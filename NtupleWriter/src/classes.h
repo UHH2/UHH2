@@ -1,0 +1,50 @@
+#include "UHH2/NtupleWriter/include/Particle.h"
+#include "UHH2/NtupleWriter/include/FlavorParticle.h"
+#include "UHH2/NtupleWriter/include/PFParticle.h"
+#include "UHH2/NtupleWriter/include/Jet.h"
+#include "UHH2/NtupleWriter/include/Electron.h"
+#include "UHH2/NtupleWriter/include/Muon.h"
+#include "UHH2/NtupleWriter/include/Tau.h"
+#include "UHH2/NtupleWriter/include/Photon.h"
+#include "UHH2/NtupleWriter/include/MET.h"
+#include "UHH2/NtupleWriter/include/PrimaryVertex.h"
+#include "UHH2/NtupleWriter/include/TopJet.h"
+#include "UHH2/NtupleWriter/include/GenJetWithParts.h"
+#include "UHH2/NtupleWriter/include/GenTopJet.h"
+#include "UHH2/NtupleWriter/include/GenInfo.h"
+#include "UHH2/NtupleWriter/include/GenParticle.h"
+
+#include <vector>
+
+namespace {
+  namespace {
+    Particle p;
+    std::vector<Particle> ps;
+    FlavorParticle pfl;
+    std::vector<FlavorParticle> pfls;
+    PFParticle pf;
+    std::vector<PFParticle> pfs;
+    Jet jet;
+    std::vector<Jet> jets;
+    TopJet topjet;
+    std::vector<TopJet> topjets;
+    GenJetWithParts genjetwithparts;
+    std::vector<GenJetWithParts> genjetswithparts;
+    GenTopJet gentopjet;
+    std::vector<GenTopJet> gentopjets;
+    Electron ele; 
+    std::vector<Electron> eles; 
+    Muon mu; 
+    std::vector<Muon> mus; 
+    Tau tau;
+    std::vector<Tau> taus; 
+    Photon ph; 
+    std::vector<Photon> phs; 
+    MET met;
+    PrimaryVertex pv;
+    std::vector<PrimaryVertex> pvs; 
+    GenInfo genInfo;
+    GenParticle genp;
+    std::vector<GenParticle> genps;
+  }
+}

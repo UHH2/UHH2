@@ -1,0 +1,108 @@
+// Dear emacs, this is -*- c++ -*-
+
+#ifndef Njettiness_ICC
+#define Njettiness_ICC
+
+#include "Njettiness.h"
+
+// Given starting axes, update to find better axes
+template <int N>
+std::vector<LightLikeAxis> Njettiness::UpdateAxesFast(const std::vector <LightLikeAxis> & old_axes, 
+						      const std::vector <fastjet::PseudoJet> & inputJets,
+						      NsubParameters paraNsub, double precision) {
+   assert(old_axes.size() == N);
+   
+   // some storage, declared static to save allocation/re-allocation costs
+   static LightLikeAxis new_axes[N];
+   static fastjet::PseudoJet new_jets[N];
+   for (int n = 0; n < N; ++n) {
+      new_axes[n].reset(0.0,0.0,0.0,0.0);
+#ifdef FASTJET2
+      new_jets[n].reset(0.0,0.0,0.0,0.0);
+#else
+      // use cheaper reset if available
+      new_jets[n].reset_momentum(0.0,0.0,0.0,0.0);
+#endif
+   }
+
+   
+   double beta = paraNsub.beta();
+   double Rcutoff = paraNsub.Rcutoff();
+   
+   /////////////// Assignment Step //////////////////////////////////////////////////////////
+   std::vector<int> assignment_index(inputJets.size()); 
+   int k_assign = -1;
+   
+   for (unsigned i = 0; i < inputJets.size(); i++){
+      double smallestDist = 1000000.0;
+      for (int k = 0; k < N; k++) {
+         double thisDist = DistanceSq(inputJets[i].rap(),inputJets[i].phi(),old_axes[k].rap(),old_axes[k].phi());
+         if (thisDist < smallestDist) {
+            smallestDist = thisDist;
+            k_assign = k;
+         }
+      }
+      if (smallestDist > sq(Rcutoff)) {k_assign = -1;}
+      assignment_index[i] = k_assign;
+   }
+   
+   //////////////// Update Step /////////////////////////////////////////////////////////////
+   double distPhi, old_dist;
+   for (unsigned i = 0; i < inputJets.size(); i++) {
+      int old_jet_i = assignment_index[i];
+      if (old_jet_i == -1) {continue;}
+
+      const fastjet::PseudoJet& inputJet_i = inputJets[i];
+      LightLikeAxis& new_axis_i = new_axes[old_jet_i];
+      double inputPhi_i = inputJet_i.phi();
+      double inputRap_i = inputJet_i.rap();
+            
+      // optimize pow() call
+      // add noise (the precision term) to make sure we don't divide by zero
+      if (beta == 1.0) {
+         double DR = std::sqrt(sq(precision) + DistanceSq(inputRap_i, inputPhi_i, old_axes[old_jet_i].rap(), old_axes[old_jet_i].phi()));
+         old_dist = 1.0/DR;
+      } else if (beta == 2.0) {
+         old_dist = 1.0;
+      } else if (beta == 0.0) {
+         double DRSq = sq(precision) + DistanceSq(inputRap_i, inputPhi_i, old_axes[old_jet_i].rap(), old_axes[old_jet_i].phi());
+         old_dist = 1.0/DRSq;
+      } else {
+         old_dist = sq(precision) + DistanceSq(inputRap_i, inputPhi_i, old_axes[old_jet_i].rap(), old_axes[old_jet_i].phi());
+         old_dist = std::pow(old_dist, (0.5*beta-1.0));
+      }
+      
+      // rapidity sum
+      new_axis_i.set_rap(new_axis_i.rap() + inputJet_i.perp() * inputRap_i * old_dist);
+      // phi sum
+      distPhi = inputPhi_i - old_axes[old_jet_i].phi();
+      if (fabs(distPhi) <= M_PI){
+         new_axis_i.set_phi( new_axis_i.phi() + inputJet_i.perp() * inputPhi_i * old_dist );
+      } else if (distPhi > M_PI) {
+         new_axis_i.set_phi( new_axis_i.phi() + inputJet_i.perp() * (-2*M_PI + inputPhi_i) * old_dist );
+      } else if (distPhi < -M_PI) {
+         new_axis_i.set_phi( new_axis_i.phi() + inputJet_i.perp() * (+2*M_PI + inputPhi_i) * old_dist );
+      }
+      // weights sum
+      new_axis_i.set_weight( new_axis_i.weight() + inputJet_i.perp() * old_dist );
+      // momentum magnitude sum
+      new_jets[old_jet_i] += inputJet_i;
+   }
+   // normalize sums
+   for (int k = 0; k < N; k++) {
+      if (new_axes[k].weight() == 0) {
+         // no particles were closest to this axis!  Return to old axis instead of (0,0,0,0)
+         new_axes[k] = old_axes[k];
+      } else {
+         new_axes[k].set_rap( new_axes[k].rap() / new_axes[k].weight() );
+         new_axes[k].set_phi( new_axes[k].phi() / new_axes[k].weight() );
+         new_axes[k].set_phi( std::fmod(new_axes[k].phi() + 2*M_PI, 2*M_PI) );
+         new_axes[k].set_mom( std::sqrt(new_jets[k].modp2()) );
+      }
+   }
+   std::vector<LightLikeAxis> new_axes_vec(N);
+   for (unsigned k = 0; k < N; ++k) new_axes_vec[k] = new_axes[k];
+   return new_axes_vec;
+}
+
+#endif

@@ -1,0 +1,5 @@
+<use name="root"/>
+<Flags CPPDEFINES="CMSSW" />
+<export>
+    <lib name="1" />
+</export>

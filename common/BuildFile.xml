@@ -1,0 +1,5 @@
+<use name="root" />
+<use name="UHH2/core" />
+<export>
+    <lib name="1" />
+</export>

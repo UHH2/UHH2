@@ -1,0 +1,104 @@
+#include "UHH2/core/include/Event.h"
+#include <sstream>
+#include <stdexcept>
+
+using namespace uhh2;
+using namespace std;
+
+void Event::clear(){
+    run = luminosityBlock = event = -1;
+    rho = beamspot_x0 = beamspot_y0 = beamspot_z0 = NAN;
+    electrons = 0;
+    muons = 0;
+    taus = 0;
+    photons = 0;
+    pvs = 0;
+    jets = 0;
+    topjets = 0;
+    topjetsgen = 0;
+    genparticles = 0;
+    genjets = 0;
+    met = 0;
+    genInfo = 0;
+    triggerResults = 0;
+    triggerNames_currentrun.clear();
+    triggerNames_currentrun_runid = -1; // this is an invalid runid
+}
+
+Event::Event(const GenericEventStructure & ges): GenericEvent(ges){
+    clear();
+}
+
+Event::~Event(){}
+
+
+Event::TriggerIndex Event::get_trigger_index(const std::string & triggername) const{
+    if(triggername.empty() || triggername == "*"){
+        throw invalid_argument("invalid triggername='" + triggername + "' passed to Event::get_trigger_index");
+    }
+    bool trailing_wildcard = triggername[triggername.size() - 1] == '*';
+    return TriggerIndex(0, -1, trailing_wildcard ? triggername.substr(0, triggername.size() - 1) : triggername, trailing_wildcard);
+}
+
+bool Event::lookup_trigger_index(TriggerIndex & ti) const{
+    if(ti.runid == run){
+        return true;
+    }
+    if(triggerNames_currentrun_runid != run){
+        stringstream ss;
+        ss << "Event::lookup_trigger: no trigger names for current run available: need trigger names for current runid=" << run << ", but last update was for runid=" << triggerNames_currentrun_runid
+           << ". Is reading trigger names configured correctly?";
+        throw runtime_error(ss.str());
+    }
+    int runid = -1;
+    size_t index = triggerNames_currentrun.size();
+    for(size_t i=0; i<triggerNames_currentrun.size(); ++i){
+        bool matches = false;
+        if(ti.is_prefix){
+            matches = triggerNames_currentrun[i].find(ti.triggername) == 0;
+        }
+        else{
+            matches = triggerNames_currentrun[i] == ti.triggername;
+        }
+        if(matches){
+            if(index == triggerNames_currentrun.size()){ // first match
+                index = i;
+                runid = run;
+            }
+            else{
+                stringstream ss;
+                ss << "Trigger name '" << ti.triggername << (ti.is_prefix ? "*" : "")  << "' not unique: found at index " << ti.index << " and at index " << i << ".";
+                throw runtime_error(ss.str());
+            }
+        }
+    }
+    if(runid == -1){
+        return false;
+    }
+    ti.runid = runid;
+    ti.index = index;
+    return true;
+}
+
+namespace {
+    
+string format_list(const vector<string> & l){
+    string result;
+    for(const auto & i : l){
+        result += i;
+        result += "\n";
+    }
+    return result;
+}
+
+}
+
+
+bool Event::passes_trigger(TriggerIndex & ti) const{
+    if(!lookup_trigger_index(ti)){
+        throw runtime_error("Event does not have trigger '" + ti.triggername + "'. Available triggers:\n" + format_list(triggerNames_currentrun));
+    }
+    assert(triggerResults);
+    return triggerResults->at(ti.index);
+}
+

@@ -1,0 +1,30 @@
+<lcgdict>
+<class name="Particle"/>
+<class name="std::vector<Particle>"/>
+<class name="FlavorParticle"/>
+<class name="std::vector<FlavorParticle>"/>
+<class name="PFParticle"/>
+<class name="std::vector<PFParticle>"/>
+<class name="Jet"/>
+<class name="std::vector<Jet>"/>
+<class name="TopJet"/>
+<class name="std::vector<TopJet>"/>
+<class name="GenJetWithParts"/>
+<class name="std::vector<GenJetWithParts>"/>
+<class name="GenTopJet"/>
+<class name="std::vector<GenTopJet>"/>
+<class name="Electron"/>
+<class name="std::vector<Electron>"/>
+<class name="Muon"/>
+<class name="std::vector<Muon>"/>
+<class name="Tau"/>
+<class name="std::vector<Tau>"/>
+<class name="Photon"/>
+<class name="std::vector<Photon>"/>
+<class name="MET"/>
+<class name="PrimaryVertex"/>
+<class name="std::vector<PrimaryVertex>"/>
+<class name="GenInfo"/>
+<class name="GenParticle"/>
+<class name="std::vector<GenParticle>"/>
+</lcgdict>

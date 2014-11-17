@@ -1,0 +1,121 @@
+# this is tthe 'common' Makefile for the UHH2 package(s). It is usually included by
+# the sub-directories (such as core and example) after setting certain variables. The following
+# variables should be set:
+#
+#  * LIBRARY: should be set to a unique name, which will be used for the shared library and PROOF .par name
+#        typically, use SUHH2<subdirname>
+#  * USERLDFLAGS: additional flags for the linker. Specify all dependencies here, e.g. "-lSUHH2common" to link against
+#      the library built from 'common'. Note that some libraries are always linked against, in particular ROOT.
+#  * USERCXXFLAGS: additional flags for the compiler
+#  * DICT: set to a list of headers in 'include/' which should be used to build ROOT dictionaries. The include/XXX_LinkDef.h file
+#       must come last; see core and NtupleWriter for examples
+#  * PAR: if non-empty, build a minimal .par file for PROOF; this file can then be used in the SFrame configuration.
+#     Note that the created par file is minimal and does not do anything but to load the right shared object file.
+#  * TEST: if non-empty, build one test executable from each .cxx file in the 'test' subdirectory. Note that .cxx files are
+#       handles differently from .cpp files, see next item.
+#  * TESTLIB: if non-empty, build a shared object names libTest$(LIBRARY).so from all .cpp files in the 'test' subdirectory.
+
+# create obj and obj/$LIBRARY/PROOF-INF (and intermediate) directories:
+dummy := $(shell [ -d obj/$(LIBRARY)/PROOF-INF ] || mkdir -p obj/$(LIBRARY)/PROOF-INF )
+
+# find sources to use for the build:
+src := $(wildcard src/*.cxx)
+obj := $(patsubst src/%.cxx,obj/%.o,$(src))
+deps := $(patsubst src/%.cxx,obj/%.d,$(src))
+
+INCLUDES := -I$(SFRAME_DIR) -I.
+LIBTARGET := $(SFRAME_LIB_PATH)/lib$(LIBRARY).so
+PARTARGET := $(SFRAME_LIB_PATH)/$(LIBRARY).par
+
+# as default, build library only:
+all: $(LIBTARGET) 
+
+# build dictionary only if requested via $(DICT).
+ifneq ($(DICT),)
+DICTCXXFILE := obj/$(LIBRARY)_dict.cxx
+DICTOBJ := obj/$(LIBRARY)_dict.o
+$(DICTCXXFILE): $(DICT)
+	@echo "Generating dictionary $@" 
+	@$(shell root-config --exec-prefix)/bin/rootcint -f $@ -c -p $(INCLUDES) $+ || rm -f $(DICTCXXFILE)
+$(DICTOBJ): $(DICTCXXFILE)
+	@$(CXX_CMD)
+obj += $(DICTOBJ)
+endif
+
+$(LIBTARGET): $(obj)
+	@$(SHARED_CMD)
+
+ifneq ($(MAKECMDGOALS),clean)
+-include $(deps)
+endif
+
+
+
+ifneq ($(TEST),)
+dummy := $(shell [ -d obj/test ] || mkdir obj/test)
+dummy := $(shell [ -d bin ] || mkdir bin)
+testsources := $(wildcard test/*.cxx)
+testprogs := $(patsubst test/%.cxx,bin/%,$(testsources))
+all: $(testprogs)
+obj/test/%.o: test/%.cxx
+	@$(CXX_CMD)
+bin/%: obj/test/%.o
+	@$(EXE_CMD) -lProof -lPyROOT -lTreePlayer
+endif
+
+
+
+ifneq ($(TESTLIB),)
+dummy := $(shell [ -d obj/test ] || mkdir obj/test)
+TESTLIBTARGET := $(SFRAME_LIB_PATH)/libTest$(LIBRARY).so
+all: $(TESTLIBTARGET)
+testlibsources := $(wildcard test/*.cpp)
+testlibobj := $(patsubst test/%.cpp,obj/test/%.o,$(testlibsources))
+obj/test/%.o: test/%.cpp
+	@$(CXX_CMD)
+$(TESTLIBTARGET): $(testlibobj)
+	@$(SHARED_CMD) -l$(LIBRARY)
+endif
+
+
+
+LIBS := $(shell root-config --libs) -lSFrameCore -lXMLParser 
+CXXFLAGS := $(shell root-config --cflags) -std=c++0x -O3 -Wall -g -fPIC -Wno-unused-local-typedefs -pipe $(INCLUDES) $(USERCXXFLAGS)
+LDFLAGS := $(LIBS) -fPIC -rdynamic -lrt -Wl,-z,defs -L$(SFRAME_LIB_PATH) $(USERLDFLAGS)
+
+SHARED_CMD = echo creating $@; $(CXX) $^ -shared $(LDFLAGS) -o $@ 
+EXE_CMD = echo creating $@; $(CXX) -o $@ $^ $(LDFLAGS)
+CXX_CMD = echo creating $@; $(CXX) -c -o $@ $< $(CXXFLAGS)
+
+
+obj/%.o : src/%.cxx
+	@$(CXX_CMD)
+
+obj/%.d: src/%.cxx 
+	@echo creating dep file $@; $(CXX) $(CXXFLAGS) -MM -MT '$(patsubst src/%.cxx,obj/%.o,$<)' $< > $@
+	
+ifneq ($(PAR),)
+all: $(PARTARGET)
+
+$(PARTARGET): obj/$(LIBRARY)/PROOF-INF/BUILD.sh obj/$(LIBRARY)/PROOF-INF/SETUP.C
+	@echo "Creating minimal par at" $(PARTARGET)
+	@cd obj; tar czf $(PARTARGET) $(LIBRARY)
+
+obj/$(LIBRARY)/PROOF-INF/BUILD.sh:
+	@echo "Creating dummy BUILD.sh for par"
+	@echo "#!/bin/bash" > $@
+	@echo "exit 0" >> $@
+	@chmod a+x $@
+
+obj/$(LIBRARY)/PROOF-INF/SETUP.C:
+	@echo "Creating minimal SETUP.C for par"
+	@echo "int SETUP() {" > $@
+	@echo "    gSystem->Load(\"lib$(LIBRARY)\");" >> $@
+	@echo "    return 0; }" >> $@
+
+endif
+
+clean:
+	@rm -rf obj/ bin/
+
+.PHONY: clean obj/$(LIBRARY)/PROOF-INF/SETUP.C obj/$(LIBRARY)/PROOF-INF/BUILD.sh
