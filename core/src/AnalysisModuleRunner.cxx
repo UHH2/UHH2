@@ -376,7 +376,7 @@ void AnalysisModuleRunner::BeginInputData( const SInputData& in ) throw( SError 
     m_PrimaryVertexCollection = context->get("PrimaryVertexCollection", "");
     m_METName = context->get("METName", "");
     m_TopJetCollection = context->get("TopJetCollection", "");
-    m_TopJetCollectionGen = context->get("TopJetCollectionGen", "");
+    m_GenTopJetCollection = context->get("GenTopJetCollection", "");
     m_GenParticleCollection = context->get("GenParticleCollection", "");
     
     m_readCommonInfo = string2bool(context->get("readCommonInfo", "true"));
@@ -457,7 +457,7 @@ void AnalysisModuleRunner::BeginInputFile( const SInputData& ) throw( SError ){
     if(m_TopJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_TopJetCollection.c_str(), event->topjets);
     
     if(m_addGenInfo && m_GenJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenJetCollection.c_str(), event->genjets);
-    if(m_addGenInfo && m_TopJetCollectionGen.size()>0) ConnectVariable( "AnalysisTree", m_TopJetCollectionGen.c_str() , event->topjetsgen);
+    if(m_addGenInfo && m_GenTopJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenTopJetCollection.c_str() , event->gentopjets);
     if(m_addGenInfo && m_GenParticleCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenParticleCollection.c_str() , event->genparticles);
     if(m_addGenInfo && m_readCommonInfo) ConnectVariable( "AnalysisTree", "genInfo" , event->genInfo);
     
@@ -519,7 +519,7 @@ void AnalysisModuleRunner::setup_output(){
     setup_branch(outtree, m_METName.c_str(), event->met);
     setup_branch(outtree, m_PrimaryVertexCollection.c_str() , event->pvs);
     setup_branch(outtree, m_TopJetCollection.c_str(), event->topjets);
-    setup_branch(outtree, m_TopJetCollectionGen.c_str() , event->topjetsgen);
+    setup_branch(outtree, m_GenTopJetCollection.c_str() , event->gentopjets);
     setup_branch(outtree, m_GenParticleCollection.c_str() , event->genparticles);
     setup_branch(outtree, "genInfo" , event->genInfo);
     setup_branch(outtree, "triggerResults", event->get_triggerResults());

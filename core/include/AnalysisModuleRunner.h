@@ -55,7 +55,7 @@ private:
     void FillTriggerNames();
     
     std::string m_JetCollection, m_GenJetCollection, m_ElectronCollection, m_MuonCollection, 
-      m_TauCollection, m_PhotonCollection, m_PrimaryVertexCollection, m_METName, m_TopJetCollection, m_TopJetCollectionGen,
+      m_TauCollection, m_PhotonCollection, m_PrimaryVertexCollection, m_METName, m_TopJetCollection, m_GenTopJetCollection,
       m_GenParticleCollection;
     bool m_readCommonInfo, m_addGenInfo, m_readTrigger;
     

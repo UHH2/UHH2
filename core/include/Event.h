@@ -39,7 +39,7 @@ public:
   MET* met;
     
   GenInfo* genInfo;
-  std::vector< GenTopJet >* topjetsgen;
+  std::vector< GenTopJet >* gentopjets;
   std::vector< GenParticle >* genparticles;
   std::vector< Particle>* genjets;
   
