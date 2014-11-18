@@ -1,15 +1,15 @@
-#include "UHH2/NtupleWriter/plugins/JetProps.h"
+#include "UHH2/core/plugins/JetProps.h"
 
 #include <vector>
 #include <iostream>
 
-#include "UHH2/NtupleWriter/plugins/Nsubjettiness.h"
+#include "UHH2/core/plugins/Nsubjettiness.h"
 
 // NOTE: in the long run, use this from CMSSW:
 //#include "RecoJets/JetAlgorithms/interface/QjetsPlugin.h"
 // but: requires setting random engine of QjetPlugin explicitly (otherwise segfault when setting seed).
 
-#include "UHH2/NtupleWriter/plugins/QjetsPlugin.h"
+#include "UHH2/core/plugins/QjetsPlugin.h"
 #include "fastjet/tools/Pruner.hh"
 
 #include "TString.h"

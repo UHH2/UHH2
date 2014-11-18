@@ -4,8 +4,8 @@
     <Library Name="libSUHH2examples"/>
     <Package Name="SUHH2examples.par" />
 
-   <!-- <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
-   <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" >
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+   <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
         <InputData Lumi="92270" NEventsMax="10000" Type="MC" Version="TTbar" Cacheable="False">
             <In FileName="/nfs/dust/cms/user/peiffer/Analysis70X/PreSelectionMuon/ZprimePreSelectionCycle.MC.TTbar.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 

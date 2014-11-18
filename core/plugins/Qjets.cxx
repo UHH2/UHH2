@@ -1,4 +1,4 @@
-#include "UHH2/NtupleWriter/plugins/Qjets.h"
+#include "UHH2/core/plugins/Qjets.h"
 
 using namespace uhh2;
 

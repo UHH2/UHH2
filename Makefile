@@ -1,6 +1,6 @@
 # This just executes 'make' in all the subdirectories. Note the dependencies:
 # core comes first, then NtupleWriter, then common, then all other packages.
-dirs := core NtupleWriter common examples
+dirs := core common examples
 
 
 # Makefile.local can be used to append more directories to be built to 'dirs'

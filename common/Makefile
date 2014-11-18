@@ -1,3 +1,3 @@
 LIBRARY := SUHH2common
-USERLDFLAGS := -lSUHH2core -lSUHH2NtupleWriter
+USERLDFLAGS := -lSUHH2core
 include ../Makefile.common

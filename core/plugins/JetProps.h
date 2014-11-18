@@ -2,10 +2,10 @@
 #ifndef JetProps_H
 #define JetProps_H
 
-#include "UHH2/NtupleWriter/include/Jet.h"
-#include "UHH2/NtupleWriter/include/TopJet.h"
-#include "UHH2/NtupleWriter/include/PFParticle.h"
-#include "UHH2/NtupleWriter/plugins/Njettiness.h"
+#include "UHH2/core/include/Jet.h"
+#include "UHH2/core/include/TopJet.h"
+#include "UHH2/core/include/PFParticle.h"
+#include "UHH2/core/plugins/Njettiness.h"
 
 
 /**

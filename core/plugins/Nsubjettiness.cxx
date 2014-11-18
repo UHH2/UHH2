@@ -24,7 +24,7 @@
 //      59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //----------------------------------------------------------------------
 
-#include "UHH2/NtupleWriter/plugins/Nsubjettiness.h"
+#include "UHH2/core/plugins/Nsubjettiness.h"
 
 #include "fastjet/FunctionOfPseudoJet.hh"
 

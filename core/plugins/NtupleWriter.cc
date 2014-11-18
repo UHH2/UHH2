@@ -5,8 +5,8 @@
 #include "FWCore/Utilities/interface/CPUTimer.h"
 
 #include "UHH2/core/include/root-utils.h"
-#include "UHH2/NtupleWriter/plugins/NtupleWriter.h"
-#include "UHH2/NtupleWriter/plugins/JetProps.h"
+#include "UHH2/core/plugins/NtupleWriter.h"
+#include "UHH2/core/plugins/JetProps.h"
 #include "RecoBTau/JetTagComputer/interface/GenericMVAJetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/GenericMVAJetTagComputerWrapper.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"

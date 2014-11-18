@@ -12,7 +12,7 @@
 // to fit with the SFrame analysis setup.
 //----------------------------------------------------------------------
 
-#include "UHH2/NtupleWriter/plugins/Njettiness.h"
+#include "UHH2/core/plugins/Njettiness.h"
 
 ///////
 //

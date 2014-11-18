@@ -1,4 +1,5 @@
 <use name="root"/>
+<use name="rootrflx"/>
 <Flags CPPDEFINES="CMSSW" />
 <export>
     <lib name="1" />

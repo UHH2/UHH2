@@ -40,8 +40,7 @@ ln -s $CMSSW_BASE/src/UHH2 .
 Compiling code for SFrame is done by executing `make` in the `UHH2` directory; this will build all the subdirectories.
 
 The subdirectories of `UHH2` contain:
- * `NtupleWriter`: ntuple data format and CMSSW code for the conversion of miniAOD to the ntuple format, including CMSSW configuration files
- * `core`: important common base classes (such as `AnalysisModule`, `Selection`, ...) and glue code to SFrame (`AnalysisModuleRunner`)
+ * `core`: ntuple data format for dictionaries; crucial abstract base classes (such as `AnalysisModule`, `Selection`, ...); glue code to SFrame (`AnalysisModuleRunner`) and for CMSSW (`NtupleWriter` defined in  `plugins`)
  * `common`: object ids and event selection modules common to several analyses
  * `common/datasets` and subdirectories: SFrame xml files defining input data files
  * `examples`: example implementation of an `AnalysisModule`, including SFrame configuration
