@@ -4,9 +4,18 @@
 
 // see also ElectronIds.h for general comments
 
-class MuonID_nonIso {
+
+// the tight muon id according to
+// https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId
+class MuonIDTight {
 public:
-    MuonID_nonIso(double ptmin, double etamax);
+    bool operator()(const Muon & muon, const uhh2::Event & event) const;
+};
+
+// only kinematic cuts, with no further id
+class MuonIDKinematic {
+public:
+    MuonIDKinematic(double ptmin, double etamax);
     bool operator()(const Muon & muon, const uhh2::Event & event) const;
     
 private:
