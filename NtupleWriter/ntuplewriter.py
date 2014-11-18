@@ -10,6 +10,7 @@ import FWCore.ParameterSet.Config as cms
 # ntuple.
 
 useMiniAOD = True
+useData = False
 
 # AOD
 pfcandidates          = 'particleFlow'
@@ -50,33 +51,36 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 
-
-#process.source = cms.Source("PoolSource",
-#                            fileNames  = cms.untracked.vstring(__FILE_NAMES__),
-#                            skipEvents = cms.untracked.uint32(__SKIP_EVENTS__)
-#)
-
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(__MAX_EVENTS__))
-
 process.source = cms.Source("PoolSource",
-                            fileNames  = cms.untracked.vstring("/store/mc/Spring14miniaod/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/MINIAODSIM/PU40bx25_POSTLS170_V7-v2/00000/00800BE3-E826-E411-AD01-20CF3019DEE9.root"),
+                            fileNames  = cms.untracked.vstring("/store/mc/Phys14DR/TprimeTprime_M_1000_Tune4C_13TeV-madgraph/MINIAODSIM/PU40bx25_PHYS14_25_V1-v1/10000/F6F71931-6F67-E411-ABA2-20CF3027A5C9.root"),
                             skipEvents = cms.untracked.uint32(0)
 )
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 
 
+# Grid-control changes:
+gc_maxevents = '__MAX_EVENTS__'
+gc_skipevents = '__SKIP_EVENTS__'
+gc_filenames = '__FILE_NAMES__'
+
+import os
+gc_nickname = os.getenv('DATASETNICK')
+
+if gc_nickname is not None:
+    useData = not gc_nickname.startswith('MC_')
+    process.source.fileNames = map(lambda s: s.strip(' "'), gc_filenames.split(','))
+    process.source.skipEvents = int(gc_skipevents)
+    process.maxEvents.input = int(gc_maxevents)
+
+
 
 ###############################################
 # OUT
-outfile = 'ntuple-miniaod.root'
-
 from Configuration.EventContent.EventContent_cff import *
 process.out = cms.OutputModule("PoolOutputModule",
-                               fileName = cms.untracked.string(outfile),
-                               outputCommands = MINIAODSIMEventContent.outputCommands
-                               #outputCommands = cms.untracked.vstring('keep *')
-)
+                               fileName = cms.untracked.string('miniaod.root'),
+                               outputCommands = MINIAODSIMEventContent.outputCommands )
 
 process.out.outputCommands.extend([
     'keep *_patJetsCA8CHS_*_*',
@@ -86,8 +90,6 @@ process.out.outputCommands.extend([
     "keep *_patJetsHEPTopTagCHSPacked_*_*",
     "keep *_patJetsHEPTopTagCHSSubjets_*_*",
 ])
-
-print process.out.outputCommands
 
 ###############################################
 # RECO AND GEN SETUP
@@ -206,6 +208,7 @@ process.load('RecoJets.Configuration.RecoJetAssociations_cff')
 process.load('PhysicsTools.PatAlgos.slimming.unpackedTracksAndVertices_cfi')
 
 # fix JTA (see https://github.com/cms-sw/cmssw/tree/CMSSW_7_0_X/RecoJets/JetAssociationProducers/python)
+process.load('RecoJets.JetAssociationProducers.ak5JTA_cff')
 process.ak5JetTracksAssociatorAtVertexPF.tracks = cms.InputTag(tracks)
 process.impactParameterTagInfos.primaryVertex = cms.InputTag(vertices)
 process.inclusiveSecondaryVertexFinderTagInfos.extSVCollection = cms.InputTag(mergedvertices,mergedvertices2,"")
@@ -417,8 +420,6 @@ for jetcoll in (process.patJetsCA8CHS,
         jetcoll.addGenPartonMatch = False
 
 #NtupleWriter
-useData = False
-
 process.MyNtuple = cms.EDFilter('NtupleWriter',
                                   #AnalysisModule = cms.PSet(
                                   #    name = cms.string("NoopAnalysisModule"),

@@ -1,24 +1,6 @@
-// -*- C++ -*-
-//
-// Package:    NtupleWriter
-// Class:      NtupleWriter
-// 
-/**\class NtupleWriter NtupleWriter.cc NtupleWriter/src/NtupleWriter.cc
-
- Description: [one line class summary]
-
- Implementation:
-     [Notes on implementation]
-*/
-//
-// Original Author:  Thomas Peiffer,,,Uni Hamburg
-//         Created:  Tue Mar 13 08:43:34 CET 2012
-// $Id: NtupleWriter.cc,v 1.29 2013/06/19 22:05:46 rkogler Exp $
-//
-//
 
 //set this flag to 1 when running in CMSSW_7_0_X, switch it to 0 for CMSSW_7_1_X and CMSSW_7_2_X
-#define CMSSW70 1
+//#define CMSSW70 1
 
 #include "FWCore/Utilities/interface/CPUTimer.h"
 
@@ -1130,14 +1112,16 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           jet.set_phi(gen_jet.phi());
           jet.set_energy(gen_jet.energy());
 
-          // recalculate the jet charge
+          // recalculate the jet charge.
+          // Currently not done due to an issue with miniAOD:
+          // https://hypernews.cern.ch/HyperNews/CMS/get/physTools/3274.html
+          /*cout << "Jet charge genjets " << j << ":" << i << endl;
           int jet_charge = 0;
-          std::vector<const reco::GenParticle * > jetgenps = gen_jet.getGenConstituents();
-          for(unsigned int l = 0; l<jetgenps.size(); ++l){
-            jet_charge +=  jetgenps[l]->charge();
+          for(const auto & constituent : gen_jet){
+              jet_charge += constituent.charge();
           }
           jet.set_charge(jet_charge);
-          genjets[j].push_back(jet);   
+          genjets[j].push_back(jet);*/
        }
      }
    }
@@ -1521,7 +1505,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    }
    
    if(tr && keep){
-       if(!setup_output_branches_done){
+       if(!setup_output_branches_done && context){
           context->setup_output_branches(*event);
           setup_output_branches_done = true;
        }
