@@ -32,6 +32,28 @@ std::string uhh2::double2string(double d){
     return buf;
 }
 
+std::string uhh2::double2string(double d, int precision){
+    char buf[40], fbuf[10];
+    int res = snprintf(fbuf, 10, "%%%d.5g", precision);
+    if(res <= 0 || res >= 10){
+        throw runtime_error("double2string: snprintf[0] returned unexpected result");
+    }
+    res = snprintf(buf, 40, fbuf, d);
+    if(res <= 0 || res >= 40){
+        throw runtime_error("double2string: snprintf[1] returned unexpected result");
+    }
+    return buf;
+}
+
+std::string uhh2::int2string(int i){
+    char buf[40];
+    int res = snprintf(buf, 40, "%d", i);
+    if(res <= 0 || res >= 40){
+        throw runtime_error("int2string: snprintf returned unexpected result");
+    }
+    return buf;
+}
+
 std::string uhh2::demangle(const std::string & mangled_typename){
     int status;
     char * demangled = abi::__cxa_demangle(mangled_typename.c_str(), 0, 0, &status);

@@ -21,6 +21,9 @@ bool string2bool(const std::string & s);
 /// Convert a double to a string; use enough digits to keep high accuracy
 std::string double2string(double d);
 
+std::string double2string(double d, int precision);
+std::string int2string(int i);
+
 /// Make a C++-mangled typename human-readable
 std::string demangle(const std::string & mangled_typename);
 

@@ -438,7 +438,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       branch(tr, gentopjet_sources[j].c_str(), "std::vector<GenTopJet>", &gentopjets[j]);
     }
     if(!gentopjet_sources.empty()){
-        event->topjetsgen = &gentopjets[0];
+        event->gentopjets = &gentopjets[0];
     }
   }
   if(doGenJetsWithParts){
@@ -638,16 +638,20 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
 
      edm::Handle<reco::GenParticleCollection> genPartColl;
+     // use genPartColl for the Matrix-Element particles. Also use it for stable leptons
+     // in case doAllGenParticles is false.
      iEvent.getByLabel(genparticle_source, genPartColl);
      int index=-1;
      for(reco::GenParticleCollection::const_iterator iter = genPartColl->begin(); iter != genPartColl->end(); ++ iter){
        index++;
-       
-       //write out only top quarks,final state leptons and status 3 particles (works fine only for MadGraph)
+       //write out only leptons and matrix-element particles (for doAllGenParticles, write all)
        bool islepton = iter->status()==1 && abs(iter->pdgId())>=11 && abs(iter->pdgId())<=16 ;
-       if(abs(iter->pdgId())==6 || iter->status()==3 || islepton ||  doAllGenParticles ){
-	 //in case of miniAOD: do not store stable particles here, will be strored later from packed collection
-	 if(iter->status()==1 && runOnMiniAOD && !islepton) continue;
+       bool is_me = iter->status()==3 || (iter->status()>=20 && iter->status()<=30); // 3 for MadGraph, 20--30 for Pythia8
+       if(is_me || islepton ||  doAllGenParticles){
+	 //in case we store all stable particles later anyway: do not store here to avoid duplication.
+	 if(doAllGenParticles && runOnMiniAOD && iter->status()==1){
+             continue;
+         }
 
 	 GenParticle genp;
 	 genp.set_charge(iter->charge());
@@ -681,6 +685,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      //store stable gen particles from packed collection
      if(doAllGenParticles && runOnMiniAOD){
        edm::Handle<edm::View<pat::PackedGenParticle> > packed;
+       // use packed particle collection for all STABLE (status 1) particles
        iEvent.getByLabel(stablegenparticle_source,packed);
 
        for(size_t j=0; j<packed->size();j++){

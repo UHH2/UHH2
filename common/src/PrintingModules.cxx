@@ -1,4 +1,5 @@
 #include "UHH2/common/include/PrintingModules.h"
+#include "UHH2/core/include/Utils.h"
 
 using namespace uhh2;
 using namespace std;
@@ -31,12 +32,12 @@ bool GenParticlesPrinter::process(Event & event){
         return true;
     }
     cout << "N_gp = " << event.genparticles->size() << endl;
-    int i=0;
+    TableOutput to({"id", "ind", "mo1", "mo2", "stat", "pt", "eta"});
     for(const auto & gp : *event.genparticles){
-        ++i;
-        cout << "gp[" << i << "]: id=" << gp.pdgId() << " pt=" << gp.pt() << ", eta=" << gp.eta() << "; index=" << gp.index()
-             << "; status=" << gp.status() << "; mo1=" << gp.mother1() << "mo2 = " << gp.mother2() << endl;
+        to.add_row({ int2string(gp.pdgId()), int2string(gp.index()), int2string(gp.mother1()), int2string(gp.mother2()),
+                   int2string(gp.status()), double2string(gp.pt(), 4), double2string(gp.eta(), 2)});
     }
+    to.print(cout);
     return true;
 }
 

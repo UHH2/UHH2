@@ -15,7 +15,7 @@ void Event::clear(){
     pvs = 0;
     jets = 0;
     topjets = 0;
-    topjetsgen = 0;
+    gentopjets = 0;
     genparticles = 0;
     genjets = 0;
     met = 0;

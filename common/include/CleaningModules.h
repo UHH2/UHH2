@@ -1,4 +1,3 @@
-#ifndef __CINT__
 #pragma once
 
 
@@ -55,5 +54,3 @@ public:
 private:
     ele_id_type ele_id;
 };
-
-#endif
