@@ -644,14 +644,9 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      int index=-1;
      for(reco::GenParticleCollection::const_iterator iter = genPartColl->begin(); iter != genPartColl->end(); ++ iter){
        index++;
-       //write out only leptons and matrix-element particles (for doAllGenParticles, write all)
-       bool islepton = iter->status()==1 && abs(iter->pdgId())>=11 && abs(iter->pdgId())<=16 ;
-       bool is_me = iter->status()==3 || (iter->status()>=20 && iter->status()<=30); // 3 for MadGraph, 20--30 for Pythia8
-       if(is_me || islepton ||  doAllGenParticles){
-	 //in case we store all stable particles later anyway: do not store here to avoid duplication.
-	 if(doAllGenParticles && runOnMiniAOD && iter->status()==1){
-             continue;
-         }
+
+     // No checks here in order to keep mother-daughter relations intact.
+     // For more filtering check the GEN PARTICLES section in the config
 
 	 GenParticle genp;
 	 genp.set_charge(iter->charge());
@@ -679,7 +674,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 	 event->genparticles->push_back(genp);
 
-       }
      }
      
      //store stable gen particles from packed collection

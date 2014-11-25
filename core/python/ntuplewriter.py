@@ -111,6 +111,21 @@ from RecoJets.JetProducers.CATopJetParameters_cfi import *
 from RecoJets.JetProducers.GenJetParameters_cfi import *
 from RecoJets.JetProducers.caTopTaggers_cff import *
 
+
+###############################################
+# GEN PARTICLES
+
+
+process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
+    src = cms.InputTag("prunedGenParticles"),
+    select = cms.vstring(
+        'drop *',
+        'keep status == 3',         # me in MadGraph
+        'keep 20 <= status <= 30',  # me in Pythia8
+        'keep 11 <= pdgId  <= 16',  # leptons
+    )
+)
+
 ###############################################
 # GEN JETS
 
@@ -445,12 +460,12 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                   pf_constituents_sources = cms.vstring("packedPFCandidates"),
                                   storePFsAroundLeptons = cms.untracked.bool(False),
                                   doGenInfo = cms.bool(not useData),
-                                  doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only tops and status 3 particles are stored
+                                  doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
                                   doTrigger = cms.bool(True),
                                   doTagInfos = cms.untracked.bool(False), # when set to true crashes for the 'packed' jet collections
                                   svComputer = cms.untracked.InputTag("combinedSecondaryVertex"),
                                   rho_source = cms.InputTag("fixedGridRhoFastjetAll"),
-                                  genparticle_source = cms.InputTag("prunedGenParticles" ),
+                                  genparticle_source = cms.InputTag("prunedPrunedGenParticles" ),
                                   stablegenparticle_source = cms.InputTag("packedGenParticles" ),
                                   electron_sources = cms.vstring("slimmedElectrons"),
                                   muon_sources = cms.vstring("slimmedMuons"),
