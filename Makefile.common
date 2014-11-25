@@ -23,7 +23,16 @@ src := $(wildcard src/*.cxx)
 obj := $(patsubst src/%.cxx,obj/%.o,$(src))
 deps := $(patsubst src/%.cxx,obj/%.d,$(src))
 
-INCLUDES := -I$(SFRAME_DIR) -I.
+ifeq ($(SFRAME_DIR),)
+$(error SFrame not set up. Set up SFrame first by sourcing setup.sh, setting $$SFRAME_DIR)
+endif
+
+ifeq ($(CMSSW_BASE),)
+$(error CMSSW not set up. Set up CMSSW first via cmsenv)
+endif
+
+
+INCLUDES := -I$(SFRAME_DIR) -I. -I$(CMSSW_BASE)/src
 LIBTARGET := $(SFRAME_LIB_PATH)/lib$(LIBRARY).so
 PARTARGET := $(SFRAME_LIB_PATH)/$(LIBRARY).par
 

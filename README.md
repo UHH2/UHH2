@@ -15,7 +15,20 @@ Standalone using SFrame and as part of the `NtupleWriter` in a `cmsRun` job. Thi
 
 
 
-## Code organization, installation
+## Installation
+
+### Install SFrame
+
+If not done yet, first install SFrame. To start with a clean setup, it is recommended to install a new version of SFrame, e.g. via
+
+```
+svn co https://svn.code.sf.net/p/sframe/code/SFrame/tags/SFrame-04-00-01/ SFramePhys14
+```
+
+Before compiling SFrame, remember to setup CMSSW first and source `setup.sh` in the SFrame directory.
+
+
+### Install `UHH2`
 
 To install `UHH2`, clone it with git into an existing CMSSW installation, e.g.:
 
@@ -25,29 +38,51 @@ cd CMSSW_7_2_1_patch4/src
 git clone https://github.com/jottCern/UHH2.git
 ```
 
-To compile the code for CMSSW, run `scram b` as usual.
+### Compiling and Environment
 
-The code is in directories with two directory hierarchies (`UHH2/*`) to have the same directory structure
-as expected by CMSSW. This allows to compile the same code within SFrame and within CMSSW unchanged. To 'install'
-the code in SFrame the best choice is to make a symlink to the CMSSW installation (it is assumed that you have
-a SFrame installation set up).
+After the installation, compile the SFrame core by executing `make` in the directory you used to checkout SFrame into. This has only to be done once.
+
+To compile `UHH2` code, change to the `UHH2` directory and execute `make`. **IMPORTANT*:* If you also want to run the CMSSW part (i.e. `NtupleWriter` or execute `AnalysisModules`
+within CMSSW), you also have to run `scram b`. For cleaning up, use `make clean` or `scram b clean` / `scram b distclean`. Cleaning up manually can be done by removing
+all files in the `obj` subdirectory (which is the location used by all auto-generated files) and the SFrame libraries, i.e. `$SFRAME_DIR/lib/libSUHH2*`.
+
+Also take care to always use a consistent setup when compiling. A good thing to do is to always set up CMSSW, then set up sframe, e.g. execute
+these commands every time you login:
 
 ```
-cd $SFRAME_DIR
-ln -s $CMSSW_BASE/src/UHH2 .
+cd CMSSW_7_2_1_patch4
+cmsenv
+cd ~/SFramePhys14
+source setup.sh
 ```
 
-Compiling code for SFrame is done by executing `make` in the `UHH2` directory; this will build all the subdirectories.
+(adapt for your location, of course).
+
+**Note:** If you have an existing SFrame setup, you might have your own installation of fastjet. This can be a problem when trying to run CMSSW, as CMSSW also
+depends on fastjet, but has some specific plugins. Therefore, it's best to not install fastjet or setup your environment such that the fastjet library of CMSSW is used
+when running `cmsRun`.
+
+
+## Code structure and conventions
 
 The subdirectories of `UHH2` contain:
  * `core`: ntuple data format for dictionaries; crucial abstract base classes (such as `AnalysisModule`, `Selection`, ...); glue code to SFrame (`AnalysisModuleRunner`) and for CMSSW (`NtupleWriter` defined in  `plugins`)
  * `common`: object ids and event selection modules common to several analyses
  * `common/datasets` and subdirectories: SFrame xml files defining input data files
  * `examples`: example implementation of an `AnalysisModule`, including SFrame configuration
- * `scripts`: scripts and/or configuration files required by various steps in the workflow, such as grid-control configuration
+ * `scripts`: non-C++ code/scripts and other files (such as configuration files) required in various steps in the workflow; right now mainly a grid-control configuration example for running `NtupleWriter` at the NAF
 
 All subdirectories containing code have the include files in `include` and the C++ source code in `src`. A special
 case is `NtupleWriter` which is the only package also providing code to be compiled within CMSSW only; it is located in `plugins`.
+
+Most of the code structure is a result of the desire to be able to build the same code either within CMSSW via `scram` and also
+to build it for SFrame via `make`. Therefore, please stick to the structure for new code, unless you want to do something special (such as
+creating code build only in CMSSW or only in SFrame, which should be rarely necessary).
+
+You might notice that libraries in SFrame follow a slightly different naming convention than those in CMSSW: The library built from
+`UHH2/core` is called `libSUHH2core.so` in SFrame (see the `LIBRARY` variable in `core/Makefile`, which controls the library name). In CMSSW, however, it is called `libUHH2core.so`, following
+the conventions of CMSSW. Please follow the same library naming conventions when setting `LIBRARY` in your new subdirectory's `Makefile`; the reason for having `SUHH2`
+instead of `UHH2` in the SFrame library names is to avoid name clashes of the created shared object files between the SFrame and CMSSW.
  
 
 ## Event I/O, workflow
