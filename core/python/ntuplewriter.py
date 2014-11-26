@@ -120,9 +120,9 @@ process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
     src = cms.InputTag("prunedGenParticles"),
     select = cms.vstring(
         'drop *',
-        'keep status == 3',         # me in MadGraph
-        'keep 20 <= status <= 30',  # me in Pythia8
-        'keep 11 <= pdgId  <= 16',  # leptons
+        'keep status == 3',         	 # me in MadGraph
+        'keep 20 <= status <= 30',  	 # me in Pythia8
+        'keep 11 <= abs(pdgId)  <= 16',  # leptons
     )
 )
 
