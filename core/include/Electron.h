@@ -18,7 +18,6 @@ class Electron : public Particle{
     m_supercluster_eta=0; 
     m_supercluster_phi=0; 
     m_dB=0; 
-    // m_particleIso=0; 
     m_neutralHadronIso=0; 
     m_chargedHadronIso=0; 
     m_photonIso=0;
@@ -42,10 +41,7 @@ class Electron : public Particle{
     m_mvaTrigV0=0;
     m_mvaNonTrigV0=0;
     m_AEff=0;
-  };
-
-  ~Electron(){
-  };
+  }
 
   float vertex_x() const{return m_vertex_x;} 
   float vertex_y() const{return m_vertex_y;} 
@@ -53,7 +49,6 @@ class Electron : public Particle{
   float supercluster_eta() const{return m_supercluster_eta;} 
   float supercluster_phi() const{return m_supercluster_phi;} 
   float dB() const{return m_dB;} 
-  //float particleIso() const{return m_particleIso;} 
   float neutralHadronIso() const{return m_neutralHadronIso;} 
   float chargedHadronIso() const{return m_chargedHadronIso;} 
   float photonIso() const{return m_photonIso;}
@@ -85,7 +80,6 @@ class Electron : public Particle{
   void set_supercluster_eta(float x){m_supercluster_eta=x;} 
   void set_supercluster_phi(float x){m_supercluster_phi=x;} 
   void set_dB(float x){m_dB=x;} 
-  //void set_particleIso(float x){m_particleIso=x;} 
   void set_neutralHadronIso(float x){m_neutralHadronIso=x;} 
   void set_chargedHadronIso(float x){m_chargedHadronIso=x;} 
   void set_photonIso(float x){m_photonIso=x;}
@@ -126,52 +120,6 @@ class Electron : public Particle{
     return ( m_chargedHadronIso + std::max( 0.0, m_neutralHadronIso + m_photonIso - rho*m_AEff ) ) / pt();
   }
 
-enum E_eleIDType{
-  e_Tight,
-  e_Medium,
-  e_Loose,
-  e_Veto
-};
-
-
- bool eleID(E_eleIDType type){
-   
-   bool pass=false;
- 
-   
-   float cuts_barrel[5]={0,0,0,0,0};
-   float cuts_endcap[5]={0,0,0,0,0};
-
-   if(type==e_Tight){
-     cuts_barrel[0]=0.004; cuts_barrel[1]=0.03; cuts_barrel[2]=0.01; cuts_barrel[3]=0.12; cuts_barrel[4]=0.05;
-     cuts_endcap[0]=0.005; cuts_endcap[1]=0.02; cuts_endcap[2]=0.03; cuts_endcap[3]=0.10; cuts_endcap[4]=0.05; 
-   }
-   if(type==e_Medium){
-     cuts_barrel[0]=0.004; cuts_barrel[1]=0.06; cuts_barrel[2]=0.01; cuts_barrel[3]=0.12; cuts_barrel[4]=0.05;
-     cuts_endcap[0]=0.007; cuts_endcap[1]=0.03; cuts_endcap[2]=0.03; cuts_endcap[3]=0.10; cuts_endcap[4]=0.05; 
-   }
-   if(type==e_Loose){
-     cuts_barrel[0]=0.007; cuts_barrel[1]=0.15; cuts_barrel[2]=0.01; cuts_barrel[3]=0.12; cuts_barrel[4]=0.05;
-     cuts_endcap[0]=0.009; cuts_endcap[1]=0.10; cuts_endcap[2]=0.03; cuts_endcap[3]=0.10; cuts_endcap[4]=0.05; 
-   }
-   if(type==e_Veto){
-     cuts_barrel[0]=0.007; cuts_barrel[1]=0.8; cuts_barrel[2]=0.01; cuts_barrel[3]=0.15; cuts_barrel[4]=std::numeric_limits<float>::infinity();
-     cuts_endcap[0]=0.01; cuts_endcap[1]=0.7; cuts_endcap[2]=0.03; cuts_endcap[3]=std::numeric_limits<float>::infinity(); cuts_endcap[4]=std::numeric_limits<float>::infinity(); 
-   }
-
-   float trackMomentumAtVtx = EcalEnergy()/EoverPIn();
-
-   if(fabs(supercluster_eta())<1.4442){
-     if(dEtaIn()<cuts_barrel[0] && dPhiIn()<cuts_barrel[1] && sigmaIEtaIEta()<cuts_barrel[2] && HoverE()<cuts_barrel[3] && fabs(1./EcalEnergy()-1./trackMomentumAtVtx)<cuts_barrel[4]) pass=true; 
-   }
-   else if( fabs(supercluster_eta())>1.5660){
-     if(dEtaIn()<cuts_endcap[0] && dPhiIn()<cuts_endcap[1] && sigmaIEtaIEta()<cuts_endcap[2] && HoverE()<cuts_endcap[3] && fabs(1./EcalEnergy()-1./trackMomentumAtVtx)<cuts_endcap[4]) pass=true; 
-   }
-   
-   return pass;
-   
- }
-
  private:
   float m_vertex_x; 
   float m_vertex_y; 
@@ -179,7 +127,6 @@ enum E_eleIDType{
   float m_supercluster_eta; 
   float m_supercluster_phi; 
   float m_dB; 
-  //float m_particleIso; 
   float m_neutralHadronIso; 
   float m_chargedHadronIso; 
   float m_photonIso;
