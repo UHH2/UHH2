@@ -106,7 +106,7 @@ class Jet : public FlavorParticle{
   void set_photonMultiplicity(int x){m_photonMultiplicity=x;}
   void set_btag_simpleSecondaryVertexHighEff(float x){m_btag_simpleSecondaryVertexHighEff=x;}
   void set_btag_simpleSecondaryVertexHighPur(float x){m_btag_simpleSecondaryVertexHighPur=x;}
-  void set_btag_combinedSecondaryVertex(float x){m_btag_combinedSecondaryVertex=x;}
+  void set_btag_combinedSecondaryVertex(float x){m_btag_combinedSecondaryVertex=x;} // for 72, this is combinedInclusiveSecondaryVertexV2BJetTags
   void set_btag_combinedSecondaryVertexMVA(float x){m_btag_combinedSecondaryVertexMVA=x;}
   void set_btag_jetBProbability(float x){m_btag_jetBProbability=x;}
   void set_btag_jetProbability(float x){m_btag_jetProbability=x;}
