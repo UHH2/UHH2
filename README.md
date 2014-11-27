@@ -19,13 +19,13 @@ Standalone using SFrame and as part of the `NtupleWriter` in a `cmsRun` job. Thi
 
 ### Install SFrame
 
-If not done yet, first install SFrame. To start with a clean setup, it is recommended to install a new version of SFrame, e.g. via
+As first step, install SFrame. To start with a clean setup, it is recommended to install a new version of SFrame via
 
 ```
 svn co https://svn.code.sf.net/p/sframe/code/SFrame/tags/SFrame-04-00-01/ SFramePhys14
 ```
 
-Before compiling SFrame, remember to setup CMSSW first and source `setup.sh` in the SFrame directory.
+Before compiling SFrame, remember to setup CMSSW first and source `setup.sh` in the SFrame directory (see below in compiling).
 
 
 ### Install `UHH2`
@@ -42,12 +42,12 @@ git clone https://github.com/jottCern/UHH2.git
 
 After the installation, compile the SFrame core by executing `make` in the directory you used to checkout SFrame into. This has only to be done once.
 
-To compile `UHH2` code, change to the `UHH2` directory and execute `make`. **IMPORTANT*:* If you also want to run the CMSSW part (i.e. `NtupleWriter` or execute `AnalysisModules`
+To compile `UHH2` code, change to the `UHH2` directory and execute `make`. If you also want to run the CMSSW part (i.e. `NtupleWriter` or execute `AnalysisModules`
 within CMSSW), you also have to run `scram b`. For cleaning up, use `make clean` or `scram b clean` / `scram b distclean`. Cleaning up manually can be done by removing
 all files in the `obj` subdirectory (which is the location used by all auto-generated files) and the SFrame libraries, i.e. `$SFRAME_DIR/lib/libSUHH2*`.
 
-Also take care to always use a consistent setup when compiling. A good thing to do is to always set up CMSSW, then set up sframe, e.g. execute
-these commands every time you login:
+Concerning the environment, it is important to make sure you always use a consistent setup when compiling and running the code.
+A good thing to do is to always first set up CMSSW, then set up sframe, i.e. execute an analogue of these commands for every new shell:
 
 ```
 cd CMSSW_7_2_1_patch4
@@ -55,8 +55,6 @@ cmsenv
 cd ~/SFramePhys14
 source setup.sh
 ```
-
-(adapt for your location, of course).
 
 **Note:** If you have an existing SFrame setup, you might have your own installation of fastjet. This can be a problem when trying to run CMSSW, as CMSSW also
 depends on fastjet, but has some specific plugins. Therefore, it's best to not install fastjet or setup your environment such that the fastjet library of CMSSW is used
