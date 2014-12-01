@@ -4,6 +4,7 @@
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/CleaningModules.h"
+#include "UHH2/common/include/ElectronHists.h"
 #include "UHH2/examples/include/ExampleSelections.h"
 #include "UHH2/examples/include/ExampleHists.h"
 
@@ -31,7 +32,7 @@ private:
     std::unique_ptr<AndSelection> final_selection;
     
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
-    std::unique_ptr<Hists> h_nocuts, h_njet, h_bsel;
+    std::unique_ptr<Hists> h_nocuts, h_njet, h_bsel, h_ele;
 };
 
 
@@ -68,6 +69,7 @@ ExampleModule::ExampleModule(Context & ctx){
     h_nocuts.reset(new ExampleHists(ctx, "NoCuts"));
     h_njet.reset(new ExampleHists(ctx, "Njet"));
     h_bsel.reset(new ExampleHists(ctx, "Bsel"));
+    h_ele.reset(new ElectronHists(ctx, "ele_nocuts"));
 }
 
 
@@ -93,6 +95,7 @@ bool ExampleModule::process(Event & event) {
     if(bjet_selection){
         h_bsel->fill(event);
     }
+    h_ele->fill(event);
     return final_selection->passes(event);
 }
 

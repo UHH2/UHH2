@@ -21,7 +21,9 @@ namespace uhh2 {
 // also forward-declare some root classes:
 class TH1;
 class TH1F;
+class TH2F;
 class TH1D;
+class TH2D;
 
 
 #ifdef __CINT__

@@ -6,13 +6,19 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
-        <InputData Lumi="92270" NEventsMax="2" Type="MC" Version="TTbar" Cacheable="False">
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="BpJ_TW_800" Cacheable="False">
             <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_BpJ_TW_M800_20x25_14_Ntuple.root" Lumi="0.0"/> 
             <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_BpJ_TW_M800_20x25_15_Ntuple.root" Lumi="0.0"/> 
             <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_BpJ_TW_M800_20x25_16_Ntuple.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
+            <!-- uncomment to write tree of selected events, i.e. of those events for which the AnalysisModule::process method  returns true -->
             <!-- <OutputTree Name="AnalysisTree" /> -->
-        </InputData>                
+        </InputData>
+        
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="BpJ_TW_1200" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_BpJ_TW_M1200_20x25_19_Ntuple.root" Lumi="0.0"/> 
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>
             
         <UserConfig>
             <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" /> 

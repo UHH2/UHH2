@@ -1,30 +1,96 @@
 #include "UHH2/common/include/ElectronHists.h"
+#include "UHH2/common/include/Utils.h"
 #include "UHH2/core/include/Event.h"
 
 #include "TH1F.h"
+#include "TH2F.h"
+
+#include <vector>
 
 using namespace uhh2;
+using namespace std;
 
 ElectronHists::ElectronHists(Context & ctx, const std::string & dname): Hists(ctx, dname){
-    number = book<TH1F>( "number","number of electrons",7,-0.5,6.5);
-    pt = book<TH1F>( "pt","p_{T} electron",100,0,500);
-    eta = book<TH1F>( "eta","#eta electron",100,-3,3);
-    phi = book<TH1F>( "phi","#phi electron",100,-M_PI,M_PI);
+    number = book<TH1F>("number","number of electrons",7,-0.5,6.5);
+    
+    pt = book<TH1F>("pt","p_{T} electron",100,0,500);
+    eta = book<TH1F>("eta","#eta electron",100,-3,3);
+    phi = book<TH1F>("phi","#phi electron",100,-M_PI,M_PI);
     isolation = book<TH1F>("isolation","relIso electron",100,0,0.5);
+    charge = book<TH1F>("charge", "electron charge",3,-1.5,1.5);
+    ptrel = book<TH1F>("ptrel", "p_{T}^{rel}(e,jet)", 40, 0, 200.);
+    deltaRmin = book<TH1F>("deltaRmin", "#Delta R_{min}(e,jet)", 40, 0, 2.0);
+    deltaRmin_ptrel = book<TH2F>("deltaRmin_ptrel", "x=#Delta R_{min}(e,jet) y=p_{T}^{rel}(e,jet)", 40, 0, 2.0, 40, 0, 200.);
+    
+    pt_1 = book<TH1F>("pt_1","p_{T} electron 1",100,0,500);
+    eta_1 = book<TH1F>("eta_1","#eta electron 1",100,-3,3);
+    phi_1 = book<TH1F>("phi_1","#phi electron 1",100,-M_PI,M_PI);
+    isolation_1 = book<TH1F>("isolation_1","relIso electron 1",100,0,0.5);
+    charge_1 = book<TH1F>("charge_1", "electron 1 charge",3,-1.5,1.5);
+    ptrel_1 = book<TH1F>("ptrel_1", "p_{T}^{rel}(e 1,jet)", 40, 0, 200.);
+    deltaRmin_1 = book<TH1F>("deltaRmin_1", "#Delta R_{min}(e 1,jet)", 40, 0, 2.0);
+    deltaRmin_ptrel_1 = book<TH2F>("deltaRmin_ptrel_1", "x=#Delta R_{min}(e 1,jet) y=p_{T}^{rel}(e 1,jet)", 40, 0, 2.0, 40, 0, 200.);
+    
+    pt_2 = book<TH1F>("pt_2","p_{T} electron 2",100,0,500);
+    eta_2 = book<TH1F>("eta_2","#eta electron 2",100,-3,3);
+    phi_2 = book<TH1F>("phi_2","#phi electron 2",100,-M_PI,M_PI);
+    isolation_2 = book<TH1F>("isolation_2","relIso electron 2",100,0,0.5);
+    ptrel_2 = book<TH1F>("ptrel_2", "p_{T}^{rel}(e 2,jet)", 40, 0, 200.);
+    charge_2 = book<TH1F>("charge_2", "electron 2 charge",3,-1.5,1.5);
+    deltaRmin_2 = book<TH1F>("deltaRmin_2", "#Delta R_{min}(e 2,jet)", 40, 0, 2.0);
+    deltaRmin_ptrel_2 = book<TH2F>("deltaRmin_ptrel_2", "x=#Delta R_{min}(e 2,jet) y=p_{T}^{rel}(e 2,jet)", 40, 0, 2.0, 40, 0, 200.);
 }
 
 void ElectronHists::fill(Event & event){
     auto w = event.weight;
     assert(event.electrons);
-
     number->Fill(event.electrons->size(), w);
+    
+    // buffer values for ptrel and drmin to avoid recomputation:
+    vector<float> drmin_buf(event.electrons->size(), 0.0);
+    vector<float> ptrel_buf(event.electrons->size(), 0.0);
     for(const auto & ele : *event.electrons){
         pt->Fill(ele.pt(), w);
         eta->Fill(ele.eta(), w);
         phi->Fill(ele.phi(), w);
         isolation->Fill(ele.relIso(), w);
+        charge->Fill(ele.charge(), w);
+        
+        if(event.jets){
+            auto nj = nextJet(ele, *event.jets);
+            auto drmin_val = nj ? ele.deltaR(*nj) : numeric_limits<float>::infinity();
+            drmin_buf.push_back(drmin_val);
+            ptrel_buf.push_back(pTrel(ele, nj));
+            ptrel->Fill(ptrel_buf.back(), w);
+            deltaRmin->Fill(drmin_buf.back(), w);
+            deltaRmin_ptrel->Fill(drmin_buf.back(), ptrel_buf.back(), w);
+        }
+    }
+    
+    if(event.electrons->size() > 0){
+        const auto & ele = (*event.electrons)[0];
+        pt_1->Fill(ele.pt(), w);
+        eta_1->Fill(ele.eta(), w);
+        phi_1->Fill(ele.phi(), w);
+        isolation_1->Fill(ele.relIso(), w);
+        charge_1->Fill(ele.charge(), w);
+        if(event.jets){
+            ptrel_1->Fill(ptrel_buf[0], w);
+            deltaRmin_1->Fill(drmin_buf[0], w);
+            deltaRmin_ptrel_1->Fill(drmin_buf[0], ptrel_buf[0], w);
+        }
+    }
+    if(event.electrons->size() > 1){
+        const auto & ele = (*event.electrons)[1];
+        pt_2->Fill(ele.pt(), w);
+        eta_2->Fill(ele.eta(), w);
+        phi_2->Fill(ele.phi(), w);
+        isolation_2->Fill(ele.relIso(), w);
+        charge_2->Fill(ele.charge(), w);
+        if(event.jets){
+            ptrel_2->Fill(ptrel_buf[1], w);
+            deltaRmin_2->Fill(drmin_buf[1], w);
+            deltaRmin_ptrel_2->Fill(drmin_buf[1], ptrel_buf[1], w);
+        }
     }
 }
-
-
-
