@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<!-- <!ENTITY ZP500W5 SYSTEM "/afs/desy.de/user/u/usaiem/code/SFrameAnalysis/config/Samples_TTBSM53/ZP500W5.xml"> -->
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+   <Library Name="libSUHH2examples"/>
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+        <InputData Lumi="92270" NEventsMax="10" Type="MC" Version="TTbar" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_TpTp_M1000_20x25_6_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_TpTp_M1000_20x25_7_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_TpTp_M1000_20x25_8_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_TpTp_M1000_20x25_9_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_TpTp_M1000_20x25_10_Ntuple.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" /> 
+            <OutputTree Name="AnalysisTree" />
+        </InputData>                
+            
+        <UserConfig>
+            <Item Name="GenParticleCollection" Value="GenParticles" />
+            <Item Name="AnalysisModule" Value="GenParticlesPrinter" />
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>

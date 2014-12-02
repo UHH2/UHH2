@@ -33,7 +33,7 @@ $(error CMSSW not set up. Set up CMSSW first via cmsenv)
 endif
 
 
-INCLUDES := -I$(SFRAME_DIR) -I. 
+INCLUDES := -I$(SFRAME_DIR) -I. -I$(CMSSW_BASE)/src
 LIBTARGET := $(SFRAME_LIB_PATH)/lib$(LIBRARY).so
 PARTARGET := $(SFRAME_LIB_PATH)/$(LIBRARY).par
 
