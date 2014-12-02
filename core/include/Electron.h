@@ -95,7 +95,7 @@ class Electron : public Particle{
   void set_passconversionveto(bool x){m_passconversionveto=x;}
   void set_dEtaIn(float x){m_dEtaIn=x;}
   void set_dPhiIn(float x){m_dPhiIn=x;} 
-  void set_sigmaIEtaIEta(float x){m_sigmaIEtaIEta=x;} 
+  void set_sigmaIEtaIEta(float x){m_sigmaIEtaIEta=x;}  // this is the 'full5x5sigma ieta ieta', (not the gsfelecton->sigmaIetaIeta)
   void set_HoverE(float x){m_HoverE=x;}
   void set_fbrem(float x){m_fbrem=x;}
   void set_EoverPIn(float x){m_EoverPIn=x;}

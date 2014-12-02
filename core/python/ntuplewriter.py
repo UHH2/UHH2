@@ -434,6 +434,14 @@ for jetcoll in (process.patJetsCA8CHS,
         jetcoll.getJetMCFlavour = False
         jetcoll.addGenPartonMatch = False
 
+# for the electron id, we need the full 5x5 ietaieta, which has to be produced:
+process.load('RecoEgamma.ElectronIdentification.ElectronIDValueMapProducer_cfi')
+process.electronIDValueMapProducer.ebReducedRecHitCollection = cms.InputTag('reducedEgamma:reducedEBRecHits')
+process.electronIDValueMapProducer.eeReducedRecHitCollection = cms.InputTag('reducedEgamma:reducedEERecHits')
+process.electronIDValueMapProducer.esReducedRecHitCollection = cms.InputTag('reducedEgamma:reducedESRecHits')
+process.electronIDValueMapProducer.src = cms.InputTag('slimmedElectrons')
+process.electronIDValueMapProducer.dataFormat = 'PAT'
+
 #NtupleWriter
 process.MyNtuple = cms.EDFilter('NtupleWriter',
                                   #AnalysisModule = cms.PSet(

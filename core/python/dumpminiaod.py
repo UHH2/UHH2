@@ -7,6 +7,6 @@ process.source = cms.Source("PoolSource",
   fileNames = cms.untracked.vstring('file:///pnfs/desy.de/cms/tier2/store/mc/Phys14DR/QCD_Pt-15to3000_Tune4C_Flat_13TeV_pythia8/MINIAODSIM/PU20bx25_trkalmb_PHYS14_25_V1-v1/00000/1020E374-B26B-E411-8F91-E0CB4E29C513.root'),
  
   )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10))
 process.dump = cms.EDAnalyzer('DumpMiniAOD')
 process.p = cms.Path(process.dump)

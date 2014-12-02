@@ -763,6 +763,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
    // ------------- electrons -------------   
    if(doElectrons){
+     edm::Handle<edm::ValueMap<float> > full5x5sieie;
+     iEvent.getByLabel(edm::InputTag("electronIDValueMapProducer", "eleFull5x5SigmaIEtaIEta"), full5x5sieie);
      for(size_t j=0; j< electron_tokens.size(); ++j){
        eles[j].clear();
        edm::Handle< std::vector<pat::Electron> > ele_handle;
@@ -770,56 +772,55 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        const std::vector<pat::Electron>& pat_electrons = *ele_handle;
        
        for (unsigned int i = 0; i < pat_electrons.size(); ++i) {
-	 const pat::Electron & pat_ele = pat_electrons[i];
+         const pat::Electron & pat_ele = pat_electrons[i];
          eles[j].emplace_back();
-	 Electron & ele = eles[j].back();
-	 
-	 ele.set_charge( pat_ele.charge());
-	 ele.set_pt( pat_ele.pt());
-	 ele.set_eta( pat_ele.eta());
-	 ele.set_phi( pat_ele.phi());
-	 ele.set_energy( pat_ele.energy());
-	 ele.set_vertex_x(pat_ele.vertex().x());
-	 ele.set_vertex_y(pat_ele.vertex().y());
-	 ele.set_vertex_z(pat_ele.vertex().z());
-	 ele.set_supercluster_eta(pat_ele.superCluster()->eta());
-	 ele.set_supercluster_phi(pat_ele.superCluster()->phi());
-	 ele.set_dB(pat_ele.dB());
-	 //ele.set_particleIso(pat_ele.particleIso());
-	 ele.set_neutralHadronIso(pat_ele.neutralHadronIso());
-	 ele.set_chargedHadronIso(pat_ele.chargedHadronIso());
-	 ele.set_trackIso(pat_ele.trackIso());
-	 ele.set_photonIso(pat_ele.photonIso());
-	 ele.set_puChargedHadronIso(pat_ele.puChargedHadronIso());
-#if CMSSW70 == 1
-	 ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->trackerExpectedHitsInner().numberOfLostHits());
-#else
-	 ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->hitPattern().numberOfLostTrackerHits(reco::HitPattern::MISSING_INNER_HITS));
-#endif
-	 ele.set_gsfTrack_px( pat_ele.gsfTrack()->px());
-	 ele.set_gsfTrack_py( pat_ele.gsfTrack()->py());
-	 ele.set_gsfTrack_pz( pat_ele.gsfTrack()->pz());
-	 ele.set_gsfTrack_vx( pat_ele.gsfTrack()->vx());
-	 ele.set_gsfTrack_vy( pat_ele.gsfTrack()->vy());
-	 ele.set_gsfTrack_vz( pat_ele.gsfTrack()->vz());
-	 ele.set_passconversionveto(pat_ele.passConversionVeto());
-	 ele.set_dEtaIn(pat_ele.deltaEtaSuperClusterTrackAtVtx());
-	 ele.set_dPhiIn(pat_ele.deltaPhiSuperClusterTrackAtVtx());
-	 ele.set_sigmaIEtaIEta(pat_ele.sigmaIetaIeta());
-	 ele.set_HoverE(pat_ele.hadronicOverEm());
-	 ele.set_fbrem(pat_ele.fbrem());
-	 ele.set_EoverPIn(pat_ele.eSuperClusterOverP());
-	 ele.set_EcalEnergy(pat_ele.ecalEnergy());
-	 //not in miniaod
-	 //ele.set_mvaTrigV0(pat_ele.electronID("mvaTrigV0"));
-	 //ele.set_mvaNonTrigV0(pat_ele.electronID("mvaNonTrigV0"));
-	 float AEff03 = 0.00;
-	 if(event->isRealData){
-	   AEff03 = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, pat_ele.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2011);
-	 }else{
-	   AEff03 = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, pat_ele.superCluster()->eta(), ElectronEffectiveArea::kEleEAFall11MC);
-	 }
-	 ele.set_AEff(AEff03);
+         Electron & ele = eles[j].back();
+         ele.set_charge( pat_ele.charge());
+         ele.set_pt( pat_ele.pt());
+         ele.set_eta( pat_ele.eta());
+         ele.set_phi( pat_ele.phi());
+         ele.set_energy( pat_ele.energy());
+         ele.set_vertex_x(pat_ele.vertex().x());
+         ele.set_vertex_y(pat_ele.vertex().y());
+         ele.set_vertex_z(pat_ele.vertex().z());
+         ele.set_supercluster_eta(pat_ele.superCluster()->eta());
+         ele.set_supercluster_phi(pat_ele.superCluster()->phi());
+         ele.set_dB(pat_ele.dB());
+         const auto & pfiso = pat_ele.pfIsolationVariables();
+         ele.set_neutralHadronIso(pfiso.sumNeutralHadronEt);
+         ele.set_chargedHadronIso(pfiso.sumChargedHadronPt);
+         ele.set_trackIso(pfiso.sumChargedParticlePt);
+         ele.set_photonIso(pfiso.sumPhotonEt);
+         ele.set_puChargedHadronIso(pfiso.sumPUPt);
+    #if CMSSW70 == 1
+         ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->trackerExpectedHitsInner().numberOfLostHits());
+    #else
+         ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->hitPattern().numberOfLostTrackerHits(reco::HitPattern::MISSING_INNER_HITS));
+    #endif
+         ele.set_gsfTrack_px( pat_ele.gsfTrack()->px());
+         ele.set_gsfTrack_py( pat_ele.gsfTrack()->py());
+         ele.set_gsfTrack_pz( pat_ele.gsfTrack()->pz());
+         ele.set_gsfTrack_vx( pat_ele.gsfTrack()->vx());
+         ele.set_gsfTrack_vy( pat_ele.gsfTrack()->vy());
+         ele.set_gsfTrack_vz( pat_ele.gsfTrack()->vz());
+         ele.set_passconversionveto(pat_ele.passConversionVeto());
+         ele.set_dEtaIn(pat_ele.deltaEtaSuperClusterTrackAtVtx());
+         ele.set_dPhiIn(pat_ele.deltaPhiSuperClusterTrackAtVtx());
+         ele.set_sigmaIEtaIEta((*full5x5sieie)[edm::Ref<pat::ElectronCollection>(ele_handle, i)]);
+         ele.set_HoverE(pat_ele.hcalOverEcal());
+         ele.set_fbrem(pat_ele.fbrem());
+         ele.set_EoverPIn(pat_ele.eSuperClusterOverP());
+         ele.set_EcalEnergy(pat_ele.ecalEnergy());
+         //not in miniaod, maybe later ...
+         //ele.set_mvaTrigV0(pat_ele.electronID("mvaTrigV0"));
+         //ele.set_mvaNonTrigV0(pat_ele.electronID("mvaNonTrigV0"));
+         float AEff03 = 0.00;
+         if(event->isRealData){
+            AEff03 = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, pat_ele.superCluster()->eta(), ElectronEffectiveArea::kEleEAData2011);
+         }else{
+            AEff03 = ElectronEffectiveArea::GetElectronEffectiveArea(ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03, pat_ele.superCluster()->eta(), ElectronEffectiveArea::kEleEAFall11MC);
+         }
+         ele.set_AEff(AEff03);
 	 
 	 if (storePFsAroundLeptons){
 	   if(runOnMiniAOD){
