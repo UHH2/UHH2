@@ -1,0 +1,6 @@
+<use name="root"/>
+<use name="FWCore/MessageLogger" />
+<Flags CPPDEFINES="CMSSW" />
+<export>
+    <lib name="1" />
+</export>

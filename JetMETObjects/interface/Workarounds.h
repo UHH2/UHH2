@@ -1,3 +1,5 @@
+#ifndef CMSSW
+
 #include <sstream>
 #include <stdexcept>
 
@@ -26,3 +28,9 @@ namespace edm {
         std::stringstream msg;
     };
 }
+
+#else
+
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+
+#endif

@@ -17,6 +17,8 @@
 #include <cmath>
 #include <iterator>
 
+using namespace std;
+
 //------------------------------------------------------------------------
 //--- JetCorrectorParameters::Definitions constructor --------------------
 //--- takes specific arguments for the member variables ------------------
