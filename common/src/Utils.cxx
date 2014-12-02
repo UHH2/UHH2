@@ -1,8 +1,27 @@
 #include "UHH2/common/include/Utils.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include <limits>
 
 using namespace std;
+
+namespace {
+bool file_exists(const std::string & path){
+    struct stat s;
+    errno = 0;
+    int res = stat(path.c_str(), &s);
+    if(res < 0){
+        return false;
+    }
+    else{
+        return S_ISREG(s.st_mode);
+    }
+}
+    
+}
 
 
 const Jet * nextJet(const Particle  & p, const std::vector<Jet> & jets){
@@ -31,3 +50,38 @@ double pTrel(const Particle  & p, const Particle * reference_axis){
     return ptrel;
 }
 
+std::string locate_file(const std::string & fname){
+    if(fname.empty()){
+        throw invalid_argument("locate_file with empty fname called");
+    }
+    if(fname[0] == '/'){
+        if(!file_exists(fname)){
+            throw runtime_error("locate_file: file '" + fname + "' does not exist!");
+        }
+        return fname;
+    }
+    // relative: try the various locations ...
+    auto cmssw_base = getenv("CMSSW_BASE");
+    if(cmssw_base != NULL){
+        auto fname_test = string(cmssw_base) + "/src/UHH2/" + fname;
+        if(file_exists(fname_test)){
+            return fname_test;
+        }
+        fname_test = string(cmssw_base) + "/src/" + fname;
+        if(file_exists(fname_test)){
+            return fname_test;
+        }
+    }
+    auto sframe_dir = getenv("SFRAME_DIR");
+    if(sframe_dir != NULL){
+        auto fname_test = string(sframe_dir) + "/UHH2/" + fname;
+        if(file_exists(fname_test)){
+            return fname_test;
+        }
+        fname_test = string(sframe_dir) + "/" + fname;
+        if(file_exists(fname_test)){
+            return fname_test;
+        }
+    }
+    throw runtime_error("Could not locate file '" + fname + "' in $CMSSW_BASE/src/{UHH2,} or $SFRAME_DIR/{UHH2,}.");
+}

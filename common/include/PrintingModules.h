@@ -20,3 +20,11 @@ public:
     virtual bool process(uhh2::Event & event) override;
 };
 
+class JetPrinter: public uhh2::AnalysisModule {
+public:
+    explicit JetPrinter(const std::string & name_, double ptmin_): name(name_), ptmin(ptmin_){}
+    virtual bool process(uhh2::Event & event) override;
+private:
+    std::string name;
+    double ptmin;
+};

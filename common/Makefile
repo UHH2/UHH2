@@ -1,3 +1,4 @@
 LIBRARY := SUHH2common
-USERLDFLAGS := -lSUHH2core
+TESTLIB := 1
+USERLDFLAGS := -lSUHH2core -lSUHH2JetMETObjects
 include ../Makefile.common

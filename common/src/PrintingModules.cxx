@@ -42,3 +42,18 @@ bool GenParticlesPrinter::process(Event & event){
 }
 
 UHH2_REGISTER_ANALYSIS_MODULE(GenParticlesPrinter)
+
+
+
+bool JetPrinter::process(uhh2::Event & event) {
+    if(!name.empty()){
+        cout << "JetPrinter(" << name << "): ";
+    }
+    cout << "event has " << event.jets->size() << " jets" << endl;
+    for(size_t i=0; i< event.jets->size(); ++i){
+        const auto & jet = (*event.jets)[i];
+        if(jet.pt() < ptmin) continue;
+        cout << " jet[" << i << "]: pt=" << jet.pt() << "; eta=" << jet.eta() << "; phi=" << jet.phi() << " raw pt=" << (jet.pt() * jet.JEC_factor_raw()) << endl;
+    }
+    return true;
+}

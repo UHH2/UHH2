@@ -19,9 +19,10 @@
 dummy := $(shell [ -d obj/$(LIBRARY)/PROOF-INF ] || mkdir -p obj/$(LIBRARY)/PROOF-INF )
 
 # find sources to use for the build:
-src := $(wildcard src/*.cxx)
-obj := $(patsubst src/%.cxx,obj/%.o,$(src))
-deps := $(patsubst src/%.cxx,obj/%.d,$(src))
+src_cc := $(wildcard src/*.cc)
+src_cxx := $(wildcard src/*.cxx)
+obj := $(patsubst src/%.cxx,obj/%.o,$(src_cxx)) $(patsubst src/%.cc,obj/%.o,$(src_cc))
+deps := $(patsubst obj/%.o,obj/%.d,$(obj))
 
 ifeq ($(SFRAME_DIR),)
 $(error SFrame not set up. Set up SFrame first by sourcing setup.sh, setting $$SFRAME_DIR)
@@ -32,7 +33,7 @@ $(error CMSSW not set up. Set up CMSSW first via cmsenv)
 endif
 
 
-INCLUDES := -I$(SFRAME_DIR) -I. -I$(CMSSW_BASE)/src
+INCLUDES := -I$(SFRAME_DIR) -I. 
 LIBTARGET := $(SFRAME_LIB_PATH)/lib$(LIBRARY).so
 PARTARGET := $(SFRAME_LIB_PATH)/$(LIBRARY).par
 
@@ -98,6 +99,9 @@ CXX_CMD = echo creating $@; $(CXX) -c -o $@ $< $(CXXFLAGS)
 
 
 obj/%.o : src/%.cxx
+	@$(CXX_CMD)
+
+obj/%.o : src/%.cc
 	@$(CXX_CMD)
 
 obj/%.d: src/%.cxx 
