@@ -78,7 +78,7 @@ bool ExampleModule::process(Event & event) {
     // such as filtering objects (applying jet pt cuts, lepton selections, etc.),
     // then test which selection(s) the event passes and fill according histograms.
     
-    cout << "ExampleModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << ")" << endl;
+    cout << "ExampleModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
     
     // run all modules (here: only jet cleaning).
     for(auto & m: modules){
