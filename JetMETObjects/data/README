@@ -1,0 +1,2 @@
+To create new/updated JER files, run cmsRun on scripts/cmssw/create_jerfiles.py
+after changing the global tag there.

@@ -1,0 +1,6 @@
+This is a copy of CondFormats/JetMETObjects, to enable stand-alone use of
+jet energy corrections.
+Slight changes have been made to enable stand-alone compilation and to avoid name collisions.
+In particular, the Workaround.h file contains some code emulating cmssw edm::LogError to
+minimize required changes in other places of the code.
+
