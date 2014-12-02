@@ -1,5 +1,6 @@
 <use name="root" />
 <use name="UHH2/core" />
+<use name="UHH2/JetMETObjects" />
 <export>
     <lib name="1" />
 </export>
