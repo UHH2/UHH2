@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("NTUPLE")
 
 process.source = cms.Source("PoolSource",
-                            fileNames  = cms.untracked.vstring("file://./ntuple-miniaod.root"),
+                            fileNames  = cms.untracked.vstring("file://./miniaod.root"),
                             skipEvents = cms.untracked.uint32(0)
 )
 

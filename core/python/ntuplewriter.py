@@ -56,7 +56,7 @@ process.source = cms.Source("PoolSource",
                             skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
 
 
 # Grid-control changes:
@@ -89,6 +89,7 @@ process.out.outputCommands.extend([
     "keep *_patJetsCMSTopTagCHSSubjets_*_*",
     "keep *_patJetsHEPTopTagCHSPacked_*_*",
     "keep *_patJetsHEPTopTagCHSSubjets_*_*",
+    "keep *_electronIDValueMapProducer_eleFull5x5SigmaIEtaIEta_*"
 ])
 
 ###############################################
