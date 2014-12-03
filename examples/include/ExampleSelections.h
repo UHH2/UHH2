@@ -4,6 +4,10 @@
 #include "UHH2/core/include/Selection.h"
 
 namespace uhh2 {
+    
+/** NOTE: These classes are here as a (small) example only. If you need them, do NOT copy+paste these; the
+ *  same (or even improved) functionality is also available through classes already in UHH2/common!
+ */
 
 /// Select events with certain minimum / maximum number of jets
 class NJetSelection: public Selection {
