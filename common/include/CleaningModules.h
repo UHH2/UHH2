@@ -7,16 +7,18 @@
 
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
-#include <functional>
+#include "UHH2/common/include/ObjectIdUtils.h"
 
 /// Keep only jets with a minimum pt and maximum |eta|; sort jets in pt.
 class JetCleaner: public uhh2::AnalysisModule {
 public:
-    JetCleaner(double minpt, double maxeta);
+    
+    explicit JetCleaner(const JetId & jet_id);
+    JetCleaner(float minpt, float maxeta);
     virtual bool process(uhh2::Event & event) override;
     
 private:
-    double minpt, maxeta;
+    JetId jet_id;
 };
 
 /** \brief Keep only muon passing a given muon id
@@ -32,11 +34,11 @@ class MuonCleaner : public uhh2::AnalysisModule {
 public:
     typedef std::function<bool (const Muon &, const uhh2::Event &)> muon_id_type;
     
-    explicit MuonCleaner(const  muon_id_type & muon_id);
+    explicit MuonCleaner(const MuonId & muon_id);
     virtual bool process(uhh2::Event & event) override;
     
 private:
-    muon_id_type muon_id;
+    MuonId muon_id;
 };
 
 
@@ -46,11 +48,10 @@ private:
  */
 class ElectronCleaner : public uhh2::AnalysisModule {
 public:
-    typedef std::function<bool (const Electron &, const uhh2::Event &)> ele_id_type;
     
-    explicit ElectronCleaner(const  ele_id_type & ele_id);
+    explicit ElectronCleaner(const ElectronId & ele_id);
     virtual bool process(uhh2::Event & event) override;
     
 private:
-    ele_id_type ele_id;
+    ElectronId ele_id;
 };

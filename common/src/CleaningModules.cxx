@@ -4,44 +4,45 @@
 using namespace uhh2;
 using namespace std;
 
-JetCleaner::JetCleaner(double minpt_, double maxeta_): minpt(minpt_), maxeta(maxeta_){}
-
-bool JetCleaner::process(Event & event){
-    // move all failing jets to the end of the vector event.jets
-    auto failing_jets_begin = std::remove_if(event.jets->begin(), event.jets->end(),
-                   [&](const Jet & j){return j.pt() < minpt || fabs(j.eta()) > maxeta; });
-    // erase the failing ones:
-    event.jets->erase(failing_jets_begin, event.jets->end());
-    return true;
+namespace {
+    
+// common code to filter out objects from a collection according to an object id
+template<typename T>
+void clean_collection(vector<T> & objects, const uhh2::Event & event, const std::function<bool (const T &, const Event &)> obj_id){
+    vector<T> result;
+    for(const auto & obj : objects){
+        if(obj_id(obj, event)){
+            result.push_back(obj);
+        }
+    }
+    std::swap(result, objects);
+}
+    
 }
 
 
-MuonCleaner::MuonCleaner(const muon_id_type & muon_id_): muon_id(muon_id_){}
+JetCleaner::JetCleaner(const JetId & jet_id_): jet_id(jet_id_){}
+
+JetCleaner::JetCleaner(float minpt, float maxeta): jet_id(JetPtEtaCut(minpt, maxeta)){}
+
+bool JetCleaner::process(Event & event){
+    clean_collection(*event.jets, event, jet_id);
+    return true;
+}
+
+MuonCleaner::MuonCleaner(const MuonId & muon_id_): muon_id(muon_id_){}
 
 bool MuonCleaner::process(uhh2::Event & event){
     assert(event.muons);
-    vector<Muon> cleaned_muons;
-    for(const auto & mu : *event.muons){
-        if(muon_id(mu, event)){
-            cleaned_muons.push_back(mu);
-        }
-    }
-    *event.muons = move(cleaned_muons);
+    clean_collection(*event.muons, event, muon_id);
     return true;
 }
 
 
-ElectronCleaner::ElectronCleaner(const ele_id_type & ele_id_): ele_id(ele_id_){}
+ElectronCleaner::ElectronCleaner(const ElectronId & ele_id_): ele_id(ele_id_){}
 
 bool ElectronCleaner::process(uhh2::Event & event){
     assert(event.electrons);
-    vector<Electron> cleaned_electrons;
-    for(const auto & ele : *event.electrons){
-        if(ele_id(ele, event)){
-            cleaned_electrons.push_back(ele);
-        }
-    }
-    *event.electrons = move(cleaned_electrons);
+    clean_collection(*event.electrons, event, ele_id);
     return true;
 }
-

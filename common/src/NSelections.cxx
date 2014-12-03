@@ -2,28 +2,41 @@
 #include "UHH2/core/include/Event.h"
 
 using namespace uhh2;
+using namespace std;
+
+namespace {
+    
+template<typename T>
+bool passes_minmax(const vector<T> & objects, int nmin, int nmax, const Event & event, const boost::optional<std::function<bool (const T &, const Event & )>> & object_id){
+    auto n_objects = objects.size();
+    if(object_id){
+        n_objects = 0;
+        for(const auto & obj : objects){
+            if((*object_id)(obj, event)) ++n_objects;
+        }
+    }
+    return n_objects >= nmin && (nmax < 0 || n_objects <= nmax);
+}
+    
+}
 
     
-NMuonSelection::NMuonSelection(int nmin_, int nmax_): nmin(nmin_), nmax(nmax_){
-}
+NMuonSelection::NMuonSelection(int nmin_, int nmax_, const boost::optional<MuonId> & muid_): nmin(nmin_), nmax(nmax_), muid(muid_){}
 
 bool NMuonSelection::passes(const Event & event){
-    int nmuons = event.muons->size();
-    return nmuons >= nmin && (nmax < 0 || nmuons <= nmax);
+    return passes_minmax(*event.muons, nmin, nmax, event, muid);
 }
 
 
-NElectronSelection::NElectronSelection(int nmin_, int nmax_): nmin(nmin_), nmax(nmax_){
+NElectronSelection::NElectronSelection(int nmin_, int nmax_, const boost::optional<ElectronId> & eleid_): nmin(nmin_), nmax(nmax_), eleid(eleid_){
 }
 
 bool NElectronSelection::passes(const Event & event){
-    int ne = event.electrons->size();
-    return ne >= nmin && (nmax < 0 || ne <= nmax);
+    return passes_minmax(*event.electrons, nmin, nmax, event, eleid);
 }
 
-NJetSelection::NJetSelection(int nmin_, int nmax_): nmin(nmin_), nmax(nmax_){}
+NJetSelection::NJetSelection(int nmin_, int nmax_, const boost::optional<JetId> & jetid_): nmin(nmin_), nmax(nmax_), jetid(jetid_){}
 
 bool NJetSelection::passes(const Event & event){
-    int nj = event.jets->size();
-    return nj >= nmin && (nmax < 0 || nj <= nmax);
+    return passes_minmax(*event.jets, nmin, nmax, event, jetid);
 }
