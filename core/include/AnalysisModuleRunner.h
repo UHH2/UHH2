@@ -54,6 +54,9 @@ private:
     void setup_output();
     void FillTriggerNames();
     
+    template<typename T>
+    void tree_branch(TTree * tree, const std::string & bname, T * addr);
+    
     std::string m_JetCollection, m_GenJetCollection, m_ElectronCollection, m_MuonCollection, 
       m_TauCollection, m_PhotonCollection, m_PrimaryVertexCollection, m_METName, m_TopJetCollection, m_GenTopJetCollection,
       m_GenParticleCollection;
@@ -73,6 +76,8 @@ private:
     std::auto_ptr<GenericEventStructure> ges;
     std::auto_ptr<Event> event;
     bool first_event_inputdata;
+    
+    std::list<void*> output_ptrs;
     
     std::auto_ptr<SFrameContext> context;
        

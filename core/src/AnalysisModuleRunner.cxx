@@ -403,7 +403,6 @@ void AnalysisModuleRunner::FillTriggerNames(){
     // Maybe the event we just read was the first of the given run,
     // so it has the trigger name information already filled:
     if(!m_input_triggerNames->empty()) {
-        cout << "  Found trigger in current event" << endl;
         m_triggerNames = *m_input_triggerNames;
         event->set_triggernames(*m_input_triggerNames);
         m_runid_triggernames = event->run;
@@ -445,6 +444,8 @@ void AnalysisModuleRunner::FillTriggerNames(){
 }
 
 void AnalysisModuleRunner::BeginInputFile( const SInputData& ) throw( SError ){
+    cout << "BeginInputFile" << endl;
+    first_event_inputdata = true;
     event->clear();
     m_input_triggerNames = 0;
     if(m_ElectronCollection.size()>0) ConnectVariable( "AnalysisTree", m_ElectronCollection.c_str(), event->electrons);
@@ -481,17 +482,35 @@ void AnalysisModuleRunner::BeginInputFile( const SInputData& ) throw( SError ){
     context->begin_input_file(*event);
 }
 
+/*
 namespace {
-    
+
 template<typename T>                                                                                                                                                                                                      
 void setup_branch(TTree * tree, const char * branchname, T * t){
     if(!t) return;
-    tree->Branch(branchname, t);
+    TBranch * b = tree->GetBranch(branchname);
+    if(b==0){
+        cout << "creating branch " << branchname << endl;
+        tree->Branch(branchname, t);
+    }
+    else{
+        cout << "re-using branch " << branchname << endl;
+        b->SetAddress(t);
+    }
 }
 
+}*/
+
+
+template<typename T>
+void AnalysisModuleRunner::tree_branch(TTree * tree, const std::string & bname, T * addr){
+    output_ptrs.push_back(addr);
+    uhh2::tree_branch(tree, bname, addr, &output_ptrs.back(), typeid(T));
 }
 
 void AnalysisModuleRunner::setup_output(){
+    cout << "setup output" << endl;
+    output_ptrs.clear();
     TTree * outtree = 0;
     try{
       outtree = GetOutputTree("AnalysisTree");
@@ -510,35 +529,35 @@ void AnalysisModuleRunner::setup_output(){
 
     
     // a.:
-    setup_branch(outtree, m_ElectronCollection.c_str(), event->electrons);
-    setup_branch(outtree, m_MuonCollection.c_str(), event->muons);
-    setup_branch(outtree, m_TauCollection.c_str(), event->taus);
-    setup_branch(outtree, m_JetCollection.c_str(), event->jets);
-    setup_branch(outtree, m_GenJetCollection.c_str(), event->genjets);
-    setup_branch(outtree, m_PhotonCollection.c_str(), event->photons);
-    setup_branch(outtree, m_METName.c_str(), event->met);
-    setup_branch(outtree, m_PrimaryVertexCollection.c_str() , event->pvs);
-    setup_branch(outtree, m_TopJetCollection.c_str(), event->topjets);
-    setup_branch(outtree, m_GenTopJetCollection.c_str() , event->gentopjets);
-    setup_branch(outtree, m_GenParticleCollection.c_str() , event->genparticles);
-    setup_branch(outtree, "genInfo" , event->genInfo);
-    setup_branch(outtree, "triggerResults", event->get_triggerResults());
+    tree_branch(outtree, m_ElectronCollection, event->electrons);
+    tree_branch(outtree, m_MuonCollection.c_str(), event->muons);
+    tree_branch(outtree, m_TauCollection.c_str(), event->taus);
+    tree_branch(outtree, m_JetCollection.c_str(), event->jets);
+    tree_branch(outtree, m_GenJetCollection.c_str(), event->genjets);
+    tree_branch(outtree, m_PhotonCollection.c_str(), event->photons);
+    tree_branch(outtree, m_METName.c_str(), event->met);
+    tree_branch(outtree, m_PrimaryVertexCollection.c_str() , event->pvs);
+    tree_branch(outtree, m_TopJetCollection.c_str(), event->topjets);
+    tree_branch(outtree, m_GenTopJetCollection.c_str() , event->gentopjets);
+    tree_branch(outtree, m_GenParticleCollection.c_str() , event->genparticles);
+    tree_branch(outtree, "genInfo" , event->genInfo);
+    tree_branch(outtree, "triggerResults", event->get_triggerResults());
     
     // trigger names is special: use our own member variable for that:
-    setup_branch(outtree, "triggerNames", &m_output_triggerNames);
+    tree_branch(outtree, "triggerNames", &m_output_triggerNames);
 
     // b.:
     // these are always read:
-    setup_branch(outtree, "run", &event->run);
-    setup_branch(outtree, "luminosityBlock", &event->luminosityBlock);
-    setup_branch(outtree, "event", &event->event);
-    setup_branch(outtree, "isRealData", &event->isRealData);
+    tree_branch(outtree, "run", &event->run);
+    tree_branch(outtree, "luminosityBlock", &event->luminosityBlock);
+    tree_branch(outtree, "event", &event->event);
+    tree_branch(outtree, "isRealData", &event->isRealData);
     
     if(m_readCommonInfo){
-        setup_branch(outtree, "rho", &event->rho);
-        setup_branch(outtree, "beamspot_x0", &event->beamspot_x0);
-        setup_branch(outtree, "beamspot_y0", &event->beamspot_y0);
-        setup_branch(outtree, "beamspot_z0", &event->beamspot_z0);
+        tree_branch(outtree, "rho", &event->rho);
+        tree_branch(outtree, "beamspot_x0", &event->beamspot_x0);
+        tree_branch(outtree, "beamspot_y0", &event->beamspot_y0);
+        tree_branch(outtree, "beamspot_z0", &event->beamspot_z0);
     }
 }
 
