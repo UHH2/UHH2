@@ -28,7 +28,7 @@ public:
     
     // - fill the histograms based on the event content; this is called for each (selected) event.
     //   Use the get method with the same name as used in book to retrieve the histogram
-    virtual void fill(Event & ev) = 0;
+    virtual void fill(const Event & ev) = 0;
     
 protected:
     
@@ -51,6 +51,9 @@ protected:
      * it is not allowed to specify further subdirectories at this point, and a runtime_error is thrown
      * if trying to add a histogram with a '/' in the name. (If you want to add histograms to subdirectories, use the
      * Context::put method directly or create another Hist class with the subdirecory name as constructor argument.)
+     * 
+     * Histograms created via this methods are handed over to the framework via Context::put, so the
+     * lifetime and memory is managed by the framework. So please do not call delete on the returned pointer.
      */
     template<typename HTYPE, typename... TARGS>
     HTYPE* book(const char * name, TARGS... args){

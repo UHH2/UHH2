@@ -41,7 +41,7 @@ ElectronHists::ElectronHists(Context & ctx, const std::string & dname): Hists(ct
     deltaRmin_ptrel_2 = book<TH2F>("deltaRmin_ptrel_2", "x=#Delta R_{min}(e 2,jet) y=p_{T}^{rel}(e 2,jet)", 40, 0, 2.0, 40, 0, 200.);
 }
 
-void ElectronHists::fill(Event & event){
+void ElectronHists::fill(const Event & event){
     auto w = event.weight;
     assert(event.electrons);
     number->Fill(event.electrons->size(), w);

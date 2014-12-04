@@ -27,7 +27,7 @@ ExampleHists::ExampleHists(Context & ctx, const string & dirname): Hists(ctx, di
 }
 
 
-void ExampleHists::fill(Event & event){
+void ExampleHists::fill(const Event & event){
   // fill the histograms. Don't forget to always use the weight when filling:
   double weight = event.weight;
   

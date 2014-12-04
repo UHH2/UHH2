@@ -11,7 +11,7 @@ class ElectronHists: public uhh2::Hists {
 public:
     ElectronHists(uhh2::Context & ctx, const std::string & dirname);
     
-    virtual void fill(uhh2::Event & ev) override;
+    virtual void fill(const uhh2::Event & ev) override;
     
 private:
     

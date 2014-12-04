@@ -11,6 +11,6 @@ public:
     // use the same constructor arguments as Hists for forwarding:
     ExampleHists(uhh2::Context & ctx, const std::string & dirname);
 
-    virtual void fill(uhh2::Event & ev) override;
+    virtual void fill(const uhh2::Event & ev) override;
     virtual ~ExampleHists();
 };

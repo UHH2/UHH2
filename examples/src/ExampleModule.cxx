@@ -20,7 +20,7 @@ class ExampleModule: public AnalysisModule {
 public:
     
     explicit ExampleModule(Context & ctx);
-    virtual bool process(Event & event);
+    virtual bool process(Event & event) override;
 
 private:
     
