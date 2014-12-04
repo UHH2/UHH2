@@ -8,3 +8,5 @@ core/python/__init__.py
 *.root
 *~
 *.local
+VLQToHiggsPairProd/*
+
