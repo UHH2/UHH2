@@ -24,12 +24,11 @@ public:
 
 private:
     
-    std::vector<std::unique_ptr<AnalysisModule>> modules;
+    std::unique_ptr<JetCleaner> jetcleaner;
    
     // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor,
     // to avoid memory leaks.
     std::unique_ptr<Selection> njet_sel, bsel;
-    std::unique_ptr<AndSelection> final_selection;
     
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
     std::unique_ptr<Hists> h_nocuts, h_njet, h_bsel, h_ele;
@@ -37,6 +36,10 @@ private:
 
 
 ExampleModule::ExampleModule(Context & ctx){
+    // In the constructor, the typical tasks are to create
+    // other modules like cleaners (1), selections (2) and Hist classes (3).
+    // But you can do more and e.g. access the configuration, as shown below.
+    
     cout << "Hello World from ExampleModule!" << endl;
     
     // If needed, access the configuration of the module here, e.g.:
@@ -46,26 +49,18 @@ ExampleModule::ExampleModule(Context & ctx){
     // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
     // are set to the according values in the xml file. For CMSSW, these are
     // not set automatically, but can be set in the python config file.
-    for(auto kv : ctx.get_all()){
+    for(auto & kv : ctx.get_all()){
         cout << " " << kv.first << " = " << kv.second << endl;
     }
     
-    // set up modules, e.g. jet cleaning.
-    modules.emplace_back(new JetCleaner(30.0, 2.4));
+    // 1. setup other modules. Here, only the jet cleaner
+    jetcleaner.reset(new JetCleaner(30.0, 2.4));
     
-    // set up selections:
+    // 2. set up selections:
     njet_sel.reset(new NJetSelection(2));
     bsel.reset(new NBTagSelection(1));
-    // use AndSelection to create cutflow of both selections.
-    // NOTE: adding selections to AndSelection via add constructs them in-place;
-    // the first argument to add is a description (to be used as name of the selection
-    // in tables or histograms), followed by the constructor arguments of that Selection
-    // class.
-    final_selection.reset(new AndSelection(ctx, "final"));
-    final_selection->add<NJetSelection>("n_jets >= 2", 2);
-    final_selection->add<NBTagSelection>("nb >= 1", 1);
 
-    // Set up Hists classes:
+    // 3. Set up Hists classes:
     h_nocuts.reset(new ExampleHists(ctx, "NoCuts"));
     h_njet.reset(new ExampleHists(ctx, "Njet"));
     h_bsel.reset(new ExampleHists(ctx, "Bsel"));
@@ -74,16 +69,22 @@ ExampleModule::ExampleModule(Context & ctx){
 
 
 bool ExampleModule::process(Event & event) {
-    // This is the main procedure, called for each event. Typically, do some pre-processing,
-    // such as filtering objects (applying jet pt cuts, lepton selections, etc.),
-    // then test which selection(s) the event passes and fill according histograms.
+    // This is the main procedure, called for each event. Typically,
+    // do some pre-processing by calling the modules' process method
+    // of the modules constructed in the constructor (1).
+    // Then, test whether the event passes some selection and -- if yes --
+    // use it to fill the histograms (2).
+    // Finally, decide whether or not to keep the event in the output (3);
+    // this is controlled by the return value of this method: If it
+    // returns true, the event is kept; if it returns false, the event
+    // is thrown away.
     
     cout << "ExampleModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
     
-    // run all modules (here: only jet cleaning).
-    for(auto & m: modules){
-        m->process(event);
-    }
+    // 1. run all modules; here: only jet cleaning.
+    jetcleaner->process(event);
+    
+    // 2. test selections and fill histograms
     
     h_nocuts->fill(event);
     
@@ -96,7 +97,9 @@ bool ExampleModule::process(Event & event) {
         h_bsel->fill(event);
     }
     h_ele->fill(event);
-    return final_selection->passes(event);
+    
+    // 3. decide whether or not to keep the current event in the output:
+    return njet_selection && bjet_selection;
 }
 
 // as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,
