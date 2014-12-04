@@ -12,14 +12,16 @@ using namespace std;
 class NtupleWriterTestGenJets : public edm::EDAnalyzer {
    public:
       explicit NtupleWriterTestGenJets(const edm::ParameterSet& cfg): n_gj_total(0), n_gj_withnull(0){
-          src = cfg.getParameter<edm::InputTag>("src");
+          genjetsrc = cfg.getParameter<edm::InputTag>("genjetsrc");
           outfile = new TFile("genjets.root", "recreate");
-          h_gj_eta = new TH1D("gj_eta", "gj_eta", 120, -6, 6);
-          h_gj_pt = new TH1D("gj_pt", "gj_pt", 100, 0, 100);
-          h_gj_eta_incomplete = new TH1D("gj_eta_incomplete", "gj_eta_incomplete", 120, -6, 6);
-          h_gj_pt_incomplete = new TH1D("gj_pt_incomplete", "gj_pt_incomplete", 100, 0, 100);
-          for(auto h : {h_gj_eta, h_gj_pt, h_gj_eta_incomplete, h_gj_pt_incomplete}){
+          if(!genjetsrc.label().empty()){
+            h_gj_eta = new TH1D("gj_eta", "gj_eta", 120, -6, 6);
+            h_gj_pt = new TH1D("gj_pt", "gj_pt", 100, 0, 100);
+            h_gj_eta_incomplete = new TH1D("gj_eta_incomplete", "gj_eta_incomplete", 120, -6, 6);
+            h_gj_pt_incomplete = new TH1D("gj_pt_incomplete", "gj_pt_incomplete", 100, 0, 100);
+            for(auto h : {h_gj_eta, h_gj_pt, h_gj_eta_incomplete, h_gj_pt_incomplete}){
               h->SetDirectory(outfile);
+            }
           }
       }
       
@@ -30,13 +32,10 @@ class NtupleWriterTestGenJets : public edm::EDAnalyzer {
       }
 
    private:
-      virtual void analyze(const edm::Event& event, const edm::EventSetup&) override{
-          //std::cout << "Starting event " << event.id() << std::endl;
+      void analyze_genjets(const edm::Event & event){
           edm::Handle<reco::GenJetCollection> h_genjets;
-          event.getByLabel(src, h_genjets);
+          event.getByLabel(genjetsrc, h_genjets);
           for(const auto & gj : *h_genjets){
-              //std::cout << "Genjet p4 = " << gj.p4() << ", eta = " << gj.eta() << std::endl;
-              //if(fabs(gj.eta()) > 5.0) continue;
               reco::Candidate::LorentzVector p4_constituent_sum;
               size_t nd = gj.numberOfSourceCandidatePtrs();
               cout << nd << endl;
@@ -60,15 +59,14 @@ class NtupleWriterTestGenJets : public edm::EDAnalyzer {
               }
               h_gj_pt->Fill(gj.pt());
               h_gj_eta->Fill(gj.eta());
-              /*for(const auto & constituent : gj){
-                  p4_constituent_sum += constituent.p4();
-                  std::cout << "   constituent: " << constituent.p4() << "; eta = " << constituent.eta() << "; status=" << constituent.status() << std::endl;
-              }*/
-              //std::cout << " constituent sum p4 = " << p4_constituent_sum << std::endl;
           }
       }
       
-      edm::InputTag src;
+      virtual void analyze(const edm::Event& event, const edm::EventSetup&) override{
+          analyze_genjets(event);
+      }
+      
+      edm::InputTag genjetsrc;
       
       
       size_t n_gj_total, n_gj_withnull;
