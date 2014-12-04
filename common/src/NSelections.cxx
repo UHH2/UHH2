@@ -8,7 +8,7 @@ namespace {
     
 template<typename T>
 bool passes_minmax(const vector<T> & objects, int nmin, int nmax, const Event & event, const boost::optional<std::function<bool (const T &, const Event & )>> & object_id){
-    auto n_objects = objects.size();
+    int n_objects = objects.size();
     if(object_id){
         n_objects = 0;
         for(const auto & obj : objects){

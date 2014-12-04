@@ -25,7 +25,7 @@ obj := $(patsubst src/%.cxx,obj/%.o,$(src_cxx)) $(patsubst src/%.cc,obj/%.o,$(sr
 deps := $(patsubst obj/%.o,obj/%.d,$(obj))
 
 ifeq ($(SFRAME_DIR),)
-$(error SFrame not set up. Set up SFrame first by sourcing setup.sh, setting $$SFRAME_DIR)
+$(error SFrame not set up. Set up SFrame first by sourcing setup.sh in the directory you installed SFrame in)
 endif
 
 ifeq ($(CMSSW_BASE),)
