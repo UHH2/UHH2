@@ -20,8 +20,8 @@ using namespace uhh2;
  * similar effects.
  * 
  * It implements a preselection of
- *   - at least one lepton (electron or muon) with pt > 20, eta < 2.4, using the tight id for muons and the medium
- *     cut-based for electrons.
+ *   - at least one lepton (electron or muon) with pt > 20, |eta| < 2.4 (electrons: |eta| < 2.5), using the tight id for
+ *     muons and the medium cut-based id for electrons.
  *   - at least two jets with pt > 30, eta < 2.4
  *   - at least one b-tagged jet with above kinematics with loose csv b-tag
  * 
@@ -61,7 +61,7 @@ ExampleModule2::ExampleModule2(Context & ctx): ele_selection(ctx, "ele"), mu_sel
     ele_selection.add<NJetSelection>("nj >= 2", 2);
     ele_selection.add<NJetSelection>("nb >= 1", 1, -1, btag);
     
-    mu_selection.add<NMuonSelection>("ne >= 1", 1);
+    mu_selection.add<NMuonSelection>("nm >= 1", 1);
     mu_selection.add<NJetSelection>("nj >= 2", 2);
     mu_selection.add<NJetSelection>("nb >= 1", 1, -1, btag);
 }
@@ -72,9 +72,12 @@ bool ExampleModule2::process(Event & event) {
         m->process(event);
     }
     
-    // note: do not short-circuit the evaluation here to fill both cutflows.
-    bool keep = mu_selection.passes(event) | ele_selection.passes(event);
-    return keep;
+    // note that always both selections are tested, even if we could
+    // short-circuit after mu_selection is passed. This is done
+    // to ensure that both cutflow histograms are filled.
+    bool keep_mu = mu_selection.passes(event);
+    bool keep_ele = ele_selection.passes(event);
+    return keep_mu || keep_ele;
 }
 
 // as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,
