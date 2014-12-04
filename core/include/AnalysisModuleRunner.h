@@ -75,7 +75,6 @@ private:
     
     std::auto_ptr<GenericEventStructure> ges;
     std::auto_ptr<Event> event;
-    bool first_event_inputdata;
     
     std::list<void*> output_ptrs;
     

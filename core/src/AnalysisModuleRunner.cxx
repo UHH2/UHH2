@@ -387,14 +387,18 @@ void AnalysisModuleRunner::BeginInputData( const SInputData& in ) throw( SError 
     // read in gen info if and only if the type is Monte-Carlo:
     m_addGenInfo = context->get("dataset_type") == "MC";
     
+    // 2. now construct user module, which could add event contest to ges
     analysis.reset(AnalysisModuleRegistry::build(module_classname, *context).release());
-    first_event_inputdata = true;
     event.reset(new Event(*ges));
-    // note: output tree setup is defered after processing the first event in the input dataset, see ExecuteEvent.
+    
+    // 3. after the event content is defined, setup the output. setup_output does that for the
+    // 'direct' event content, i.e. the bare pointers defined directly in Event,
+    // while context->setup_output does it for content stored via the GenericEvent mechanisms.
+    setup_output();
+    context->setup_output(*event);
 }
 
 
-// see AnalysisCycle::FillTriggerNames!
 void AnalysisModuleRunner::FillTriggerNames(){
     if(!m_readTrigger) return;
     if(event->run == m_runid_triggernames) return;
@@ -444,8 +448,6 @@ void AnalysisModuleRunner::FillTriggerNames(){
 }
 
 void AnalysisModuleRunner::BeginInputFile( const SInputData& ) throw( SError ){
-    cout << "BeginInputFile" << endl;
-    first_event_inputdata = true;
     event->clear();
     m_input_triggerNames = 0;
     if(m_ElectronCollection.size()>0) ConnectVariable( "AnalysisTree", m_ElectronCollection.c_str(), event->electrons);
@@ -457,10 +459,12 @@ void AnalysisModuleRunner::BeginInputFile( const SInputData& ) throw( SError ){
     if(m_PrimaryVertexCollection.size()>0) ConnectVariable( "AnalysisTree", m_PrimaryVertexCollection.c_str() , event->pvs);
     if(m_TopJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_TopJetCollection.c_str(), event->topjets);
     
-    if(m_addGenInfo && m_GenJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenJetCollection.c_str(), event->genjets);
-    if(m_addGenInfo && m_GenTopJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenTopJetCollection.c_str() , event->gentopjets);
-    if(m_addGenInfo && m_GenParticleCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenParticleCollection.c_str() , event->genparticles);
-    if(m_addGenInfo && m_readCommonInfo) ConnectVariable( "AnalysisTree", "genInfo" , event->genInfo);
+    if(m_addGenInfo){
+        if(m_GenJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenJetCollection.c_str(), event->genjets);
+        if(m_GenTopJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenTopJetCollection.c_str() , event->gentopjets);
+        if(m_GenParticleCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenParticleCollection.c_str() , event->genparticles);
+        if(m_readCommonInfo) ConnectVariable( "AnalysisTree", "genInfo" , event->genInfo);
+    }
     
     ConnectVariable( "AnalysisTree", "run" , event->run);
     ConnectVariable( "AnalysisTree", "luminosityBlock" , event->luminosityBlock);
@@ -482,34 +486,14 @@ void AnalysisModuleRunner::BeginInputFile( const SInputData& ) throw( SError ){
     context->begin_input_file(*event);
 }
 
-/*
-namespace {
-
-template<typename T>                                                                                                                                                                                                      
-void setup_branch(TTree * tree, const char * branchname, T * t){
-    if(!t) return;
-    TBranch * b = tree->GetBranch(branchname);
-    if(b==0){
-        cout << "creating branch " << branchname << endl;
-        tree->Branch(branchname, t);
-    }
-    else{
-        cout << "re-using branch " << branchname << endl;
-        b->SetAddress(t);
-    }
-}
-
-}*/
-
-
 template<typename T>
 void AnalysisModuleRunner::tree_branch(TTree * tree, const std::string & bname, T * addr){
+    if(bname.empty()) return;
     output_ptrs.push_back(addr);
     uhh2::tree_branch(tree, bname, addr, &output_ptrs.back(), typeid(T));
 }
 
 void AnalysisModuleRunner::setup_output(){
-    cout << "setup output" << endl;
     output_ptrs.clear();
     TTree * outtree = 0;
     try{
@@ -530,21 +514,27 @@ void AnalysisModuleRunner::setup_output(){
     
     // a.:
     tree_branch(outtree, m_ElectronCollection, event->electrons);
-    tree_branch(outtree, m_MuonCollection.c_str(), event->muons);
-    tree_branch(outtree, m_TauCollection.c_str(), event->taus);
-    tree_branch(outtree, m_JetCollection.c_str(), event->jets);
-    tree_branch(outtree, m_GenJetCollection.c_str(), event->genjets);
-    tree_branch(outtree, m_PhotonCollection.c_str(), event->photons);
-    tree_branch(outtree, m_METName.c_str(), event->met);
-    tree_branch(outtree, m_PrimaryVertexCollection.c_str() , event->pvs);
-    tree_branch(outtree, m_TopJetCollection.c_str(), event->topjets);
-    tree_branch(outtree, m_GenTopJetCollection.c_str() , event->gentopjets);
-    tree_branch(outtree, m_GenParticleCollection.c_str() , event->genparticles);
-    tree_branch(outtree, "genInfo" , event->genInfo);
-    tree_branch(outtree, "triggerResults", event->get_triggerResults());
+    tree_branch(outtree, m_MuonCollection, event->muons);
+    tree_branch(outtree, m_TauCollection, event->taus);
+    tree_branch(outtree, m_JetCollection, event->jets);
+    tree_branch(outtree, m_PhotonCollection, event->photons);
+    tree_branch(outtree, m_METName, event->met);
+    tree_branch(outtree, m_PrimaryVertexCollection , event->pvs);
+    tree_branch(outtree, m_TopJetCollection, event->topjets);
+    if(m_addGenInfo){
+        tree_branch(outtree, m_GenJetCollection, event->genjets);
+        tree_branch(outtree, m_GenTopJetCollection, event->gentopjets);
+        tree_branch(outtree, m_GenParticleCollection, event->genparticles);
+        if(m_readCommonInfo){
+            tree_branch(outtree, "genInfo", event->genInfo);
+        }
+    }
     
     // trigger names is special: use our own member variable for that:
-    tree_branch(outtree, "triggerNames", &m_output_triggerNames);
+    if(m_readTrigger){
+        tree_branch(outtree, "triggerResults", event->get_triggerResults());
+        tree_branch(outtree, "triggerNames", &m_output_triggerNames);
+    }
 
     // b.:
     // these are always read:
@@ -577,16 +567,6 @@ void AnalysisModuleRunner::ExecuteEvent( const SInputData&, Double_t w) throw( S
     
     if(!keep){
         throw SError(SError::SkipEvent);
-    }
-    
-    // setup output:
-    // note that it is important to do the output setup *after* the event has been processed
-    // as only then we know which information in the event is available (calculated), and
-    // we want to write it all.
-    if(first_event_inputdata){
-        first_event_inputdata = false;
-        setup_output();
-        context->setup_output(*event);
     }
     
     // make sure list of trigger names is filled in the output for each runid once:

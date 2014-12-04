@@ -48,7 +48,12 @@ char DataTypeToChar(EDataType datatype){
    
 void uhh2::tree_branch(TTree * tree, const std::string & bname, void * addr, void ** addraddr, const std::type_info & ti){
     TBranch * b = tree->GetBranch(bname.c_str());
-    
+    if(b != 0){
+        throw runtime_error("tree_branch: Branch '" + bname + "' in tree '" + tree->GetName() + "' already exists!");
+    }
+    if(bname.empty()){
+        throw invalid_argument("tree_branch: tried to create empty branchname in tree '" + string(tree->GetName()) + "'");
+    }
     //emulate
     // template<typename T>
     // outtree->Branch(name, (T*)addr);
@@ -64,24 +69,14 @@ void uhh2::tree_branch(TTree * tree, const std::string & bname, void * addr, voi
         // I'd like to do now:
         //  outtree->BronchExec(name, actualClass->GetName(), addr, *** kFALSE ****, bufsize, splitlevel);
         // but root doesn't let me, so work around by passing a pointer-to-pointer after all:
-        if(!b){
-            tree->Bronch(bname.c_str(), actualclass->GetName(), addraddr);
-        }
-        else{
-            b->SetAddress(addraddr);
-        }
+        tree->Bronch(bname.c_str(), actualclass->GetName(), addraddr);
     }
     else{
         EDataType dt = TDataType::GetType(ti);
         if(dt==kOther_t or dt==kNoType_t) throw invalid_argument("unknown class");
         char c = DataTypeToChar(dt);
         assert(c!=0);
-        if(!b){
-            tree->Branch(bname.c_str(), addr, (bname + '/' + c).c_str());
-        }
-        else{
-            b->SetAddress(addr);
-        }
+        tree->Branch(bname.c_str(), addr, (bname + '/' + c).c_str());
     }
 }
 
