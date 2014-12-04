@@ -50,40 +50,12 @@ public:
         
     ClassDef(AnalysisModuleRunner, 0);
   
-private:
-    void setup_output();
-    void FillTriggerNames();
+private:    
+    class AnalysisModuleRunnerImpl;
     
-    template<typename T>
-    void tree_branch(TTree * tree, const std::string & bname, T * addr);
-    
-    std::string m_JetCollection, m_GenJetCollection, m_ElectronCollection, m_MuonCollection, 
-      m_TauCollection, m_PhotonCollection, m_PrimaryVertexCollection, m_METName, m_TopJetCollection, m_GenTopJetCollection,
-      m_GenParticleCollection;
-    bool m_readCommonInfo, m_addGenInfo, m_readTrigger;
-    
-    // for reading trigger names:
-    int m_runid_triggernames; // the run id which corresponds to the currently filled "actual" trigger names in m_bcc
-    std::vector<std::string> m_triggerNames; // of the run m_runid_triggernames; should usually match current run
-    std::vector<std::string> * m_input_triggerNames; // as in the input branch
-    
-    // trigger name output is special: we only write a non-empty list the first time
-    // we see this runid. So save the runid for which we already saved the triggerNames
-    // and write an empty list in ther cases:
-    std::vector<std::string> m_output_triggerNames;
-    int m_output_triggerNames_runid;
-    
-    std::auto_ptr<GenericEventStructure> ges;
-    std::auto_ptr<Event> event;
-    
-    std::list<void*> output_ptrs;
-    
-    std::auto_ptr<SFrameContext> context;
-       
-    // the actual analysis module to run:
-    std::auto_ptr<AnalysisModule> analysis;
-    
-    std::map<std::string, std::string> dummyConfigVars;
+    // use primpl-idiom to decouple implementation from
+    // rest in order to enable ROOT to parse the header.
+    std::auto_ptr<AnalysisModuleRunnerImpl> pimpl;
 };
 
 }

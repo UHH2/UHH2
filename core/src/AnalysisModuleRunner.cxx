@@ -12,8 +12,8 @@
 #include "TXMLAttr.h"
 #include "TTree.h"
 
-
 #include <stdexcept>
+#include <memory>
 
 using namespace std;
 using namespace uhh2;
@@ -265,41 +265,72 @@ void SFrameContext::do_declare_event_output(const type_info & ti, const string &
 }
 
 SFrameContext::~SFrameContext(){}
+
+class AnalysisModuleRunner::AnalysisModuleRunnerImpl {
+friend class AnalysisModuleRunner;
+public:
+    AnalysisModuleRunnerImpl(){}
     
-// other tree output:
-/*
-void SFrameContext::do_declare_output(const string & treename, const string & name, const void * caddr, const type_info & ti){
-    auto it = output_trees.find(treename);
-    TTree * tree;
-    if(it==output_trees.end()){
-        tree = base.GetOutputMetadataTree(treename.c_str());
-        assert(tree);
-        output_trees[treename] = tree;
-    }
-    else{
-        tree = it->second;
-    }
-    void * addr = const_cast<void*>(caddr);
-    ptrs.push_back(addr);
-    tree_branch(tree, name, addr, &ptrs.back(), ti);
-}
+private:
+    
+    std::string m_JetCollection, m_GenJetCollection, m_ElectronCollection, m_MuonCollection, 
+      m_TauCollection, m_PhotonCollection, m_PrimaryVertexCollection, m_METName, m_TopJetCollection, m_GenTopJetCollection,
+      m_GenParticleCollection, m_GenInfoName;
+    bool m_readCommonInfo, m_addGenInfo, m_readTrigger;
+    
+    // trigger name stuff
+    int last_runid_in; // last run id for which trigger names in uhh2::Event has been updated
+    int last_runid_out; // last runid for which trigger names have been written to output 
+    std::map<int, std::vector<std::string>> runid_to_triggernames; // for current input file
+    
+    bool setup_output_done;
+    bool first_event_inputfile;
+    
+    std::auto_ptr<GenericEventStructure> ges;
+    std::auto_ptr<Event> event;
+    
+    //std::list<void*> output_ptrs;
+    
+    std::unique_ptr<SFrameContext> context;
+       
+    // the actual analysis module to run:
+    std::unique_ptr<AnalysisModule> analysis;
+    
+    std::map<std::string, std::string> dummyConfigVars;  
+    
+    
+    // event content handles:
+    Event::Handle<int> h_run, h_lumi, h_event;
+    Event::Handle<float> h_rho, h_bsx, h_bsy, h_bsz;
+    Event::Handle<bool> h_isRealData;
+    
+    Event::Handle<std::vector<PrimaryVertex>> h_pvs;
+    Event::Handle<std::vector<Electron>> h_electrons;
+    Event::Handle<std::vector<Muon>> h_muons;
+    Event::Handle<std::vector<Tau>> h_taus;
+    Event::Handle<std::vector<Photon>> h_photons;
+    Event::Handle<std::vector<Jet>> h_jets;
+    Event::Handle<std::vector<TopJet>> h_topjets;
+    Event::Handle<MET> h_met;
+    
+    Event::Handle<GenInfo> h_genInfo;
+    Event::Handle<std::vector<GenTopJet>> h_gentopjets;
+    Event::Handle<std::vector<GenParticle>> h_genparticles;
+    Event::Handle<std::vector<Particle>> h_genjets;
+    
+    Event::Handle<std::vector<bool>> h_triggerResults;
+    Event::Handle<std::vector<std::string>> h_triggerNames; // only used for output
+};
 
-
-void SFrameContext::write_entry(const string & treename){
-    auto it = output_trees.find(treename);
-    if(it==output_trees.end()){
-        throw runtime_error("called write_output for tree '" + treename + "' which has not been declared previously");
-    }
-    it->second->Fill();
-}*/
 
 
 AnalysisModuleRunner::AnalysisModuleRunner(){
-    m_runid_triggernames = -1;
+    pimpl.reset(new AnalysisModuleRunnerImpl());
 }
 
 
-AnalysisModuleRunner::~AnalysisModuleRunner(){}
+AnalysisModuleRunner::~AnalysisModuleRunner(){
+}
 
 // I want to have a list of ALL settings the user gives in the xml config file, without
 // having to declare them at an early point. One dirty way to achieve this is
@@ -330,8 +361,8 @@ void AnalysisModuleRunner::Initialize( TXMLNode* node ) throw( SError ){
                     if(attribute->GetName() == string("Name"))  name = attribute->GetValue();
                 }
                 //cout << "got '" << name << "'" << endl;
-                dummyConfigVars[name] = "";
-                DeclareProperty(name, dummyConfigVars[name]);
+                pimpl->dummyConfigVars[name] = "";
+                DeclareProperty(name, pimpl->dummyConfigVars[name]);
                 userNode = userNode->GetNextNode();
             }
         }
@@ -349,234 +380,215 @@ void AnalysisModuleRunner::Initialize( TXMLNode* node ) throw( SError ){
 void AnalysisModuleRunner::SetConfig(const SCycleConfig& config){
     const SCycleConfig::property_type & props = config.GetProperties();
     for(SCycleConfig::property_type::const_iterator it = props.begin(); it != props.end(); ++it){
-        if(dummyConfigVars.find(it->first) == dummyConfigVars.end()){
-            dummyConfigVars[it->first] = "";
-            DeclareProperty(it->first, dummyConfigVars[it->first]);
+        if(pimpl->dummyConfigVars.find(it->first) == pimpl->dummyConfigVars.end()){
+            pimpl->dummyConfigVars[it->first] = "";
+            DeclareProperty(it->first, pimpl->dummyConfigVars[it->first]);
         }
     }
     SCycleBase::SetConfig(config);
 }
 
+
+namespace {
+    
+template<typename T>
+Event::Handle<T> declare_in_out(const std::string & name, Context & ctx){
+    auto result = ctx.declare_event_input<T>(name);
+    ctx.declare_event_output<T>(name);
+    return result;
+}
+
+}
+
 void AnalysisModuleRunner::BeginInputData( const SInputData& in ) throw( SError ){
     // reset the triggernames output info:
-    m_output_triggerNames_runid = -1;
-    m_output_triggerNames.clear();
-    
+    pimpl->last_runid_in = -1;
+    pimpl->last_runid_out = -1;
+    pimpl->setup_output_done = false;
     
     // 1. general setup of user config:
-    ges.reset(new GenericEventStructure);
-    context.reset(new SFrameContext(*this, in, *ges));
+    pimpl->ges.reset(new GenericEventStructure);
+    pimpl->context.reset(new SFrameContext(*this, in, *pimpl->ges));
     
-    m_JetCollection = context->get("JetCollection", "");
-    m_GenJetCollection = context->get("GenJetCollection", "");
-    m_ElectronCollection = context->get("ElectronCollection", "");
-    m_MuonCollection = context->get("MuonCollection", "");
-    m_TauCollection = context->get("TauCollection", "");
-    m_PhotonCollection = context->get("PhotonCollection", "");
-    m_PrimaryVertexCollection = context->get("PrimaryVertexCollection", "");
-    m_METName = context->get("METName", "");
-    m_TopJetCollection = context->get("TopJetCollection", "");
-    m_GenTopJetCollection = context->get("GenTopJetCollection", "");
-    m_GenParticleCollection = context->get("GenParticleCollection", "");
+    pimpl->m_PrimaryVertexCollection = pimpl->context->get("PrimaryVertexCollection", "");
+    pimpl->m_ElectronCollection = pimpl->context->get("ElectronCollection", "");
+    pimpl->m_MuonCollection = pimpl->context->get("MuonCollection", "");
+    pimpl->m_TauCollection = pimpl->context->get("TauCollection", "");
+    pimpl->m_PhotonCollection = pimpl->context->get("PhotonCollection", "");
+    pimpl->m_JetCollection = pimpl->context->get("JetCollection", "");
+    pimpl->m_TopJetCollection = pimpl->context->get("TopJetCollection", "");
+    pimpl->m_METName = pimpl->context->get("METName", "");
     
-    m_readCommonInfo = string2bool(context->get("readCommonInfo", "true"));
-    m_readTrigger = string2bool(context->get("readTrigger", "true"));
+    pimpl->m_GenInfoName = pimpl->context->get("GenInfoName", "genInfo");
+    pimpl->m_GenJetCollection = pimpl->context->get("GenJetCollection", "");
+    pimpl->m_GenTopJetCollection = pimpl->context->get("GenTopJetCollection", "");
+    pimpl->m_GenParticleCollection = pimpl->context->get("GenParticleCollection", "");
     
-    string module_classname = context->get("AnalysisModule");
+    pimpl->m_readCommonInfo = string2bool(pimpl->context->get("readCommonInfo", "true"));
+    pimpl->m_readTrigger = string2bool(pimpl->context->get("readTrigger", "true"));
+    
+    string module_classname = pimpl->context->get("AnalysisModule");
     
     // read in gen info if and only if the type is Monte-Carlo:
-    m_addGenInfo = context->get("dataset_type") == "MC";
+    pimpl->m_addGenInfo = pimpl->context->get("dataset_type") == "MC";
     
     // 2. now construct user module, which could add event contest to ges
-    analysis.reset(AnalysisModuleRegistry::build(module_classname, *context).release());
-    event.reset(new Event(*ges));
+    pimpl->analysis = AnalysisModuleRegistry::build(module_classname, *pimpl->context);
     
-    // 3. after the event content is defined, setup the output. setup_output does that for the
-    // 'direct' event content, i.e. the bare pointers defined directly in Event,
-    // while context->setup_output does it for content stored via the GenericEvent mechanisms.
-    setup_output();
-    context->setup_output(*event);
+    // 3. setup standrad output. To avoid double coding, use the context mechanism
+    pimpl->h_run = declare_in_out<int>("run", *pimpl->context);
+    pimpl->h_lumi = declare_in_out<int>("luminosityBlock", *pimpl->context);
+    pimpl->h_event = declare_in_out<int>("event", *pimpl->context);
+    pimpl->h_rho = declare_in_out<float>("rho", *pimpl->context);
+    pimpl->h_isRealData = declare_in_out<bool>("isRealData", *pimpl->context);
+    pimpl->h_bsx = declare_in_out<float>("beamspot_x0", *pimpl->context);
+    pimpl->h_bsy = declare_in_out<float>("beamspot_y0", *pimpl->context);
+    pimpl->h_bsz = declare_in_out<float>("beamspot_z0", *pimpl->context);
+    
+    if(!pimpl->m_PrimaryVertexCollection.empty()) pimpl->h_pvs = declare_in_out<vector<PrimaryVertex>>(pimpl->m_PrimaryVertexCollection, *pimpl->context);
+    if(!pimpl->m_ElectronCollection.empty()) pimpl->h_electrons = declare_in_out<vector<Electron>>(pimpl->m_ElectronCollection, *pimpl->context);
+    if(!pimpl->m_MuonCollection.empty()) pimpl->h_muons = declare_in_out<vector<Muon>>(pimpl->m_MuonCollection, *pimpl->context);
+    if(!pimpl->m_TauCollection.empty()) pimpl->h_taus = declare_in_out<vector<Tau>>(pimpl->m_TauCollection, *pimpl->context);
+    if(!pimpl->m_PhotonCollection.empty()) pimpl->h_photons = declare_in_out<vector<Photon>>(pimpl->m_PhotonCollection, *pimpl->context);
+    if(!pimpl->m_JetCollection.empty()) pimpl->h_jets = declare_in_out<vector<Jet>>(pimpl->m_JetCollection, *pimpl->context);
+    if(!pimpl->m_TopJetCollection.empty()) pimpl->h_topjets = declare_in_out<vector<TopJet>>(pimpl->m_TopJetCollection, *pimpl->context);
+    if(!pimpl->m_METName.empty()) pimpl->h_met = declare_in_out<MET>(pimpl->m_METName, *pimpl->context);
+    
+    if(pimpl->m_addGenInfo){
+        if(!pimpl->m_GenInfoName.empty()) pimpl->h_genInfo = declare_in_out<GenInfo>(pimpl->m_GenInfoName, *pimpl->context);
+        if(!pimpl->m_GenTopJetCollection.empty()) pimpl->h_gentopjets = declare_in_out<vector<GenTopJet>>(pimpl->m_GenTopJetCollection, *pimpl->context);
+        if(!pimpl->m_GenParticleCollection.empty()) pimpl->h_genparticles = declare_in_out<vector<GenParticle>>(pimpl->m_GenParticleCollection, *pimpl->context);
+        if(!pimpl->m_GenJetCollection.empty()) pimpl->h_genjets = declare_in_out<vector<Particle>>(pimpl->m_GenJetCollection, *pimpl->context);
+    }
+    
+    if(pimpl->m_readTrigger){
+        pimpl->h_triggerResults = declare_in_out<std::vector<bool>>("triggerResults", *pimpl->context);
+        pimpl->h_triggerNames = declare_in_out<std::vector<std::string>>("triggerNames", *pimpl->context);
+    }
+    
+    pimpl->event.reset(new Event(*pimpl->ges));
 }
 
-
-void AnalysisModuleRunner::FillTriggerNames(){
-    if(!m_readTrigger) return;
-    if(event->run == m_runid_triggernames) return;
-    
-    //fill list of trigger names.
-    // Maybe the event we just read was the first of the given run,
-    // so it has the trigger name information already filled:
-    if(!m_input_triggerNames->empty()) {
-        m_triggerNames = *m_input_triggerNames;
-        event->set_triggernames(*m_input_triggerNames);
-        m_runid_triggernames = event->run;
-    }
-    else{
-      m_logger << INFO << "No trigger table found for this event (need: run " << event->run << "; have: run " << m_runid_triggernames << ") -> start trigger search on all input events" << SLogger::endmsg;
-      TTree* tmp_tree = GetInputTree("AnalysisTree");
-      TBranch * run_branch = tmp_tree->GetBranch("run");
-      TBranch * triggerNames_branch = tmp_tree->GetBranch("triggerNames");
-      assert(run_branch);
-      assert(triggerNames_branch);
-      auto old_run_address = run_branch->GetAddress();
-      int runid = -2;
-      run_branch->SetAddress(&runid);
-      int N_ent= tmp_tree->GetEntriesFast();
-      //search for some event in the input event tree with the same runid which has the trigger filled. Can be before or after ...
-      for(int i=0; i<N_ent; ++i){
-        run_branch->GetEntry(i);
-        if(runid != event->run){
-            continue;
-        }
-        triggerNames_branch->GetEntry(i);
-        if(m_input_triggerNames->empty()){
-            continue;
-        }
-        m_triggerNames = *m_input_triggerNames;
-        event->set_triggernames(m_triggerNames);
-        m_runid_triggernames = event->run;
-        break;
-      }
-      // reset address (should be event->run)
-      run_branch->SetAddress(old_run_address);
-      
-    }
-    if(m_runid_triggernames != event->run){
-        m_logger << ERROR << "Trigger search was NOT succesful!!!" << SLogger::endmsg;
-        throw runtime_error("triggerNames not found");
-    }
-}
 
 void AnalysisModuleRunner::BeginInputFile( const SInputData& ) throw( SError ){
-    event->clear();
-    m_input_triggerNames = 0;
-    if(m_ElectronCollection.size()>0) ConnectVariable( "AnalysisTree", m_ElectronCollection.c_str(), event->electrons);
-    if(m_MuonCollection.size()>0) ConnectVariable( "AnalysisTree", m_MuonCollection.c_str(), event->muons);
-    if(m_TauCollection.size()>0) ConnectVariable( "AnalysisTree", m_TauCollection.c_str(), event->taus);
-    if(m_JetCollection.size()>0) ConnectVariable( "AnalysisTree", m_JetCollection.c_str(), event->jets);
-    if(m_PhotonCollection.size()>0) ConnectVariable( "AnalysisTree", m_PhotonCollection.c_str(), event->photons);
-    if(m_METName.size()>0) ConnectVariable( "AnalysisTree", m_METName.c_str(), event->met);
-    if(m_PrimaryVertexCollection.size()>0) ConnectVariable( "AnalysisTree", m_PrimaryVertexCollection.c_str() , event->pvs);
-    if(m_TopJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_TopJetCollection.c_str(), event->topjets);
+    pimpl->event->clear();    
+    pimpl->context->begin_input_file(*pimpl->event);
     
-    if(m_addGenInfo){
-        if(m_GenJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenJetCollection.c_str(), event->genjets);
-        if(m_GenTopJetCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenTopJetCollection.c_str() , event->gentopjets);
-        if(m_GenParticleCollection.size()>0) ConnectVariable( "AnalysisTree", m_GenParticleCollection.c_str() , event->genparticles);
-        if(m_readCommonInfo) ConnectVariable( "AnalysisTree", "genInfo" , event->genInfo);
-    }
+    pimpl->first_event_inputfile = true;
     
-    ConnectVariable( "AnalysisTree", "run" , event->run);
-    ConnectVariable( "AnalysisTree", "luminosityBlock" , event->luminosityBlock);
-    ConnectVariable( "AnalysisTree" ,"event" ,event->event);
-    ConnectVariable( "AnalysisTree" ,"isRealData", event->isRealData);
-    
-    if(m_readTrigger){
-        ConnectVariable( "AnalysisTree", "triggerResults", event->get_triggerResults());
-        ConnectVariable( "AnalysisTree", "triggerNames", m_input_triggerNames);
-    }
-
-    if(m_readCommonInfo){
-        ConnectVariable( "AnalysisTree", "rho" , event->rho);
-        ConnectVariable( "AnalysisTree" ,"beamspot_x0", event->beamspot_x0);
-        ConnectVariable( "AnalysisTree" ,"beamspot_y0", event->beamspot_y0);
-        ConnectVariable( "AnalysisTree" ,"beamspot_z0", event->beamspot_z0);
-    }
-    
-    context->begin_input_file(*event);
-}
-
-template<typename T>
-void AnalysisModuleRunner::tree_branch(TTree * tree, const std::string & bname, T * addr){
-    if(bname.empty()) return;
-    output_ptrs.push_back(addr);
-    uhh2::tree_branch(tree, bname, addr, &output_ptrs.back(), typeid(T));
-}
-
-void AnalysisModuleRunner::setup_output(){
-    output_ptrs.clear();
-    TTree * outtree = 0;
-    try{
-      outtree = GetOutputTree("AnalysisTree");
-    }
-    catch(const SError &){
-         // if output tree is not found, we don't write anything.
-        return;
-    }
-    assert(outtree!=0);
-
-    // We want to write everything we have.
-    // a) For all pointers in the Event container, this means we want to write everyhing that is not 0. Note 
-    //    that this rule covers the case of writing recoHyps which are not present int the input but were created by an
-    //    AnalysisModule 'on-the-fly'
-    // b) For all "plain" data, use the configuration to see whether it was read and only write what has been read.
-
-    
-    // a.:
-    tree_branch(outtree, m_ElectronCollection, event->electrons);
-    tree_branch(outtree, m_MuonCollection, event->muons);
-    tree_branch(outtree, m_TauCollection, event->taus);
-    tree_branch(outtree, m_JetCollection, event->jets);
-    tree_branch(outtree, m_PhotonCollection, event->photons);
-    tree_branch(outtree, m_METName, event->met);
-    tree_branch(outtree, m_PrimaryVertexCollection , event->pvs);
-    tree_branch(outtree, m_TopJetCollection, event->topjets);
-    if(m_addGenInfo){
-        tree_branch(outtree, m_GenJetCollection, event->genjets);
-        tree_branch(outtree, m_GenTopJetCollection, event->gentopjets);
-        tree_branch(outtree, m_GenParticleCollection, event->genparticles);
-        if(m_readCommonInfo){
-            tree_branch(outtree, "genInfo", event->genInfo);
+    // fill trigger names map:
+    if(pimpl->m_readTrigger){
+        // find triggernames for all runs in this file:
+        TTree* intree = GetInputTree("AnalysisTree");
+        if(!intree) throw runtime_error("Did not find AnalysisTree in input file");
+        std::vector<std::string> trigger_names;
+        std::vector<std::string> *ptrigger_names = &trigger_names;
+        int runid = 0;
+        TBranch* runb = intree->GetBranch("run");
+        TBranch* tnb = intree->GetBranch("triggerNames");
+        auto oldaddr_runb = runb->GetAddress();
+        auto oldaddr_tnb = tnb->GetAddress();
+        if(runb==0 || tnb==0){
+            throw runtime_error("did not find branches for setting up trigger names");
         }
+        intree->SetBranchAddress("run", &runid, &runb);
+        intree->SetBranchAddress("triggerNames", &ptrigger_names, &tnb);
+        int nentries = intree->GetEntries();
+        int last_runid = -1;
+        for(int i=0; i<nentries; ++i){
+            runb->GetEntry(i);
+            if(last_runid == runid) continue;
+            last_runid = runid;
+            assert(runid >= 1);
+            tnb->GetEntry(i);
+            if(!trigger_names.empty()){
+                pimpl->runid_to_triggernames[runid] = trigger_names;
+            }
+        }
+        runb->SetAddress(oldaddr_runb);
+        tnb->SetAddress(oldaddr_tnb);
     }
     
-    // trigger names is special: use our own member variable for that:
-    if(m_readTrigger){
-        tree_branch(outtree, "triggerResults", event->get_triggerResults());
-        tree_branch(outtree, "triggerNames", &m_output_triggerNames);
-    }
-
-    // b.:
-    // these are always read:
-    tree_branch(outtree, "run", &event->run);
-    tree_branch(outtree, "luminosityBlock", &event->luminosityBlock);
-    tree_branch(outtree, "event", &event->event);
-    tree_branch(outtree, "isRealData", &event->isRealData);
-    
-    if(m_readCommonInfo){
-        tree_branch(outtree, "rho", &event->rho);
-        tree_branch(outtree, "beamspot_x0", &event->beamspot_x0);
-        tree_branch(outtree, "beamspot_y0", &event->beamspot_y0);
-        tree_branch(outtree, "beamspot_z0", &event->beamspot_z0);
-    }
 }
-
 
 
 void AnalysisModuleRunner::ExecuteEvent( const SInputData&, Double_t w) throw( SError ){
-    event->invalidate_all();
-    // read in the event from the input tree:
-    context->begin_event(*event);
+    uhh2::Event & event = *pimpl->event;
     
-    // search for trigger names in input tree:
-    FillTriggerNames();
+    event.invalidate_all();
+    // read in the event from the input tree:
+    pimpl->context->begin_event(event);
+    
+    // transfer data to usual members:
+    event.run = event.get(pimpl->h_run);
+    event.luminosityBlock = event.get(pimpl->h_lumi);
+    event.event = event.get(pimpl->h_event);
+    event.rho = event.get(pimpl->h_rho);
+    event.isRealData = event.get(pimpl->h_isRealData);
+    event.beamspot_x0 = event.get(pimpl->h_bsx);
+    event.beamspot_y0 = event.get(pimpl->h_bsy);
+    event.beamspot_z0 = event.get(pimpl->h_bsz);
+    
+    if(pimpl->m_readTrigger){
+        // fix triggerNames in case of a run change.
+        if(pimpl->last_runid_in != event.run){
+            auto it = pimpl->runid_to_triggernames.find(event.run);
+            if(it==pimpl->runid_to_triggernames.end()){
+                throw runtime_error("Did not find trigger names for current run");
+            }
+            event.set_triggernames(it->second);
+        }
+        pimpl->last_runid_in = event.run;
+    }
+    
+    if(pimpl->first_event_inputfile){
+        pimpl->first_event_inputfile = false;
+        if(!pimpl->m_PrimaryVertexCollection.empty()) event.pvs = &event.get(pimpl->h_pvs);
+        if(!pimpl->m_ElectronCollection.empty()) event.electrons = &event.get(pimpl->h_electrons);
+        if(!pimpl->m_MuonCollection.empty()) event.muons = &event.get(pimpl->h_muons);
+        if(!pimpl->m_TauCollection.empty())  event.taus = &event.get(pimpl->h_taus);
+        if(!pimpl->m_PhotonCollection.empty())  event.photons = &event.get(pimpl->h_photons);
+        if(!pimpl->m_JetCollection.empty()) event.jets = &event.get(pimpl->h_jets);
+        if(!pimpl->m_TopJetCollection.empty())  event.topjets = &event.get(pimpl->h_topjets);
+        if(!pimpl->m_METName.empty()) event.met = &event.get(pimpl->h_met);
+        if(pimpl->m_addGenInfo){
+            if(!pimpl->m_GenInfoName.empty()) event.genInfo = &event.get(pimpl->h_genInfo);
+            if(!pimpl->m_GenTopJetCollection.empty()) event.gentopjets = &event.get(pimpl->h_gentopjets);
+            if(!pimpl->m_GenParticleCollection.empty()) event.genparticles = & event.get(pimpl->h_genparticles);
+            if(!pimpl->m_GenJetCollection.empty()) event.genjets = &event.get(pimpl->h_genjets);
+        }
+        if(pimpl->m_readTrigger){
+            event.get_triggerResults() = &event.get(pimpl->h_triggerResults);
+        }
+    }
 
     // now call the user module:
-    event->weight = w;
-    bool keep = analysis->process(*event);
+    event.weight = w;
+    bool keep = pimpl->analysis->process(event);
     
     if(!keep){
         throw SError(SError::SkipEvent);
     }
     
-    // make sure list of trigger names is filled in the output for each runid once:
-    if(m_output_triggerNames_runid != event->run){
-        m_output_triggerNames_runid = event->run;
-        m_output_triggerNames = m_triggerNames;
+    if(!pimpl->setup_output_done){
+        //setup_output();
+        pimpl->context->setup_output(*pimpl->event);
+        pimpl->setup_output_done = true;
     }
-    else{
-        // we already output the name list for that runid, so write empty it for this event:
-        m_output_triggerNames.clear();
+    
+    // now setup output triggernames:
+    if(pimpl->m_readTrigger){
+        if(pimpl->last_runid_out != event.run){
+            auto it = pimpl->runid_to_triggernames.find(event.run);
+            if(it==pimpl->runid_to_triggernames.end()){
+                throw runtime_error("Did not find trigger names for current runid");
+            }
+            event.set(pimpl->h_triggerNames, it->second);
+            pimpl->last_runid_out = event.run;
+        }
+        else{
+            event.set(pimpl->h_triggerNames, vector<string>());
+        }
     }
 }
 
@@ -653,6 +665,6 @@ void AnalysisModuleRunner::EndMasterInputData(const SInputData & d) throw (SErro
     }
 }
 
-ClassImp(AnalysisModuleRunner);
+ClassImp(uhh2::AnalysisModuleRunner);
 
 #endif
