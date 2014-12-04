@@ -28,7 +28,12 @@ ExampleHists::ExampleHists(Context & ctx, const string & dirname): Hists(ctx, di
 
 
 void ExampleHists::fill(const Event & event){
-  // fill the histograms. Don't forget to always use the weight when filling:
+  // fill the histograms. Please note the comments in the header file:
+  // 'hist' is used here a lot for simplicity, but it will be rather
+  // slow when you have many histograms; therefore, better
+  // use histogram pointers as members as in 'UHH2/common/include/ElectronHists.h'
+  
+  // Don't forget to always use the weight when filling.
   double weight = event.weight;
   
   std::vector<Jet>* jets = event.jets;
