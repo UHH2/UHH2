@@ -83,7 +83,7 @@ testlibsources := $(wildcard test/*.cpp)
 testlibobj := $(patsubst test/%.cpp,obj/test/%.o,$(testlibsources))
 obj/test/%.o: test/%.cpp
 	@$(CXX_CMD)
-$(TESTLIBTARGET): $(testlibobj)
+$(TESTLIBTARGET): $(testlibobj) $(LIBTARGET)
 	@$(SHARED_CMD) -l$(LIBRARY)
 endif
 
