@@ -132,17 +132,17 @@ public:
     
     /** \brief Declare an input variable in the event tree
      * 
-     * T must not be a pointer type. In case event_member_name is empty, it is set to the branchname.
+     * T must not be a pointer type. In case event_member_name is empty, it is set to the branch_name.
      */
     template<typename T>
     GenericEvent::Handle<T> declare_event_input(const std::string & branch_name, const std::string & event_member_name = "");
     
     /** \brief Declare an output variable in the event tree
      * 
-     * T must not be a pointer type. In case event_member_name is empty, it is set to the branchname.
+     * T must not be a pointer type. In case event_member_name is empty, it is set to the branch_name.
      */
     template<typename T>
-    GenericEvent::Handle<T> declare_event_output(const std::string & name, const std::string & event_member_name = "");
+    GenericEvent::Handle<T> declare_event_output(const std::string & branch_name, const std::string & event_member_name = "");
     
     /** \brief Declare a non-event variable which should be written to the tree identified by tree_id instead.
      * 

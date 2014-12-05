@@ -2,7 +2,6 @@
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
     <Library Name="libTestSUHH2core"/>
-    <Library Name="libSUHH2NtupleWriter"/>
     <!-- <Package Name="SUHH2examples.par" /> -->
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >

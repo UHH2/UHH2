@@ -43,3 +43,17 @@ private:
 
 
 UHH2_REGISTER_ANALYSIS_MODULE(CoreTestA)
+
+
+
+class NoopModule: public AnalysisModule {
+public:
+    NoopModule(Context & ctx){
+    }
+    
+    virtual bool process(Event & e) override {
+        return true;
+    }
+};
+
+UHH2_REGISTER_ANALYSIS_MODULE(NoopModule)
