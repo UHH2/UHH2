@@ -9,14 +9,14 @@ class FilterStrangeGenParticles: public edm::EDFilter {
    public:
       explicit FilterStrangeGenParticles(const edm::ParameterSet& cfg) {
           src = cfg.getParameter<edm::InputTag>("src");
+          n_top_expected = cfg.getParameter<int>("n_top_expected");
       }
 
    private:
-      
       virtual bool filter(edm::Event& event, const edm::EventSetup&) override;
       
       edm::InputTag src;
-
+      int n_top_expected;
 };
 
 
@@ -24,10 +24,10 @@ DEFINE_FWK_MODULE(FilterStrangeGenParticles);
 
 
 
-
 bool FilterStrangeGenParticles::filter(edm::Event & event, const edm::EventSetup&){
     edm::Handle<reco::GenParticleCollection> h_genparticles;
     event.getByLabel(src, h_genparticles);
+    int n_top = 0;
     for(const auto & gp : *h_genparticles){
         if(abs(gp.pdgId()) == 6000006){
             if(gp.numberOfDaughters() != 2){
@@ -36,6 +36,7 @@ bool FilterStrangeGenParticles::filter(edm::Event & event, const edm::EventSetup
             }
         }
         if(abs(gp.pdgId()) == 6){
+            ++n_top;
             if(gp.numberOfDaughters() != 2){
                 cout << "t has " << gp.numberOfDaughters() << " daughters." << endl;
                 return true;
@@ -60,6 +61,12 @@ bool FilterStrangeGenParticles::filter(edm::Event & event, const edm::EventSetup
                 cout << "W from top has != 2 daughters" << endl;
                 return true;
             }
+        }
+    }
+    if(n_top_expected >= 0){
+        if(n_top != n_top_expected){
+            cout << "Found " << n_top << " top quarks in the event, but expected " << n_top_expected << endl;
+            return true;
         }
     }
     return false;

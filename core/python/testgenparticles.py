@@ -2,10 +2,11 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("TEST")
 process.source = cms.Source("PoolSource", 
   # a file from: /TprimeJetToTH_M800GeV_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1/MINIAODSIM
-  fileNames = cms.untracked.vstring('file:/nfs/dust/cms/user/ottjoc/24D444CE-216A-E411-ADC5-001E67398633.root')
+  #fileNames = cms.untracked.vstring('file:/nfs/dust/cms/user/ottjoc/24D444CE-216A-E411-ADC5-001E67398633.root')
+  fileNames = cms.untracked.vstring('file:/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_0_miniaod.root')
 )
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10))
 
 process.prunedTmp = cms.EDProducer("GenParticlePruner",
     src = cms.InputTag("prunedGenParticles"),
@@ -27,7 +28,8 @@ process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
 )
 
 process.genpfilter = cms.EDFilter('FilterStrangeGenParticles',
-  src = cms.InputTag("prunedPrunedGenParticles")
+  src = cms.InputTag("prunedPrunedGenParticles"),
+  n_top_expected = cms.int32(-1)
 )
 process.genpprinter = cms.EDAnalyzer("ParticleTreeDrawer",
                                    src = cms.InputTag("prunedPrunedGenParticles"),
