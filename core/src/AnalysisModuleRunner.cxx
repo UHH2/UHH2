@@ -248,7 +248,14 @@ void SFrameContext::begin_event(Event & event){
 }
 
 void SFrameContext::setup_output(Event & event){
-    TTree * outtree = base.GetOutputTree(event_treename.c_str());
+    TTree * outtree = 0;
+    try {
+        outtree = base.GetOutputTree(event_treename.c_str());
+    }
+    catch(const SError &){
+        // not OutputTree defined -> no output is written.
+        return;
+    }
     assert(outtree);
     for(const auto & name_bi : event_output_bname2bi){
         void * addr = event.get(name_bi.second.ti, name_bi.second.handle, false);
@@ -360,18 +367,6 @@ void AnalysisModuleRunner::SetConfig(const SCycleConfig& config){
         }
     }
     SCycleBase::SetConfig(config);
-}
-
-
-namespace {
-    
-template<typename T>
-Event::Handle<T> declare_in_out(const std::string & name, Context & ctx){
-    auto result = ctx.declare_event_input<T>(name);
-    ctx.declare_event_output<T>(name);
-    return result;
-}
-
 }
 
 void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(SCycleBase & base, const SInputData& in){
