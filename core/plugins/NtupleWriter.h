@@ -169,7 +169,6 @@ class NtupleWriter : public edm::EDFilter {
       edm::InputTag SVComputer_;
       std::vector<std::string> trigger_prefixes;
       std::vector<std::string> triggerNames_outbranch;
-      std::vector<bool> triggerResults;
 
       bool newrun, setup_output_branches_done;
 

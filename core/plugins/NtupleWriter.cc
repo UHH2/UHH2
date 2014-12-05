@@ -1476,6 +1476,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    if(doTrigger){
      edm::Handle<edm::TriggerResults> triggerBits;
      iEvent.getByToken(triggerBits_, triggerBits);
+     auto & triggerResults = *event->get_triggerResults();
      triggerResults.clear();
      triggerNames_outbranch.clear();
      const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
