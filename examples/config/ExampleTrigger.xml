@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+    <Library Name="libSUHH2examples"/>
+    <Package Name="SUHH2examples.par" />
+    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="BpJ_TW_800" Cacheable="False">
+            <In FileName="/afs/desy.de/user/o/ottjoc/xxl-af-cms/CMSSW_7_2_1_patch4/src/UHH2/Ntuple.root" Lumi="0.0"/> 
+            <InputTree Name="AnalysisTree" /> 
+            <OutputTree Name="AnalysisTree" /> 
+        </InputData>
+            
+        <UserConfig>
+            <Item Name="AnalysisModule" Value="ExampleModuleTrigger" /> 
+            <Item Name="TriggerName" Value="HLT_Mu40_v*" />
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>
