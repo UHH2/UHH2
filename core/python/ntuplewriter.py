@@ -89,6 +89,7 @@ process.out.outputCommands.extend([
     "keep *_patJetsCMSTopTagCHSSubjets_*_*",
     "keep *_patJetsHEPTopTagCHSPacked_*_*",
     "keep *_patJetsHEPTopTagCHSSubjets_*_*",
+    "keep *_prunedPrunedGenParticles_*_*",
     "keep *_electronIDValueMapProducer_eleFull5x5SigmaIEtaIEta_*"
 ])
 
