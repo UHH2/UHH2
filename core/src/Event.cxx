@@ -75,6 +75,7 @@ bool Event::lookup_trigger_index(TriggerIndex & ti) const{
     if(runid == -1){
         return false;
     }
+    assert(index < triggerNames_currentrun.size());
     ti.runid = runid;
     ti.index = index;
     return true;
@@ -99,6 +100,7 @@ bool Event::passes_trigger(TriggerIndex & ti) const{
         throw runtime_error("Event does not have trigger '" + ti.triggername + "'. Available triggers:\n" + format_list(triggerNames_currentrun));
     }
     assert(triggerResults);
+    assert(triggerNames_currentrun.size() == triggerResults->size());
     return triggerResults->at(ti.index);
 }
 

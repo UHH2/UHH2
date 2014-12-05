@@ -107,6 +107,12 @@ public:
    */
   bool lookup_trigger_index(TriggerIndex & ti) const;
   
+  /** \brief Get the names of the triggers for the current event 
+   */
+  const std::vector<std::string> & get_current_triggernames() const {
+      return triggerNames_currentrun;
+  }
+  
   
   // ** Framework methods **
   // Analyses should not use the methods below directly; this is for adapting to the framework(s) only.
