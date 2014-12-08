@@ -316,13 +316,13 @@ double DeltaPolarNeutrino(double PhiN, double metPx, double metPy, double PhiLep
 
   double num = 10.e-7;
 
-  if(1-cos(fabs(PhiLep-PhiN)> PI ? 2*PI-fabs(PhiLep-PhiN) : fabs(PhiLep-PhiN )) < num){
+  if(1-cos(fabs(PhiLep-PhiN)> M_PI ? 2*M_PI-fabs(PhiLep-PhiN) : fabs(PhiLep-PhiN )) < num){
     PyN = 0.5*mass_w*mass_w* sin(PhiN)/(PtLep*num);
     PxN = 0.5*mass_w*mass_w* cos(PhiN)/(PtLep*num);
   }
   else{
-    PyN = 0.5*mass_w*mass_w* sin(PhiN)/(PtLep*(1-cos(fabs(PhiLep-PhiN)> PI ? 2*PI-fabs(PhiLep-PhiN) : fabs(PhiLep-PhiN ))));
-    PxN = 0.5*mass_w*mass_w* cos(PhiN)/(PtLep*(1-cos(fabs(PhiLep-PhiN)> PI ? 2*PI-fabs(PhiLep-PhiN) : fabs(PhiLep-PhiN ))));
+    PyN = 0.5*mass_w*mass_w* sin(PhiN)/(PtLep*(1-cos(fabs(PhiLep-PhiN)> M_PI ? 2*M_PI-fabs(PhiLep-PhiN) : fabs(PhiLep-PhiN ))));
+    PxN = 0.5*mass_w*mass_w* cos(PhiN)/(PtLep*(1-cos(fabs(PhiLep-PhiN)> M_PI ? 2*M_PI-fabs(PhiLep-PhiN) : fabs(PhiLep-PhiN ))));
   }
 
   return pow(PxN-metPx,2)+pow(PyN-metPy,2);
@@ -346,8 +346,8 @@ std::vector<LorentzVector> NeutrinoFitPolar(const LorentzVector lepton, const Lo
   const double mass_w = 80.399;
 
 
-  double min = -2*PI;
-  double max = 2*PI;
+  double min = -2*M_PI;
+  double max = 2*M_PI;
   double start = met.phi();
   double step = 10.e-5;
 
@@ -402,8 +402,8 @@ std::vector<LorentzVector> NeutrinoFitPolar(const LorentzVector lepton, const Lo
 	std::cerr << "neutrino phi is NAN " << std::endl;
       }
 
-    if(resultPhi > PI) resultPhi = resultPhi-2*PI;
-    if(resultPhi < PI) resultPhi = resultPhi+2*PI;
+    if(resultPhi > M_PI) resultPhi = resultPhi-2*M_PI;
+    if(resultPhi < M_PI) resultPhi = resultPhi+2*M_PI;
 
 
     double PyN;
