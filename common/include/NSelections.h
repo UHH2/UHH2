@@ -51,3 +51,14 @@ private:
     int nmin, nmax;
     boost::optional<JetId> jetid;
 };
+
+class NTopJetSelection: public uhh2::Selection {
+public:
+    typedef std::function<bool (const Jet & jet, const uhh2::Event & event)> jetid_type;
+    
+    explicit NTopJetSelection(int nmin, int nmax = -1, const boost::optional<TopJetId> & topjetid = boost::none);
+    virtual bool passes(const uhh2::Event & event);
+private:
+    int nmin, nmax;
+    boost::optional<TopJetId> topjetid;
+};

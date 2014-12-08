@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+    <Library Name="libSUHH2examples"/>
+    <Package Name="SUHH2examples.par" />
+
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="/nfs/dust/cms/user/peiffer/Analysis72X/" PostFix="" TargetLumi="1" >
+             
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="BpJ_TW_1200" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_BpJ_TW_M1200_20x25_19_Ntuple.root" Lumi="0.0"/> 
+            <InputTree Name="AnalysisTree" /> 
+            <OutputTree Name="AnalysisTree" /> 
+        </InputData>
+            
+        <UserConfig>
+            <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" /> 
+            <Item Name="MuonCollection" Value="slimmedMuons" /> 
+            <Item Name="JetCollection" Value="slimmedJets" />
+            <Item Name="TopJetCollection" Value="patJetsCMSTopTagCHSPacked" />
+            <Item Name="METName" Value="slimmedMETs" />  
+            
+                   
+            <!-- the class name of the AnalysisModule subclasses to run: -->
+            <Item Name="AnalysisModule" Value="ExampleTTbarRec" /> 
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>
