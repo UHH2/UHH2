@@ -1,7 +1,7 @@
 #ifndef ReconstructionHypothesis_H
 #define ReconstructionHypothesis_H
 
-#include "../core/include/Particle.h"
+#include "UHH2/core/include/Particle.h"
 
 struct qualityflag{
   std::string label;
