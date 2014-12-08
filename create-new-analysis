@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# This script creates a new almost-minimal analysis directory based on the examples
+# directory. It will contain a new AnalysisModule and Selection class.
+#
+# Usage:
+#   create-new-analysis VLQSingleTToH
+#
+# where MyAnalysis is the name of the subdirectory to create, which will also
+# be the name of the github repository in UHH2. This name will also be used in class
+# names, although that can be easily changed later.
+
+
+function fail() {
+    echo "FATAL: " $*;
+    exit 1;
+}
+
+function exec_checked () {
+  { $*; } || { fail "Executing $*"; }
+}
+
+
+[ -z "$1" ] && { fail "Please specify analysis name as argument"; } 
+[ -d "examples" ] || { fail "Please execute this script from the UHH2 directory (where 'examples' is located)"; }
+
+NAME=$1
+name_regex='^[[:alpha:]][[:alnum:]]{2,}$'
+
+if [[ $NAME =~ $name_regex ]];
+then
+ echo "Using name '$NAME'";
+else
+ fail "Invalid name '$NAME': the name must only consist of alphanumeric characters, must not start with a number, and have a minimum length of 3";
+fi
+
+[ -d "$NAME" ]  && { fail "A directory of with name '$NAME' already exists!"; }
+
+exec_checked mkdir -p $NAME/src $NAME/include $NAME/config
+
+# copy example Example.cxx, modifying the class name:
+
+echo "Creating module from ExampleModule, ExampleHists, and ExampleSelections"
+exec_checked cp examples/include/ExampleSelections.h $NAME/include/${NAME}Selections.h
+exec_checked cp examples/include/ExampleHists.h $NAME/include/${NAME}Hists.h
+
+exec_checked cp examples/src/ExampleModule.cxx $NAME/src/${NAME}Module.cxx
+exec_checked cp examples/src/ExampleHists.cxx $NAME/src/${NAME}Hists.cxx
+exec_checked cp examples/src/ExampleSelections.cxx $NAME/src/${NAME}Selections.cxx
+exec_checked sed -i "s|/examples/|/${NAME}/|" $NAME/src/*.cxx $NAME/include/*.h
+exec_checked sed -i "s|ExampleModule|${NAME}Module|g" $NAME/src/*.cxx $NAME/include/*.h
+exec_checked sed -i "s|ExampleHists|${NAME}Hists|g" $NAME/src/*.cxx $NAME/include/*.h
+exec_checked sed -i "s|ExampleSelections|${NAME}Selections|g" $NAME/src/*.cxx $NAME/include/*.h
+
+
+echo "Creating configuration files"
+exec_checked sed s/ExampleModule/${NAME}Module/g examples/config/Example.xml > $NAME/config/${NAME}.xml
+exec_checked cp examples/config/JobConfig.dtd $NAME/config/
+exec_checked sed -i "s|SUHH2examples|SUHH2${NAME}|g" $NAME/config/${NAME}.xml
+
+echo "Creating adapted Makefile"
+exec_checked sed s/SUHH2examples/SUHH2${NAME}/ examples/Makefile > $NAME/Makefile
+
+echo "Copying BuildFile.xml"
+exec_checked cp examples/BuildFile.xml $NAME/BuildFile.xml
+
+echo "Adding the new directory to Makefile.local to enable automatic build"
+echo -e "\n# next line was auto-created by create-new-analysis; remove this line if you removed the directory.\ndirs += $NAME" >> Makefile.local
+
+echo -e "\nDone creating $NAME."
+echo "Compile the new code by running 'make'."
+echo "Then, run the new ${NAME}Module with 'sframe_main $NAME/config/$NAME.xml'"
+echo "For removing $NAME, run 'rm -rf $NAME' and remove the according lines in Makefile.local"
