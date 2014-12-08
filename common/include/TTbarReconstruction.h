@@ -32,7 +32,6 @@ public:
   /**
    * @short AnalysisModule that calculates ttbar reconstruction hypotheses and fills them into the event output
    *
-   * HighMassTTbar:
    * Reconstructs the ttbar system by constructing a chi2 function
    * taking into account different combinations of jets with the lepton and MET. 
    * The solution which minimizes chi2 in an event is used, the hadronic side
@@ -59,11 +58,11 @@ public:
   /**
    * @short AnalysisModule that calculates ttbar reconstruction hypotheses and fills them into the event output
    *
-   * Take the C/A-Jet with the TopTag and use it as hadronic Top.
+   * Take the C/A-Jet with the highest pT and use it as hadronic Top. 
    * For the leptonic side the primary lepton is taken. A list is generated 
-   * with all possible combinations of single ak5 jets. Later one hypothesis is selected 
-   * via chi_square. Make sure a reasonable selection is run. There is hardcoded a minimum
-   * distance of lepton and TopTag of 0.8 and between ak5 jet and TopTag of 1.3 (measure in delta R)
+   * with all possible combinations of one ak 0.5 Jets. Later one ak 0.5 Jet is selected  
+   * via chi_square.
+   * ak 0.5 Jets with  
    *
    * neutrinofunction can be either NeutrinoReconstruction or NeutrinoFitPolar
    *
@@ -86,10 +85,11 @@ public:
   /**
    * @short AnalysisModule that calculates ttbar reconstruction hypotheses and fills them into the event output
    *
-   * Reconstructs the ttbar system by constructing a chi2 function
-   * taking into account different combinations of jets with the lepton and MET. 
-   * The solution which minimizes chi2 in an event is used, the hadronic side
-   * is allowed to consist of 1,2 or 3 jets to account for very boosted topologies.
+   * Take the C/A-Jet with the TopTag and use it as hadronic Top.
+   * For the leptonic side the primary lepton is taken. A list is generated 
+   * with all possible combinations of single ak5 jets. Later one hypothesis is selected 
+   * via chi_square. Make sure a reasonable selection is run. There is hardcoded a minimum
+   * distance of lepton and TopTag of 0.8 and between ak5 jet and TopTag of 1.3 (measure in delta R)
    *
    * neutrinofunction can be either NeutrinoReconstruction or NeutrinoFitPolar
    *
