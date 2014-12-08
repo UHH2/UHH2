@@ -20,30 +20,22 @@ typedef std::function<bool (const Tau &, const uhh2::Event &)> TauId;
 
 /** \brief Cut on minimum pt and maximum |eta| of a particle
  * 
- * This implements the kienamtic cut which is often used and imposes a minimum pt
- * requirement and a maximum eta requirement. This can be applied to many different particles
- * and is thus defined as template class where the template parameter is the type of object.
- * Usually, you can use a typedef which specifies the template parameter, e.g. JetPtEtaCut for jets,
- * ElectronPtEtaCut for electrons, etc. See below the declaration of this class for the available
- * typedefs.
+ * This implements the kinematic cut which is often used and imposes a minimum pt
+ * requirement and a maximum absolute-eta requirement. As such a cut can be applied to many different particles,
+ * it is defined using the Particle base class; note that it can still be applied as
+ * MuonId, JetId, etc. as all these inherit from Particle.
  */
-template<typename T>
 class PtEtaCut {
 public:
     PtEtaCut(float min_pt_, float max_eta_): min_pt(min_pt_), max_eta(max_eta_){}
     
-    bool operator()(const T & obj, const uhh2::Event & ) const{
-        return obj.pt() > min_pt && std::abs(obj.eta()) < max_eta;
+    bool operator()(const Particle & p, const uhh2::Event & ) const{
+        return p.pt() > min_pt && std::abs(p.eta()) < max_eta;
     }
     
 private:
     float min_pt, max_eta;
 };
-
-typedef PtEtaCut<Jet> JetPtEtaCut;
-typedef PtEtaCut<Electron> ElectronPtEtaCut;
-typedef PtEtaCut<Muon> MuonPtEtaCut;
-typedef PtEtaCut<Tau> TauPtEtaCut;
 
 
 /** \brief Construct a new object id, taking the logical and of several other ids.

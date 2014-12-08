@@ -23,7 +23,7 @@ void clean_collection(vector<T> & objects, const uhh2::Event & event, const std:
 
 JetCleaner::JetCleaner(const JetId & jet_id_): jet_id(jet_id_){}
 
-JetCleaner::JetCleaner(float minpt, float maxeta): jet_id(JetPtEtaCut(minpt, maxeta)){}
+JetCleaner::JetCleaner(float minpt, float maxeta): jet_id(PtEtaCut(minpt, maxeta)){}
 
 bool JetCleaner::process(Event & event){
     clean_collection(*event.jets, event, jet_id);

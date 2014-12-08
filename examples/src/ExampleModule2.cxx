@@ -45,10 +45,10 @@ private:
 
 
 ExampleModule2::ExampleModule2(Context & ctx): ele_selection(ctx, "ele"), mu_selection(ctx, "mu") {
-    jet_kinematic = JetPtEtaCut(30.0, 2.4);
+    jet_kinematic = PtEtaCut(30.0, 2.4);
     btag = CSVBTag(CSVBTag::WP_LOOSE);
-    muid = AndId<Muon>(MuonIDTight(), MuonPtEtaCut(20.0, 2.4));
-    eleid = AndId<Electron>(ElectronID_CSA14_50ns_medium, ElectronPtEtaCut(20.0, 2.5));
+    muid = AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.4));
+    eleid = AndId<Electron>(ElectronID_CSA14_50ns_medium, PtEtaCut(20.0, 2.5));
     
     // clean the objects:
     modules.emplace_back(new JetCleaner(jet_kinematic));
