@@ -95,42 +95,29 @@ public:
 
 
 /**
- * @short function to calculate the neutrino four-momentum from MET and charged lepton momenta
+ * @short Function to calculate the neutrino four-momentum from MET and charged lepton momenta
  *
  * Given the Decay:
  *
- * A -> B + Neutrino
+ * W -> lepton + Neutrino
  *
- * reconstruct the Neutrino pZ component of the Lorentz Vector given
- * it's Energy, px, and py are known.
+ * reconstruct the Neutrino pZ component, using the fact that the lepton
+ * is well-measured and assuming that the MET corresponds to the x and y components
+ * of the Neutrino. With these assumptions, the neutrino pZ is given by a quadratic equation
+ * for pZ which follows from the W-mass constraint
  *
- * Calculation is carried with formula:
- *
- * P4A^2 = (P4B + P4Neutrino)^2
- *
- * assuming:
- *
- * P4Neutrino^2 = 0
- * P4B^2 = 0
- *
- * within the SM: m_neutrino = 0, mass of the second decay product
- * is neglected due to expected small mass, e.g. in case of the
- * electron: m_B = 0.5 MeV, for the muon: m_mu = 105 MeV and mass
- * of the W-boson: m_W = 80 GeV. m_B is used in formula in form:
- *
- * m_A^2 - m_B^2
- *
- * and therefore m_B can be neglected.
- *
- * The final equation is:
- *
- * (-pTlep^2) * x^2 + 2 * (mu * pZlep) * x + (mu^2 - Elep^2 * pTnu^2) = 0
- *
- * where
- * x is pz_nu
- * mu = mW^2 / 2 + pTlep * pTnu * cos(phi)
- * phi is angle between p_lepton and p_neutrino in transverse plane
- *
+ * W_p4^2 = (lepton_p4 + Neutrino_p4)^2  = m_W^2
+ * 
+ * The code assumes that the lepton mass and the neutrino mass are 0 and uses
+ * m_W = 80.399 GeV.
+ * 
+ * The returned solutions are the neutrino four-vectors where pZ solves the W-mass contraint.
+ * In general, there can be 0, 1, or 2 real-valued solutions for pZ. In case there is no real solution,
+ * the real part of the complex solution is used instead; the returned vector has size=1 in this case.
+ * If this happens, the W mass constrained is not fulfilled exactly, but only approximately.
+ * In all other cases, 2 solutions are returned and the W-mass constraint is fulfilled exactly (note that
+ * 2 solutions are returned even if there is only 1, as the distiction between 1 or 2 real solutions is not
+ * possible in a numerically stable way).
  */
 std::vector<LorentzVector> NeutrinoReconstruction(const LorentzVector & lepton, const LorentzVector & met);
 
@@ -146,6 +133,7 @@ std::vector<LorentzVector> NeutrinoReconstruction(const LorentzVector & lepton, 
  * doing this with a W-mass constraint. As the name indicates polarcoordinates 
  * are used in the computation.
  * 
+ * TODO: document better; probably need to re-write!
  */
 std::vector<LorentzVector> NeutrinoFitPolar(const LorentzVector & lepton, const LorentzVector & met);
 

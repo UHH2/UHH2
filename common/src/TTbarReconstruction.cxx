@@ -11,20 +11,19 @@ PrimaryLepton::PrimaryLepton(Context & ctx){
 
 bool PrimaryLepton::process(uhh2::Event & event){
   assert(event.muons || event.electrons);
-
-  double ptmax = -999;
+  double ptmax = -infinity;
   FlavorParticle primlep;
   if(event.electrons){
     for(const auto & ele : *event.electrons){
       if(ele.pt() > ptmax){
         ptmax = ele.pt();
-        primlep = (FlavorParticle) (ele);
+        primlep = ele;
       }
     }
   }
   if(event.muons){
     for(const auto & mu : *event.muons){
-      if(mu.pt()>ptmax){
+      if(mu.pt() > ptmax){
         ptmax = mu.pt();
         primlep = mu;
       }
@@ -51,15 +50,17 @@ bool HighMassTTbarReconstruction::process(uhh2::Event & event){
   std::vector<ReconstructionHypothesis> recoHyps;
   //reconstruct neutrino
   std::vector<LorentzVector> neutrinos = m_neutrinofunction( lepton.v4(), event.met->v4());
+  unsigned int n_jets = event.jets->size();
+  if(n_jets>10) n_jets=10; //avoid crashes in events with many jets
+  // idea: loop over 3^Njet possibilities and write the current loop
+  // index j in the 3-base system. The Njets digits represent whether
+  // to assign each jet to the hadronic side (0), leptonic side (1),
+  // or none of them (2).
+  const unsigned int max_j = pow(3, n_jets);
  
   //loop over neutrino solutions and jet assignments to fill hyotheses
-  for(unsigned int i=0; i< neutrinos.size();++i){
-    
-    LorentzVector wlep_v4 = lepton.v4() + neutrinos[i];
-
-    unsigned int n_jets = event.jets->size();
-    if(n_jets>10) n_jets=10; //avoid crashes in events with many jets
-    unsigned int max_j = pow(3, n_jets);
+  for(const auto & neutrino_p4 : neutrinos){
+    const LorentzVector wlep_v4 = lepton.v4() + neutrino_p4;
     for (unsigned int j=0; j < max_j; j++) {
       LorentzVector tophad_v4;
       LorentzVector toplep_v4 = wlep_v4;
@@ -68,15 +69,8 @@ bool HighMassTTbarReconstruction::process(uhh2::Event & event){
       int num = j;
       ReconstructionHypothesis hyp;
       hyp.set_lepton(lepton);
-      hyp.set_neutrino_v4(neutrinos[i]);
+      hyp.set_neutrino_v4(neutrino_p4);
       for (unsigned int k=0; k<n_jets; k++) {
-        // num is the k-th digit of j if you
-        // write j in a base-3 system. According
-        // to the value of this digit (which takes
-        // values from 0 to 2,
-        // in all possible combinations with the other digits),
-        // decide how to treat the jet.
-
         if(num%3==0) {
             tophad_v4 = tophad_v4 + event.jets->at(k).v4();
             hyp.add_tophad_jet(event.jets->at(k));
@@ -100,7 +94,7 @@ bool HighMassTTbarReconstruction::process(uhh2::Event & event){
       }
     } // 3^n_jets jet combinations
   } // neutrinos
-  event.set(h_recohyps, std::move(recoHyps));
+  event.set(h_recohyps, move(recoHyps));
   return true;
 }
 
@@ -138,7 +132,7 @@ std::vector<LorentzVector> NeutrinoReconstruction(const LorentzVector & lepton, 
       solution.SetPz(-B / A);
       solution.SetE(toVector(solution).Mag());
       
-      solutions.push_back(toPtEtaPhi(solution));
+      solutions.emplace_back(toPtEtaPhi(solution));
   }
   else {
       discriminant = sqrt(discriminant);
@@ -190,8 +184,6 @@ std::vector<LorentzVector> NeutrinoFitPolar(const LorentzVector & lepton, const 
   TVector3 neutrino_pT = toVector(met);
   neutrino_pT.SetZ(0);
   const double mass_w = 80.399;
-  double min = -2*M_PI;
-  double max = 2*M_PI;
   double start = met.phi();
   double step = 10.e-5;
   double mu = mass_w * mass_w / 2 + lepton_pT * neutrino_pT;
@@ -212,7 +204,7 @@ std::vector<LorentzVector> NeutrinoFitPolar(const LorentzVector & lepton, const 
 
     positiv->SetFCN(polarminuitfunc);
 
-    positiv->DefineParameter(0,"PhiN",start, step,  min, max);
+    positiv->DefineParameter(0,"PhiN",start, step,  -2*M_PI, 2*M_PI);
     positiv->DefineParameter(1,"metPx",met.px(),0,0,0);
     positiv->DefineParameter(2,"metPy",met.py(),0,0,0);
     positiv->DefineParameter(3,"PhiLep",lepton.phi(),0,0,0);
@@ -286,6 +278,4 @@ std::vector<LorentzVector> NeutrinoFitPolar(const LorentzVector & lepton, const 
 
   return solutions;
 }
-
-
 
