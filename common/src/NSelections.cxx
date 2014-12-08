@@ -40,3 +40,10 @@ NJetSelection::NJetSelection(int nmin_, int nmax_, const boost::optional<JetId> 
 bool NJetSelection::passes(const Event & event){
     return passes_minmax(*event.jets, nmin, nmax, event, jetid);
 }
+
+NTopJetSelection::NTopJetSelection(int nmin_, int nmax_, const boost::optional<TopJetId> & topjetid_): nmin(nmin_), nmax(nmax_), topjetid(topjetid_){}
+
+bool NTopJetSelection::passes(const Event & event){
+  return passes_minmax(*event.topjets, nmin, nmax, event, topjetid);
+}
+

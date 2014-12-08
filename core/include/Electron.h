@@ -2,6 +2,7 @@
 #define Electron_H
 
 #include "Particle.h"
+#include "FlavorParticle.h"
 
 /**
  *  @short electron class
@@ -118,6 +119,17 @@ class Electron : public Particle{
   }
   float relIsorho(const double rho) const{
     return ( m_chargedHadronIso + std::max( 0.0, m_neutralHadronIso + m_photonIso - rho*m_AEff ) ) / pt();
+  }
+
+  operator FlavorParticle() const{
+    FlavorParticle fp;
+    fp.set_charge(this->charge());
+    fp.set_pt(this->pt());
+    fp.set_eta(this->eta());
+    fp.set_phi(this->phi());
+    fp.set_energy(this->energy());
+    fp.set_pdgId(-13*this->charge());
+    return fp;
   }
 
  private:

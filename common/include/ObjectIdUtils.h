@@ -16,7 +16,7 @@ typedef std::function<bool (const Jet &, const uhh2::Event &)> JetId;
 typedef std::function<bool (const Electron &, const uhh2::Event &)> ElectronId;
 typedef std::function<bool (const Muon &, const uhh2::Event &)> MuonId;
 typedef std::function<bool (const Tau &, const uhh2::Event &)> TauId;
-
+typedef std::function<bool (const TopJet &, const uhh2::Event &)> TopJetId;
 
 /** \brief Cut on minimum pt and maximum |eta| of a particle
  * 

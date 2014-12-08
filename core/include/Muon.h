@@ -2,6 +2,7 @@
 #define Muon_H
 
 #include "Particle.h"
+#include "FlavorParticle.h"
 
 /**
  *  @short muon class
@@ -129,6 +130,17 @@ class Muon : public Particle{
 
   float relIso() const{
     return ( m_chargedHadronIso + std::max( 0.0, m_neutralHadronIso + m_photonIso - 0.5*m_puChargedHadronIso ) ) / pt();
+  }
+
+  operator FlavorParticle() const{
+    FlavorParticle fp;
+    fp.set_charge(this->charge());
+    fp.set_pt(this->pt());
+    fp.set_eta(this->eta());
+    fp.set_phi(this->phi());
+    fp.set_energy(this->energy());
+    fp.set_pdgId(-13*this->charge());
+    return fp;
   }
 
  private:
