@@ -53,7 +53,6 @@ ExampleTTbarRec::ExampleTTbarRec(Context & ctx): selection(ctx, "selection") {
     //make reconstruction hyptotheses
     recomodules.emplace_back(new PrimaryLepton(ctx));
     recomodules.emplace_back(new HighMassTTbarReconstruction(ctx,NeutrinoReconstruction));
-    recomodules.emplace_back(new CAJetsReconstruction(ctx,NeutrinoFitPolar));
     
 }
 
