@@ -8,6 +8,5 @@
 
 #pragma link C++ class ReconstructionHypothesis+;
 #pragma link C++ class std::vector<ReconstructionHypothesis>+;
-#pragma link C++ struct qualityflag+;
 
 #endif // __CINT__

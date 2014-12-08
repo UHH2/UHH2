@@ -1,111 +1,67 @@
-#ifndef ReconstructionHypothesis_H
-#define ReconstructionHypothesis_H
+#pragma once
 
 #include "UHH2/core/include/Particle.h"
-
-struct qualityflag{
-  std::string label;
-  float discriminator;
-};
+#include <map>
 
 /**
  *  @short container class to store the results of the top quark reconstruction
+ * 
+ * The top quarks reconstruction only applied to semileptonic ttbar events. A
+ * ReconstructionHypothesis then consists of finding the lepton, and assigning the jets of the event
+ * to either the leptonically decaying top or the hadronically decaying top. In addition
+ * to accessing these information (i.e., which jets are assigned to which side, etc.), each
+ * hypothesis can have a number of associated *discriminators*. A discriminator is identified
+ * by name and is a floating point value meant to measure how 'good' the hypothesis is according to some criterion;
+ * see ReconstructionHypothesisDiscriminators.h for different criteria and to fill the discriminators.
  */
-
-class ReconstructionHypothesis{
-
- public:
-
-
-  ReconstructionHypothesis(){
-    m_tophad_jets_ind.clear();
-    m_toplep_jets_ind.clear();
-    m_blep_ind=-1;
-    LorentzVector v4(0,0,0,0);
-    m_toplep_v4=v4;
-    m_tophad_v4=v4;
-    m_neutrino_v4=v4;
-    m_lepton.set_v4(v4);
-    m_lepton.set_charge(0);
-    m_qualityflags.clear();
-    m_blep_v4=v4;
-  };
-  ~ReconstructionHypothesis(){};
-
+class ReconstructionHypothesis {
+public:
   LorentzVector toplep_v4() const{return m_toplep_v4;}
   LorentzVector tophad_v4() const{return m_tophad_v4;} 
   LorentzVector neutrino_v4() const{return m_neutrino_v4;} 
   Particle lepton() const{return m_lepton;}
-  std::vector<unsigned int> tophad_jets_indices() const{return m_tophad_jets_ind;}
-  std::vector<unsigned int> toplep_jets_indices() const{return m_toplep_jets_ind;}
+  std::vector<Particle> tophad_jets() const{return m_tophad_jets;}
+  std::vector<Particle> toplep_jets() const{return m_toplep_jets;}
   LorentzVector top_v4() const{ return m_lepton.charge() > 0 ? m_toplep_v4 : m_tophad_v4;}
   LorentzVector antitop_v4() const{ return m_lepton.charge() < 0 ? m_toplep_v4 : m_tophad_v4;}
   LorentzVector wlep_v4() const{ return m_neutrino_v4+m_lepton.v4();}
   LorentzVector blep_v4() const{return m_blep_v4;}
-  int blep_index() const{ return m_blep_ind;}
 
-  /// get the discriminator value for this hypothesis
-  float discriminator(std::string l){
-    float discr=0;
-    bool found=false;
-    for(unsigned int i=0; i<m_qualityflags.size(); ++i){
-      if(l==m_qualityflags[i].label){
-	discr = m_qualityflags[i].discriminator;
-	found = true;
-	break;
+  /// get the discriminator value for this hypothesis; thows a runtime_error if it does not exist.
+  float discriminator(const std::string & l) const {
+      auto it = m_discriminators.find(l);
+      if(it == m_discriminators.end()){
+          throw std::runtime_error("ReconstructionHypothesis::discriminator: discriminator with label '" + l + "' not set");
       }
-    }
-    if(!found) std::cerr << "WARNING: discriminator with label " << l << " not found in hypothesis, return 0." <<std::endl;
-    return discr;
+      return it->second;
+  }
+  
+  /// test if a discriminator value with a certian label has already been added
+  bool has_discriminator(const std::string & label) const {
+      return m_discriminators.find(label) != m_discriminators.end();
   }
   
   void set_blep_v4(LorentzVector v4){m_blep_v4=v4;}
   void set_toplep_v4(LorentzVector v4){m_toplep_v4=v4;}
   void set_tophad_v4(LorentzVector v4){m_tophad_v4=v4;} 
   void set_neutrino_v4(LorentzVector v4){m_neutrino_v4=v4;}
-  void add_toplep_jet_index(unsigned int j){m_toplep_jets_ind.push_back(j);}
-  void add_tophad_jet_index(unsigned int j){m_tophad_jets_ind.push_back(j);}
-  void set_blep_index(int j){m_blep_ind=j;}
-  void set_lepton(Particle p){m_lepton=p;}
-  void add_qualityflag(qualityflag q){m_qualityflags.push_back(q);}
-  void add_qualityflag(std::string label, float discr){
-    qualityflag qflag;
-    qflag.label = label;
-    qflag.discriminator = discr;
-    add_qualityflag(qflag);
-  };
-
-  void clear_jetindices(){
-    m_tophad_jets_ind.clear();
-    m_toplep_jets_ind.clear();
+  void add_toplep_jet(const Particle & j){m_toplep_jets.push_back(j);}
+  void add_tophad_jet(const Particle & j){m_tophad_jets.push_back(j);}
+  void set_lepton(const Particle & l){m_lepton = l;}
+  void set_discriminator(const std::string & label, float discr){
+      m_discriminators[label] = discr;
   }
   
-  /// test if a discriminator value with a certian label has already been added
-  bool has_discriminator(std::string label){
-    for(unsigned int i=0; i< m_qualityflags.size(); ++i){
-      if(m_qualityflags[i].label == label) return true;
-    }
-    return false;
-  }
-
- private:
-
+private:
   LorentzVector m_blep_v4;
   LorentzVector m_toplep_v4;
   LorentzVector m_tophad_v4;
   LorentzVector m_neutrino_v4;
 
-  //indices to the jets in the jet list assigned to hadronic and leptonic tops
-  std::vector<unsigned int> m_tophad_jets_ind;
-  std::vector<unsigned int> m_toplep_jets_ind;
-  //index to the jet with highest pt assigned to the leptonic top
-  int m_blep_ind;
-
+  std::vector<Particle> m_tophad_jets;
+  std::vector<Particle> m_toplep_jets;
   Particle m_lepton;
 
-  std::vector<qualityflag> m_qualityflags;
-
+  std::map<std::string, float> m_discriminators;
 };
 
-
-#endif

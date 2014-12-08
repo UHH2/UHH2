@@ -79,6 +79,18 @@ class Particle{
     double dphi = deltaPhi(p2);
     return sqrt(deltaeta * deltaeta + dphi * dphi);
   }
+  
+  double deltaPhi(const LorentzVector & l) const {
+      double deltaphi = fabs(this->phi() - l.phi());
+      if(deltaphi > M_PI) deltaphi = 2* M_PI - deltaphi;
+      return deltaphi;
+  }
+  
+  double deltaR(const LorentzVector & l) const{
+    double deltaeta = m_eta - l.eta();
+    double dphi = deltaPhi(l);
+    return sqrt(deltaeta * deltaeta + dphi * dphi);
+  }
 
  private:
 
