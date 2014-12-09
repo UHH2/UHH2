@@ -1,6 +1,6 @@
 # this is tthe 'common' Makefile for the UHH2 package(s). It is usually included by
 # the sub-directories (such as core and example) after setting certain variables. The following
-# variables should be set:
+# variables can be set ,only the first is mandantory:
 #
 #  * LIBRARY: should be set to a unique name, which will be used for the shared library and PROOF .par name
 #        typically, use SUHH2<subdirname>
@@ -11,9 +11,12 @@
 #       must come last; see core and NtupleWriter for examples
 #  * PAR: if non-empty, build a minimal .par file for PROOF; this file can then be used in the SFrame configuration.
 #     Note that the created par file is minimal and does not do anything but to load the right shared object file.
-#  * TEST: if non-empty, build one test executable from each .cxx file in the 'test' subdirectory. Note that .cxx files are
-#       handles differently from .cpp files, see next item.
-#  * TESTLIB: if non-empty, build a shared object names libTest$(LIBRARY).so from all .cpp files in the 'test' subdirectory.
+#  * TEST: if non-empty, build one test executable from each .cxx file in the 'test' subdirectory, and use all .cpp files to create
+#       a shared object. The executables are linked against the shared object and against the boost unit test framework.
+
+ifeq ($(LIBRARY),)
+$(error Define the variable 'LIBRARY' before including Makefile.common!)
+endif
 
 # create obj and obj/$LIBRARY/PROOF-INF (and intermediate) directories:
 dummy := $(shell [ -d obj/$(LIBRARY)/PROOF-INF ] || mkdir -p obj/$(LIBRARY)/PROOF-INF )
@@ -32,6 +35,10 @@ ifeq ($(CMSSW_BASE),)
 $(error CMSSW not set up. Set up CMSSW first via cmsenv)
 endif
 
+scramtag = $(shell cd $$CMSSW_BASE; scram tool tag $(1) $(2))
+
+BOOST_CFLAGS := -I$(call scramtag,boost,INCLUDE)
+BOOST_LDFLAGS := -L$(call scramtag,boost,LIBDIR)
 
 INCLUDES := -I$(SFRAME_DIR) -I. -I$(CMSSW_BASE)/src
 LIBTARGET := $(SFRAME_LIB_PATH)/lib$(LIBRARY).so
@@ -60,37 +67,35 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 
-
 ifneq ($(TEST),)
 dummy := $(shell [ -d obj/test ] || mkdir obj/test)
 dummy := $(shell [ -d bin ] || mkdir bin)
 testsources := $(wildcard test/*.cxx)
 testprogs := $(patsubst test/%.cxx,bin/%,$(testsources))
-all: $(testprogs)
-obj/test/%.o: test/%.cxx
-	@$(CXX_CMD)
-bin/%: obj/test/%.o
-	@$(EXE_CMD) -lProof -lPyROOT -lTreePlayer
-endif
 
-
-
-ifneq ($(TESTLIB),)
-dummy := $(shell [ -d obj/test ] || mkdir obj/test)
-TESTLIBTARGET := $(SFRAME_LIB_PATH)/libTest$(LIBRARY).so
-all: $(TESTLIBTARGET)
 testlibsources := $(wildcard test/*.cpp)
 testlibobj := $(patsubst test/%.cpp,obj/test/%.o,$(testlibsources))
+testlib := $(SFRAME_LIB_PATH)/libTest$(LIBRARY).so
+
+all: $(testprogs)
+
+obj/test/%.o: test/%.cxx
+	@$(CXX_CMD)
+
+bin/%: obj/test/%.o $(testlib)
+	@$(EXE_CMD) -lProof -lPyROOT -lTreePlayer -lTest$(LIBRARY)
+
 obj/test/%.o: test/%.cpp
 	@$(CXX_CMD)
-$(TESTLIBTARGET): $(testlibobj) $(LIBTARGET)
-	@$(SHARED_CMD) -l$(LIBRARY)
+
+$(testlib): $(testlibobj) $(LIBTARGET)
+	@$(SHARED_CMD) -l$(LIBRARY) $(BOOST_LDFLAGS) -lboost_unit_test_framework
 endif
 
 
 
 LIBS := $(shell root-config --libs) -lSFrameCore -lXMLParser 
-CXXFLAGS := $(shell root-config --cflags) -std=c++0x -O3 -Wall -g -fPIC -Wno-unused-local-typedefs -pipe $(INCLUDES) $(USERCXXFLAGS)
+CXXFLAGS := $(shell root-config --cflags) -std=c++0x -O3 -Wall -g -fPIC -Wno-unused-local-typedefs -pipe $(BOOST_CFLAGS) $(INCLUDES) $(USERCXXFLAGS)
 LDFLAGS := $(LIBS) -fPIC -rdynamic -lrt -Wl,-z,defs -L$(SFRAME_LIB_PATH) $(USERLDFLAGS)
 
 SHARED_CMD = echo creating $@; $(CXX) $^ -shared $(LDFLAGS) -o $@ 
