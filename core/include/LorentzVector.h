@@ -9,6 +9,8 @@
 typedef ROOT::Math::LorentzVector< ROOT::Math::PtEtaPhiE4D< Double32_t > > LorentzVector;
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > LorentzVectorXYZE;
 
+namespace uhh2 {
+
 /// transfroms LorentzVector to TVector3
 inline TVector3 toVector(const LorentzVector & v4){
     return TVector3(v4.X(),v4.Y(),v4.Z());
@@ -45,4 +47,6 @@ inline double deltaR(const T & p1, const U & p2){
     double deltaeta = p1.eta() - p2.eta();
     double dphi = deltaPhi(p1, p2);
     return sqrt(deltaeta * deltaeta + dphi * dphi);
+}
+
 }

@@ -7,6 +7,7 @@
 #include <limits>
 
 using namespace std;
+using uhh2::deltaR;
 
 namespace {
 bool file_exists(const std::string & path){
