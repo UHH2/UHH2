@@ -24,6 +24,8 @@ std::string double2string(double d);
 std::string double2string(double d, int precision);
 std::string int2string(int i);
 
+double string2double(const std::string & s);
+
 /// Make a C++-mangled typename human-readable
 std::string demangle(const std::string & mangled_typename);
 

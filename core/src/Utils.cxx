@@ -6,6 +6,8 @@
 #include <limits>
 #include <strings.h>
 
+#include <boost/lexical_cast.hpp>
+
 #include <cxxabi.h>
 
 using namespace std;
@@ -52,6 +54,10 @@ std::string uhh2::int2string(int i){
         throw runtime_error("int2string: snprintf returned unexpected result");
     }
     return buf;
+}
+
+double uhh2::string2double(const std::string & s){
+    return boost::lexical_cast<double>(s);
 }
 
 std::string uhh2::demangle(const std::string & mangled_typename){
