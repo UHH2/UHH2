@@ -58,6 +58,8 @@ BOOST_AUTO_TEST_CASE(trivial) {
     
     auto solutions = NeutrinoReconstruction(toPtEtaPhi(lepton), toPtEtaPhi(neutrino));
     BOOST_REQUIRE_EQUAL(solutions.size(), 2);
+    BOOST_CHECK_LT(fabs(solutions[0].M2()), 0.1);
+    BOOST_CHECK_LT(fabs(solutions[1].M2()), 0.1);
     // make sure solutions fulfill W mass constraint:
     float mw1 = (solutions[0] + lepton).M();
     float mw2 = (solutions[1] + lepton).M();
@@ -74,6 +76,7 @@ BOOST_AUTO_TEST_CASE(no_real_solution) {
     auto neutrino = lep_neu.second;
     auto solutions = NeutrinoReconstruction(toPtEtaPhi(lepton), toPtEtaPhi(neutrino));
     BOOST_REQUIRE_EQUAL(solutions.size(), 1);
+    BOOST_CHECK_LT(fabs(solutions[0].M2()), 0.1);
     
     // but should still be close to original mass:
     float mw1 = (solutions[0] + lepton).M();
@@ -92,6 +95,8 @@ BOOST_AUTO_TEST_CASE(rotation) {
         auto solutions = NeutrinoReconstruction(toPtEtaPhi(lepton), toPtEtaPhi(neutrino));
         
         BOOST_REQUIRE_EQUAL(solutions.size(), 2);
+        BOOST_CHECK_LT(fabs(solutions[0].M2()), 0.1);
+        BOOST_CHECK_LT(fabs(solutions[1].M2()), 0.1);
         // make sure solutions fulfill W mass constraint:
         float mw1 = (solutions[0] + lepton).M();
         float mw2 = (solutions[1] + lepton).M();
@@ -119,12 +124,16 @@ BOOST_AUTO_TEST_CASE(rotation_noreal) {
         
         if(mtw > mW_rec){
             BOOST_REQUIRE_EQUAL(solutions.size(), 1);
+            BOOST_CHECK_LT(fabs(solutions[0].M2()), 0.1);
+            
             // W mass constraint cannot be fulfilled, but should be close to Mtw now:
             float mw1 = (solutions[0] + lepton).M();
             BOOST_CHECK_LT(fabs(mw1 - mtw) / mtw , 1e-3f);
         }
         else{
             BOOST_REQUIRE_EQUAL(solutions.size(), 2);
+            BOOST_CHECK_LT(fabs(solutions[0].M2()), 0.1);
+            BOOST_CHECK_LT(fabs(solutions[1].M2()), 0.1);
             
             float mw1 = (solutions[0] + lepton).M();
             float mw2 = (solutions[1] + lepton).M();

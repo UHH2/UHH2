@@ -8,7 +8,6 @@
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/JetIds.h"
 #include "UHH2/common/include/MuonIds.h"
-#include "UHH2/common/include/ElectronIds.h"
 #include "UHH2/common/include/NSelections.h"
 #include "UHH2/common/include/TTbarReconstruction.h"
 
@@ -48,7 +47,7 @@ ExampleTTbarRec::ExampleTTbarRec(Context & ctx): selection(ctx, "selection") {
     // object id is passed, as the cleaners have removed the objects not passing the id already.
     selection.add<NMuonSelection>("nm >= 1", 1);
     selection.add<NJetSelection>("nj >= 2", 2);
-    selection.add<NTopJetSelection>("nj >= 1", 1);
+    selection.add<NTopJetSelection>("ntj >= 1", 1);
 
     //make reconstruction hyptotheses
     recomodules.emplace_back(new PrimaryLepton(ctx));

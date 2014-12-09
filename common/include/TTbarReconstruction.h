@@ -119,18 +119,3 @@ private:
  */
 std::vector<LorentzVector> NeutrinoReconstruction(const LorentzVector & lepton, const LorentzVector & met);
 
-
-/** \brief Extension of NeutrinoReconstruction
- *
- * Extension of the neutrino reconstruction in EventCalc. This function
- * performs a fit if the sqrt() part of the solution becomes imaginary.
- *
- * Basic idea is that for the case the Neutrino becomes an Im-Part you do a fit
- * on the px and py components. If you look into the kinematics there is a way of
- * doing this with a W-mass constraint. As the name indicates polarcoordinates
- * are used in the computation.
- *
- * TODO: document better; probably need to re-write!
- */
-std::vector<LorentzVector> NeutrinoFitPolar(const LorentzVector & lepton, const LorentzVector & met);
-
