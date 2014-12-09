@@ -1,5 +1,6 @@
 #include "UHH2/common/include/JetCorrections.h"
-#include "UHH2/common/include/Utils.h" // for locate_file
+#include "UHH2/common/include/Utils.h"
+#include "UHH2/core/include/Utils.h"
 
 #include "UHH2/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "UHH2/JetMETObjects/interface/JetCorrectorParameters.h"
@@ -7,6 +8,7 @@
 #include <string>
 
 using namespace std;
+using namespace uhh2;
 
 const std::vector<std::string> JERFiles::PHYS14_L123_MC = {"JetMETObjects/data/PHYS14_50_V1_L1FastJet_AK4PFchs.txt",
   "JetMETObjects/data/PHYS14_50_V1_L2Relative_AK4PFchs.txt", "JetMETObjects/data/PHYS14_50_V1_L3Absolute_AK4PFchs.txt"};
@@ -42,3 +44,17 @@ bool JetCorrector::process(uhh2::Event & event){
 }
 
 JetCorrector::~JetCorrector(){}
+
+
+JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
+    throw runtime_error("JetResolutionSmearer: not yet implemented");
+    smear_met = string2bool(ctx.get("propagate_jercorr_to_met", "false"));
+}
+
+bool JetResolutionSmearer::process(uhh2::Event & event) {
+    // FIXME: implement
+    return true;
+}
+
+JetResolutionSmearer::~JetResolutionSmearer(){}
+
