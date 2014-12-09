@@ -50,13 +50,6 @@ double pTrel(const Particle  & p, const Particle * reference_axis){
     return ptrel;
 }
 
-double deltaPhiAbs(double x1, double x2){
-  // x1 & x2 are two Phi expected in the range [-PI,PI]
-  double deltaphi = fabs(x1 - x2);
-  if(deltaphi > M_PI) deltaphi = 2*M_PI - deltaphi;
-  return deltaphi;
-}
-
 std::string locate_file(const std::string & fname){
     if(fname.empty()){
         throw invalid_argument("locate_file with empty fname called");

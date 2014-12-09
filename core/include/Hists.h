@@ -26,8 +26,7 @@ public:
     
     virtual ~Hists();
     
-    // - fill the histograms based on the event content; this is called for each (selected) event.
-    //   Use the get method with the same name as used in book to retrieve the histogram
+    // fill the histograms based on the event content; this is called for each (selected) event.
     virtual void fill(const Event & ev) = 0;
     
 protected:

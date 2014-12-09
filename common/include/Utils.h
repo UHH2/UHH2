@@ -34,5 +34,3 @@ double pTrel(const Particle  & p, const Particle * reference_axis);
  */
 std::string locate_file(const std::string & fname);
 
-/// absolute value of Delta_phi, xi should be in [-pi,pi]
-double deltaPhiAbs(double x1, double x2);
