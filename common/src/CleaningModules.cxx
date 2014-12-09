@@ -46,3 +46,11 @@ bool ElectronCleaner::process(uhh2::Event & event){
     clean_collection(*event.electrons, event, ele_id);
     return true;
 }
+
+TauCleaner::TauCleaner(const TauId & tau_id_): tau_id(tau_id_){}
+
+bool TauCleaner::process(uhh2::Event & event){
+    assert(event.taus);
+    clean_collection(*event.taus, event, tau_id);
+    return true;
+}

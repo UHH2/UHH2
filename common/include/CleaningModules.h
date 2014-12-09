@@ -55,3 +55,17 @@ public:
 private:
     ElectronId ele_id;
 };
+
+/** \brief Keep only taus passing a given tau id
+ *
+ * See comments for MuonCleaner.
+ */
+class TauCleaner : public uhh2::AnalysisModule {
+public:
+
+    explicit TauCleaner(const TauId & tau_id);
+    virtual bool process(uhh2::Event & event) override;
+
+private:
+    TauId tau_id;
+};

@@ -20,8 +20,8 @@ private:
     // that would entail quite a runtime overhead and it is much faster to declare the histograms
     // here directly.
     TH1F *number, *pt, *eta, *phi, *isolation, *charge, *ptrel, *deltaRmin;
-    TH1F *number_1, *pt_1, *eta_1, *phi_1, *isolation_1, *charge_1, *ptrel_1, *deltaRmin_1;
-    TH1F *number_2, *pt_2, *eta_2, *phi_2, *isolation_2, *charge_2, *ptrel_2, *deltaRmin_2;
+    TH1F *pt_1, *eta_1, *phi_1, *isolation_1, *charge_1, *ptrel_1, *deltaRmin_1;
+    TH1F *pt_2, *eta_2, *phi_2, *isolation_2, *charge_2, *ptrel_2, *deltaRmin_2;
     
     TH2F *deltaRmin_ptrel, *deltaRmin_ptrel_1, *deltaRmin_ptrel_2;
 };
