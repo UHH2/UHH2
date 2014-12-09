@@ -9,7 +9,7 @@ typedef std::function< std::vector<LorentzVector>  (const LorentzVector & lepton
 
 
 /** \brief Search the highest-pt lepton (electron or muon)
- * 
+ *
  * The found lepton is written to the event as FlavourParticle
  * with name "PrimaryLepton". Should be called after proper cleaning
  * modules for electron and muon ID.
@@ -17,28 +17,27 @@ typedef std::function< std::vector<LorentzVector>  (const LorentzVector & lepton
  */
 class PrimaryLepton: public uhh2::AnalysisModule {
 public:
-  explicit PrimaryLepton(uhh2::Context & ctx);
+    explicit PrimaryLepton(uhh2::Context & ctx);
 
-  virtual bool process(uhh2::Event & event) override;
+    virtual bool process(uhh2::Event & event) override;
 
-  virtual ~PrimaryLepton();
+    virtual ~PrimaryLepton();
 
 private:
-  uhh2::Event::Handle<FlavorParticle> h_primlep;
+    uhh2::Event::Handle<FlavorParticle> h_primlep;
 };
 
 
-/**
- * @short Make a list of ttbar reconstruction hypotheses as used in high-mass semileptonic ttbar 8 TeV analysis
+/** \brief Make a list of ttbar reconstruction hypotheses as used in high-mass semileptonic ttbar 8 TeV analysis
  *
  * Make a list of ttbar reconstruction hypothesis using all (~ 3^Njet) combinations
- * of assigning jets to either the leptonic top, the hadronic top, or none of them; 
+ * of assigning jets to either the leptonic top, the hadronic top, or none of them;
  * hypotheses not assigning any jet to either the hadronic or leptonic top
  * are discarded.
  * For the leptonic side, the primary lepton and the neutrino reconstruction
  * according to the neutrinofunction parameter is done, which typically doubles
  * the number of hypotheses.
- * 
+ *
  * Make sure to run an appropriate cleaner to keep only jets which should be used
  * in the hypothesis. Only works for events with Njets >= 2.
  *
@@ -48,25 +47,24 @@ private:
  */
 class HighMassTTbarReconstruction: public uhh2::AnalysisModule {
 public:
-  
+
     explicit HighMassTTbarReconstruction(uhh2::Context & ctx, const NeutrinoReconstructionMethod & neutrinofunction, const std::string & label="HighMassReconstruction");
-    
+
     virtual bool process(uhh2::Event & event) override;
-    
+
     virtual ~HighMassTTbarReconstruction();
 
- private:
+private:
     NeutrinoReconstructionMethod m_neutrinofunction;
     uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_recohyps;
     uhh2::Event::Handle<FlavorParticle> h_primlep;
 };
 
 
-/**
- * @short Make a list of ttbar reconstruction hypotheses using top tagging
+/** \brief Make a list of ttbar reconstruction hypotheses using top tagging
  *
  * Take the C/A-Jet with the TopTag and use it as hadronic Top.
- * For the leptonic side the primary lepton is taken. A list is generated 
+ * For the leptonic side the primary lepton is taken. A list is generated
  * with all possible combinations of single ak5 jets.
  * Make sure a reasonable selection is run before to get hypotheses.
  * There is hardcoded a minimum
@@ -75,18 +73,18 @@ public:
  * neutrinofunction can be either NeutrinoReconstruction or NeutrinoFitPolar
  *
  * label = name of the hypotheses list in the event / output tree
- * 
+ *
  * TODO: implement, document better.
  */
 class TopTagReconstruction: public uhh2::AnalysisModule {
-public: 
+public:
     explicit TopTagReconstruction(uhh2::Context & ctx, const NeutrinoReconstructionMethod & neutrinofunction, const std::string & label="TopTagReconstruction");
-    
+
     virtual bool process(uhh2::Event & event) override;
-    
+
     virtual ~TopTagReconstruction();
 
- private:
+private:
     NeutrinoReconstructionMethod m_neutrinofunction;
     uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_recohyps;
     uhh2::Event::Handle<FlavorParticle> h_primlep;
@@ -94,45 +92,44 @@ public:
 
 
 
-/**
- * @short Function to calculate the neutrino four-momentum from MET and charged lepton momenta
+/** \brief Calculate the neutrino four-momentum from MET and charged lepton momenta
  *
  * Given the Decay:
  *
  * W -> lepton + Neutrino
  *
- * reconstruct the Neutrino pZ component, using the fact that the lepton
+ * reconstruct the complete possible Neutrino four-vector(s), using the fact that the lepton
  * is well-measured and assuming that the MET corresponds to the x and y components
- * of the Neutrino. With these assumptions, the neutrino pZ is given by a quadratic equation
+ * of the Neutrino momentum. With these assumptions, the neutrino pZ is given by a quadratic equation
  * for pZ which follows from the W-mass constraint
  *
  * W_p4^2 = (lepton_p4 + Neutrino_p4)^2  = m_W^2
- * 
+ *
  * The code assumes that the lepton mass and the neutrino mass are 0 and uses
  * m_W = 80.399 GeV.
- * 
- * The returned solutions are the neutrino four-vectors where pZ solves the W-mass contraint.
- * In general, there can be 0, 1, or 2 real-valued solutions for pZ. In case there is no real solution,
- * the real part of the complex solution is used instead; the returned vector has size=1 in this case.
- * If this happens, the W mass constrained is not fulfilled exactly, but only approximately.
- * In all other cases, 2 solutions are returned and the W-mass constraint is fulfilled exactly (note that
- * 2 solutions are returned even if there is only 1, as the distiction between 1 or 2 real solutions is not
- * possible in a numerically stable way).
+ *
+ * The returned solutions are the neutrino four-vectors where pZ was calculated from the W-mass contraint.
+ * As pZ is a solution of a quadratic equation, there can be either 0, 1 or 2 real solutions.
+ *  - In case there is no real solution, the real part of the complex solution is used instead; the returned
+ *    vector has size=1 in this case. If this happens, the W mass constrained is not fulfilled exactly, but only approximately.
+ *    This happens if the transverse W mass exceeds the W mass.
+ *  - In all other cases, 2 solutions are returned and the W-mass constraint is fulfilled exactly (note that
+ *    2 solutions are returned even if there is only 1, as the distiction between 1 or 2 real solutions is not
+ *    possible in a numerically stable way).
  */
 std::vector<LorentzVector> NeutrinoReconstruction(const LorentzVector & lepton, const LorentzVector & met);
 
 
-/**
- * @short Extension of NeutrinoReconstruction
+/** \brief Extension of NeutrinoReconstruction
  *
- * Extension of the neutrino reconstruction in EventCalc. This function 
+ * Extension of the neutrino reconstruction in EventCalc. This function
  * performs a fit if the sqrt() part of the solution becomes imaginary.
  *
  * Basic idea is that for the case the Neutrino becomes an Im-Part you do a fit
- * on the px and py components. If you look into the kinematics there is a way of 
- * doing this with a W-mass constraint. As the name indicates polarcoordinates 
+ * on the px and py components. If you look into the kinematics there is a way of
+ * doing this with a W-mass constraint. As the name indicates polarcoordinates
  * are used in the computation.
- * 
+ *
  * TODO: document better; probably need to re-write!
  */
 std::vector<LorentzVector> NeutrinoFitPolar(const LorentzVector & lepton, const LorentzVector & met);

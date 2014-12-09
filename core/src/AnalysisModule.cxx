@@ -10,8 +10,9 @@ void Context::fail(const std::string & key) const{
 }
 
 
-/** \brief AnalysisModule which does nothin nd lets all events pass
- *
+/** \brief AnalysisModule which does nothing and lets all events pass
+ * 
+ * Only useful for testing.
  */
 class NoopAnalysisModule: public AnalysisModule {
 public:

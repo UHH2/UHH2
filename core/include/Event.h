@@ -1,5 +1,3 @@
-#ifndef __CINT__
-
 #pragma once
 
 #include "UHH2/core/include/NtupleObjects.h"
@@ -146,4 +144,3 @@ private:
 
 }
 
-#endif
