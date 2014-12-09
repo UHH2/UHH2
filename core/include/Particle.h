@@ -1,12 +1,8 @@
 #ifndef Particle_H
 #define Particle_H
 
-#include <vector>
-#include "Math/LorentzVector.h"
-#include "Math/PtEtaPhiE4D.h"
-#include "TObject.h"
+#include "UHH2/core/include/LorentzVector.h"
 
-typedef ROOT::Math::LorentzVector< ROOT::Math::PtEtaPhiE4D< Double32_t > > LorentzVector;
 
 /**
  *  @short generic particle class
@@ -67,32 +63,7 @@ class Particle{
     set_energy(v4.E());
   }
 
-  /// distance in phi to particle p2
-  double deltaPhi(const Particle & p2) const{
-    double deltaphi = fabs(this->phi() - p2.phi());
-    if(deltaphi > M_PI) deltaphi = 2* M_PI - deltaphi;
-    return deltaphi;
-  }
-  /// distance in eta-phi plane to particle p2
-  double deltaR(const Particle & p2) const{
-    double deltaeta = m_eta - p2.m_eta;
-    double dphi = deltaPhi(p2);
-    return sqrt(deltaeta * deltaeta + dphi * dphi);
-  }
-  
-  double deltaPhi(const LorentzVector & l) const {
-      double deltaphi = fabs(this->phi() - l.phi());
-      if(deltaphi > M_PI) deltaphi = 2* M_PI - deltaphi;
-      return deltaphi;
-  }
-  
-  double deltaR(const LorentzVector & l) const{
-    double deltaeta = m_eta - l.eta();
-    double dphi = deltaPhi(l);
-    return sqrt(deltaeta * deltaeta + dphi * dphi);
-  }
-
- private:
+private:
 
   short m_charge;
   float m_pt; 

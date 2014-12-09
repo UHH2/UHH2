@@ -55,7 +55,7 @@ bool TopDRMCDiscriminator::process(uhh2::Event & event){
     auto & hyps = event.get(h_hyps);
     const auto & ttbargen = event.get(h_ttbargen);
     for(auto & hyp: hyps){
-        auto deltar_sum = ttbargen.Top().deltaR(hyp.top_v4()) + ttbargen.Antitop().deltaR(hyp.antitop_v4());
+        auto deltar_sum = deltaR(ttbargen.Top(), hyp.top_v4()) + deltaR(ttbargen.Antitop(), hyp.antitop_v4());
         hyp.set_discriminator(config.discriminator_label, deltar_sum);
     }
     return true;
@@ -77,7 +77,7 @@ float match_dr(const Particle & p, const std::vector<T> & jets, int& index){
   float mindr = infinity;
   index = -1;
   for(unsigned int i=0; i<jets.size(); ++i){
-    float dR = p.deltaR(jets.at(i));
+    float dR = deltaR(p, jets.at(i));
     if( dR <0.3 && dR<mindr) {
       mindr=dR;
       index=i;
@@ -134,7 +134,7 @@ bool CorrectMatchDiscriminator::process(uhh2::Event & event){
         }
 
         //add deltaR between reconstructed and true neutrino
-        correct_dr += ttbargen.Neutrino().deltaR(hyp.neutrino_v4());
+        correct_dr += deltaR(ttbargen.Neutrino(), hyp.neutrino_v4());
         hyp.set_discriminator(config.discriminator_label, correct_dr);
     }
     return true;

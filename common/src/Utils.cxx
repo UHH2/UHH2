@@ -29,7 +29,7 @@ const Jet * nextJet(const Particle  & p, const std::vector<Jet> & jets){
     const Jet* nextjet=0;
     for(unsigned int i=0; i<jets.size(); ++i) {
         const Jet & ji = jets[i];
-        double dr = ji.deltaR(p);
+        double dr = deltaR(ji, p);
         if(dr < deltarmin) {
             deltarmin = dr;
             nextjet = &ji;

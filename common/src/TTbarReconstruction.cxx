@@ -1,5 +1,5 @@
 #include "UHH2/common/include/TTbarReconstruction.h"
-#include "UHH2/common/include/LorentzVector.h"
+#include "UHH2/core/include/LorentzVector.h"
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/core/include/Utils.h"
 

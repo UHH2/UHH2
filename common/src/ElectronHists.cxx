@@ -1,6 +1,7 @@
 #include "UHH2/common/include/ElectronHists.h"
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/core/include/Event.h"
+#include "UHH2/core/include/LorentzVector.h"
 
 #include "TH1F.h"
 #include "TH2F.h"
@@ -58,7 +59,7 @@ void ElectronHists::fill(const Event & event){
         
         if(event.jets){
             auto nj = nextJet(ele, *event.jets);
-            auto drmin_val = nj ? ele.deltaR(*nj) : numeric_limits<float>::infinity();
+            auto drmin_val = nj ? deltaR(ele, *nj) : numeric_limits<float>::infinity();
             drmin_buf.push_back(drmin_val);
             ptrel_buf.push_back(pTrel(ele, nj));
             ptrel->Fill(ptrel_buf.back(), w);
