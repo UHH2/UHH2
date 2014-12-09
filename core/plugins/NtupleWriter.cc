@@ -1113,15 +1113,18 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           jet.set_energy(gen_jet.energy());
 
           // recalculate the jet charge.
-          // Currently not done due to an issue with miniAOD:
-          // https://hypernews.cern.ch/HyperNews/CMS/get/physTools/3274.html
-          /*cout << "Jet charge genjets " << j << ":" << i << endl;
           int jet_charge = 0;
-          for(const auto & constituent : gen_jet){
-              jet_charge += constituent.charge();
+          size_t nd = gen_jet.numberOfSourceCandidatePtrs();
+          for(size_t i=0; i<nd; ++i){
+            auto constituent = gen_jet.sourceCandidatePtr(i);
+            if(constituent.isNull()){
+               continue;
+            }
+            // use constituent here
+            jet_charge += constituent->charge();
           }
           jet.set_charge(jet_charge);
-          genjets[j].push_back(jet);*/
+          genjets[j].push_back(jet);
        }
      }
    }
