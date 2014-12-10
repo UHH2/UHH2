@@ -7,6 +7,7 @@
 #include "Math/Quaternion.h"
 
 using namespace std;
+using namespace uhh2;
 
 namespace {
 

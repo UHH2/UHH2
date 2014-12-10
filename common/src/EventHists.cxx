@@ -23,16 +23,16 @@ void EventHists::fill(const uhh2::Event & e){
     Weights->Fill(e.weight);
     MET->Fill(e.met->pt(), e.weight);
     auto met = e.met->pt();
-    boost::optional<float> primlep_pt, ht;
+    float primlep_pt = -1.0f, ht = -1.0f;
     if(e.get_state(h_primlep) == GenericEvent::state::valid){
         primlep_pt = e.get(h_primlep).pt();
-        HTLep->Fill(*primlep_pt + met, e.weight);
+        HTLep->Fill(primlep_pt + met, e.weight);
     }
     if(e.get_state(h_ht)==GenericEvent::state::valid){
         ht = e.get(h_ht);
-        HT->Fill(*ht, e.weight);
+        HT->Fill(ht, e.weight);
     }
-    if(primlep_pt && ht){
-        ST->Fill(*ht + *primlep_pt + met, e.weight);
+    if(primlep_pt >= 0.0f && ht >= 0.0f){
+        ST->Fill(ht + primlep_pt + met, e.weight);
     }
 }
