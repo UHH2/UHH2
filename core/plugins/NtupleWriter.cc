@@ -167,7 +167,11 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       context.reset(new uhh2::CMSSWContext(*ges, outfile, tr));
   }
   
-  std::cout<<"begin"<<std::endl;
+  // TODO: cleanup the configuration by better grouping which
+  // parameters are for which objects. Could even pass
+  // a edm::ParameterSet for each NtupleWriterModule.
+  doPV = iConfig.getParameter<bool>("doPV");
+  doRho = iConfig.getUntrackedParameter<bool>("doRho",true);
   bool doElectrons = iConfig.getParameter<bool>("doElectrons");
   bool doMuons = iConfig.getParameter<bool>("doMuons");
   bool doTaus = iConfig.getParameter<bool>("doTaus");
@@ -181,16 +185,20 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doMET = iConfig.getParameter<bool>("doMET");
   doGenInfo = iConfig.getParameter<bool>("doGenInfo");
   doAllGenParticles = iConfig.getParameter<bool>("doAllGenParticles");
-  doPV = iConfig.getParameter<bool>("doPV");
-  doTopJets = iConfig.getParameter<bool>("doTopJets");
-  doTopJetsConstituents = iConfig.getParameter<bool>("doTopJetsConstituents");
-  doTrigger = iConfig.getParameter<bool>("doTrigger");
+
+  // topjet configuration:
+  bool doTopJets = iConfig.getParameter<bool>("doTopJets");
+  bool doTopJetsConstituents = iConfig.getParameter<bool>("doTopJetsConstituents");
   SVComputer_  = iConfig.getUntrackedParameter<edm::InputTag>("svComputer",edm::InputTag("combinedSecondaryVertex"));
-  doTagInfos = iConfig.getUntrackedParameter<bool>("doTagInfos",false);
-  doRho = iConfig.getUntrackedParameter<bool>("doRho",true);
+  bool doTagInfos = iConfig.getUntrackedParameter<bool>("doTagInfos",false);
+
+
+  doTrigger = iConfig.getParameter<bool>("doTrigger");
+  doPuppi = iConfig.getParameter<bool>("doPuppi");
+  runOnMiniAOD = iConfig.getParameter<bool>("runOnMiniAOD");
+
   bool storePFsAroundLeptons = iConfig.getUntrackedParameter<bool>("storePFsAroundLeptons",false);
   bool doAllPFConstituents = iConfig.getParameter<bool>("doAllPFConstituents");
-  runOnMiniAOD = iConfig.getParameter<bool>("runOnMiniAOD");
 
   if(storePFsAroundLeptons){
       throw runtime_error("storePFsAroundLeptons not supported any more");
@@ -203,6 +211,9 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   // inform the ges what they write to the uhh2::Event
   if(doTopJetsConstituents || doJetsConstituents){
       branch(tr, "PFParticles", "std::vector<PFParticle>", &pfparticles);
+  }
+  if(doPuppi){
+      branch(tr, "PuppiParticles", "std::vector<PFParticle>", &puppiparticles);
   }
   if(doElectrons){
       using uhh2::NtupleWriterElectrons;
@@ -251,6 +262,34 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
           writer_modules.emplace_back(new NtupleWriterJets(cfg, i==0));
       }
   }
+  if(doTopJets){
+    using uhh2::NtupleWriterTopJets;
+    auto topjet_sources = iConfig.getParameter<std::vector<std::string> >("topjet_sources");
+    double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
+    double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
+    std::vector<std::string> topjet_constituents_sources;
+    if(doTopJetsConstituents) topjet_constituents_sources = iConfig.getParameter<std::vector<std::string> >("topjet_constituents_sources");
+    for(size_t j=0; j< topjet_sources.size(); ++j){
+        NtupleWriterTopJets::Config cfg(*context, consumesCollector(), topjet_sources[j], topjet_sources[j]);
+        cfg.runOnMiniAOD = runOnMiniAOD;
+        cfg.doTagInfos = doTagInfos;
+        cfg.ptmin = topjet_ptmin;
+        cfg.etamax = topjet_etamax;
+        if(doTopJetsConstituents && j < topjet_constituents_sources.size()){
+            cfg.constituent_src = topjet_constituents_sources[j];
+            bool is_puppi =  topjet_constituents_sources[j].find("Puppi") != string::npos;
+            if(is_puppi){
+                cfg.pfparts = &puppiparticles;
+            }
+            else{
+                cfg.pfparts = &pfparticles;
+            }
+        }
+        topjet_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0));
+    }
+  }
+
+
 
   // initialization of tree variables
   event.reset(new uhh2::Event(*ges));
@@ -289,22 +328,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         event->genjets = &genjets[0];
     }
   }
-  if(doTopJets){
-    auto topjet_sources = iConfig.getParameter<std::vector<std::string> >("topjet_sources");
-    topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
-    topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
-    topjets.resize(topjet_sources.size());
-    for(size_t j=0; j< topjet_sources.size(); ++j){
-      topjet_tokens.push_back(consumes<vector<pat::Jet>>(topjet_sources[j]));
-      branch(tr, topjet_sources[j].c_str(), "std::vector<TopJet>", &topjets[j]);
-    }
-    if(!topjet_sources.empty()){
-        event->topjets = &topjets[0];
-    }
-  }
-
-  if(doTopJetsConstituents) topjet_constituents_sources = iConfig.getParameter<std::vector<std::string> >("topjet_constituents_sources");
-  if(doAllPFConstituents) pf_constituents_sources = iConfig.getParameter<std::vector<std::string> >("pf_constituents_sources");
   if(doGenTopJets){
     auto gentopjet_sources = iConfig.getParameter<std::vector<std::string> >("gentopjet_sources");
     gentopjet_ptmin = iConfig.getParameter<double> ("gentopjet_ptmin");
@@ -402,6 +425,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    edm::CPUTimer timer;
    timer.start();
    pfparticles.clear();
+   puppiparticles.clear();
    
    event->weight = 1.0;
    event->run = iEvent.id().run();
@@ -680,204 +704,36 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    
    print_times(timer, "genjetswithparts");
    
-   // ------------- jets -------------
    for(auto & m : writer_modules){
        m->process(iEvent, *event);
    }
 
-   // ------------- top jets -------------
-   if(doTopJets){
-     const GenericMVAJetTagComputer *computer = 0;
-     if(doTagInfos){
-        edm::ESHandle<JetTagComputer> computerHandle;
-        iSetup.get<JetTagComputerRecord>().get( SVComputer_.label(), computerHandle );
-        computer = dynamic_cast<const GenericMVAJetTagComputer*>( computerHandle.product() );
-     }
-
-     for(size_t j=0; j< topjet_tokens.size(); ++j){
-       topjets[j].clear();
-
-       edm::Handle<pat::JetCollection> h_pat_topjets;
-       iEvent.getByToken(topjet_tokens[j], h_pat_topjets);
-       const vector<pat::Jet> & pat_topjets = *h_pat_topjets;
-
-       for (unsigned int i = 0; i < pat_topjets.size(); i++) {
-           const pat::Jet & pat_topjet =  pat_topjets[i];
-           if(pat_topjet.pt() < topjet_ptmin) continue;
-           if(fabs(pat_topjet.eta()) > topjet_etamax) continue;
-
-           TopJet topjet;
-           uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet);
-         
-           /*
-	     const reco::GenJet *genj = pat_topjet.genJet();
-	     if(genj){
-	       topjet.set_genjet_pt ( genj->pt());
-	       topjet.set_genjet_eta ( genj->eta());
-	       topjet.set_genjet_phi ( genj->phi());
-	       topjet.set_genjet_energy ( genj->energy());
-	       if(doAllGenParticles){
-	         std::vector<const reco::GenParticle * > jetgenps = genj->getGenConstituents();
-	         for(unsigned int l = 0; l<jetgenps.size(); ++l){
-	           for(unsigned int k=0; k< genps.size(); ++k){
-		     if(jetgenps[l]->pt() == genps[k].pt() && jetgenps[l]->pdgId() == genps[k].pdgId()){
-		       topjet.add_genparticles_index(genps[k].index());
-		       break;
-		     }
-	        }
-	      }
-	     if(topjet.genparticles_indices().size()!= jetgenps.size())
-	       std::cout << "WARNING: Found only " << topjet.genparticles_indices().size() << " from " << jetgenps.size() << " gen particles of this topjet"<<std::endl;
-	       }
-	     }
-	 */
-
-	 // add constituents to the jet, if requested
-	 if (doTopJetsConstituents){
-	   if (topjet_constituents_sources.size()>j){ //only add constituents if they are defined
-	     edm::Handle<pat::JetCollection> pat_topjets_with_cands;
-	     iEvent.getByLabel(topjet_constituents_sources[j], pat_topjets_with_cands);
-	     const pat::Jet* pat_topjet_wc = NULL;
-
-	     for (unsigned int it = 0; it < pat_topjets_with_cands->size(); it++) {
-	       const pat::Jet* cand =  dynamic_cast<pat::Jet const *>(&pat_topjets_with_cands->at(it));
-               assert(cand);
-	       double dphi = deltaPhi(cand->phi(), pat_topjet.phi());   
-	       if (fabs(dphi)<0.5 && fabs(cand->eta()-pat_topjet.eta())<0.5){ // be generous: filtering, pruning... can change jet axis
-		 pat_topjet_wc = cand;
-		 break;
-	       }
-	     }
-
-	     if (pat_topjet_wc){
-	       //if (pat_topjet.pt()>150) 
-	       uhh2::NtupleWriterJets::store_jet_constituents(*pat_topjet_wc, topjet, pfparticles, runOnMiniAOD);
-	       // now run substructure information
-	       JetProps substructure(&topjet);
-	       substructure.set_pf_cands(&pfparticles);
-	       double tau1 = substructure.GetNsubjettiness(1, Njettiness::onepass_kt_axes, 1., 2.0);
-	       double tau2 = substructure.GetNsubjettiness(2, Njettiness::onepass_kt_axes, 1., 2.0);
-	       double tau3 = substructure.GetNsubjettiness(3, Njettiness::onepass_kt_axes, 1., 2.0);
-	       double qjets = substructure.GetQjetVolatility(iEvent.id().event(), 2.0);
-	       topjet.set_tau1(tau1);
-	       topjet.set_tau2(tau2);
-	       topjet.set_tau3(tau3);
-	       topjet.set_qjets_volatility(qjets);
-	     }
-	   }
-	 }
-
-
-	 for (unsigned int k = 0; k < pat_topjet.numberOfDaughters(); k++) {
-	   Particle subjet_v4;
-
-	   reco::Candidate const * subjetd =  pat_topjet.daughter(k);
-           pat::Jet const * patsubjetd = dynamic_cast<pat::Jet const *>(subjetd);
-	   if(patsubjetd) {
-              auto p4 = patsubjetd->correctedP4(0);
-	      subjet_v4.set_pt(p4.pt());
-              subjet_v4.set_eta(p4.eta());
-              subjet_v4.set_phi(p4.phi()); 
-              subjet_v4.set_energy(p4.E());
-              topjet.add_subjet(subjet_v4);
-	      //btag info
-              topjet.add_subFlavour(patsubjetd->partonFlavour());
-              topjet.add_subCSV(patsubjetd->bDiscriminator("combinedSecondaryVertexBJetTags"));
-	      //info for subjet JEC correction
-	      topjet.add_subArea(patsubjetd->jetArea());
-	      topjet.add_subJEC_raw(patsubjetd->jecFactor("Uncorrected"));
-	      if (doTagInfos)
-		{
-		  //ip tag info
-		  reco::TaggingVariableList tvlIP=patsubjetd->tagInfoTrackIP("impactParameter")->taggingVariables();
-		  topjet.add_subTrackMomentum(tvlIP.getList(reco::btau::trackMomentum,false));
-		  topjet.add_subTrackEta(tvlIP.getList(reco::btau::trackEta,false));
-		  topjet.add_subTrackEtaRel(tvlIP.getList(reco::btau::trackEtaRel,false));
-		  topjet.add_subTrackDeltaR(tvlIP.getList(reco::btau::trackDeltaR,false));
-		  topjet.add_subTrackSip3dVal(tvlIP.getList(reco::btau::trackSip3dVal,false));
-		  topjet.add_subTrackSip3dSig(tvlIP.getList(reco::btau::trackSip3dSig,false));
-		  topjet.add_subTrackSip2dVal(tvlIP.getList(reco::btau::trackSip2dVal,false));
-		  topjet.add_subTrackSip2dSig(tvlIP.getList(reco::btau::trackSip2dSig,false));
-		  topjet.add_subTrackDecayLenVal(tvlIP.getList(reco::btau::trackDecayLenVal,false));
-		  topjet.add_subTrackChi2(tvlIP.getList(reco::btau::trackChi2,false));
-		  topjet.add_subTrackNTotalHits(tvlIP.getList(reco::btau::trackNTotalHits,false));
-		  topjet.add_subTrackNPixelHits(tvlIP.getList(reco::btau::trackNPixelHits,false));     
-		  topjet.add_subTrackPtRel(tvlIP.getList(reco::btau::trackPtRel,false));
-		  topjet.add_subTrackPPar(tvlIP.getList(reco::btau::trackPPar,false));
-		  topjet.add_subTrackPtRatio(tvlIP.getList(reco::btau::trackPtRatio,false));
-		  topjet.add_subTrackPParRatio(tvlIP.getList(reco::btau::trackPParRatio,false));
-		  topjet.add_subTrackJetDistVal(tvlIP.getList(reco::btau::trackJetDistVal,false));
-		  topjet.add_subTrackJetDistSig(tvlIP.getList(reco::btau::trackJetDistSig,false));
-		  topjet.add_subTrackGhostTrackDistVal(tvlIP.getList(reco::btau::trackGhostTrackDistVal,false));
-		  topjet.add_subTrackGhostTrackDistSig(tvlIP.getList(reco::btau::trackGhostTrackDistSig,false));
-		  topjet.add_subTrackGhostTrackWeight(tvlIP.getList(reco::btau::trackGhostTrackWeight,false));
-		  //sv tag info
-		  reco::TaggingVariableList tvlSV=patsubjetd->tagInfoSecondaryVertex("secondaryVertex")->taggingVariables();
-		  topjet.add_subFlightDistance2dVal(tvlSV.getList(reco::btau::flightDistance2dVal,false));
-		  topjet.add_subFlightDistance2dSig(tvlSV.getList(reco::btau::flightDistance2dSig,false));
-		  topjet.add_subFlightDistance3dVal(tvlSV.getList(reco::btau::flightDistance3dVal,false));
-		  topjet.add_subFlightDistance3dSig(tvlSV.getList(reco::btau::flightDistance3dSig,false));
-		  topjet.add_subVertexJetDeltaR(tvlSV.getList(reco::btau::vertexJetDeltaR,false));
-		  topjet.add_subJetNSecondaryVertices(tvlSV.get(reco::btau::jetNSecondaryVertices,-9999));
-		  topjet.add_subVertexNTracks(tvlSV.get(reco::btau::vertexNTracks,-9999));
-		  std::vector<TLorentzVector> vp4;
-		  std::vector<float> vchi2;
-		  std::vector<float> vndof;
-		  std::vector<float> vchi2ndof;
-		  std::vector<float> vtrsize;
-                  unsigned int nv = patsubjetd->tagInfoSecondaryVertex("secondaryVertex")->nVertices();
-		  for(unsigned int i=0; i<nv; i++){
-                      const auto & sv_i = patsubjetd->tagInfoSecondaryVertex("secondaryVertex")->secondaryVertex(i);
-		      ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > p4 = sv_i.p4();
-		      vp4.push_back(TLorentzVector(p4.px(),p4.py(),p4.pz(),p4.e()));
-		      vchi2.push_back(sv_i.chi2());  
-		      vndof.push_back(sv_i.ndof());  
-		      vchi2ndof.push_back(sv_i.normalizedChi2());  
-		      vtrsize.push_back(sv_i.tracksSize());  
-		  }
-		  topjet.add_subSecondaryVertex(vp4);
-		  topjet.add_subVertexChi2(vchi2);
-		  topjet.add_subVertexNdof(vndof);
-		  topjet.add_subVertexNormalizedChi2(vchi2ndof);
-		  topjet.add_subVertexTracksSize(vtrsize);
-		  //try computer
-		  if(computer)
-		    {
-#if CMSSW70 == 1
-		      computer->passEventSetup(iSetup);
-#endif
-		      std::vector<const reco::BaseTagInfo*>  baseTagInfos;
-		      baseTagInfos.push_back(patsubjetd->tagInfoTrackIP("impactParameter") );
-		      baseTagInfos.push_back(patsubjetd->tagInfoSecondaryVertex("secondaryVertex") );      
-		      JetTagComputer::TagInfoHelper helper(baseTagInfos);
-		      reco::TaggingVariableList vars = computer->taggingVariables(helper);
-		      topjet.add_subVertexMassJTC(vars.get(reco::btau::vertexMass,-9999));
-		      topjet.add_subVertexCategoryJTC(vars.get(reco::btau::vertexCategory,-9999));
-		      topjet.add_subVertexEnergyRatioJTC(vars.get(reco::btau::vertexEnergyRatio,-9999));
-		      topjet.add_subTrackSip3dSigAboveCharmJTC(vars.get(reco::btau::trackSip3dSigAboveCharm,-9999));
-		    }
-		}
-	   }
-	   else
-	     {
-	       //filling only standard information in case the subjet has not been pat-tified during the pattuples production
-	       subjet_v4.set_pt(pat_topjet.daughter(k)->p4().pt());
-	       subjet_v4.set_eta(pat_topjet.daughter(k)->p4().eta());
-	       subjet_v4.set_phi(pat_topjet.daughter(k)->p4().phi());
-	       subjet_v4.set_energy(pat_topjet.daughter(k)->p4().E());
-	       topjet.add_subjet(subjet_v4);
-	     }
-	   
-	   
-	 }
-	 topjets[j].push_back(topjet);
+   if(doPuppi){
+       edm::Handle< std::vector<reco::PFCandidate> > puppicand_handle;
+       iEvent.getByLabel(edm::InputTag("puppi","Puppi"), puppicand_handle);
+       for(const auto & pc : *puppicand_handle){
+           uhh2::add_pfpart(pc, puppiparticles, false, false, false);
        }
-     }
+   }
+
+   // call topjet modules; they are special because
+   // they need the JetTagComputer
+   // TODO: check whether they need it for each event; maybe
+   // once is enough?!
+   if(!topjet_modules.empty()){
+       const GenericMVAJetTagComputer *computer = 0;
+       if(doTagInfos){
+           edm::ESHandle<JetTagComputer> computerHandle;
+           iSetup.get<JetTagComputerRecord>().get( SVComputer_.label(), computerHandle );
+           computer = dynamic_cast<const GenericMVAJetTagComputer*>( computerHandle.product() );
+       }
+       for(auto & m : topjet_modules){
+           m->set_computer(computer); // computer can be NULL, but that's ok
+           m->process(iEvent, *event);
+       }
    }
    
-   print_times(timer, "topjets");
 
-   
    // ------------- generator top jets -------------
    if(doGenTopJets){
      for(size_t j=0; j< gentopjet_tokens.size(); ++j){

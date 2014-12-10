@@ -13,7 +13,6 @@
 
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
-#include "UHH2/core/plugins/NtupleWriterModule.h"
 
 #include "TTree.h"
 
@@ -21,6 +20,8 @@
 
 namespace uhh2 {
     class CMSSWContext;
+    class NtupleWriterModule;
+    class NtupleWriterTopJets;
 }
 
 class NtupleWriter : public edm::EDFilter {
@@ -47,8 +48,6 @@ class NtupleWriter : public edm::EDFilter {
 
       bool doGenJets;
       bool doGenJetsWithParts;
-      bool doTopJets;
-      bool doTopJetsConstituents;
       bool doGenTopJets;
       bool doMET;
       bool doPhotons;
@@ -59,30 +58,25 @@ class NtupleWriter : public edm::EDFilter {
       bool doTagInfos;
       bool runOnMiniAOD;
       bool doRho;
-
+      bool doPuppi;
 
       // in order of initialization:
       std::unique_ptr<uhh2::GenericEventStructure> ges;
       std::unique_ptr<uhh2::CMSSWContext> context;
       std::vector<std::unique_ptr<uhh2::NtupleWriterModule>> writer_modules;
+      std::vector<std::unique_ptr<uhh2::NtupleWriterTopJets>> topjet_modules;
       std::unique_ptr<uhh2::Event> event;
       std::unique_ptr<uhh2::AnalysisModule> module;
 
       edm::EDGetToken rho_token;
       
-      std::vector<PFParticle> pfparticles;
+      std::vector<PFParticle> pfparticles, puppiparticles;
 
       std::vector<edm::EDGetToken> genjet_tokens;
       std::vector<std::vector<Particle>> genjets;
       double genjet_ptmin;
       double genjet_etamax;
 
-      std::vector<edm::EDGetToken> topjet_tokens;
-      std::vector<std::vector<TopJet> > topjets;
-      double topjet_ptmin;
-      double topjet_etamax;
-
-      std::vector<std::string> topjet_constituents_sources;
       std::vector<std::string> pf_constituents_sources;
 
       std::vector<edm::EDGetToken> gentopjet_tokens;
