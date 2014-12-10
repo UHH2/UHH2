@@ -171,6 +171,11 @@ public:
     // and dispose of the memory.
     void set_unmanaged(const std::type_info & ti, const RawHandle & handle, void * data);
     
+    template<typename T>
+    void set_unmanaged(const Handle<T> & handle, T * data){
+        set_unmanaged(typeid(T), handle, data);
+    }
+
     /** \brief Install a get callback
      * 
      * The callback is called whenever 'get' is called on an invalid member; after the call,

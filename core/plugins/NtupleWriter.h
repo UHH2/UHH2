@@ -1,47 +1,23 @@
 #ifndef NtupleWriter_h
 #define NtupleWriter_h
 
-#include <memory>
-
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Utilities/interface/InputTag.h"
-#include "DataFormats/Common/interface/Handle.h"
-
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDFilter.h"
-
 #include "FWCore/Framework/interface/Event.h"
-#include "FWCore/Framework/interface/MakerMacros.h"
-
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "FWCore/ServiceRegistry/interface/Service.h"
-#include "CommonTools/UtilAlgos/interface/TFileService.h"
-#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
-#include "TTree.h"
-#include "TMath.h"
-#include "TLorentzVector.h"
 
-#include "DataFormats/PatCandidates/interface/Electron.h"
-#include "DataFormats/PatCandidates/interface/Muon.h"
-#include "DataFormats/PatCandidates/interface/Tau.h"
-#include "DataFormats/PatCandidates/interface/Jet.h"
-#include "DataFormats/PatCandidates/interface/Photon.h"
-#include "DataFormats/PatCandidates/interface/MET.h"
-#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
-#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
-#include "DataFormats/TrackReco/interface/HitPattern.h"
-#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
-#include "SimDataFormats/GeneratorProducts/interface/PdfInfo.h"
-#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
-#include "FWCore/Common/interface/TriggerNames.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
-#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
-
-#include "EgammaAnalysis/ElectronTools/interface/ElectronEffectiveArea.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
 
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
+#include "UHH2/core/plugins/NtupleWriterModule.h"
+
+#include "TTree.h"
+
+#include <memory>
 
 namespace uhh2 {
     class CMSSWContext;
@@ -60,15 +36,6 @@ class NtupleWriter : public edm::EDFilter {
       virtual void endJob() override;
 
       virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
-
-      /// fills constituents of the pat_jet into the Ntuple and stores a reference to those in the provided topjet
-      void StoreJetConstituents(const pat::Jet & pat_jet, Jet & topjet);
-
-      /// fill PF candidates from pf_cands to "pfparticles" collection in a cone of radius R0 around inpart (lepton, most likely)
-      void StorePFCandsInCone(Particle* part, const std::vector<reco::PFCandidate>& pf_cands, double R0, bool fromiso);
-
-      /// fill PF candidates from packed pf_cands to "pfparticles" collection in a cone of radius R0 around inpart (lepton, most likely)
-      void StorePFCandsInCone_packed(Particle* part, const std::vector<pat::PackedCandidate>& pf_cands, double R0);
       
       // fill gen particles from a gen topjet
       void fill_genparticles_jet(const reco::GenJet& reco_genjet, GenJetWithParts& genjet);
@@ -78,11 +45,6 @@ class NtupleWriter : public edm::EDFilter {
       TTree *tr;
       std::string fileName;
 
-      bool doElectrons;
-      bool doMuons;
-      bool doTaus;
-      bool doJets;
-      bool doJetsConstituents;
       bool doGenJets;
       bool doGenJetsWithParts;
       bool doTopJets;
@@ -95,35 +57,20 @@ class NtupleWriter : public edm::EDFilter {
       bool doPV;
       bool doTrigger;
       bool doTagInfos;
-      bool storePFsAroundLeptons;
-      bool doAllPFConstituents;
       bool runOnMiniAOD;
       bool doRho;
 
+
+      // in order of initialization:
       std::unique_ptr<uhh2::GenericEventStructure> ges;
       std::unique_ptr<uhh2::CMSSWContext> context;
+      std::vector<std::unique_ptr<uhh2::NtupleWriterModule>> writer_modules;
       std::unique_ptr<uhh2::Event> event;
       std::unique_ptr<uhh2::AnalysisModule> module;
 
       edm::EDGetToken rho_token;
       
       std::vector<PFParticle> pfparticles;
-
-      std::vector<edm::EDGetToken> electron_tokens;
-      std::vector<std::vector<Electron>> eles;
-
-      std::vector<edm::EDGetToken> muon_tokens;
-      std::vector<std::vector<Muon>> mus;
-
-      std::vector<edm::EDGetToken> tau_tokens;
-      std::vector<std::vector<Tau>> taus;
-      double tau_ptmin;
-      double tau_etamax;
-
-      std::vector<edm::EDGetToken> jet_tokens;
-      std::vector<std::vector<Jet>> jets;
-      double jet_ptmin;
-      double jet_etamax;
 
       std::vector<edm::EDGetToken> genjet_tokens;
       std::vector<std::vector<Particle>> genjets;
@@ -136,9 +83,7 @@ class NtupleWriter : public edm::EDFilter {
       double topjet_etamax;
 
       std::vector<std::string> topjet_constituents_sources;
-      //std::vector<edm::EDGetToken> topjet_consituents_tokens;
       std::vector<std::string> pf_constituents_sources;
-      //std::vector<edm::EDGetToken> pf_consituents_tokens;
 
       std::vector<edm::EDGetToken> gentopjet_tokens;
       std::vector<std::vector<GenTopJet>> gentopjets;
@@ -159,12 +104,8 @@ class NtupleWriter : public edm::EDFilter {
       std::vector<edm::EDGetToken> pv_tokens;
       std::vector<std::vector<PrimaryVertex>> pvs;
 
-      std::vector<std::string> pf_around_leptons_sources;
-
       edm::InputTag genparticle_source;
-      //edm::EDGetToken genparticle_token;
       edm::InputTag stablegenparticle_source;   
-      //edm::EDGetToken stablegenparticle_token;
       
       edm::InputTag SVComputer_;
       std::vector<std::string> trigger_prefixes;

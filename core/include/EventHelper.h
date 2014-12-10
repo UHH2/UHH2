@@ -11,8 +11,8 @@ namespace detail {
 
 /** \brief This is a framework-internal class; do not use it.
  * 
- * This helper class aids the framwork to fill the contents of the Event container
- * correctly: The framework for event input and output is tighly coupled to the GenericEvent,
+ * This helper class aids the framework to fill the contents of the Event container
+ * correctly: The framework for event input and output is tightly coupled to the GenericEvent,
  * so all data read is read into members of GenericEvent, and the output written is the
  * one in GenericEvent. However, for easier access, the Event class has data members
  * to access the most widely-used event data directly (e.g. Event::run, Event::event, Event::jets, etc.).

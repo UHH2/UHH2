@@ -70,9 +70,9 @@ class Electron : public Particle{
   float fbrem() const{return m_fbrem;}
   float EoverPIn() const{return m_EoverPIn;}
   float EcalEnergy() const{return m_EcalEnergy;}
-  float mvaTrigV0() const{return m_mvaTrigV0;}
-  float mvaNonTrigV0() const{return m_mvaNonTrigV0;}
-  float AEff() const{return m_AEff;}
+  float mvaTrigV0() const{return m_mvaTrigV0;} // note: currently (PHYS14) NOT filled; do not use!
+  float mvaNonTrigV0() const{return m_mvaNonTrigV0;} // note: currently (PHYS14) NOT filled; do not use!
+  float AEff() const{return m_AEff;} // note: currently (PHYS14) NOT filled; do not use!
 
 
   void set_vertex_x(float x){m_vertex_x=x;} 
