@@ -7,7 +7,7 @@
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
        <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
         <InputData Lumi="92270" NEventsMax="10000" Type="noMC" Version="TTbar" Cacheable="False">
-            <In FileName="testtree-a.root" Lumi="0.0"/> 
+            <In FileName="testtree-b.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
             <OutputTree Name="AnalysisTree" />
         </InputData>                

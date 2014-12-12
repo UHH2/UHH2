@@ -83,7 +83,7 @@ obj/test/%.o: test/%.cxx
 	@$(CXX_CMD)
 
 bin/%: obj/test/%.o $(testlib)
-	@$(EXE_CMD) -lProof -lPyROOT -lTreePlayer -lTest$(LIBRARY)
+	@$(EXE_CMD) -lProof -lPyROOT -lTreePlayer -lTest$(LIBRARY) -l$(LIBRARY)
 
 obj/test/%.o: test/%.cpp
 	@$(CXX_CMD)
