@@ -71,3 +71,5 @@ echo -e "\nDone creating $NAME."
 echo "Compile the new code by running 'make'."
 echo "Then, run the new ${NAME}Module with 'sframe_main $NAME/config/$NAME.xml'"
 echo "For removing $NAME, run 'rm -rf $NAME' and remove the according lines in Makefile.local"
+
+echo "Hint: In order to store the UHH2 verion hash with every commit, do a 'cp scripts/pre-commit $NAME/.git/hooks' once you've setup git"
