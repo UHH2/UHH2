@@ -1,0 +1,13 @@
+# copy this to .git/hooks to store the UHH2 version in each commit
+
+# script code
+cwd="$(pwd)"
+repo_base="$(git rev-parse --show-toplevel)"
+cd $repo_base/..
+git rev-parse --verify HEAD > UHH2_VERSION
+mv UHH2_VERSION $repo_base
+cd $repo_base
+echo "Adding UHH2_VERSION:"
+cat UHH2_VERSION
+git add UHH2_VERSION
+cd $cwd
