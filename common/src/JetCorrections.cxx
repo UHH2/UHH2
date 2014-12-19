@@ -15,7 +15,7 @@ const std::vector<std::string> JERFiles::PHYS14_L123_MC = {"JetMETObjects/data/P
   
 const std::vector<std::string> JERFiles::PHYS14_L123_DATA = {"JetMETObjects/data/PHYS14_25_V2_L1FastJet_AK4PFchs.txt ",
   "JetMETObjects/data/PHYS14_25_V2_L2Relative_AK4PFchs.txt", "JetMETObjects/data/PHYS14_25_V2_L3Absolute_AK4PFchs.txt",
-							     "JetMETObjects/data/PHYS14_50_V1_L2L3Residual_AK4PFchs.txt" // note: L2L3Residual corrections not implemented in global tag PHYS14_25_V2
+  "JetMETObjects/data/PHYS14_50_V1_L2L3Residual_AK4PFchs.txt" // note: L2L3Residual corrections not implemented in global tag PHYS14_25_V2
 };
 
 JetCorrector::JetCorrector(const std::vector<std::string> & filenames){
