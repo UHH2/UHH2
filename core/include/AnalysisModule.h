@@ -9,6 +9,7 @@
 #include <map>
 #include <type_traits>
 #include <typeinfo>
+#include <cassert>
 
 namespace uhh2 {
 
