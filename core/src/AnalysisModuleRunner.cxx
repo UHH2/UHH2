@@ -160,7 +160,7 @@ class SFrameContext: public uhh2::Context {
 public:
     friend class ::MetaDataInputTree;
     
-    SFrameContext(SCycleBase & base, const SInputData& sin, GenericEventStructure & es);
+    SFrameContext(AnalysisModuleRunner & base, const SInputData& sin, GenericEventStructure & es);
 
     virtual void put(const std::string & path, TH1 * t) override;
 
@@ -189,7 +189,7 @@ private:
 
     TDirectory * get_tmpdir();
 
-    SCycleBase & base;
+    AnalysisModuleRunner & base;
 
     TTree * input_tree = 0; // input event tree
 
@@ -225,7 +225,7 @@ private:
     struct metadata_output_handler {
         TTree * event_outtree;
         
-        std::unique_ptr<TTree> tree;
+        TTree * tree; // belongs to root output file / directory
         std::unique_ptr<OutTree> outtree;
         
         std::shared_ptr<obj> o_data;
@@ -286,7 +286,7 @@ void MetaDataInputTree::update_metadata(int64_t index, SFrameContext * ctx){
 }
 
 
-SFrameContext::SFrameContext(SCycleBase & base_, const SInputData& sin, GenericEventStructure & es_) :
+SFrameContext::SFrameContext(AnalysisModuleRunner & base_, const SInputData& sin, GenericEventStructure & es_) :
         Context(es_), base(base_) {
     for (const auto & prop : base.GetConfig().GetProperties()) {
         set(prop.first, prop.second);
@@ -353,14 +353,14 @@ void SFrameContext::write_metadata_trees(){
         auto & info = m.second;
         if(info.tree){
             info.write_current_metadata();
-            if(!isProof){
+            if(info.tree->GetEntries() || !isProof){
                 TDirectory * dir = info.tree->GetDirectory();
                 if(dir)  dir->cd();
                 info.tree->Write();
                 info.tree->AutoSave();
             }
             info.tree->SetDirectory(0);
-            info.tree.reset(nullptr);
+            delete info.tree;
         }
     }
     gDirectory = dir_before;
@@ -376,13 +376,11 @@ void SFrameContext::init_metadata_output(){
         if(dir){
             dir->cd();
         }
-        else{
-            throw runtime_error("SFrameContext::init_metadata_output: event tree has no directory");
-        }
         string treename = "meta_" + name;
-        info.tree.reset(new TTree(treename.c_str(), treename.c_str()));
+        info.tree = new TTree(treename.c_str(), treename.c_str()); // belongs to output dir
+        // put output TTree in the same directory as the event tree:
         info.tree->SetDirectory(dir);
-        info.outtree.reset(new OutTree(info.tree.get()));
+        info.outtree.reset(new OutTree(info.tree));
         info.o_data = object;
         info.o_nevents = obj::create<int64_t>(0);
         info.outtree->create_branch("data", info.o_data);
@@ -505,7 +503,7 @@ class AnalysisModuleRunner::AnalysisModuleRunnerImpl {
     AnalysisModuleRunnerImpl() {
     }
 
-    void begin_input_data(SCycleBase & base, const SInputData& in);
+    void begin_input_data(AnalysisModuleRunner & base, const SInputData& in);
 
 private:
     bool m_readTrigger;
@@ -593,7 +591,7 @@ void AnalysisModuleRunner::SetConfig(const SCycleConfig& config) {
     SCycleBase::SetConfig(config);
 }
 
-void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(SCycleBase & base, const SInputData& in) {
+void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisModuleRunner & base, const SInputData& in) {
     ges.reset(new GenericEventStructure);
     context.reset(new SFrameContext(base, in, *ges));
     eh.reset(new EventHelper(*context));

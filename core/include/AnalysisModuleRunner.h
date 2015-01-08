@@ -32,6 +32,9 @@ class SFrameContext;
  */
 class AnalysisModuleRunner: public SCycleBase{
 public:
+    // make GetOutputFile public for SFrameContext;
+    using SCycleBase::GetOutputFile;
+    
     AnalysisModuleRunner();
     
     // called at the beginning of the cycle, but for proof only in one process!
