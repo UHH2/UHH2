@@ -83,7 +83,7 @@ obj/test/%.o: test/%.cxx
 	@$(CXX_CMD)
 
 bin/%: obj/test/%.o $(testlib)
-	@$(EXE_CMD) -lProof -lPyROOT -lTreePlayer -lTest$(LIBRARY)
+	@$(EXE_CMD) -lProof -lPyROOT -lTreePlayer -lTest$(LIBRARY) -l$(LIBRARY)
 
 obj/test/%.o: test/%.cpp
 	@$(CXX_CMD)
@@ -115,21 +115,18 @@ obj/%.d: src/%.cxx
 ifneq ($(PAR),)
 all: $(PARTARGET)
 
-$(PARTARGET): obj/$(LIBRARY)/PROOF-INF/BUILD.sh obj/$(LIBRARY)/PROOF-INF/SETUP.C
-	@echo "Creating minimal par at" $(PARTARGET)
-	@cd obj; tar czf $(PARTARGET) $(LIBRARY)
+$(PARTARGET):
+	@../scripts/create-minimal-par $(LIBRARY) $(PARTARGET)
 
-obj/$(LIBRARY)/PROOF-INF/BUILD.sh:
-	@echo "Creating dummy BUILD.sh for par"
-	@echo "#!/bin/bash" > $@
-	@echo "exit 0" >> $@
-	@chmod a+x $@
+endif
 
-obj/$(LIBRARY)/PROOF-INF/SETUP.C:
-	@echo "Creating minimal SETUP.C for par"
-	@echo "int SETUP() {" > $@
-	@echo "    gSystem->Load(\"lib$(LIBRARY)\");" >> $@
-	@echo "    return 0; }" >> $@
+ifneq ($(TESTPAR),)
+TESTPARTARGET := $(SFRAME_LIB_PATH)/Test$(LIBRARY).par
+
+all: $(TESTPARTARGET)
+
+$(TESTPARTARGET):
+	@../scripts/create-minimal-par Test$(LIBRARY) $(TESTPARTARGET)
 
 endif
 

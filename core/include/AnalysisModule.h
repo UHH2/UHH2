@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UHH2/core/include/fwd.h"
+#include "UHH2/core/include/obj.h"
 #include "UHH2/core/include/registry.h"
 #include "UHH2/core/include/GenericEvent.h"
 
@@ -8,22 +9,29 @@
 #include <map>
 #include <type_traits>
 #include <typeinfo>
+#include <cassert>
 
 namespace uhh2 {
 
 /**  \brief Abstract base class for all analysis modules, independent of SFrame
+ * 
+ * To implement an analysis, derive from this class and override the 'process' method, which
+ * will be called for each event.
  *
- * Concrete AnalysisModules can be constructed directly by other AnalysisModules. The 'top-level'
- * AnalysisModule, however, is always constructed by the framework, by the C++ class name.
- * For using an AnalysisModule as 'top-level' AnalysisModule, it must
- *   - have a constructor using 'Context &' as argument
- *   - be registered via the REGISTER_ANALYSIS_MODULE macro
+ * Derived classes of AnalysisModules can be either constructed by other AnalysisModules or
+ * by the framework in which case the C++ class name is specified in the xml configuration file.
+ * In the latter use-case, the AnalysisModule is called a 'top-level' module. In order for
+ * a class to be used this way, it must:
+ *   - have a constructor using 'Context &' as only argument and
+ *   - be registered via the UHH2_REGISTER_ANALYSIS_MODULE macro
  *
- * How the constructors for other AnalysisModules are used is up to the author of the respective module. For many modules,
- * it makes sense to also use a 'Context &' as constructor argument, in order to be able to save histograms in the output.
+ * How the constructors for other AnalysisModules (not run via the framework) is up to the author of
+ * the respective class. For many classes, it makes sense to also use a 'Context &' as constructor argument,
+ * in order to be able to access event content via handles or to save histograms.
  *
- * An AnalysisModules' lifetime is limited to one dataset. If multiple datasets are processed 'in one go',
- * the modules are destroyed and reconstructed for the new dataset.
+ * An AnalysisModules' lifetime is limited to the processing of one dataset.
+ * If multiple datasets are processed 'in one go', the framework takes care of destroying and re-constructing all
+ * AnalysisModules at the transition from one to the next dataset.
  */
 class AnalysisModule {
 public:
@@ -32,8 +40,10 @@ public:
      * Do the filling of histograms, calculating new variables, etc. in this method;
      * see examples for more explanations.
      *
-     * The return value indicates whether or not the event should be kept for the output for the top-level
-     * AnalysisModule.
+     * The return value indicates whether or not the event should be kept for the output. Whether the return
+     * value is actually interpreted this way is up to the caller, however; for 'top-level' analysis modules
+     * (which are configured by the xml file and called by the framework), this will be the case, but if called from
+     * other AnalysisModules', it depends on the conventions and implementation followed there.
      */
     virtual bool process(Event & event) = 0;
 
@@ -56,20 +66,20 @@ public:
  * Histograms:
  * For writing a histogram, use the \c put method.
  *
- * Trees:
- * For TTree I/O, it is important to know that there are two types of trees: The (one) event tree and
- * (a number of) user-defined trees.
+ * Event TTree:
  * The event tree is handled by the framework, which means that reading entries and writing entries is done
- * automatically. Also most setup (reading in variables) is done centrally, although AnalysisModules can
- * call \c declare_event_output and \c declare_event_input to write/read additional event data.
- * For user-defined trees, both the setup of the tree (creating it and connecting it to variables)
- * as well as writing an entry has to be done through this class with the \c declare_output and the \c write_entry
- * methods. Note that no input is possible for user-defined trees, only output. This limits the use-case of
- * user-defined trees to trees which are read by another software, e.g. for creating training data
- * for MVA analyses.
+ * automatically. Also most setup (reading in variables) is usually done centrally (in AnalysisModuleRunner).
+ * To define event input or output beyond the standard set of variables, use
+ * \c declare_event_output and \c declare_event_input.
  */
 class Context {
 public:
+
+    /// declare the destructor virtual, as this is a purely virtual base class.
+    virtual ~Context();
+
+    Context(const Context &) = delete;
+    Context(Context &&) = default;
 
     /** \brief Get the value of a key
      *
@@ -82,8 +92,6 @@ public:
     }
 
     /** \brief Get the value of a key, returning a default value if the key does not exists
-     *
-     * This method never throws.
      */
     std::string get(const std::string & key, const std::string & def) const {
         std::map<std::string, std::string>::const_iterator it = settings.find(key);
@@ -144,12 +152,6 @@ public:
     template<typename T>
     GenericEvent::Handle<T> declare_event_output(const std::string & branch_name, const std::string & event_member_name = "");
 
-    /** \brief Declare a non-event variable which should be written to the tree identified by tree_id instead.
-     *
-     * T must not be of pointer type. Make sure that the lifetime of t exceeds the last call of write_output of the corresponding tree
-     */
-    /*template<typename T>
-    void declare_output(const std::string & treename, const std::string & branchname, T & t);*/
 
     /** \brief Get a handle by type and name, allowing to set / get event contents
      *
@@ -162,27 +164,131 @@ public:
     GenericEvent::Handle<T> get_handle(const std::string & name) {
         return ges.get_handle<T>(name);
     }
+    
+    
+    /// resolution order for metadata sources
+    enum class metadata_source_policy {
+        infile_only, handle_only, infile_then_handle, handle_then_infile
+    };
+    
+    /** \brief register a callback to be called when new metadata is available
+     *
+     * metadata announced via the registered callback should be considered valid for all event
+     * processed in the future until a new value is announced via the callback.
+     *
+     * metadata can have two different sources:
+     * 1. another AnalysisModule via create_metadata and MetaDataHandle::set.
+     * 2. the input file
+     *
+     * The source of the value announced via the callback depends on the value of resolution. The default
+     * uses the value from the handle if available and uses the value from the input file otherwise. This
+     * is what one often wants as this typically is the 'most up-to-date' value for that metadata. It is also
+     * the policy used to write output.
+     *
+     * If metadata for that name is available, but the type T does not match, the framework aborts execution
+     * with an exception.
+     */
+    template<typename T>
+    void register_metadata_callback(const std::string & name, const std::function<void (const T & t)> & callback, metadata_source_policy pol = metadata_source_policy::handle_then_infile){
+        register_metadata_callback(typeid(T), name, [callback](const void * ptr){ callback(*reinterpret_cast<const T*>(ptr)); }, pol, false);
+    }
 
-    /// Write a single entry to the output tree identified by the tree name, using the current contents of the declared output addresses.
-    //virtual void write_entry(const std::string & treename) = 0;
+    template<typename T>
+    class MetadataObject {
+    public:
+        
+        void operator=(const T & new_metadata){
+            assert(object && ctx);
+            ctx->notify_callbacks_before(object->address());
+            object->assign<T>(new_metadata);
+            ctx->notify_callbacks_after(object->address());
+        }
+        
+        MetadataObject() = default;
 
-    /// declare the destructor virtual, as this is a purely virtual base class.
-    virtual ~Context();
+    private:
+        friend class Context;
+        MetadataObject(const std::shared_ptr<obj> & object_, Context * ctx_): object(object_), ctx(ctx_) {}
+
+        std::shared_ptr<obj> object;
+        Context * ctx = nullptr;
+    };
+
+    /** \brief Create new metadata of type T and the given name
+     *
+     * Metadata can be thought of event-data which is valid for more than one event in
+     * a row in the event processing. A typical example would be sample cross section/luminosity or
+     * information about the processing history. Another example are the trigger names which are used to give names
+     * to the indices in the trigger bool-vector.
+     * To exploit the fact that these data are the same for many events in a row during the processing of one dataset,
+     * this kind of data is not saved in the Event directly, but instead transferred via the methods
+     * declared below: create_metadata<T> creates new metadata of type T with a given name. Via the returned
+     * object, the metadata value can be set. This metadata should be considered valid for the current
+     * event and all subsequent events, until a new assignment is made (note that metadata validity never
+     * extends across datasets because all data is cleared between datasets anyway).
+     * 
+     * store_in_output controls whether or not the value is saved in the output file.
+     *
+     * It is important to assign a value to the metadata object *before* any (other) module uses the (old, outdated) value
+     * from the previous event. It is therefore recommended that producers of metadata are kept in some few, specific
+     * AnalysisModules and are run first for each event. Also, each consumer should
+     * throw an exception if the first metadata value is announced *after* the first event has been processed;
+     * this should catch most use-before-set bugs.
+     *
+     * If metadata of that name was already created, a runtime_error is thrown. Note that it is not
+     * considered as error creating metadata which also exists in the input, as long as it is the same type;
+     * in this case, see register_metadata_callback about which data is actually used.
+     * 
+     * Metadata output:
+     *  - for metadata created here only, \c store_in_output controls whether the metadata object created here is written to output
+     *  - Metadata only available in the input file is also written to the output.
+     *  - For Metadata which is both available in the input and created via \c create_metadata, the behavior is the same as
+     *    if it was only created here and not available in the input.
+     * 
+     * In particular, this means that:
+     *  - all metadata will be written to output by default, even if no module explicitly asks for it
+     *  - it is possible to 'erase' metadata from the input (=not write it to output) by creating it here with \c store_in_output=false
+     */
+    template<typename T>
+    MetadataObject<T> create_metadata(const std::string & name, bool store_in_output){
+        auto object = obj::create<T>();
+        put_metadata(name, false, object, store_in_output);
+        return MetadataObject<T>(object, this);
+    }
 
 protected:
-    Context(GenericEventStructure & ges_): ges(ges_) {}
+
+    explicit Context(GenericEventStructure & ges_);
 
     GenericEventStructure & ges;
+    
+    // should be called by derived classes to get all metadata to write to output after processing at least one event.
+    void visit_metadata_for_output(const std::function<void (const std::string & name, const std::shared_ptr<obj> & object)> & callback);
+    
+    // type-erased metadata handling:
+    void register_metadata_callback(const std::type_info & ti, const std::string & name, const std::function<void (const void * ptr)> & callback,
+                                    metadata_source_policy pol, bool call_before_change);
+    
+    void put_metadata(const std::string & name, bool from_infile, const std::shared_ptr<obj> & object, bool store_in_output);
+    
+    void notify_callbacks_before(void * object_addr);
+    void notify_callbacks_after(void * object_addr);
 
 private:
 
+    template<typename T>
+    friend class MetadataObject;
+
     virtual void do_declare_event_input(const std::type_info & ti, const std::string & bname, const std::string & mname) = 0;
     virtual void do_declare_event_output(const std::type_info & ti, const std::string & bname, const std::string & mname) = 0;
-    //virtual void do_declare_output(const std::string & treename, const std::string & branchname, const void * t, const std::type_info & ti) = 0;
-
-    void fail(const std::string & key) const;
-
+    
     std::map<std::string, std::string> settings;
+    
+    // below here: derived classes do not need to care
+    void fail(const std::string & key) const;
+    
+    class MetadataImpl;
+    std::unique_ptr<MetadataImpl> meta;
 };
 
 
@@ -201,14 +307,6 @@ GenericEvent::Handle<T> Context::declare_event_output(const std::string & bname,
     do_declare_event_output(typeid(T), bname, ename);
     return ges.get_handle<T>(ename);
 }
-
-/*
-template<typename T>
-void Context::declare_output(const std::string & treename, const std::string & branchname, T & t){
-    static_assert(!std::is_pointer<T>::value, "T must not be of pointer type");
-    do_declare_output(treename, branchname, static_cast<const void*>(&t), typeid(T));
-}
-*/
 
 typedef Registry<AnalysisModule, Context &> AnalysisModuleRegistry;
 #define UHH2_REGISTER_ANALYSIS_MODULE(T) namespace { int dummy##T = ::uhh2::AnalysisModuleRegistry::register_<T>(#T); }
