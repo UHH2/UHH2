@@ -85,7 +85,7 @@ class PrintHT2: public AnalysisModule {
 public:
     explicit PrintHT2(const double & ht_): ht(ht_){}
     
-    virtual bool process(Event & event){
+    virtual bool process(Event &){
         cout << "PrintHT2: ht = " << ht << endl;
         return true;
     }

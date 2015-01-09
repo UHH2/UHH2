@@ -7,7 +7,7 @@ using namespace std;
 
 class TestJetCorrections: public uhh2::AnalysisModule {
 public:
-    explicit TestJetCorrections(Context & ctx) {
+    explicit TestJetCorrections(Context & ) {
         jec_mc.reset(new JetCorrector(JERFiles::PHYS14_L123_MC));
         jec_data.reset(new JetCorrector(JERFiles::PHYS14_L123_DATA));
     }

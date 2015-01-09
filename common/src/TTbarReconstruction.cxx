@@ -107,7 +107,7 @@ TopTagReconstruction::TopTagReconstruction(Context & ctx, const NeutrinoReconstr
     h_primlep = ctx.get_handle<FlavorParticle>("PrimaryLepton");
 }
 
-bool TopTagReconstruction::process(uhh2::Event & event) {
+bool TopTagReconstruction::process(uhh2::Event &) {
     std::cerr<< "TopTagger is not yet implemented in UHH2! As soon as it is implemented you can import this function from TopFitCalc::CalculateTopTag in UHHAnalysis." << std::endl;
     return true;
 }

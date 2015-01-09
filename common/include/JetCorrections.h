@@ -53,7 +53,7 @@ public:
 
     virtual ~JetResolutionSmearer();
 private:
-    void set_jer_applied(bool v);
+    void jer_already_applied();
     
     bool smear_met;
     int direction = 0; // -1 = down, +1 = up, 0 = nominal

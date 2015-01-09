@@ -31,7 +31,7 @@ public:
         assert(exception);
     }
     
-    virtual bool process(Event & e) override {
+    virtual bool process(Event &) override {
         if(ievent % 10 == 0){
             meta = ievent;
         }
@@ -54,7 +54,7 @@ public:
         value = newval;
     }
 
-    virtual bool process(Event & e) override {
+    virtual bool process(Event &) override {
         assert(value);
         double expected_value = ievent / 10 * 10;
         assert(*value == expected_value);
@@ -95,7 +95,7 @@ public:
         meta = ctx.create_metadata<double>("testdata", true);
     }
 
-    virtual bool process(Event & e) override {
+    virtual bool process(Event &) override {
         if(ievent % 100 == 0){
             meta = ievent;
         }
@@ -122,7 +122,7 @@ public:
         //cout << "MetaDataC at ievent " << ievent << ": received testdata value: " << val << endl;
     }
 
-    virtual bool process(Event & e) override {
+    virtual bool process(Event &) override {
         double expected_testdata_value = ievent / 100 * 100;
         // check that it has been set before we go to process:
         assert(testdata_value);
@@ -159,7 +159,7 @@ public:
         //cout << "MetaDataD at ievent " << ievent << ": received onfly testdata value: " << val << endl;
     }
 
-    virtual bool process(Event & e) override {
+    virtual bool process(Event &) override {
         double expected_testdata_value_onfly = -ievent / 100 * 100;
         if(ievent % 100 == 0){
             md = expected_testdata_value_onfly; // should trigger callback ...
@@ -193,7 +193,7 @@ public:
         assert(n > 0);
     }
 
-    virtual bool process(Event & e) override {
+    virtual bool process(Event &) override {
         ++ievent;
         return ievent % n == 0;
     }

@@ -9,7 +9,7 @@ using namespace std;
 
 class CoreTestA: public AnalysisModule {
 public:
-    CoreTestA(Context & ctx){
+    CoreTestA(Context &){
         ti_init = false;
     }
     

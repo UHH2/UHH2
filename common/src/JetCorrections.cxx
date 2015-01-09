@@ -59,10 +59,12 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
         throw runtime_error("JetResolutionSmearer: invalid value jersmear_direction='" + dir + "' (valid: 'nominal', 'up', 'down')");
     }
     jer_applied = ctx.create_metadata<bool>("jer_applied", true);
-    ctx.register_metadata_callback<bool>("jer_applied", [this](bool v){this->set_jer_applied(v);}, Context::metadata_source_policy::infile_only);
+    // make sure to get value only from input file, otherwise the assignment in 'process' would be reported as well,
+    // and this class would complain about its own setting jer_applied to true.
+    ctx.register_metadata_callback<bool>("jer_applied", [this](bool){this->jer_already_applied();}, Context::metadata_source_policy::infile_only);
 }
 
-void JetResolutionSmearer::set_jer_applied(bool v){
+void JetResolutionSmearer::jer_already_applied(){
     throw runtime_error("JetResolutionSmearer: tried to apply jet resolution smearing, although metadata indicates that it already has been applied!");
 }
 

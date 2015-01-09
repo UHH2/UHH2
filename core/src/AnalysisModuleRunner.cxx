@@ -8,8 +8,6 @@
 #include "UHH2/core/include/registry.h"
 #include "UHH2/core/include/root-utils.h"
 
-#include "core/include/SConstants.h"
-
 #include "TH1.h"
 #include "TXMLNode.h"
 #include "TXMLAttr.h"
@@ -347,7 +345,7 @@ void SFrameContext::put(const string & path, TH1 * t) {
 void SFrameContext::write_metadata_trees(){
     if(!outtree) return;
     // see SCycleNTupleBase::SaveOutputTrees
-    bool isProof = base.GetNTupleInput()->FindObject( SFrame::ProofOutputName );
+    bool isProof = base.GetNTupleInput()->FindObject("PROOF_OUTPUTFILE"); //  SFrame::ProofOutputName = "PROOF_OUTPUTFILE"
     TDirectory * dir_before = gDirectory;
     for(auto & m : metadata_out){
         auto & info = m.second;
@@ -727,7 +725,7 @@ string ul2s(unsigned long i) {
 
 }
 
-void AnalysisModuleRunner::EndMasterInputData(const SInputData & d) throw (SError) {
+void AnalysisModuleRunner::EndMasterInputData(const SInputData &) throw (SError) {
     TList * l = GetHistOutput();
     TIter next(l);
     TObject * obj;

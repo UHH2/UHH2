@@ -183,7 +183,7 @@ void Context::visit_metadata_for_output(const std::function<void (const std::str
  */
 class NoopAnalysisModule: public AnalysisModule {
 public:
-    NoopAnalysisModule(Context & ctx){}
+    NoopAnalysisModule(Context &){}
     virtual bool process(Event &){
         return true;
     }
