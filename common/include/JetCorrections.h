@@ -13,7 +13,7 @@ namespace JERFiles {
 /** \brief (Re-)Correct jets according to the corrections in the passed txt files
  * 
  * txt files are available in JetMETObjects/data/; see README there for instructions how to produce
- * updates files.
+ * updated files.
  * 
  * For some standard jet energy corrections, you can use filenames defined in the JERFiles namespace.
  */
@@ -42,10 +42,8 @@ private:
  * is too much.
  *
  * Options parsed from the given Context:
- *  - "propagate_jercorr_to_met": if "true", propagate the jet resolution smearing to MET. Default is false.
- *
- *  NOTE: this is currently a placeholder class; constructing it will
- *  throw a runtime_error.
+ *  - "jersmear_smear_met": if "true", propagate the jet resolution smearing to MET. Default is false.
+ *  - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing resp.
  */
 class JetResolutionSmearer: public uhh2::AnalysisModule {
 public:
@@ -55,5 +53,10 @@ public:
 
     virtual ~JetResolutionSmearer();
 private:
+    void jer_already_applied();
+    
     bool smear_met;
+    int direction = 0; // -1 = down, +1 = up, 0 = nominal
+    bool first_event = true;
+    uhh2::Context::MetadataObject<bool> jer_applied;
 };

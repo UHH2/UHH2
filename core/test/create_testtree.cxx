@@ -31,6 +31,7 @@ void create_testtree(const char * outname, const std::function<bool (int)> & ese
     TFile * f = new TFile(outname, "recreate");
     TTree * t = new TTree("AnalysisTree", "AnalysisTree");
     int run, event, lumi;
+    float bsx = 0, bsy = 0, bsz = 0., rho = 0;
     bool data = false;
     std::vector<bool> triggers;
     std::vector<std::string> triggernames_tree, triggernames;
@@ -44,6 +45,11 @@ void create_testtree(const char * outname, const std::function<bool (int)> & ese
     t->Branch("event", &event);
     t->Branch("luminosityBlock", &lumi);
     t->Branch("isRealData", &data);
+    
+    t->Branch("beamspot_x0", &bsx);
+    t->Branch("beamspot_y0", &bsy);
+    t->Branch("beamspot_z0", &bsz);
+    t->Branch("rho", &rho);
     
     t->Branch("triggerNames", &triggernames_tree);
     t->Branch("triggerResults", &triggers);

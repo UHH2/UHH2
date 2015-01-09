@@ -15,6 +15,9 @@ namespace uhh2 {
     // GenericEvent.h
     class GenericEventStructure;
     class GenericEvent;
+    
+    // obj.h
+    class obj;
 }
 
 

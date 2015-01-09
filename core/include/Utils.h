@@ -8,8 +8,14 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace uhh2{
+
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args){
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 
 /** \brief Interpret the string as a boolean
  * 
