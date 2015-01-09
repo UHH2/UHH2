@@ -699,7 +699,7 @@ for jetcoll in (process.patJetsCA8CHS,
         jetcoll.getJetMCFlavour = False
 
 #Explicit JTA for subjets
-for xtrplabel in ['patJetsCA8CHSprunedSubjets','patJetsCA15CHSFilteredSubjets','patJetsCMSTopTagCHSSubjets','patJetsHEPTopTagCHSSubjets'] :
+for xtrplabel in ['CA8CHSprunedSubjets','CA15CHSFilteredSubjets','CMSTopTagCHSSubjets','HEPTopTagCHSSubjets'] :
         if hasattr( process, 'jetTracksAssociatorAtVertex' + xtrplabel):
             from RecoJets.JetAssociationProducers.ak5JTA_cff import ak5JetTracksAssociatorExplicit
             m = 'jetTracksAssociatorAtVertex' + xtrplabel
@@ -794,3 +794,4 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 # Note: we run in unscheduled mode, i.e. all modules are run as required; just make sure that MyNtuple runs:
 process.p = cms.Path(process.MyNtuple)
 process.end = cms.EndPath(process.out)
+
