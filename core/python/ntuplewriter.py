@@ -699,12 +699,12 @@ for jetcoll in (process.patJetsCA8CHS,
         jetcoll.getJetMCFlavour = False
 
 #Explicit JTA for subjets
-for xtrplabel in ['CA8CHSprunedSubjets','CA15CHSFilteredSubjets','CMSTopTagCHSSubjets','HEPTopTagCHSSubjets'] :
-        if hasattr( process, 'jetTracksAssociatorAtVertex' + xtrplabel):
-            from RecoJets.JetAssociationProducers.ak5JTA_cff import ak5JetTracksAssociatorExplicit
-            m = 'jetTracksAssociatorAtVertex' + xtrplabel
-            print 'Switching ' + m + ' to explicit jet-track association'
-            setattr( process, m, ak5JetTracksAssociatorExplicit.clone(jets = getattr(getattr(process,m),'jets')) )
+#for xtrplabel in ['CA8CHSprunedSubjets','CA15CHSFilteredSubjets','CMSTopTagCHSSubjets','HEPTopTagCHSSubjets'] :
+#        if hasattr( process, 'jetTracksAssociatorAtVertex' + xtrplabel):
+#            from RecoJets.JetAssociationProducers.ak5JTA_cff import ak5JetTracksAssociatorExplicit
+#            m = 'jetTracksAssociatorAtVertex' + xtrplabel
+#            print 'Switching ' + m + ' to explicit jet-track association'
+#            setattr( process, m, ak5JetTracksAssociatorExplicit.clone(jets = getattr(getattr(process,m),'jets')) )
 
 # for the electron id, we need the full 5x5 ietaieta, which has to be produced:
 process.load('RecoEgamma.ElectronIdentification.ElectronIDValueMapProducer_cfi')
