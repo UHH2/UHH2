@@ -72,7 +72,7 @@ const void * GenericEvent::get(const std::type_info & ti, const GenericEventStru
     // it's not valid, try to generate it:
     if(md.generator){
         try{
-            (*md.generator)();
+            md.generator();
         }
         catch(...){
             const auto & mi = member_infos[handle.index];
@@ -121,7 +121,7 @@ void GenericEvent::invalidate_all(){
     }
 }
 
-void GenericEvent::set_get_callback(const std::type_info & ti, const RawHandle & handle, boost::optional<std::function<void ()>> callback){
+void GenericEvent::set_get_callback(const std::type_info & ti, const RawHandle & handle, std::function<void ()> callback){
     check(ti, handle, "set_get_callback");
     member_data & md = member_datas[handle.index];
     md.valid = false;

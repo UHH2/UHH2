@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Usage:
+# create-minimal-par <libname> <parname>
+#
+# This will create <parname> (usually ends on '.par') which makes root load lib<libname>.so and do nothing
+# else.
+
+LIB=$1
+PAR=`readlink -f $2`
+
+[ -n "$LIB" ] || { echo "Error: missing libname argument"; exit 1; }
+[ -n "$PAR" ] || { echo "Error: missing parname argument"; exit 1; }
+
+tmpdir=`mktemp -d`
+mkdir -p $tmpdir/$LIB/PROOF-INF
+cat << EOF > $tmpdir/$LIB/PROOF-INF/BUILD.sh
+#!/bin/bash
+exit 0
+EOF
+
+chmod a+x $tmpdir/$LIB/PROOF-INF/BUILD.sh
+
+cat << EOF > $tmpdir/$LIB/PROOF-INF/SETUP.C
+int SETUP(){
+   gSystem->Load("lib${LIB}");
+   return 0;
+}
+EOF
+
+echo "Creating par $PAR"
+
+cd $tmpdir
+tar czf $PAR $LIB
