@@ -21,6 +21,25 @@ float inv_mass(const LorentzVector & p4){
 }
 
 
+const ReconstructionHypothesis * get_best_hypothesis(const std::vector<ReconstructionHypothesis> & hyps, const std::string & label){
+    const ReconstructionHypothesis * best = nullptr;
+    float current_best_disc = numeric_limits<float>::infinity();
+    for(const auto & hyp : hyps){
+        if(!hyp.has_discriminator(label)) continue;
+        auto disc = hyp.discriminator(label);
+        if(disc < current_best_disc){
+            best = &hyp;
+            current_best_disc = disc;
+        }
+    }
+    if(std::isfinite(current_best_disc)){
+        return best;
+    }
+    else{
+        return nullptr;
+    }
+}
+
 Chi2Discriminator::Chi2Discriminator(Context & ctx, const std::string & rechyps_name, const cfg & config_): config(config_){
     h_hyps = ctx.get_handle<vector<ReconstructionHypothesis>>(rechyps_name);
 }
