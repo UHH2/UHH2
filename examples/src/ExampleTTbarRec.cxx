@@ -10,6 +10,8 @@
 #include "UHH2/common/include/MuonIds.h"
 #include "UHH2/common/include/NSelections.h"
 #include "UHH2/common/include/TTbarReconstruction.h"
+#include "UHH2/common/include/ReconstructionHypothesisDiscriminators.h"
+#include "UHH2/common/include/HypothesisHists.h"
 
 using namespace std;
 using namespace uhh2;
@@ -30,7 +32,11 @@ private:
 
     std::vector<std::unique_ptr<AnalysisModule>> cleanermodules;
     std::vector<std::unique_ptr<AnalysisModule>> recomodules;
+    std::unique_ptr<Hists> h_hyphists;
     AndSelection selection;
+  
+    uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_hyps;
+   
 };
 
 
@@ -49,10 +55,16 @@ ExampleTTbarRec::ExampleTTbarRec(Context & ctx): selection(ctx, "selection") {
     selection.add<NJetSelection>("nj >= 2", 2);
     selection.add<NTopJetSelection>("ntj >= 1", 1);
 
-    //make reconstruction hyptotheses
+    //make reconstruction hypotheses
     recomodules.emplace_back(new PrimaryLepton(ctx));
     recomodules.emplace_back(new HighMassTTbarReconstruction(ctx,NeutrinoReconstruction));
-    
+    recomodules.emplace_back(new Chi2Discriminator(ctx,"HighMassReconstruction"));
+
+    //set up the histograms
+    h_hyphists.reset(new HypothesisHists(ctx,"Chi2Hists","HighMassReconstruction","Chi2"));
+
+    h_hyps = ctx.get_handle<std::vector<ReconstructionHypothesis>>("HighMassReconstruction");
+
 }
 
 
@@ -60,11 +72,13 @@ bool ExampleTTbarRec::process(Event & event) {
     for(auto & m : cleanermodules){
         m->process(event);
     }
- 
     if(selection.passes(event)){
       for(auto & m : recomodules){
         m->process(event);
       }
+
+      h_hyphists->fill(event);
+ 
       return true;
     }
     return false;
