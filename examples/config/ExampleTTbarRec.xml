@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"[
+<!ENTITY MC_TTJets_MSDecaysCKM_central_20x25 SYSTEM "../../common/datasets/MC_TTJets_MSDecaysCKM_central_20x25.xml">
+<!ENTITY MC_TTJets_MSDecaysCKM_central_40x50 SYSTEM "../../common/datasets/MC_TTJets_MSDecaysCKM_central_40x50.xml">
+]>
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
     <Library Name="libSUHH2examples"/>
     <Package Name="SUHH2examples.par" />
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="/nfs/dust/cms/user/peiffer/Analysis72X/" PostFix="" TargetLumi="1" >
-             
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="BpJ_TW_1200" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_BpJ_TW_M1200_20x25_19_Ntuple.root" Lumi="0.0"/> 
+        <InputData Lumi="1" NEventsMax="10000" Type="MC" Version="MC_TTJets_MSDecaysCKM_central_20x25" Cacheable="False">
+	    &MC_TTJets_MSDecaysCKM_central_20x25;
+            <InputTree Name="AnalysisTree" /> 
+            <OutputTree Name="AnalysisTree" /> 
+        </InputData>
+
+        <InputData Lumi="1" NEventsMax="10000" Type="MC" Version="MC_TTJets_MSDecaysCKM_central_40x50" Cacheable="False">
+	    &MC_TTJets_MSDecaysCKM_central_40x50; 
             <InputTree Name="AnalysisTree" /> 
             <OutputTree Name="AnalysisTree" /> 
         </InputData>
@@ -19,7 +27,7 @@
             <Item Name="JetCollection" Value="slimmedJets" />
             <Item Name="TopJetCollection" Value="patJetsCMSTopTagCHSPacked" />
             <Item Name="METName" Value="slimmedMETs" />  
-            
+            <Item Name="GenParticleCollection" Value="GenParticles" />
                    
             <!-- the class name of the AnalysisModule subclasses to run: -->
             <Item Name="AnalysisModule" Value="ExampleTTbarRec" /> 
