@@ -8,6 +8,10 @@ using namespace uhh2;
 using namespace std;
 
 MCLumiWeight::MCLumiWeight(Context & ctx){
+    use_sframe_weight = string2bool(ctx.get("use_sframe_weight", "true"));
+    if(use_sframe_weight){
+        return;
+    }
     auto dataset_type = ctx.get("dataset_type");
     bool is_mc = dataset_type  == "MC";
     if(!is_mc){
@@ -22,7 +26,9 @@ MCLumiWeight::MCLumiWeight(Context & ctx){
 }
 
 bool MCLumiWeight::process(uhh2::Event & event){
-    event.weight *= factor;
+    if(!use_sframe_weight){
+        event.weight *= factor;
+    }
     return true;
 }
 

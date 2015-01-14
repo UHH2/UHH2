@@ -21,7 +21,7 @@
             <!-- switch off MCPileupReweight explicitly -->
             <Item Name="pileup_directory" Value="" />
             
-            <Item Name="AnalysisModule" Value="CommonModules" /> 
+            <Item Name="AnalysisModule" Value="TestCommonModules" /> 
         </UserConfig>
     </Cycle>
 </JobConfiguration>

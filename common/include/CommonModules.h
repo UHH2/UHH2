@@ -12,7 +12,7 @@
  * to some extent by setting object ids or by disabling certain modules.
  *
  * The AnalysisModules run are (in this order):
- *  - MCLumiWeight (for MC only)
+ *  - MCLumiWeight (for MC only; only has an effect if "use_sframe_weight" is set to false)
  *  - MCPileupReweight (for MC only)
  *  - JetCorrector using the latest PHYS14 corrections for MC
  *  - JetResolutionSmearer  (for MC only)
@@ -32,23 +32,18 @@
  *  // in the AnalysisModule constructor:
  *  cm.reset(new CommonModules); // assuming a 'std::unique_ptr<CommonModules> cm' as member varibale
  *  cm->set_jet_id(...);
- *  ... other set_*_id calls ...
+ *  ... more set_*_id or disable_* calls ...
  *  cm->init(context);
  * 
  * // in AnalysisModule::process:
- * cm->process(event)
+ *  cm->process(event);
  * \endcode
  *
  * In particular, call the 'set_*_id' methods in the constructor; call init after setting
  * all the object ids at the end of the constructor.
- *
- * NOTE: currently, many modules used by this one are not yet fully
- * implemented. Therefore, init might fail with an exception.
  */
 class CommonModules: public uhh2::AnalysisModule {
 public:
-    
-    explicit CommonModules(uhh2::Context & ctx);
     
     // disable certain modules; see list above
     void disable_mclumiweight();
@@ -73,9 +68,9 @@ public:
         tauid = tauid_;
     }
 
-    void init(uhh2::Context & ctx);
-
     virtual bool process(uhh2::Event & event) override;
+    
+    void init(uhh2::Context & ctx);
 
 private:
     void fail_if_init() const;

@@ -508,7 +508,8 @@ private:
     bool m_readTrigger;
 
     bool setup_output_done;
-    //bool first_event_inputfile;
+    
+    bool use_sframe_weight;
 
     // per-dataset information, in the order of construction:
     std::unique_ptr<GenericEventStructure> ges;
@@ -616,6 +617,8 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
     if (m_readTrigger) {
         eh->setup_trigger();
     }
+    
+    use_sframe_weight = string2bool(context->get("use_sframe_weight", "true"));
 
     // 2. now construct user module, which could add event contest to ges
     string module_classname = context->get("AnalysisModule");
@@ -679,9 +682,15 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
     pimpl->eh->event_read();
 
     uhh2::Event & event = *pimpl->event;
+    
+    // setup weight depending on the "use_sframe_weight" configuration option:
+    if(pimpl->use_sframe_weight){
+        event.weight = w;
+    }
+    else{
+        event.weight = 1.0;
+    }
 
-    // now call the user module:
-    event.weight = w;
     bool keep = pimpl->analysis->process(event);
 
     if (!keep) {

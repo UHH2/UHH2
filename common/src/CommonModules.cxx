@@ -46,6 +46,9 @@ void CommonModules::init(Context & ctx){
 }
 
 bool CommonModules::process(uhh2::Event & event){
+    if(!init_done){
+        throw runtime_error("CommonModules::init not called (has to be called in AnalysisModule constructor)");
+    }
     for(auto & m : modules){
         m->process(event);
     }
@@ -73,8 +76,25 @@ void CommonModules::disable_jersmear(){
     jersmear = false;
 }
 
-CommonModules::CommonModules(Context & ctx){
-    init(ctx);
-}
 
-UHH2_REGISTER_ANALYSIS_MODULE(CommonModules)
+class TestCommonModules: public AnalysisModule {
+public:
+    TestCommonModules(uhh2::Context & ctx){
+        common.reset(new CommonModules());
+        // in a non-trivial usage, would call
+        // common->set_*_id   and
+        // common->disable_*  here.
+        common->init(ctx);
+    }
+    
+    virtual bool process(Event & event) override {
+        common->process(event);
+        return true;
+    }
+private:
+    std::unique_ptr<CommonModules> common;
+};
+
+UHH2_REGISTER_ANALYSIS_MODULE(TestCommonModules)
+
+
