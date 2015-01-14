@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+   <Library Name="libTestSUHH2common"/>
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="TestCommonModules" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_BpJ_TW_M800_20x25_14_Ntuple.root" Lumi="0.0"/> 
+            <InputTree Name="AnalysisTree" /> 
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+            
+        <UserConfig>
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" /> 
+            <Item Name="ElectronCollection" Value="slimmedElectrons" />
+            <Item Name="MuonCollection" Value="slimmedMuons" /> 
+            <Item Name="TauCollection" Value="slimmedTaus" />
+            <Item Name="JetCollection" Value="slimmedJets" />
+            <Item Name="GenJetCollection" Value="slimmedGenJets" />
+            <Item Name="METName" Value="slimmedMETs" />
+            
+            <!-- switch off MCPileupReweight explicitly -->
+            <Item Name="pileup_directory" Value="" />
+            
+            <Item Name="AnalysisModule" Value="CommonModules" /> 
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>

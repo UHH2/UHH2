@@ -24,18 +24,16 @@ private:
 
 /** \brief Reweight MC based on simulated and actual pileup
  *
- * Interprets the following settings from the Context:
- *  - "pileup_mc_file": path to a root file with the histogram containing the pileup profile of MC
- *  - "pileup_data_file": path to a root file with the histogram containing the according file for DATA
- *
- *  NOTE: currently, this is a dummy class; construction will fail with an excpetion.
+ * Interprets "pileup_directory" from Context, which should be set to the
+ * path to root files which contain the pileup information for each MC sample and data.
+ * If an empty value is given, no pileup reweighting is done.
+ * 
+ * NOTE: currently, this is a dummy class; construction will fail with an excpetion, unless
+ * an empty value is given for "pileup_directory".
  */
 class MCPileupReweight: public uhh2::AnalysisModule {
 public:
     explicit MCPileupReweight(uhh2::Context & ctx);
 
     virtual bool process(uhh2::Event & event) override;
-
-private:
-
 };

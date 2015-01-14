@@ -14,9 +14,9 @@ MCLumiWeight::MCLumiWeight(Context & ctx){
         throw runtime_error("MCLumiWeight created for a non-MC sample (dataset_type = '" + dataset_type + "'");
     }
     double dataset_lumi = string2double(ctx.get("dataset_lumi"));
-    double reweight_to_lumi = string2double(ctx.get("reweight_to_lumi"));
+    double reweight_to_lumi = string2double(ctx.get("target_lumi"));
     if(reweight_to_lumi <= 0.0){
-        throw runtime_error("MCLumiWeight: reweight_to_lumi was <= 0.0");
+        throw runtime_error("MCLumiWeight: target_lumi <= 0.0 not allowed");
     }
     factor = reweight_to_lumi / dataset_lumi;
 }
@@ -29,10 +29,13 @@ bool MCLumiWeight::process(uhh2::Event & event){
 
 
 MCPileupReweight::MCPileupReweight(Context & ctx){
-    throw runtime_error("MCPileupReweight: not yet implemented!");
+    auto pileup_directory = ctx.get("pileup_directory");
+    if(pileup_directory != ""){
+        throw runtime_error("MCPileupReweight: not yet implemented!");
+    }
 }
 
-bool MCPileupReweight::process(Event & event){
+bool MCPileupReweight::process(Event &){
     // FIXME: implement
     return true;
 }
