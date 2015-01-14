@@ -21,26 +21,26 @@ void CommonModules::init(Context & ctx){
     init_done = true;
     bool is_mc = ctx.get("dataset_type") == "MC";
     if(is_mc){
-        modules.emplace_back(new MCLumiWeight(ctx));
-        modules.emplace_back(new MCPileupReweight(ctx));
-        modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_MC));
-        modules.emplace_back(new JetResolutionSmearer(ctx));
+        if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
+        if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx));
+        if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_MC));
+        if(jersmear) modules.emplace_back(new JetResolutionSmearer(ctx));
     }
     else{
-        modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_DATA));
+        if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_DATA));
     }
 
     if(jetid){
-        modules.emplace_back(new JetCleaner(*jetid));
+        modules.emplace_back(new JetCleaner(jetid));
     }
     if(eleid){
-        modules.emplace_back(new ElectronCleaner(*eleid));
+        modules.emplace_back(new ElectronCleaner(eleid));
     }
     if(muid){
-        modules.emplace_back(new MuonCleaner(*muid));
+        modules.emplace_back(new MuonCleaner(muid));
     }
     if(tauid){
-        modules.emplace_back(new TauCleaner(*tauid));
+        modules.emplace_back(new TauCleaner(tauid));
     }
     modules.emplace_back(new HTCalculator(ctx));
 }
@@ -51,3 +51,30 @@ bool CommonModules::process(uhh2::Event & event){
     }
     return true;
 }
+
+
+void CommonModules::disable_mclumiweight(){
+    fail_if_init();
+    mclumiweight = false;
+}
+
+void CommonModules::disable_mcpileupreweight(){
+    fail_if_init();
+    mcpileupreweight = false;
+}
+
+void CommonModules::disable_jec(){
+    fail_if_init();
+    jec = false;
+}
+
+void CommonModules::disable_jersmear(){
+    fail_if_init();
+    jersmear = false;
+}
+
+CommonModules::CommonModules(Context & ctx){
+    init(ctx);
+}
+
+UHH2_REGISTER_ANALYSIS_MODULE(CommonModules)
