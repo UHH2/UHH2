@@ -56,12 +56,16 @@ public:
  *
  * Configuration:
  * The configuration of a module is represented as key/value pairs of strings, to pass small (configuration) data to
- * the modules. A number of dataset-related keys are always present:
+ * the modules. A number of dataset-related keys are always present when running via SFrame:
  *  - "dataset_type" is the type as given in the SFrame xml file, should be either "MC" or "DATA"
- *  - "dataset_version" is the version of the dataset as given in the SFrame xml file
- *  - "dataset_lumi" is the integrated luminosity of the dataset in pb^-1, as given in the SFrame xml file
+ *  - "dataset_version" is the 'Version' of the dataset as given in the SFrame xml file
+ *  - "dataset_lumi" is the integrated luminosity ('Lumi') of the dataset in pb^-1, as given in the SFrame xml file
+ *  - "target_lumi" is the target luminosity in pb^-1 for MC reweighting, as specified in the SFrame xml in Cycle in 'TargetLumi'
  * Other keys can either be specified in the SFrame xml configuration file (see ExampleModule), or set
  * by other classes, in particular by the top-level AnalysisModule before constructing other AnalysisModules.
+ * 
+ * When running in CMSSW, none of the above keys is set by the framework, but all of them can be set explicitly
+ * as cms.string in the 'AnalysisModule' PSet in the EDFilter configuration of NtuplerWriter.
  *
  * Histograms:
  * For writing a histogram, use the \c put method.

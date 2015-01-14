@@ -9,13 +9,12 @@
  * This is a convenience class which runs a number of commonly-used
  * AnalysisModules in the right order. It is mainly intended
  * to get started quickly with a new analysis. It is configurable
- * to some extent in that modules can be disabled. For more
- * control, run the AnalysisModules yourself.
+ * to some extent by setting object ids or by disabling certain modules.
  *
  * The AnalysisModules run are (in this order):
- *  - MCLumiWeight (for MC only)
+ *  - MCLumiWeight (for MC only; only has an effect if "use_sframe_weight" is set to false)
  *  - MCPileupReweight (for MC only)
- *  - JetCorrector using the PHYS14 corrections for MC
+ *  - JetCorrector using the latest PHYS14 corrections for MC
  *  - JetResolutionSmearer  (for MC only)
  *  - JetCleaner
  *  - ElectronCleaner
@@ -23,19 +22,34 @@
  *  - Tau Cleaner
  *  - HTCalculator
  *
- *  The cleaners are only run if an id was set via the according set methods.
+ * The cleaners are only run if an id was set via the according set methods, otherwise
+ * no cleaner is run and all objects are kept.
+ * All other modules are run as default; see the 'disable_*' methods below for disabling
+ * certain modules, though.
+ * 
+ * Usage:
+ * \code
+ *  // in the AnalysisModule constructor:
+ *  cm.reset(new CommonModules); // assuming a 'std::unique_ptr<CommonModules> cm' as member varibale
+ *  cm->set_jet_id(...);
+ *  ... more set_*_id or disable_* calls ...
+ *  cm->init(context);
+ * 
+ * // in AnalysisModule::process:
+ *  cm->process(event);
+ * \endcode
  *
- *  After setting the ids, call the init method.
- *
- *  NOTE: do not call a set-method after init, and do call init
- *  in the setup phase, i.e. before processing the first event (typically
- *  from a constructor of a derived class of AnalysisModule).
- *
- *  NOTE: currently, many modules used by this one are not yet fully
- *  implemented. Therefore, init might fail with an exception.
+ * In particular, call the 'set_*_id' methods in the constructor; call init after setting
+ * all the object ids at the end of the constructor.
  */
 class CommonModules: public uhh2::AnalysisModule {
 public:
+    
+    // disable certain modules; see list above
+    void disable_mclumiweight();
+    void disable_mcpileupreweight();
+    void disable_jec();
+    void disable_jersmear();
 
     void set_jet_id(const JetId & jetid_){
         fail_if_init();
@@ -54,18 +68,20 @@ public:
         tauid = tauid_;
     }
 
-    void init(uhh2::Context & ctx);
-
     virtual bool process(uhh2::Event & event) override;
+    
+    void init(uhh2::Context & ctx);
 
 private:
     void fail_if_init() const;
 
     std::vector<std::unique_ptr<AnalysisModule>> modules;
-    boost::optional<JetId> jetid;
-    boost::optional<ElectronId> eleid;
-    boost::optional<MuonId> muid;
-    boost::optional<TauId> tauid;
+    JetId jetid;
+    ElectronId eleid;
+    MuonId muid;
+    TauId tauid;
+    
+    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true;
 
     bool init_done = false;
 };
