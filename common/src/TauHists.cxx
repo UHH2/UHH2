@@ -32,7 +32,7 @@ TauHists::TauHists(Context & ctx, const std::string & dname): Hists(ctx, dname){
     charge_1 = book<TH1F>("charge_1", "tau 1 charge",3,-1.5,1.5);
     ptrel_1 = book<TH1F>("ptrel_1", "p_{T}^{rel}(tau 1,jet)", 40, 0, 200.);
     deltaRmin_1 = book<TH1F>("deltaRmin_1", "#Delta R_{min}(tau 1,jet)", 40, 0, 2.0);
-    deltaRmin_ptrel_1 = book<TH2F>("deltaRmin_ptrel_1", "x=#Delta R_{min}(e 1,jet) y=p_{T}^{rel}(tau 1,jet)", 40, 0, 2.0, 40, 0, 200.);
+    deltaRmin_ptrel_1 = book<TH2F>("deltaRmin_ptrel_1", "x=#Delta R_{min}(tau 1,jet) y=p_{T}^{rel}(tau 1,jet)", 40, 0, 2.0, 40, 0, 200.);
     
     pt_2 = book<TH1F>("pt_2","p_{T} tau 2",50,0,500);
     eta_2 = book<TH1F>("eta_2","#eta tau 2",100,-3,3);
@@ -82,11 +82,11 @@ void TauHists::fill(const Event & event){
         }
     }
 
-    if(event.muons->size() && event.taus->size() > 0){
+    if(event.muons && event.muons->size() > 0 && event.taus->size() > 0){
         const auto & muon = (*event.muons)[0];
-	const auto & tau = (*event.taus)[0];
-	pt_muon1_tau1->Fill(muon.pt()+tau.pt(), w);
-	pt_muon1_tau1_binned->Fill(muon.pt()+tau.pt(), w);
+        const auto & tau = (*event.taus)[0];
+        pt_muon1_tau1->Fill(muon.pt()+tau.pt(), w);
+        pt_muon1_tau1_binned->Fill(muon.pt()+tau.pt(), w);
     }
 
     if(event.taus->size() > 1){

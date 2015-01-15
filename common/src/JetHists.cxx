@@ -48,20 +48,10 @@ void JetHists::fill(const Event & event){
     assert(event.jets);
     number->Fill(event.jets->size(), w);
     
-    // buffer values for ptrel and drmin to avoid recomputation:
-    vector<float> drmin_buf(event.jets->size(), 0.0);
-    vector<float> ptrel_buf(event.jets->size(), 0.0);
     for(const auto & jet : *event.jets){
         pt->Fill(jet.pt(), w);
         eta->Fill(jet.eta(), w);
         phi->Fill(jet.phi(), w);
-        
-        if(event.jets){
-            auto nj = nextJet(jet, *event.jets);
-            auto drmin_val = nj ? deltaR(jet, *nj) : numeric_limits<float>::infinity();
-            drmin_buf.push_back(drmin_val);
-            ptrel_buf.push_back(pTrel(jet, nj));
-        }
     }
     
     if(event.jets->size() > 0){
@@ -70,9 +60,9 @@ void JetHists::fill(const Event & event){
         eta_1->Fill(jet.eta(), w);
         phi_1->Fill(jet.phi(), w);
         m_1->Fill(jet.v4().M(), w);
-        if(event.jets){
-            deltaRmin_1->Fill(drmin_buf[0], w);
-	}
+        auto next_jet = nextJet(jet, *event.jets);
+        auto drmin = next_jet ? deltaR(jet, *next_jet) : numeric_limits<float>::infinity();
+        deltaRmin_1->Fill(drmin, w);
     }
     if(event.jets->size() > 1){
         const auto & jet = (*event.jets)[1];
@@ -80,9 +70,9 @@ void JetHists::fill(const Event & event){
         eta_2->Fill(jet.eta(), w);
         phi_2->Fill(jet.phi(), w);
         m_2->Fill(jet.v4().M(), w);
-        if(event.jets){
-            deltaRmin_2->Fill(drmin_buf[1], w);
-        }
+        auto next_jet = nextJet(jet, *event.jets);
+        auto drmin = next_jet ? deltaR(jet, *next_jet) : numeric_limits<float>::infinity();
+        deltaRmin_2->Fill(drmin, w);
     }
     
     if(event.jets->size() > 2){
