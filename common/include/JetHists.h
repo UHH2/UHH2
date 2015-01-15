@@ -1,3 +1,5 @@
+#pragma once
+
 #include "UHH2/core/include/Hists.h"
 
 /** \brief Common jet histograms such as multiplicity, pt, eta, isolation, etc.
@@ -15,10 +17,8 @@ public:
     
 private:
     
-    // declare all histograms as members. Note that one could also use get_hist
-    // as in the example's ExampleHists instead of saving the histograms here. However,
-    // that would entail quite a runtime overhead and it is much faster to declare the histograms
-    // here directly.
+    // see ElectronHists.h on implementation.
+    
     TH1F *number, *pt, *eta, *phi, *isolation, *charge, *ptrel, *deltaRmin;
     TH1F *pt_1, *eta_1, *phi_1, *m_1, *isolation_1, *charge_1, *ptrel_1, *deltaRmin_1;
     TH1F *pt_2, *eta_2, *phi_2, *m_2, *isolation_2, *charge_2, *ptrel_2, *deltaRmin_2;

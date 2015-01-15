@@ -3,10 +3,6 @@
 using namespace std;
 using namespace uhh2;
 
-// For thresholds, see
-//   https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation53XReReco
-// note that the CSV discriminator saves in Jet::btag_combinedSecondaryVertex
-// is the combinedInclusiveSecondaryVertexV2BJetTags, so use these thresholds.
 CSVBTag::CSVBTag(wp working_point) {
     switch(working_point){
         case WP_LOOSE:

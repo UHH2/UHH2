@@ -79,7 +79,7 @@ class Jet : public FlavorParticle{
   int photonMultiplicity() const{return m_photonMultiplicity;}
   float btag_simpleSecondaryVertexHighEff() const{return m_btag_simpleSecondaryVertexHighEff;}
   float btag_simpleSecondaryVertexHighPur() const{return m_btag_simpleSecondaryVertexHighPur;}
-  float btag_combinedSecondaryVertex() const{return m_btag_combinedSecondaryVertex;}
+  float btag_combinedSecondaryVertex() const{return m_btag_combinedSecondaryVertex;} // combinedInclusiveSecondaryVertexV2BJetTags
   float btag_combinedSecondaryVertexMVA() const{return m_btag_combinedSecondaryVertexMVA;}
   float btag_jetBProbability() const{return m_btag_jetBProbability;}
   float btag_jetProbability() const{return m_btag_jetProbability;}
