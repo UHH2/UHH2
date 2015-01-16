@@ -2,10 +2,28 @@
 
 #include "UHH2/core/include/Event.h"
 
+#include <limits>
+
 /** Find the jet with smallest DeltaR to particle p
  * 
  * Returns NULL if (and only if) jets is empty.
  */
+
+template<typename T>
+const T * closestParticle(const Particle  & p, const std::vector<T> & particles){
+    double deltarmin = std::numeric_limits<double>::infinity();
+    const T* next=0;
+    for(unsigned int i=0; i<particles.size(); ++i) {
+        const T & pi = particles[i];
+        double dr = uhh2::deltaR(pi, p);
+        if(dr < deltarmin) {
+            deltarmin = dr;
+            next = &pi;
+        }
+    }
+    return next;
+}
+
 const Jet * nextJet(const Particle  & p, const std::vector<Jet> & jets);
 
 /** Relative transverse momentum of the particle p with respect to reference_axis
