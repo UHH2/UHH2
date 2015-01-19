@@ -34,3 +34,15 @@ double pTrel(const Particle  & p, const Particle * reference_axis);
  */
 std::string locate_file(const std::string & fname);
 
+
+
+/** Sort vector of Particles depending on pT 
+ * Thanks to Jochen for the code 
+ *
+ */
+
+template<typename P>
+void sort_by_pt(std::vector<P> & particles){
+    std::sort(particles.begin(), particles.end(), [](const P & p1, const
+P & p2){return p1.pt() > p2.pt();});
+}
