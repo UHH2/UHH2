@@ -16,9 +16,9 @@ bool TauIDMedium::operator()(const Tau & tau, const Event & event) const {
 	double deltaR = uhh2::deltaR(muon,tau);
 	if (deltaR < deltaRmin) deltaRmin = deltaR;
       }
-    if (deltaRmin > 0.5)
+    if (deltaRmin < 0.5)
       {
-	return true;
+	return false;
       }
   }
   else{
