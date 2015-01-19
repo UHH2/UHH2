@@ -48,8 +48,8 @@ void MuonHists::fill(const Event & event){
     number->Fill(event.muons->size(), w);
     
     // buffer values for ptrel and drmin to avoid recomputation:
-    vector<float> drmin_buf(event.muons->size(), 0.0);
-    vector<float> ptrel_buf(event.muons->size(), 0.0);
+    vector<float> drmin_buf;
+    vector<float> ptrel_buf;
     for(const auto & muon : *event.muons){
         pt->Fill(muon.pt(), w);
         eta->Fill(muon.eta(), w);
