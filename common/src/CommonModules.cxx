@@ -21,33 +21,80 @@ void CommonModules::init(Context & ctx){
     init_done = true;
     bool is_mc = ctx.get("dataset_type") == "MC";
     if(is_mc){
-        modules.emplace_back(new MCLumiWeight(ctx));
-        modules.emplace_back(new MCPileupReweight(ctx));
-        modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_MC));
-        modules.emplace_back(new JetResolutionSmearer(ctx));
+        if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
+        if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx));
+        if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_MC));
+        if(jersmear) modules.emplace_back(new JetResolutionSmearer(ctx));
     }
     else{
-        modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_DATA));
+        if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_DATA));
     }
 
     if(jetid){
-        modules.emplace_back(new JetCleaner(*jetid));
+        modules.emplace_back(new JetCleaner(jetid));
     }
     if(eleid){
-        modules.emplace_back(new ElectronCleaner(*eleid));
+        modules.emplace_back(new ElectronCleaner(eleid));
     }
     if(muid){
-        modules.emplace_back(new MuonCleaner(*muid));
+        modules.emplace_back(new MuonCleaner(muid));
     }
     if(tauid){
-        modules.emplace_back(new TauCleaner(*tauid));
+        modules.emplace_back(new TauCleaner(tauid));
     }
     modules.emplace_back(new HTCalculator(ctx));
 }
 
 bool CommonModules::process(uhh2::Event & event){
+    if(!init_done){
+        throw runtime_error("CommonModules::init not called (has to be called in AnalysisModule constructor)");
+    }
     for(auto & m : modules){
         m->process(event);
     }
     return true;
 }
+
+
+void CommonModules::disable_mclumiweight(){
+    fail_if_init();
+    mclumiweight = false;
+}
+
+void CommonModules::disable_mcpileupreweight(){
+    fail_if_init();
+    mcpileupreweight = false;
+}
+
+void CommonModules::disable_jec(){
+    fail_if_init();
+    jec = false;
+}
+
+void CommonModules::disable_jersmear(){
+    fail_if_init();
+    jersmear = false;
+}
+
+
+class TestCommonModules: public AnalysisModule {
+public:
+    TestCommonModules(uhh2::Context & ctx){
+        common.reset(new CommonModules());
+        // in a non-trivial usage, would call
+        // common->set_*_id   and
+        // common->disable_*  here.
+        common->init(ctx);
+    }
+    
+    virtual bool process(Event & event) override {
+        common->process(event);
+        return true;
+    }
+private:
+    std::unique_ptr<CommonModules> common;
+};
+
+UHH2_REGISTER_ANALYSIS_MODULE(TestCommonModules)
+
+

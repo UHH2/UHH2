@@ -7,7 +7,7 @@ using namespace std;
 
 class TestJetCorrections: public uhh2::AnalysisModule {
 public:
-    explicit TestJetCorrections(Context & ctx) {
+    explicit TestJetCorrections(Context & ) {
         jec_mc.reset(new JetCorrector(JERFiles::PHYS14_L123_MC));
         jec_data.reset(new JetCorrector(JERFiles::PHYS14_L123_DATA));
     }
@@ -46,7 +46,7 @@ bool TestJetCorrections::process(Event & e){
     jec_mc->process(e);
     // re-applying MC jet energy corrections should not change anything:
     auto jets_after_mc_jec = *e.jets;
-    assert(compare_jets(jets_before, jets_after_mc_jec) <= 1);
+    assert(compare_jets(jets_before, jets_after_mc_jec) <= 2);
     jec_data->process(e);
     auto jets_after_data_jec = *e.jets;
     // applying data jet energy corrections on MC should change the pt considerably, but not the number of jets:
@@ -55,3 +55,29 @@ bool TestJetCorrections::process(Event & e){
 }
 
 UHH2_REGISTER_ANALYSIS_MODULE(TestJetCorrections)
+
+
+class TestJERSmear: public uhh2::AnalysisModule {
+public:
+    explicit TestJERSmear(Context & ctx) {
+        jer.reset(new JetResolutionSmearer(ctx));
+        //printer_before.reset(new JetPrinter("before", 20.0));
+        //printer_after.reset(new JetPrinter("after", 20.0));
+    }
+    
+    virtual bool process(Event & e) override {
+        //printer_before->process(e);
+        auto jets_before = *e.jets;
+        jer->process(e);
+        //printer_after->process(e);
+        assert(compare_jets(jets_before, *e.jets) <= 2);
+        return true;
+    }
+    
+private:
+    std::unique_ptr<AnalysisModule> jer, printer_before, printer_after;
+};
+
+
+UHH2_REGISTER_ANALYSIS_MODULE(TestJERSmear)
+

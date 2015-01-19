@@ -18,6 +18,16 @@
  */
 
 
+/** \brief Get the best hypothesis, i.e. the one with the smallest discriminator value
+ * 
+ * If no hypothesis exists with that name or if the smallest discriminator is infinite, returns
+ * nullptr.
+ * 
+ * label is the disriminator label, e.g. "Chi2".
+ */
+const ReconstructionHypothesis * get_best_hypothesis(const std::vector<ReconstructionHypothesis> & hyps, const std::string & label);
+
+
 /** \brief Calculate the chi-square reconstruction discriminator
  * 
  * The Chi-square value is calculated from leptonic and hadronic reconstructed top-quark masses. This

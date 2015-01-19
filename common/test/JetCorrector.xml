@@ -3,7 +3,7 @@
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
    <Library Name="libTestSUHH2common"/>
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
-        <InputData Lumi="1" NEventsMax="10" Type="MC" Version="BpJ_TW_800" Cacheable="False">
+        <InputData Lumi="1" NEventsMax="10" Type="MC" Version="TestJetCorrector" Cacheable="False">
             <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_BpJ_TW_M800_20x25_14_Ntuple.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
             <OutputTree Name="AnalysisTree" />

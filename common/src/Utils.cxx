@@ -4,8 +4,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <limits>
-
 using namespace std;
 using uhh2::deltaR;
 
@@ -24,19 +22,8 @@ bool file_exists(const std::string & path){
     
 }
 
-
 const Jet * nextJet(const Particle  & p, const std::vector<Jet> & jets){
-    double deltarmin = numeric_limits<double>::infinity();
-    const Jet* nextjet=0;
-    for(unsigned int i=0; i<jets.size(); ++i) {
-        const Jet & ji = jets[i];
-        double dr = deltaR(ji, p);
-        if(dr < deltarmin) {
-            deltarmin = dr;
-            nextjet = &ji;
-        }
-    }
-    return nextjet;
+    return closestParticle(p, jets);
 }
 
 

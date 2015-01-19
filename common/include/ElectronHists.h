@@ -9,7 +9,7 @@
  */
 class ElectronHists: public uhh2::Hists {
 public:
-    ElectronHists(uhh2::Context & ctx, const std::string & dirname);
+    ElectronHists(uhh2::Context & ctx, const std::string & dirname, bool gen_plots=false);
     
     virtual void fill(const uhh2::Event & ev) override;
     
@@ -22,6 +22,7 @@ private:
     TH1F *number, *pt, *eta, *phi, *isolation, *charge, *ptrel, *deltaRmin;
     TH1F *pt_1, *eta_1, *phi_1, *isolation_1, *charge_1, *ptrel_1, *deltaRmin_1;
     TH1F *pt_2, *eta_2, *phi_2, *isolation_2, *charge_2, *ptrel_2, *deltaRmin_2;
+    TH1F *eff_sub, *eff_tot, *pt_response;
     
     TH2F *deltaRmin_ptrel, *deltaRmin_ptrel_1, *deltaRmin_ptrel_2;
 };

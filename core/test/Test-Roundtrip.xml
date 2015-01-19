@@ -27,7 +27,7 @@
             
             <Item Name="readTrigger" Value="false" />
             
-            <Item Name="AnalysisModule" Value="NoopModule" />
+            <Item Name="AnalysisModule" Value="NoopAnalysisModule" />
         </UserConfig>
     </Cycle>
 </JobConfiguration>

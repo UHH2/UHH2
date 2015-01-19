@@ -186,11 +186,11 @@ public:
      * invalid to trigger the callback on the next call to 'get'.
      */
     template<typename T>
-    void set_get_callback(const Handle<T> & handle, boost::optional<std::function<void ()>> callback){
+    void set_get_callback(const Handle<T> & handle, std::function<void ()> callback){
         set_get_callback(typeid(T), handle, std::move(callback));
     }
     
-    void set_get_callback(const std::type_info & ti, const RawHandle & handle, boost::optional<std::function<void ()>> callback);
+    void set_get_callback(const std::type_info & ti, const RawHandle & handle, std::function<void ()> callback);
     
     /** \brief Set the validity flag of an element
      * 
@@ -239,24 +239,23 @@ private:
     };
     
     // type-erased data member.
-    // Life-cycle: it is created upon handle creation with data=0, eraser=0, generator=none, valid=false. At this point, it is considered nonexistent
+    // Life-cycle: it is created upon handle creation with data=0, eraser=0, generator=none, valid=false.
     // 'set' sets data, eraser, valid=true. Now, it is 'valid'.
     // 'set_validity' can be used to set it to 'invalid' or 'valid' now.
     // 'set_get_callback' sets generator
     // destructor calls the eraser on data, if eraser is set.
     struct member_data {
-        bool valid;
-        void * data; // managed by eraser. Can be 0 if not 'set' yet, but handle exists, or if unmanaged.
+        bool valid = false;
+        void * data = nullptr; // managed by eraser. Can be 0 if not 'set' yet, but handle exists, or if unmanaged.
         std::unique_ptr<eraser_base> eraser;
-        boost::optional<std::function<void ()>> generator;
+        std::function<void ()> generator;
         
         ~member_data();
         member_data(const member_data &) = delete;
         member_data(member_data &&) = default; // note: default is save although this class manages the memory of 'data', as a move will make 'eraser' null, preventing double delete of data.
+        member_data(){}
         void operator=(const member_data & other) = delete;
         void operator=(member_data && other) = delete;
-        
-        member_data(): valid(false), data(0) {}
     };
     
     const std::vector<GenericEventStructure::member_info> member_infos;

@@ -3,6 +3,7 @@
 
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
+#include "UHH2/common/include/CommonModules.h"
 #include "UHH2/common/include/CleaningModules.h"
 #include "UHH2/common/include/ElectronHists.h"
 #include "UHH2/examples/include/ExampleSelections.h"
@@ -24,6 +25,8 @@ public:
 
 private:
     
+    std::unique_ptr<CommonModules> common;
+    
     std::unique_ptr<JetCleaner> jetcleaner;
    
     // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor,
@@ -36,8 +39,9 @@ private:
 
 
 ExampleModule::ExampleModule(Context & ctx){
-    // In the constructor, the typical tasks are to create
-    // other modules like cleaners (1), selections (2) and Hist classes (3).
+    // In the constructor, the typical tasks are to initialize the
+    // member variables, in particular the AnalysisModules such as
+    // CommonModules or some cleaner module, Selections and Hists.
     // But you can do more and e.g. access the configuration, as shown below.
     
     cout << "Hello World from ExampleModule!" << endl;
@@ -46,15 +50,25 @@ ExampleModule::ExampleModule(Context & ctx){
     string testvalue = ctx.get("TestKey", "<not set>");
     cout << "TestKey in the configuration was: " << testvalue << endl;
     
-    // If running in SFrame, the keys "dataset_version", "dataset_type" and "dataset_lumi"
-    // are set to the according values in the xml file. For CMSSW, these are
+    // If running in SFrame, the keys "dataset_version", "dataset_type", "dataset_lumi",
+    // and "target_lumi" are set to the according values in the xml file. For CMSSW, these are
     // not set automatically, but can be set in the python config file.
     for(auto & kv : ctx.get_all()){
         cout << " " << kv.first << " = " << kv.second << endl;
     }
     
-    // 1. setup other modules. Here, only the jet cleaner
-    jetcleaner.reset(new JetCleaner(30.0, 2.4));
+    // 1. setup other modules. CommonModules and the JetCleaner:
+    common.reset(new CommonModules());
+    // TODO: configure common here, e.g. by 
+    // calling common->set_*_id or common->disable_*
+    common->init(ctx);
+    jetcleaner.reset(new JetCleaner(30.0, 2.4)); 
+    
+    // note that the JetCleaner is only kept for the sake of example;
+    // instead of constructing a jetcleaner explicitly,
+    // the cleaning can also be achieved with less code via CommonModules with:
+    // common->set_jet_id(PtEtaCut(30.0, 2.4));
+    // before the 'common->init(ctx)' line.
     
     // 2. set up selections:
     njet_sel.reset(new NJetSelection(2));
@@ -81,11 +95,11 @@ bool ExampleModule::process(Event & event) {
     
     cout << "ExampleModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
     
-    // 1. run all modules; here: only jet cleaning.
+    // 1. run all modules other modules.
+    common->process(event);
     jetcleaner->process(event);
     
     // 2. test selections and fill histograms
-    
     h_nocuts->fill(event);
     
     bool njet_selection = njet_sel->passes(event);
