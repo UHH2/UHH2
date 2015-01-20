@@ -59,7 +59,8 @@ public:
    * Internally, \c TriggerIndex stores the actual index into the vector of booleans of trigger
    * decisions for the runid last seen, thus avoiding to make string comparisons for each event.
    * If the runid changes, this index is looked up again in the (potentially changed) trigger
-   * menu for the new run.
+   * menu for the new run. This is done automatically in the routines below, the user does not have
+   * to do anything special at a run transition.
    */
   struct TriggerIndex {
       // invalid triggerindex

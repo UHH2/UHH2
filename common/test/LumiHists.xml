@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+   <Library Name="libTestSUHH2common"/>
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="TestLumiHists" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/peiffer/Analysis53X_v3/PreSelectionMuon/ZprimePreSelectionCycle.DATA.DATA_A.root" Lumi="0.0"/> 
+            <In FileName="/nfs/dust/cms/user/peiffer/Analysis53X_v3/PreSelectionMuon/ZprimePreSelectionCycle.DATA.DATA_B.root" Lumi="0.0"/> 
+            <In FileName="/nfs/dust/cms/user/peiffer/Analysis53X_v3/PreSelectionMuon/ZprimePreSelectionCycle.DATA.DATA_C.root" Lumi="0.0"/> 
+            <In FileName="/nfs/dust/cms/user/peiffer/Analysis53X_v3/PreSelectionMuon/ZprimePreSelectionCycle.DATA.DATA_D.root" Lumi="0.0"/> 
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>
+            
+        <UserConfig>
+            
+            <Item Name="lumihists_lumi_file" Value="/nfs/dust/cms/user/peiffer/Analysis53X_v3/LumiFiles/Mu40_pixel.root" />
+            
+            <Item Name="AnalysisModule" Value="TestLumiHists" /> 
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>
