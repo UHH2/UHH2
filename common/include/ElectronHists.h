@@ -9,7 +9,7 @@
  */
 class ElectronHists: public uhh2::Hists {
 public:
-    ElectronHists(uhh2::Context & ctx, const std::string & dirname, bool gen_plots=false);
+    ElectronHists(uhh2::Context & ctx, const std::string & dirname, bool gen_plots=true);
     
     virtual void fill(const uhh2::Event & ev) override;
     

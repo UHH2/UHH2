@@ -20,6 +20,12 @@ bool passes_minmax(const vector<T> & objects, int nmin, int nmax, const Event & 
     
 }
 
+
+NTauSelection::NTauSelection(int nmin_, int nmax_, const boost::optional<TauId> & tauid_): nmin(nmin_), nmax(nmax_), tauid(tauid_){}
+
+bool NTauSelection::passes(const Event & event){
+    return passes_minmax(*event.taus, nmin, nmax, event, tauid);
+}
     
 NMuonSelection::NMuonSelection(int nmin_, int nmax_, const boost::optional<MuonId> & muid_): nmin(nmin_), nmax(nmax_), muid(muid_){}
 

@@ -20,6 +20,15 @@
 // which corresponds to the first of the two described modes.
 
 
+class NTauSelection: public uhh2::Selection {
+public:
+    explicit NTauSelection(int nmin, int nmax = -1, const boost::optional<TauId> & tauid = boost::none);
+    virtual bool passes(const uhh2::Event & event);
+private:
+    int nmin, nmax;
+    boost::optional<TauId> tauid;
+};
+
 class NMuonSelection: public uhh2::Selection {
 public:
     explicit NMuonSelection(int nmin, int nmax = -1, const boost::optional<MuonId> & muid = boost::none);

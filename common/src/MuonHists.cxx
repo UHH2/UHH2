@@ -11,7 +11,7 @@
 using namespace uhh2;
 using namespace std;
 
-MuonHists::MuonHists(Context & ctx, const std::string & dname): Hists(ctx, dname){
+MuonHists::MuonHists(Context & ctx, const std::string & dname, bool gen_plots): Hists(ctx, dname){
     number = book<TH1F>("number","number of muons",7,-0.5,6.5);
     
     pt = book<TH1F>("pt","p_{T} muon",100,0,500);
@@ -40,16 +40,41 @@ MuonHists::MuonHists(Context & ctx, const std::string & dname): Hists(ctx, dname
     charge_2 = book<TH1F>("charge_2", "muon 2 charge",3,-1.5,1.5);
     deltaRmin_2 = book<TH1F>("deltaRmin_2", "#Delta R_{min}(mu 2,jet)", 40, 0, 2.0);
     deltaRmin_ptrel_2 = book<TH2F>("deltaRmin_ptrel_2", "x=#Delta R_{min}(mu 2,jet) y=p_{T}^{rel}(mu 2,jet)", 40, 0, 2.0, 40, 0, 200.);
+
+    if (gen_plots) {
+        eff_sub     = book<TH1F>("eff_sub",     "p_{T}",                100,0,500);
+        eff_tot     = book<TH1F>("eff_tot",     "p_{T}",                100,0,500);
+        pt_response = book<TH1F>("pt_response", "(p_{T, gen} - p_{T, reco}) / p_{T, gen}",
+                                                                        800,-2.,2.);
+    } else {
+        eff_sub     = 0;
+        eff_tot     = 0;
+        pt_response = 0;
+    }
 }
 
 void MuonHists::fill(const Event & event){
     auto w = event.weight;
     assert(event.muons);
     number->Fill(event.muons->size(), w);
-    
+
+    if (eff_sub && event.genparticles) {
+        for (const auto & gp: *event.genparticles) {
+            if (abs(gp.pdgId()) == 13) {
+                auto gp_pt = gp.pt();
+                eff_tot->Fill(gp_pt, w);
+                auto mu = closestParticle(gp, *event.muons);
+                if (mu && deltaR(gp, *mu) < 0.1) {
+                    eff_sub->Fill(gp_pt, w);
+                    pt_response->Fill((gp_pt - mu->pt()) / gp_pt, w);
+                }
+            }
+        }
+    }
+
     // buffer values for ptrel and drmin to avoid recomputation:
-    vector<float> drmin_buf(event.muons->size(), 0.0);
-    vector<float> ptrel_buf(event.muons->size(), 0.0);
+    vector<float> drmin_buf;
+    vector<float> ptrel_buf;
     for(const auto & muon : *event.muons){
         pt->Fill(muon.pt(), w);
         eta->Fill(muon.eta(), w);
