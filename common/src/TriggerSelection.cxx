@@ -4,7 +4,7 @@ using namespace uhh2;
 using namespace std;
 
 
-TriggerSelection::TriggerSelection(string triggerName_):triggerName(triggerName_){
+TriggerSelection::TriggerSelection(string triggerName_):triggerName(move(triggerName_)){
   triggerInit = false;
 }
 
@@ -13,8 +13,6 @@ bool TriggerSelection::passes(const Event & event){
     triggerIndex = event.get_trigger_index(triggerName);
     triggerInit = true;
   }
-
   return event.passes_trigger(triggerIndex);
-
 }
 

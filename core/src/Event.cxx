@@ -99,7 +99,15 @@ bool Event::passes_trigger(TriggerIndex & ti) const{
     if(!lookup_trigger_index(ti)){
         throw runtime_error("Event does not have trigger '" + ti.triggername + "'. Available triggers:\n" + format_list(triggerNames_currentrun));
     }
-    assert(triggerResults);
+    if(!triggerResults){
+        throw runtime_error("Event::passes_trigger: trigger Results have not beed read in");
+    }
+    if(triggerNames_currentrun.size() != triggerResults->size()){
+        stringstream ss;
+        ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger results for current event have size " << triggerResults->size()
+           << endl;
+        throw runtime_error(ss.str());
+    }
     assert(triggerNames_currentrun.size() == triggerResults->size());
     return triggerResults->at(ti.index);
 }

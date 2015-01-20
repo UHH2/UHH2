@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+   <Library Name="libTestSUHH2common"/>
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="TestTrigger" Cacheable="False">
+            <!-- TODO: replace that file with a more recent one ... -->
+            <In FileName="/afs/desy.de/user/o/ottjoc/xxl-af-cms/CMSSW_7_2_1_patch4/src/UHH2/core/Ntuple.root" Lumi="0.0"/> 
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>
+            
+        <UserConfig>
+            
+            <Item Name="AnalysisModule" Value="TestTrigger" /> 
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>

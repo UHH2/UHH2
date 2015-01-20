@@ -7,6 +7,9 @@ source ../core/test/testlib.sh
 exec_checked sframe_main test/JetCorrector.xml
 exec_checked sframe_main test/JetSmearer.xml
 expect_failure sframe_main test/JetSmearer-again.xml
+exec_checked sframe_main test/Trigger.xml
+
+exec_checked bin/test
 
 #cleanup:
 rm uhh2.AnalysisModuleRunner.MC.Test*.root
