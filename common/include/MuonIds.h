@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UHH2/core/include/Event.h"
+#include "UHH2/core/include/Utils.h"
 
 // see also ElectronIds.h for general comments
 
@@ -15,7 +16,7 @@ public:
 // only kinematic cuts, with no further id
 class MuonIDKinematic {
 public:
-    MuonIDKinematic(double ptmin, double etamax);
+    MuonIDKinematic(double ptmin, double etamax) DEPRECATED("Use more general PtEtaCut instead");
     bool operator()(const Muon & muon, const uhh2::Event & event) const;
     
 private:
