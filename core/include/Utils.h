@@ -10,7 +10,7 @@
 #include <vector>
 #include <memory>
 
-#define DEPRECATED(reason) __attribute__((deprectaed(reason)))
+#define DEPRECATED(reason) __attribute__((deprecated(reason)))
 
 
 namespace uhh2{
