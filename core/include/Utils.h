@@ -10,6 +10,9 @@
 #include <vector>
 #include <memory>
 
+#define DEPRECATED(reason) __attribute__((deprectaed(reason)))
+
+
 namespace uhh2{
 
 template<typename T, typename... Args>
@@ -27,9 +30,13 @@ bool string2bool(const std::string & s);
 /// Convert a double to a string; use enough digits to keep high accuracy
 std::string double2string(double d);
 
+/// Convert a double to string with a given precision
 std::string double2string(double d, int precision);
+
+/// Convert an integer to a string
 std::string int2string(int i);
 
+/// Convert a string to a double
 double string2double(const std::string & s);
 
 /// Make a C++-mangled typename human-readable
@@ -42,6 +49,7 @@ std::string demangle(const std::string & mangled_typename);
  */
 void trim(std::string & s, const std::string & to_trim = " \r\n\t");
 
+/// for those who do not like std::numeric_limits<double>::infinity();
 extern const double infinity;
 
 /** \brief Format information in a text-based table

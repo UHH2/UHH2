@@ -9,7 +9,7 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
 
-/// Keep only jets with a minimum pt and maximum |eta|; sort jets in pt.
+/// Keep only jets fulfilling a certain JetId / with a minimum pt and maximum |eta|
 class JetCleaner: public uhh2::AnalysisModule {
 public:
     

@@ -11,7 +11,19 @@
 
 class MuonPrinter: public uhh2::AnalysisModule {
 public:
+    explicit MuonPrinter(const std::string & name = "");
     virtual bool process(uhh2::Event & event) override;
+private:
+    std::string name;
+};
+
+class ElectronPrinter: public uhh2::AnalysisModule {
+public:
+    explicit ElectronPrinter(const std::string & name = "");
+    virtual bool process(uhh2::Event & event) override;
+    static void print(std::ostream & out, const Electron & ele, const uhh2::Event & event);
+private:
+    std::string name;
 };
 
 class GenParticlesPrinter: public uhh2::AnalysisModule {
