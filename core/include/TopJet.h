@@ -13,68 +13,14 @@
 class TopJet : public Jet{
  public:
   TopJet(){
-    m_subjets.clear();
-
     // initialize substructure variables to -1
     m_qjets_volatility = -1.; 
     m_tau1 = -1.;
     m_tau2 = -1.;
     m_tau3 = -1.;
+  }
 
-    //clear btag variables
-    m_subCSV.clear();
-    m_subArea.clear();
-    m_subJEC_raw.clear();
-    m_subFlavour.clear();
-
-    //clear track impact parameter tag info
-    m_subTrackMomentum.clear();
-    m_subTrackEta.clear();
-    m_subTrackEtaRel.clear();
-    m_subTrackDeltaR.clear();
-    m_subTrackSip3dVal.clear();
-    m_subTrackSip3dSig.clear();
-    m_subTrackSip2dVal.clear();
-    m_subTrackSip2dSig.clear();
-    m_subTrackDecayLenVal.clear();
-    m_subTrackChi2.clear();
-    m_subTrackNTotalHits.clear();
-    m_subTrackNPixelHits.clear();
-    m_subTrackPtRel.clear();
-    m_subTrackPPar.clear();
-    m_subTrackPtRatio.clear();
-    m_subTrackPParRatio.clear();
-    m_subTrackJetDistVal.clear();
-    m_subTrackJetDistSig.clear();
-    m_subTrackGhostTrackDistVal.clear();
-    m_subTrackGhostTrackDistSig.clear();
-    m_subTrackGhostTrackWeight.clear();
-  
-    //clear secondary vertex tag info
-    m_subFlightDistance2dVal.clear();
-    m_subFlightDistance2dSig.clear();
-    m_subFlightDistance3dVal.clear();
-    m_subFlightDistance3dSig.clear();
-    m_subVertexJetDeltaR.clear();
-    m_subJetNSecondaryVertices.clear();
-    m_subVertexNTracks.clear();
-    m_subSecondaryVertex.clear();
-    m_subVertexChi2.clear();                                
-    m_subVertexNdof.clear();                    
-    m_subVertexNormalizedChi2.clear();
-    m_subVertexTracksSize.clear();
-    //JTC SV variables
-    m_subVertexCategoryJTC.clear();
-    m_subVertexMassJTC.clear();
-    m_subVertexEnergyRatioJTC.clear();
-    m_subTrackSip3dSigAboveCharmJTC.clear();
-
-
-  };
-  ~TopJet(){
-  };
-
-  TopJet(Jet j){
+  explicit TopJet(const Jet & j){
     this->set_v4(j.v4());
     this->set_charge(j.charge());
     this->set_pdgId(j.pdgId());
@@ -100,10 +46,10 @@ class TopJet : public Jet{
     this->set_btag_jetProbability(j.btag_jetProbability());
     this->set_JEC_factor_raw(j.JEC_factor_raw());
     this->set_genjet_index(j.genjet_index());
-    for(unsigned int i=0; i<j.pfconstituents_indices().size(); i++){
-      this->add_pfconstituents_index(j.pfconstituents_indices()[i]);
+    auto indices = j.pfconstituents_indices();
+    for(unsigned int i=0; i<indices.size(); i++){
+      this->add_pfconstituents_index(indices[i]);
     }
-
   }
 
   // substructure getters

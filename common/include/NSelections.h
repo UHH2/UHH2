@@ -41,8 +41,6 @@ private:
 
 class NElectronSelection: public uhh2::Selection {
 public:
-    typedef std::function<bool (const Electron & muon, const uhh2::Event & event)> eleid_type;
-    
     explicit NElectronSelection(int nmin, int nmax = -1, const boost::optional<ElectronId> & eleid = boost::none);
     virtual bool passes(const uhh2::Event & event);
 private:
@@ -52,8 +50,6 @@ private:
 
 class NJetSelection: public uhh2::Selection {
 public:
-    typedef std::function<bool (const Jet & jet, const uhh2::Event & event)> jetid_type;
-    
     explicit NJetSelection(int nmin, int nmax = -1, const boost::optional<JetId> & jetid = boost::none);
     virtual bool passes(const uhh2::Event & event);
 private:
@@ -63,8 +59,6 @@ private:
 
 class NTopJetSelection: public uhh2::Selection {
 public:
-    typedef std::function<bool (const Jet & jet, const uhh2::Event & event)> jetid_type;
-    
     explicit NTopJetSelection(int nmin, int nmax = -1, const boost::optional<TopJetId> & topjetid = boost::none);
     virtual bool passes(const uhh2::Event & event);
 private:

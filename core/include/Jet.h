@@ -132,12 +132,12 @@ class Jet : public FlavorParticle{
        && neutralEmEnergyFraction()<0.99){
       
       if(fabs(eta())>=2.4)
-	return true;
+        return true;
       
       if(chargedEmEnergyFraction()<0.99
-	 && chargedHadronEnergyFraction()>0
-	 && chargedMultiplicity()>0)
-	return true;   
+        && chargedHadronEnergyFraction()>0
+        && chargedMultiplicity()>0)
+        return true;   
     }
     return false;
   }
@@ -160,8 +160,8 @@ class Jet : public FlavorParticle{
     int jet_charge=0;
     for(unsigned int i=0; i< m_pfconstituents_indices.size(); i++){
       if(m_pfconstituents_indices[i]>pfparts.size()){
-	std::cerr << "ERROR: PFParticle index out of range in this jet, check list of particles given to fill_PF_variables routine" << std::endl;
-	continue;
+        std::cerr << "ERROR: PFParticle index out of range in this jet, check list of particles given to fill_PF_variables routine" << std::endl;
+        continue;
       }
       n_dau++;
       if(pfparts.at(m_pfconstituents_indices[i])->charge()!=0) n_cm++;
