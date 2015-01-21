@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UHH2/core/include/AnalysisModule.h"
+#include "UHH2/common/include/ObjectIdUtils.h"
 
 class FactorizedJetCorrector;
 
@@ -16,6 +17,9 @@ namespace JERFiles {
  * updated files.
  * 
  * For some standard jet energy corrections, you can use filenames defined in the JERFiles namespace.
+ * 
+ * Please note that the JetCorrector does not sort the (re-)corrected jets by pt;
+ * you might want to do that before running algorithms / plotting which assume that.
  */
 class JetCorrector: public uhh2::AnalysisModule {
 public:
@@ -27,6 +31,56 @@ public:
     
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
+};
+
+
+/** \brief Cross-clean lepton and jets by subtracting lepton four momenta from nearby jets
+ * 
+ * Leptons are subtracted from the jets' raw four-momentum if:
+ *  - DR(jet, lepton) < drmax (default: 0.5) and
+ *  - electron/muon multiplicity is greater than 0 and
+ *  - electron energy / muon energy of jet is compatible with lepton to subtract
+ * 
+ * Only implemented for muons and electrons, not for taus. As default, all muons
+ * and electrons are used. To not consider all electrons/muons either:
+ *   - run an appropriate cleaning module before this one or
+ *   - set an explicit id via the set_electron_id / set_muon_id.
+ * 
+ * Note that the cleaning works well if using a muon or electron id which is stricly a subset of the
+ * particle-flow id, because only particle-flow muons/electrons are considered in the muon/electron
+ * energy fraction stored in the jet which is used to decide whether or not to subtract it.
+ * So if you use non-PF muons or non-PF electrons, you might need to re-write the
+ * JetLeptonCleaner for that case.
+ * 
+ * Please note that the JetLeptonCleaner does not sort the (re-)corrected jets by pt;
+ * you might want to do that before running algorithms / plotting which assume that.
+ */
+class JetLeptonCleaner: public uhh2::AnalysisModule {
+public:
+    // jec_filenames is teh same as for the JetCorrector.
+    explicit JetLeptonCleaner(const std::vector<std::string> & jec_filenames);
+    
+    void set_muon_id(const MuonId & mu_id_){
+        mu_id = mu_id_;
+    }
+    
+    void set_electron_id(const ElectronId & ele_id_){
+        ele_id = ele_id_;
+    }
+    
+    void set_drmax(double drmax_){
+        drmax = drmax_;
+    }
+    
+    virtual bool process(uhh2::Event & event) override;
+    
+    virtual ~JetLeptonCleaner();
+    
+private:
+    std::unique_ptr<FactorizedJetCorrector> corrector;
+    MuonId mu_id;
+    ElectronId ele_id;
+    double drmax = 0.5;
 };
 
 /** \brief Smear the jet four-momenta in MC to match the resolution in data
@@ -44,6 +98,9 @@ private:
  * Options parsed from the given Context:
  *  - "jersmear_smear_met": if "true", propagate the jet resolution smearing to MET. Default is false.
  *  - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing resp.
+ * 
+ * Please note that the JetResolutionSmearer does not sort the (re-)corrected jets by pt;
+ * you might want to do that before running algorithms / plotting which assume that.
  */
 class JetResolutionSmearer: public uhh2::AnalysisModule {
 public:
