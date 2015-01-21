@@ -14,6 +14,8 @@
 using namespace std;
 using namespace uhh2;
 
+namespace uhh2examples {
+
 /** \brief Another analysis example of an AnalysisModule
  * 
  * In contrast to ExampleModule, this class uses more code from 'common' to achieve
@@ -83,3 +85,5 @@ bool ExampleModule2::process(Event & event) {
 // as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,
 // make sure the ExampleModule is found by class name. This is ensured by this macro:
 UHH2_REGISTER_ANALYSIS_MODULE(ExampleModule2)
+
+}

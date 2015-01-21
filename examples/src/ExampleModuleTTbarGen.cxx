@@ -9,6 +9,8 @@
 using namespace std;
 using namespace uhh2;
 
+namespace uhh2examples {
+
 /** \brief Example for calculating and accessing the TTbarGen interpretation
  * 
  */
@@ -42,3 +44,5 @@ bool ExampleModuleTTbarGen::process(Event & event) {
 }
 
 UHH2_REGISTER_ANALYSIS_MODULE(ExampleModuleTTbarGen)
+
+}

@@ -6,11 +6,14 @@
 #include "UHH2/common/include/CommonModules.h"
 #include "UHH2/common/include/CleaningModules.h"
 #include "UHH2/common/include/ElectronHists.h"
+#include "UHH2/common/include/NSelections.h"
 #include "UHH2/examples/include/ExampleSelections.h"
 #include "UHH2/examples/include/ExampleHists.h"
 
 using namespace std;
 using namespace uhh2;
+
+namespace uhh2examples {
 
 /** \brief Basic analysis example of an AnalysisModule (formerly 'cycle') in UHH2
  * 
@@ -31,10 +34,10 @@ private:
    
     // declare the Selections to use. Use unique_ptr to ensure automatic call of delete in the destructor,
     // to avoid memory leaks.
-    std::unique_ptr<Selection> njet_sel, bsel;
+    std::unique_ptr<Selection> njet_sel, dijet_sel;
     
     // store the Hists collection as member variables. Again, use unique_ptr to avoid memory leaks.
-    std::unique_ptr<Hists> h_nocuts, h_njet, h_bsel, h_ele;
+    std::unique_ptr<Hists> h_nocuts, h_njet, h_dijet, h_ele;
 };
 
 
@@ -70,14 +73,14 @@ ExampleModule::ExampleModule(Context & ctx){
     // common->set_jet_id(PtEtaCut(30.0, 2.4));
     // before the 'common->init(ctx)' line.
     
-    // 2. set up selections:
-    njet_sel.reset(new NJetSelection(2));
-    bsel.reset(new NBTagSelection(1));
+    // 2. set up selections
+    njet_sel.reset(new NJetSelection(2)); // see common/include/NSelections.h
+    dijet_sel.reset(new DijetSelection()); // see ExampleSelections
 
     // 3. Set up Hists classes:
     h_nocuts.reset(new ExampleHists(ctx, "NoCuts"));
     h_njet.reset(new ExampleHists(ctx, "Njet"));
-    h_bsel.reset(new ExampleHists(ctx, "Bsel"));
+    h_dijet.reset(new ExampleHists(ctx, "Dijet"));
     h_ele.reset(new ElectronHists(ctx, "ele_nocuts"));
 }
 
@@ -100,22 +103,23 @@ bool ExampleModule::process(Event & event) {
     jetcleaner->process(event);
     
     // 2. test selections and fill histograms
+    h_ele->fill(event);
     h_nocuts->fill(event);
     
     bool njet_selection = njet_sel->passes(event);
     if(njet_selection){
         h_njet->fill(event);
     }
-    bool bjet_selection = bsel->passes(event);
-    if(bjet_selection){
-        h_bsel->fill(event);
+    bool dijet_selection = dijet_sel->passes(event);
+    if(dijet_selection){
+        h_dijet->fill(event);
     }
-    h_ele->fill(event);
-    
     // 3. decide whether or not to keep the current event in the output:
-    return njet_selection && bjet_selection;
+    return njet_selection && dijet_selection;
 }
 
 // as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,
 // make sure the ExampleModule is found by class name. This is ensured by this macro:
 UHH2_REGISTER_ANALYSIS_MODULE(ExampleModule)
+
+}

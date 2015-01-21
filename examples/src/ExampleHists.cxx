@@ -6,6 +6,7 @@
 
 using namespace std;
 using namespace uhh2;
+using namespace uhh2examples;
 
 ExampleHists::ExampleHists(Context & ctx, const string & dirname): Hists(ctx, dirname){
   // book all histograms here

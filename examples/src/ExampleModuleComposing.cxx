@@ -7,6 +7,8 @@
 using namespace std;
 using namespace uhh2;
 
+namespace uhh2examples {
+
 /* Example for composing many AnalysisModules
  * 
  * This example shows how to use AnalysisModules together by having one 'main' 
@@ -134,3 +136,5 @@ bool ExampleModuleComposing::process(Event & event) {
 // any problems because it has the right constructor, while this
 // would not be possible for CalcHT2, as it does not have the right constructor.
 UHH2_REGISTER_ANALYSIS_MODULE(ExampleModuleComposing)
+
+}

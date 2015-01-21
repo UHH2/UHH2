@@ -3,49 +3,20 @@
 #include "UHH2/core/include/fwd.h"
 #include "UHH2/core/include/Selection.h"
 
-namespace uhh2 {
+namespace uhh2examples {
     
-/** NOTE: These classes are here as a (small) example only. If you need them, do NOT copy+paste these; the
- *  same (or even improved) functionality is also available through classes already in UHH2/common!
+/* Select events with at least two jets in which the leading two jets have deltaphi > 2.7 and the third jet pt is
+ * below 20% of the average of the leading two jets, where the minimum deltaphi and
+ * maximum third jet pt fraction can be changed in the constructor.
+ * The jets are assumed to be sorted in pt.
  */
-
-/// Select events with certain minimum / maximum number of jets
-class NJetSelection: public Selection {
+class DijetSelection: public uhh2::Selection {
 public:
-    /// In case nmax=-1, no cut on the maximum is applied.
-    explicit NJetSelection(int nmin, int nmax = -1);
-    virtual bool passes(const Event & event) override;
-    
+    DijetSelection(float dphi_min = 2.7f, float third_frac_max = 0.2f);
+    virtual bool passes(const uhh2::Event & event) override;
 private:
-    int nmin, nmax;
+    float dphi_min, third_frac_max;
 };
 
-
-/** \brief Various definitions of b-tagging, in particular working points
- * 
- * This is useful for various selection modules, and thus defined outside of a particular Selection class.
- */
-namespace btagging {
-    
-enum class csv_wp {
-    loose, medium, tight
-};
-
-/// convert a CSV working point to a numerical threshold of the discriminator.
-float csv_threshold(const csv_wp & wp);
-
-}
-
-/// Select events with certain minimum / maximum number of b-tagged jets using the CSV tagger
-class NBTagSelection: public Selection {
-public:
-    /// In case nmax=-1, no cut on the maximum is applied.
-    explicit NBTagSelection(int nmin, int nmax = -1, btagging::csv_wp wp = btagging::csv_wp::medium);
-    virtual bool passes(const Event & event) override;
-    
-private:
-    int nmin, nmax;
-    float min_csv;
-};
 
 }

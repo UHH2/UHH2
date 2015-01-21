@@ -2,6 +2,8 @@
 
 #include "UHH2/core/include/Hists.h"
 
+namespace uhh2examples {
+
 /**  \brief Example class for booking and filling histograms
  * 
  * NOTE: This class uses the 'hist' method to retrieve histograms.
@@ -17,3 +19,5 @@ public:
     virtual void fill(const uhh2::Event & ev) override;
     virtual ~ExampleHists();
 };
+
+}
