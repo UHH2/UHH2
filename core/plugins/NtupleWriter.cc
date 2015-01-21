@@ -218,8 +218,10 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   if(doElectrons){
       using uhh2::NtupleWriterElectrons;
       auto electron_sources = iConfig.getParameter<std::vector<std::string> >("electron_sources");
+      auto electron_id_sources = iConfig.getParameter<std::vector<edm::InputTag>>("electron_id_sources");
       for(size_t i=0; i< electron_sources.size(); ++i){
           NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_sources[i], electron_sources[i]);
+          cfg.id_sources = electron_id_sources;
           cfg.runOnMiniAOD = runOnMiniAOD;
           writer_modules.emplace_back(new NtupleWriterElectrons(cfg, i==0));
       }

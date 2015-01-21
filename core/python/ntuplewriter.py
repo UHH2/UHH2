@@ -56,7 +56,7 @@ process.source = cms.Source("PoolSource",
                             skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 
 bTagDiscriminators = ['jetBProbabilityBJetTags','jetProbabilityBJetTags',
     'simpleSecondaryVertexHighEffBJetTags','simpleSecondaryVertexHighPurBJetTags',
@@ -97,7 +97,8 @@ process.out.outputCommands.extend([
     "keep *_patJetsHEPTopTagCHSPacked_*_*",
     "keep *_patJetsHEPTopTagCHSSubjets_*_*",
     "keep *_prunedPrunedGenParticles_*_*",
-    "keep *_electronIDValueMapProducer_eleFull5x5SigmaIEtaIEta_*"
+    "keep *_electronIDValueMapProducer_eleFull5x5SigmaIEtaIEta_*",
+    "keep *_egmGsfElectronIDs_*_*"
 ])
 
 ###############################################
@@ -699,6 +700,15 @@ for jetcoll in (process.patJetsCA8CHS,
                 ) :
         jetcoll.getJetMCFlavour = False
 
+# electron ids for PHYS14:
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+process.load("RecoEgamma.ElectronIdentification.egmGsfElectronIDs_cfi")
+process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectrons')
+#from PhysicsTools.SelectorUtils.centralIDRegistry import central_id_registry
+#process.egmGsfElectronIDSequence = cms.Sequence(process.egmGsfElectronIDs)
+setupAllVIDIdsInModule(process, 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_PHYS14_PU20bx25_V1_miniAOD_cff', setupVIDElectronSelection)
+        
+        
 #Explicit JTA for subjets
 #for xtrplabel in ['CA8CHSprunedSubjets','CA15CHSFilteredSubjets','CMSTopTagCHSSubjets','HEPTopTagCHSSubjets'] :
 #        if hasattr( process, 'jetTracksAssociatorAtVertex' + xtrplabel):
@@ -750,6 +760,12 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                   genparticle_source = cms.InputTag("prunedPrunedGenParticles" ),
                                   stablegenparticle_source = cms.InputTag("packedGenParticles" ),
                                   electron_sources = cms.vstring("slimmedElectrons"),
+                                  electron_id_sources = cms.VInputTag(
+                                     'egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-veto',
+                                     'egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-loose',
+                                     'egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-medium',
+                                     'egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-tight'
+                                     ),
                                   muon_sources = cms.vstring("slimmedMuons"),
                                   tau_sources = cms.vstring("slimmedTaus" ),
                                   tau_ptmin = cms.double(0.0),
@@ -794,5 +810,5 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
 # Note: we run in unscheduled mode, i.e. all modules are run as required; just make sure that MyNtuple runs:
 process.p = cms.Path(process.MyNtuple)
-process.end = cms.EndPath(process.out)
+#process.end = cms.EndPath(process.out)
 

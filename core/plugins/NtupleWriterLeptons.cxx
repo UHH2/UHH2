@@ -7,16 +7,43 @@
 using namespace uhh2;
 using namespace std;
 
+namespace {
+
+union fi_union {
+    float f;
+    uint32_t i;
+};
+    
+// note: this is non-standarad, but works well on gnu
+float int2float_bitwise(uint32_t i){
+    fi_union u;
+    u.i = i;
+    return u.f;
+}
+
+
+}
+
 
 NtupleWriterElectrons::NtupleWriterElectrons(Config & cfg, bool set_electrons_member){
+    n_passing_electrons.resize(8);
     handle = cfg.ctx.declare_event_output<vector<Electron>>(cfg.dest_branchname, cfg.dest);
     if(set_electrons_member){
         electrons_handle = cfg.ctx.get_handle<vector<Electron>>("electrons");
     }
     src_token = cfg.cc.consumes<std::vector<pat::Electron>>(cfg.src);
+    for(auto & tag : cfg.id_sources){
+        id_src_tokens.push_back(cfg.cc.consumes<edm::ValueMap<bool>>(tag));
+    }
 }
 
-NtupleWriterElectrons::~NtupleWriterElectrons(){}
+NtupleWriterElectrons::~NtupleWriterElectrons(){
+    auto imax = min(id_src_tokens.size(), n_passing_electrons.size());
+    cout << "Electron id summary: number of electrons passing id X, where X is index to electron_id_sources:" << endl;
+    for(auto i=0ul; i<imax; ++i){
+        cout << " N[" << i <<"] = " << n_passing_electrons[i] << endl;
+    }
+}
 
 void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & uevent){
     edm::Handle< std::vector<pat::Electron> > ele_handle;
@@ -28,47 +55,61 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     for (size_t i=0; i<n_ele; ++i){
         const auto & pat_ele = (*ele_handle)[i];
         eles.emplace_back();
-         Electron & ele = eles.back();
-         ele.set_charge( pat_ele.charge());
-         ele.set_pt( pat_ele.pt());
-         ele.set_eta( pat_ele.eta());
-         ele.set_phi( pat_ele.phi());
-         ele.set_energy( pat_ele.energy());
-         ele.set_vertex_x(pat_ele.vertex().x());
-         ele.set_vertex_y(pat_ele.vertex().y());
-         ele.set_vertex_z(pat_ele.vertex().z());
-         ele.set_supercluster_eta(pat_ele.superCluster()->eta());
-         ele.set_supercluster_phi(pat_ele.superCluster()->phi());
-         ele.set_dB(pat_ele.dB());
-         const auto & pfiso = pat_ele.pfIsolationVariables();
-         ele.set_neutralHadronIso(pfiso.sumNeutralHadronEt);
-         ele.set_chargedHadronIso(pfiso.sumChargedHadronPt);
-         ele.set_trackIso(pfiso.sumChargedParticlePt);
-         ele.set_photonIso(pfiso.sumPhotonEt);
-         ele.set_puChargedHadronIso(pfiso.sumPUPt);
-#if CMSSW70 == 1
-         ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->trackerExpectedHitsInner().numberOfLostHits());
-#else
-         ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->hitPattern().numberOfLostTrackerHits(reco::HitPattern::MISSING_INNER_HITS));
-#endif
-         ele.set_gsfTrack_px( pat_ele.gsfTrack()->px());
-         ele.set_gsfTrack_py( pat_ele.gsfTrack()->py());
-         ele.set_gsfTrack_pz( pat_ele.gsfTrack()->pz());
-         ele.set_gsfTrack_vx( pat_ele.gsfTrack()->vx());
-         ele.set_gsfTrack_vy( pat_ele.gsfTrack()->vy());
-         ele.set_gsfTrack_vz( pat_ele.gsfTrack()->vz());
-         ele.set_passconversionveto(pat_ele.passConversionVeto());
-         ele.set_dEtaIn(pat_ele.deltaEtaSuperClusterTrackAtVtx());
-         ele.set_dPhiIn(pat_ele.deltaPhiSuperClusterTrackAtVtx());
-         ele.set_sigmaIEtaIEta((*full5x5sieie)[edm::Ref<pat::ElectronCollection>(ele_handle, i)]);
-         ele.set_HoverE(pat_ele.hcalOverEcal());
-         ele.set_fbrem(pat_ele.fbrem());
-         ele.set_EoverPIn(pat_ele.eSuperClusterOverP());
-         ele.set_EcalEnergy(pat_ele.ecalEnergy());
-         //not in miniaod, maybe later ...
-         //ele.set_mvaTrigV0(pat_ele.electronID("mvaTrigV0"));
-         //ele.set_mvaNonTrigV0(pat_ele.electronID("mvaNonTrigV0"));
-         ele.set_AEff(-1.0);
+        Electron & ele = eles.back();
+        ele.set_charge( pat_ele.charge());
+        ele.set_pt( pat_ele.pt());
+        ele.set_eta( pat_ele.eta());
+        ele.set_phi( pat_ele.phi());
+        ele.set_energy( pat_ele.energy());
+        ele.set_vertex_x(pat_ele.vertex().x());
+        ele.set_vertex_y(pat_ele.vertex().y());
+        ele.set_vertex_z(pat_ele.vertex().z());
+        ele.set_supercluster_eta(pat_ele.superCluster()->eta());
+        ele.set_supercluster_phi(pat_ele.superCluster()->phi());
+        ele.set_dB(pat_ele.dB());
+        const auto & pfiso = pat_ele.pfIsolationVariables();
+        ele.set_neutralHadronIso(pfiso.sumNeutralHadronEt);
+        ele.set_chargedHadronIso(pfiso.sumChargedHadronPt);
+        ele.set_trackIso(pfiso.sumChargedParticlePt);
+        ele.set_photonIso(pfiso.sumPhotonEt);
+        ele.set_puChargedHadronIso(pfiso.sumPUPt);
+        ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->hitPattern().numberOfLostTrackerHits(reco::HitPattern::MISSING_INNER_HITS));
+        ele.set_gsfTrack_px( pat_ele.gsfTrack()->px());
+        ele.set_gsfTrack_py( pat_ele.gsfTrack()->py());
+        ele.set_gsfTrack_pz( pat_ele.gsfTrack()->pz());
+        ele.set_gsfTrack_vx( pat_ele.gsfTrack()->vx());
+        ele.set_gsfTrack_vy( pat_ele.gsfTrack()->vy());
+        ele.set_gsfTrack_vz( pat_ele.gsfTrack()->vz());
+        ele.set_passconversionveto(pat_ele.passConversionVeto());
+        ele.set_dEtaIn(pat_ele.deltaEtaSuperClusterTrackAtVtx());
+        ele.set_dPhiIn(pat_ele.deltaPhiSuperClusterTrackAtVtx());
+        ele.set_sigmaIEtaIEta((*full5x5sieie)[edm::Ref<pat::ElectronCollection>(ele_handle, i)]);
+        ele.set_HoverE(pat_ele.hcalOverEcal());
+        ele.set_fbrem(pat_ele.fbrem());
+        ele.set_EoverPIn(pat_ele.eSuperClusterOverP());
+        ele.set_EcalEnergy(pat_ele.ecalEnergy());
+        //not in miniaod, maybe later ...
+        //ele.set_mvaTrigV0(pat_ele.electronID("mvaTrigV0"));
+        //ele.set_mvaNonTrigV0(pat_ele.electronID("mvaNonTrigV0"));
+        ele.set_AEff(-1.0);
+        
+        // test ids and save the bitmask in the lowest 22 bits of a float:
+        uint32_t id_mask = 0;
+        for(auto i_id=0ul; i_id < id_src_tokens.size(); ++i_id){
+            edm::Handle<edm::ValueMap<bool> > id_handle;
+            event.getByToken(id_src_tokens[i_id], id_handle);
+            const edm::Ptr<pat::Electron> eleptr(ele_handle, i);
+            bool id_passed = (*id_handle)[eleptr];
+            if(id_passed){
+                id_mask |= (uint32_t(1) << i_id);
+                if(i_id < n_passing_electrons.size()){
+                    ++n_passing_electrons[i_id];
+                }
+            }
+        }
+        // set the highest 10 bits of the float to 1, such that the float is NAN:
+        id_mask |= 0xFFC00000;
+        ele.set_mvaTrigV0(int2float_bitwise(id_mask));
     }
     uevent.set(handle, move(eles));
     if(electrons_handle){
