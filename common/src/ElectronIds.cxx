@@ -6,7 +6,7 @@ namespace {
 
 // The values to cut on. Corresponds to the tables in the twiki:
 // in the tables at https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
-// following the same order of variables.
+// following the same order of variables as in the CSA14 section.
 // The only difference to the twiki tables is the passes_conversion_rejection flag which replaces the 'Conversion rejection: vertex fit probability'
 // and is treated as a boolean here.
 struct ele_cutvalues {
@@ -25,8 +25,8 @@ ele_cutvalues cv_from_ele(const Electron & ele, const Event & event){
     result.abs_dPhiIn = std::abs(ele.dPhiIn());
     result.full5x5_sigmaIetaIeta = ele.sigmaIEtaIEta();
     result.HoverE = ele.HoverE();
-    result.fabs_d0 = ele.gsfTrack_dxy_vertex(pv.x(), pv.y());
-    result.fabs_dz = ele.gsfTrack_dz_vertex(pv.x(), pv.y(), pv.z());
+    result.fabs_d0 = std::abs(ele.gsfTrack_dxy_vertex(pv.x(), pv.y()));
+    result.fabs_dz = std::abs(ele.gsfTrack_dz_vertex(pv.x(), pv.y(), pv.z()));
     result.fabs_1oE_1op = std::numeric_limits<float>::infinity();
     if(ele.EcalEnergy() > 0.0){
         result.fabs_1oE_1op = std::abs(1.0f/ele.EcalEnergy() - ele.EoverPIn()/ele.EcalEnergy());
@@ -84,3 +84,33 @@ bool ElectronID_CSA14_50ns_tight(const Electron & ele, const uhh2::Event & event
     static const auto thresholds_endcap = ele_cutvalues{0.019f, 0.043f, 0.029f, 0.080f, 0.0370f, 0.065f, 0.076f, 0.14f, 1.0f, 1.0f};
     return passes_id(ele, event, thresholds_barrel, thresholds_endcap);
 }
+
+
+bool ElectronID_PHYS14_25ns_medium(const Electron & electron, const uhh2::Event & event){
+    static constexpr const auto thresholds_barrel = ele_cutvalues{
+         .abs_dEtaIn = 0.007641f,
+         .abs_dPhiIn = 0.032643f,
+         .full5x5_sigmaIetaIeta = 0.010399f,
+         .HoverE = 0.060662f,
+         .fabs_d0 = 0.011811f,
+         .fabs_dz = 0.070775f,
+         .fabs_1oE_1op = 0.153897f,
+         .pfiso_dbeta_dr03 = 0.097213f,
+         .passes_conversion_rejection = 1.0f,
+         .cr_misshits = 1.0f
+    };
+    static constexpr const auto thresholds_endcap = ele_cutvalues{
+        .abs_dEtaIn = 0.009285f,
+        .abs_dPhiIn = 0.042447f,
+        .full5x5_sigmaIetaIeta = 0.029524f,
+        .HoverE = 0.104263f,
+        .fabs_d0 = 0.051682f,
+        .fabs_dz = 0.180720f,
+        .fabs_1oE_1op = 0.137468f,
+        .pfiso_dbeta_dr03 = 0.116708f,
+        .passes_conversion_rejection = 1.0f,
+        .cr_misshits = 1.0f
+    };
+    return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
