@@ -92,6 +92,8 @@ process.out = cms.OutputModule("PoolOutputModule",
 process.out.outputCommands.extend([
     'keep *_patJetsCA8CHS_*_*',
     'keep *_patJetsCA15CHS_*_*',
+    'keep *_NjettinessCA8CHS_*_*',
+    'keep *_NjettinessCA15CHS_*_*',
     "keep *_patJetsCMSTopTagCHSPacked_*_*",
     "keep *_patJetsCMSTopTagCHSSubjets_*_*",
     "keep *_patJetsHEPTopTagCHSPacked_*_*",
@@ -698,6 +700,17 @@ for jetcoll in (process.patJetsCA8CHS,
                 process.patJetsHEPTopTagCHS,
                 ) :
         jetcoll.getJetMCFlavour = False
+        
+
+# Add subjet variables:
+from RecoJets.JetProducers.nJettinessAdder_cfi import Njettiness
+#from RecoJets.JetProducers.qjetsadder_cfi import QJetsAdder
+
+process.NjettinessCA8CHS = Njettiness.clone(src = cms.InputTag("patJetsCA8CHS"), cone = cms.double(0.8))
+process.NjettinessCA15CHS = Njettiness.clone(src = cms.InputTag("patJetsCA15CHS"), cone = cms.double(1.5))
+#process.QJetsCA8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCA8CHS"), jetRad = cms.double(0.8), jetAlgo = cms.string('CA'))
+
+
 
 #Explicit JTA for subjets
 #for xtrplabel in ['CA8CHSprunedSubjets','CA15CHSFilteredSubjets','CMSTopTagCHSSubjets','HEPTopTagCHSSubjets'] :
@@ -761,10 +774,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                   genjet_ptmin = cms.double(10.0),
                                   genjet_etamax = cms.double(5.0),
                                   #photon_sources = cms.vstring("selectedPatPhotons"),
-                                  #topjet_sources = cms.vstring("patJetsHEPTopTagCHSPacked"),
-                                  #topjet_constituents_sources = cms.vstring("patJetsHEPTopTagCHS"),
                                   topjet_sources = cms.vstring("patJetsCMSTopTagCHSPacked","patJetsHEPTopTagCHSPacked","patJetsCA8CHSprunedPacked","patJetsCA15CHSFilteredPacked"),
-                                  topjet_constituents_sources = cms.vstring("patJetsCA8CHS","patJetsCA15CHS"),
+                                  # jets to match to the topjets in order to get constituents and njettiness:
+                                  topjet_constituents_sources = cms.vstring("patJetsCA8CHS", "patJetsCA15CHS", "patJetsCA8CHS", "patJetsCA15CHS"),
+                                  topjet_njettiness_sources = cms.vstring("NjettinessCA8CHS", "NjettinessCA15CHS", "NjettinessCA8CHS", "NjettinessCA15CHS"),
                                   topjet_ptmin = cms.double(100.0), 
                                   topjet_etamax = cms.double(5.0),
                                   pf_around_leptons_sources = cms.vstring("packedPFCandidates"),

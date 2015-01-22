@@ -265,24 +265,29 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   if(doTopJets){
     using uhh2::NtupleWriterTopJets;
     auto topjet_sources = iConfig.getParameter<std::vector<std::string> >("topjet_sources");
+    
     double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
     double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
-    std::vector<std::string> topjet_constituents_sources;
-    if(doTopJetsConstituents) topjet_constituents_sources = iConfig.getParameter<std::vector<std::string> >("topjet_constituents_sources");
+    auto topjet_constituents_sources = iConfig.getParameter<std::vector<std::string> >("topjet_constituents_sources");
+    auto njettiness_sources = iConfig.getParameter<std::vector<std::string> >("topjet_njettiness_sources");
+    assert(topjet_constituents_sources.size() == njettiness_sources.size());
     for(size_t j=0; j< topjet_sources.size(); ++j){
         NtupleWriterTopJets::Config cfg(*context, consumesCollector(), topjet_sources[j], topjet_sources[j]);
         cfg.runOnMiniAOD = runOnMiniAOD;
         cfg.doTagInfos = doTagInfos;
         cfg.ptmin = topjet_ptmin;
         cfg.etamax = topjet_etamax;
-        if(doTopJetsConstituents && j < topjet_constituents_sources.size()){
+        if(j < topjet_constituents_sources.size()){
             cfg.constituent_src = topjet_constituents_sources[j];
-            bool is_puppi =  topjet_constituents_sources[j].find("Puppi") != string::npos;
-            if(is_puppi){
-                cfg.pfparts = &puppiparticles;
-            }
-            else{
-                cfg.pfparts = &pfparticles;
+            cfg.njettiness_src = njettiness_sources[j];
+            if(doTopJetsConstituents){
+                bool is_puppi =  topjet_constituents_sources[j].find("Puppi") != string::npos;
+                if(is_puppi){
+                    cfg.pfparts = &puppiparticles;
+                }
+                else{
+                    cfg.pfparts = &pfparticles;
+                }
             }
         }
         topjet_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0));

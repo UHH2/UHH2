@@ -105,7 +105,8 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): ru
         topjets_handle = cfg.ctx.get_handle<vector<TopJet>>("topjets");
     }
     src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
-    if(cfg.pfparts){
+    njettiness_src = cfg.njettiness_src;
+    if(cfg.pfparts || !cfg.njettiness_src.empty()){
         constituent_src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.constituent_src);
     }
 }
@@ -176,6 +177,14 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     edm::Handle<pat::JetCollection> h_pat_topjets;
     event.getByToken(src_token, h_pat_topjets);
     const vector<pat::Jet> & pat_topjets = *h_pat_topjets;
+    
+    edm::Handle<edm::ValueMap<float> > h_njettiness1, h_njettiness2, h_njettiness3;
+    
+    if(!njettiness_src.empty()){
+        event.getByLabel(edm::InputTag(njettiness_src, "tau1"), h_njettiness1);
+        event.getByLabel(edm::InputTag(njettiness_src, "tau2"), h_njettiness2);
+        event.getByLabel(edm::InputTag(njettiness_src, "tau3"), h_njettiness3);
+    }
 
     vector<TopJet> topjets;
 
@@ -187,32 +196,42 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
         uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet);
-
-        if (pfparts){
-            edm::Handle<pat::JetCollection> pat_topjets_with_cands;
+        
+        // match a unpruned jet according to topjets_with_cands:
+        int i_pat_topjet_wc = -1;
+        edm::Handle<pat::JetCollection> pat_topjets_with_cands;
+        if(pfparts || !njettiness_src.empty()){
             event.getByToken(constituent_src_token, pat_topjets_with_cands);
-            const pat::Jet* pat_topjet_wc = NULL;
-            for (const auto & cand : *pat_topjets_with_cands) {
+            for (size_t i_wc=0; i_wc < pat_topjets_with_cands->size(); ++i_wc) {
+                const auto & cand = (*pat_topjets_with_cands)[i_wc];
                 double dphi = reco::deltaPhi(cand.phi(), pat_topjet.phi());
                 if (fabs(dphi)<0.5 && fabs(cand.eta()-pat_topjet.eta())<0.5){ // be generous: filtering, pruning... can change jet axis
-                    pat_topjet_wc = &cand;
+                    i_pat_topjet_wc = i_wc;
                     break;
                 }
             }
-            if (pat_topjet_wc){
-                uhh2::NtupleWriterJets::store_jet_constituents(*pat_topjet_wc, topjet, *pfparts, runOnMiniAOD);
-                // now run substructure information
-                JetProps substructure(&topjet);
-                substructure.set_pf_cands(pfparts);
-                double tau1 = substructure.GetNsubjettiness(1, Njettiness::onepass_kt_axes, 1., 2.0);
-                double tau2 = substructure.GetNsubjettiness(2, Njettiness::onepass_kt_axes, 1., 2.0);
-                double tau3 = substructure.GetNsubjettiness(3, Njettiness::onepass_kt_axes, 1., 2.0);
-                double qjets = substructure.GetQjetVolatility(event.id().event(), 2.0);
-                topjet.set_tau1(tau1);
-                topjet.set_tau2(tau2);
-                topjet.set_tau3(tau3);
-                topjet.set_qjets_volatility(qjets);
-             }
+        }
+
+        if (pfparts && i_pat_topjet_wc >= 0){
+            uhh2::NtupleWriterJets::store_jet_constituents(pat_topjets_with_cands->at(i_pat_topjet_wc), topjet, *pfparts, runOnMiniAOD);
+            // now run substructure information
+            JetProps substructure(&topjet);
+            substructure.set_pf_cands(pfparts);
+            double tau1 = substructure.GetNsubjettiness(1, Njettiness::onepass_kt_axes, 1., 2.0);
+            double tau2 = substructure.GetNsubjettiness(2, Njettiness::onepass_kt_axes, 1., 2.0);
+            double tau3 = substructure.GetNsubjettiness(3, Njettiness::onepass_kt_axes, 1., 2.0);
+            double qjets = substructure.GetQjetVolatility(event.id().event(), 2.0);
+            topjet.set_tau1(tau1);
+            topjet.set_tau2(tau2);
+            topjet.set_tau3(tau3);
+            topjet.set_qjets_volatility(qjets);
+        }
+        
+        if (i_pat_topjet_wc >= 0 && !njettiness_src.empty()){
+            auto ref = edm::Ref<pat::JetCollection>(pat_topjets_with_cands, i_pat_topjet_wc);
+            topjet.set_tau1((*h_njettiness1)[ref]);
+            topjet.set_tau2((*h_njettiness2)[ref]);
+            topjet.set_tau3((*h_njettiness3)[ref]);
         }
 
         // loop over subjets to fill some more subjet info:

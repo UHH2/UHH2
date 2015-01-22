@@ -46,6 +46,7 @@ public:
 
         std::vector<PFParticle> * pfparts = NULL; // set to non-NULL to enable saving jet constituents
         edm::InputTag constituent_src; // a jet collection from where to take the constituents
+        std::string njettiness_src;
         bool doTagInfos = false;
     };
 
@@ -64,6 +65,7 @@ private:
     std::vector<PFParticle> * pfparts;
     float ptmin, etamax;
     edm::EDGetToken src_token, constituent_src_token;
+    std::string njettiness_src;
 
     const GenericMVAJetTagComputer * computer = 0;
 
