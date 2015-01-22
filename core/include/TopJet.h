@@ -46,7 +46,7 @@ class TopJet : public Jet{
     this->set_btag_jetProbability(j.btag_jetProbability());
     this->set_JEC_factor_raw(j.JEC_factor_raw());
     this->set_genjet_index(j.genjet_index());
-    auto indices = j.pfconstituents_indices();
+    std::vector<unsigned int> indices = j.pfconstituents_indices();
     for(unsigned int i=0; i<indices.size(); i++){
       this->add_pfconstituents_index(indices[i]);
     }
