@@ -20,6 +20,9 @@ const std::vector<std::string> JERFiles::PHYS14_L123_DATA = {"JetMETObjects/data
   "JetMETObjects/data/PHYS14_50_V1_L2L3Residual_AK4PFchs.txt" // note: L2L3Residual corrections not implemented in global tag PHYS14_25_V2
 };
 
+const std::vector<std::string> JERFiles::PHYS14_L123_AK8PFchs_MC = {"JetMETObjects/data/PHYS14_V2_MC_L1FastJet_AK8PFchs.txt",
+  "JetMETObjects/data/PHYS14_V2_MC_L2Relative_AK8PFchs.txt", "JetMETObjects/data/PHYS14_V2_MC_L3Absolute_AK8PFchs.txt"};
+
 namespace {
     
 // to share some code between JetCorrector and JetLeptonCleaner, provide some methods
@@ -62,6 +65,22 @@ bool JetCorrector::process(uhh2::Event & event){
 
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
 JetCorrector::~JetCorrector(){}
+
+
+TopJetCorrector::TopJetCorrector(const std::vector<std::string> & filenames){
+    corrector = build_corrector(filenames);
+}
+    
+bool TopJetCorrector::process(uhh2::Event & event){
+    assert(event.topjets);
+    for(auto & jet : *event.topjets){
+        correct_jet(*corrector, jet, event);
+    }
+    return true;
+}
+
+// note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
+TopJetCorrector::~TopJetCorrector(){}
 
 
 // ** JetLeptonCleaner
