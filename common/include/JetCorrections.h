@@ -9,6 +9,7 @@ class FactorizedJetCorrector;
 namespace JERFiles {
     extern const std::vector<std::string> PHYS14_L123_MC;
     extern const std::vector<std::string> PHYS14_L123_DATA;
+    extern const std::vector<std::string> PHYS14_L123_AK8PFchs_MC;
 }
 
 /** \brief (Re-)Correct jets according to the corrections in the passed txt files
@@ -28,6 +29,18 @@ public:
     virtual bool process(uhh2::Event & event) override;
     
     virtual ~JetCorrector();
+    
+private:
+    std::unique_ptr<FactorizedJetCorrector> corrector;
+};
+
+class TopJetCorrector: public uhh2::AnalysisModule {
+public:
+    explicit TopJetCorrector(const std::vector<std::string> & filenames);
+    
+    virtual bool process(uhh2::Event & event) override;
+    
+    virtual ~TopJetCorrector();
     
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
