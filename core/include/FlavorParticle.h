@@ -1,33 +1,21 @@
-#ifndef FlavorParticle_H
-#define FlavorParticle_H
+#pragma once
 
 #include "Particle.h"
-#include <iomanip>
-#include <iostream>
-#include <string>
-#include <sstream>
 
-/**
- *  @short particle with flavor/pdgId
- *  @author Thomas Peiffer
- */
 
 class FlavorParticle : public Particle{
- public:
+public:
   FlavorParticle(){
-    m_pdgId=0;
-  };
-  ~FlavorParticle(){
-  };
-
+      m_pdgId = 0;
+  }
+    
   int pdgId() const{return m_pdgId;}
   int flavor() const{return m_pdgId;}
 
   void set_pdgId(int x){  m_pdgId=x;}
   void set_flavor(int x){  m_pdgId=x;}
 
- private:
+private:
   int m_pdgId;
 };
 
-#endif

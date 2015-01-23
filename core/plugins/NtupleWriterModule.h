@@ -50,12 +50,5 @@ public:
     virtual ~NtupleWriterModule();
 };
 
-PFParticle PFCandidate2PFParticle(const reco::PFCandidate & pf, bool fromjet, bool fromiso, bool frompuiso);
-PFParticle PFCandidate2PFParticle(const pat::PackedCandidate & pf, bool fromjet, bool fromiso, bool frompuiso);
-
-// helper functions for storing PFParticles
-size_t add_pfpart(const pat::PackedCandidate & pf, std::vector<PFParticle> & pfs, bool fromjet, bool fromiso, bool frompuiso);
-size_t add_pfpart(const reco::PFCandidate & pf, std::vector<PFParticle> & pfs, bool fromjet, bool fromiso, bool frompuiso);
-
 }
 

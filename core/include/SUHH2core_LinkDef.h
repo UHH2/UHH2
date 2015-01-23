@@ -8,12 +8,11 @@
 
 #pragma link C++ class uhh2::AnalysisModuleRunner+;
 
+#pragma link C++ class Tags+;
 #pragma link C++ class Particle+;
 #pragma link C++ class std::vector<Particle>+;
 #pragma link C++ class FlavorParticle+;
 #pragma link C++ class std::vector<FlavorParticle>+;
-#pragma link C++ class PFParticle+;
-#pragma link C++ class std::vector<PFParticle>+;
 #pragma link C++ class Jet+;
 #pragma link C++ class std::vector<Jet>+;
 #pragma link C++ class TopJet+;

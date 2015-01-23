@@ -1,47 +1,44 @@
-#ifndef Electron_H
-#define Electron_H
+#pragma once
 
 #include "Particle.h"
+#include "Tags.h"
 #include "FlavorParticle.h"
 
-/**
- *  @short electron class
- *  @author Thomas Peiffer
- */
-
-class Electron : public Particle{
-
- public:
+class Electron: public Particle{
+public:
+    
+  enum tag {};
+  
   Electron(){
-    m_vertex_x=0; 
-    m_vertex_y=0; 
-    m_vertex_z=0; 
-    m_supercluster_eta=0; 
-    m_supercluster_phi=0; 
-    m_dB=0; 
-    m_neutralHadronIso=0; 
-    m_chargedHadronIso=0; 
-    m_photonIso=0;
-    m_trackIso=0; 
-    m_puChargedHadronIso=0;
-    m_gsfTrack_trackerExpectedHitsInner_numberOfLostHits=0;
-    m_gsfTrack_px=0;
-    m_gsfTrack_py=0;
-    m_gsfTrack_pz=0;
-    m_gsfTrack_vx=0;
-    m_gsfTrack_vy=0;
-    m_gsfTrack_vz=0;
-    m_passconversionveto=false;
-    m_dEtaIn=0;
-    m_dPhiIn=0;
-    m_sigmaIEtaIEta=0;
-    m_HoverE=0;
-    m_fbrem=0;
-    m_EoverPIn=0;
-    m_EcalEnergy=0;
-    m_mvaTrigV0=0;
-    m_mvaNonTrigV0=0;
-    m_AEff=0;
+   m_vertex_x = 0;
+   m_vertex_y = 0; 
+   m_vertex_z = 0; 
+   m_supercluster_eta = 0; 
+   m_supercluster_phi = 0; 
+   m_dB = 0; 
+   m_neutralHadronIso = 0; 
+   m_chargedHadronIso = 0; 
+   m_photonIso = 0;
+   m_trackIso = 0; 
+   m_puChargedHadronIso = 0;
+   m_gsfTrack_trackerExpectedHitsInner_numberOfLostHits = 0;
+   m_gsfTrack_px = 0;
+   m_gsfTrack_py = 0;
+   m_gsfTrack_pz = 0;
+   m_gsfTrack_vx = 0;
+   m_gsfTrack_vy = 0;
+   m_gsfTrack_vz = 0;
+   m_passconversionveto = false;
+   m_dEtaIn = 0;
+   m_dPhiIn = 0; 
+   m_sigmaIEtaIEta = 0; 
+   m_HoverE = 0;
+   m_fbrem = 0;
+   m_EoverPIn = 0;
+   m_EcalEnergy = 0;
+   m_mvaTrigV0 = 0;
+   m_mvaNonTrigV0 = 0;
+   m_AEff = 0;
   }
 
   float vertex_x() const{return m_vertex_x;} 
@@ -73,6 +70,7 @@ class Electron : public Particle{
   float mvaTrigV0() const{return m_mvaTrigV0;} // note: currently (PHYS14) NOT filled; do not use!
   float mvaNonTrigV0() const{return m_mvaNonTrigV0;} // note: currently (PHYS14) NOT filled; do not use!
   float AEff() const{return m_AEff;} // note: currently (PHYS14) NOT filled; do not use!
+  float get_tag(tag t)const {return tags.get_tag(static_cast<int>(t));}
 
 
   void set_vertex_x(float x){m_vertex_x=x;} 
@@ -104,6 +102,7 @@ class Electron : public Particle{
   void set_mvaTrigV0(float x){m_mvaTrigV0=x;}
   void set_mvaNonTrigV0(float x){m_mvaNonTrigV0=x;}
   void set_AEff(float x){m_AEff=x;}
+  void set_tag(tag t, float value) { tags.set_tag(static_cast<int>(t), value);}
 
   float gsfTrack_dxy_vertex(const float point_x, const float point_y) const{ 
     return ( - (m_gsfTrack_vx-point_x) * m_gsfTrack_py + (m_gsfTrack_vy-point_y) * m_gsfTrack_px ) / sqrt(m_gsfTrack_px*m_gsfTrack_px+m_gsfTrack_py*m_gsfTrack_py);  
@@ -133,7 +132,7 @@ class Electron : public Particle{
   }
 
  private:
-  float m_vertex_x; 
+  float m_vertex_x;
   float m_vertex_y; 
   float m_vertex_z; 
   float m_supercluster_eta; 
@@ -162,7 +161,6 @@ class Electron : public Particle{
   float m_mvaTrigV0;
   float m_mvaNonTrigV0;
   float m_AEff;
-
+  
+  Tags tags;
 };
-
-#endif

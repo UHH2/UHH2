@@ -1,153 +1,134 @@
-#ifndef Tau_H
-#define Tau_H
+#pragma once
 
 #include "Particle.h"
+#include "Tags.h"
 
-/**
- *  @short tau class
- *  @author Thomas Peiffer
- */
 
-class Tau : public Particle{
-
- public:
+class Tau: public Particle{
+public:
+    
+  enum tag { /* for future use (more b-taggers, etc.) */ };
+  
   Tau(){
-/*     m_leadPFCand_px=0; */
-/*     m_leadPFCand_py=0; */
-/*     m_leadPFCand_pz=0; */
-
-
-
-
-    m_decayModeFinding=false; 
-    m_decayModeFindingNewDMs=false; 
-    m_againstElectronLoose =false; 
-    m_againstElectronLooseMVA5=false; 
-    m_againstElectronMVA5category=false; 
-    m_againstElectronMVA5raw=false; 
-    m_againstElectronMedium =false; 
-    m_againstElectronMediumMVA5=false; 
-    m_againstElectronTight =false; 
-    m_againstElectronTightMVA5 =false; 
-    m_againstElectronVLooseMVA5 =false; 
-    m_againstElectronVTightMVA5=false; 
-    m_againstMuonLoose =false; 
-    m_againstMuonLoose2 =false; 
-    m_againstMuonLoose3=false; 
-    m_againstMuonLooseMVA =false; 
-    m_againstMuonMVAraw =false; 
-    m_againstMuonMedium =false; 
-    m_againstMuonMedium2 =false; 
-    m_againstMuonMediumMVA =false; 
-    m_againstMuonTight =false; 
-    m_againstMuonTight2 =false; 
-    m_againstMuonTight3=false; 
-    m_againstMuonTightMVA=false; 
-    m_byCombinedIsolationDeltaBetaCorrRaw3Hits=false; 
-    m_byIsolationMVA3newDMwLTraw =false; 
-    m_byIsolationMVA3newDMwoLTraw =false; 
-    m_byIsolationMVA3oldDMwLTraw =false; 
-    m_byIsolationMVA3oldDMwoLTraw =false; 
-    m_byLooseCombinedIsolationDeltaBetaCorr3Hits =false; 
-    m_byLooseIsolationMVA3newDMwLT =false; 
-    m_byLooseIsolationMVA3newDMwoLT =false; 
-    m_byLooseIsolationMVA3oldDMwLT =false; 
-    m_byLooseIsolationMVA3oldDMwoLT=false; 
-    m_byMediumCombinedIsolationDeltaBetaCorr3Hits=false; 
-    m_byMediumIsolationMVA3newDMwLT =false; 
-    m_byMediumIsolationMVA3newDMwoLT =false; 
-    m_byMediumIsolationMVA3oldDMwLT =false; 
-    m_byMediumIsolationMVA3oldDMwoLT=false; 
-    m_byTightCombinedIsolationDeltaBetaCorr3Hits=false; 
-    m_byTightIsolationMVA3newDMwLT =false; 
-    m_byTightIsolationMVA3newDMwoLT=false; 
-    m_byTightIsolationMVA3oldDMwLT=false; 
-    m_byTightIsolationMVA3oldDMwoLT =false; 
-    m_byVLooseIsolationMVA3newDMwLT =false; 
-    m_byVLooseIsolationMVA3newDMwoLT =false; 
-    m_byVLooseIsolationMVA3oldDMwLT =false; 
-    m_byVLooseIsolationMVA3oldDMwoLT =false; 
-    m_byVTightIsolationMVA3newDMwLT =false; 
-    m_byVTightIsolationMVA3newDMwoLT=false; 
-    m_byVTightIsolationMVA3oldDMwLT =false; 
-    m_byVTightIsolationMVA3oldDMwoLT=false; 
-    m_byVVTightIsolationMVA3newDMwLT=false; 
-    m_byVVTightIsolationMVA3newDMwoLT =false; 
-    m_byVVTightIsolationMVA3oldDMwLT =false; 
-    m_byVVTightIsolationMVA3oldDMwoLT=false; 
-
-  };
-
-  ~Tau(){
-  };
-
-/*   float leadPFCand_px() const{return m_leadPFCand_px;} */
-/*   float leadPFCand_py() const{return m_leadPFCand_py;} */
-/*   float leadPFCand_pz() const{return m_leadPFCand_pz;} */
+      m_decayModeFinding = false; 
+      m_decayModeFindingNewDMs = false;
+      m_againstElectronLoose = false;
+      m_againstElectronLooseMVA5 = false;
+      m_againstElectronMVA5category = false;
+      m_againstElectronMVA5raw = false;
+      m_againstElectronMedium  = false;
+      m_againstElectronMediumMVA5 = false;
+      m_againstElectronTight  = false;
+      m_againstElectronTightMVA5 = false; 
+      m_againstElectronVLooseMVA5  = false;
+      m_againstElectronVTightMVA5 = false;
+      m_againstMuonLoose  = false;
+      m_againstMuonLoose2  = false;
+      m_againstMuonLoose3 = false;
+      m_againstMuonLooseMVA = false; 
+      m_againstMuonMVAraw  = false;
+      m_againstMuonMedium  = false;
+      m_againstMuonMedium2  = false;
+      m_againstMuonMediumMVA  = false;
+      m_againstMuonTight  = false;
+      m_againstMuonTight2  = false;
+      m_againstMuonTight3 = false;
+      m_againstMuonTightMVA = false;
+      m_byCombinedIsolationDeltaBetaCorrRaw3Hits = false;
+      m_byIsolationMVA3newDMwLTraw  = false;
+      m_byIsolationMVA3newDMwoLTraw  = false;
+      m_byIsolationMVA3oldDMwLTraw  = false;
+      m_byIsolationMVA3oldDMwoLTraw  = false;
+      m_byLooseCombinedIsolationDeltaBetaCorr3Hits = false;
+      m_byLooseIsolationMVA3newDMwLT  = false;
+      m_byLooseIsolationMVA3newDMwoLT  = false;
+      m_byLooseIsolationMVA3oldDMwLT  = false;
+      m_byLooseIsolationMVA3oldDMwoLT = false;
+      m_byMediumCombinedIsolationDeltaBetaCorr3Hits = false;
+      m_byMediumIsolationMVA3newDMwLT  = false;
+      m_byMediumIsolationMVA3newDMwoLT  = false;
+      m_byMediumIsolationMVA3oldDMwLT  = false;
+      m_byMediumIsolationMVA3oldDMwoLT = false;
+      m_byTightCombinedIsolationDeltaBetaCorr3Hits = false;
+      m_byTightIsolationMVA3newDMwLT  = false;
+      m_byTightIsolationMVA3newDMwoLT = false;
+      m_byTightIsolationMVA3oldDMwLT = false;
+      m_byTightIsolationMVA3oldDMwoLT  = false;
+      m_byVLooseIsolationMVA3newDMwLT  = false;
+      m_byVLooseIsolationMVA3newDMwoLT  = false;
+      m_byVLooseIsolationMVA3oldDMwLT  = false;
+      m_byVLooseIsolationMVA3oldDMwoLT  = false;
+      m_byVTightIsolationMVA3newDMwLT  = false;
+      m_byVTightIsolationMVA3newDMwoLT = false;
+      m_byVTightIsolationMVA3oldDMwLT  = false;
+      m_byVTightIsolationMVA3oldDMwoLT = false;
+      m_byVVTightIsolationMVA3newDMwLT = false;
+      m_byVVTightIsolationMVA3newDMwoLT  = false;
+      m_byVVTightIsolationMVA3oldDMwLT  = false;
+      m_byVVTightIsolationMVA3oldDMwoLT = false;
+      m_decayMode = 0;
+  }
 
   bool decayModeFinding() const{return m_decayModeFinding;} 
   bool decayModeFindingNewDMs() const{return m_decayModeFindingNewDMs;} 
 
-  bool  againstElectronLoose() const{return m_againstElectronLoose ;}
-  bool  againstElectronLooseMVA5() const{return m_againstElectronLooseMVA5 ;}
-  bool  againstElectronMVA5category() const{return m_againstElectronMVA5category ;}
-  bool  againstElectronMVA5raw() const{return m_againstElectronMVA5raw ;}
-  bool  againstElectronMedium() const{return m_againstElectronMedium ;}
-  bool  againstElectronMediumMVA5() const{return m_againstElectronMediumMVA5 ;}
-  bool  againstElectronTight() const{return m_againstElectronTight ;}
-  bool  againstElectronTightMVA5() const{return m_againstElectronTightMVA5 ;}
-  bool  againstElectronVLooseMVA5() const{return m_againstElectronVLooseMVA5 ;}
-  bool  againstElectronVTightMVA5() const{return m_againstElectronVTightMVA5 ;}
-  bool  againstMuonLoose() const{return m_againstMuonLoose ;}
-  bool  againstMuonLoose2() const{return m_againstMuonLoose2 ;}
-  bool  againstMuonLoose3() const{return m_againstMuonLoose3 ;}
-  bool  againstMuonLooseMVA() const{return m_againstMuonLooseMVA ;}
-  bool  againstMuonMVAraw() const{return m_againstMuonMVAraw ;}
-  bool  againstMuonMedium() const{return m_againstMuonMedium ;}
-  bool  againstMuonMedium2() const{return m_againstMuonMedium2 ;}
-  bool  againstMuonMediumMVA() const{return m_againstMuonMediumMVA ;}
-  bool  againstMuonTight() const{return m_againstMuonTight ;}
-  bool  againstMuonTight2() const{return m_againstMuonTight2 ;}
-  bool  againstMuonTight3() const{return m_againstMuonTight3 ;}
-  bool  againstMuonTightMVA() const{return m_againstMuonTightMVA ;}
-  bool  byCombinedIsolationDeltaBetaCorrRaw3Hits() const{return m_byCombinedIsolationDeltaBetaCorrRaw3Hits ;}
-  bool  byIsolationMVA3newDMwLTraw() const{return m_byIsolationMVA3newDMwLTraw ;}
-  bool  byIsolationMVA3newDMwoLTraw() const{return m_byIsolationMVA3newDMwoLTraw ;}
-  bool  byIsolationMVA3oldDMwLTraw() const{return m_byIsolationMVA3oldDMwLTraw ;}
-  bool  byIsolationMVA3oldDMwoLTraw() const{return m_byIsolationMVA3oldDMwoLTraw ;}
-  bool  byLooseCombinedIsolationDeltaBetaCorr3Hits() const{return m_byLooseCombinedIsolationDeltaBetaCorr3Hits ;}
-  bool  byLooseIsolationMVA3newDMwLT() const{return m_byLooseIsolationMVA3newDMwLT ;}
-  bool  byLooseIsolationMVA3newDMwoLT() const{return m_byLooseIsolationMVA3newDMwoLT ;}
-  bool  byLooseIsolationMVA3oldDMwLT() const{return m_byLooseIsolationMVA3oldDMwLT ;}
-  bool  byLooseIsolationMVA3oldDMwoLT() const{return m_byLooseIsolationMVA3oldDMwoLT ;}
-  bool  byMediumCombinedIsolationDeltaBetaCorr3Hits() const{return m_byMediumCombinedIsolationDeltaBetaCorr3Hits ;}
-  bool  byMediumIsolationMVA3newDMwLT() const{return m_byMediumIsolationMVA3newDMwLT ;}
-  bool  byMediumIsolationMVA3newDMwoLT() const{return m_byMediumIsolationMVA3newDMwoLT ;}
-  bool  byMediumIsolationMVA3oldDMwLT() const{return m_byMediumIsolationMVA3oldDMwLT ;}
-  bool  byMediumIsolationMVA3oldDMwoLT() const{return m_byMediumIsolationMVA3oldDMwoLT ;}
-  bool  byTightCombinedIsolationDeltaBetaCorr3Hits() const{return m_byTightCombinedIsolationDeltaBetaCorr3Hits ;}
-  bool  byTightIsolationMVA3newDMwLT() const{return m_byTightIsolationMVA3newDMwLT ;}
-  bool  byTightIsolationMVA3newDMwoLT() const{return m_byTightIsolationMVA3newDMwoLT ;}
-  bool  byTightIsolationMVA3oldDMwLT() const{return m_byTightIsolationMVA3oldDMwLT ;}
-  bool  byTightIsolationMVA3oldDMwoLT() const{return m_byTightIsolationMVA3oldDMwoLT ;}
-  bool  byVLooseIsolationMVA3newDMwLT() const{return m_byVLooseIsolationMVA3newDMwLT ;}
-  bool  byVLooseIsolationMVA3newDMwoLT() const{return m_byVLooseIsolationMVA3newDMwoLT ;}
-  bool  byVLooseIsolationMVA3oldDMwLT() const{return m_byVLooseIsolationMVA3oldDMwLT ;}
-  bool  byVLooseIsolationMVA3oldDMwoLT() const{return m_byVLooseIsolationMVA3oldDMwoLT ;}
-  bool  byVTightIsolationMVA3newDMwLT() const{return m_byVTightIsolationMVA3newDMwLT ;}
-  bool  byVTightIsolationMVA3newDMwoLT() const{return m_byVTightIsolationMVA3newDMwoLT ;}
-  bool  byVTightIsolationMVA3oldDMwLT() const{return m_byVTightIsolationMVA3oldDMwLT ;}
-  bool  byVTightIsolationMVA3oldDMwoLT() const{return m_byVTightIsolationMVA3oldDMwoLT ;}
-  bool  byVVTightIsolationMVA3newDMwLT() const{return m_byVVTightIsolationMVA3newDMwLT ;}
-  bool  byVVTightIsolationMVA3newDMwoLT() const{return m_byVVTightIsolationMVA3newDMwoLT ;}
-  bool  byVVTightIsolationMVA3oldDMwLT() const{return m_byVVTightIsolationMVA3oldDMwLT ;}
-  bool  byVVTightIsolationMVA3oldDMwoLT() const{return m_byVVTightIsolationMVA3oldDMwoLT ;}
+  bool  againstElectronLoose() const{return m_againstElectronLoose;}
+  bool  againstElectronLooseMVA5() const{return m_againstElectronLooseMVA5;}
+  bool  againstElectronMVA5category() const{return m_againstElectronMVA5category;}
+  bool  againstElectronMVA5raw() const{return m_againstElectronMVA5raw;}
+  bool  againstElectronMedium() const{return m_againstElectronMedium;}
+  bool  againstElectronMediumMVA5() const{return m_againstElectronMediumMVA5;}
+  bool  againstElectronTight() const{return m_againstElectronTight;}
+  bool  againstElectronTightMVA5() const{return m_againstElectronTightMVA5;}
+  bool  againstElectronVLooseMVA5() const{return m_againstElectronVLooseMVA5;}
+  bool  againstElectronVTightMVA5() const{return m_againstElectronVTightMVA5;}
+  bool  againstMuonLoose() const{return m_againstMuonLoose;}
+  bool  againstMuonLoose2() const{return m_againstMuonLoose2;}
+  bool  againstMuonLoose3() const{return m_againstMuonLoose3;}
+  bool  againstMuonLooseMVA() const{return m_againstMuonLooseMVA;}
+  bool  againstMuonMVAraw() const{return m_againstMuonMVAraw;}
+  bool  againstMuonMedium() const{return m_againstMuonMedium;}
+  bool  againstMuonMedium2() const{return m_againstMuonMedium2;}
+  bool  againstMuonMediumMVA() const{return m_againstMuonMediumMVA;}
+  bool  againstMuonTight() const{return m_againstMuonTight;}
+  bool  againstMuonTight2() const{return m_againstMuonTight2;}
+  bool  againstMuonTight3() const{return m_againstMuonTight3;}
+  bool  againstMuonTightMVA() const{return m_againstMuonTightMVA;}
+  bool  byCombinedIsolationDeltaBetaCorrRaw3Hits() const{return m_byCombinedIsolationDeltaBetaCorrRaw3Hits;}
+  bool  byIsolationMVA3newDMwLTraw() const{return m_byIsolationMVA3newDMwLTraw;}
+  bool  byIsolationMVA3newDMwoLTraw() const{return m_byIsolationMVA3newDMwoLTraw;}
+  bool  byIsolationMVA3oldDMwLTraw() const{return m_byIsolationMVA3oldDMwLTraw;}
+  bool  byIsolationMVA3oldDMwoLTraw() const{return m_byIsolationMVA3oldDMwoLTraw;}
+  bool  byLooseCombinedIsolationDeltaBetaCorr3Hits() const{return m_byLooseCombinedIsolationDeltaBetaCorr3Hits;}
+  bool  byLooseIsolationMVA3newDMwLT() const{return m_byLooseIsolationMVA3newDMwLT;}
+  bool  byLooseIsolationMVA3newDMwoLT() const{return m_byLooseIsolationMVA3newDMwoLT;}
+  bool  byLooseIsolationMVA3oldDMwLT() const{return m_byLooseIsolationMVA3oldDMwLT;}
+  bool  byLooseIsolationMVA3oldDMwoLT() const{return m_byLooseIsolationMVA3oldDMwoLT;}
+  bool  byMediumCombinedIsolationDeltaBetaCorr3Hits() const{return m_byMediumCombinedIsolationDeltaBetaCorr3Hits;}
+  bool  byMediumIsolationMVA3newDMwLT() const{return m_byMediumIsolationMVA3newDMwLT;}
+  bool  byMediumIsolationMVA3newDMwoLT() const{return m_byMediumIsolationMVA3newDMwoLT;}
+  bool  byMediumIsolationMVA3oldDMwLT() const{return m_byMediumIsolationMVA3oldDMwLT;}
+  bool  byMediumIsolationMVA3oldDMwoLT() const{return m_byMediumIsolationMVA3oldDMwoLT;}
+  bool  byTightCombinedIsolationDeltaBetaCorr3Hits() const{return m_byTightCombinedIsolationDeltaBetaCorr3Hits;}
+  bool  byTightIsolationMVA3newDMwLT() const{return m_byTightIsolationMVA3newDMwLT;}
+  bool  byTightIsolationMVA3newDMwoLT() const{return m_byTightIsolationMVA3newDMwoLT;}
+  bool  byTightIsolationMVA3oldDMwLT() const{return m_byTightIsolationMVA3oldDMwLT;}
+  bool  byTightIsolationMVA3oldDMwoLT() const{return m_byTightIsolationMVA3oldDMwoLT;}
+  bool  byVLooseIsolationMVA3newDMwLT() const{return m_byVLooseIsolationMVA3newDMwLT;}
+  bool  byVLooseIsolationMVA3newDMwoLT() const{return m_byVLooseIsolationMVA3newDMwoLT;}
+  bool  byVLooseIsolationMVA3oldDMwLT() const{return m_byVLooseIsolationMVA3oldDMwLT;}
+  bool  byVLooseIsolationMVA3oldDMwoLT() const{return m_byVLooseIsolationMVA3oldDMwoLT;}
+  bool  byVTightIsolationMVA3newDMwLT() const{return m_byVTightIsolationMVA3newDMwLT;}
+  bool  byVTightIsolationMVA3newDMwoLT() const{return m_byVTightIsolationMVA3newDMwoLT;}
+  bool  byVTightIsolationMVA3oldDMwLT() const{return m_byVTightIsolationMVA3oldDMwLT;}
+  bool  byVTightIsolationMVA3oldDMwoLT() const{return m_byVTightIsolationMVA3oldDMwoLT;}
+  bool  byVVTightIsolationMVA3newDMwLT() const{return m_byVVTightIsolationMVA3newDMwLT;}
+  bool  byVVTightIsolationMVA3newDMwoLT() const{return m_byVVTightIsolationMVA3newDMwoLT;}
+  bool  byVVTightIsolationMVA3oldDMwLT() const{return m_byVVTightIsolationMVA3oldDMwLT;}
+  bool  byVVTightIsolationMVA3oldDMwoLT() const{return m_byVVTightIsolationMVA3oldDMwoLT;}
+  float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
     
   int decayMode() const{return m_decayMode;}
-
-/*   void set_leadPFCand_px(float x){m_leadPFCand_px=x;} */
-/*   void set_leadPFCand_py(float x){m_leadPFCand_py=x;} */
-/*   void set_leadPFCand_pz(float x){m_leadPFCand_pz=x;} */
 
   void set_decayModeFinding(bool x){m_decayModeFinding=x;} 
   void set_decayModeFindingNewDMs(bool x){m_decayModeFindingNewDMs=x;} 
@@ -208,11 +189,9 @@ class Tau : public Particle{
   void set_byVVTightIsolationMVA3oldDMwoLT(bool x){m_byVVTightIsolationMVA3oldDMwoLT = x;}
   
   void set_decayMode(int x){m_decayMode=x;}
+  void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
 
  private:
-/*   float m_leadPFCand_px; */
-/*   float m_leadPFCand_py; */
-/*   float m_leadPFCand_pz; */
 
   bool m_decayModeFinding; 
   bool m_decayModeFindingNewDMs;
@@ -220,61 +199,59 @@ class Tau : public Particle{
   bool m_againstElectronLooseMVA5;
   bool m_againstElectronMVA5category;
   bool m_againstElectronMVA5raw;
-  bool m_againstElectronMedium ;
+  bool m_againstElectronMedium;
   bool m_againstElectronMediumMVA5;
-  bool m_againstElectronTight ;
+  bool m_againstElectronTight;
   bool m_againstElectronTightMVA5; 
-  bool m_againstElectronVLooseMVA5 ;
+  bool m_againstElectronVLooseMVA5;
   bool m_againstElectronVTightMVA5;
-  bool m_againstMuonLoose ;
-  bool m_againstMuonLoose2 ;
+  bool m_againstMuonLoose;
+  bool m_againstMuonLoose2;
   bool m_againstMuonLoose3;
   bool m_againstMuonLooseMVA; 
-  bool m_againstMuonMVAraw ;
-  bool m_againstMuonMedium ;
-  bool m_againstMuonMedium2 ;
-  bool m_againstMuonMediumMVA ;
-  bool m_againstMuonTight ;
-  bool m_againstMuonTight2 ;
+  bool m_againstMuonMVAraw;
+  bool m_againstMuonMedium;
+  bool m_againstMuonMedium2;
+  bool m_againstMuonMediumMVA;
+  bool m_againstMuonTight;
+  bool m_againstMuonTight2;
   bool m_againstMuonTight3;
   bool m_againstMuonTightMVA;
   bool m_byCombinedIsolationDeltaBetaCorrRaw3Hits;
-  bool m_byIsolationMVA3newDMwLTraw ;
-  bool m_byIsolationMVA3newDMwoLTraw ;
-  bool m_byIsolationMVA3oldDMwLTraw ;
-  bool m_byIsolationMVA3oldDMwoLTraw ;
-  bool m_byLooseCombinedIsolationDeltaBetaCorr3Hits ;
-  bool m_byLooseIsolationMVA3newDMwLT ;
-  bool m_byLooseIsolationMVA3newDMwoLT ;
-  bool m_byLooseIsolationMVA3oldDMwLT ;
+  bool m_byIsolationMVA3newDMwLTraw;
+  bool m_byIsolationMVA3newDMwoLTraw;
+  bool m_byIsolationMVA3oldDMwLTraw;
+  bool m_byIsolationMVA3oldDMwoLTraw;
+  bool m_byLooseCombinedIsolationDeltaBetaCorr3Hits;
+  bool m_byLooseIsolationMVA3newDMwLT;
+  bool m_byLooseIsolationMVA3newDMwoLT;
+  bool m_byLooseIsolationMVA3oldDMwLT;
   bool m_byLooseIsolationMVA3oldDMwoLT;
   bool m_byMediumCombinedIsolationDeltaBetaCorr3Hits;
-  bool m_byMediumIsolationMVA3newDMwLT ;
-  bool m_byMediumIsolationMVA3newDMwoLT ;
-  bool m_byMediumIsolationMVA3oldDMwLT ;
+  bool m_byMediumIsolationMVA3newDMwLT;
+  bool m_byMediumIsolationMVA3newDMwoLT;
+  bool m_byMediumIsolationMVA3oldDMwLT;
   bool m_byMediumIsolationMVA3oldDMwoLT;
   bool m_byTightCombinedIsolationDeltaBetaCorr3Hits;
-  bool m_byTightIsolationMVA3newDMwLT ;
+  bool m_byTightIsolationMVA3newDMwLT;
   bool m_byTightIsolationMVA3newDMwoLT;
   bool m_byTightIsolationMVA3oldDMwLT;
-  bool m_byTightIsolationMVA3oldDMwoLT ;
-  bool m_byVLooseIsolationMVA3newDMwLT ;
-  bool m_byVLooseIsolationMVA3newDMwoLT ;
-  bool m_byVLooseIsolationMVA3oldDMwLT ;
-  bool m_byVLooseIsolationMVA3oldDMwoLT ;
-  bool m_byVTightIsolationMVA3newDMwLT ;
+  bool m_byTightIsolationMVA3oldDMwoLT;
+  bool m_byVLooseIsolationMVA3newDMwLT;
+  bool m_byVLooseIsolationMVA3newDMwoLT;
+  bool m_byVLooseIsolationMVA3oldDMwLT;
+  bool m_byVLooseIsolationMVA3oldDMwoLT;
+  bool m_byVTightIsolationMVA3newDMwLT;
   bool m_byVTightIsolationMVA3newDMwoLT;
-  bool m_byVTightIsolationMVA3oldDMwLT ;
+  bool m_byVTightIsolationMVA3oldDMwLT;
   bool m_byVTightIsolationMVA3oldDMwoLT;
   bool m_byVVTightIsolationMVA3newDMwLT;
-  bool m_byVVTightIsolationMVA3newDMwoLT ;
-  bool m_byVVTightIsolationMVA3oldDMwLT ;
+  bool m_byVVTightIsolationMVA3newDMwoLT;
+  bool m_byVVTightIsolationMVA3oldDMwLT;
   bool m_byVVTightIsolationMVA3oldDMwoLT;
 
-
-
   int m_decayMode;
-
+  
+  Tags tags;
 };
 
-#endif

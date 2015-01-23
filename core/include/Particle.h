@@ -1,27 +1,13 @@
-#ifndef Particle_H
-#define Particle_H
+#pragma once
 
 #include "UHH2/core/include/LorentzVector.h"
 
 
-/**
- *  @short generic particle class
- *  @author Thomas Peiffer
- */
-
 class Particle{
- public:
-  /// Default constructor
-  Particle(){
-    m_charge=0;
-    m_pt=0; 
-    m_eta=0; 
-    m_phi=0; 
-    m_energy=0; 
-  };
-  /// Default destructor
-  ~Particle(){
-  };
+public:
+     
+   Particle(): m_charge(0), m_pt(0), m_eta(0), m_phi(0), m_energy(0){
+   }
 
   /// four-momentum
   LorentzVector v4() const{
@@ -31,7 +17,7 @@ class Particle{
     v4.SetPhi(m_phi);
     v4.SetE(m_energy);
     return v4;
-  };
+  }
   
   /// charge
   short charge() const{return m_charge;}
@@ -66,11 +52,9 @@ class Particle{
 private:
 
   short m_charge;
-  float m_pt; 
-  float m_eta; 
-  float m_phi; 
-  float m_energy; 
-
+  float m_pt;
+  float m_eta;
+  float m_phi;
+  float m_energy;
 };
 
-#endif
