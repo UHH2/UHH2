@@ -243,6 +243,7 @@ if useMiniAOD:
   chsstring = 'chs'
   
 process.ca8CHSJets  = ca8PFJets.clone (src = chsstring)
+process.ca15CHSJets = process.ca8CHSJets.clone(rParam = cms.double(1.5))
 
 from RecoJets.JetProducers.ak4PFJetsPruned_cfi import *
 process.ca8CHSJetsPruned = ak4PFJetsPruned.clone(rParam=0.8, jetAlgorithm = cms.string("CambridgeAachen"), doAreaFastjet = True, src = chsstring)
@@ -292,9 +293,6 @@ process.hepTopTagCHS = process.cmsTopTagCHS.clone(
     maxSubjetMass = cms.double(30.0),
     useSubjetMass = cms.bool(False),
 )
-
-process.ca15CHSJets = process.hepTopTagCHS.clone ( writeCompound = cms.bool(False), jetCollInstanceName = cms.string('') )
-
 
 process.CATopTagInfos = cms.EDProducer("CATopJetTagger",
                                     src = cms.InputTag("cmsTopTagCHS"),
