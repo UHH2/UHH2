@@ -190,14 +190,11 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   // inform the ges what they write to the uhh2::Event
   if(doElectrons){
       using uhh2::NtupleWriterElectrons;
-      auto electron_sources = iConfig.getParameter<std::vector<std::string> >("electron_sources");
-      auto electron_id_sources = iConfig.getParameter<std::vector<edm::InputTag>>("electron_id_sources");
-      for(size_t i=0; i< electron_sources.size(); ++i){
-          NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_sources[i], electron_sources[i]);
-          cfg.id_sources = electron_id_sources;
-          cfg.runOnMiniAOD = runOnMiniAOD;
-          writer_modules.emplace_back(new NtupleWriterElectrons(cfg, i==0));
-      }
+      auto electron_source = iConfig.getParameter<edm::InputTag>("electron_source");
+      NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
+      cfg.id_sources = iConfig.getParameter<edm::ParameterSet>("electron_id_sources");
+      cfg.runOnMiniAOD = runOnMiniAOD;
+      writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true));
   }
   if(doMuons){
       using uhh2::NtupleWriterMuons;

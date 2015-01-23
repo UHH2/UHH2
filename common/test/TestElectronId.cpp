@@ -9,28 +9,9 @@
 using namespace uhh2;
 using namespace std;
 
-namespace {
-    
-union fi_union {
-    uint32_t i;
-    float f;
-};
-    
-// bit = 0 means least significan
-int extract_bit(float value, int bit){
-    fi_union u;
-    u.f = value;
-    bool isset = (u.i & (uint32_t(1) << bit));
-    return isset ? 1 : 0;
-}
-
-}
-
-
-
 class TestElectronId: public uhh2::AnalysisModule {
 public:
-    explicit TestElectronId(Context & ctx): n_passing(4, 0){
+    explicit TestElectronId(Context & ctx) {
         ele_printer.reset(new ElectronPrinter());
         ele_hists.reset(new ElectronHists(ctx, "ele"));
         ele_cleaner.reset(new ElectronCleaner(&ElectronID_PHYS14_25ns_medium));
@@ -40,9 +21,7 @@ public:
         assert(e.electrons);
         
         for(const auto & ele : *e.electrons){
-            float id = ele.mvaTrigV0();
-            assert(std::isnan(id));
-            bool cmssw_medium = extract_bit(id, 2);
+            bool cmssw_medium = ele.get_tag(Electron::eid_PHYS14_20x25_medium);
             bool sframe_medium = ElectronID_PHYS14_25ns_medium(ele, e);
             if(cmssw_medium ^ sframe_medium){
                 cout << "Found weird electron: cmssw? " << cmssw_medium << "; sframe? " << sframe_medium
@@ -50,10 +29,8 @@ public:
                 ElectronPrinter::print(cout, ele, e);
                 cout << endl;
             }
-            for(int i_id = 0; i_id < 4; ++i_id){
-                if(extract_bit(id, i_id)){
-                    ++n_passing[i_id];
-                }
+            if(sframe_medium){
+                ++n_passing;
             }
         }
         ele_cleaner->process(e);
@@ -62,14 +39,11 @@ public:
     }
     
     virtual ~TestElectronId(){
-        cout << "~TestElectronId: Total electrons:" << endl;
-        for(int i=0; i<4; ++i){
-            cout << " N[" << i << "] = " << n_passing[i] << endl;
-        }
+        cout << "~TestElectronId: Total electrons passing sframe medium id:" << n_passing<< endl;
     }
     
 private:
-    std::vector<int> n_passing;
+    int n_passing = 0;
     std::unique_ptr<AnalysisModule> ele_cleaner, ele_printer;
     std::unique_ptr<Hists> ele_hists;
 };

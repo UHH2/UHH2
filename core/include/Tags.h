@@ -18,8 +18,12 @@ public:
     
     // throes a runtime_error exception in case the tag is not available.
     float get_tag(int) const;
+    
+    bool has_tag(int) const;
     // set the value for some tag
     void set_tag(int, float);
+    
+    
     
 private:
     //std::vector<std::pair<int, float>> tagdata;

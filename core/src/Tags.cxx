@@ -13,6 +13,10 @@ float Tags::get_tag(int index) const {
     return it->second;
 }
 
+bool Tags::has_tag(int index) const{
+    return tagdata.find(index) != tagdata.end();
+}
+
 void Tags::set_tag(int index, float value) {
     tagdata[index] = value;
 }

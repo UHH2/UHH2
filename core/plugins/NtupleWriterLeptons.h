@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "UHH2/core/plugins/NtupleWriterModule.h"
 
 namespace uhh2 {
@@ -8,7 +9,7 @@ class NtupleWriterElectrons: public NtupleWriterModule {
 public:
     
     struct Config: public NtupleWriterModule::Config {        
-        std::vector<edm::InputTag> id_sources;
+        edm::ParameterSet id_sources;
 
         // inherit constructor does not work yet :-(
         Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_, const std::string & dest_,
@@ -22,11 +23,10 @@ public:
     virtual ~NtupleWriterElectrons();
 private:
     edm::EDGetToken src_token;
+    std::vector<Electron::tag> id_tags;
     std::vector<edm::EDGetToken> id_src_tokens;
     Event::Handle<std::vector<Electron>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Electron>>> electrons_handle; // handle of name "electrons" in case set_electrons_member is true
-    
-    std::vector<int> n_passing_electrons;
 };
 
 class NtupleWriterMuons: public NtupleWriterModule {

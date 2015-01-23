@@ -7,43 +7,19 @@
 using namespace uhh2;
 using namespace std;
 
-namespace {
-
-union fi_union {
-    float f;
-    uint32_t i;
-};
-    
-// note: this is non-standarad, but works well on gnu
-float int2float_bitwise(uint32_t i){
-    fi_union u;
-    u.i = i;
-    return u.f;
-}
-
-
-}
-
-
 NtupleWriterElectrons::NtupleWriterElectrons(Config & cfg, bool set_electrons_member){
-    n_passing_electrons.resize(8);
     handle = cfg.ctx.declare_event_output<vector<Electron>>(cfg.dest_branchname, cfg.dest);
     if(set_electrons_member){
         electrons_handle = cfg.ctx.get_handle<vector<Electron>>("electrons");
     }
     src_token = cfg.cc.consumes<std::vector<pat::Electron>>(cfg.src);
-    for(auto & tag : cfg.id_sources){
-        id_src_tokens.push_back(cfg.cc.consumes<edm::ValueMap<bool>>(tag));
+    for(const auto & pname : cfg.id_sources.getParameterNames()){
+        id_tags.push_back(Electron::tagname2tag(pname));
+        id_src_tokens.push_back(cfg.cc.consumes<edm::ValueMap<float>>(cfg.id_sources.getParameter<edm::InputTag>(pname)));
     }
 }
 
-NtupleWriterElectrons::~NtupleWriterElectrons(){
-    auto imax = min(id_src_tokens.size(), n_passing_electrons.size());
-    cout << "Electron id summary: number of electrons passing id X, where X is index to electron_id_sources:" << endl;
-    for(auto i=0ul; i<imax; ++i){
-        cout << " N[" << i <<"] = " << n_passing_electrons[i] << endl;
-    }
-}
+NtupleWriterElectrons::~NtupleWriterElectrons(){}
 
 void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & uevent){
     edm::Handle< std::vector<pat::Electron> > ele_handle;
@@ -51,6 +27,11 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     std::vector<Electron> eles;
     edm::Handle<edm::ValueMap<float> > full5x5sieie;
     event.getByLabel(edm::InputTag("electronIDValueMapProducer", "eleFull5x5SigmaIEtaIEta"), full5x5sieie);
+    
+    std::vector<edm::Handle<edm::ValueMap<float>>> electron_ids(id_src_tokens.size());
+    for(size_t i_id=0; i_id<id_src_tokens.size(); ++i_id){
+        event.getByToken(id_src_tokens[i_id], electron_ids[i_id]);
+    }
     const size_t n_ele = ele_handle->size();
     for (size_t i=0; i<n_ele; ++i){
         const auto & pat_ele = (*ele_handle)[i];
@@ -88,28 +69,11 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_fbrem(pat_ele.fbrem());
         ele.set_EoverPIn(pat_ele.eSuperClusterOverP());
         ele.set_EcalEnergy(pat_ele.ecalEnergy());
-        //not in miniaod, maybe later ...
-        //ele.set_mvaTrigV0(pat_ele.electronID("mvaTrigV0"));
-        //ele.set_mvaNonTrigV0(pat_ele.electronID("mvaNonTrigV0"));
-        ele.set_AEff(-1.0);
         
-        // test ids and save the bitmask in the lowest 22 bits of a float:
-        uint32_t id_mask = 0;
-        for(auto i_id=0ul; i_id < id_src_tokens.size(); ++i_id){
-            edm::Handle<edm::ValueMap<bool> > id_handle;
-            event.getByToken(id_src_tokens[i_id], id_handle);
-            const edm::Ptr<pat::Electron> eleptr(ele_handle, i);
-            bool id_passed = (*id_handle)[eleptr];
-            if(id_passed){
-                id_mask |= (uint32_t(1) << i_id);
-                if(i_id < n_passing_electrons.size()){
-                    ++n_passing_electrons[i_id];
-                }
-            }
+        const edm::Ptr<pat::Electron> eleptr(ele_handle, i);
+        for(size_t i_id=0; i_id<id_tags.size(); ++i_id){
+            ele.set_tag(id_tags[i_id], (*electron_ids[i_id])[eleptr]);
         }
-        // set the highest 10 bits of the float to 1, such that the float is NAN:
-        id_mask |= 0xFFC00000;
-        ele.set_mvaTrigV0(int2float_bitwise(id_mask));
     }
     uevent.set(handle, move(eles));
     if(electrons_handle){
@@ -144,7 +108,6 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
      mu.set_vertex_y ( pat_mu.vertex().y());
      mu.set_vertex_z ( pat_mu.vertex().z());
      mu.set_dB ( pat_mu.dB());
-     //mu.particleIso ( pat_mu.particleIso());
      mu.set_neutralHadronIso ( pat_mu.neutralHadronIso());
      mu.set_chargedHadronIso ( pat_mu.chargedHadronIso());
      mu.set_trackIso ( pat_mu.trackIso());

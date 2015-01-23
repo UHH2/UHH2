@@ -725,8 +725,6 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 process.load("RecoEgamma.ElectronIdentification.egmGsfElectronIDs_cfi")
 process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectrons')
-#from PhysicsTools.SelectorUtils.centralIDRegistry import central_id_registry
-#process.egmGsfElectronIDSequence = cms.Sequence(process.egmGsfElectronIDs)
 setupAllVIDIdsInModule(process, 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_PHYS14_PU20bx25_V1_miniAOD_cff', setupVIDElectronSelection)
         
         
@@ -772,13 +770,15 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                   rho_source = cms.InputTag("fixedGridRhoFastjetAll"),
                                   genparticle_source = cms.InputTag("prunedPrunedGenParticles" ),
                                   stablegenparticle_source = cms.InputTag("packedGenParticles" ),
-                                  electron_sources = cms.vstring("slimmedElectrons"),
-                                  electron_id_sources = cms.VInputTag(
-                                     'egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-veto',
-                                     'egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-loose',
-                                     'egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-medium',
-                                     'egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-tight'
-                                     ),
+                                  electron_source = cms.InputTag("slimmedElectrons"),
+                                  electron_id_sources = cms.PSet (
+                                     # use the Electron::tag enumeration as parameter name; value should be the InputTag
+                                     # to use to read the ValueMap<float> from.
+                                     eid_PHYS14_20x25_veto = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-veto'),
+                                     eid_PHYS14_20x25_loose = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-loose'),
+                                     eid_PHYS14_20x25_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-medium'),
+                                     eid_PHYS14_20x25_tight = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-tight')
+                                  ),
                                   muon_sources = cms.vstring("slimmedMuons"),
                                   tau_sources = cms.vstring("slimmedTaus" ),
                                   tau_ptmin = cms.double(0.0),

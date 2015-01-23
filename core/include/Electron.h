@@ -7,7 +7,15 @@
 class Electron: public Particle{
 public:
     
-  enum tag {};
+  enum tag {eid_PHYS14_20x25_veto, eid_PHYS14_20x25_loose, eid_PHYS14_20x25_medium, eid_PHYS14_20x25_tight };
+  
+  static tag tagname2tag(const std::string & tagname){
+      if(tagname == "eid_PHYS14_20x25_veto") return eid_PHYS14_20x25_veto;
+      if(tagname == "eid_PHYS14_20x25_loose") return eid_PHYS14_20x25_loose;
+      if(tagname == "eid_PHYS14_20x25_medium") return eid_PHYS14_20x25_medium;
+      if(tagname == "eid_PHYS14_20x25_tight") return eid_PHYS14_20x25_tight;
+      throw std::runtime_error("unknwon Electron::tag '" + tagname + "'");
+  }
   
   Electron(){
    m_vertex_x = 0;
@@ -36,9 +44,6 @@ public:
    m_fbrem = 0;
    m_EoverPIn = 0;
    m_EcalEnergy = 0;
-   m_mvaTrigV0 = 0;
-   m_mvaNonTrigV0 = 0;
-   m_AEff = 0;
   }
 
   float vertex_x() const{return m_vertex_x;} 
@@ -67,10 +72,8 @@ public:
   float fbrem() const{return m_fbrem;}
   float EoverPIn() const{return m_EoverPIn;}
   float EcalEnergy() const{return m_EcalEnergy;}
-  float mvaTrigV0() const{return m_mvaTrigV0;} // note: currently (PHYS14) NOT filled; do not use!
-  float mvaNonTrigV0() const{return m_mvaNonTrigV0;} // note: currently (PHYS14) NOT filled; do not use!
-  float AEff() const{return m_AEff;} // note: currently (PHYS14) NOT filled; do not use!
   float get_tag(tag t)const {return tags.get_tag(static_cast<int>(t));}
+  bool has_tag(tag t) const {return tags.has_tag(static_cast<int>(t));}
 
 
   void set_vertex_x(float x){m_vertex_x=x;} 
@@ -99,9 +102,6 @@ public:
   void set_fbrem(float x){m_fbrem=x;}
   void set_EoverPIn(float x){m_EoverPIn=x;}
   void set_EcalEnergy(float x){m_EcalEnergy=x;}
-  void set_mvaTrigV0(float x){m_mvaTrigV0=x;}
-  void set_mvaNonTrigV0(float x){m_mvaNonTrigV0=x;}
-  void set_AEff(float x){m_AEff=x;}
   void set_tag(tag t, float value) { tags.set_tag(static_cast<int>(t), value);}
 
   float gsfTrack_dxy_vertex(const float point_x, const float point_y) const{ 
