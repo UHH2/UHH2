@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+   <Library Name="libTestSUHH2common"/>
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="TestElectronId" Cacheable="False">
+            <!-- <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_BpJ_TW_M800_20x25_14_Ntuple.root" Lumi="0.0"/>  -->
+            <In FileName="/afs/desy.de/user/o/ottjoc/xxl-af-cms/CMSSW_7_2_1_patch4/src/UHH2/core/Ntuple.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" /> 
+            <OutputTree Name="AnalysisTree" />
+        </InputData>
+            
+        <UserConfig>
+            <Item Name="ElectronCollection" Value="slimmedElectrons" />
+            <Item Name="GenParticleCollection" Value="GenParticles" />
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
+            <Item Name="AnalysisModule" Value="TestElectronId" /> 
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>
