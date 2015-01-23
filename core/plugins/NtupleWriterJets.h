@@ -33,8 +33,9 @@ public:
     struct Config: public NtupleWriterModule::Config {
         using NtupleWriterModule::Config::Config;
 
-        edm::InputTag constituent_src; // a jet collection from where to take the subjet variables (after DeltaR-matching)
+        edm::InputTag substructure_variables_src; // a jet collection from where to take the subjet variables (after DeltaR-matching)
         std::string njettiness_src;
+        std::string qjets_src;
     };
 
     explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member);
@@ -46,8 +47,8 @@ public:
 private:
     bool runOnMiniAOD;
     float ptmin, etamax;
-    edm::EDGetToken src_token, constituent_src_token;
-    std::string njettiness_src;
+    edm::EDGetToken src_token, substructure_variables_src_token;
+    std::string njettiness_src, qjets_src;
 
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;

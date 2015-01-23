@@ -243,6 +243,7 @@ if useMiniAOD:
   chsstring = 'chs'
   
 process.ca8CHSJets  = ca8PFJets.clone (src = chsstring)
+process.ca15CHSJets = process.ca8CHSJets.clone (rParam = cms.double(1.5))
 
 from RecoJets.JetProducers.ak4PFJetsPruned_cfi import *
 process.ca8CHSJetsPruned = ak4PFJetsPruned.clone(rParam=0.8, jetAlgorithm = cms.string("CambridgeAachen"), doAreaFastjet = True, src = chsstring)
@@ -292,9 +293,6 @@ process.hepTopTagCHS = process.cmsTopTagCHS.clone(
     maxSubjetMass = cms.double(30.0),
     useSubjetMass = cms.bool(False),
 )
-
-process.ca15CHSJets = process.hepTopTagCHS.clone ( writeCompound = cms.bool(False), jetCollInstanceName = cms.string('') )
-
 
 process.CATopTagInfos = cms.EDProducer("CATopJetTagger",
                                     src = cms.InputTag("cmsTopTagCHS"),
@@ -704,11 +702,21 @@ for jetcoll in (process.patJetsCA8CHS,
 
 # Add subjet variables:
 from RecoJets.JetProducers.nJettinessAdder_cfi import Njettiness
-#from RecoJets.JetProducers.qjetsadder_cfi import QJetsAdder
+from RecoJets.JetProducers.qjetsadder_cfi import QJetsAdder
 
 process.NjettinessCA8CHS = Njettiness.clone(src = cms.InputTag("patJetsCA8CHS"), cone = cms.double(0.8))
 process.NjettinessCA15CHS = Njettiness.clone(src = cms.InputTag("patJetsCA15CHS"), cone = cms.double(1.5))
-#process.QJetsCA8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCA8CHS"), jetRad = cms.double(0.8), jetAlgo = cms.string('CA'))
+process.QJetsCA8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCA8CHS"), jetRad = cms.double(0.8), jetAlgo = cms.string('CA'))
+process.QJetsCA15CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCA15CHS"), jetRad = cms.double(1.5), jetAlgo = cms.string('CA'))
+
+process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
+   QJetsCA8CHS = cms.PSet(
+      initialSeed = cms.untracked.uint32(123)
+   ),
+   QJetsCA15CHS = cms.PSet(
+      initialSeed = cms.untracked.uint32(123)
+   )
+)
 
 
 
@@ -751,7 +759,6 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                   doGenInfo = cms.bool(not useData),
                                   doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
                                   doTrigger = cms.bool(True),
-                                  doTagInfos = cms.untracked.bool(False), # when set to true crashes for the 'packed' jet collections
                                   rho_source = cms.InputTag("fixedGridRhoFastjetAll"),
                                   genparticle_source = cms.InputTag("prunedPrunedGenParticles" ),
                                   stablegenparticle_source = cms.InputTag("packedGenParticles" ),
@@ -768,13 +775,15 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                   genjet_etamax = cms.double(5.0),
                                   #photon_sources = cms.vstring("selectedPatPhotons"),
                                   topjet_sources = cms.vstring("patJetsCMSTopTagCHSPacked","patJetsHEPTopTagCHSPacked","patJetsCA8CHSprunedPacked","patJetsCA15CHSFilteredPacked"),
-                                  # jets to match to the topjets in order to get constituents and njettiness:
-                                  topjet_constituents_sources = cms.vstring("patJetsCA8CHS", "patJetsCA15CHS", "patJetsCA8CHS", "patJetsCA15CHS"),
+                                  # jets to match to the topjets in order to get njettiness, in the same order as topjet_sources:
+                                  topjet_substructure_variables_sources = cms.vstring("patJetsCA8CHS", "patJetsCA15CHS", "patJetsCA8CHS", "patJetsCA15CHS"),
                                   topjet_njettiness_sources = cms.vstring("NjettinessCA8CHS", "NjettinessCA15CHS", "NjettinessCA8CHS", "NjettinessCA15CHS"),
+                                  topjet_qjets_sources = cms.vstring("QJetsCA8CHS", "QJetsCA15CHS", "QJetsCA8CHS", "QJetsCA15CHS"),
+                                  
                                   topjet_ptmin = cms.double(100.0), 
                                   topjet_etamax = cms.double(5.0),
                                   #missing in miniaod
-                                  doGenTopJets = cms.bool(False),			      
+                                  doGenTopJets = cms.bool(False),     
                                   #gentopjet_sources = cms.vstring("caTopTagGen","ca12TopTagGen", "caFilteredGenJetsNoNu", "caHEPTopTagGen"),
                                   #gentopjet_ptmin = cms.double(150.0), 
                                   #gentopjet_etamax = cms.double(5.0),
