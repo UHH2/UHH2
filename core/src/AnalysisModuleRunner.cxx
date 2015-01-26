@@ -12,6 +12,8 @@
 #include "TXMLNode.h"
 #include "TXMLAttr.h"
 #include "TTree.h"
+#include "TBranchElement.h"
+#include "TClonesArray.h"
 
 #include <stdexcept>
 #include <memory>
@@ -75,6 +77,7 @@ void connect_input_branch(TBranch * branch, const std::type_info & ti, void ** a
     if (res > 0) {
         throw runtime_error("input branch '" + string(branch->GetName()) + "': error reading type information");
     }
+    
     // get address type:
     TClass * address_class = TBuffer::GetClass(ti);
     EDataType address_dtype = kNoType_t;
@@ -88,6 +91,14 @@ void connect_input_branch(TBranch * branch, const std::type_info & ti, void ** a
         if (addr == 0) {
             addr = branch_class->New();
             eraser = branch_class->GetDelete();
+            // TClonesArray needs special treatment, as the TClonesArray object needs to know the underlying class it should store:
+            bool is_clones = branch_class == TClonesArray::Class();
+            if(is_clones){
+                auto br = dynamic_cast<TBranchElement*>(branch);
+                assert(br);
+                auto tca = reinterpret_cast<TClonesArray*>(addr);
+                tca->SetClass(br->GetClonesName(), 1);
+            }
         }
         branch->SetAddress(addraddr);
     }
@@ -100,11 +111,10 @@ void connect_input_branch(TBranch * branch, const std::type_info & ti, void ** a
     }
     else { // this is an error:
         stringstream ss;
-        ss << "Type error for branch '" << branch->GetName() << "': branch holds type '";
+        ss << "Type error for branch '" << branch->GetName() << "': branch holds type ";
         write_type_info(ss, branch_class, branch_dtype);
-        ss << "', but tried to connect to variable of type '";
+        ss << ", but tried to connect to variable of type ";
         write_type_info(ss, address_class, address_dtype);
-        ss << "'";
         throw runtime_error(ss.str());
     }
 }
@@ -506,6 +516,7 @@ class AnalysisModuleRunner::AnalysisModuleRunnerImpl {
 
 private:
     bool m_readTrigger;
+    bool m_userEventFormat;
 
     bool setup_output_done;
     
@@ -594,38 +605,50 @@ void AnalysisModuleRunner::SetConfig(const SCycleConfig& config) {
 void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisModuleRunner & base, const SInputData& in) {
     ges.reset(new GenericEventStructure);
     context.reset(new SFrameContext(base, in, *ges));
-    eh.reset(new EventHelper(*context));
+    
+    m_userEventFormat = string2bool(context->get("userEventFormat", "false"));
+    
+    if(!m_userEventFormat){
+    
+        eh.reset(new EventHelper(*context));
 
-    eh->setup_pvs(context->get("PrimaryVertexCollection", ""));
-    eh->setup_electrons(context->get("ElectronCollection", ""));
-    eh->setup_muons(context->get("MuonCollection", ""));
-    eh->setup_taus(context->get("TauCollection", ""));
-    eh->setup_photons(context->get("PhotonCollection", ""));
-    eh->setup_jets(context->get("JetCollection", ""));
-    eh->setup_topjets(context->get("TopJetCollection", ""));
-    eh->setup_met(context->get("METName", ""));
+        eh->setup_pvs(context->get("PrimaryVertexCollection", ""));
+        eh->setup_electrons(context->get("ElectronCollection", ""));
+        eh->setup_muons(context->get("MuonCollection", ""));
+        eh->setup_taus(context->get("TauCollection", ""));
+        eh->setup_photons(context->get("PhotonCollection", ""));
+        eh->setup_jets(context->get("JetCollection", ""));
+        eh->setup_topjets(context->get("TopJetCollection", ""));
+        eh->setup_met(context->get("METName", ""));
 
-    bool is_mc = context->get("dataset_type") == "MC";
-    if (is_mc) {
-        eh->setup_genInfo(context->get("GenInfoName", "genInfo"));
-        eh->setup_genjets(context->get("GenJetCollection", ""));
-        eh->setup_gentopjets(context->get("GenTopJetCollection", ""));
-        eh->setup_genparticles(context->get("GenParticleCollection", ""));
-    }
+        bool is_mc = context->get("dataset_type") == "MC";
+        if (is_mc) {
+            eh->setup_genInfo(context->get("GenInfoName", "genInfo"));
+            eh->setup_genjets(context->get("GenJetCollection", ""));
+            eh->setup_gentopjets(context->get("GenTopJetCollection", ""));
+            eh->setup_genparticles(context->get("GenParticleCollection", ""));
+        }
 
-    m_readTrigger = string2bool(context->get("readTrigger", "true"));
-    if (m_readTrigger) {
-        eh->setup_trigger();
+        m_readTrigger = string2bool(context->get("readTrigger", "true"));
+        if (m_readTrigger) {
+            eh->setup_trigger();
+        }
+        
+        use_sframe_weight = string2bool(context->get("use_sframe_weight", "true"));
     }
     
-    use_sframe_weight = string2bool(context->get("use_sframe_weight", "true"));
+    else{
+        m_readTrigger = false;
+    }
 
     // 2. now construct user module, which could add event contest to ges
     string module_classname = context->get("AnalysisModule");
     analysis = AnalysisModuleRegistry::build(module_classname, *context);
 
     event.reset(new Event(*ges));
-    eh->set_event(event.get());
+    if(eh){
+        eh->set_event(event.get());
+    }
     setup_output_done = false;
 }
 
@@ -679,7 +702,9 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
     // read in the event from the input tree:
     pimpl->context->begin_event(*pimpl->event);
     // copy to Event members and setup trigger:
-    pimpl->eh->event_read();
+    if(!pimpl->m_userEventFormat){
+        pimpl->eh->event_read();
+    }
 
     uhh2::Event & event = *pimpl->event;
     
@@ -697,7 +722,9 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
         throw SError(SError::SkipEvent);
     }
 
-    pimpl->eh->event_write();
+    if(!pimpl->m_userEventFormat){
+        pimpl->eh->event_write();
+    }
 
     if (!pimpl->setup_output_done) {
         pimpl->context->setup_output(*pimpl->event);
