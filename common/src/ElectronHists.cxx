@@ -53,7 +53,7 @@ ElectronHists::ElectronHists(Context & ctx, const std::string & dname, bool gen_
         eff_sub     = book<TH1F>("eff_sub",     "p_{T}",                100,0,500);
         eff_tot     = book<TH1F>("eff_tot",     "p_{T}",                100,0,500);
         pt_response = book<TH1F>("pt_response", "(p_{T, gen} - p_{T, reco}) / p_{T, gen}",
-                                                                        800,-2.,2.);
+                                                                        800,-1.,1.);
     } else {
         eff_sub     = 0;
         eff_tot     = 0;

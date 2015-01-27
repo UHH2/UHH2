@@ -46,6 +46,18 @@ private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
 };
 
+class SubJetCorrector: public uhh2::AnalysisModule {
+public:
+    explicit SubJetCorrector(const std::vector<std::string> & filenames);
+    
+    virtual bool process(uhh2::Event & event) override;
+    
+    virtual ~SubJetCorrector();
+    
+private:
+    std::unique_ptr<FactorizedJetCorrector> corrector;
+};
+
 
 /** \brief Cross-clean lepton and jets by subtracting lepton four momenta from nearby jets
  * 

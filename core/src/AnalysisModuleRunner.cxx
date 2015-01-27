@@ -97,7 +97,10 @@ void connect_input_branch(TBranch * branch, const std::type_info & ti, void ** a
                 auto br = dynamic_cast<TBranchElement*>(branch);
                 assert(br);
                 auto tca = reinterpret_cast<TClonesArray*>(addr);
-                tca->SetClass(br->GetClonesName(), 1);
+                // note: have to initialize TClonesArray with large enough size, e.g. 100. Using
+                // smaller sizes (at least <~10) segfaults root in TClonesArray::ExpandCreateFast called
+                // upon reading input data by TTree.
+                tca->SetClass(br->GetClonesName(), 100);
             }
         }
         branch->SetAddress(addraddr);

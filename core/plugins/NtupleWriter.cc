@@ -298,7 +298,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     gentopjet_etamax = iConfig.getParameter<double> ("gentopjet_etamax");
     gentopjets.resize(gentopjet_sources.size());
     for(size_t j=0; j< gentopjet_sources.size(); ++j){
-      gentopjet_tokens.push_back(consumes<vector<reco::BasicJetCollection>>(gentopjet_sources[j]));
+      gentopjet_tokens.push_back(consumes<reco::BasicJetCollection>(gentopjet_sources[j]));
       branch(tr, gentopjet_sources[j].c_str(), "std::vector<GenTopJet>", &gentopjets[j]);
     }
     if(!gentopjet_sources.empty()){
