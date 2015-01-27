@@ -151,6 +151,7 @@ process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
         'drop 11 <= abs(pdgId) <= 16',  # drop leptons
         'keep+ abs(pdgId) == 24', # but keep from W ... 
         'keep+ abs(pdgId) == 23' # and from Z
+        'keep+ abs(pdgId) == 25', # and from h0
     )
 )
 
