@@ -47,6 +47,28 @@ void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & ev
     jet.set_JEC_factor_raw(1. / correctionfactor);
 }
 
+void correct_subjets(FactorizedJetCorrector & corrector, TopJet & topjet, const Event & event){
+    auto subjets_top=topjet.subjets();
+    auto subjets_JECraw=topjet.subJEC_raw();
+    topjet.rm_subjets();
+    topjet.rm_JEC();
+    for (unsigned int i=0; i<subjets_top.size();i++)
+    { 
+      //It is not needed to uncorrect the subjets because the ntuplewriter corrects the subjets at level 0, that is: they're not corrected.
+      //However the subJEC_raw value is set to the full correction, thus by uncorrecting we would un-apply a correction that was never applied in the first place.
+      //The analyzer must be careful to apply subjet JECs only *once* in the entire analysis.
+      corrector.setJetPt(subjets_top[i].pt());
+      corrector.setJetEta(subjets_top[i].eta());
+      corrector.setJetE(subjets_top[i].energy());
+      corrector.setJetA(topjet.subArea()[i]);
+      corrector.setRho(event.rho);
+      auto correctionfactor = corrector.getCorrection();
+      subjets_top[i].set_v4(subjets_top[i].v4() * correctionfactor);
+      topjet.add_subjet(subjets_top[i]);
+      topjet.add_subJEC_raw(1. / correctionfactor);
+    }
+}
+
 
 
 }
@@ -81,6 +103,21 @@ bool TopJetCorrector::process(uhh2::Event & event){
 
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
 TopJetCorrector::~TopJetCorrector(){}
+
+SubJetCorrector::SubJetCorrector(const std::vector<std::string> & filenames){
+    corrector = build_corrector(filenames);
+}
+    
+bool SubJetCorrector::process(uhh2::Event & event){
+    assert(event.topjets);
+    for(auto & jet : *event.topjets){
+        correct_subjets(*corrector, jet, event);
+    }
+    return true;
+}
+
+// note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
+SubJetCorrector::~SubJetCorrector(){}
 
 
 // ** JetLeptonCleaner
