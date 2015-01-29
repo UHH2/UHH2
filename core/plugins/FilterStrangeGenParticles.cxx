@@ -52,7 +52,29 @@ bool FilterStrangeGenParticles::filter(edm::Event & event, const edm::EventSetup
                 return true;
             }
         }
-        if(abs(gp.pdgId()) == 6){
+        else if(abs(gp.pdgId()) == 6000007){
+            // single B'
+            if(gp.numberOfDaughters() != 2){
+                cout << "B' has " << gp.numberOfDaughters() << " daughters." << endl;
+                return true;
+            }
+            auto bprime_d0 = gp.daughter(0);
+            auto bprime_d1 = gp.daughter(1);
+            
+            int pdgid_lower = abs(bprime_d0->pdgId());
+            int pdgid_higher = abs(bprime_d1->pdgId());
+            
+            if(pdgid_lower > pdgid_higher){
+                swap(pdgid_lower, pdgid_higher);
+                swap(bprime_d0, bprime_d1);
+            }
+            
+            if(pdgid_lower != 6 || pdgid_higher != 24){
+                cout << "B' decays: " << pdgid_lower << ", " << pdgid_higher << endl;
+                return true;
+            }
+        }
+        else if(abs(gp.pdgId()) == 6){
             ++n_top;
             if(gp.numberOfDaughters() < 2 || gp.numberOfDaughters() > 3){
                 cout << "t has " << gp.numberOfDaughters() << " daughters." << endl;
