@@ -25,8 +25,6 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     edm::Handle< std::vector<pat::Electron> > ele_handle;
     event.getByToken(src_token, ele_handle);
     std::vector<Electron> eles;
-    edm::Handle<edm::ValueMap<float> > full5x5sieie;
-    event.getByLabel(edm::InputTag("electronIDValueMapProducer", "eleFull5x5SigmaIEtaIEta"), full5x5sieie);
     
     std::vector<edm::Handle<edm::ValueMap<float>>> electron_ids(id_src_tokens.size());
     for(size_t i_id=0; i_id<id_src_tokens.size(); ++i_id){
@@ -64,7 +62,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_passconversionveto(pat_ele.passConversionVeto());
         ele.set_dEtaIn(pat_ele.deltaEtaSuperClusterTrackAtVtx());
         ele.set_dPhiIn(pat_ele.deltaPhiSuperClusterTrackAtVtx());
-        ele.set_sigmaIEtaIEta((*full5x5sieie)[edm::Ref<pat::ElectronCollection>(ele_handle, i)]);
+        ele.set_sigmaIEtaIEta(pat_ele.full5x5_sigmaIetaIeta());
         ele.set_HoverE(pat_ele.hcalOverEcal());
         ele.set_fbrem(pat_ele.fbrem());
         ele.set_EoverPIn(pat_ele.eSuperClusterOverP());
