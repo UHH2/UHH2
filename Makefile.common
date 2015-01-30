@@ -71,11 +71,14 @@ ifneq ($(TEST),)
 dummy := $(shell [ -d obj/test ] || mkdir obj/test)
 dummy := $(shell [ -d bin ] || mkdir bin)
 testsources := $(wildcard test/*.cxx)
+testobj := $(patsubst test/%.cxx,obj/test/%.o,$(testsources))
 testprogs := $(patsubst test/%.cxx,bin/%,$(testsources))
 
 testlibsources := $(wildcard test/*.cpp)
 testlibobj := $(patsubst test/%.cpp,obj/test/%.o,$(testlibsources))
 testlib := $(SFRAME_LIB_PATH)/libTest$(LIBRARY).so
+
+.SECONDARY: $(testobj) $(testlibobj)
 
 all: $(testprogs)
 
