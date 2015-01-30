@@ -64,12 +64,12 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet){
         jet.set_photonMultiplicity (pat_jet.photonMultiplicity());
     }
     jet.set_JEC_factor_raw(pat_jet.jecFactor("Uncorrected"));
-    jet.set_btag_simpleSecondaryVertexHighEff(pat_jet.bDiscriminator("simpleSecondaryVertexHighEffBJetTags"));
-    jet.set_btag_simpleSecondaryVertexHighPur(pat_jet.bDiscriminator("simpleSecondaryVertexHighPurBJetTags"));
-    jet.set_btag_combinedSecondaryVertex(pat_jet.bDiscriminator("combinedInclusiveSecondaryVertexV2BJetTags"));
-    jet.set_btag_combinedSecondaryVertexMVA(pat_jet.bDiscriminator("combinedMVABJetTags"));
-    jet.set_btag_jetBProbability(pat_jet.bDiscriminator("jetBProbabilityBJetTags"));
-    jet.set_btag_jetProbability(pat_jet.bDiscriminator("jetProbabilityBJetTags"));
+    jet.set_btag_simpleSecondaryVertexHighEff(pat_jet.bDiscriminator("pfSimpleSecondaryVertexHighEffBJetTags"));
+    jet.set_btag_simpleSecondaryVertexHighPur(pat_jet.bDiscriminator("pfSimpleSecondaryVertexHighPurBJetTags"));
+    jet.set_btag_combinedSecondaryVertex(pat_jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+    //jet.set_btag_combinedSecondaryVertexMVA(pat_jet.bDiscriminator("combinedMVABJetTags"));
+    jet.set_btag_jetBProbability(pat_jet.bDiscriminator("pfJetBProbabilityBJetTags"));
+    jet.set_btag_jetProbability(pat_jet.bDiscriminator("pfJetProbabilityBJetTags"));
 }
 
 

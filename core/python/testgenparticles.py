@@ -5,11 +5,12 @@ process.source = cms.Source("PoolSource",
   #fileNames = cms.untracked.vstring('file:/nfs/dust/cms/user/ottjoc/24D444CE-216A-E411-ADC5-001E67398633.root')
   #fileNames = cms.untracked.vstring('file:/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_TpTp_M1000_40x25_0_miniaod.root')
   #fileNames = cms.untracked.vstring('/store/mc/Phys14DR/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola/MINIAODSIM/PU20bx25_PHYS14_25_V1-v1/00000/00C90EFC-3074-E411-A845-002590DB9262.root')
-  fileNames = cms.untracked.vstring('/store/mc/Phys14DR/TprimeJetToTH_M800GeV_Tune4C_13TeV-madgraph-tauola/MINIAODSIM/PU20bx25_PHYS14_25_V1-v1/00000/24D444CE-216A-E411-ADC5-001E67398633.root'),
-  skipEvents = cms.untracked.uint32(8000)
+  #fileNames = cms.untracked.vstring('/store/mc/Phys14DR/TprimeJetToTH_M800GeV_Tune4C_13TeV-madgraph-tauola/MINIAODSIM/PU20bx25_PHYS14_25_V1-v1/00000/24D444CE-216A-E411-ADC5-001E67398633.root'),
+  fileNames = cms.untracked.vstring('/store/mc/Phys14DR/BprimeJetToTW_M800GeV_Tune4C_13TeV-madgraph-tauola/MINIAODSIM/PU20bx25_PHYS14_25_V1-v1/00000/86D970BD-5E69-E411-BA40-002590AC4CC8.root'),
+  skipEvents = cms.untracked.uint32(0)
 )
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 
 process.prunedTmp = cms.EDProducer("GenParticlePruner",
     src = cms.InputTag("prunedGenParticles"),

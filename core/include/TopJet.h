@@ -29,7 +29,7 @@ public:
 
   void add_subjet(const Jet & subjet){m_subjets.push_back(subjet);}
   
-  void set_subjets(std::vector<Jet> subjets){m_subjets = std::move(subjets);}
+  void set_subjets(std::vector<Jet> subjets){ std::swap(m_subjets, subjets);} // note: move not possible in C++98
   
   void set_tag(tag t, float value){ tags.set_tag(static_cast<int>(t), value);}
 
