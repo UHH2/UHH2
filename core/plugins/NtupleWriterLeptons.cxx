@@ -22,8 +22,6 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     edm::Handle< std::vector<pat::Electron> > ele_handle;
     event.getByToken(src_token, ele_handle);
     std::vector<Electron> eles;
-    edm::Handle<edm::ValueMap<float> > full5x5sieie;
-    event.getByLabel(edm::InputTag("electronIDValueMapProducer", "eleFull5x5SigmaIEtaIEta"), full5x5sieie);
     const size_t n_ele = ele_handle->size();
     for (size_t i=0; i<n_ele; ++i){
         const auto & pat_ele = (*ele_handle)[i];
@@ -46,11 +44,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
          ele.set_trackIso(pfiso.sumChargedParticlePt);
          ele.set_photonIso(pfiso.sumPhotonEt);
          ele.set_puChargedHadronIso(pfiso.sumPUPt);
-#if CMSSW70 == 1
-         ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->trackerExpectedHitsInner().numberOfLostHits());
-#else
          ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->hitPattern().numberOfLostTrackerHits(reco::HitPattern::MISSING_INNER_HITS));
-#endif
          ele.set_gsfTrack_px( pat_ele.gsfTrack()->px());
          ele.set_gsfTrack_py( pat_ele.gsfTrack()->py());
          ele.set_gsfTrack_pz( pat_ele.gsfTrack()->pz());
@@ -60,7 +54,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
          ele.set_passconversionveto(pat_ele.passConversionVeto());
          ele.set_dEtaIn(pat_ele.deltaEtaSuperClusterTrackAtVtx());
          ele.set_dPhiIn(pat_ele.deltaPhiSuperClusterTrackAtVtx());
-         ele.set_sigmaIEtaIEta((*full5x5sieie)[edm::Ref<pat::ElectronCollection>(ele_handle, i)]);
+         ele.set_sigmaIEtaIEta(pat_ele.full5x5_sigmaIetaIeta());
          ele.set_HoverE(pat_ele.hcalOverEcal());
          ele.set_fbrem(pat_ele.fbrem());
          ele.set_EoverPIn(pat_ele.eSuperClusterOverP());

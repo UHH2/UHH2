@@ -710,23 +710,6 @@ process.NjettinessCA15CHS = Njettiness.clone(src = cms.InputTag("patJetsCA15CHS"
 #process.QJetsCA8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCA8CHS"), jetRad = cms.double(0.8), jetAlgo = cms.string('CA'))
 
 
-
-#Explicit JTA for subjets
-#for xtrplabel in ['CA8CHSprunedSubjets','CA15CHSFilteredSubjets','CMSTopTagCHSSubjets','HEPTopTagCHSSubjets'] :
-#        if hasattr( process, 'jetTracksAssociatorAtVertex' + xtrplabel):
-#            from RecoJets.JetAssociationProducers.ak5JTA_cff import ak5JetTracksAssociatorExplicit
-#            m = 'jetTracksAssociatorAtVertex' + xtrplabel
-#            print 'Switching ' + m + ' to explicit jet-track association'
-#            setattr( process, m, ak5JetTracksAssociatorExplicit.clone(jets = getattr(getattr(process,m),'jets')) )
-
-# for the electron id, we need the full 5x5 ietaieta, which has to be produced:
-process.load('RecoEgamma.ElectronIdentification.ElectronIDValueMapProducer_cfi')
-process.electronIDValueMapProducer.ebReducedRecHitCollection = cms.InputTag('reducedEgamma:reducedEBRecHits')
-process.electronIDValueMapProducer.eeReducedRecHitCollection = cms.InputTag('reducedEgamma:reducedEERecHits')
-process.electronIDValueMapProducer.esReducedRecHitCollection = cms.InputTag('reducedEgamma:reducedESRecHits')
-process.electronIDValueMapProducer.src = cms.InputTag('slimmedElectrons')
-process.electronIDValueMapProducer.dataFormat = 'PAT'
-
 #NtupleWriter
 process.MyNtuple = cms.EDFilter('NtupleWriter',
                                   #AnalysisModule = cms.PSet(
