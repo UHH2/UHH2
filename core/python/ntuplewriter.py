@@ -107,10 +107,9 @@ process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
 
 
 ###############################################
-# JET COLLECTIONS
+# CHS JETS
 #
-# configure additional jet collections, based on
-# chs.
+# configure additional jet collections, based on chs.
 process.chs = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string("fromPV"))
 
 process.ca8CHSJets  = ca8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = fatjet_ptmin)
@@ -155,7 +154,20 @@ process.hepTopTagCHS = process.cmsTopTagCHS.clone(
     useSubjetMass = cms.bool(False),
 )
 
+#################################################
+### Softdrop
 
+from RecoJets.Configuration.RecoPFJets_cff import ak8PFJetsCHS
+process.ca8CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('chs'), jetAlgorithm = 'CambridgeAachen')
+
+###############################################
+# PUPPI JETS
+from CommonTools.PileupAlgos.Puppi_cff import puppi
+process.puppi = puppi.clone(candName = cms.InputTag('packedPFCandidates'), vertexName = cms.InputTag('offlineSlimmedPrimaryVertices'))
+
+# copy all the jet collections above; just use 'puppi' instead of 'chs' as input:
+for name in ['ca8CHSJets', 'ca15CHSJets', 'ca8CHSJetsPruned', 'ca15CHSJetsFiltered', 'cmsTopTagCHS', 'hepTopTagCHS', 'ca8CHSJetsSoftDrop']:
+    setattr(process, name.replace('CHS', 'Puppi'), getattr(process, name).clone(src = cms.InputTag('puppi')))
 
 ###############################################
 # PAT JETS and Gen Jets
@@ -191,12 +203,13 @@ def cap(s): return s[0].upper() + s[1:]
 #   - 'patJets' + groomed_jets_name for the fat jets and
 #   - 'patJets' + groomed_jets_name + 'Subjets' for the subjets
 # * a merged jet collection 'patJets' + groomed_jets_name + 'Packed'
-# * in case add_genjets is true, a genjet collection with name groomed_jets_name + 'Gen'
-#   - if also the ungroomed jet collection has been added, the corresponding GenJet collection is also added
+# * in case genjets_name is not None, is must be a function returning the genjet collection name, given the original
+#   (reco) jet collection name. In this case, the according genjet producer is added for the groomed and for
+#   the ungroomed collection, using that name.
 #
-# Note that gen jets are currently only working for the fat, ungroomed jets, and the subjets, but not for the
-# groomed fat jets; this is a restriction of PAT.
-def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label = 'AK7PFchs', jetcorr_label_subjets = 'AK4PFchs', add_genjets = False):
+# Note that gen jets are produced but genjet *matching* is currently only working for the fat, ungroomed jets,
+#  and the subjets, but not for the groomed fat jets; this is a restriction of PAT.
+def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label = 'AK7PFchs', jetcorr_label_subjets = 'AK4PFchs', genjets_name = None, verbose = False, btagging = True):
     rParam = getattr(process, fatjets_name).rParam.value()
     algo = None
     if 'ca' in fatjets_name.lower():
@@ -208,44 +221,50 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
     else:
         raise RuntimeError, "cannot guess jet algo (ca/ak) from fatjets name %s" % fatjets_name
     
-    subjets_name = groomed_jets_name + 'Subjets' # e.g. CA8CHS + pruned + Subjets
+    subjets_name = groomed_jets_name + 'Subjets' # e.g. CA8CHSPruned + Subjets
     
-    if add_genjets:
-        #raise RuntimeError, "not yet implemented"
+    # add genjet producers, if requested:
+    groomed_genjets_name = 'INVALID'
+    ungroomed_genjets_name = 'INVALID'
+    
+    if genjets_name is not None:
         groomed_jetproducer = getattr(process, groomed_jets_name)
-        if groomed_jetproducer.type_() in ('FastjetJetProducer', 'CATopJetProducer'):
-            setattr(process, groomed_jets_name + 'Gen', groomed_jetproducer.clone(src = cms.InputTag('packedGenParticles'), jetType = 'GenJet'))
-        else:
-            raise RuntimeError, "do not know how to construct genjet collection for %s" % repr(groomed_jetproducer)
-        # add for ungroomed jets if not done yet (maybe never used in case ungroomed are not added,
-        # but that's ok ..)
-        if not hasattr(process, fatjets_name + 'Gen'):
-            ungroomed_jetproducer = getattr(process, fatjets_name)
-            assert ungroomed_jetproducer.type_() == 'FastjetJetProducer'
-            setattr(process, fatjets_name + 'Gen', ungroomed_jetproducer.clone(src = cms.InputTag('packedGenParticles'), jetType = 'GenJet'))
+        assert groomed_jetproducer.type_() in ('FastjetJetProducer', 'CATopJetProducer'), "do not know how to construct genjet collection for %s" % repr(groomed_jetproducer)
+        groomed_genjets_name = genjets_name(groomed_jets_name)
+        if verbose: print "Adding groomed genjets ", groomed_genjets_name
+        setattr(process, groomed_genjets_name, groomed_jetproducer.clone(src = cms.InputTag('packedGenParticles'), jetType = 'GenJet'))
+        # add for ungroomed jets if not done yet (maybe never used in case ungroomed are not added, but that's ok ..)
+        ungroomed_jetproducer = getattr(process, fatjets_name)
+        assert ungroomed_jetproducer.type_() == 'FastjetJetProducer'
+        ungroomed_genjets_name = genjets_name(fatjets_name)
+        if verbose: print "Adding ungroomed genjets ", ungroomed_genjets_name
+        setattr(process, ungroomed_genjets_name, ungroomed_jetproducer.clone(src = cms.InputTag('packedGenParticles'), jetType = 'GenJet'))
         
 
     # patify ungroomed jets, if not already done:
     add_ungroomed = not hasattr(process, 'patJets' + fatjets_name)
     if add_ungroomed:
+        if verbose: print "Adding ungroomed patJets" + cap(fatjets_name)
         addJetCollection(process, labelName = fatjets_name, jetSource = cms.InputTag(fatjets_name), algo = algo, rParam = rParam,
             jetCorrections = (jetcorr_label, cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
-            genJetCollection = cms.InputTag(fatjets_name + 'Gen'),
+            genJetCollection = cms.InputTag(ungroomed_genjets_name),
             **common_btag_parameters
         )
     
     # patify groomed fat jets, with b-tagging:
+    if verbose: print "adding grommed jets patJets" + cap(groomed_jets_name)
     addJetCollection(process, labelName = groomed_jets_name, jetSource = cms.InputTag(groomed_jets_name), algo = algo, rParam = rParam,
        jetCorrections = (jetcorr_label, cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
-       #genJetCollection = cms.InputTag(groomed_jets_name + 'Gen'), # nice try, but PAT looks for GenJets, whereas jets with subjets are BasicJets, so PAT cannot be used for this matching ...
+       #genJetCollection = cms.InputTag(groomed_genjets_name), # nice try, but PAT looks for GenJets, whereas jets with subjets are BasicJets, so PAT cannot be used for this matching ...
        **common_btag_parameters)
     # patify subjets, with subjet b-tagging:
+    if verbose: print "adding grommed jets' subjets patJets" + cap(subjets_name)
     addJetCollection(process, labelName = subjets_name, jetSource = cms.InputTag(groomed_jets_name, 'SubJets'), algo = algo, rParam = rParam,
         jetCorrections = (jetcorr_label_subjets, cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
         explicitJTA = True,
         svClustering = True,
         fatJets = cms.InputTag(fatjets_name), groomedFatJets = cms.InputTag(groomed_jets_name),
-        genJetCollection = cms.InputTag(groomed_jets_name + 'Gen', 'SubJets'),
+        genJetCollection = cms.InputTag(groomed_genjets_name, 'SubJets'),
         **common_btag_parameters)
         
     # add the merged jet collection which contains the links from fat jets to subjets:
@@ -258,25 +277,34 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
     if add_ungroomed: module_names += [fatjets_name]
     for name in module_names:
         if hasattr(process,'pfInclusiveSecondaryVertexFinderTagInfos' + cap(name)):
-            producer = getattr(process,'pfInclusiveSecondaryVertexFinderTagInfos' + cap(name))
-            producer.extSVCollection = cms.InputTag('slimmedSecondaryVertices')
-        getattr(process, 'patJetCorrFactors' + cap(name)).primaryVertices = 'offlineSlimmedPrimaryVertices'
+            getattr(process,'pfInclusiveSecondaryVertexFinderTagInfos' + cap(name)).extSVCollection = cms.InputTag('slimmedSecondaryVertices')
         getattr(process, 'patJetPartonMatch' + cap(name)).matched = 'prunedGenParticles'
         producer = getattr(process, 'patJets' + cap(name))
         producer.addJetCharge = False
         producer.addAssociatedTracks = False
-        producer.addGenJetMatch = add_genjets
+        producer.addBTagInfo = False
+        if not btagging: producer.addDiscriminators = False
+        producer.addGenJetMatch = genjets_name is not None
         # for fat groomed jets, gen jet match and jet flavor is not working, so switch it off:
         if name == groomed_jets_name:
             producer.addGenJetMatch = False
             producer.getJetMCFlavour = False
 
 
-add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', add_genjets = True)
-add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered', add_genjets = True)
+add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'))
+add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered', genjets_name = lambda s: s.replace('CHS', 'Gen'))
+add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
+add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 
-add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', add_genjets = True)
-add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', add_genjets = True)
+# for softdrop: no genjets, no b-tagging:
+add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsSoftDrop', btagging = False)
+
+add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsPruned', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
+add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsFiltered', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
+add_fatjets_subjets(process, 'ca8PuppiJets', 'cmsTopTagPuppi', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
+add_fatjets_subjets(process, 'ca15PuppiJets', 'hepTopTagPuppi', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
+add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsSoftDrop', btagging = False)
+
 
 # configure PAT for miniAOD:
 process.patJetPartons.particles = 'prunedGenParticles'
@@ -292,6 +320,10 @@ from RecoJets.JetProducers.qjetsadder_cfi import QJetsAdder
 
 process.NjettinessCa8CHS = Njettiness.clone(src = cms.InputTag("patJetsCa8CHSJets"), cone = cms.double(0.8))
 process.NjettinessCa15CHS = Njettiness.clone(src = cms.InputTag("patJetsCa15CHSJets"), cone = cms.double(1.5))
+process.NjettinessCa8Puppi = Njettiness.clone(src = cms.InputTag("patJetsCa8PuppiJets"), cone = cms.double(0.8))
+process.NjettinessCa15Puppi = Njettiness.clone(src = cms.InputTag("patJetsCa15PuppiJets"), cone = cms.double(1.5))
+
+"""
 process.QJetsCa8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa8CHSJets"), jetRad = cms.double(0.8))
 process.QJetsCa15CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa15CHSJets"), jetRad = cms.double(1.5))
 
@@ -303,81 +335,93 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
       initialSeed = cms.untracked.uint32(123)
    )
 )
+"""
+
+# electron id:
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+process.load("RecoEgamma.ElectronIdentification.egmGsfElectronIDs_cfi")
+process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectrons')
+setupAllVIDIdsInModule(process, 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_PHYS14_PU20bx25_V1_miniAOD_cff', setupVIDElectronSelection)
 
 #NtupleWriter
 process.MyNtuple = cms.EDFilter('NtupleWriter',
-                                  #AnalysisModule = cms.PSet(
-                                  #    name = cms.string("NoopAnalysisModule"),
-                                  #    library = cms.string("libUHH2examples.so"),
-                                  #    # Note: all other settings of type string are passed to the module, e.g.:
-                                  #    TestKey = cms.string("TestValue")
-                                  #),
-                                  fileName = cms.string("Ntuple.root"), 
-                                  runOnMiniAOD = cms.bool(True),
-                                  doElectrons = cms.bool(True),
-                                  doMuons = cms.bool(True),
-                                  doTaus = cms.bool(True),
-                                  doJets = cms.bool(True),
-                                  doTopJets = cms.bool(True),
-                                  doGenJets = cms.bool(not useData),
-                                  doPhotons = cms.bool(False),
-                                  doMET = cms.bool(True),
-                                  doPV = cms.bool(True),
-                                  doRho = cms.untracked.bool(True),
-                                  doGenInfo = cms.bool(not useData),
-                                  doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
-                                  doTrigger = cms.bool(True),
-                                  rho_source = cms.InputTag("fixedGridRhoFastjetAll"),
-                                  genparticle_source = cms.InputTag("prunedPrunedGenParticles" ),
-                                  stablegenparticle_source = cms.InputTag("packedGenParticles" ),
-                                  electron_source = cms.InputTag("slimmedElectrons"),
-                                  electron_id_sources = cms.PSet (
-                                     # use the Electron::tag enumeration as parameter name; value should be the InputTag
-                                     # to use to read the ValueMap<float> from.
-                                     eid_PHYS14_20x25_veto = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-veto'),
-                                     eid_PHYS14_20x25_loose = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-loose'),
-                                     eid_PHYS14_20x25_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-medium'),
-                                     eid_PHYS14_20x25_tight = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-tight')
-                                  ),
-                                  muon_sources = cms.vstring("slimmedMuons"),
-                                  tau_sources = cms.vstring("slimmedTaus" ),
-                                  tau_ptmin = cms.double(0.0),
-                                  tau_etamax = cms.double(999.0),
-                                  jet_sources = cms.vstring("slimmedJets","slimmedJetsAK8"),
-                                  jet_ptmin = cms.double(10.0),
-                                  jet_etamax = cms.double(5.0),
-                                  genjet_sources = cms.vstring("slimmedGenJets", "ca8CHSJetsGen", "ca15CHSJetsGen"),
-                                  genjet_ptmin = cms.double(10.0),
-                                  genjet_etamax = cms.double(5.0),
-                                  #photon_sources = cms.vstring("selectedPatPhotons"),
-                                  topjet_sources = cms.vstring("patJetsHepTopTagCHSPacked", "patJetsCmsTopTagCHSPacked", "patJetsCa8CHSJetsPrunedPacked", "patJetsCa15CHSJetsFilteredPacked"),
-                                  # jets to match to the topjets in order to get njettiness, in the same order as topjet_sources:
-                                  topjet_substructure_variables_sources = cms.vstring("patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa8CHSJets", "patJetsCa15CHSJets"),
-                                  topjet_njettiness_sources = cms.vstring("NjettinessCa15CHS", "NjettinessCa8CHS", "NjettinessCa8CHS", "NjettinessCa15CHS"),
-                                  topjet_qjets_sources = cms.vstring("QJetsCa15CHS", "QJetsCa8CHS", "QJetsCa8CHS", "QJetsCa15CHS"),
-                                  
-                                  topjet_ptmin = cms.double(100.0), 
-                                  topjet_etamax = cms.double(5.0),
-                                  #missing in miniaod
-                                  doGenTopJets = cms.bool(True),
-                                  gentopjet_sources = cms.vstring("ca8CHSJetsPrunedGen", "ca15CHSJetsFilteredGen", "cmsTopTagCHSGen", "hepTopTagCHSGen"),
-                                  gentopjet_ptmin = cms.double(50.0), 
-                                  gentopjet_etamax = cms.double(5.0),
-                                  #missing in miniaod
-                                  doGenJetsWithParts = cms.bool(False),
-                                  #genjetwithparts_sources = cms.vstring("slimmedGenJets"),
-                                  #genjetwithparts_ptmin = cms.double(10.0), 
-                                  #genjetwithparts_etamax = cms.double(5.0),
-                                  met_sources =  cms.vstring("slimmedMETs"),
-                                  pv_sources = cms.vstring("offlineSlimmedPrimaryVertices"),
-                                  trigger_bits = cms.InputTag("TriggerResults","","HLT"),
-                                  trigger_prefixes = cms.vstring(#"HLT_IsoMu", "HLT_Mu",
-                                                                 #"HLT_L1SingleMu", "HLT_L2Mu",
-                                                                 #"HLT_Ele",
-                                                                 "HLT_",
-                                                                 #"HLT_DoubleMu", "HLT_DoubleEle"
-	                                                         ),
-                                  
+        #AnalysisModule = cms.PSet(
+        #    name = cms.string("NoopAnalysisModule"),
+        #    library = cms.string("libUHH2examples.so"),
+        #    # Note: all other settings of type string are passed to the module, e.g.:
+        #    TestKey = cms.string("TestValue")
+        #),
+        fileName = cms.string("Ntuple.root"), 
+        runOnMiniAOD = cms.bool(True),
+        doPV = cms.bool(True),
+        pv_sources = cms.vstring("offlineSlimmedPrimaryVertices"),
+        doRho = cms.untracked.bool(True),
+        rho_source = cms.InputTag("fixedGridRhoFastjetAll"),
+        doElectrons = cms.bool(True),
+        electron_source = cms.InputTag("slimmedElectrons"),
+        electron_id_sources = cms.PSet (
+            # use the Electron::tag enumeration as parameter name; value should be the InputTag
+            # to use to read the ValueMap<float> from.
+            eid_PHYS14_20x25_veto = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-veto'),
+            eid_PHYS14_20x25_loose = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-loose'),
+            eid_PHYS14_20x25_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-medium'),
+            eid_PHYS14_20x25_tight = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V1-miniAOD-standalone-tight')
+        ),
+        doMuons = cms.bool(True),
+        muon_sources = cms.vstring("slimmedMuons"),
+        doTaus = cms.bool(True),
+        tau_sources = cms.vstring("slimmedTaus" ),
+        tau_ptmin = cms.double(0.0),
+        tau_etamax = cms.double(999.0),
+        doPhotons = cms.bool(False),
+        #photon_sources = cms.vstring("selectedPatPhotons"),
+        
+        doJets = cms.bool(True),
+        jet_sources = cms.vstring("slimmedJets", "slimmedJetsAK8", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
+        jet_ptmin = cms.double(10.0),
+        jet_etamax = cms.double(5.0),
+        
+        doMET = cms.bool(True),
+        met_sources =  cms.vstring("slimmedMETs"),
+        
+        
+        doTopJets = cms.bool(True),
+        topjet_ptmin = cms.double(100.0),
+        topjet_etamax = cms.double(5.0),
+        topjet_sources = cms.vstring("patJetsHepTopTagCHSPacked", "patJetsCmsTopTagCHSPacked", "patJetsCa8CHSJetsPrunedPacked", "patJetsCa15CHSJetsFilteredPacked",
+                "patJetsHepTopTagPuppiPacked", "patJetsCmsTopTagPuppiPacked", "patJetsCa8PuppiJetsPrunedPacked", "patJetsCa15PuppiJetsFilteredPacked",
+                'patJetsCa8CHSJetsSoftDropPacked', 'patJetsCa8PuppiJetsSoftDropPacked'
+                ),
+        # jets to match to the topjets in order to get njettiness, in the same order as topjet_sources.
+        # Note that no substructure variables are added for the softdrop jets.
+        topjet_substructure_variables_sources = cms.vstring("patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa8CHSJets", "patJetsCa15CHSJets",
+                "patJetsCa15PuppiJets", "patJetsCa8PuppiJets", "patJetsCa8PuppiJets", "patJetsCa15PuppiJets"),
+        topjet_njettiness_sources = cms.vstring("NjettinessCa15CHS", "NjettinessCa8CHS", "NjettinessCa8CHS", "NjettinessCa15CHS",
+                "NjettinessCa15Puppi", "NjettinessCa8Puppi", "NjettinessCa8Puppi", "NjettinessCa15Puppi"),
+        # switch off qjets for now, as it takes a long time:
+        #topjet_qjets_sources = cms.vstring("QJetsCa15CHS", "QJetsCa8CHS", "QJetsCa8CHS", "QJetsCa15CHS"),
+        
+        doTrigger = cms.bool(True),
+        trigger_bits = cms.InputTag("TriggerResults","","HLT"),
+        # for now, save all the triggers:
+        trigger_prefixes = cms.vstring("HLT_",),
+        
+        # *** gen stuff:
+        doGenInfo = cms.bool(not useData),
+        genparticle_source = cms.InputTag("prunedPrunedGenParticles"),
+        stablegenparticle_source = cms.InputTag("packedGenParticles"),
+        doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
+        doGenJets = cms.bool(not useData),
+        genjet_sources = cms.vstring("slimmedGenJets", "ca8GenJets", "ca15GenJets"),
+        genjet_ptmin = cms.double(10.0),
+        genjet_etamax = cms.double(5.0),
+        
+        doGenTopJets = cms.bool(not useData),
+        gentopjet_sources = cms.vstring("ca8GenJetsPruned", "ca15GenJetsFiltered", "cmsTopTagGen", "hepTopTagGen"),
+        gentopjet_ptmin = cms.double(50.0), 
+        gentopjet_etamax = cms.double(5.0),
+        
+        doGenJetsWithParts = cms.bool(False),
 )
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")

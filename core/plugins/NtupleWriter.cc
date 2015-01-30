@@ -239,17 +239,24 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
     auto topjet_substructure_variables_sources = iConfig.getParameter<std::vector<std::string> >("topjet_substructure_variables_sources");
     auto njettiness_sources = iConfig.getParameter<std::vector<std::string> >("topjet_njettiness_sources");
-    auto qjets_sources = iConfig.getParameter<std::vector<std::string> >("topjet_qjets_sources");
-    assert(qjets_sources.size() == njettiness_sources.size());
-    assert(qjets_sources.size() == topjet_substructure_variables_sources.size());
+    std::vector<std::string> qjets_sources;
+    if(iConfig.exists("topjet_qjets_sources")){
+        qjets_sources = iConfig.getParameter<std::vector<std::string> >("topjet_qjets_sources");
+    }
+    assert(njettiness_sources.size() <= topjet_substructure_variables_sources.size());
+    assert(qjets_sources.size() <= topjet_substructure_variables_sources.size());
     for(size_t j=0; j< topjet_sources.size(); ++j){
         NtupleWriterTopJets::Config cfg(*context, consumesCollector(), topjet_sources[j], topjet_sources[j]);
         cfg.runOnMiniAOD = runOnMiniAOD;
         cfg.ptmin = topjet_ptmin;
         cfg.etamax = topjet_etamax;
-        if(j < qjets_sources.size()){
+        if(j < topjet_substructure_variables_sources.size()){
             cfg.substructure_variables_src = topjet_substructure_variables_sources[j];
+        }
+        if(j < njettiness_sources.size()){
             cfg.njettiness_src = njettiness_sources[j];
+        }
+        if(j < qjets_sources.size()){
             cfg.qjets_src = qjets_sources[j];
         }
         writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0));
