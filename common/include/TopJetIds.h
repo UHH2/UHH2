@@ -42,3 +42,8 @@ private:
     double threshold;
 };
 
+   
+// minimum di-subjet-mass using the three pt-hardest subjets, as used by the CMS top tagger.
+// It is provided as function here to allow calculating this variable for plotting, etc.
+double m_disubjet_min(const TopJet & topjet);
+double m_disubjet_min(const GenTopJet & topjet);
