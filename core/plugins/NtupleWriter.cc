@@ -237,11 +237,18 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     
     double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
     double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
-    auto topjet_substructure_variables_sources = iConfig.getParameter<std::vector<std::string> >("topjet_substructure_variables_sources");
-    auto njettiness_sources = iConfig.getParameter<std::vector<std::string> >("topjet_njettiness_sources");
-    std::vector<std::string> qjets_sources;
+    bool substructure_variables = false;
+    std::vector<std::string> qjets_sources, njettiness_sources, topjet_substructure_variables_sources;
     if(iConfig.exists("topjet_qjets_sources")){
         qjets_sources = iConfig.getParameter<std::vector<std::string> >("topjet_qjets_sources");
+        substructure_variables = true;
+    }
+    if(iConfig.exists("topjet_njettiness_sources")){
+        njettiness_sources = iConfig.getParameter<std::vector<std::string> >("topjet_njettiness_sources");
+        substructure_variables = true;
+    }
+    if(substructure_variables){
+        topjet_substructure_variables_sources = iConfig.getParameter<std::vector<std::string> >("topjet_substructure_variables_sources");
     }
     assert(njettiness_sources.size() <= topjet_substructure_variables_sources.size());
     assert(qjets_sources.size() <= topjet_substructure_variables_sources.size());
