@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+   <Library Name="libTestSUHH2common"/>
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="TestTopJetId" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v2/signals_WZ/MC_TpTp_M1000_40x25_5_Ntuple.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>
+            
+        <UserConfig>
+            <Item Name="readCommonInfo" Value="false" />
+            <Item Name="readTrigger" Value="false" />
+            <Item Name="GenParticleCollection" Value="GenParticles" />
+            <Item Name="TopJetCollection" Value="patJetsCMSTopTagCHSPacked" />
+            <Item Name="AnalysisModule" Value="TestTopJetId" />
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>

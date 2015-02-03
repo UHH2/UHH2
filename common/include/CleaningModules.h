@@ -69,3 +69,20 @@ public:
 private:
     TauId tau_id;
 };
+
+
+
+/** \brief Keep only taus passing a given tau id
+ *
+ * See comments for MuonCleaner.
+ */
+class TopJetCleaner : public uhh2::AnalysisModule {
+public:
+
+    explicit TopJetCleaner(const TopJetId & topjet_id);
+    virtual bool process(uhh2::Event & event) override;
+
+private:
+    TopJetId topjet_id;
+};
+
