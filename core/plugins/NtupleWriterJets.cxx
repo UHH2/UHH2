@@ -150,7 +150,6 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
             auto patsubjetd = dynamic_cast<const pat::Jet *>(pat_topjet.daughter(k));
             if (patsubjetd) {
                 NtupleWriterJets::fill_jet_info(*patsubjetd, subjet);
-                topjet.add_subjet(subjet);
             }
             else {
                 //filling only standard information in case the subjet has not been pat-tified during the pattuples production
