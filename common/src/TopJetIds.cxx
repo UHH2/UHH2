@@ -18,18 +18,7 @@ bool CMSTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const {
     auto mjet = allsubjets.M();
     if(mjet < m_mjetLower) return false;
     if(mjet > m_mjetUpper) return false;
-    sort_by_pt(subjets);
-    double m01 = 0;
-    if( (subjets[0].v4()+subjets[1].v4()).isTimelike())
-      m01=(subjets[0].v4()+subjets[1].v4()).M();
-    double m02 = 0;
-    if( (subjets[0].v4()+subjets[2].v4()).isTimelike() )
-      m02=(subjets[0].v4()+subjets[2].v4()).M();
-    double m12 = 0;
-    if( (subjets[1].v4()+subjets[2].v4()).isTimelike() )
-      m12 = (subjets[1].v4()+subjets[2].v4()).M();
-    //minimum pairwise mass of all three combinations:
-    auto mmin = std::min(m01,std::min(m02,m12));
+    auto mmin = m_disubjet_min(topjet);
     if(mmin < m_mminLower) return false;
     return true;
 }
@@ -46,5 +35,45 @@ bool Tau32::operator()(const TopJet & topjet, const uhh2::Event &) const{
     auto tau3 = topjet.tau3();
     if(!std::isfinite(tau3)) return false;
     return tau3 / tau2 < threshold;
+}
+
+
+namespace {
+    
+template<typename T>
+double m_disubjet_minT(const T & topjet){
+    auto subjets = topjet.subjets();
+    if(subjets.size() < 2) return 0.0;
+    
+    // only need to sort if subjets there are more than 3 subjets, as
+    // otherwise, we use all 3 anyway.
+    if(subjets.size() > 3) sort_by_pt(subjets);
+    
+    double m01 = 0;
+    auto sum01 = subjets[0].v4()+subjets[1].v4();
+    if(sum01.isTimelike())  m01 = sum01.M();
+    
+    if(subjets.size() < 3) return m01;
+    
+    double m02 = 0;
+    auto sum02 = subjets[0].v4()+subjets[2].v4();
+    if( sum02.isTimelike() ) m02 = sum02.M();
+    
+    double m12 = 0;
+    auto sum12 = subjets[1].v4()+subjets[2].v4();
+    if( sum12.isTimelike() )  m12 = sum12.M();
+    
+    return std::min(m01,std::min(m02, m12));
+}
+
+}
+
+double m_disubjet_min(const TopJet & topjet){
+    return m_disubjet_minT<TopJet>(topjet);
+}
+
+
+double m_disubjet_min(const GenTopJet & topjet){
+    return m_disubjet_minT<GenTopJet>(topjet);
 }
 
