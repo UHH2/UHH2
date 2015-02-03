@@ -27,28 +27,21 @@
  * Since subjets need some additional histograms the TopJet Hist class has additional book and fill  
  * routines for them. Subjets are connected to their respective TopJet and with it to the sorting of 
  * the topjets.
- *
- *
- *
- *
  */
 
-struct jetHist{
-  TH1F* pt, *eta, *phi, *mass, *csv; 
-}; 
 
+/// base class for jet histograms with routines for booking and filling a 'standard set' of histograms (pt, eta, phi, mass, csv).
 class JetHistsBase: public uhh2::Hists {
- public:
-  JetHistsBase(uhh2::Context & ctx,
-	      const std::string & dirname);
+protected:
+  struct jetHist{
+      TH1F* pt, *eta, *phi, *mass, *csv; 
+  };
+    
+  JetHistsBase(uhh2::Context & ctx, const std::string & dirname);
 
-
-  jetHist jetHistsBooker(std::string axisSuffix, std::string histSuffix, double minPt, double maxPt);
+  jetHist book_jetHist(const std::string & axisSuffix, const std::string & histSuffix, double minPt, double maxPt);
   
-  void jetHistFiller(const Jet jet,jetHist jet_hist, double  weight);
-
-
-  virtual void fill(const uhh2::Event & ev) =0;
+  void fill_jetHist(const Jet & jet, jetHist & jet_hist, double  weight);
 };
 
 
@@ -64,9 +57,8 @@ public:
   
   virtual void fill(const uhh2::Event & ev) override;
   
-
   //UserJet defines the i-th Jet to be plotted. The other variables are needed for plotting and to have different histogram names/axis.
-  void add_iJetHists(unsigned int UserJet, double minPt=20, double maxPt=800, std::string axisSuffix="userjet", std::string histSuffix="userjet");
+  void add_iJetHists(unsigned int UserJet, double minPt=20, double maxPt=800, const std::string & axisSuffix="userjet", const std::string & histSuffix="userjet");
   
  private:
   
@@ -80,14 +72,10 @@ public:
   jetHist alljets;
   std::vector<jetHist> single_jetHists;
   
+  std::string collection;
   uhh2::Event::Handle<std::vector<Jet> > h_jets;
 };
 
-struct subjetHist
-{
-  TH1F* number, *sum4Vec, *pt, *eta, *phi, *mass, *csv;  
-
-};
 
 class TopJetHists: public JetHistsBase{
  public: 
@@ -99,16 +87,20 @@ class TopJetHists: public JetHistsBase{
   virtual void fill(const uhh2::Event & ev) override;
 
   //UserJet defines the i-th Jet to be plotted. The other variables are needed for plotting and to have different histogram names/axis. For each TopJet all its SubJets are also plotted. 
-  void add_iTopJetHists(unsigned int UserJet, double minPt=0, double maxPt=800, double minPt_sub=0, double maxPt_sub=500, std::string axisSuffix="userjet" , std::string histSuffix="userjet");
+  void add_iTopJetHists(unsigned int UserJet, double minPt=0, double maxPt=800, double minPt_sub=0, double maxPt_sub=500, const std::string & axisSuffix="userjet", const std::string & histSuffix="userjet");
 
 
  private:
+     
+  struct subjetHist {
+    TH1F* number, *sum4Vec, *pt, *eta, *phi, *mass, *csv;
+  };
    
-  subjetHist subjetHistsBooker(std::string axisSuffix, std::string histSuffix, double minPt, double maxPt);
+  subjetHist book_subjetHist(const std::string & axisSuffix, const std::string & histSuffix, double minPt, double maxPt);
 
-  void subjetHistFiller(const TopJet topjet, subjetHist subjet_hist, double weight);
- 
-  unsigned int m_numJetsPlotted;
+  void fill_subjetHist(const TopJet & topjet, subjetHist & subjet_hist, double weight);
+  
+  std::string collection;
 
   std::vector<unsigned int> m_usertopjet;
   std::vector<jetHist> usertopjets;

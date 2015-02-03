@@ -69,6 +69,12 @@ protected:
         return h;
     }
     
+    // utility function allowing to use strings as name and title for histogram construction.
+    template<typename HTYPE, typename... TARGS>
+    HTYPE* book(const std::string & name, const std::string & title, TARGS... args){
+        return book<HTYPE>(name.c_str(), title.c_str(), std::forward<TARGS>(args)...);
+    }
+    
     
     /** \brief Get a histogram previously booked via 'book'
      * 
