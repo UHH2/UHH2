@@ -3,6 +3,13 @@
 #include "UHH2/core/include/Hists.h"
 #include "UHH2/core/include/Event.h"
 
+#include "UHH2/core/include/LorentzVector.h"
+
+#include <vector>
+#include <string>
+
+
+
 /** \brief Common jet histograms such as multiplicity, pt, eta, isolation, etc.
  *
  *
@@ -10,22 +17,112 @@
  *   - does not sort jets in pt; do that outside this class if desired
  *   - no log-y version of the histogram; this is a plotting choice.
  *   - if collection is empty, event.jets will be used
+ *
+ *
+ * This class was extended to also host the TopJet Hists since many histograms are similar.
+ * A shared parent class exist now with a common function to book and fill histograms for plain jets.
+ * In the constructor the number of however ordered jets can be specified. Also multiple single jets 
+ * can be addresed by their ordering (add_iJetHists/add_iTopJetHists). 
+ *
+ * Since subjets need some additional histograms the TopJet Hist class has additional book and fill  
+ * routines for them. Subjets are connected to their respective TopJet and with it to the sorting of 
+ * the topjets.
+ *
+ *
+ *
+ *
  */
-class JetHists: public uhh2::Hists {
-public:
-    JetHists(uhh2::Context & ctx,
-             const std::string & dirname,
-             const std::string & collection = "");
-    
-    virtual void fill(const uhh2::Event & ev) override;
-    
-private:
-    
-    TH1F *number, *pt, *eta, *phi, *csv;
-    TH1F *pt_1, *eta_1, *phi_1, *m_1, *csv_1, *deltaRmin_1;
-    TH1F *pt_2, *eta_2, *phi_2, *m_2, *csv_2, *deltaRmin_2;
-    TH1F *pt_3, *eta_3, *phi_3, *m_3, *csv_3;
-    TH1F *pt_4, *eta_4, *phi_4, *m_4, *csv_4;
 
-    uhh2::Event::Handle<std::vector<Jet> > h_jets;
+struct jetHist{
+  TH1F* pt, *eta, *phi, *mass, *csv; 
+}; 
+
+class JetHistsBase: public uhh2::Hists {
+ public:
+  JetHistsBase(uhh2::Context & ctx,
+	      const std::string & dirname);
+
+
+  jetHist jetHistsBooker(std::string axisSuffix, std::string histSuffix, double minPt, double maxPt);
+  
+  void jetHistFiller(const Jet jet,jetHist jet_hist, double  weight);
+
+
+  virtual void fill(const uhh2::Event & ev) =0;
 };
+
+
+
+
+class JetHists: public JetHistsBase {
+public:
+
+  JetHists(uhh2::Context & ctx,
+	   const std::string & dirname,
+	   const unsigned int NumberOfPlottedJets=4,
+	   const std::string & collection = "");
+  
+  virtual void fill(const uhh2::Event & ev) override;
+  
+
+  //UserJet defines the i-th Jet to be plotted. The other variables are needed for plotting and to have different histogram names/axis.
+  void add_iJetHists(unsigned int UserJet, double minPt=20, double maxPt=800, std::string axisSuffix="userjet", std::string histSuffix="userjet");
+  
+ private:
+  
+  std::vector<unsigned int> m_userjet;
+  std::vector<jetHist> userjets;
+  unsigned int m_numJetsPlotted;
+
+  TH1F *number;
+  TH1F *deltaRmin_1, *deltaRmin_2;
+  
+  jetHist alljets;
+  std::vector<jetHist> single_jetHists;
+  
+  uhh2::Event::Handle<std::vector<Jet> > h_jets;
+};
+
+struct subjetHist
+{
+  TH1F* number, *sum4Vec, *pt, *eta, *phi, *mass, *csv;  
+
+};
+
+class TopJetHists: public JetHistsBase{
+ public: 
+  TopJetHists(uhh2::Context & ctx,
+	      const std::string & dirname,
+	      const unsigned int NumberOfPlottedJets=4,
+	      const std::string & collection = "");
+  
+  virtual void fill(const uhh2::Event & ev) override;
+
+  //UserJet defines the i-th Jet to be plotted. The other variables are needed for plotting and to have different histogram names/axis. For each TopJet all its SubJets are also plotted. 
+  void add_iTopJetHists(unsigned int UserJet, double minPt=0, double maxPt=800, double minPt_sub=0, double maxPt_sub=500, std::string axisSuffix="userjet" , std::string histSuffix="userjet");
+
+
+ private:
+   
+  subjetHist subjetHistsBooker(std::string axisSuffix, std::string histSuffix, double minPt, double maxPt);
+
+  void subjetHistFiller(const TopJet topjet, subjetHist subjet_hist, double weight);
+ 
+  unsigned int m_numJetsPlotted;
+
+  std::vector<unsigned int> m_usertopjet;
+  std::vector<jetHist> usertopjets;
+  std::vector<subjetHist> usersubjets;
+
+  TH1F *number;
+  TH1F *deltaRmin_1, *deltaRmin_2;
+  
+  jetHist alljets;
+  subjetHist allsubjets;
+  std::vector<jetHist> single_jetHists;
+  std::vector<subjetHist> subjets;
+
+  uhh2::Event::Handle<std::vector<TopJet> > h_topjets;
+};
+
+
