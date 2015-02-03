@@ -46,15 +46,15 @@ JetHists::JetHists(Context & ctx,
 
     for(unsigned int i =0; i<NumberOfPlottedJets; i++){
       if(i<4){
-        single_jetHists.push_back(book_jetHist(axis_suffix[i],string("_")+to_string(i+1),minPt[i],maxPt[i]));
+        single_jetHists.push_back(book_jetHist(axis_suffix[i],"_"+to_string(i+1),minPt[i],maxPt[i]));
       }
       else {
-        single_jetHists.push_back(book_jetHist(to_string(i+1)+"-th jet",string("_")+to_string(i+1),20,500));
+        single_jetHists.push_back(book_jetHist(to_string(i+1)+"-th jet","_"+to_string(i+1),20,500));
       }
     }
   
-    deltaRmin_1 = book<TH1F>("deltaRmin_1", "#Delta R_{min}(first jet,nearest jet)", 40, 0, 2.0);
-    deltaRmin_2 = book<TH1F>("deltaRmin_2", "#Delta R_{min}(2nd jet,nearest jet)", 40, 0, 2.0);
+    deltaRmin_1 = book<TH1F>("deltaRmin_1", "#Delta R_{min}(first jet,nearest jet)", 40, 0, 8.0);
+    deltaRmin_2 = book<TH1F>("deltaRmin_2", "#Delta R_{min}(2nd jet,nearest jet)", 40, 0, 8.0);
 
     if(!collection.empty()){
         h_jets = ctx.get_handle<std::vector<Jet> >(collection);
@@ -97,14 +97,14 @@ void JetHists::fill(const Event & event){
 TopJetHists::subjetHist TopJetHists::book_subjetHist(const std::string & axisSuffix, const std::string & histSuffix, double minPt, double maxPt){
   subjetHist subjet_hist;
 
-  subjet_hist.number = book<TH1F>((string("number")+histSuffix).c_str(),(string("number ")+axisSuffix).c_str(),7, -.5, 6.5);
+  subjet_hist.number = book<TH1F>("number"+histSuffix,"number "+axisSuffix,7, -.5, 6.5);
     
-  subjet_hist.pt = book<TH1F>((string("pt")+histSuffix).c_str(),(string("p_{T} ")+axisSuffix).c_str(),50,minPt,maxPt);
-  subjet_hist.eta = book<TH1F>((string("eta")+histSuffix).c_str(),(string("#eta ")+axisSuffix).c_str(),100,-5,5);
-  subjet_hist.phi = book<TH1F>((string("phi")+histSuffix).c_str(),(string("#phi ")+axisSuffix).c_str(),50,-M_PI,M_PI);
-  subjet_hist.mass = book<TH1F>((string("mass")+histSuffix).c_str(),(string("M^{ ")+axisSuffix+string("} [GeV/c^{2}]")).c_str(), 100, 0, 200);
-  subjet_hist.csv = book<TH1F>((string("csv")+histSuffix).c_str(),(string("csv-disriminator ")+axisSuffix).c_str(),50,0,1);
-  subjet_hist.sum4Vec = book<TH1F>((string("sum_mass")+histSuffix).c_str(),(string("Mass sum  ")+axisSuffix).c_str(),100,0,350);
+  subjet_hist.pt = book<TH1F>("pt"+histSuffix,"p_{T} "+axisSuffix,50,minPt,maxPt);
+  subjet_hist.eta = book<TH1F>("eta"+histSuffix,"#eta "+axisSuffix,100,-5,5);
+  subjet_hist.phi = book<TH1F>("phi"+histSuffix,"#phi "+axisSuffix,50,-M_PI,M_PI);
+  subjet_hist.mass = book<TH1F>("mass"+histSuffix,"M^{ "+axisSuffix+"} [GeV/c^{2}]", 100, 0, 200);
+  subjet_hist.csv = book<TH1F>("csv"+histSuffix,"csv-disriminator "+axisSuffix,50,0,1);
+  subjet_hist.sum4Vec = book<TH1F>("sum_mass"+histSuffix,"Mass sum  "+axisSuffix,100,0,350);
 
   return subjet_hist;
 }
@@ -153,8 +153,8 @@ TopJetHists::TopJetHists(Context & ctx,
       subjets.push_back(book_subjetHist(axis_subjetSuffix+to_string(i+1)+string("-th subjet")+axis_suffix,string("_")+to_string(i+1)+string("_subj"),0,maxPt[i]));
     }
   }
-  deltaRmin_1 = book<TH1F>("deltaRmin_1", "#Delta R_{min}(first jet,nearest jet)", 40, 0, 2.0);
-  deltaRmin_2 = book<TH1F>("deltaRmin_2", "#Delta R_{min}(2nd jet,nearest jet)", 40, 0, 2.0);
+  deltaRmin_1 = book<TH1F>("deltaRmin_1", "#Delta R_{min}(first jet,nearest jet)", 40, 0, 8.0);
+  deltaRmin_2 = book<TH1F>("deltaRmin_2", "#Delta R_{min}(2nd jet,nearest jet)", 40, 0, 8.0);
   if(!collection.empty()){
     h_topjets = ctx.get_handle<std::vector<TopJet> >(collection);
   }
@@ -163,7 +163,7 @@ TopJetHists::TopJetHists(Context & ctx,
 void TopJetHists::add_iTopJetHists(unsigned int UserJet, double minPt, double maxPt, double minPt_sub, double maxPt_sub, const std::string & axisSuffix, const std::string & histSuffix ){
   m_usertopjet.push_back(UserJet); 
   usertopjets.push_back(book_jetHist(axisSuffix,histSuffix, minPt, maxPt));
-  usersubjets.push_back(book_subjetHist(axisSuffix+string("_sub"), histSuffix+string("_sub"), minPt_sub, maxPt_sub));
+  usersubjets.push_back(book_subjetHist(axisSuffix+"_sub", histSuffix+"_sub", minPt_sub, maxPt_sub));
 }
 
 
