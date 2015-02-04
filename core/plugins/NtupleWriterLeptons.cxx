@@ -167,6 +167,8 @@ NtupleWriterTaus::NtupleWriterTaus(Config & cfg, bool set_taus_member){
 
 NtupleWriterTaus::~NtupleWriterTaus(){}
 
+
+
 void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
     edm::Handle< std::vector<pat::Tau> > tau_handle;
     event.getByToken(src_token, tau_handle);
@@ -182,65 +184,69 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          tau.set_eta( pat_tau.eta());
          tau.set_phi( pat_tau.phi());
          tau.set_energy( pat_tau.energy());
-         tau.set_decayModeFinding ( pat_tau.tauID("decayModeFinding")>0.5);
-         tau.set_decayModeFindingNewDMs ( pat_tau.tauID("decayModeFindingNewDMs")>0.5);
+         
+         // use the macro to avoid typos: using this macro assures that the enum name
+         // used in the same as the string used for the pat tauID.
+         #define FILL_TAU_BIT(tauidname) tau.set_bool(Tau:: tauidname, pat_tau.tauID(#tauidname) > 0.5)
+         
+         FILL_TAU_BIT(againstElectronLoose);
+         FILL_TAU_BIT(againstElectronMedium);
+         FILL_TAU_BIT(againstElectronTight);
+         FILL_TAU_BIT(againstElectronVLooseMVA5);
+         FILL_TAU_BIT(againstElectronLooseMVA5);
+         FILL_TAU_BIT(againstElectronMediumMVA5);
+         FILL_TAU_BIT(againstElectronTightMVA5);
+         FILL_TAU_BIT(againstElectronVTightMVA5);
+         FILL_TAU_BIT(againstMuonLoose);
+         FILL_TAU_BIT(againstMuonMedium);
+         FILL_TAU_BIT(againstMuonTight);
+         FILL_TAU_BIT(againstMuonLoose3);
+         FILL_TAU_BIT(againstMuonTight3);
+         FILL_TAU_BIT(againstMuonLooseMVA);
+         FILL_TAU_BIT(againstMuonMediumMVA);
+         FILL_TAU_BIT(againstMuonTightMVA);
+         FILL_TAU_BIT(decayModeFinding);
+         FILL_TAU_BIT(byLooseCombinedIsolationDeltaBetaCorr3Hits);
+         FILL_TAU_BIT(byMediumCombinedIsolationDeltaBetaCorr3Hits);
+         FILL_TAU_BIT(byTightCombinedIsolationDeltaBetaCorr3Hits);
+         FILL_TAU_BIT(byVLooseIsolationMVA3oldDMwoLT);
+         FILL_TAU_BIT(byLooseIsolationMVA3oldDMwoLT);
+         FILL_TAU_BIT(byMediumIsolationMVA3oldDMwoLT);
+         FILL_TAU_BIT(byTightIsolationMVA3oldDMwoLT);
+         FILL_TAU_BIT(byVTightIsolationMVA3oldDMwoLT);
+         
+         FILL_TAU_BIT(byVLooseIsolationMVA3oldDMwLT);
+         FILL_TAU_BIT(byLooseIsolationMVA3oldDMwLT);
+         FILL_TAU_BIT(byMediumIsolationMVA3oldDMwLT);
+         FILL_TAU_BIT(byTightIsolationMVA3oldDMwLT);
+         FILL_TAU_BIT(byVTightIsolationMVA3oldDMwLT);
+         
+         FILL_TAU_BIT(byVLooseIsolationMVA3newDMwoLT);
+         FILL_TAU_BIT(byLooseIsolationMVA3newDMwoLT);
+         FILL_TAU_BIT(byMediumIsolationMVA3newDMwoLT);
+         FILL_TAU_BIT(byTightIsolationMVA3newDMwoLT);
+         FILL_TAU_BIT(byVTightIsolationMVA3newDMwoLT);
+         
+         FILL_TAU_BIT(byVLooseIsolationMVA3newDMwLT);
+         FILL_TAU_BIT(byLooseIsolationMVA3newDMwLT);
+         FILL_TAU_BIT(byMediumIsolationMVA3newDMwLT);
+         FILL_TAU_BIT(byTightIsolationMVA3newDMwLT);
+         FILL_TAU_BIT(byVTightIsolationMVA3newDMwLT);
+         
+         #undef FILL_TAU_BIT
+         #define FILL_TAU_FLOAT(name) tau.set_##name (pat_tau.tauID(#name))
+         
+         FILL_TAU_FLOAT(againstElectronMVA5raw);
+         FILL_TAU_FLOAT(againstMuonMVAraw);
+         FILL_TAU_FLOAT(byCombinedIsolationDeltaBetaCorrRaw3Hits);
+         FILL_TAU_FLOAT(byIsolationMVA3oldDMwoLTraw);
+         FILL_TAU_FLOAT(byIsolationMVA3oldDMwLTraw);
+         FILL_TAU_FLOAT(byIsolationMVA3newDMwoLTraw);
+         FILL_TAU_FLOAT(byIsolationMVA3newDMwLTraw);
+         
+         #undef FILL_TAU_FLOAT
 
-         tau.set_againstElectronLoose ( pat_tau.tauID("againstElectronLoose"));
-         tau.set_againstElectronLooseMVA5 ( pat_tau.tauID("againstElectronLooseMVA5"));
-         tau.set_againstElectronMVA5category ( pat_tau.tauID("againstElectronMVA5category"));
-         tau.set_againstElectronMVA5raw ( pat_tau.tauID("againstElectronMVA5raw"));
-         tau.set_againstElectronMedium ( pat_tau.tauID("againstElectronMedium"));
-         tau.set_againstElectronMediumMVA5 ( pat_tau.tauID("againstElectronMediumMVA5"));
-         tau.set_againstElectronTight ( pat_tau.tauID("againstElectronTight"));
-         tau.set_againstElectronTightMVA5 ( pat_tau.tauID("againstElectronTightMVA5"));
-         tau.set_againstElectronVLooseMVA5 ( pat_tau.tauID("againstElectronVLooseMVA5"));
-         tau.set_againstElectronVTightMVA5 ( pat_tau.tauID("againstElectronVTightMVA5"));
-         tau.set_againstMuonLoose ( pat_tau.tauID("againstMuonLoose"));
-         tau.set_againstMuonLoose2 ( pat_tau.tauID("againstMuonLoose2"));
-         tau.set_againstMuonLoose3 ( pat_tau.tauID("againstMuonLoose3"));
-         tau.set_againstMuonLooseMVA ( pat_tau.tauID("againstMuonLooseMVA"));
-         tau.set_againstMuonMVAraw ( pat_tau.tauID("againstMuonMVAraw"));
-         tau.set_againstMuonMedium ( pat_tau.tauID("againstMuonMedium"));
-         tau.set_againstMuonMedium2 ( pat_tau.tauID("againstMuonMedium2"));
-         tau.set_againstMuonMediumMVA ( pat_tau.tauID("againstMuonMediumMVA"));
-         tau.set_againstMuonTight ( pat_tau.tauID("againstMuonTight"));
-         tau.set_againstMuonTight2 ( pat_tau.tauID("againstMuonTight2"));
-         tau.set_againstMuonTight3 ( pat_tau.tauID("againstMuonTight3"));
-         tau.set_againstMuonTightMVA ( pat_tau.tauID("againstMuonTightMVA"));
-         tau.set_byCombinedIsolationDeltaBetaCorrRaw3Hits ( pat_tau.tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits"));
-         tau.set_byIsolationMVA3newDMwLTraw ( pat_tau.tauID("byIsolationMVA3newDMwLTraw"));
-         tau.set_byIsolationMVA3newDMwoLTraw ( pat_tau.tauID("byIsolationMVA3newDMwoLTraw"));
-         tau.set_byIsolationMVA3oldDMwLTraw ( pat_tau.tauID("byIsolationMVA3oldDMwLTraw"));
-         tau.set_byIsolationMVA3oldDMwoLTraw ( pat_tau.tauID("byIsolationMVA3oldDMwoLTraw"));
-         tau.set_byLooseCombinedIsolationDeltaBetaCorr3Hits ( pat_tau.tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits"));
-         tau.set_byLooseIsolationMVA3newDMwLT ( pat_tau.tauID("byLooseIsolationMVA3newDMwLT"));
-         tau.set_byLooseIsolationMVA3newDMwoLT ( pat_tau.tauID("byLooseIsolationMVA3newDMwoLT"));
-         tau.set_byLooseIsolationMVA3oldDMwLT ( pat_tau.tauID("byLooseIsolationMVA3oldDMwLT"));
-         tau.set_byLooseIsolationMVA3oldDMwoLT ( pat_tau.tauID("byLooseIsolationMVA3oldDMwoLT"));
-         tau.set_byMediumCombinedIsolationDeltaBetaCorr3Hits ( pat_tau.tauID("byMediumCombinedIsolationDeltaBetaCorr3Hits"));
-         tau.set_byMediumIsolationMVA3newDMwLT ( pat_tau.tauID("byMediumIsolationMVA3newDMwLT"));
-         tau.set_byMediumIsolationMVA3newDMwoLT ( pat_tau.tauID("byMediumIsolationMVA3newDMwoLT"));
-         tau.set_byMediumIsolationMVA3oldDMwLT ( pat_tau.tauID("byMediumIsolationMVA3oldDMwLT"));
-         tau.set_byMediumIsolationMVA3oldDMwoLT ( pat_tau.tauID("byMediumIsolationMVA3oldDMwoLT"));
-         tau.set_byTightCombinedIsolationDeltaBetaCorr3Hits ( pat_tau.tauID("byTightCombinedIsolationDeltaBetaCorr3Hits"));
-         tau.set_byTightIsolationMVA3newDMwLT ( pat_tau.tauID("byTightIsolationMVA3newDMwLT"));
-         tau.set_byTightIsolationMVA3newDMwoLT ( pat_tau.tauID("byTightIsolationMVA3newDMwoLT"));
-         tau.set_byTightIsolationMVA3oldDMwLT ( pat_tau.tauID("byTightIsolationMVA3oldDMwLT"));
-         tau.set_byTightIsolationMVA3oldDMwoLT ( pat_tau.tauID("byTightIsolationMVA3oldDMwoLT"));
-         tau.set_byVLooseIsolationMVA3newDMwLT ( pat_tau.tauID("byVLooseIsolationMVA3newDMwLT"));
-         tau.set_byVLooseIsolationMVA3newDMwoLT ( pat_tau.tauID("byVLooseIsolationMVA3newDMwoLT"));
-         tau.set_byVLooseIsolationMVA3oldDMwLT ( pat_tau.tauID("byVLooseIsolationMVA3oldDMwLT"));
-         tau.set_byVLooseIsolationMVA3oldDMwoLT ( pat_tau.tauID("byVLooseIsolationMVA3oldDMwoLT"));
-         tau.set_byVTightIsolationMVA3newDMwLT ( pat_tau.tauID("byVTightIsolationMVA3newDMwLT"));
-         tau.set_byVTightIsolationMVA3newDMwoLT ( pat_tau.tauID("byVTightIsolationMVA3newDMwoLT"));
-         tau.set_byVTightIsolationMVA3oldDMwLT ( pat_tau.tauID("byVTightIsolationMVA3oldDMwLT"));
-         tau.set_byVTightIsolationMVA3oldDMwoLT ( pat_tau.tauID("byVTightIsolationMVA3oldDMwoLT"));
-         tau.set_byVVTightIsolationMVA3newDMwLT ( pat_tau.tauID("byVVTightIsolationMVA3newDMwLT"));
-         tau.set_byVVTightIsolationMVA3newDMwoLT ( pat_tau.tauID("byVVTightIsolationMVA3newDMwoLT"));
-         tau.set_byVVTightIsolationMVA3oldDMwLT ( pat_tau.tauID("byVVTightIsolationMVA3oldDMwLT"));
-         tau.set_byVVTightIsolationMVA3oldDMwoLT ( pat_tau.tauID("byVVTightIsolationMVA3oldDMwoLT"));
-
-         tau.set_decayMode( pat_tau.decayMode() );
+         tau.set_decayMode(pat_tau.decayMode());
     }
     uevent.set(handle, move(taus));
     if(taus_handle){
