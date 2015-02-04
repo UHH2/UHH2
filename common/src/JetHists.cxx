@@ -13,7 +13,14 @@ using namespace std;
 
 JetHists::JetHists(Context & ctx,
                    const std::string & dname,
-                   const std::string & collection): Hists(ctx, dname){
+                   const std::string & collection,
+                   bool gen_plots,
+                   float gen_plots_eta_min,
+                   float gen_plots_eta_max): 
+    Hists(ctx, dname),
+    gen_plots_eta_min_(gen_plots_eta_min),
+    gen_plots_eta_max_(gen_plots_eta_max)
+{
     number = book<TH1F>("number","number of jets",21, -.5, 20.5);
     
     pt = book<TH1F>("pt","p_{T} all jets",50,20,1500);
@@ -48,6 +55,17 @@ JetHists::JetHists(Context & ctx,
     m_3 = book<TH1F>("m_3","M^{jet 3} [GeV/c^{2}]", 100, 0, 300);
     m_4 = book<TH1F>("m_4","M^{jet 4} [GeV/c^{2}]", 100, 0, 300);
 
+    if (gen_plots) {
+        eff_sub     = book<TH1F>("eff_sub",     "p_{T}",                75,0,1500);
+        eff_tot     = book<TH1F>("eff_tot",     "p_{T}",                75,0,1500);
+        pt_response = book<TH1F>("pt_response", "(p_{T, gen} - p_{T, reco}) / p_{T, gen}",
+                                                                        800,-1.,1.);
+    } else {
+        eff_sub     = 0;
+        eff_tot     = 0;
+        pt_response = 0;
+    }
+
     h_jets = ctx.get_handle<std::vector<Jet> >(collection);
 }
 
@@ -59,7 +77,23 @@ void JetHists::fill(const Event & event){
 
     assert(jets);
     number->Fill(jets->size(), w);
-    
+
+    if (eff_sub && event.genparticles) {
+        for (const auto & gp: *event.genparticles) {
+            if (-6 < gp.pdgId() && gp.pdgId() < 6 
+                && abs(gp.eta()) > gen_plots_eta_min_
+                && abs(gp.eta()) < gen_plots_eta_max_) {
+                auto gp_pt = gp.pt();
+                eff_tot->Fill(gp_pt, w);
+                auto j = closestParticle(gp, *jets);
+                if (j && deltaR(gp, *j) < 0.2) {
+                    eff_sub->Fill(gp_pt, w);
+                    pt_response->Fill((gp_pt - j->pt()) / gp_pt, w);
+                }
+            }
+        }
+    }
+
     for(const auto & jet : *jets){
         pt->Fill(jet.pt(), w);
         eta->Fill(jet.eta(), w);
