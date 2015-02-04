@@ -23,11 +23,9 @@ public:
       againstMuonLoose, againstMuonMedium, againstMuonTight, againstMuonLoose3, againstMuonTight3,
       againstMuonLooseMVA, againstMuonMediumMVA, againstMuonTightMVA, 
       decayModeFinding, 
-      byLooseCombinedIsolationDeltaBetaCorr3Hits, byMediumCombinedIsolationDeltaBetaCorr3Hits, byTightCombinedIsolationDeltaBetaCorr3Hits,
-      byVLooseIsolationMVA3oldDMwoLT, byLooseIsolationMVA3oldDMwoLT, byMediumIsolationMVA3oldDMwoLT, byTightIsolationMVA3oldDMwoLT, byVTightIsolationMVA3oldDMwoLT, byVVTightIsolationMVA3oldDMwoLT,
-      byVLooseIsolationMVA3oldDMwLT, byLooseIsolationMVA3oldDMwLT, byMediumIsolationMVA3oldDMwLT, byTightIsolationMVA3oldDMwLT, byVTightIsolationMVA3oldDMwLT, byVVTightIsolationMVA3oldDMwLT,
+      byLooseCombinedIsolationDeltaBetaCorr3Hits, byMediumCombinedIsolationDeltaBetaCorr3Hits, byTightCombinedIsolationDeltaBetaCorr3Hits /* = 19 */,
       byVLooseIsolationMVA3newDMwoLT, byLooseIsolationMVA3newDMwoLT, byMediumIsolationMVA3newDMwoLT, byTightIsolationMVA3newDMwoLT, byVTightIsolationMVA3newDMwoLT, byVVTightIsolationMVA3newDMwoLT,
-      byVLooseIsolationMVA3newDMwLT, byLooseIsolationMVA3newDMwLT, byMediumIsolationMVA3newDMwLT, byTightIsolationMVA3newDMwLT, byVTightIsolationMVA3newDMwLT, byVVTightIsolationMVA3newDMwLT
+      byVLooseIsolationMVA3newDMwLT, byLooseIsolationMVA3newDMwLT, byMediumIsolationMVA3newDMwLT, byTightIsolationMVA3newDMwLT, byVTightIsolationMVA3newDMwLT, byVVTightIsolationMVA3newDMwLT /* = 31 */
   };
   
   bool get_bool(bool_id i) const {
@@ -49,8 +47,6 @@ public:
   float byCombinedIsolationDeltaBetaCorrRaw3Hits() const { return m_byCombinedIsolationDeltaBetaCorrRaw3Hits; }
   float byIsolationMVA3newDMwLTraw() const { return m_byIsolationMVA3newDMwLTraw; }
   float byIsolationMVA3newDMwoLTraw() const { return m_byIsolationMVA3newDMwoLTraw; }
-  float byIsolationMVA3oldDMwLTraw() const {return m_byIsolationMVA3oldDMwLTraw; }
-  float byIsolationMVA3oldDMwoLTraw() const  {return m_byIsolationMVA3oldDMwoLTraw; }
   
   int decayMode() const { return m_decayMode; }
   
@@ -58,8 +54,6 @@ public:
   void set_againstElectronMVA5raw(float value) { m_againstElectronMVA5raw = value;}
   void set_againstMuonMVAraw(float value) { m_againstMuonMVAraw = value; }
   void set_byCombinedIsolationDeltaBetaCorrRaw3Hits(float value){ m_byCombinedIsolationDeltaBetaCorrRaw3Hits = value; }
-  void set_byIsolationMVA3oldDMwoLTraw(float value) { m_byIsolationMVA3oldDMwoLTraw = value; }
-  void set_byIsolationMVA3oldDMwLTraw(float value) { m_byIsolationMVA3oldDMwLTraw = value; }
   void set_byIsolationMVA3newDMwoLTraw(float value) { m_byIsolationMVA3newDMwoLTraw = value; }
   void set_byIsolationMVA3newDMwLTraw(float value) { m_byIsolationMVA3newDMwLTraw = value; }
   
@@ -74,8 +68,6 @@ public:
       m_againstElectronMVA5raw = 0;
       m_againstMuonMVAraw = 0;
       m_byCombinedIsolationDeltaBetaCorrRaw3Hits = 0;
-      m_byIsolationMVA3oldDMwoLTraw = 0;
-      m_byIsolationMVA3oldDMwLTraw = 0;
       m_byIsolationMVA3newDMwoLTraw = 0;
       m_byIsolationMVA3newDMwLTraw = 0;
       m_decayMode = 0;
@@ -89,8 +81,6 @@ private:
     float m_againstElectronMVA5raw;
     float m_againstMuonMVAraw;
     float m_byCombinedIsolationDeltaBetaCorrRaw3Hits;
-    float m_byIsolationMVA3oldDMwoLTraw;
-    float m_byIsolationMVA3oldDMwLTraw;
     float m_byIsolationMVA3newDMwoLTraw;
     float m_byIsolationMVA3newDMwLTraw;
     
