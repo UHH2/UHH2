@@ -4,8 +4,8 @@
 
 #include <limits>
 
-/** Find the jet with smallest DeltaR to particle p
- * 
+/** Find the particle (from particles) with smallest DeltaR to particle p
+ * Prevents comparing particle to itself (if p is from the same collection) by checking pointer addresses
  * Returns NULL if (and only if) jets is empty.
  */
 
@@ -16,7 +16,7 @@ const T * closestParticle(const Particle  & p, const std::vector<T> & particles)
     for(unsigned int i=0; i<particles.size(); ++i) {
         const T & pi = particles[i];
         double dr = uhh2::deltaR(pi, p);
-        if(dr < deltarmin) {
+        if(dr < deltarmin && &pi != &p) {
             deltarmin = dr;
             next = &pi;
         }

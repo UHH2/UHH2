@@ -54,3 +54,13 @@ bool TauCleaner::process(uhh2::Event & event){
     clean_collection(*event.taus, event, tau_id);
     return true;
 }
+
+
+
+TopJetCleaner::TopJetCleaner(const TopJetId & topjet_id_): topjet_id(topjet_id_){}
+
+bool TopJetCleaner::process(uhh2::Event & event){
+    assert(event.topjets);
+    clean_collection(*event.topjets, event, topjet_id);
+    return true;
+}
