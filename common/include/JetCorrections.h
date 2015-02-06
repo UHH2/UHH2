@@ -58,6 +58,44 @@ private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
 };
 
+class GenericJetCorrector: public uhh2::AnalysisModule {
+public:
+    explicit GenericJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname);
+    
+    virtual bool process(uhh2::Event & event) override;
+    
+    virtual ~GenericJetCorrector();
+    
+private:
+    std::unique_ptr<FactorizedJetCorrector> corrector;
+    uhh2::Event::Handle<std::vector<Jet> > h_jets;
+};
+
+class GenericTopJetCorrector: public uhh2::AnalysisModule {
+public:
+    explicit GenericTopJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname);
+    
+    virtual bool process(uhh2::Event & event) override;
+    
+    virtual ~GenericTopJetCorrector();
+    
+private:
+    std::unique_ptr<FactorizedJetCorrector> corrector;
+    uhh2::Event::Handle<std::vector<TopJet> > h_jets;
+};
+
+class GenericSubJetCorrector: public uhh2::AnalysisModule {
+public:
+    explicit GenericSubJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname);
+    
+    virtual bool process(uhh2::Event & event) override;
+    
+    virtual ~GenericSubJetCorrector();
+    
+private:
+    std::unique_ptr<FactorizedJetCorrector> corrector;
+    uhh2::Event::Handle<std::vector<TopJet> > h_jets;
+};
 
 /** \brief Cross-clean lepton and jets by subtracting lepton four momenta from nearby jets
  * 

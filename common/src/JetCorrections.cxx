@@ -99,6 +99,63 @@ bool SubJetCorrector::process(uhh2::Event & event){
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
 SubJetCorrector::~SubJetCorrector(){}
 
+GenericJetCorrector::GenericJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
+    corrector = build_corrector(filenames);
+    h_jets = ctx.get_handle<std::vector<Jet> >(collectionname);
+}
+    
+bool GenericJetCorrector::process(uhh2::Event & event){
+
+    const auto jets = &event.get(h_jets);
+    assert(jets);
+    for(auto & jet : *jets){
+        correct_jet(*corrector, jet, event);
+    }
+    return true;
+}
+
+// note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
+GenericJetCorrector::~GenericJetCorrector(){}
+
+GenericTopJetCorrector::GenericTopJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
+    corrector = build_corrector(filenames);
+    h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
+}
+    
+bool GenericTopJetCorrector::process(uhh2::Event & event){
+
+    const auto jets = &event.get(h_jets);
+    assert(jets);
+    for(auto & jet : *jets){
+        correct_jet(*corrector, jet, event);
+    }
+    return true;
+}
+
+// note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
+GenericTopJetCorrector::~GenericTopJetCorrector(){}
+
+GenericSubJetCorrector::GenericSubJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
+    corrector = build_corrector(filenames);
+    h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
+}
+    
+bool GenericSubJetCorrector::process(uhh2::Event & event){
+
+    const auto topjets = &event.get(h_jets);
+    assert(topjets);
+    for(auto & topjet : *topjets){
+        auto subjets = topjet.subjets();
+        for (auto & subjet : subjets) { 
+            correct_jet(*corrector, subjet, event);
+        }
+        topjet.set_subjets(move(subjets));
+    }
+    return true;
+}
+
+// note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
+GenericSubJetCorrector::~GenericSubJetCorrector(){}
 
 // ** JetLeptonCleaner
 
