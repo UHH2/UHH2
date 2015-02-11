@@ -24,10 +24,10 @@ private:
 };
 
 //relativ Isolation for Muon check above twiki for reference
-class IsoMuon {
+class MuonIso {
  public:
-  IsoMuon(double iso = 0.15);
-  bool operator()(const Muon & muon) const;
+  MuonIso(double iso = 0.15);
+  bool operator()(const Muon & muon, const uhh2::Event & event) const;
  private:
   double iso;
 };
