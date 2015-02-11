@@ -24,3 +24,9 @@ bool MuonIDTight::operator()(const Muon & muon, const Event & event) const {
     return true;
 }
 
+IsoMuon::IsoMuon(double iso_):iso(iso_){}
+
+bool IsoMuon::operator()(const Muon & muon) const {
+  if(muon.relIso()>iso) return false;
+  return true;
+}

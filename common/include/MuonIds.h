@@ -22,3 +22,12 @@ public:
 private:
     double ptmin, etamax;
 };
+
+//relativ Isolation for Muon check above twiki for reference
+class IsoMuon {
+ public:
+  IsoMuon(double iso = 0.15);
+  bool operator()(const Muon & muon) const;
+ private:
+  double iso;
+};
