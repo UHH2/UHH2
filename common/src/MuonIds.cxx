@@ -18,7 +18,8 @@ bool MuonIDTight::operator()(const Muon & muon, const Event & event) const {
     if(muon.globalTrack_numberOfValidMuonHits() <= 0) return false;
     if(muon.numberOfMatchedStations() <= 1) return false;
     if(muon.dB() > 0.2) return false;
-    if(fabs(muon.vertex_z() - event.pvs->at(0).z()) > 0.5) return false;
+    // NOTE: removed because not correctly filled for PHYS14-ntuple2-v1
+    //if(fabs(muon.vertex_z() - event.pvs->at(0).z()) > 0.5) return false;
     if(muon.innerTrack_numberOfValidPixelHits() <= 0) return false;
     if(muon.innerTrack_trackerLayersWithMeasurement() <= 5) return false;
     return true;
