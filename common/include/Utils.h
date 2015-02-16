@@ -34,7 +34,10 @@ const Jet * nextJet(const Particle  & p, const std::vector<Jet> & jets);
  * In case reference_axis is NULL or or the 0-three-vector, 0.0 is returned.
  */
 double pTrel(const Particle  & p, const Particle * reference_axis);
+double pTrel(const Particle  & p, const std::vector<Jet> & jets);
 
+/// minimal distance in the eta-phi plane of particle p with respect to the closest jet from the list of jets
+double deltaRmin(const Particle & p, const std::vector<Jet> & jets);
 
 /** Locate a file, searching in several standard locations.
  * 

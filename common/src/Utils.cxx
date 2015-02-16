@@ -27,6 +27,7 @@ const Jet * nextJet(const Particle  & p, const std::vector<Jet> & jets){
 }
 
 
+
 double pTrel(const Particle  & p, const Particle * reference_axis){
     double ptrel=0;
     if (!reference_axis) return ptrel;
@@ -36,6 +37,36 @@ double pTrel(const Particle  & p, const Particle * reference_axis){
         ptrel = p3.Cross(ref3).Mag()/ref3.Mag();
     } // otherwise: ptrel stays at 0.0
     return ptrel;
+}
+
+double pTrel(const Particle & p, const std::vector<Jet> &jets)
+{
+
+    double ptrel=0;
+    const Jet* nextjet =  nextJet(p,jets);
+    if (!nextjet) return ptrel;
+
+    TVector3 p3(p.v4().Px(),p.v4().Py(),p.v4().Pz());
+    TVector3 jet3(nextjet->v4().Px(),nextjet->v4().Py(),nextjet->v4().Pz());
+
+    if(p3.Mag()!=0 && jet3.Mag()!=0) {
+        double sin_alpha = (p3.Cross(jet3)).Mag()/p3.Mag()/jet3.Mag();
+        ptrel = p3.Mag()*sin_alpha;
+    } else {
+        std::cout << "something strange happend in the ptrel calculation: either lepton or jet momentum is 0" <<std::endl;
+    }
+
+    return ptrel;
+}
+
+
+
+double deltaRmin(const Particle & p, const std::vector<Jet> & jets)
+{
+    const Jet* j = nextJet(p,jets);
+    double dr = 999.;
+    if (j) dr = uhh2::deltaR(p,*j);
+    return dr;
 }
 
 std::string locate_file(const std::string & fname){
