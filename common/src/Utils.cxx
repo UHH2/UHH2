@@ -38,6 +38,15 @@ double pTrel(const Particle  & p, const Particle * reference_axis){
     return ptrel;
 }
 
+std::pair<double, double> drmin_pTrel(const Particle & p, const std::vector<Jet> & jets){
+    auto nj = nextJet(p, jets);
+    const constexpr auto inf = numeric_limits<double>::infinity();
+    if(nj == nullptr){
+        return make_pair(inf, inf);
+    }
+    return make_pair(deltaR(p, *nj), pTrel(p, nj));
+}
+
 std::string locate_file(const std::string & fname){
     if(fname.empty()){
         throw invalid_argument("locate_file with empty fname called");
