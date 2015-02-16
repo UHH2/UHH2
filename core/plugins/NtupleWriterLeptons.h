@@ -31,6 +31,14 @@ private:
 
 class NtupleWriterMuons: public NtupleWriterModule {
 public:
+    
+    struct Config: public NtupleWriterModule::Config {        
+        edm::InputTag pv_src;
+
+        // inherit constructor does not work yet :-(
+        Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_, const std::string & dest_,
+                const std::string & dest_branchname_ = ""): NtupleWriterModule::Config(ctx_, std::move(cc_), src_, dest_, dest_branchname_){}
+    };
 
     explicit NtupleWriterMuons(Config & cfg, bool set_muons_member);
 
@@ -39,6 +47,7 @@ public:
     virtual ~NtupleWriterMuons();
 private:
     edm::EDGetToken src_token;
+    edm::EDGetToken pv_token;
     Event::Handle<std::vector<Muon>> handle;
     boost::optional<Event::Handle<std::vector<Muon>>> muons_handle;
 };

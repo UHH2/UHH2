@@ -17,16 +17,11 @@ bool MuonPrinter::process(Event & event){
     }
     cout << " event has " << event.muons->size() << " muons" << endl;
     int i=-1;
-    float pv0z = NAN;
-    if(event.pvs && event.pvs->size() > 0){
-        pv0z = event.pvs->at(0).z();
-    }
     for(const Muon & mu : *event.muons){
         ++i;
         cout << " mu[" << i << "]: E=" << mu.energy() << "; pt=" << mu.pt() << ", eta=" << mu.eta() << "; phi=" << mu.phi() << "; reliso=" << mu.relIso()
-             << "; global=" << mu.isGlobalMuon() << "; pf=" << mu.isPFMuon() << "; nchi2=" << (mu.globalTrack_chi2() / mu.globalTrack_ndof())
-             << "; muon hits=" << mu.globalTrack_numberOfValidMuonHits() << "; matched stations=" << mu.numberOfMatchedStations()
-             << "; db=" << mu.dB() << "; |dz|=" << fabs(mu.vertex_z() - pv0z) << "; npix=" << mu.innerTrack_numberOfValidPixelHits() << "; ntrackl=" << mu.innerTrack_trackerLayersWithMeasurement() << endl;
+             << "; global=" << mu.get_bool(Muon::global) << "; pf=" << mu.get_bool(Muon::pf)
+             << "; dxy=" << mu.dxy() << "; dz=" << mu.dz() << endl;
     }
     return true;
 }

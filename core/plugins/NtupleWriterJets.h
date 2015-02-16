@@ -19,7 +19,6 @@ public:
 
     virtual ~NtupleWriterJets();
 private:
-    bool runOnMiniAOD;
     edm::EDGetToken src_token;
     float ptmin, etamax;
     Event::Handle<std::vector<Jet>> handle; // main handle to write output to
@@ -45,7 +44,6 @@ public:
     virtual ~NtupleWriterTopJets();
 
 private:
-    bool runOnMiniAOD;
     float ptmin, etamax;
     edm::EDGetToken src_token, substructure_variables_src_token;
     std::string njettiness_src, qjets_src;
