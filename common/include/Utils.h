@@ -6,9 +6,8 @@
 
 /** Find the particle (from particles) with smallest DeltaR to particle p
  * Prevents comparing particle to itself (if p is from the same collection) by checking pointer addresses
- * Returns NULL if (and only if) jets is empty.
+ * Returns NULL if (and only if) particles is empty.
  */
-
 template<typename T>
 const T * closestParticle(const Particle  & p, const std::vector<T> & particles){
     double deltarmin = std::numeric_limits<double>::infinity();
@@ -31,9 +30,16 @@ const Jet * nextJet(const Particle  & p, const std::vector<Jet> & jets);
  * note: can use reference_axis = nextJet(p, *event.jets) for the 'usual' ptrel, assuming that the
  * jets have the correct filter(!).
  * 
- * In case reference_axis is NULL or or the 0-three-vector, 0.0 is returned.
+ * In case reference_axis is NULL or the 0-three-vector, 0.0 is returned.
  */
 double pTrel(const Particle  & p, const Particle * reference_axis);
+
+
+/** return a pair of (Delta R, pt_rel) values for Particle p w.r.t. the next jet in jets.
+ * 
+ * Returns (infinity, infinity) if jets is empty.
+ */
+std::pair<double, double> drmin_pTrel(const Particle & p, const std::vector<Jet> & jets);
 
 
 /** Locate a file, searching in several standard locations.
@@ -54,13 +60,10 @@ std::string locate_file(const std::string & fname);
 
 
 
-/** Sort vector of Particles depending on pT 
- * Thanks to Jochen for the code 
+/** Sort vector of Particles descndeing in pT 
  *
  */
-
 template<typename P>
-void sort_by_pt(std::vector<P> & particles){
-    std::sort(particles.begin(), particles.end(), [](const P & p1, const
-P & p2){return p1.pt() > p2.pt();});
+inline void sort_by_pt(std::vector<P> & particles){
+    std::sort(particles.begin(), particles.end(), [](const P & p1, const P & p2){return p1.pt() > p2.pt();});
 }
