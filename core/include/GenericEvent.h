@@ -39,7 +39,7 @@ namespace uhh2 {
  * setting members whose type is not known at compile time but only at run time. Also, this avoids template code bloat as templated
  * versions of the methods just forward the call to the 'raw' ones.
  */
-
+class EventAccess_;
 class GenericEventStructure {
 friend class GenericEvent;
 public:
@@ -61,6 +61,7 @@ public:
     class RawHandle {
         friend class GenericEventStructure;
         friend class GenericEvent;
+        friend class EventAccess_;
         uint64_t index;
         template<typename T>
         RawHandle(const Handle<T> & h): index(h.index){}
@@ -96,8 +97,6 @@ private:
     };
     std::vector<member_info> member_infos;
 };
-
-class EventAccess_;
 
 class GenericEvent {
 friend class EventAccess_;
@@ -300,6 +299,11 @@ public:
     
     static void set_unmanaged(GenericEvent & event,const std::type_info & ti, const GenericEvent::RawHandle & handle, void * data){
         event.set_unmanaged(ti, handle, data);
+    }
+    
+    template<typename T>
+    static void set_unmanaged(GenericEvent & event, const GenericEvent::Handle<T> & handle, void * data){
+        event.set_unmanaged(typeid(T), handle, data);
     }
 
     static void invalidate_all(GenericEvent & event){

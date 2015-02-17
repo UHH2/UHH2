@@ -40,7 +40,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent){
     }
     uevent.set(handle, move(jets));
     if(jets_handle){
-        uevent.set_unmanaged(*jets_handle, &uevent.get(handle));
+        EventAccess_::set_unmanaged(uevent, *jets_handle, &uevent.get(handle));
     }
 }
 
@@ -279,7 +279,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     }// for topjets
     uevent.set(handle, move(topjets));
     if(topjets_handle){
-        uevent.set_unmanaged(*topjets_handle, &uevent.get(handle));
+        EventAccess_::set_unmanaged(uevent, *topjets_handle, &uevent.get(handle));
     }
 }
 
