@@ -75,7 +75,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     }
     uevent.set(handle, move(eles));
     if(electrons_handle){
-        uevent.set_unmanaged(*electrons_handle, &uevent.get(handle));
+        EventAccess_::set_unmanaged(uevent, *electrons_handle, &uevent.get(handle));
     }
 }
 
@@ -149,7 +149,7 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
    }
    uevent.set(handle, move(mus));
    if(muons_handle){
-       uevent.set_unmanaged(*muons_handle, &uevent.get(handle));
+       EventAccess_::set_unmanaged(uevent, *muons_handle, &uevent.get(handle));
    }
 }
 
@@ -237,7 +237,7 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
     }
     uevent.set(handle, move(taus));
     if(taus_handle){
-       uevent.set_unmanaged(*taus_handle, &uevent.get(handle));
+       EventAccess_::set_unmanaged(uevent, *taus_handle, &uevent.get(handle));
     }
  }
 
