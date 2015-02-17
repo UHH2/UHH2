@@ -415,7 +415,7 @@ void SFrameContext::begin_input_file(Event & event) {
             throw runtime_error("Could not find branch '" + bname + "' in tree '" + event_treename + "'");
         }
         connect_input_branch(branch, bi.ti, &bi.addr, bi.eraser);
-        event.set_unmanaged(bi.ti, bi.handle, bi.addr);
+        EventAccess_::set_unmanaged(event, bi.ti, bi.handle, bi.addr);
         bi.branch = branch;
     }
     // discover metadata trees:
@@ -465,12 +465,12 @@ void SFrameContext::begin_input_file(Event & event) {
 }
 
 void SFrameContext::begin_event(Event & event) {
-    event.invalidate_all();
+    EventAccess_::invalidate_all(event);
     auto ientry = input_tree->GetReadEntry();
     assert(ientry >= 0);
     for (const auto & name_bi : event_input_bname2bi) {
         name_bi.second->branch->GetEntry(ientry);
-        event.set_validity(name_bi.second->ti, name_bi.second->handle, true);
+        EventAccess_::set_validity(event, name_bi.second->ti, name_bi.second->handle, true);
     }
     // update metadata:
     for(const auto & md : metadata_input_trees){
@@ -490,7 +490,7 @@ void SFrameContext::setup_output(Event & event) {
     assert(outtree);
     for (auto & name_bi : event_output_bname2bi) {
         auto & bi = *name_bi.second;
-        bi.addr = event.get(bi.ti, bi.handle, false);
+        bi.addr = EventAccess_::get(event, bi.ti, bi.handle, false, false);
         tree_branch(outtree, name_bi.first, bi.addr, &bi.addr, bi.ti);
     }
 }
