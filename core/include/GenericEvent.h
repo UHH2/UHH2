@@ -218,6 +218,17 @@ protected:
      */
     void invalidate_all();
     
+    // get an existing / create a new handle. Note that this
+    // (unlike all other methods, and unlike the user-point-of-view!) allows to effectively
+    // change the event structure *after* creating the Event instance.
+    RawHandle get_raw_handle(const std::type_info & ti, const std::string & name){
+        RawHandle result = structure.get_raw_handle(ti, name);
+        if(result.index >= member_datas.size()){
+            member_datas.resize(result.index + 1);
+        }
+        return result;
+    }
+    
 private:
     void fail(const std::type_info & ti, const RawHandle & handle, const std::string & msg) const;
     void check(const std::type_info & ti, const RawHandle & handle, const std::string & where) const;
@@ -293,6 +304,10 @@ public:
 
     static void invalidate_all(GenericEvent & event){
         event.invalidate_all();
+    }
+    
+    static GenericEvent::RawHandle get_raw_handle(GenericEvent & event, const std::type_info & ti, const std::string & name){
+        return event.get_raw_handle(ti, name);
     }
 };
 

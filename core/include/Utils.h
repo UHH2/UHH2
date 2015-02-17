@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <limits>
 
 #define DEPRECATED(reason) __attribute__((deprecated(reason)))
 
@@ -34,7 +35,7 @@ std::string double2string(double d);
 std::string double2string(double d, int precision);
 
 /// Convert an integer to a string
-std::string int2string(int i);
+std::string int2string(int i) DEPRECATED("use std::to_string instead");
 
 /// Convert a string to a double
 double string2double(const std::string & s);
@@ -42,15 +43,23 @@ double string2double(const std::string & s);
 /// Make a C++-mangled typename human-readable
 std::string demangle(const std::string & mangled_typename);
 
-
 /** \brief Remove leading and trailing characters (e.g. spaces) from a string
  * 
  * The default is to remove spaces, newlines, carriage returns and tabs.
  */
 void trim(std::string & s, const std::string & to_trim = " \r\n\t");
 
+
+/** Split a string at any of the given splitting characters (default: spacee-characters " \r\n\t").
+ * 
+ * It makes no difference for the result whether elements are separated by a single or multiple
+ * consecutive splitting-characters.
+ * Returns an empty vector if (and only if) s consists entirely of splitting-characters.
+ */
+std::vector<std::string> split(const std::string & s, const std::string & splitting = " \r\n\t");
+
 /// for those who do not like std::numeric_limits<double>::infinity();
-extern const double infinity;
+const constexpr double infinity = std::numeric_limits<double>::infinity();
 
 /** \brief Format information in a text-based table
  * 
