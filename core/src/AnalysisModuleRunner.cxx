@@ -189,6 +189,9 @@ public:
     std::string event_treename;
     
     TTree * outtree = 0; // output tree. Can be 0 in case no output should be written.
+    
+    void do_declare_event_input_handle(const std::type_info & ti, const std::string & bname, const GenericEvent::RawHandle & handle);
+    void do_declare_event_output_handle(const std::type_info & ti, const std::string & bname, const GenericEvent::RawHandle & handle);
 
 private:
 
@@ -415,7 +418,7 @@ void SFrameContext::begin_input_file(Event & event) {
             throw runtime_error("Could not find branch '" + bname + "' in tree '" + event_treename + "'");
         }
         connect_input_branch(branch, bi.ti, &bi.addr, bi.eraser);
-        event.set_unmanaged(bi.ti, bi.handle, bi.addr);
+        EventAccess_::set_unmanaged(event, bi.ti, bi.handle, bi.addr);
         bi.branch = branch;
     }
     // discover metadata trees:
@@ -465,12 +468,12 @@ void SFrameContext::begin_input_file(Event & event) {
 }
 
 void SFrameContext::begin_event(Event & event) {
-    event.invalidate_all();
+    EventAccess_::invalidate_all(event);
     auto ientry = input_tree->GetReadEntry();
     assert(ientry >= 0);
     for (const auto & name_bi : event_input_bname2bi) {
         name_bi.second->branch->GetEntry(ientry);
-        event.set_validity(name_bi.second->ti, name_bi.second->handle, true);
+        EventAccess_::set_validity(event, name_bi.second->ti, name_bi.second->handle, true);
     }
     // update metadata:
     for(const auto & md : metadata_input_trees){
@@ -490,19 +493,26 @@ void SFrameContext::setup_output(Event & event) {
     assert(outtree);
     for (auto & name_bi : event_output_bname2bi) {
         auto & bi = *name_bi.second;
-        bi.addr = event.get(bi.ti, bi.handle, false);
+        bi.addr = EventAccess_::get(event, bi.ti, bi.handle, false, false);
         tree_branch(outtree, name_bi.first, bi.addr, &bi.addr, bi.ti);
     }
 }
 
-// event tree i/o
 void SFrameContext::do_declare_event_input(const type_info & ti, const string & bname, const string & mname) {
     auto handle = ges.get_raw_handle(ti, mname);
-    event_input_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));
+    do_declare_event_input_handle(ti, bname, handle);
 }
 
 void SFrameContext::do_declare_event_output(const type_info & ti, const string & bname, const string & mname) {
     auto handle = ges.get_raw_handle(ti, mname);
+    do_declare_event_output_handle(ti, bname, handle);
+}
+
+void SFrameContext::do_declare_event_input_handle(const type_info & ti, const string & bname, const GenericEvent::RawHandle & handle) {
+    event_input_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));
+}
+
+void SFrameContext::do_declare_event_output_handle(const type_info & ti, const string & bname, const GenericEvent::RawHandle & handle) {
     event_output_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));
 }
 
@@ -524,6 +534,9 @@ private:
     bool setup_output_done;
     
     bool use_sframe_weight;
+    
+    std::vector<std::string> additional_branches;
+    bool additional_branches_setup = false;
 
     // per-dataset information, in the order of construction:
     std::unique_ptr<GenericEventStructure> ges;
@@ -609,6 +622,7 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
     ges.reset(new GenericEventStructure);
     context.reset(new SFrameContext(base, in, *ges));
     
+    // 1. setup common event data members / branches:
     m_userEventFormat = string2bool(context->get("userEventFormat", "false"));
     
     if(!m_userEventFormat){
@@ -643,8 +657,12 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
     else{
         m_readTrigger = false;
     }
+    
+    // 2. read additional branches from input:
+    additional_branches = split(context->get("additionalBranches", ""));
+    additional_branches_setup = false;
 
-    // 2. now construct user module, which could add event contest to ges
+    // 3. now construct user module, which could add event contest to ges
     string module_classname = context->get("AnalysisModule");
     analysis = AnalysisModuleRegistry::build(module_classname, *context);
 
@@ -660,15 +678,13 @@ void AnalysisModuleRunner::BeginInputData(const SInputData& in) throw (SError) {
 }
 
 void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
-    pimpl->context->begin_input_file(*pimpl->event);
-
     // fill trigger names map:
     if (pimpl->m_readTrigger) {
         std::map<int, std::vector<std::string>> run2triggernames;
         // find triggernames for all runs in this file:
         TTree* intree = GetInputTree(pimpl->context->event_treename.c_str());
         if (!intree){
-            throw runtime_error("Did not find AnalysisTree in input file");
+            throw runtime_error("Did not find input tree '" + pimpl->context->event_treename + "' in input file");
         }
         std::vector<std::string> trigger_names;
         std::vector<std::string> *ptrigger_names = &trigger_names;
@@ -699,6 +715,30 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
         tnb->SetAddress(oldaddr_tnb);
         pimpl->eh->set_infile_triggernames(move(run2triggernames));
     }
+    
+    // setup additional branches, if not done yet:
+    if(!pimpl->additional_branches_setup && !pimpl->additional_branches.empty()){
+        TTree* intree = GetInputTree(pimpl->context->event_treename.c_str());
+        if (!intree){
+            throw runtime_error("Did not find input tree '" + pimpl->context->event_treename + "' in input file");
+        }
+        for(const auto & bname : pimpl->additional_branches){
+            auto branch = intree->GetBranch(bname.c_str());
+            if(!branch){
+                throw runtime_error("While setting up additional branches: did not find branch '" + bname + "' in input tree");
+            }
+            const auto & ti = InTree::get_type(branch);
+             m_logger << VERBOSE  << "Setting up additional branch '" << bname << "';  with (auto-detected) type: " << demangle(ti.name()) << SLogger::endmsg;
+            // add it to the list of branches the context using the same mechanism as declare_event_input / declare_event_output.
+            // Note that the call to get_raw_handle might create a new data member in event.
+            auto handle = EventAccess_::get_raw_handle(*pimpl->event, ti, bname);
+            pimpl->context->do_declare_event_input_handle(ti, bname, handle);
+            pimpl->context->do_declare_event_output_handle(ti, bname, handle);
+        }
+        pimpl->additional_branches_setup = true;
+    }
+    
+    pimpl->context->begin_input_file(*pimpl->event);
 }
 
 void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SError) {
@@ -745,24 +785,6 @@ void AnalysisModuleRunner::CloseOutputFile() throw( SError ){
     // called from CloseOutputFile, so we override that method here to call the save at the right point.
     pimpl->context->write_metadata_trees();
     SCycleBase::CloseOutputFile();
-}
-
-namespace {
-// double to string;
-string d2s(double d) {
-    char s[20];
-    snprintf(s, 20, "%.6g", d);
-    return s;
-}
-
-
-//long uint to string:
-string ul2s(unsigned long i) {
-    char s[20];
-    snprintf(s, 20, "%lu", i);
-    return s;
-}
-
 }
 
 void AnalysisModuleRunner::EndMasterInputData(const SInputData &) throw (SError) {
@@ -820,8 +842,8 @@ void AnalysisModuleRunner::EndMasterInputData(const SInputData &) throw (SError)
         for (int ibin = 1; ibin <= cf->GetNbinsX(); ++ibin) {
             vector<string> row;
             row.push_back(xax->GetBinLabel(ibin));
-            row.push_back(ul2s(cf_raw->GetBinContent(ibin)));
-            row.push_back(d2s(cf->GetBinContent(ibin)));
+            row.push_back(to_string(cf_raw->GetBinContent(ibin)));
+            row.push_back(to_string(cf->GetBinContent(ibin)));
             out.add_row(row);
         }
         out.print(cout);

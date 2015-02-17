@@ -27,7 +27,7 @@ bool MuonIDTight::operator()(const Muon & muon, const Event & event) const {
 
 MuonIso::MuonIso(double iso_):iso(iso_){}
 
-bool MuonIso::operator()(const Muon & muon, const uhh2::Event & event) const {
+bool MuonIso::operator()(const Muon & muon, const uhh2::Event &) const {
   if(muon.relIso()>iso) return false;
   return true;
 }

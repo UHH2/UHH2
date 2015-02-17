@@ -24,11 +24,11 @@ void EventHists::fill(const uhh2::Event & e){
     MET->Fill(e.met->pt(), e.weight);
     auto met = e.met->pt();
     float primlep_pt = -1.0f, ht = -1.0f;
-    if(e.get_state(h_primlep) == GenericEvent::state::valid){
+    if(e.is_valid(h_primlep)){
         primlep_pt = e.get(h_primlep).pt();
         HTLep->Fill(primlep_pt + met, e.weight);
     }
-    if(e.get_state(h_ht)==GenericEvent::state::valid){
+    if(e.is_valid(h_ht)){
         ht = e.get(h_ht);
         HT->Fill(ht, e.weight);
     }
