@@ -24,20 +24,25 @@ HTlepCalculator::HTlepCalculator(Context & ctx, const boost::optional<ElectronId
 }
 bool HTlepCalculator::process(Event & event){
     double htlep = 0.0;
-    for(const auto & electron : *event.electrons){
+    if(event.electrons)
+      for(const auto & electron : *event.electrons){
         if(electronid && !(*electronid)(electron, event)) continue;
         htlep += electron.pt();
-    }
-	for(const auto & muon : *event.muons){
+      }
+    if(event.muons){
+      for(const auto & muon : *event.muons){
         if(muonid && !(*muonid)(muon, event)) continue;
         htlep += muon.pt();
+      }
     }
-	for(const auto & tau : *event.taus){
+    if(event.taus){
+      for(const auto & tau : *event.taus){
         if(tauid && !(*tauid)(tau, event)) continue;
         htlep += tau.pt();
+      }
     }
-	if(event.met) {
-        htlep += event.met->pt();
+    if(event.met) {
+      htlep += event.met->pt();
     }
        
     event.set(h_htlep, htlep);
