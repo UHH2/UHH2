@@ -15,7 +15,9 @@
             <UserConfig>
                 
                 <!-- the class name of the AnalysisModule subclasses to run: -->
-                <Item Name="AnalysisModule" Value="ExampleModuleEventInput" /> 
+                <Item Name="AnalysisModule" Value="ExampleModuleEventInput2" /> 
+                
+                <Item Name="additionalBranches" Value="myjets" /> 
                 
                 <!-- the name of the branch to use for the test int event output. See ExampleEventOutput module for details. -->
                 <Item Name="int_branchname" Value="testbranchname" />
