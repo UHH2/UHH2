@@ -14,6 +14,7 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member) {
     if(set_jets_member){
         jets_handle = cfg.ctx.get_handle<vector<Jet>>("jets");
     }
+    src = cfg.src;
     src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
     runOnMiniAOD = cfg.runOnMiniAOD;
 }
@@ -30,7 +31,13 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent){
         if(pat_jet.pt() < ptmin) continue;
         if(fabs(pat_jet.eta()) > etamax) continue;
         jets.emplace_back();
-        fill_jet_info(pat_jet, jets.back());
+        try {
+            fill_jet_info(pat_jet, jets.back(), true);
+        }
+        catch(runtime_error & ex){
+            cerr << "Exception in fill_jet_info in NtupleWriterJets::process for jets with src=" << src << endl;
+            throw;
+        }
     }
     uevent.set(handle, move(jets));
     if(jets_handle){
@@ -39,7 +46,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent){
 }
 
 
-void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet){
+void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool do_btagging){
     jet.set_charge(pat_jet.charge());
     jet.set_pt(pat_jet.pt());
     jet.set_eta(pat_jet.eta());
@@ -64,12 +71,43 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet){
         jet.set_photonMultiplicity (pat_jet.photonMultiplicity());
     }
     jet.set_JEC_factor_raw(pat_jet.jecFactor("Uncorrected"));
-    jet.set_btag_simpleSecondaryVertexHighEff(pat_jet.bDiscriminator("pfSimpleSecondaryVertexHighEffBJetTags"));
-    jet.set_btag_simpleSecondaryVertexHighPur(pat_jet.bDiscriminator("pfSimpleSecondaryVertexHighPurBJetTags"));
-    jet.set_btag_combinedSecondaryVertex(pat_jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-    //jet.set_btag_combinedSecondaryVertexMVA(pat_jet.bDiscriminator("combinedMVABJetTags"));
-    jet.set_btag_jetBProbability(pat_jet.bDiscriminator("pfJetBProbabilityBJetTags"));
-    jet.set_btag_jetProbability(pat_jet.bDiscriminator("pfJetProbabilityBJetTags"));
+    if(do_btagging){
+        const auto & bdisc = pat_jet.getPairDiscri();
+        bool sv_he = false, sv_hp = false, csv = false, jetp = false, jetbp = false;
+        for(const auto & name_value : bdisc){
+            const auto & name = name_value.first;
+            const auto & value = name_value.second;
+            if(name == "pfSimpleSecondaryVertexHighEffBJetTags"){
+                jet.set_btag_simpleSecondaryVertexHighEff(value);
+                sv_he = true;
+            }
+            else if(name == "pfSimpleSecondaryVertexHighPurBJetTags"){
+                jet.set_btag_simpleSecondaryVertexHighPur(value);
+                sv_hp = true;
+            }
+            else if(name == "pfCombinedInclusiveSecondaryVertexV2BJetTags"){
+                jet.set_btag_combinedSecondaryVertex(value);
+                csv = true;
+            }
+            else if(name == "pfJetBProbabilityBJetTags"){
+                jet.set_btag_jetBProbability(value);
+                jetp = true;
+            }
+            else if(name == "pfJetProbabilityBJetTags"){
+                jet.set_btag_jetProbability(value);
+                jetbp = true;
+            }
+        }
+        // NOTE: csvmva is NOT set.
+        if(!sv_he || !sv_hp || !csv || !jetp || !jetbp){
+            cout << "Error in NtupleWriterJets: did not find all b-taggers! Available btaggers: ";
+            for(const auto & name_value : bdisc){
+                cout << name_value.first << " ";
+            }
+            cout << endl;
+            throw runtime_error("did not find all b-taggers; see output for details");
+        }
+    }
 }
 
 
@@ -82,6 +120,9 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): ru
     src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
     njettiness_src = cfg.njettiness_src;
     qjets_src = cfg.qjets_src;
+    src = cfg.src;
+    do_btagging = cfg.do_btagging;
+    do_btagging_subjets = cfg.do_btagging_subjets;
     if(!njettiness_src.empty() || !qjets_src.empty()){
         substructure_variables_src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.substructure_variables_src);
     }
@@ -116,7 +157,12 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
-        uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet);
+        try{
+            uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet, do_btagging);
+        }catch(runtime_error &){
+            cerr << "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " << src << "." << endl;
+            throw;
+        }
         
         // match a unpruned jet according to topjets_with_cands:
         int i_pat_topjet_wc = -1;
@@ -149,7 +195,12 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
             Jet subjet;
             auto patsubjetd = dynamic_cast<const pat::Jet *>(pat_topjet.daughter(k));
             if (patsubjetd) {
-                NtupleWriterJets::fill_jet_info(*patsubjetd, subjet);
+                try{
+                    NtupleWriterJets::fill_jet_info(*patsubjetd, subjet, do_btagging_subjets);
+                }catch(runtime_error &){
+                    cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
+                    throw;
+                }
             }
             else {
                 //filling only standard information in case the subjet has not been pat-tified during the pattuples production

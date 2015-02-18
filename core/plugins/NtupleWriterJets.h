@@ -11,7 +11,7 @@ namespace uhh2 {
 class NtupleWriterJets: public NtupleWriterModule {
 public:
 
-    static void fill_jet_info(const pat::Jet & pat_jet, Jet & jet);
+    static void fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool do_btagging);
 
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member);
 
@@ -20,6 +20,7 @@ public:
     virtual ~NtupleWriterJets();
 private:
     bool runOnMiniAOD;
+    edm::InputTag src;
     edm::EDGetToken src_token;
     float ptmin, etamax;
     Event::Handle<std::vector<Jet>> handle; // main handle to write output to
@@ -32,6 +33,8 @@ public:
 
     struct Config: public NtupleWriterModule::Config {
         using NtupleWriterModule::Config::Config;
+        
+        bool do_btagging = true, do_btagging_subjets = true;
 
         edm::InputTag substructure_variables_src; // a jet collection from where to take the subjet variables (after DeltaR-matching)
         std::string njettiness_src;
@@ -46,7 +49,9 @@ public:
 
 private:
     bool runOnMiniAOD;
+    edm::InputTag src;
     float ptmin, etamax;
+    bool do_btagging, do_btagging_subjets;
     edm::EDGetToken src_token, substructure_variables_src_token;
     std::string njettiness_src, qjets_src;
 

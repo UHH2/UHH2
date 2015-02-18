@@ -154,6 +154,13 @@ process.hepTopTagCHS = process.cmsTopTagCHS.clone(
     useSubjetMass = cms.bool(False),
 )
 
+# also re-do the ak4 jet clustering, as this is much simpler for b-tagging (there does not seem to be a simple way of
+# re-running b-tagging on the slimmedJets ...).
+from RecoJets.JetProducers.ak4PFJets_cfi import ak4PFJets
+process.ak4PFCHS = ak4PFJets.clone(src = 'chs')
+process.ak8PFCHS =process.ak4PFCHS.clone(rParam = 0.8)
+
+
 #################################################
 ### Softdrop
 
@@ -166,7 +173,7 @@ from CommonTools.PileupAlgos.Puppi_cff import puppi
 process.puppi = puppi.clone(candName = cms.InputTag('packedPFCandidates'), vertexName = cms.InputTag('offlineSlimmedPrimaryVertices'))
 
 # copy all the jet collections above; just use 'puppi' instead of 'chs' as input:
-for name in ['ca8CHSJets', 'ca15CHSJets', 'ca8CHSJetsPruned', 'ca15CHSJetsFiltered', 'cmsTopTagCHS', 'hepTopTagCHS', 'ca8CHSJetsSoftDrop']:
+for name in ['ca8CHSJets', 'ca15CHSJets', 'ca8CHSJetsPruned', 'ca15CHSJetsFiltered', 'cmsTopTagCHS', 'hepTopTagCHS', 'ca8CHSJetsSoftDrop', 'ak4PFCHS']:
     setattr(process, name.replace('CHS', 'Puppi'), getattr(process, name).clone(src = cms.InputTag('puppi')))
 
 ###############################################
@@ -174,6 +181,10 @@ for name in ['ca8CHSJets', 'ca15CHSJets', 'ca8CHSJetsPruned', 'ca15CHSJetsFilter
 #
 # 'Patify' the jet collections defined above and also add the corresponding
 # genjets.
+
+# captitalize string; needed below to construct pat module names.
+def cap(s): return s[0].upper() + s[1:]
+
 from PhysicsTools.PatAlgos.tools.jetTools import *
 process.load('PhysicsTools.PatAlgos.slimming.unpackedTracksAndVertices_cfi')
 
@@ -186,8 +197,20 @@ common_btag_parameters = dict(trackSource = cms.InputTag('unpackedTracksAndVerti
     btagDiscriminators = bTagDiscriminators
 )
 
-# captitalize string
-def cap(s): return s[0].upper() + s[1:]
+# ak4/ak8 jets:
+for jt in ('ak4', 'ak8'):
+    addJetCollection(process, '%sPFCHS' % jt, jetSource = cms.InputTag('%sPFCHS' % jt), algo = 'ak', rParam = {'ak4': 0.4, 'ak8': 0.8}[jt],
+      jetCorrections = ('%sPFchs' % jt.upper(), cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
+      genJetCollection = cms.InputTag('slimmedGenJets'), # note: switched off for Ak8 below
+      **common_btag_parameters
+    )
+    getattr(process, 'pfInclusiveSecondaryVertexFinderTagInfos' + cap(jt) + 'PFCHS').extSVCollection = cms.InputTag('slimmedSecondaryVertices')
+    getattr(process, 'patJetPartonMatch' + cap(jt) + 'PFCHS').matched = 'prunedGenParticles'
+    getattr(process, 'patJets' + cap(jt) + 'PFCHS').addJetCharge = False
+    getattr(process, 'patJets' + cap(jt) + 'PFCHS').addAssociatedTracks = False
+    
+# switch off genjet matching for ak8
+process.patJetsAk8PFCHS.addGenJetMatch = False
 
 # Add PAT part of fat jets and subjets, and optionally gen jets. Note that the input collections for the groomed PF jets have to be defined elsewhere
 # already.
@@ -242,7 +265,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         
 
     # patify ungroomed jets, if not already done:
-    add_ungroomed = not hasattr(process, 'patJets' + fatjets_name)
+    add_ungroomed = not hasattr(process, 'patJets' + cap(fatjets_name))
     if add_ungroomed:
         if verbose: print "Adding ungroomed patJets" + cap(fatjets_name)
         addJetCollection(process, labelName = fatjets_name, jetSource = cms.InputTag(fatjets_name), algo = algo, rParam = rParam,
@@ -282,8 +305,9 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         producer = getattr(process, 'patJets' + cap(name))
         producer.addJetCharge = False
         producer.addAssociatedTracks = False
-        producer.addBTagInfo = False
-        if not btagging: producer.addDiscriminators = False
+        if not btagging:
+            producer.addDiscriminators = False
+            producer.addBTagInfo = False
         producer.addGenJetMatch = genjets_name is not None
         # for fat groomed jets, gen jet match and jet flavor is not working, so switch it off:
         if name == groomed_jets_name:
@@ -295,15 +319,13 @@ add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = la
 add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-
-# for softdrop: no genjets, no b-tagging:
-add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsSoftDrop', btagging = False)
+add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsSoftDrop')
 
 add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsPruned', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsFiltered', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 add_fatjets_subjets(process, 'ca8PuppiJets', 'cmsTopTagPuppi', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 add_fatjets_subjets(process, 'ca15PuppiJets', 'hepTopTagPuppi', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
-add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsSoftDrop', btagging = False)
+add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsSoftDrop')
 
 
 # configure PAT for miniAOD:
@@ -377,7 +399,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #photon_sources = cms.vstring("selectedPatPhotons"),
         
         doJets = cms.bool(True),
-        jet_sources = cms.vstring("slimmedJets", "slimmedJetsAK8", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
+        jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
         jet_ptmin = cms.double(10.0),
         jet_etamax = cms.double(5.0),
         
