@@ -374,7 +374,6 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #    TestKey = cms.string("TestValue")
         #),
         fileName = cms.string("Ntuple.root"), 
-        runOnMiniAOD = cms.bool(True),
         doPV = cms.bool(True),
         pv_sources = cms.vstring("offlineSlimmedPrimaryVertices"),
         doRho = cms.untracked.bool(True),

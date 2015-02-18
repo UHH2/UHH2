@@ -53,8 +53,6 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
     jet.set_energy(pat_jet.energy());
     jet.set_flavor(pat_jet.partonFlavour());
     jet.set_numberOfDaughters (pat_jet.numberOfDaughters());
-    const reco::TrackRefVector&  jettracks = pat_jet.associatedTracks();
-    jet.set_nTracks ( jettracks.size());
     jet.set_jetArea(pat_jet.jetArea());
     if(pat_jet.isPFJet()){
         jet.set_neutralEmEnergyFraction (pat_jet.neutralEmEnergyFraction());

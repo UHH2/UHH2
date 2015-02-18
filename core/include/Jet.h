@@ -9,7 +9,6 @@ public:
   enum tag { /* for future use (more b-taggers, etc.) */ };
   
   Jet(){
-    m_nTracks = 0;
     m_jetArea = 0;
     m_numberOfDaughters = 0;
     m_neutralEmEnergyFraction = 0;
@@ -31,27 +30,8 @@ public:
     m_btag_jetProbability = 0;
     m_JEC_factor_raw = 0;
     m_genjet_index = 0;
-    
-    m_genjet = 0;
   }
 
-  LorentzVector genjet_v4() const{
-    return genjet().v4();
-  }
-
-  Particle genjet() const{
-    if(m_genjet){
-      return *m_genjet;
-    }
-    else{
-      std::cout << "WARNING: genjet routine called for a jet but genjet collection has not been specified" << std::endl;
-      //return 0 particle
-      Particle p;
-      return p;
-    }
-  }
-
-  int nTracks() const{return m_nTracks;}
   float jetArea() const{return m_jetArea;}
   int numberOfDaughters() const{return m_numberOfDaughters;} 
   float neutralEmEnergyFraction() const{return m_neutralEmEnergyFraction;}
@@ -72,14 +52,8 @@ public:
   float btag_jetBProbability() const{return m_btag_jetBProbability;}
   float btag_jetProbability() const{return m_btag_jetProbability;}
   float JEC_factor_raw() const{return m_JEC_factor_raw;}
-  float genjet_pt() const{return genjet().pt();}
-  float genjet_eta() const{return genjet().eta();}
-  float genjet_phi() const{return genjet().phi();}
-  float genjet_energy() const{return genjet().energy();}
-  float genjet_index() const{return m_genjet_index;}
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
 
-  void set_nTracks(int x){m_nTracks=x;}
   void set_jetArea(float x){m_jetArea=x;}
   void set_numberOfDaughters(int x){m_numberOfDaughters=x;} 
   void set_neutralEmEnergyFraction(float x){m_neutralEmEnergyFraction=x;}
@@ -103,19 +77,7 @@ public:
   void set_genjet_index(int x){m_genjet_index=x;}
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
 
-  bool has_genjet() const{return m_genjet_index>=0;}
-
-  void set_genjet(std::vector<Particle>* genjets){
-    if(!genjets) return; //no genjet collection -> keep NULL pointer
-    if(m_genjet_index<0 || m_genjet_index>(int)genjets->size()) { //genjet collection provided but no matched genjet found -> set genjet pointer to 0 particle
-      static Particle* p =  new Particle();
-      m_genjet = p;
-      return;
-    }
-    m_genjet = &genjets->at(m_genjet_index);
-  }
-
-  bool pfID(){
+  bool pfID() const {
     //pf ID has already been applied when using goodPatJets
     if(numberOfDaughters()>1 
        && neutralHadronEnergyFraction()<0.99
@@ -135,7 +97,6 @@ public:
 
  private:
   
-  int m_nTracks;
   float m_jetArea;
   int m_numberOfDaughters;
   float m_neutralEmEnergyFraction;
@@ -159,6 +120,5 @@ public:
   int m_genjet_index;
   
   Tags tags;
-  Particle* m_genjet; //!
 };
 

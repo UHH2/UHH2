@@ -40,9 +40,6 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_eta( pat_ele.eta());
         ele.set_phi( pat_ele.phi());
         ele.set_energy( pat_ele.energy());
-        ele.set_vertex_x(pat_ele.vertex().x());
-        ele.set_vertex_y(pat_ele.vertex().y());
-        ele.set_vertex_z(pat_ele.vertex().z());
         ele.set_supercluster_eta(pat_ele.superCluster()->eta());
         ele.set_supercluster_phi(pat_ele.superCluster()->phi());
         ele.set_dB(pat_ele.dB());
