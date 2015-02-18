@@ -21,6 +21,21 @@ private:
     JetId jet_id;
 };
 
+
+/** \brief Keep only primary vertices fulfilling an id.
+ * 
+ * The default id is the StandardPrimaryVertexId, which is the id used in 8TeV
+ * (for details, see definiction of StandardPrimaryVertexId in ObjectUtils.h).
+ */
+class PrimaryVertexCleaner: public uhh2::AnalysisModule {
+public:
+    explicit PrimaryVertexCleaner(const PrimaryVertexId & vtx_id = StandardPrimaryVertexId());
+    virtual bool process(uhh2::Event & event) override;
+    
+private:
+    PrimaryVertexId vtx_id;
+};
+
 /** \brief Keep only muon passing a given muon id
  * 
  * The muon id is passed as function with the signature
@@ -32,7 +47,6 @@ private:
  */
 class MuonCleaner : public uhh2::AnalysisModule {
 public:
-    typedef std::function<bool (const Muon &, const uhh2::Event &)> muon_id_type;
     
     explicit MuonCleaner(const MuonId & muon_id);
     virtual bool process(uhh2::Event & event) override;
