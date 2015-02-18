@@ -34,8 +34,6 @@ public:
         double ptmin = 0.0;
         double etamax = 1e10;
 
-        bool runOnMiniAOD = true;
-
         Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_, const std::string & dest_,
                 const std::string & dest_branchname_ = ""):
             ctx(ctx_), cc(std::move(cc_)), src(src_), dest(dest_), dest_branchname(dest_branchname_){

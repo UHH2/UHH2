@@ -19,7 +19,6 @@ public:
 
     virtual ~NtupleWriterJets();
 private:
-    bool runOnMiniAOD;
     edm::InputTag src;
     edm::EDGetToken src_token;
     float ptmin, etamax;
@@ -48,7 +47,6 @@ public:
     virtual ~NtupleWriterTopJets();
 
 private:
-    bool runOnMiniAOD;
     edm::InputTag src;
     float ptmin, etamax;
     bool do_btagging, do_btagging_subjets;

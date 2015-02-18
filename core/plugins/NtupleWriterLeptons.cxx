@@ -86,6 +86,7 @@ NtupleWriterMuons::NtupleWriterMuons(Config & cfg, bool set_muons_member){
         muons_handle = cfg.ctx.get_handle<vector<Muon>>("muons");
     }
     src_token = cfg.cc.consumes<std::vector<pat::Muon>>(cfg.src);
+    pv_token = cfg.cc.consumes<std::vector<reco::Vertex>>(cfg.pv_src);
 }
 
 NtupleWriterMuons::~NtupleWriterMuons(){}
@@ -93,6 +94,15 @@ NtupleWriterMuons::~NtupleWriterMuons(){}
 void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
    edm::Handle<std::vector<pat::Muon>> mu_handle;
    event.getByToken(src_token, mu_handle);
+   
+   edm::Handle<std::vector<reco::Vertex>> pv_handle;
+   event.getByToken(pv_token, pv_handle);
+   if(pv_handle->empty()){
+       cout << "WARNING: no PVs found, not writing muons!" << endl;
+       return;
+   }
+   const auto & PV = pv_handle->front();
+   
    vector<Muon> mus;
    for (const pat::Muon & pat_mu : *mu_handle) {
      mus.emplace_back();
@@ -102,50 +112,25 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
      mu.set_eta( pat_mu.eta());
      mu.set_phi( pat_mu.phi());
      mu.set_energy( pat_mu.energy());
-     mu.set_vertex_x ( pat_mu.vertex().x());
-     mu.set_vertex_y ( pat_mu.vertex().y());
-     mu.set_vertex_z ( pat_mu.vertex().z());
-     mu.set_dB ( pat_mu.dB());
-     mu.set_neutralHadronIso ( pat_mu.neutralHadronIso());
-     mu.set_chargedHadronIso ( pat_mu.chargedHadronIso());
-     mu.set_trackIso ( pat_mu.trackIso());
-     mu.set_photonIso ( pat_mu.photonIso());
-     mu.set_puChargedHadronIso ( pat_mu.puChargedHadronIso());
-     mu.set_isGlobalMuon ( pat_mu.isGlobalMuon());
-     mu.set_isPFMuon ( pat_mu.isPFMuon());
-     mu.set_isStandAloneMuon ( pat_mu.isStandAloneMuon());
-     mu.set_isTrackerMuon ( pat_mu.isTrackerMuon());
-     mu.set_numberOfMatchedStations ( pat_mu.numberOfMatchedStations());
-     reco::TrackRef globalTrack = pat_mu.globalTrack();
-     if(!globalTrack.isNull()){
-       mu.set_globalTrack_chi2 ( globalTrack->chi2());
-       mu.set_globalTrack_ndof ( globalTrack->ndof());
-       mu.set_globalTrack_d0 ( globalTrack->d0());
-       mu.set_globalTrack_d0Error ( globalTrack->d0Error());
-       mu.set_globalTrack_numberOfValidHits ( globalTrack->numberOfValidHits());
-       mu.set_globalTrack_numberOfLostHits ( globalTrack->numberOfLostHits());
-       mu.set_globalTrack_numberOfValidMuonHits(globalTrack->hitPattern().numberOfValidMuonHits() );
-     } // otherwise; keep them at 0
-     reco::TrackRef innerTrack = pat_mu.innerTrack();
-     if(!innerTrack.isNull()){
-       mu.set_innerTrack_chi2 ( innerTrack->chi2());
-       mu.set_innerTrack_ndof ( innerTrack->ndof());
-       mu.set_innerTrack_d0 ( innerTrack->d0());
-       mu.set_innerTrack_d0Error ( innerTrack->d0Error());
-       mu.set_innerTrack_numberOfValidHits ( innerTrack->numberOfValidHits());
-       mu.set_innerTrack_numberOfLostHits ( innerTrack->numberOfLostHits());
-       mu.set_innerTrack_trackerLayersWithMeasurement ( innerTrack->hitPattern().trackerLayersWithMeasurement());
-       mu.set_innerTrack_numberOfValidPixelHits ( innerTrack->hitPattern().numberOfValidPixelHits());
-     } // otherwise; keep them at 0
-     reco::TrackRef outerTrack = pat_mu.outerTrack();
-     if(!outerTrack.isNull()){
-       mu.set_outerTrack_chi2 ( outerTrack->chi2());
-       mu.set_outerTrack_ndof ( outerTrack->ndof());
-       mu.set_outerTrack_d0 ( outerTrack->d0());
-       mu.set_outerTrack_d0Error ( outerTrack->d0Error());
-       mu.set_outerTrack_numberOfValidHits ( outerTrack->numberOfValidHits());
-       mu.set_outerTrack_numberOfLostHits ( outerTrack->numberOfLostHits());
-     } // otherwise; keep them at 0
+     
+     mu.set_dxy(pat_mu.muonBestTrack()->dxy(PV.position()));
+     mu.set_dxy_error(pat_mu.muonBestTrack()->dxyError());
+     mu.set_dz(pat_mu.muonBestTrack()->dz(PV.position()));
+     mu.set_dz_error(pat_mu.muonBestTrack()->dzError());
+     
+     mu.set_bool(Muon::global, pat_mu.isGlobalMuon());
+     mu.set_bool(Muon::pf, pat_mu.isPFMuon());
+     mu.set_bool(Muon::tracker, pat_mu.isTrackerMuon());
+     mu.set_bool(Muon::standalone, pat_mu.isStandAloneMuon());
+     
+     mu.set_bool(Muon::soft, pat_mu.isSoftMuon(PV));
+     mu.set_bool(Muon::tight, pat_mu.isTightMuon(PV));
+     mu.set_bool(Muon::highpt, pat_mu.isHighPtMuon(PV));
+     
+     mu.set_sumChargedHadronPt(pat_mu.pfIsolationR04().sumChargedHadronPt);
+     mu.set_sumNeutralHadronEt(pat_mu.pfIsolationR04().sumNeutralHadronEt);
+     mu.set_sumPhotonEt(pat_mu.pfIsolationR04().sumPhotonEt);
+     mu.set_sumPUPt(pat_mu.pfIsolationR04().sumPUPt);
    }
    uevent.set(handle, move(mus));
    if(muons_handle){
@@ -167,8 +152,6 @@ NtupleWriterTaus::NtupleWriterTaus(Config & cfg, bool set_taus_member){
 
 NtupleWriterTaus::~NtupleWriterTaus(){}
 
-
-
 void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
     edm::Handle< std::vector<pat::Tau> > tau_handle;
     event.getByToken(src_token, tau_handle);
@@ -178,7 +161,7 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          if(fabs(pat_tau.eta()) > etamax) continue;
          taus.emplace_back();
          Tau & tau = taus.back();
-
+         
          tau.set_charge( pat_tau.charge());
          tau.set_pt( pat_tau.pt());
          tau.set_eta( pat_tau.eta());
@@ -188,8 +171,8 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          // use the macro to avoid typos: using this macro assures that the enum name
          // used in the same as the string used for the pat tauID.
          #define FILL_TAU_BIT(tauidname) tau.set_bool(Tau:: tauidname, pat_tau.tauID(#tauidname) > 0.5)
-         
-         FILL_TAU_BIT(againstElectronLoose);         //  0 
+        
+         FILL_TAU_BIT(againstElectronLoose);         //  0
          FILL_TAU_BIT(againstElectronMedium);
          FILL_TAU_BIT(againstElectronTight);
          FILL_TAU_BIT(againstElectronVLooseMVA5);
@@ -199,7 +182,7 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          FILL_TAU_BIT(againstElectronVTightMVA5);
          FILL_TAU_BIT(againstMuonLoose);
          FILL_TAU_BIT(againstMuonMedium);
-         FILL_TAU_BIT(againstMuonTight);            // 10 
+         FILL_TAU_BIT(againstMuonTight);            // 10
          FILL_TAU_BIT(againstMuonLoose3);
          FILL_TAU_BIT(againstMuonTight3);
          FILL_TAU_BIT(againstMuonLooseMVA);

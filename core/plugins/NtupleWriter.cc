@@ -184,7 +184,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
-  runOnMiniAOD = iConfig.getParameter<bool>("runOnMiniAOD");
+  
+  auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 
   // important: initialize first all module_writers, so that they can
   // inform the ges what they write to the uhh2::Event
@@ -193,7 +194,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       auto electron_source = iConfig.getParameter<edm::InputTag>("electron_source");
       NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
       cfg.id_sources = iConfig.getParameter<edm::ParameterSet>("electron_id_sources");
-      cfg.runOnMiniAOD = runOnMiniAOD;
       writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true));
   }
   if(doMuons){
@@ -201,7 +201,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       auto muon_sources = iConfig.getParameter<std::vector<std::string> >("muon_sources");
       for(size_t i=0; i< muon_sources.size(); ++i){
           NtupleWriterMuons::Config cfg(*context, consumesCollector(), muon_sources[i], muon_sources[i]);
-          cfg.runOnMiniAOD = runOnMiniAOD;
+          assert(pv_sources.size() > 0); // note: pvs are required for muon id.
+          cfg.pv_src = pv_sources[0];
           writer_modules.emplace_back(new NtupleWriterMuons(cfg, i==0));
       }
   }
@@ -212,7 +213,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       auto tau_etamax = iConfig.getParameter<double> ("tau_etamax");
       for(size_t i=0; i< tau_sources.size(); ++i){
           NtupleWriterTaus::Config cfg(*context, consumesCollector(), tau_sources[i], tau_sources[i]);
-          cfg.runOnMiniAOD = runOnMiniAOD;
           cfg.ptmin = tau_ptmin;
           cfg.etamax = tau_etamax;
           writer_modules.emplace_back(new NtupleWriterTaus(cfg, i==0));
@@ -225,7 +225,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       double jet_etamax = iConfig.getParameter<double> ("jet_etamax");
       for(size_t i=0; i< jet_sources.size(); ++i){
           NtupleWriterJets::Config cfg(*context, consumesCollector(), jet_sources[i], jet_sources[i]);
-          cfg.runOnMiniAOD = runOnMiniAOD;
           cfg.ptmin = jet_ptmin;
           cfg.etamax = jet_etamax;
           writer_modules.emplace_back(new NtupleWriterJets(cfg, i==0));
@@ -254,7 +253,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     assert(qjets_sources.size() <= topjet_substructure_variables_sources.size());
     for(size_t j=0; j< topjet_sources.size(); ++j){
         NtupleWriterTopJets::Config cfg(*context, consumesCollector(), topjet_sources[j], topjet_sources[j]);
-        cfg.runOnMiniAOD = runOnMiniAOD;
         cfg.ptmin = topjet_ptmin;
         cfg.etamax = topjet_etamax;
         if(j < topjet_substructure_variables_sources.size()){
@@ -353,7 +351,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
   }
   if(doPV){
-    auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
     pvs.resize(pv_sources.size());
     for(size_t j=0; j< pv_sources.size(); ++j){  
       pv_tokens.push_back(consumes<vector<reco::Vertex> >(pv_sources[j]));
@@ -365,7 +362,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   }
   if(doGenInfo){
     genparticle_source= iConfig.getParameter<edm::InputTag>("genparticle_source");
-    if(runOnMiniAOD && doAllGenParticles) stablegenparticle_source = iConfig.getParameter<edm::InputTag>("stablegenparticle_source");
+    if(doAllGenParticles) stablegenparticle_source = iConfig.getParameter<edm::InputTag>("stablegenparticle_source");
     event->genInfo = new GenInfo();
     event->genparticles = new vector<GenParticle>();
     branch(tr, "genInfo","GenInfo", event->genInfo);
@@ -551,7 +548,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
      
      //store stable gen particles from packed collection
-     if(doAllGenParticles && runOnMiniAOD){
+     if(doAllGenParticles){
        edm::Handle<edm::View<pat::PackedGenParticle> > packed;
        // use packed particle collection for all STABLE (status 1) particles
        iEvent.getByLabel(stablegenparticle_source,packed);

@@ -16,7 +16,6 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member) {
     }
     src = cfg.src;
     src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
-    runOnMiniAOD = cfg.runOnMiniAOD;
 }
 
 NtupleWriterJets::~NtupleWriterJets(){}
@@ -111,8 +110,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
 }
 
 
-NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): runOnMiniAOD(cfg.runOnMiniAOD),
-        ptmin(cfg.ptmin), etamax(cfg.etamax){
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): ptmin(cfg.ptmin), etamax(cfg.etamax){
     handle = cfg.ctx.declare_event_output<vector<TopJet>>(cfg.dest_branchname, cfg.dest);
     if(set_jets_member){
         topjets_handle = cfg.ctx.get_handle<vector<TopJet>>("topjets");
