@@ -8,7 +8,7 @@ bool MuonIDKinematic::operator()(const Muon & muon, const Event &) const {
     return muon.pt() > ptmin and fabs(muon.eta()) < etamax;
 }
     
-bool MuonIDTight::operator()(const Muon & muon, const Event & event) const {
+bool MuonIDTight::operator()(const Muon & muon, const Event &) const {
     return muon.get_bool(Muon::tight);
 }
 
