@@ -13,6 +13,7 @@
  * to read what kind of argument is expected at some places.
  */
 typedef std::function<bool (const Jet &, const uhh2::Event &)> JetId;
+typedef std::function<bool (const PrimaryVertex &, const uhh2::Event &)> PrimaryVertexId;
 typedef std::function<bool (const Electron &, const uhh2::Event &)> ElectronId;
 typedef std::function<bool (const Muon &, const uhh2::Event &)> MuonId;
 typedef std::function<bool (const Tau &, const uhh2::Event &)> TauId;
@@ -35,6 +36,14 @@ public:
     
 private:
     float min_pt, max_eta;
+};
+
+/// The standard primary vertex id, i.e. ndof >= 4, |z| < 24cm, rho < 2cm
+class StandardPrimaryVertexId {
+public:
+    bool operator()(const PrimaryVertex & pv, const uhh2::Event &) const{
+        return pv.ndof() >= 4.0 && std::abs(pv.z()) < 24.0 && pv.rho() < 2.0;
+    }
 };
 
 
