@@ -20,4 +20,11 @@ bool ElectronID_CSA14_50ns_loose(const Electron & electron, const uhh2::Event & 
 bool ElectronID_CSA14_50ns_medium(const Electron & electron, const uhh2::Event & event);
 bool ElectronID_CSA14_50ns_tight(const Electron & electron, const uhh2::Event & event);
 
+bool ElectronID_PHYS14_25ns_veto(const Electron & electron, const uhh2::Event & event);
+bool ElectronID_PHYS14_25ns_loose(const Electron & electron, const uhh2::Event & event);
 bool ElectronID_PHYS14_25ns_medium(const Electron & electron, const uhh2::Event & event);
+bool ElectronID_PHYS14_25ns_tight(const Electron & electron, const uhh2::Event & event);
+
+bool ElectronID_PHYS14_25ns_loose_noIso(const Electron & electron, const uhh2::Event & event);
+bool ElectronID_PHYS14_25ns_medium_noIso(const Electron & electron, const uhh2::Event & event);
+bool ElectronID_PHYS14_25ns_tight_noIso(const Electron & electron, const uhh2::Event & event);
