@@ -135,6 +135,8 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3;
     edm::Handle<edm::ValueMap<float>> h_qjets;
     
+    edm::Handle<pat::JetCollection> pat_topjets_with_cands;
+    
     if(!njettiness_src.empty()){
         event.getByLabel(edm::InputTag(njettiness_src, "tau1"), h_njettiness1);
         event.getByLabel(edm::InputTag(njettiness_src, "tau2"), h_njettiness2);
@@ -142,6 +144,9 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     }
     if(!qjets_src.empty()){
         event.getByLabel(edm::InputTag(qjets_src, "QjetsVolatility"), h_qjets);
+    }
+    if(!njettiness_src.empty() || !qjets_src.empty()){
+        event.getByToken(substructure_variables_src_token, pat_topjets_with_cands);
     }
 
     vector<TopJet> topjets;
@@ -162,18 +167,17 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         
         // match a unpruned jet according to topjets_with_cands:
         int i_pat_topjet_wc = -1;
-        edm::Handle<pat::JetCollection> pat_topjets_with_cands;
         if(!njettiness_src.empty() || !qjets_src.empty()){
-            event.getByToken(substructure_variables_src_token, pat_topjets_with_cands);
+            double drmin = numeric_limits<double>::infinity();
             for (size_t i_wc=0; i_wc < pat_topjets_with_cands->size(); ++i_wc) {
                 const auto & cand = (*pat_topjets_with_cands)[i_wc];
-                double dphi = reco::deltaPhi(cand.phi(), pat_topjet.phi());
-                if (fabs(dphi)<0.5 && fabs(cand.eta()-pat_topjet.eta())<0.5){ // be generous: filtering, pruning... can change jet axis
+                auto dr = reco::deltaR((*pat_topjets_with_cands)[i_wc], pat_topjet);
+                if(dr < drmin){
                     i_pat_topjet_wc = i_wc;
-                    break;
+                    drmin = dr;
                 }
             }
-            if (i_pat_topjet_wc >= 0){
+            if (i_pat_topjet_wc >= 0 && drmin < 1.0){ // be genereous: pruning can change jet axis quite a lot (esp. for DR=1.5 jets as in heptoptag)
                 auto ref = edm::Ref<pat::JetCollection>(pat_topjets_with_cands, i_pat_topjet_wc);
                 if(!njettiness_src.empty()){
                     topjet.set_tau1((*h_njettiness1)[ref]);
