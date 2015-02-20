@@ -2,18 +2,19 @@
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
     <Library Name="libTestSUHH2core"/>
+    <!-- <Package Name="SUHH2examples.par" /> -->
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
        <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
-        <InputData Lumi="92270" NEventsMax="10000" Type="MC" Version="TestC" Cacheable="False">
-            <In FileName="./uhh2.AnalysisModuleRunner.MC.TestB.root" Lumi="0.0"/> 
-            <InputTree Name="AnalysisTree" />
+        <InputData Lumi="92270" NEventsMax="100" Type="noMC" Version="TestMetadataOut" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v2/signals_WZ/MC_WJets_LNu_20x25_106_Ntuple.root" Lumi="0.0"/> 
+            <InputTree Name="AnalysisTree" /> 
             <OutputTree Name="AnalysisTree" />
         </InputData>                
             
         <UserConfig> 
             <Item Name="readCommonInfo" Value="False" /> 
-            <Item Name="AnalysisModule" Value="MetaDataC" />
+            <Item Name="AnalysisModule" Value="TestMetadataOut" /> 
         </UserConfig>
     </Cycle>
 </JobConfiguration>

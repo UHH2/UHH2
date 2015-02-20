@@ -173,10 +173,7 @@ public:
 
     virtual ~JetResolutionSmearer();
 private:
-    void jer_already_applied();
     
     bool smear_met;
     int direction = 0; // -1 = down, +1 = up, 0 = nominal
-    bool first_event = true;
-    uhh2::Context::MetadataObject<bool> jer_applied;
 };

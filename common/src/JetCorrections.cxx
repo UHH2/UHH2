@@ -251,21 +251,13 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
         // direction = 0 is default
         throw runtime_error("JetResolutionSmearer: invalid value jersmear_direction='" + dir + "' (valid: 'nominal', 'up', 'down')");
     }
-    jer_applied = ctx.create_metadata<bool>("jer_applied", true);
-    // make sure to get value only from input file, otherwise the assignment in 'process' would be reported as well,
-    // and this class would complain about its own setting jer_applied to true.
-    ctx.register_metadata_callback<bool>("jer_applied", [this](bool){this->jer_already_applied();}, Context::metadata_source_policy::infile_only);
-}
-
-void JetResolutionSmearer::jer_already_applied(){
-    throw runtime_error("JetResolutionSmearer: tried to apply jet resolution smearing, although metadata indicates that it already has been applied!");
+    if(ctx.get("meta_jer_applied", "") == "true"){
+        throw runtime_error("JetResolutionSmearer: tried to apply jet resolution smearing, although metadata indicates that it already has been applied!");
+    }
+    ctx.set_metadata("jer_applied", "true");
 }
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
-    if(first_event){
-        jer_applied = true;
-        first_event = false;
-    }
     //numbers taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
     // from 8TeV JER measurement.
     constexpr const size_t n = 7;
