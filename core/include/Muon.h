@@ -17,7 +17,7 @@ public:
   };
   
   bool get_bool(bool_id i) const {
-      return (id_bits | (uint64_t(1) << static_cast<uint64_t>(i)));
+      return (id_bits & (uint64_t(1) << static_cast<uint64_t>(i)));
   }
   
   void set_bool(bool_id i, bool value) {
