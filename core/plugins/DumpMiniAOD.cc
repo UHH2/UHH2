@@ -3,6 +3,7 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
 
 using namespace std;
 
@@ -35,10 +36,32 @@ class DumpMiniAOD: public edm::EDAnalyzer {
               cout << " pu=" << ele.pfIsolationVariables().sumPUPt << "; direct=" << ele.puChargedHadronIso() << endl;
           }
       }
+      
+      void dump_muons(const edm::Event & event){
+          edm::Handle<std::vector<reco::Vertex>> pv_handle;
+          event.getByLabel("offlineSlimmedPrimaryVertices", pv_handle);
+          if(pv_handle->empty()){
+             cout << "WARNING: no PVs found, not writing muons!" << endl;
+             return;
+          }
+          const auto & PV = pv_handle->front();
+          
+          edm::Handle<std::vector<pat::Muon>> mu_handle;
+          event.getByLabel("slimmedMuons", mu_handle);
+          assert(mu_handle.isValid());
+          
+          //cout << endl;
+          for (const pat::Muon & pat_mu : *mu_handle) {
+            auto dz = pat_mu.muonBestTrack()->dz(PV.position());
+            bool tight = pat_mu.isTightMuon(PV);
+            cout << "Muon pt=" << pat_mu.pt() << "; eta=" << pat_mu.eta() << "; dz=" << dz << "; tight=" << tight << endl;
+          }
+      }
        
        
       virtual void analyze(const edm::Event& event, const edm::EventSetup&) override{
-          dump_electrons(event);
+          //dump_electrons(event);
+          dump_muons(event);
       }
 };
 
