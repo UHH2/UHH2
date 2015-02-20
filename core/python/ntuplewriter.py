@@ -61,7 +61,6 @@ process.out.outputCommands.extend([
     "keep *_patJetsHepTopTagCHSPacked_*_*",
     "keep *_patJetsHepTopTagCHSSubjets_*_*",
     "keep *_prunedPrunedGenParticles_*_*",
-    "keep *_electronIDValueMapProducer_eleFull5x5SigmaIEtaIEta_*",
     "keep *_egmGsfElectronIDs_*_*"
 ])
 
@@ -70,7 +69,7 @@ process.out.outputCommands.extend([
 process.load('Configuration.StandardSequences.Geometry_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.GlobalTag.globaltag = 'PHYS14_25_V3::All'
+process.GlobalTag.globaltag = 'PHYS14_25_V2::All'  # NOTE: use V2, not V3, as V3 has broken jet energy corrections.
 
 from RecoJets.Configuration.RecoPFJets_cff import *
 from RecoJets.JetProducers.fixedGridRhoProducerFastjet_cfi import *
@@ -328,6 +327,14 @@ add_fatjets_subjets(process, 'ca15PuppiJets', 'hepTopTagPuppi', genjets_name = l
 add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsSoftDrop')
 
 
+# TODO: this is a test for fixing puppi b-tagging. If it works, also apply to other jets!
+# NOTE: this uses puppi particles for explicit jet-track association, which has not
+# been studied extensively yet. In principle, puppi particles should be Ok as we use charged
+# particles only, and those remaining after chs should be those after puppi, so chs and puppi
+# should not be too different for this case ...
+process.pfImpactParameterTagInfosCa15PuppiJetsFilteredSubjets.candidates = cms.InputTag('puppi')
+
+
 # configure PAT for miniAOD:
 process.patJetPartons.particles = 'prunedGenParticles'
 
@@ -416,9 +423,11 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         # jets to match to the topjets in order to get njettiness, in the same order as topjet_sources.
         # Note that no substructure variables are added for the softdrop jets.
         topjet_substructure_variables_sources = cms.vstring("patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa8CHSJets", "patJetsCa15CHSJets",
-                "patJetsCa15PuppiJets", "patJetsCa8PuppiJets", "patJetsCa8PuppiJets", "patJetsCa15PuppiJets"),
+                "patJetsCa15PuppiJets", "patJetsCa8PuppiJets", "patJetsCa8PuppiJets", "patJetsCa15PuppiJets",
+                "patJetsCa8CHSJets", "patJetsCa8PuppiJets"),
         topjet_njettiness_sources = cms.vstring("NjettinessCa15CHS", "NjettinessCa8CHS", "NjettinessCa8CHS", "NjettinessCa15CHS",
-                "NjettinessCa15Puppi", "NjettinessCa8Puppi", "NjettinessCa8Puppi", "NjettinessCa15Puppi"),
+                "NjettinessCa15Puppi", "NjettinessCa8Puppi", "NjettinessCa8Puppi", "NjettinessCa15Puppi",
+                "NjettinessCa8CHS", "NjettinessCa8Puppi"),
         # switch off qjets for now, as it takes a long time:
         #topjet_qjets_sources = cms.vstring("QJetsCa15CHS", "QJetsCa8CHS", "QJetsCa8CHS", "QJetsCa15CHS"),
         
