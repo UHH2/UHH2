@@ -61,15 +61,15 @@ class TestJERSmear: public uhh2::AnalysisModule {
 public:
     explicit TestJERSmear(Context & ctx) {
         jer.reset(new JetResolutionSmearer(ctx));
-        //printer_before.reset(new JetPrinter("before", 20.0));
-        //printer_after.reset(new JetPrinter("after", 20.0));
+        printer_before.reset(new JetPrinter("before", 20.0));
+        printer_after.reset(new JetPrinter("after", 20.0));
     }
     
     virtual bool process(Event & e) override {
-        //printer_before->process(e);
+        printer_before->process(e);
         auto jets_before = *e.jets;
         jer->process(e);
-        //printer_after->process(e);
+        printer_after->process(e);
         assert(compare_jets(jets_before, *e.jets) <= 2);
         return true;
     }

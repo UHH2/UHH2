@@ -285,10 +285,12 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
     }
     for(unsigned int i=0; i<event.jets->size(); ++i) {
         auto & jet = event.jets->at(i);
-        jet.set_genjet(event.genjets);
-        float genpt = jet.genjet_pt();
-        //ignore unmatched jets (which have zero vector) or jets with very low pt:
-        if(genpt < 15.0) {
+        // find next genjet:
+        auto closest_genjet = closestParticle(jet, *event.genjets);
+        // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt:
+        if(closest_genjet == nullptr || deltaR(*closest_genjet, jet) > 0.3) continue;
+        auto genpt = closest_genjet->pt();
+        if(genpt < 15.0f) {
             continue;
         }
         LorentzVector jet_v4 = jet.v4();
