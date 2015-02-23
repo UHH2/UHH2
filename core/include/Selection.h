@@ -46,6 +46,13 @@ public:
         selections.emplace_back(new TSEL(cargs...));
         descriptions.push_back(description);
     }
+
+    /// add an already defined selection -> WARNING: if this is an AndSelection producing cutflow histograms, bear in mind that this might
+    /// be filled twice in the event!
+    void add(const std::string & description, std::shared_ptr<Selection> sel){
+        selections.push_back(sel);
+        descriptions.push_back(description);   
+    }
     
     virtual ~AndSelection();
     
@@ -58,7 +65,7 @@ private:
     
     std::string cutflow_hname;
     
-    std::vector<std::unique_ptr<Selection> > selections;
+    std::vector<std::shared_ptr<Selection> > selections;
     std::vector<std::string> descriptions;
     
     TH1D * cutflow_raw, * cutflow_weighted; // owned by Context

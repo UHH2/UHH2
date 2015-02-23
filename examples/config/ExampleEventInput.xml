@@ -10,7 +10,6 @@
                     <In FileName="./uhh2.AnalysisModuleRunner.MC.TTbar.root" Lumi="0.0"/> 
                     <InputTree Name="AnalysisTree" /> 
                     <OutputTree Name="AnalysisTree" />
-                    <!-- <MetadataOutputTree Name="Tree2" /> -->
                 </InputData>                
                 
             <UserConfig>

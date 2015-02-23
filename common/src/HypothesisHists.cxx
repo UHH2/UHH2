@@ -92,7 +92,7 @@ void HypothesisHists::fill(const uhh2::Event & e){
   M_ttbar_rec->Fill(mttbar_rec, weight);
   Pt_ttbar_rec->Fill ( ptttbar_rec, weight);
   
-  if( e.get_state(h_ttbargen) == uhh2::Event::state::valid ){
+  if(e.is_valid(h_ttbargen)){
     const auto & ttbargen = e.get(h_ttbargen);
     mttbar_gen = ( ttbargen.Top().v4() + ttbargen.Antitop().v4()).M();
     ptttbar_gen = ( ttbargen.Top().v4() + ttbargen.Antitop().v4()).Pt();

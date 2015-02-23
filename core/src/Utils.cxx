@@ -13,8 +13,6 @@
 using namespace std;
 using namespace uhh2;
 
-const double uhh2::infinity = std::numeric_limits<double>::infinity();
-
 bool uhh2::string2bool(const std::string & s){
     static const char * true_strings[] = {"true", "yes", "1", "on"};
     static const char * false_strings[] = {"false", "no", "0", "off"};
@@ -82,6 +80,27 @@ void uhh2::trim(string & s, const std::string & to_trim){
     else{
         s = "";
     }
+}
+
+std::vector<std::string> uhh2::split(const std::string & s, const std::string & splitting){
+    size_t current_pos = 0;
+    std::vector<std::string> result;
+    while(true){
+        size_t p0 = s.find_first_not_of(splitting, current_pos);
+        if(p0 == string::npos) break;
+        size_t p1 = s.find_first_of(splitting, p0);
+        if(p1 == string::npos){
+            // take up to end of string and we're done:
+            result.emplace_back(s.substr(p0));
+            break;
+        }
+        else{
+            assert(p1 > p0);
+            result.emplace_back(s.substr(p0, p1 - p0));
+            current_pos = p1;
+        }
+    }
+    return result;
 }
 
 

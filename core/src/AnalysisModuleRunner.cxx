@@ -21,6 +21,8 @@
 using namespace std;
 using namespace uhh2;
 
+using boost::optional;
+
 using uhh2::detail::EventHelper;
 
 namespace {
@@ -122,34 +124,6 @@ void connect_input_branch(TBranch * branch, const std::type_info & ti, void ** a
     }
 }
 
-
-class MetaDataInputTree {
-public:
-    explicit MetaDataInputTree(TTree * tree_): tree(tree_), intree(tree){
-        o_nevents = intree.open_branch<int64_t>("nevents");
-        o_data = intree.open_branch("data");
-        cout << "Setup metadata input tree with name '" << string(tree->GetName()) << "' holding metadata of type '" << demangle(o_data->type().name()) << "'" << endl;
-    }
-    
-    const shared_ptr<obj> & data() const {
-        return o_data;
-    }
-    
-    // index is the event index
-    // update metadata (including calling the callbacks(!))
-    void update_metadata(int64_t index, SFrameContext * ctx);
-    
-private:
-    TTree * tree; // belongs to input file
-    InTree intree;
-    
-    shared_ptr<obj> o_nevents, o_data;
-    
-    int64_t valid_from = 0, valid_to = 0; // current data is valid for event tree indices [valid_from, valid_to)
-    
-    int64_t current_md_entry = -1; // entry number of metadata tree of current data
-};
-
 }
 
 
@@ -169,7 +143,6 @@ namespace uhh2 {
  */
 class SFrameContext: public uhh2::Context {
 public:
-    friend class ::MetaDataInputTree;
     
     SFrameContext(AnalysisModuleRunner & base, const SInputData& sin, GenericEventStructure & es);
 
@@ -183,12 +156,15 @@ public:
     void begin_event(Event & event);
     void setup_output(Event & event); // should be called after processing the first event which is written to the output
     
-    void write_metadata_trees(); // call TTree::Write for all metadata trees; is called just before closing output file
-    void init_metadata_output(); // create all metadata trees and branches; is called just before writing the first event to the output
+    void write_metadata_tree();
+    void first_input_file(); // called for the first input file of the dataset, in addition to begin_input_file, but with no event (yet)
 
     std::string event_treename;
     
-    TTree * outtree = 0; // output tree. Can be 0 in case no output should be written.
+    TTree * outtree = nullptr; // output tree. Can be 0 in case no output should be written.
+    
+    void do_declare_event_input_handle(const std::type_info & ti, const std::string & bname, const GenericEvent::RawHandle & handle);
+    void do_declare_event_output_handle(const std::type_info & ti, const std::string & bname, const GenericEvent::RawHandle & handle);
 
 private:
 
@@ -197,12 +173,17 @@ private:
     // input branches is done in begin_input_file.
     virtual void do_declare_event_input(const std::type_info & ti, const std::string & bname, const std::string & mname) override;
     virtual void do_declare_event_output(const std::type_info & ti, const std::string & bname, const std::string & mname) override;
+    
+    // read metadata from a tree "uhh2_meta" in dir into data. Returns whether the tree
+    // was found or not. Also checks consistency opf all entries in case there is more than one entry
+    // in the metadata tree (in case of merged output).
+    static optional<map<string, string>> read_metadata(TDirectory * dir);
 
     TDirectory * get_tmpdir();
 
     AnalysisModuleRunner & base;
 
-    TTree * input_tree = 0; // input event tree
+    TTree * input_tree = nullptr; // input event tree
 
     // IMPORTANT: branchinfo must not move in memory
     // to not invalidate the pointer to addr, which ROOT trees need.
@@ -233,69 +214,11 @@ private:
 
 
     // metadata handling
-    struct metadata_output_handler {
-        TTree * event_outtree;
-        
-        TTree * tree; // belongs to root output file / directory
-        std::unique_ptr<OutTree> outtree;
-        
-        std::shared_ptr<obj> o_data;
-        std::shared_ptr<obj> o_nevents;
-        
-        int64_t last_nentries = 0;
-        
-        void write_current_metadata(){
-            int64_t current_nentries = event_outtree->GetEntries();
-            int64_t valid_for = current_nentries - last_nentries;
-            if(valid_for == 0) return;
-            o_nevents->assign<int64_t>(valid_for);
-            last_nentries = current_nentries;
-            tree->Fill();
-        }
-    };
-
-    std::map<std::string, metadata_output_handler> metadata_out; // metadata name to info
-    
-    struct metadata_input_info {
-        const type_info & type;
-        bool found = true;
-        
-        explicit metadata_input_info(const std::type_info & ti_): type(ti_){
-        }
-    };
-    
-    // per input file:
-    std::map<std::string, std::unique_ptr<MetaDataInputTree>> metadata_input_trees;
-    // dataset-global, to check consistency across input files:
-    std::map<std::string, metadata_input_info> metadata_input_infos;
+    TTree * metadata_tree; // for output
+    optional<map<string, string>> metadata; // from input. none if input has no metadata
 };
 
 }
-
-
-void MetaDataInputTree::update_metadata(int64_t index, SFrameContext * ctx){
-    // update metadata from input file if necessary
-    if(valid_from <= index && index < valid_to) return;
-    
-    // need to update. Tell others:
-    ctx->notify_callbacks_before(o_data->address());
-    const int64_t nentries = tree->GetEntries();
-    if(index < valid_from){
-        current_md_entry = -1;
-        valid_from = valid_to = 0;
-    }
-    do{
-        ++current_md_entry;
-        if(current_md_entry == nentries){
-            throw runtime_error("inconsistent metadata: metadata does not cover all events");
-        }
-        tree->GetEntry(current_md_entry);
-        valid_from = valid_to;
-        valid_to += o_nevents->get<int64_t>();
-    }while(!(valid_from <= index && index < valid_to));
-    ctx->notify_callbacks_after(o_data->address());
-}
-
 
 SFrameContext::SFrameContext(AnalysisModuleRunner & base_, const SInputData& sin, GenericEventStructure & es_) :
         Context(es_), base(base_) {
@@ -324,9 +247,54 @@ SFrameContext::SFrameContext(AnalysisModuleRunner & base_, const SInputData& sin
     }
 }
 
+optional<map<string, string>> SFrameContext::read_metadata(TDirectory * dir){
+    TTree * meta_intree = dynamic_cast<TTree*>(dir->Get("uhh2_meta"));
+    if(meta_intree == nullptr){
+        return boost::none;
+    }
+    else{
+        string data;
+        string * pdata = &data;
+        meta_intree->SetBranchAddress("data", &pdata);
+        int n = meta_intree->GetEntries();
+        map<string, string> result;
+        for(int i=0; i<n; ++i){
+            meta_intree->GetEntry(i);
+            map<string, string> result_i;
+            // parse metadata into result_i:
+            size_t p = 0;
+            while (true){
+                size_t p_equal = data.find("===", p);
+                if(p_equal == string::npos){
+                    break;
+                }
+                size_t p_value_start = p_equal + 3;
+                size_t p_endline = data.find('\n', p_value_start);
+                if(p_endline == string::npos){
+                    break;
+                }
+                auto entry = make_pair(data.substr(p, p_equal - p), data.substr(p_value_start, p_endline - p_value_start));
+                result_i.insert(move(entry));
+                p = p_endline + 1;
+            }
+            if(i==0){
+                result = move(result_i);
+            }
+            else{
+                // check consistency:
+                if(result_i.size() != result.size() || !equal(result.begin(), result.end(), result_i.begin())){
+                    throw runtime_error("metadata tree has more than 1 entry, and entries are not consistent with each other");
+                }
+            }
+        }
+        return result;
+    }
+}
+
+
 TDirectory * SFrameContext::get_tmpdir() {
     // see SCycleBaseHist::GetTempDir (which is private ...):
-    static TDirectory* tempdir = 0;
+    static TDirectory* tempdir = nullptr;
     if (!tempdir) {
         gROOT->cd();
         tempdir = gROOT->mkdir("SFrameTempDir");
@@ -355,128 +323,82 @@ void SFrameContext::put(const string & path, TH1 * t) {
     gROOT->cd();
 }
 
-
-void SFrameContext::write_metadata_trees(){
+void SFrameContext::write_metadata_tree(){
     if(!outtree) return;
     // see SCycleNTupleBase::SaveOutputTrees
-    bool isProof = base.GetNTupleInput()->FindObject("PROOF_OUTPUTFILE"); //  SFrame::ProofOutputName = "PROOF_OUTPUTFILE"
+    bool isProof = base.GetNTupleInput()->FindObject("PROOF_OUTPUTFILE"); // SFrame::ProofOutputName = "PROOF_OUTPUTFILE"
     TDirectory * dir_before = gDirectory;
-    for(auto & m : metadata_out){
-        auto & info = m.second;
-        if(info.tree){
-            info.write_current_metadata();
-            if(info.tree->GetEntries() || !isProof){
-                TDirectory * dir = info.tree->GetDirectory();
-                if(dir)  dir->cd();
-                info.tree->Write();
-                info.tree->AutoSave();
-            }
-            info.tree->SetDirectory(0);
-            delete info.tree;
+    if(metadata_tree){
+        if(metadata_tree->GetEntries() || !isProof){
+            TDirectory * dir = metadata_tree->GetDirectory();
+            if(dir) dir->cd();
+            metadata_tree->Write();
+            metadata_tree->AutoSave();
         }
+        metadata_tree->SetDirectory(nullptr);
     }
+    delete metadata_tree;
     gDirectory = dir_before;
 }
 
-void SFrameContext::init_metadata_output(){
-    assert(outtree);
-    visit_metadata_for_output([this](const string & name, const shared_ptr<obj> & object) -> void {
-        auto it = metadata_out.insert(make_pair(name, metadata_output_handler()));
-        auto & info = it.first->second;
-        info.event_outtree = outtree;
-        auto dir = outtree->GetDirectory();
-        if(dir){
-            dir->cd();
+void SFrameContext::first_input_file() {
+    input_tree = base.GetInputTree(event_treename.c_str());
+    if (input_tree == nullptr) {
+        throw runtime_error("Could not find input tree '" + event_treename + "'");
+    }
+    auto dir = input_tree->GetDirectory();
+    std::map<std::string, std::string> data;
+    metadata = read_metadata(dir);
+    if(metadata){
+        // set all keys:
+        for(const auto & kv : *metadata){
+            set("meta_" + kv.first, kv.second);
         }
-        string treename = "meta_" + name;
-        info.tree = new TTree(treename.c_str(), treename.c_str()); // belongs to output dir
-        // put output TTree in the same directory as the event tree:
-        info.tree->SetDirectory(dir);
-        info.outtree.reset(new OutTree(info.tree));
-        info.o_data = object;
-        info.o_nevents = obj::create<int64_t>(0);
-        info.outtree->create_branch("data", info.o_data);
-        info.outtree->create_branch("nevents", info.o_nevents);
-        // install callback to be called *before* a metadata change, to ensure *old* value is written:
-        register_metadata_callback(object->type(), name, [&info](const void *){ info.write_current_metadata(); }, metadata_source_policy::handle_then_infile, true);
-    });
+    }
 }
 
 void SFrameContext::begin_input_file(Event & event) {
     input_tree = base.GetInputTree(event_treename.c_str());
-    if (input_tree == 0) {
+    if (input_tree == nullptr) {
         throw runtime_error("Could not find input tree '" + event_treename + "'");
     }
     for (auto & name_bi : event_input_bname2bi) {
         const string & bname = name_bi.first;
         branchinfo & bi = *name_bi.second;
         TBranch * branch = input_tree->GetBranch(bname.c_str());
-        if (branch == 0) {
+        if (branch == nullptr) {
             throw runtime_error("Could not find branch '" + bname + "' in tree '" + event_treename + "'");
         }
         connect_input_branch(branch, bi.ti, &bi.addr, bi.eraser);
-        event.set_unmanaged(bi.ti, bi.handle, bi.addr);
+        EventAccess_::set_unmanaged(event, bi.ti, bi.handle, bi.addr);
         bi.branch = branch;
     }
-    // discover metadata trees:
-    metadata_input_trees.clear();
-    for(auto & mi : metadata_input_infos){
-        mi.second.found = false;
-    }
-    auto dir = input_tree->GetDirectory();
-    if(!dir){
-        throw invalid_argument("input tree has no TDirectory");
-    }
-    TIter next(dir->GetListOfKeys());
-    while(TObject * obj = next()){
-        auto key = dynamic_cast<TKey*>(obj);
-        assert(key);
-        if(std::string(key->GetClassName()) == "TTree"){
-            auto treename = std::string(key->GetName());
-            if(treename.find("meta_") != 0) continue;
-            std::string metaname = treename.substr(strlen("meta_"));
-            auto tree = dynamic_cast<TTree*>(key->ReadObj());
-            assert(tree);
-            auto new_metadata_it = metadata_input_trees.insert(make_pair(metaname, make_unique<MetaDataInputTree>(tree)));
-            assert(new_metadata_it.second); // should be a new entry
-            const MetaDataInputTree & new_md_tree = *new_metadata_it.first->second;
-            // look whether we know about it already:
-            auto it = metadata_input_infos.find(metaname);
-            if(it != metadata_input_infos.end()){
-                // yes: do type checking:
-                if(it->second.type != new_md_tree.data()->type()){
-                    throw runtime_error("Found inconsistent type for metadata '" + metaname + "'");
-                }
-            }
-            else{
-                // no: save to trigger a consistency check in next input file ...
-                metadata_input_infos.insert(make_pair(metaname, metadata_input_info(new_md_tree.data()->type())));
-                // ... and announce the found metadata via the Context base class:
-                put_metadata(metaname, true, new_md_tree.data(), true);
-            }
-        }
-    }
     
-    for(auto & mi : metadata_input_infos){
-        if(!mi.second.found){
-            throw runtime_error("Did not find metadata of name '" + mi.first + "' in input file, although it has been there in previous files of this dataset.");
+    // check consistency of file metadata with previous metadata.
+    auto dir = input_tree->GetDirectory();
+    assert(dir);
+    auto thisfile_metadata = read_metadata(dir);
+    if(static_cast<bool>(thisfile_metadata) != static_cast<bool>(metadata)){
+        throw runtime_error("Inconsistent metadata presence in input files");
+    }
+    if(thisfile_metadata){
+        if(metadata->size() != thisfile_metadata->size() || !std::equal(thisfile_metadata->begin(), thisfile_metadata->end(), metadata->begin())){
+            throw runtime_error("Inconsistent metadata in input files");
         }
     }
 }
 
 void SFrameContext::begin_event(Event & event) {
-    event.invalidate_all();
+    EventAccess_::invalidate_all(event);
     auto ientry = input_tree->GetReadEntry();
     assert(ientry >= 0);
     for (const auto & name_bi : event_input_bname2bi) {
         name_bi.second->branch->GetEntry(ientry);
-        event.set_validity(name_bi.second->ti, name_bi.second->handle, true);
-    }
-    // update metadata:
-    for(const auto & md : metadata_input_trees){
-        md.second->update_metadata(ientry, this);
+        EventAccess_::set_validity(event, name_bi.second->ti, name_bi.second->handle, true);
     }
 }
+
+
 
 void SFrameContext::setup_output(Event & event) {
     assert(!outtree); // prevent calling it twice
@@ -490,19 +412,47 @@ void SFrameContext::setup_output(Event & event) {
     assert(outtree);
     for (auto & name_bi : event_output_bname2bi) {
         auto & bi = *name_bi.second;
-        bi.addr = event.get(bi.ti, bi.handle, false);
+        bi.addr = EventAccess_::get(event, bi.ti, bi.handle, false, false);
         tree_branch(outtree, name_bi.first, bi.addr, &bi.addr, bi.ti);
     }
+    // write metadata as string to the output.
+    // Unfortunately, writing a single string is not straight-forward in ROOT,
+    // at least not covering all the different cases (PROOF mode, local mode, etc.).
+    // Therefore, write the string into a TTree.
+    string metadata_string; // all metadata in a single string
+    auto settings = get_all();
+    for(const auto & kv : settings){
+        const auto & key = kv.first;
+        const auto & value = kv.second;
+        if(!key.find("meta_") == 0) continue;
+        metadata_string += key.substr(5) + "===" + value + '\n';
+    }
+    auto dir = outtree->GetDirectory();
+    if(dir){
+        dir->cd();
+    }
+    metadata_tree = new TTree("uhh2_meta", "uhh2_meta");
+    metadata_tree->SetDirectory(dir);
+    void * pstring = &metadata_string;
+    tree_branch(metadata_tree, "data", pstring, &pstring, typeid(string));
+    metadata_tree->Fill();
 }
 
-// event tree i/o
 void SFrameContext::do_declare_event_input(const type_info & ti, const string & bname, const string & mname) {
     auto handle = ges.get_raw_handle(ti, mname);
-    event_input_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));
+    do_declare_event_input_handle(ti, bname, handle);
 }
 
 void SFrameContext::do_declare_event_output(const type_info & ti, const string & bname, const string & mname) {
     auto handle = ges.get_raw_handle(ti, mname);
+    do_declare_event_output_handle(ti, bname, handle);
+}
+
+void SFrameContext::do_declare_event_input_handle(const type_info & ti, const string & bname, const GenericEvent::RawHandle & handle) {
+    event_input_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));
+}
+
+void SFrameContext::do_declare_event_output_handle(const type_info & ti, const string & bname, const GenericEvent::RawHandle & handle) {
     event_output_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));
 }
 
@@ -524,6 +474,9 @@ private:
     bool setup_output_done;
     
     bool use_sframe_weight;
+    
+    std::vector<std::string> additional_branches;
+    bool first_file = true;
 
     // per-dataset information, in the order of construction:
     std::unique_ptr<GenericEventStructure> ges;
@@ -554,14 +507,14 @@ AnalysisModuleRunner::~AnalysisModuleRunner() {
 // and then distributed to the other workers.
 void AnalysisModuleRunner::Initialize(TXMLNode* node) throw (SError) {
     TXMLNode* nodes = node->GetChildren();
-    while (nodes != 0) {
+    while (nodes != nullptr) {
         if (!nodes->HasChildren()) {
             nodes = nodes->GetNextNode();
             continue;
         }
         if (nodes->GetNodeName() == string("UserConfig")) {
             TXMLNode* userNode = nodes->GetChildren();
-            while (userNode != 0) {
+            while (userNode != nullptr) {
                 if (!userNode->HasAttributes()
                         || (userNode->GetNodeName() != TString("Item"))) {
                     userNode = userNode->GetNextNode();
@@ -571,12 +524,10 @@ void AnalysisModuleRunner::Initialize(TXMLNode* node) throw (SError) {
                 std::string name, stringValue;
                 TListIter userAttributes(userNode->GetAttributes());
                 TXMLAttr* attribute;
-                while ((attribute = dynamic_cast<TXMLAttr*>(userAttributes()))
-                        != 0) {
+                while ((attribute = dynamic_cast<TXMLAttr*>(userAttributes())) != nullptr) {
                     if (attribute->GetName() == string("Name"))
                         name = attribute->GetValue();
                 }
-                //cout << "got '" << name << "'" << endl;
                 pimpl->dummyConfigVars[name] = "";
                 DeclareProperty(name, pimpl->dummyConfigVars[name]);
                 userNode = userNode->GetNextNode();
@@ -609,6 +560,7 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
     ges.reset(new GenericEventStructure);
     context.reset(new SFrameContext(base, in, *ges));
     
+    // 1. setup common event data members / branches:
     m_userEventFormat = string2bool(context->get("userEventFormat", "false"));
     
     if(!m_userEventFormat){
@@ -643,15 +595,10 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
     else{
         m_readTrigger = false;
     }
-
-    // 2. now construct user module, which could add event contest to ges
-    string module_classname = context->get("AnalysisModule");
-    analysis = AnalysisModuleRegistry::build(module_classname, *context);
-
-    event.reset(new Event(*ges));
-    if(eh){
-        eh->set_event(event.get());
-    }
+    
+    // 2. prepare reading additional branches from input:
+    additional_branches = split(context->get("additionalBranches", ""));
+    first_file = true;
     setup_output_done = false;
 }
 
@@ -660,15 +607,13 @@ void AnalysisModuleRunner::BeginInputData(const SInputData& in) throw (SError) {
 }
 
 void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
-    pimpl->context->begin_input_file(*pimpl->event);
-
     // fill trigger names map:
     if (pimpl->m_readTrigger) {
         std::map<int, std::vector<std::string>> run2triggernames;
         // find triggernames for all runs in this file:
         TTree* intree = GetInputTree(pimpl->context->event_treename.c_str());
         if (!intree){
-            throw runtime_error("Did not find AnalysisTree in input file");
+            throw runtime_error("Did not find input tree '" + pimpl->context->event_treename + "' in input file");
         }
         std::vector<std::string> trigger_names;
         std::vector<std::string> *ptrigger_names = &trigger_names;
@@ -677,7 +622,7 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
         TBranch* tnb = intree->GetBranch("triggerNames");
         auto oldaddr_runb = runb->GetAddress();
         auto oldaddr_tnb = tnb->GetAddress();
-        if (runb == 0 || tnb == 0) {
+        if (!runb || !tnb) {
             throw runtime_error("did not find branches for setting up trigger names");
         }
         intree->SetBranchAddress("run", &runid, &runb);
@@ -699,6 +644,43 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
         tnb->SetAddress(oldaddr_tnb);
         pimpl->eh->set_infile_triggernames(move(run2triggernames));
     }
+    
+    // setup additional branches, if not done yet:
+    if(pimpl->first_file && !pimpl->additional_branches.empty()){
+        TTree* intree = GetInputTree(pimpl->context->event_treename.c_str());
+        if (!intree){
+            throw runtime_error("Did not find input tree '" + pimpl->context->event_treename + "' in input file");
+        }
+        for(const auto & bname : pimpl->additional_branches){
+            auto branch = intree->GetBranch(bname.c_str());
+            if(!branch){
+                throw runtime_error("While setting up additional branches: did not find branch '" + bname + "' in input tree");
+            }
+            const auto & ti = InTree::get_type(branch);
+            m_logger << VERBOSE  << "Setting up additional branch '" << bname << "';  with (auto-detected) type: " << demangle(ti.name()) << SLogger::endmsg;
+            // add it to the context using the same mechanism as declare_event_input / declare_event_output.
+            // Note that the call to get_raw_handle might create a new data member in event.
+            auto handle = pimpl->ges->get_raw_handle(ti, bname);
+            pimpl->context->do_declare_event_input_handle(ti, bname, handle);
+            pimpl->context->do_declare_event_output_handle(ti, bname, handle);
+        }
+    }
+    
+    // In case this is the first file in the dataset: construct AnalysisModule now.
+    // This is done now (and not earlier, e.g. in BeginInputData) because only now we know
+    // the metadata and the additional branches (the latter is needed to fix the event structure).
+    if(pimpl->first_file){
+        pimpl->context->first_input_file();
+        string module_classname = pimpl->context->get("AnalysisModule");
+        pimpl->analysis = AnalysisModuleRegistry::build(module_classname, *pimpl->context);
+        pimpl->event.reset(new Event(*pimpl->ges));
+        if(pimpl->eh){
+            pimpl->eh->set_event(pimpl->event.get());
+        }
+        pimpl->first_file = false;
+    }
+    
+    pimpl->context->begin_input_file(*pimpl->event);
 }
 
 void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SError) {
@@ -731,9 +713,6 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
 
     if (!pimpl->setup_output_done) {
         pimpl->context->setup_output(*pimpl->event);
-        if(pimpl->context->outtree){
-            pimpl->context->init_metadata_output();
-        }
         pimpl->setup_output_done = true;
     }
 }
@@ -743,26 +722,8 @@ void AnalysisModuleRunner::CloseOutputFile() throw( SError ){
     // So try to emulate behavior of SFrame, i.e. as is SCycleBaseNTuple::SaveOutputTrees would also save our metadata trees.
     // SaveOutputTrees cannot be overridden directly (it is not virtual), but SaveOutputTrees is only
     // called from CloseOutputFile, so we override that method here to call the save at the right point.
-    pimpl->context->write_metadata_trees();
+    pimpl->context->write_metadata_tree();
     SCycleBase::CloseOutputFile();
-}
-
-namespace {
-// double to string;
-string d2s(double d) {
-    char s[20];
-    snprintf(s, 20, "%.6g", d);
-    return s;
-}
-
-
-//long uint to string:
-string ul2s(unsigned long i) {
-    char s[20];
-    snprintf(s, 20, "%lu", i);
-    return s;
-}
-
 }
 
 void AnalysisModuleRunner::EndMasterInputData(const SInputData &) throw (SError) {
@@ -804,7 +765,7 @@ void AnalysisModuleRunner::EndMasterInputData(const SInputData &) throw (SError)
             it != cutflows.end(); ++it) {
         TH1D * cf = it->second.first;
         TH1D * cf_raw = it->second.second;
-        if (cf == 0 or cf_raw == 0 or cf->GetNbinsX() != cf_raw->GetNbinsX()) {
+        if (!cf or !cf_raw or cf->GetNbinsX() != cf_raw->GetNbinsX()) {
             m_logger << WARNING
                     << " did not find all cutflows (or inconsistent cutflows)"
                     << endl;
@@ -820,8 +781,8 @@ void AnalysisModuleRunner::EndMasterInputData(const SInputData &) throw (SError)
         for (int ibin = 1; ibin <= cf->GetNbinsX(); ++ibin) {
             vector<string> row;
             row.push_back(xax->GetBinLabel(ibin));
-            row.push_back(ul2s(cf_raw->GetBinContent(ibin)));
-            row.push_back(d2s(cf->GetBinContent(ibin)));
+            row.push_back(to_string(cf_raw->GetBinContent(ibin)));
+            row.push_back(to_string(cf->GetBinContent(ibin)));
             out.add_row(row);
         }
         out.print(cout);

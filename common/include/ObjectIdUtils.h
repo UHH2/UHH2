@@ -13,6 +13,7 @@
  * to read what kind of argument is expected at some places.
  */
 typedef std::function<bool (const Jet &, const uhh2::Event &)> JetId;
+typedef std::function<bool (const PrimaryVertex &, const uhh2::Event &)> PrimaryVertexId;
 typedef std::function<bool (const Electron &, const uhh2::Event &)> ElectronId;
 typedef std::function<bool (const Muon &, const uhh2::Event &)> MuonId;
 typedef std::function<bool (const Tau &, const uhh2::Event &)> TauId;
@@ -37,15 +38,28 @@ private:
     float min_pt, max_eta;
 };
 
+/// The standard primary vertex id, i.e. ndof >= 4, |z| < 24cm, rho < 2cm
+class StandardPrimaryVertexId {
+public:
+    bool operator()(const PrimaryVertex & pv, const uhh2::Event &) const{
+        return pv.ndof() >= 4.0 && std::abs(pv.z()) < 24.0 && pv.rho() < 2.0;
+    }
+};
+
 
 /** \brief Construct a new object id, taking the logical and of several other ids.
  * 
  * To use an AndId for muons cutting both on kinematics and using the tight id, use like this:
  * \code
- * MuonId muid = AndId<Muon>(MuonPtEtaCut(20.0, 2.4), MuonIdTight());
+ * MuonId muid = AndId<Muon>(PtEtaCut(20.0, 2.4), MuonIdTight());
  * \endcode
  * 
- * For more complicated ids consisting of more than two sub-components, use the 'add' method to add more.
+ * For more complicated ids consisting of more than four sub-components, use the 'add' method directly.
+ * Note that 'add' can be called several times like this:
+ * \code
+ *  AndId<Muon> muid;
+ *  muid.add(PtEtaCut(20.0, 2.4)).add(MuonIdTight()).add(MuonIso(0.12));
+ * \endcode
  */
 template<typename T>
 class AndId {
@@ -57,8 +71,22 @@ public:
         add(id2);
     }
     
-    void add(const id_type & id){
+    AndId(const id_type & id1, const id_type & id2, const id_type & id3){
+        add(id1);
+        add(id2);
+        add(id3);
+    }
+    
+    AndId(const id_type & id1, const id_type & id2, const id_type & id3, const id_type & id4){
+        add(id1);
+        add(id2);
+        add(id3);
+        add(id4);
+    }
+    
+    AndId & add(const id_type & id){
         ids.push_back(id);
+        return *this;
     }
     
     bool operator()(const T & obj, const uhh2::Event & event) const {

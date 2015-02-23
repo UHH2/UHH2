@@ -112,7 +112,7 @@ public:
     
     void setup_output_branches(Event & event){
         for(const auto & o : outputs){
-            ptrs.push_back(event.get(o.ti, o.handle, false));
+            ptrs.push_back(EventAccess_::get(event, o.ti, o.handle, false, false));
             tree_branch(outtree, o.bname, ptrs.back(), &ptrs.back(), o.ti);
         }
     }

@@ -17,3 +17,34 @@ bool HTCalculator::process(Event & event){
     event.set(h_ht, ht);
     return true;
 }
+
+HTlepCalculator::HTlepCalculator(Context & ctx, const boost::optional<ElectronId> & electronid_, const boost::optional<MuonId> & muonid_, const boost::optional<TauId> & tauid_, const std::string & name):
+        electronid(electronid_), muonid(muonid_), tauid(tauid_){
+    h_htlep = ctx.get_handle<double>(name);
+}
+bool HTlepCalculator::process(Event & event){
+    double htlep = 0.0;
+    if(event.electrons)
+      for(const auto & electron : *event.electrons){
+        if(electronid && !(*electronid)(electron, event)) continue;
+        htlep += electron.pt();
+      }
+    if(event.muons){
+      for(const auto & muon : *event.muons){
+        if(muonid && !(*muonid)(muon, event)) continue;
+        htlep += muon.pt();
+      }
+    }
+    if(event.taus){
+      for(const auto & tau : *event.taus){
+        if(tauid && !(*tauid)(tau, event)) continue;
+        htlep += tau.pt();
+      }
+    }
+    if(event.met) {
+      htlep += event.met->pt();
+    }
+       
+    event.set(h_htlep, htlep);
+    return true;
+}

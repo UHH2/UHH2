@@ -61,6 +61,8 @@ public:
  *  - "dataset_version" is the 'Version' of the dataset as given in the SFrame xml file
  *  - "dataset_lumi" is the integrated luminosity ('Lumi') of the dataset in pb^-1, as given in the SFrame xml file
  *  - "target_lumi" is the target luminosity in pb^-1 for MC reweighting, as specified in the SFrame xml in Cycle in 'TargetLumi'
+ * 
+ * Also, all the dataset-metadata is added with the prefix "meta_" (refer to the Metadata documentation for details).
  * Other keys can either be specified in the SFrame xml configuration file (see ExampleModule), or set
  * by other classes, in particular by the top-level AnalysisModule before constructing other AnalysisModules.
  * 
@@ -123,6 +125,25 @@ public:
     void set(const std::string & key, const std::string & value) {
         settings[key] = value;
     }
+    
+    /** \brief Set sample metadata
+     * 
+     * The metadata will be available via 'get' with the key "meta_" + name. Unlike other
+     * settings, it will be written to the output root file, and read in from the root file.
+     * 
+     * A metadata name must not contain the sequence "===" or end with "=". The value must not contain any of "\r\n\0".
+     * (This ensures that all metadata can be stored in a simple format name1===value1\nname2====value2\n...
+     * in a single string).
+     * 
+     * In general, metadata is sample-wide immutable data, so *changing* a metadata value is something
+     * delicate and is generally not recommended. If it has to be done anyway (e.g. because a wrong value
+     * has been written which should now be corrected), make sure to do it *very* early in the processing,
+     * i.e. before any other AnalysisModule can read the old value. This also ensures that the new value
+     * is set before the first event -- and the old(?) metadata -- is written to the output file.
+     * As changing a metadata value can be problematic, this will only be done for force = true. Otherwise,
+     * an exception is thrown.
+     */
+    void set_metadata(const std::string & name, const std::string & value, bool force = false);
 
     /** \brief Put a histogram in the output root file at the specified path
      *
@@ -168,131 +189,20 @@ public:
     GenericEvent::Handle<T> get_handle(const std::string & name) {
         return ges.get_handle<T>(name);
     }
-    
-    
-    /// resolution order for metadata sources
-    enum class metadata_source_policy {
-        infile_only, handle_only, infile_then_handle, handle_then_infile
-    };
-    
-    /** \brief register a callback to be called when new metadata is available
-     *
-     * metadata announced via the registered callback should be considered valid for all event
-     * processed in the future until a new value is announced via the callback.
-     *
-     * metadata can have two different sources:
-     * 1. another AnalysisModule via create_metadata and MetaDataHandle::set.
-     * 2. the input file
-     *
-     * The source of the value announced via the callback depends on the value of resolution. The default
-     * uses the value from the handle if available and uses the value from the input file otherwise. This
-     * is what one often wants as this typically is the 'most up-to-date' value for that metadata. It is also
-     * the policy used to write output.
-     *
-     * If metadata for that name is available, but the type T does not match, the framework aborts execution
-     * with an exception.
-     */
-    template<typename T>
-    void register_metadata_callback(const std::string & name, const std::function<void (const T & t)> & callback, metadata_source_policy pol = metadata_source_policy::handle_then_infile){
-        register_metadata_callback(typeid(T), name, [callback](const void * ptr){ callback(*reinterpret_cast<const T*>(ptr)); }, pol, false);
-    }
-
-    template<typename T>
-    class MetadataObject {
-    public:
-        
-        void operator=(const T & new_metadata){
-            assert(object && ctx);
-            ctx->notify_callbacks_before(object->address());
-            object->assign<T>(new_metadata);
-            ctx->notify_callbacks_after(object->address());
-        }
-        
-        MetadataObject() = default;
-
-    private:
-        friend class Context;
-        MetadataObject(const std::shared_ptr<obj> & object_, Context * ctx_): object(object_), ctx(ctx_) {}
-
-        std::shared_ptr<obj> object;
-        Context * ctx = nullptr;
-    };
-
-    /** \brief Create new metadata of type T and the given name
-     *
-     * Metadata can be thought of event-data which is valid for more than one event in
-     * a row in the event processing. A typical example would be sample cross section/luminosity or
-     * information about the processing history. Another example are the trigger names which are used to give names
-     * to the indices in the trigger bool-vector.
-     * To exploit the fact that these data are the same for many events in a row during the processing of one dataset,
-     * this kind of data is not saved in the Event directly, but instead transferred via the methods
-     * declared below: create_metadata<T> creates new metadata of type T with a given name. Via the returned
-     * object, the metadata value can be set. This metadata should be considered valid for the current
-     * event and all subsequent events, until a new assignment is made (note that metadata validity never
-     * extends across datasets because all data is cleared between datasets anyway).
-     * 
-     * store_in_output controls whether or not the value is saved in the output file.
-     *
-     * It is important to assign a value to the metadata object *before* any (other) module uses the (old, outdated) value
-     * from the previous event. It is therefore recommended that producers of metadata are kept in some few, specific
-     * AnalysisModules and are run first for each event. Also, each consumer should
-     * throw an exception if the first metadata value is announced *after* the first event has been processed;
-     * this should catch most use-before-set bugs.
-     *
-     * If metadata of that name was already created, a runtime_error is thrown. Note that it is not
-     * considered as error creating metadata which also exists in the input, as long as it is the same type;
-     * in this case, see register_metadata_callback about which data is actually used.
-     * 
-     * Metadata output:
-     *  - for metadata created here only, \c store_in_output controls whether the metadata object created here is written to output
-     *  - Metadata only available in the input file is also written to the output.
-     *  - For Metadata which is both available in the input and created via \c create_metadata, the behavior is the same as
-     *    if it was only created here and not available in the input.
-     * 
-     * In particular, this means that:
-     *  - all metadata will be written to output by default, even if no module explicitly asks for it
-     *  - it is possible to 'erase' metadata from the input (=not write it to output) by creating it here with \c store_in_output=false
-     */
-    template<typename T>
-    MetadataObject<T> create_metadata(const std::string & name, bool store_in_output){
-        auto object = obj::create<T>();
-        put_metadata(name, false, object, store_in_output);
-        return MetadataObject<T>(object, this);
-    }
 
 protected:
 
     explicit Context(GenericEventStructure & ges_);
 
-    GenericEventStructure & ges;
-    
-    // should be called by derived classes to get all metadata to write to output after processing at least one event.
-    void visit_metadata_for_output(const std::function<void (const std::string & name, const std::shared_ptr<obj> & object)> & callback);
-    
-    // type-erased metadata handling:
-    void register_metadata_callback(const std::type_info & ti, const std::string & name, const std::function<void (const void * ptr)> & callback,
-                                    metadata_source_policy pol, bool call_before_change);
-    
-    void put_metadata(const std::string & name, bool from_infile, const std::shared_ptr<obj> & object, bool store_in_output);
-    
-    void notify_callbacks_before(void * object_addr);
-    void notify_callbacks_after(void * object_addr);
-
-private:
-
-    template<typename T>
-    friend class MetadataObject;
+    GenericEventStructure & ges; // the structure updated by get_handle/declare_event_input/declare_event_output.
 
     virtual void do_declare_event_input(const std::type_info & ti, const std::string & bname, const std::string & mname) = 0;
     virtual void do_declare_event_output(const std::type_info & ti, const std::string & bname, const std::string & mname) = 0;
     
     std::map<std::string, std::string> settings;
-    
-    // below here: derived classes do not need to care
+
+private:
     void fail(const std::string & key) const;
-    
-    class MetadataImpl;
-    std::unique_ptr<MetadataImpl> meta;
 };
 
 

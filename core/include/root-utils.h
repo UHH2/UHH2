@@ -66,6 +66,8 @@ public:
     InTree(const InTree &) = delete;
     InTree(InTree &&) = default;
     
+    static const std::type_info & get_type(TBranch * branch);
+    
     // connect a branch to an existing object container
     void connect_branch(const std::string & bname, const std::shared_ptr<obj> & value);
     

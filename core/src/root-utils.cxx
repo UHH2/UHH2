@@ -45,62 +45,6 @@ char DataTypeToChar(EDataType datatype){
     }
 }
 
-const std::type_info & get_type(TBranch * branch){
-    TClass * branch_class = 0;
-    EDataType branch_dtype = kNoType_t;
-    int res = branch->GetExpectedType(branch_class, branch_dtype);
-    if (res > 0) {
-        throw runtime_error("input branch '" + string(branch->GetName()) + "': error calling GetExpectedType");
-    }
-    if(branch_class){
-        return *branch_class->GetTypeInfo();
-    }
-    else{
-        // normalize branch type to use explicit sizes for some types:
-        if(branch_dtype == kLong_t){
-            if(sizeof(Long_t) == sizeof(Long64_t)){
-                branch_dtype = kLong64_t;
-            }
-            else{
-                assert(sizeof(Long_t) == sizeof(Int_t));
-                branch_dtype = kInt_t;
-            }
-        }
-        else if(branch_dtype == kULong_t){
-            if(sizeof(ULong_t) == sizeof(ULong64_t)){
-                branch_dtype = kULong64_t;
-            }
-            else{
-                assert(sizeof(Long_t) == sizeof(Int_t));
-                branch_dtype = kUInt_t;
-            }
-        }
-        switch(branch_dtype){
-            case kChar_t:     return typeid(Char_t);
-            case kUChar_t:    return typeid(UChar_t);
-            case kBool_t:     return typeid(Bool_t);
-            case kShort_t:    return typeid(Short_t);
-            case kUShort_t:   return typeid(UShort_t);
-            case kCounter:
-            case kInt_t:      return typeid(Int_t);
-            case kUInt_t:     return typeid(UInt_t);
-            case kDouble_t:
-            case kDouble32_t: return typeid(Double_t);
-            case kFloat_t:
-            case kFloat16_t:  return typeid(Float_t);
-            case kLong64_t:   return typeid(int64_t);
-            case kULong64_t:  return typeid(uint64_t);
-            
-            case kLong_t:     // cannot happen as of above normalization
-            case kULong_t:    assert(false);
-
-            case kOther_t:
-            case kNoType_t:
-            default: throw runtime_error("unknown non-class type for branch '" + string(branch->GetName()) + "' / type not known to ROOT");
-        }
-    }
-}
-
 namespace detail {
 bool is_class(const std::type_info & ti){
     return TBuffer::GetClass(ti) != nullptr;
@@ -207,6 +151,63 @@ void OutTree::create_branch(const std::string & name, const std::shared_ptr<obj>
 }
 
 // *** InTree ***
+
+const std::type_info & InTree::get_type(TBranch * branch){
+    assert(branch != nullptr);
+    TClass * branch_class = nullptr;
+    EDataType branch_dtype = kNoType_t;
+    int res = branch->GetExpectedType(branch_class, branch_dtype);
+    if (res > 0) {
+        throw runtime_error("input branch '" + string(branch->GetName()) + "': error calling GetExpectedType");
+    }
+    if(branch_class){
+        return *branch_class->GetTypeInfo();
+    }
+    else{
+        // normalize branch type to use explicit sizes for some types:
+        if(branch_dtype == kLong_t){
+            if(sizeof(Long_t) == sizeof(Long64_t)){
+                branch_dtype = kLong64_t;
+            }
+            else{
+                assert(sizeof(Long_t) == sizeof(Int_t));
+                branch_dtype = kInt_t;
+            }
+        }
+        else if(branch_dtype == kULong_t){
+            if(sizeof(ULong_t) == sizeof(ULong64_t)){
+                branch_dtype = kULong64_t;
+            }
+            else{
+                assert(sizeof(Long_t) == sizeof(Int_t));
+                branch_dtype = kUInt_t;
+            }
+        }
+        switch(branch_dtype){
+            case kChar_t:     return typeid(Char_t);
+            case kUChar_t:    return typeid(UChar_t);
+            case kBool_t:     return typeid(Bool_t);
+            case kShort_t:    return typeid(Short_t);
+            case kUShort_t:   return typeid(UShort_t);
+            case kCounter:
+            case kInt_t:      return typeid(Int_t);
+            case kUInt_t:     return typeid(UInt_t);
+            case kDouble_t:
+            case kDouble32_t: return typeid(Double_t);
+            case kFloat_t:
+            case kFloat16_t:  return typeid(Float_t);
+            case kLong64_t:   return typeid(int64_t);
+            case kULong64_t:  return typeid(uint64_t);
+            
+            case kLong_t:     // cannot happen as of above normalization
+            case kULong_t:    assert(false);
+
+            case kOther_t:
+            case kNoType_t:
+            default: throw runtime_error("unknown non-class type for branch '" + string(branch->GetName()) + "' / type not known to ROOT");
+        }
+    }
+}
 
 std::shared_ptr<obj> InTree::open_branch(const std::type_info & ti, const std::string & bname){
     std::function<void (void*)> eraser;

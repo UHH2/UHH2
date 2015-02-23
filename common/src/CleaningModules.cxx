@@ -30,6 +30,15 @@ bool JetCleaner::process(Event & event){
     return true;
 }
 
+
+PrimaryVertexCleaner::PrimaryVertexCleaner(const PrimaryVertexId & vtx_id_): vtx_id(vtx_id_){}
+
+bool PrimaryVertexCleaner::process(Event & event){
+    assert(event.pvs);
+    clean_collection(*event.pvs, event, vtx_id);\
+    return true;
+}
+
 MuonCleaner::MuonCleaner(const MuonId & muon_id_): muon_id(muon_id_){}
 
 bool MuonCleaner::process(uhh2::Event & event){

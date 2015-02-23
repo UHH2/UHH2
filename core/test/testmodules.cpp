@@ -43,3 +43,54 @@ private:
 
 
 UHH2_REGISTER_ANALYSIS_MODULE(CoreTestA)
+
+
+class TestMetadataOut: public AnalysisModule {
+public:
+    TestMetadataOut(Context & ctx){
+        ctx.set_metadata("test1", "value1");
+        ctx.set_metadata("test2", "value2bla");
+    }
+    
+     virtual bool process(Event &) override {
+         return true;
+     }
+};
+
+UHH2_REGISTER_ANALYSIS_MODULE(TestMetadataOut)
+
+
+class TestMetadataIn: public AnalysisModule {
+public:
+    TestMetadataIn(Context & ctx){
+        assert(ctx.get("meta_test1") == "value1");
+        assert(ctx.get("meta_test2") == "value2bla");
+        ctx.set_metadata("key3", "value3");
+    }
+    
+     virtual bool process(Event &) override {
+         return true;
+     }
+};
+
+UHH2_REGISTER_ANALYSIS_MODULE(TestMetadataIn)
+
+
+
+// reads metadata from TestMetadataOut and from TestMetadataIn, so this tests
+// round-trip of TestMetadataOut data.
+class TestMetadataIn2: public AnalysisModule {
+public:
+    TestMetadataIn2(Context & ctx){
+        assert(ctx.get("meta_test1") == "value1");
+        assert(ctx.get("meta_test2") == "value2bla");
+        assert(ctx.get("meta_key3") == "value3");
+    }
+    
+     virtual bool process(Event &) override {
+         return true;
+     }
+};
+
+UHH2_REGISTER_ANALYSIS_MODULE(TestMetadataIn2)
+
