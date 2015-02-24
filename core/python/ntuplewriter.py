@@ -327,14 +327,6 @@ add_fatjets_subjets(process, 'ca15PuppiJets', 'hepTopTagPuppi', genjets_name = l
 add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsSoftDrop')
 
 
-# TODO: this is a test for fixing puppi b-tagging. If it works, also apply to other jets!
-# NOTE: this uses puppi particles for explicit jet-track association, which has not
-# been studied extensively yet. In principle, puppi particles should be Ok as we use charged
-# particles only, and those remaining after chs should be those after puppi, so chs and puppi
-# should not be too different for this case ...
-process.pfImpactParameterTagInfosCa15PuppiJetsFilteredSubjets.candidates = cms.InputTag('puppi')
-
-
 # configure PAT for miniAOD:
 process.patJetPartons.particles = 'prunedGenParticles'
 

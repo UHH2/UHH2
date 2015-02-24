@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+
+import os, os.path, sys
+
+gc_dir = os.getenv('GC_DIR')
+if gc_dir is None:
+	paths = os.getenv('PATH').split(':')
+	for path in paths:
+		if os.path.exists(os.path.join(path, 'go.py')):
+			gc_dir = path
+			break
+
+if gc_dir:
+	print "Using grid-control from ", gc_dir
+	assert os.path.exists(os.path.join(path, 'go.py')), "Did not find go.py in gc_dir"
+else:
+	print "Error: could not determine path to grid-control. Please set environment variable GC_DIR or include it in PATH"
+	sys.exit(1)
+
+sys.path.insert(1, os.path.join(gc_dir, 'scripts'))
+sys.path.insert(1, os.path.join(gc_dir, 'packages'))
+
+import gcSupport
+import optparse
+from datasets.provider_base import DataProvider
+
+usage = '[options] <config file>'
+parser = optparse.OptionParser(usage='%%prog %s' % usage)
+(opts, args) = gcSupport.parseOptions(parser)
+
+if len(args) != 1:
+	gcSupport.utils.exitWithUsage('%s %s' % (sys.argv[0], usage))
+#setattr(opts, 'events key', 'MAX_EVENTS')
+setattr(opts, 'dataset name pattern', '__NICK__')
+setattr(opts, 'dataset guard override', 'NICK')
+setattr(opts, 'scanner', ' '.join(['OutputDirsFromConfig', 'FilesFromJobInfo', 'MetadataFromTask', 'MatchOnFilename', 'MatchDelimeter', 'DetermineEvents', 'AddFilePrefix']))
+
+config_file = args[0]
+section = None
+config = gcSupport.config.Config(configDict = {section: dict(parser.values.__dict__)})
+provider = gcSupport.datasets.DataProvider.open('GCProvider', config, section, config_file, None)
+for block in provider.getBlocks():
+	dset = block[DataProvider.Dataset]
+	print "Writing %s.xml" % dset
+	outfile = open(dset + '.xml', 'w')
+	for f in block[DataProvider.FileList]:
+		path = f[DataProvider.URL]
+		if path.startswith('dir://'): path = path[6:] # otherwise: use full path, e.g. srm:// (?)
+		outfile.write('<In FileName="%s" Lumi="0.0"/>\n' % path)
+	outfile.close()
