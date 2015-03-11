@@ -4,6 +4,8 @@
 #include "UHH2/common/include/ReconstructionHypothesis.h"
 #include "TMinuit.h"
 #include "UHH2/core/include/Event.h"
+#include "UHH2/common/include/ObjectIdUtils.h"
+#include "UHH2/common/include/TopJetIds.h"
 
 typedef std::function< std::vector<LorentzVector>  (const LorentzVector & lepton, const LorentzVector & met)> NeutrinoReconstructionMethod;
 
@@ -77,20 +79,18 @@ private:
  * TODO: implement, document better.
  */
 class TopTagReconstruction: public uhh2::AnalysisModule {
-public:
-    explicit TopTagReconstruction(uhh2::Context & ctx, const NeutrinoReconstructionMethod & neutrinofunction, const std::string & label="TopTagReconstruction");
+ public:
+  explicit TopTagReconstruction(uhh2::Context&, const NeutrinoReconstructionMethod&, const std::string& label="TopTagReconstruction", TopJetId id=CMSTopTag(), float dr=1.2);
+  virtual bool process(uhh2::Event&) override;
 
-    virtual bool process(uhh2::Event & event) override;
+ private:
+  NeutrinoReconstructionMethod m_neutrinofunction;
+  uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_recohyps;
+  uhh2::Event::Handle<FlavorParticle> h_primlep;
 
-    virtual ~TopTagReconstruction();
-
-private:
-    NeutrinoReconstructionMethod m_neutrinofunction;
-    uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_recohyps;
-    uhh2::Event::Handle<FlavorParticle> h_primlep;
+  TopJetId topjetID_;
+  float minDR_topjet_jet_;
 };
-
-
 
 /** \brief Calculate the neutrino four-momentum from MET and charged lepton momenta
  *
