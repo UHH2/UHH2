@@ -1,26 +1,13 @@
-#ifndef MET_H
-#define MET_H
-
-/**
- *  @short missing transverse energy container
- *  @author Thomas Peiffer
- */
-
+#pragma once
 
 class MET{
-   
- public:
-  /// Default constructor
+public:
+    
   MET(){
-    m_pt=0; 
-    m_phi=0; 
-    m_mEtSig=0;
-
-  };
-
-  /// Default destructor
-  ~MET(){
-  };
+      m_pt = 0;
+      m_phi = 0;
+      m_mEtSig = 0;
+  }
 
   /// transverse momentum
   float pt() const{return m_pt;}
@@ -45,10 +32,7 @@ class MET{
   }
 
  private:
-  float m_pt; 
-  float m_phi; 
-  float m_mEtSig; 
-
+  float m_pt;
+  float m_phi;
+  float m_mEtSig;
 };
-
-#endif

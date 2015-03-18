@@ -1,22 +1,13 @@
-#ifndef PrimaryVertex_H
-#define PrimaryVertex_H
+#pragma once
 
 class PrimaryVertex{
-   
- public:
+public:
+    
   PrimaryVertex(){
-    m_x=0; 
-    m_y=0; 
-    m_z=0; 
-    m_nTracks=0; 
-    //m_isValid=false; 
-    m_chi2=0; 
-    m_ndof=0;
-
-  };
-
-  ~PrimaryVertex(){
-  };
+      m_x = m_y = m_z = 0;
+      m_nTracks = 0;
+      m_chi2 = m_ndof = 0;
+  }
 
   float x() const{return m_x;} 
   float y() const{return m_y;} 
@@ -35,14 +26,10 @@ class PrimaryVertex{
   void set_ndof(float x){m_ndof=x;}
 
  private:
-  float m_x; 
-  float m_y; 
-  float m_z; 
-  unsigned int m_nTracks; 
-  //bool m_isValid; 
-  float m_chi2; 
+  float m_x;
+  float m_y;
+  float m_z;
+  unsigned int m_nTracks;
+  float m_chi2;
   float m_ndof;
-
 };
-
-#endif

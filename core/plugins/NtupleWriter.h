@@ -55,22 +55,17 @@ class NtupleWriter : public edm::EDFilter {
       bool doAllGenParticles;
       bool doPV;
       bool doTrigger;
-      bool doTagInfos;
       bool runOnMiniAOD;
       bool doRho;
-      bool doPuppi;
 
       // in order of initialization:
       std::unique_ptr<uhh2::GenericEventStructure> ges;
       std::unique_ptr<uhh2::CMSSWContext> context;
       std::vector<std::unique_ptr<uhh2::NtupleWriterModule>> writer_modules;
-      std::vector<std::unique_ptr<uhh2::NtupleWriterTopJets>> topjet_modules;
       std::unique_ptr<uhh2::Event> event;
       std::unique_ptr<uhh2::AnalysisModule> module;
 
       edm::EDGetToken rho_token;
-      
-      std::vector<PFParticle> pfparticles, puppiparticles;
 
       std::vector<edm::EDGetToken> genjet_tokens;
       std::vector<std::vector<Particle>> genjets;
@@ -101,7 +96,6 @@ class NtupleWriter : public edm::EDFilter {
       edm::InputTag genparticle_source;
       edm::InputTag stablegenparticle_source;   
       
-      edm::InputTag SVComputer_;
       std::vector<std::string> trigger_prefixes;
       std::vector<std::string> triggerNames_outbranch;
 

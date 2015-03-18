@@ -2,32 +2,27 @@
 #define GenInfo_H
 
 class GenInfo{
-
  public:
+     
   GenInfo(){
-    m_binningValues.clear();
-    m_weights.clear();
-    m_alphaQCD=0;
-    m_alphaQED=0;
-    m_qScale=0;
-    m_pdf_id1=0;
-    m_pdf_id2=0;
-    m_pdf_x1=0;
-    m_pdf_x2=0;
-    m_pdf_xPDF1=0;
-    m_pdf_xPDF2=0;
-    m_pdf_scalePDF=0;
-    m_pileup_NumInteractions_intime=0; 
-    m_pileup_NumInteractions_ootbefore=0; 
-    m_pileup_NumInteractions_ootafter=0;
-    m_pileup_TrueNumInteractions=0; 
+    m_alphaQCD = 0;
+    m_alphaQED = 0;
+    m_qScale = 0;
+    m_pdf_id1 = 0;
+    m_pdf_id2 = 0;
+    m_pdf_x1 = 0;
+    m_pdf_x2 = 0;
+    m_pdf_xPDF1 = 0;
+    m_pdf_xPDF2 = 0;
+    m_pdf_scalePDF = 0;
+    m_pileup_NumInteractions_intime = 0; 
+    m_pileup_NumInteractions_ootbefore = 0; 
+    m_pileup_NumInteractions_ootafter = 0;
+    m_pileup_TrueNumInteractions = 0;  //poisson mean
   }
 
-  ~GenInfo(){
-  };
-
-  std::vector<float> binningValues() const{return m_binningValues;}
-  std::vector<float> weights() const{return m_weights;}
+  const std::vector<float> & binningValues() const{return m_binningValues;}
+  const std::vector<float> & weights() const{return m_weights;}
   float alphaQCD() const{return m_alphaQCD;}
   float alphaQED() const{return m_alphaQED;}
   float qScale() const{return m_qScale;}
@@ -60,8 +55,7 @@ class GenInfo{
   void set_pileup_NumInteractions_intime(int x){m_pileup_NumInteractions_intime=x;} 
   void set_pileup_NumInteractions_ootbefore(int x){m_pileup_NumInteractions_ootbefore=x;} 
   void set_pileup_NumInteractions_ootafter(int x){m_pileup_NumInteractions_ootafter=x;}
-  void set_pileup_TrueNumInteractions(float x){m_pileup_TrueNumInteractions=x;}  
-
+  void set_pileup_TrueNumInteractions(float x){m_pileup_TrueNumInteractions=x;}
 
  private:
   std::vector<float> m_binningValues;
@@ -80,7 +74,6 @@ class GenInfo{
   int m_pileup_NumInteractions_ootbefore; 
   int m_pileup_NumInteractions_ootafter;
   float m_pileup_TrueNumInteractions;  //poisson mean
-
 };
 
 #endif

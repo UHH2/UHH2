@@ -1,10 +1,10 @@
 <lcgdict>
 <class name="Particle"/>
+<class name="Tags"/>
+<class name="std::map<int,float>" />
 <class name="std::vector<Particle>"/>
 <class name="FlavorParticle"/>
 <class name="std::vector<FlavorParticle>"/>
-<class name="PFParticle"/>
-<class name="std::vector<PFParticle>"/>
 <class name="Jet"/>
 <class name="std::vector<Jet>"/>
 <class name="TopJet"/>
