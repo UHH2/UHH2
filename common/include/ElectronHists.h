@@ -13,7 +13,7 @@ public:
     
     virtual void fill(const uhh2::Event & ev) override;
     
-private:
+protected:
     
     // declare all histograms as members. Note that one could also use get_hist
     // as in the example's ExampleHists instead of saving the histograms here. However,

@@ -21,7 +21,7 @@ public:
 
     virtual void fill(const uhh2::Event & ev) override;
 
-private:
+protected:
     TH1F *N_PrimVertices, *Weights, *MET, *HT, *HTLep, *ST;
 
     uhh2::Event::Handle<double> h_ht;
