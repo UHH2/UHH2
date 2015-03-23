@@ -60,7 +60,7 @@ public:
   //UserJet defines the i-th Jet to be plotted. The other variables are needed for plotting and to have different histogram names/axis.
   void add_iJetHists(unsigned int UserJet, double minPt=20, double maxPt=800, const std::string & axisSuffix="userjet", const std::string & histSuffix="userjet");
   
- private:
+ protected:
   
   std::vector<unsigned int> m_userjet;
   std::vector<jetHist> userjets;
@@ -90,7 +90,7 @@ class TopJetHists: public JetHistsBase{
   void add_iTopJetHists(unsigned int UserJet, double minPt=0, double maxPt=800, double minPt_sub=0, double maxPt_sub=500, const std::string & axisSuffix="userjet", const std::string & histSuffix="userjet");
 
 
- private:
+ protected:
      
   struct subjetHist {
     TH1F* number, *sum4Vec, *pt, *eta, *phi, *mass, *csv;
