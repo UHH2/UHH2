@@ -19,6 +19,7 @@
 // The constructor defaults are such that no explicit id is passed ('none'); in this case, all objects are counted,
 // which corresponds to the first of the two described modes.
 
+using namespace uhh2;
 
 class NTauSelection: public uhh2::Selection {
 public:
@@ -50,18 +51,24 @@ private:
 
 class NJetSelection: public uhh2::Selection {
 public:
-    explicit NJetSelection(int nmin, int nmax = -1, const boost::optional<JetId> & jetid = boost::none);
+    explicit NJetSelection(int nmin, int nmax = -1,
+        const boost::optional<JetId> & jetid = boost::none,
+        const boost::optional<Event::Handle<std::vector<Jet> > > & jetcollection = boost::none);
     virtual bool passes(const uhh2::Event & event);
 private:
     int nmin, nmax;
     boost::optional<JetId> jetid;
+    boost::optional<Event::Handle<std::vector<Jet> > > jetcollection;
 };
 
 class NTopJetSelection: public uhh2::Selection {
 public:
-    explicit NTopJetSelection(int nmin, int nmax = -1, const boost::optional<TopJetId> & topjetid = boost::none);
+    explicit NTopJetSelection(int nmin, int nmax = -1,
+        const boost::optional<TopJetId> & topjetid = boost::none,
+        const boost::optional<Event::Handle<std::vector<TopJet> > > & topjetcollection = boost::none);
     virtual bool passes(const uhh2::Event & event);
 private:
     int nmin, nmax;
     boost::optional<TopJetId> topjetid;
+    boost::optional<Event::Handle<std::vector<TopJet> > > topjetcollection;
 };

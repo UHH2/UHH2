@@ -67,3 +67,17 @@ template<typename P>
 inline void sort_by_pt(std::vector<P> & particles){
     std::sort(particles.begin(), particles.end(), [](const P & p1, const P & p2){return p1.pt() > p2.pt();});
 }
+
+/** common code to filter out objects from a collection according to an object id
+ *
+ */
+template<typename T>
+inline void clean_collection(std::vector<T> & objects, const uhh2::Event & event, const std::function<bool (const T &, const uhh2::Event &)> obj_id){
+    std::vector<T> result;
+    for(const auto & obj : objects){
+        if(obj_id(obj, event)){
+            result.push_back(obj);
+        }
+    }
+    std::swap(result, objects);
+}

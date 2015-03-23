@@ -1,6 +1,9 @@
 #pragma once
 
 #include "UHH2/core/include/Event.h"
+#include "UHH2/common/include/ObjectIdUtils.h"
+#include "UHH2/common/include/JetIds.h"
+
 
 // see also ElectronIds.h for general comments
 
@@ -40,6 +43,26 @@ public:
     
 private:
     double threshold;
+};
+
+/** \brief Higgs tagger as e.g. used in Rebekka's analysis
+ * 
+ * Look for the number of b-tagged subjets (so far, the default is a medium working point but
+ * probably have to change that!). If this number is greater or equal two, calculate the mass
+ * of the two leading b-tagged subjets and return true if it is greater than minmass (default 60 GeV).
+ */
+
+class HiggsTag {
+public:
+    explicit HiggsTag(float minmass = 60.f, float maxmass = std::numeric_limits<float>::infinity(), JetId const & id = CSVBTag(CSVBTag::WP_MEDIUM)) :
+        minmass_(minmass), maxmass_(maxmass), btagid_(id) {}
+
+    bool operator()(TopJet const & topjet, uhh2::Event const & event) const;
+
+private:
+    float minmass_, maxmass_;
+    JetId btagid_;
+
 };
 
    

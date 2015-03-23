@@ -29,12 +29,30 @@ CMSTopTag::CMSTopTag(double mminLower, double mjetLower, double mjetUpper): m_mm
 
 
     
-bool Tau32::operator()(const TopJet & topjet, const uhh2::Event &) const{
+bool Tau32::operator()(const TopJet & topjet, const uhh2::Event &) const {
     auto tau2 = topjet.tau2();
     if(!std::isfinite(tau2) || tau2 == 0.0) return false;
     auto tau3 = topjet.tau3();
     if(!std::isfinite(tau3)) return false;
     return tau3 / tau2 < threshold;
+}
+
+
+bool HiggsTag::operator()(TopJet const & topjet, uhh2::Event const & event) const {
+    auto subjets = topjet.subjets();
+    if(subjets.size() < 2) return false;
+    clean_collection(subjets, event, btagid_);
+    if (subjets.size() < 2) return false;
+    sort_by_pt(subjets);
+
+    LorentzVector firsttwosubjets = subjets[0].v4() + subjets[1].v4();
+    if(!firsttwosubjets.isTimelike()) {
+        return false;
+    }
+    auto mjet = firsttwosubjets.M();
+    if(mjet < minmass_) return false;
+    if(mjet > maxmass_) return false;
+    return true;
 }
 
 
