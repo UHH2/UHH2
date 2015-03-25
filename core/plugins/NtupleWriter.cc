@@ -286,11 +286,11 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     event->rho = -1;
   }
 
-  if(doPV){
-    branch(tr, "beamspot_x0",&event->beamspot_x0);
-    branch(tr, "beamspot_y0",&event->beamspot_y0);
-    branch(tr, "beamspot_z0",&event->beamspot_z0);
-  }
+  //if(doPV){
+  branch(tr, "beamspot_x0",&event->beamspot_x0);
+  branch(tr, "beamspot_y0",&event->beamspot_y0);
+  branch(tr, "beamspot_z0",&event->beamspot_z0);
+  //}
   if(doGenJets){
     auto genjet_sources = iConfig.getParameter<std::vector<std::string> >("genjet_sources");
     genjet_ptmin = iConfig.getParameter<double> ("genjet_ptmin");
@@ -444,6 +444,11 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      event->beamspot_x0 = bsp.x0();
      event->beamspot_y0 = bsp.y0();
      event->beamspot_z0 = bsp.z0();
+   }
+   else{
+     event->beamspot_x0 = 0;
+     event->beamspot_y0 = 0;
+     event->beamspot_z0 = 0;
    }
    
    print_times(timer, "pv");
