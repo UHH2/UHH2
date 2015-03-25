@@ -41,15 +41,23 @@ bool NElectronSelection::passes(const Event & event){
     return passes_minmax(*event.electrons, nmin, nmax, event, eleid);
 }
 
-NJetSelection::NJetSelection(int nmin_, int nmax_, const boost::optional<JetId> & jetid_): nmin(nmin_), nmax(nmax_), jetid(jetid_){}
+NJetSelection::NJetSelection(int nmin_, int nmax_,
+    const boost::optional<JetId> & jetid_,
+    const boost::optional<Event::Handle<std::vector<Jet> > > & jetcollection_) :
+    nmin(nmin_), nmax(nmax_), jetid(jetid_), jetcollection(jetcollection_){}
 
 bool NJetSelection::passes(const Event & event){
-    return passes_minmax(*event.jets, nmin, nmax, event, jetid);
+    const auto & jets = jetcollection ? event.get(*jetcollection) : *event.jets;
+    return passes_minmax(jets, nmin, nmax, event, jetid);
 }
 
-NTopJetSelection::NTopJetSelection(int nmin_, int nmax_, const boost::optional<TopJetId> & topjetid_): nmin(nmin_), nmax(nmax_), topjetid(topjetid_){}
+NTopJetSelection::NTopJetSelection(int nmin_, int nmax_,
+    const boost::optional<TopJetId> & topjetid_,
+    const boost::optional<Event::Handle<std::vector<TopJet> > > & topjetcollection_) :
+    nmin(nmin_), nmax(nmax_), topjetid(topjetid_), topjetcollection(topjetcollection_){}
 
 bool NTopJetSelection::passes(const Event & event){
-  return passes_minmax(*event.topjets, nmin, nmax, event, topjetid);
+    const auto & jets = topjetcollection ? event.get(*topjetcollection) : *event.topjets;
+  return passes_minmax(jets, nmin, nmax, event, topjetid);
 }
 

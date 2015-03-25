@@ -15,7 +15,7 @@ public:
     
     virtual void fill(const uhh2::Event & ev) override;
     
-private:
+protected:
     
     TH1F *number, *pt, *eta, *phi, *charge, *ptrel, *deltaRmin;
     TH1F *pt_1, *pt_1_binned, *pt_muon1_tau1, *pt_muon1_tau1_binned, *eta_1, *phi_1, *charge_1, *ptrel_1, *deltaRmin_1;
