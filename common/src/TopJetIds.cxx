@@ -8,18 +8,13 @@ bool CMSTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const {
     auto subjets = topjet.subjets();
     if(subjets.size() < 3) return false;
     
-    LorentzVector allsubjets;
-    for(const auto & subjet : subjets) {
-        allsubjets += subjet.v4();
-    }
-    if(!allsubjets.isTimelike()) {
-        return false;
-    }
-    auto mjet = allsubjets.M();
+    auto mjet = topjet.v4().M();
     if(mjet < m_mjetLower) return false;
     if(mjet > m_mjetUpper) return false;
+
     auto mmin = m_disubjet_min(topjet);
     if(mmin < m_mminLower) return false;
+
     return true;
 }
 
