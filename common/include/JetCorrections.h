@@ -143,7 +143,7 @@ private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     MuonId mu_id;
     ElectronId ele_id;
-    double drmax = 0.5;
+    double drmax = 0.4;
 };
 
 /** \brief Smear the jet four-momenta in MC to match the resolution in data
