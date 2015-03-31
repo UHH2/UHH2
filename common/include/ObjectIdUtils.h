@@ -147,11 +147,8 @@ private:
     std::vector<id_type> ids;
 };
 
-/** \brief Construct a new object id, taking the logical or of several other ids.
- * 
- * Similar to above, except that this Id requires only one of the implemented ids to be passed in
- * order to pass 'true'.
- * Can e.g. be used for a GenParticleId.
+/** \brief Construct a new object id that takes another Id as input and returns 'false' if the 
+ * object passes that Id.
  */
 template<typename T>
 class VetoId {
