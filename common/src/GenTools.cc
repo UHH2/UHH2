@@ -9,8 +9,8 @@ GenParticle const * findMother(GenParticle const & igenp, vector<GenParticle> co
 }
 
 
-NGenParticleCalculator::NGenParticleCalculator(Context & ctx, std::string hndl_name, int genp_id, boost::optional<int> mother_id) :
-		hndl_(ctx.get_handle<int>(hndl_name)), genp_id_(genp_id), mother_id_(mother_id) {}
+NGenParticleCalculator::NGenParticleCalculator(Context & ctx, std::string hndl_name, int genp_id, boost::optional<int> mother_id, boost::optional<int> veto_mother_id) :
+		hndl_(ctx.get_handle<int>(hndl_name)), genp_id_(genp_id), mother_id_(mother_id), veto_mother_id_(veto_mother_id) {}
 
 bool NGenParticleCalculator::process(Event & event)
 {
@@ -28,6 +28,10 @@ bool NGenParticleCalculator::process(Event & event)
 					if (abs(gen_mother->pdgId()) == *mother_id_)
 					{
 						right_mother = true;
+					}
+					else if (veto_mother_id_ && abs(gen_mother->pdgId()) == *veto_mother_id_)
+					{
+						right_mother = false;
 						break;
 					}
 					gen_mother = findMother(*gen_mother, event.genparticles);
