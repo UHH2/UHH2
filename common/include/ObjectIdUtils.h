@@ -18,6 +18,8 @@ typedef std::function<bool (const Electron &, const uhh2::Event &)> ElectronId;
 typedef std::function<bool (const Muon &, const uhh2::Event &)> MuonId;
 typedef std::function<bool (const Tau &, const uhh2::Event &)> TauId;
 typedef std::function<bool (const TopJet &, const uhh2::Event &)> TopJetId;
+typedef std::function<bool (const GenParticle &, const uhh2::Event &)> GenParticleId;
+
 
 /** \brief Cut on minimum pt and maximum |eta| of a particle
  * 
@@ -100,4 +102,70 @@ private:
     std::vector<id_type> ids;
 };
 
+/** \brief Construct a new object id, taking the logical or of several other ids.
+ * 
+ * Similar to above, except that this Id requires only one of the implemented ids to be passed in
+ * order to pass 'true'.
+ * Can e.g. be used for a GenParticleId.
+ */
+template<typename T>
+class OrId {
+public:
+    typedef std::function<bool (const T&, const uhh2::Event &)> id_type;
+    
+    OrId(const id_type & id1, const id_type & id2){
+        add(id1);
+        add(id2);
+    }
+    
+    OrId(const id_type & id1, const id_type & id2, const id_type & id3){
+        add(id1);
+        add(id2);
+        add(id3);
+    }
+    
+    OrId(const id_type & id1, const id_type & id2, const id_type & id3, const id_type & id4){
+        add(id1);
+        add(id2);
+        add(id3);
+        add(id4);
+    }
+    
+    OrId & add(const id_type & id){
+        ids.push_back(id);
+        return *this;
+    }
+    
+    bool operator()(const T & obj, const uhh2::Event & event) const {
+        for(const auto & id : ids){
+            if(id(obj, event)) return true;
+        }
+        return false;
+    }
+    
+private:
+    std::vector<id_type> ids;
+};
+
+/** \brief Construct a new object id, taking the logical or of several other ids.
+ * 
+ * Similar to above, except that this Id requires only one of the implemented ids to be passed in
+ * order to pass 'true'.
+ * Can e.g. be used for a GenParticleId.
+ */
+template<typename T>
+class VetoId {
+public:
+    typedef std::function<bool (const T&, const uhh2::Event &)> id_type;
+    
+    VetoId(const id_type & id): id_(id) {}
+    
+    bool operator()(const T & obj, const uhh2::Event & event) const {
+        if(id_(obj, event)) return true;
+        return false;
+    }
+    
+private:
+    id_type id_;
+};
 
