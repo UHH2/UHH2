@@ -87,17 +87,7 @@ inline void clean_collection(std::vector<T> & objects, const uhh2::Event & event
     std::swap(result, objects);
 }
 
-
-namespace {
 /** invariant mass of a LorentzVector, but save for timelike / spacelike vectors
  *
  */
-float inv_mass_save(const LorentzVector & p4){
-    if(p4.isTimelike()){
-            return p4.mass();
-    }
-    else{
-        return -sqrt(-p4.mass2());
-    }
-}
-}
+float inv_mass_safe(const LorentzVector&);

@@ -26,6 +26,10 @@ const Jet * nextJet(const Particle  & p, const std::vector<Jet> & jets){
     return closestParticle(p, jets);
 }
 
+float inv_mass_safe(const LorentzVector& p4){
+
+  return p4.isTimelike() ? p4.mass() : -sqrt(-p4.mass2());
+}
 
 double pTrel(const Particle  & p, const Particle * reference_axis){
     double ptrel=0;
