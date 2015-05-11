@@ -153,6 +153,7 @@ bool TopTagReconstruction::process(uhh2::Event & event) {
 
         LorentzVector tophad_v4(tj.v4());
         hyp.add_tophad_jet(tj);
+        hyp.set_tophad_topjet_ptr(&tj);
 
         LorentzVector toplep_v4(lepton.v4() + neutrino_p4);
 
