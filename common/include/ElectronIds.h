@@ -14,6 +14,17 @@
 // ids require pileup density event.rho to calculate corrected PF isolation, or the jet-lepton
 // DeltaR and ptrel, etc.
 
+class PtEtaSCCut {
+ public:
+  PtEtaSCCut(float min_pt_, float max_etaSC_): min_pt(min_pt_), max_etaSC(max_etaSC_) {}
+
+  bool operator()(const Electron& ele, const uhh2::Event&) const {
+    return (ele.pt() > min_pt) && (fabs(ele.supercluster_eta()) < max_etaSC);
+  }
+
+ private:
+  float min_pt, max_etaSC;
+};
 
 // see https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
 bool ElectronID_CSA14_50ns_loose(const Electron & electron, const uhh2::Event & event);
