@@ -81,7 +81,7 @@ bool Chi2DiscriminatorTTAG::process(uhh2::Event & event){
   for(auto & hyp: hyps){
 
     if(!hyp.tophad_topjet_ptr())
-      std::runtime_error("Chi2DiscriminatorTTAG::process -- null pointer for TopJet associated to hadronic-top");
+      throw std::runtime_error("Chi2DiscriminatorTTAG::process -- null pointer for TopJet associated to hadronic-top");
 
     LorentzVector tjet_subjet_sum;
     for(const auto& subj : hyp.tophad_topjet_ptr()->subjets()) tjet_subjet_sum += subj.v4();
