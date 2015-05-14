@@ -15,7 +15,7 @@ bool TauIDMedium::operator()(const Tau & tau, const Event & event) const {
     return true;
 }
 
-bool TauIDDecayModeFinding::operator()(const Tau & tau, const Event & event) const {
+bool TauIDDecayModeFinding::operator()(const Tau & tau, const Event &) const {
     if(!tau.get_bool(Tau::decayModeFinding)) return false;
     return true;
 }
