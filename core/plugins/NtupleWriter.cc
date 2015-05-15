@@ -121,7 +121,11 @@ private:
         if(!outfile || !outtree) return;
         outputs.emplace_back(event_output{ti, bname, ges.get_raw_handle(ti, mname)});
     }
-    
+
+    virtual void do_undeclare_event_output(const std::string & bname) override {
+        throw runtime_error("undeclare_event_output not implemented in CMSSW!");
+    }
+
     TFile * outfile;
     TTree * outtree;
     
