@@ -10,4 +10,10 @@ public:
     bool operator()(const Tau & tau, const uhh2::Event & event) const;
 };
 
+class TauIDDecayModeFinding {
+public:
+    bool operator()(const Tau & tau, const uhh2::Event & event) const;
+};
+
+
 

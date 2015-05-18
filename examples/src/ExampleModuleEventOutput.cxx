@@ -28,6 +28,9 @@ ExampleModuleEventOutput::ExampleModuleEventOutput(Context & ctx): myint(0){
     
     // declare output where the branchname is different from the name in the event:
     h_myint = ctx.declare_event_output<int>(ctx.get("int_branchname"), "myint");
+
+    // unwanted output can be removed by branchname:
+    ctx.undeclare_event_output("slimmedJets");
 }
 
 

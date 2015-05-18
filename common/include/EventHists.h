@@ -21,9 +21,10 @@ public:
 
     virtual void fill(const uhh2::Event & ev) override;
 
-private:
-    TH1F *N_PrimVertices, *Weights, *MET, *HT, *HTLep, *ST;
+protected:
+    TH1F *N_PrimVertices, *Weights, *WeightsLogBins, *MET, *HT, *HTLep, *ST;
 
     uhh2::Event::Handle<double> h_ht;
+    uhh2::Event::Handle<double> h_st;
     uhh2::Event::Handle<FlavorParticle> h_primlep;
 };

@@ -100,7 +100,7 @@ private:
 /** \brief Cross-clean lepton and jets by subtracting lepton four momenta from nearby jets
  * 
  * Leptons are subtracted from the jets' raw four-momentum if:
- *  - DR(jet, lepton) < drmax (default: 0.5) and
+ *  - DR(jet, lepton) < drmax (default: 0.4) and
  *  - electron/muon multiplicity is greater than 0 and
  *  - electron energy / muon energy of jet is compatible with lepton to subtract
  * 
@@ -143,7 +143,7 @@ private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     MuonId mu_id;
     ElectronId ele_id;
-    double drmax = 0.5;
+    double drmax = 0.4;
 };
 
 /** \brief Smear the jet four-momenta in MC to match the resolution in data

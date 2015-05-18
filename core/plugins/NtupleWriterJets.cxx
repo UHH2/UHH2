@@ -170,7 +170,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         if(!njettiness_src.empty() || !qjets_src.empty()){
             double drmin = numeric_limits<double>::infinity();
             for (size_t i_wc=0; i_wc < pat_topjets_with_cands->size(); ++i_wc) {
-                const auto & cand = (*pat_topjets_with_cands)[i_wc];
+                //const auto & cand = (*pat_topjets_with_cands)[i_wc];
                 auto dr = reco::deltaR((*pat_topjets_with_cands)[i_wc], pat_topjet);
                 if(dr < drmin){
                     i_pat_topjet_wc = i_wc;

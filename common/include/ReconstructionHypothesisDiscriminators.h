@@ -55,6 +55,27 @@ private:
     cfg config;
 };
 
+/** \brief Calculate the chi-square reconstruction discriminator
+ *         (only for events with a top-tagged jet; see TopTagReconstruction class)
+ * 
+ * Chi-square discriminator specific to events where the hadronic-top corresponds to one jet passing top-tagging.
+ * Class implementation follows the same structure of the Chi2Discriminator class.
+ * The chi2 term for the hadronic-top is calculated using the groomed mass of the top-tagged jet.
+ */
+class Chi2DiscriminatorTTAG: public uhh2::AnalysisModule {
+public:
+    struct cfg {
+        std::string discriminator_label;
+        cfg(): discriminator_label("Chi2"){}
+    };
+    
+    Chi2DiscriminatorTTAG(uhh2::Context & ctx, const std::string & rechyps_name, const cfg & config = cfg());
+    virtual bool process(uhh2::Event & event) override;
+    
+private:
+    uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_hyps;
+    cfg config;
+};
 
 /** \brief Top-DeltaR quality flag for Monte-Carlo
  * 

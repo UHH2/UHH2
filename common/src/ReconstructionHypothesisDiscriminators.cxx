@@ -39,6 +39,7 @@ const ReconstructionHypothesis * get_best_hypothesis(const std::vector<Reconstru
         return nullptr;
     }
 }
+////
 
 Chi2Discriminator::Chi2Discriminator(Context & ctx, const std::string & rechyps_name, const cfg & config_): config(config_){
     h_hyps = ctx.get_handle<vector<ReconstructionHypothesis>>(rechyps_name);
@@ -62,7 +63,43 @@ bool Chi2Discriminator::process(uhh2::Event & event){
   }
   return true;
 }
+////
 
+Chi2DiscriminatorTTAG::Chi2DiscriminatorTTAG(Context & ctx, const std::string & rechyps_name, const cfg & config_): config(config_){
+  h_hyps = ctx.get_handle<vector<ReconstructionHypothesis>>(rechyps_name);
+}
+
+
+bool Chi2DiscriminatorTTAG::process(uhh2::Event & event){
+  auto & hyps = event.get(h_hyps);
+
+  const double mass_thad       = 181.;
+  const double mass_thad_sigma =  15.;
+  const double mass_tlep       = 174.;
+  const double mass_tlep_sigma =  18.;
+
+  for(auto & hyp: hyps){
+
+    if(!hyp.tophad_topjet_ptr())
+      throw std::runtime_error("Chi2DiscriminatorTTAG::process -- null pointer for TopJet associated to hadronic-top");
+
+    LorentzVector tjet_subjet_sum;
+    for(const auto& subj : hyp.tophad_topjet_ptr()->subjets()) tjet_subjet_sum += subj.v4();
+
+    const double mass_tlep_rec = inv_mass(hyp.toplep_v4());
+    const double mass_thad_rec = inv_mass(tjet_subjet_sum);
+
+    const double chi2_thad = pow((mass_thad_rec - mass_thad) / mass_thad_sigma, 2);
+    const double chi2_tlep = pow((mass_tlep_rec - mass_tlep) / mass_tlep_sigma, 2);
+
+    hyp.set_discriminator(config.discriminator_label        , chi2_tlep + chi2_thad);
+    hyp.set_discriminator(config.discriminator_label+"_tlep", chi2_tlep);
+    hyp.set_discriminator(config.discriminator_label+"_thad", chi2_thad);
+  }
+
+  return true;
+}
+////
 
 TopDRMCDiscriminator::TopDRMCDiscriminator(Context & ctx, const std::string & rechyps_name, const cfg & config_): config(config_){
     h_hyps = ctx.get_handle<vector<ReconstructionHypothesis>>(rechyps_name);

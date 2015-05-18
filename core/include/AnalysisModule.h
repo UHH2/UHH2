@@ -177,6 +177,12 @@ public:
     template<typename T>
     GenericEvent::Handle<T> declare_event_output(const std::string & branch_name, const std::string & event_member_name = "");
 
+    /** \brief Remove a branch from the output event tree
+     */
+    void undeclare_event_output(const std::string & branch_name) {
+        do_undeclare_event_output(branch_name);
+    }
+
 
     /** \brief Get a handle by type and name, allowing to set / get event contents
      *
@@ -198,7 +204,8 @@ protected:
 
     virtual void do_declare_event_input(const std::type_info & ti, const std::string & bname, const std::string & mname) = 0;
     virtual void do_declare_event_output(const std::type_info & ti, const std::string & bname, const std::string & mname) = 0;
-    
+    virtual void do_undeclare_event_output(const std::string & branch_name) = 0;
+
     std::map<std::string, std::string> settings;
 
 private:
