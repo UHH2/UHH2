@@ -8,8 +8,8 @@
 using namespace uhh2;
 using namespace std;
 
-PrimaryLepton::PrimaryLepton(Context & ctx) {
-    h_primlep = ctx.get_handle<FlavorParticle>("PrimaryLepton");
+PrimaryLepton::PrimaryLepton(Context & ctx, const std::string & h_name) {
+    h_primlep = ctx.get_handle<FlavorParticle>(h_name);
 }
 
 bool PrimaryLepton::process(uhh2::Event & event) {
