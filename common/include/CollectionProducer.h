@@ -22,7 +22,7 @@ using namespace uhh2;
  * // assuming a 'std::unique_ptr<AnalysisModule> cp' as member varibale
  * cp.reset(new CollectionProducer<Jet>(
  *     context,
- *     CSVBTag(WP_MEDIUM), // from common/include/JetIds.h
+ *     CSVBTag(CSVBTag::WP_MEDIUM), // from common/include/JetIds.h
  *     "jets",
  *     "b_jets"
  * ));
@@ -78,7 +78,7 @@ private:
  * // assuming a 'std::unique_ptr<AnalysisModule> cp' as member varibale
  * cp.reset(new CollectionProducer<Jet>(
  *     context,
- *     CSVBTag(WP_MEDIUM), // from common/include/JetIds.h
+ *     CSVBTag(CSVBTag::WP_MEDIUM), // from common/include/JetIds.h
  *     "jets",
  *     "n_btags"
  * ));
