@@ -111,18 +111,15 @@ TopJetHists::subjetHist TopJetHists::book_subjetHist(const std::string & axisSuf
 
 void TopJetHists::fill_subjetHist(const TopJet & topjet, subjetHist & subjet_hist, double weight){
   auto subjets = topjet.subjets();
-  std::vector<float> subjetCSV = topjet.subCSV();
   subjet_hist.number->Fill(subjets.size(),weight);
   LorentzVector sumLorenzv4;
-  int it = 0;
   for (auto & subjet : subjets) {
     subjet_hist.pt->Fill(subjet.pt(), weight);
     subjet_hist.eta->Fill(subjet.eta(), weight);
     subjet_hist.phi->Fill(subjet.phi(), weight);
     subjet_hist.mass->Fill(subjet.v4().M(), weight);
-    subjet_hist.csv->Fill(subjetCSV[it], weight);
+    subjet_hist.csv->Fill(subjet.btag_combinedSecondaryVertex(), weight);
     sumLorenzv4 += subjet.v4();
-    it++;
   }
   subjet_hist.sum4Vec->Fill(sumLorenzv4.M(), weight);
 }

@@ -15,7 +15,7 @@ public:
 
     virtual void fill(const uhh2::Event & ev) override;
 
-private:
+protected:
     TH1F *Discriminator, *Discriminator_2, *Discriminator_3;
     TH1F *M_ttbar_rec, *M_ttbar_gen, *M_toplep_rec, *M_tophad_rec, *M_tophad_rec_1jet, *M_tophad_rec_2jet, *M_tophad_rec_3jet;
     TH1F *Pt_toplep_rec, *Pt_tophad_rec, *Pt_ttbar_rec, *Pt_ttbar_gen;

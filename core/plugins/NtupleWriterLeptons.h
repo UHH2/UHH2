@@ -1,11 +1,20 @@
 #pragma once
 
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "UHH2/core/plugins/NtupleWriterModule.h"
 
 namespace uhh2 {
 
 class NtupleWriterElectrons: public NtupleWriterModule {
 public:
+    
+    struct Config: public NtupleWriterModule::Config {        
+        edm::ParameterSet id_sources;
+
+        // inherit constructor does not work yet :-(
+        Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_, const std::string & dest_,
+                const std::string & dest_branchname_ = ""): NtupleWriterModule::Config(ctx_, std::move(cc_), src_, dest_, dest_branchname_){}
+    };
 
     explicit NtupleWriterElectrons(Config & cfg, bool set_electrons_member);
 
@@ -14,12 +23,22 @@ public:
     virtual ~NtupleWriterElectrons();
 private:
     edm::EDGetToken src_token;
+    std::vector<Electron::tag> id_tags;
+    std::vector<edm::EDGetToken> id_src_tokens;
     Event::Handle<std::vector<Electron>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Electron>>> electrons_handle; // handle of name "electrons" in case set_electrons_member is true
 };
 
 class NtupleWriterMuons: public NtupleWriterModule {
 public:
+    
+    struct Config: public NtupleWriterModule::Config {        
+        edm::InputTag pv_src;
+
+        // inherit constructor does not work yet :-(
+        Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_, const std::string & dest_,
+                const std::string & dest_branchname_ = ""): NtupleWriterModule::Config(ctx_, std::move(cc_), src_, dest_, dest_branchname_){}
+    };
 
     explicit NtupleWriterMuons(Config & cfg, bool set_muons_member);
 
@@ -28,6 +47,7 @@ public:
     virtual ~NtupleWriterMuons();
 private:
     edm::EDGetToken src_token;
+    edm::EDGetToken pv_token;
     Event::Handle<std::vector<Muon>> handle;
     boost::optional<Event::Handle<std::vector<Muon>>> muons_handle;
 };

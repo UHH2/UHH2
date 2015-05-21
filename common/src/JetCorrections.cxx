@@ -47,30 +47,6 @@ void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & ev
     jet.set_JEC_factor_raw(1. / correctionfactor);
 }
 
-void correct_subjets(FactorizedJetCorrector & corrector, TopJet & topjet, const Event & event){
-    auto subjets_top=topjet.subjets();
-    auto subjets_JECraw=topjet.subJEC_raw();
-    topjet.rm_subjets();
-    topjet.rm_JEC();
-    for (unsigned int i=0; i<subjets_top.size();i++)
-    { 
-      //It is not needed to uncorrect the subjets because the ntuplewriter corrects the subjets at level 0, that is: they're not corrected.
-      //However the subJEC_raw value is set to the full correction, thus by uncorrecting we would un-apply a correction that was never applied in the first place.
-      //The analyzer must be careful to apply subjet JECs only *once* in the entire analysis.
-      corrector.setJetPt(subjets_top[i].pt());
-      corrector.setJetEta(subjets_top[i].eta());
-      corrector.setJetE(subjets_top[i].energy());
-      corrector.setJetA(topjet.subArea()[i]);
-      corrector.setRho(event.rho);
-      auto correctionfactor = corrector.getCorrection();
-      subjets_top[i].set_v4(subjets_top[i].v4() * correctionfactor);
-      topjet.add_subjet(subjets_top[i]);
-      topjet.add_subJEC_raw(1. / correctionfactor);
-    }
-}
-
-
-
 }
 
 JetCorrector::JetCorrector(const std::vector<std::string> & filenames){
@@ -110,8 +86,12 @@ SubJetCorrector::SubJetCorrector(const std::vector<std::string> & filenames){
     
 bool SubJetCorrector::process(uhh2::Event & event){
     assert(event.topjets);
-    for(auto & jet : *event.topjets){
-        correct_subjets(*corrector, jet, event);
+    for(auto & topjet : *event.topjets){
+        auto subjets = topjet.subjets();
+        for (auto & subjet : subjets) { 
+            correct_jet(*corrector, subjet, event);
+        }
+        topjet.set_subjets(move(subjets));
     }
     return true;
 }
@@ -119,6 +99,63 @@ bool SubJetCorrector::process(uhh2::Event & event){
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
 SubJetCorrector::~SubJetCorrector(){}
 
+GenericJetCorrector::GenericJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
+    corrector = build_corrector(filenames);
+    h_jets = ctx.get_handle<std::vector<Jet> >(collectionname);
+}
+    
+bool GenericJetCorrector::process(uhh2::Event & event){
+
+    const auto jets = &event.get(h_jets);
+    assert(jets);
+    for(auto & jet : *jets){
+        correct_jet(*corrector, jet, event);
+    }
+    return true;
+}
+
+// note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
+GenericJetCorrector::~GenericJetCorrector(){}
+
+GenericTopJetCorrector::GenericTopJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
+    corrector = build_corrector(filenames);
+    h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
+}
+    
+bool GenericTopJetCorrector::process(uhh2::Event & event){
+
+    const auto jets = &event.get(h_jets);
+    assert(jets);
+    for(auto & jet : *jets){
+        correct_jet(*corrector, jet, event);
+    }
+    return true;
+}
+
+// note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
+GenericTopJetCorrector::~GenericTopJetCorrector(){}
+
+GenericSubJetCorrector::GenericSubJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
+    corrector = build_corrector(filenames);
+    h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
+}
+    
+bool GenericSubJetCorrector::process(uhh2::Event & event){
+
+    const auto topjets = &event.get(h_jets);
+    assert(topjets);
+    for(auto & topjet : *topjets){
+        auto subjets = topjet.subjets();
+        for (auto & subjet : subjets) { 
+            correct_jet(*corrector, subjet, event);
+        }
+        topjet.set_subjets(move(subjets));
+    }
+    return true;
+}
+
+// note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
+GenericSubJetCorrector::~GenericSubJetCorrector(){}
 
 // ** JetLeptonCleaner
 
@@ -240,10 +277,12 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
     }
     for(unsigned int i=0; i<event.jets->size(); ++i) {
         auto & jet = event.jets->at(i);
-        jet.set_genjet(event.genjets);
-        float genpt = jet.genjet_pt();
-        //ignore unmatched jets (which have zero vector) or jets with very low pt:
-        if(genpt < 15.0) {
+        // find next genjet:
+        auto closest_genjet = closestParticle(jet, *event.genjets);
+        // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt:
+        if(closest_genjet == nullptr || deltaR(*closest_genjet, jet) > 0.3) continue;
+        auto genpt = closest_genjet->pt();
+        if(genpt < 15.0f) {
             continue;
         }
         LorentzVector jet_v4 = jet.v4();

@@ -30,6 +30,8 @@
                    
                    <!-- the name of the branch to use for the test int event output. See ExampleEventOutput module for details. -->
                    <Item Name="int_branchname" Value="testbranchname" />
+                   <!-- Event output can also be switched off. See ExampleEventOutput module for details. -->
+
                 </UserConfig>
 	</Cycle>
 </JobConfiguration>

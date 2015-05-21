@@ -173,7 +173,8 @@ private:
     // input branches is done in begin_input_file.
     virtual void do_declare_event_input(const std::type_info & ti, const std::string & bname, const std::string & mname) override;
     virtual void do_declare_event_output(const std::type_info & ti, const std::string & bname, const std::string & mname) override;
-    
+    virtual void do_undeclare_event_output(const std::string & branch_name) override;
+
     // read metadata from a tree "uhh2_meta" in dir into data. Returns whether the tree
     // was found or not. Also checks consistency opf all entries in case there is more than one entry
     // in the metadata tree (in case of merged output).
@@ -447,6 +448,13 @@ void SFrameContext::do_declare_event_output(const type_info & ti, const string &
     auto handle = ges.get_raw_handle(ti, mname);
     do_declare_event_output_handle(ti, bname, handle);
 }
+
+void SFrameContext::do_undeclare_event_output(const std::string & branch_name) {
+    if (!event_output_bname2bi.count(branch_name)) {
+        throw runtime_error("Can not undeclare event output '" + branch_name + "' as it has not been declared before.");
+    }
+    event_output_bname2bi.erase(branch_name);
+};
 
 void SFrameContext::do_declare_event_input_handle(const type_info & ti, const string & bname, const GenericEvent::RawHandle & handle) {
     event_input_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));

@@ -1,14 +1,9 @@
-
-//set this flag to 1 when running in CMSSW_7_0_X, switch it to 0 for CMSSW_7_1_X and CMSSW_7_2_X
-//#define CMSSW70 1
-
 #include "FWCore/Utilities/interface/CPUTimer.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 
 #include "UHH2/core/include/root-utils.h"
 #include "UHH2/core/plugins/NtupleWriter.h"
-#include "UHH2/core/plugins/JetProps.h"
 #include "UHH2/core/plugins/NtupleWriterJets.h"
 #include "UHH2/core/plugins/NtupleWriterLeptons.h"
 
@@ -126,7 +121,11 @@ private:
         if(!outfile || !outtree) return;
         outputs.emplace_back(event_output{ti, bname, ges.get_raw_handle(ti, mname)});
     }
-    
+
+    virtual void do_undeclare_event_output(const std::string & bname) override {
+        throw runtime_error("undeclare_event_output not implemented in CMSSW!");
+    }
+
     TFile * outfile;
     TTree * outtree;
     
@@ -176,7 +175,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doMuons = iConfig.getParameter<bool>("doMuons");
   bool doTaus = iConfig.getParameter<bool>("doTaus");
   bool doJets = iConfig.getParameter<bool>("doJets");
-  bool doJetsConstituents = iConfig.getParameter<bool>("doJetsConstituents");
 
   doGenJets = iConfig.getParameter<bool>("doGenJets");
   doGenTopJets = iConfig.getParameter<bool>("doGenTopJets");
@@ -188,48 +186,27 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 
   // topjet configuration:
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
-  bool doTopJetsConstituents = iConfig.getParameter<bool>("doTopJetsConstituents");
-  SVComputer_  = iConfig.getUntrackedParameter<edm::InputTag>("svComputer",edm::InputTag("combinedSecondaryVertex"));
-  bool doTagInfos = iConfig.getUntrackedParameter<bool>("doTagInfos",false);
-
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
-  doPuppi = iConfig.getParameter<bool>("doPuppi");
-  runOnMiniAOD = iConfig.getParameter<bool>("runOnMiniAOD");
-
-  bool storePFsAroundLeptons = iConfig.getUntrackedParameter<bool>("storePFsAroundLeptons",false);
-  bool doAllPFConstituents = iConfig.getParameter<bool>("doAllPFConstituents");
-
-  if(storePFsAroundLeptons){
-      throw runtime_error("storePFsAroundLeptons not supported any more");
-  }
-  if(doAllPFConstituents){
-      throw runtime_error("doAllPFConstituents not supported any more (note: was buggy)");
-  }
+  
+  auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 
   // important: initialize first all module_writers, so that they can
   // inform the ges what they write to the uhh2::Event
-  if(doTopJetsConstituents || doJetsConstituents){
-      branch(tr, "PFParticles", "std::vector<PFParticle>", &pfparticles);
-  }
-  if(doPuppi){
-      branch(tr, "PuppiParticles", "std::vector<PFParticle>", &puppiparticles);
-  }
   if(doElectrons){
       using uhh2::NtupleWriterElectrons;
-      auto electron_sources = iConfig.getParameter<std::vector<std::string> >("electron_sources");
-      for(size_t i=0; i< electron_sources.size(); ++i){
-          NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_sources[i], electron_sources[i]);
-          cfg.runOnMiniAOD = runOnMiniAOD;
-          writer_modules.emplace_back(new NtupleWriterElectrons(cfg, i==0));
-      }
+      auto electron_source = iConfig.getParameter<edm::InputTag>("electron_source");
+      NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
+      cfg.id_sources = iConfig.getParameter<edm::ParameterSet>("electron_id_sources");
+      writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true));
   }
   if(doMuons){
       using uhh2::NtupleWriterMuons;
       auto muon_sources = iConfig.getParameter<std::vector<std::string> >("muon_sources");
       for(size_t i=0; i< muon_sources.size(); ++i){
           NtupleWriterMuons::Config cfg(*context, consumesCollector(), muon_sources[i], muon_sources[i]);
-          cfg.runOnMiniAOD = runOnMiniAOD;
+          assert(pv_sources.size() > 0); // note: pvs are required for muon id.
+          cfg.pv_src = pv_sources[0];
           writer_modules.emplace_back(new NtupleWriterMuons(cfg, i==0));
       }
   }
@@ -240,7 +217,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       auto tau_etamax = iConfig.getParameter<double> ("tau_etamax");
       for(size_t i=0; i< tau_sources.size(); ++i){
           NtupleWriterTaus::Config cfg(*context, consumesCollector(), tau_sources[i], tau_sources[i]);
-          cfg.runOnMiniAOD = runOnMiniAOD;
           cfg.ptmin = tau_ptmin;
           cfg.etamax = tau_etamax;
           writer_modules.emplace_back(new NtupleWriterTaus(cfg, i==0));
@@ -253,12 +229,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       double jet_etamax = iConfig.getParameter<double> ("jet_etamax");
       for(size_t i=0; i< jet_sources.size(); ++i){
           NtupleWriterJets::Config cfg(*context, consumesCollector(), jet_sources[i], jet_sources[i]);
-          cfg.runOnMiniAOD = runOnMiniAOD;
           cfg.ptmin = jet_ptmin;
           cfg.etamax = jet_etamax;
-          if(doJetsConstituents){
-              cfg.pfparts = &pfparticles;
-          }
           writer_modules.emplace_back(new NtupleWriterJets(cfg, i==0));
       }
   }
@@ -268,37 +240,40 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     
     double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
     double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
-    auto topjet_constituents_sources = iConfig.getParameter<std::vector<std::string> >("topjet_constituents_sources");
-    auto njettiness_sources = iConfig.getParameter<std::vector<std::string> >("topjet_njettiness_sources");
-    assert(topjet_constituents_sources.size() == njettiness_sources.size());
+    bool substructure_variables = false;
+    std::vector<std::string> qjets_sources, njettiness_sources, topjet_substructure_variables_sources;
+    if(iConfig.exists("topjet_qjets_sources")){
+        qjets_sources = iConfig.getParameter<std::vector<std::string> >("topjet_qjets_sources");
+        substructure_variables = true;
+    }
+    if(iConfig.exists("topjet_njettiness_sources")){
+        njettiness_sources = iConfig.getParameter<std::vector<std::string> >("topjet_njettiness_sources");
+        substructure_variables = true;
+    }
+    if(substructure_variables){
+        topjet_substructure_variables_sources = iConfig.getParameter<std::vector<std::string> >("topjet_substructure_variables_sources");
+    }
+    assert(njettiness_sources.size() <= topjet_substructure_variables_sources.size());
+    assert(qjets_sources.size() <= topjet_substructure_variables_sources.size());
     for(size_t j=0; j< topjet_sources.size(); ++j){
         NtupleWriterTopJets::Config cfg(*context, consumesCollector(), topjet_sources[j], topjet_sources[j]);
-        cfg.runOnMiniAOD = runOnMiniAOD;
-        cfg.doTagInfos = doTagInfos;
         cfg.ptmin = topjet_ptmin;
         cfg.etamax = topjet_etamax;
-        if(j < topjet_constituents_sources.size()){
-            cfg.constituent_src = topjet_constituents_sources[j];
-            cfg.njettiness_src = njettiness_sources[j];
-            if(doTopJetsConstituents){
-                bool is_puppi =  topjet_constituents_sources[j].find("Puppi") != string::npos;
-                if(is_puppi){
-                    cfg.pfparts = &puppiparticles;
-                }
-                else{
-                    cfg.pfparts = &pfparticles;
-                }
-            }
+        if(j < topjet_substructure_variables_sources.size()){
+            cfg.substructure_variables_src = topjet_substructure_variables_sources[j];
         }
-        topjet_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0));
+        if(j < njettiness_sources.size()){
+            cfg.njettiness_src = njettiness_sources[j];
+        }
+        if(j < qjets_sources.size()){
+            cfg.qjets_src = qjets_sources[j];
+        }
+        writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0));
     }
   }
 
-
-
   // initialization of tree variables
   event.reset(new uhh2::Event(*ges));
-
 
   branch(tr, "run",&event->run);
   branch(tr, "event",&event->event);
@@ -315,11 +290,11 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     event->rho = -1;
   }
 
-  if(doPV){
-    branch(tr, "beamspot_x0",&event->beamspot_x0);
-    branch(tr, "beamspot_y0",&event->beamspot_y0);
-    branch(tr, "beamspot_z0",&event->beamspot_z0);
-  }
+  //if(doPV){
+  branch(tr, "beamspot_x0",&event->beamspot_x0);
+  branch(tr, "beamspot_y0",&event->beamspot_y0);
+  branch(tr, "beamspot_z0",&event->beamspot_z0);
+  //}
   if(doGenJets){
     auto genjet_sources = iConfig.getParameter<std::vector<std::string> >("genjet_sources");
     genjet_ptmin = iConfig.getParameter<double> ("genjet_ptmin");
@@ -380,7 +355,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
   }
   if(doPV){
-    auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
     pvs.resize(pv_sources.size());
     for(size_t j=0; j< pv_sources.size(); ++j){  
       pv_tokens.push_back(consumes<vector<reco::Vertex> >(pv_sources[j]));
@@ -392,7 +366,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   }
   if(doGenInfo){
     genparticle_source= iConfig.getParameter<edm::InputTag>("genparticle_source");
-    if(runOnMiniAOD && doAllGenParticles) stablegenparticle_source = iConfig.getParameter<edm::InputTag>("stablegenparticle_source");
+    if(doAllGenParticles) stablegenparticle_source = iConfig.getParameter<edm::InputTag>("stablegenparticle_source");
     event->genInfo = new GenInfo();
     event->genparticles = new vector<GenParticle>();
     branch(tr, "genInfo","GenInfo", event->genInfo);
@@ -429,8 +403,6 @@ namespace {
 bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    edm::CPUTimer timer;
    timer.start();
-   pfparticles.clear();
-   puppiparticles.clear();
    
    event->weight = 1.0;
    event->run = iEvent.id().run();
@@ -476,6 +448,11 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      event->beamspot_x0 = bsp.x0();
      event->beamspot_y0 = bsp.y0();
      event->beamspot_z0 = bsp.z0();
+   }
+   else{
+     event->beamspot_x0 = 0;
+     event->beamspot_y0 = 0;
+     event->beamspot_z0 = 0;
    }
    
    print_times(timer, "pv");
@@ -580,7 +557,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
      
      //store stable gen particles from packed collection
-     if(doAllGenParticles && runOnMiniAOD){
+     if(doAllGenParticles){
        edm::Handle<edm::View<pat::PackedGenParticle> > packed;
        // use packed particle collection for all STABLE (status 1) particles
        iEvent.getByLabel(stablegenparticle_source,packed);
@@ -711,31 +688,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    
    for(auto & m : writer_modules){
        m->process(iEvent, *event);
-   }
-
-   if(doPuppi){
-       edm::Handle< std::vector<reco::PFCandidate> > puppicand_handle;
-       iEvent.getByLabel(edm::InputTag("puppi","Puppi"), puppicand_handle);
-       for(const auto & pc : *puppicand_handle){
-           uhh2::add_pfpart(pc, puppiparticles, false, false, false);
-       }
-   }
-
-   // call topjet modules; they are special because
-   // they need the JetTagComputer
-   // TODO: check whether they need it for each event; maybe
-   // once is enough?!
-   if(!topjet_modules.empty()){
-       const GenericMVAJetTagComputer *computer = 0;
-       if(doTagInfos){
-           edm::ESHandle<JetTagComputer> computerHandle;
-           iSetup.get<JetTagComputerRecord>().get( SVComputer_.label(), computerHandle );
-           computer = dynamic_cast<const GenericMVAJetTagComputer*>( computerHandle.product() );
-       }
-       for(auto & m : topjet_modules){
-           m->set_computer(computer); // computer can be NULL, but that's ok
-           m->process(iEvent, *event);
-       }
    }
    
 

@@ -34,8 +34,6 @@ public:
         double ptmin = 0.0;
         double etamax = 1e10;
 
-        bool runOnMiniAOD = true;
-
         Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_, const std::string & dest_,
                 const std::string & dest_branchname_ = ""):
             ctx(ctx_), cc(std::move(cc_)), src(src_), dest(dest_), dest_branchname(dest_branchname_){
@@ -49,13 +47,6 @@ public:
     virtual void process(const edm::Event &, uhh2::Event &) = 0;
     virtual ~NtupleWriterModule();
 };
-
-PFParticle PFCandidate2PFParticle(const reco::PFCandidate & pf, bool fromjet, bool fromiso, bool frompuiso);
-PFParticle PFCandidate2PFParticle(const pat::PackedCandidate & pf, bool fromjet, bool fromiso, bool frompuiso);
-
-// helper functions for storing PFParticles
-size_t add_pfpart(const pat::PackedCandidate & pf, std::vector<PFParticle> & pfs, bool fromjet, bool fromiso, bool frompuiso);
-size_t add_pfpart(const reco::PFCandidate & pf, std::vector<PFParticle> & pfs, bool fromjet, bool fromiso, bool frompuiso);
 
 }
 

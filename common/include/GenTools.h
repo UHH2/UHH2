@@ -1,3 +1,5 @@
+#pragma once
+
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
 
@@ -25,7 +27,7 @@ GenParticle const * findMother(GenParticle const & p, vector<GenParticle> const 
 
 class NGenParticleCalculator : public AnalysisModule {
 public:
-    explicit NGenParticleCalculator(Context & ctx, std::string hndl_name, int genp_id, boost::optional<int> mother_id = boost::none);
+    explicit NGenParticleCalculator(Context & ctx, std::string hndl_name, int genp_id, boost::optional<int> mother_id = boost::none, boost::optional<int> veto_mother_id = boost::none);
 
     virtual bool process(Event & event);
 
@@ -33,4 +35,5 @@ private:
     Event::Handle<int> hndl_;
     int genp_id_;
     boost::optional<int> mother_id_;
+    boost::optional<int> veto_mother_id_;
 };

@@ -1,24 +1,10 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/CleaningModules.h"
+#include "UHH2/common/include/Utils.h"
+
 
 using namespace uhh2;
 using namespace std;
-
-namespace {
-    
-// common code to filter out objects from a collection according to an object id
-template<typename T>
-void clean_collection(vector<T> & objects, const uhh2::Event & event, const std::function<bool (const T &, const Event &)> obj_id){
-    vector<T> result;
-    for(const auto & obj : objects){
-        if(obj_id(obj, event)){
-            result.push_back(obj);
-        }
-    }
-    std::swap(result, objects);
-}
-    
-}
 
 
 JetCleaner::JetCleaner(const JetId & jet_id_): jet_id(jet_id_){}
