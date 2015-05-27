@@ -6,6 +6,7 @@
 using namespace uhh2;
 using namespace std;
 
+bool btag_warning;
 
 NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member) {
     handle = cfg.ctx.declare_event_output<vector<Jet>>(cfg.dest_branchname, cfg.dest);
@@ -16,6 +17,7 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member) {
     }
     src = cfg.src;
     src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
+    btag_warning=true;
 }
 
 NtupleWriterJets::~NtupleWriterJets(){}
@@ -97,12 +99,15 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
         }
         // NOTE: csvmva is NOT set.
         if(!sv_he || !sv_hp || !csv || !jetp || !jetbp){
-            cout << "Error in NtupleWriterJets: did not find all b-taggers! Available btaggers: ";
-            for(const auto & name_value : bdisc){
-                cout << name_value.first << " ";
-            }
-            cout << endl;
-            throw runtime_error("did not find all b-taggers; see output for details");
+	    if(btag_warning){
+	        cout << "Warning in NtupleWriterJets: did not find all b-taggers! Available btaggers: ";
+		for(const auto & name_value : bdisc){
+		  cout << name_value.first << " ";
+		}
+		cout << endl;
+		btag_warning = false;
+	    }
+            // throw runtime_error("did not find all b-taggers; see output for details");
         }
     }
 }
@@ -122,6 +127,7 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     if(!njettiness_src.empty() || !qjets_src.empty()){
         substructure_variables_src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.substructure_variables_src);
     }
+    btag_warning=true;
 }
 
 NtupleWriterTopJets::~NtupleWriterTopJets(){}
@@ -132,20 +138,14 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     event.getByToken(src_token, h_pat_topjets);
     const vector<pat::Jet> & pat_topjets = *h_pat_topjets;
     
-    edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3;
     edm::Handle<edm::ValueMap<float>> h_qjets;
     
     edm::Handle<pat::JetCollection> pat_topjets_with_cands;
     
-    if(!njettiness_src.empty()){
-        event.getByLabel(edm::InputTag(njettiness_src, "tau1"), h_njettiness1);
-        event.getByLabel(edm::InputTag(njettiness_src, "tau2"), h_njettiness2);
-        event.getByLabel(edm::InputTag(njettiness_src, "tau3"), h_njettiness3);
-    }
     if(!qjets_src.empty()){
         event.getByLabel(edm::InputTag(qjets_src, "QjetsVolatility"), h_qjets);
     }
-    if(!njettiness_src.empty() || !qjets_src.empty()){
+    if(!qjets_src.empty()){
         event.getByToken(substructure_variables_src_token, pat_topjets_with_cands);
     }
 
@@ -167,7 +167,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         
         // match a unpruned jet according to topjets_with_cands:
         int i_pat_topjet_wc = -1;
-        if(!njettiness_src.empty() || !qjets_src.empty()){
+        if(!qjets_src.empty()){
             double drmin = numeric_limits<double>::infinity();
             for (size_t i_wc=0; i_wc < pat_topjets_with_cands->size(); ++i_wc) {
                 //const auto & cand = (*pat_topjets_with_cands)[i_wc];
@@ -179,16 +179,17 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
             }
             if (i_pat_topjet_wc >= 0 && drmin < 1.0){ // be genereous: pruning can change jet axis quite a lot (esp. for DR=1.5 jets as in heptoptag)
                 auto ref = edm::Ref<pat::JetCollection>(pat_topjets_with_cands, i_pat_topjet_wc);
-                if(!njettiness_src.empty()){
-                    topjet.set_tau1((*h_njettiness1)[ref]);
-                    topjet.set_tau2((*h_njettiness2)[ref]);
-                    topjet.set_tau3((*h_njettiness3)[ref]);
-                }
-                if(!qjets_src.empty()){
-                    topjet.set_qjets_volatility((*h_qjets)[ref]);
-                }
-            }
+		topjet.set_qjets_volatility((*h_qjets)[ref]);
+	    }
         }
+
+	//njettiness
+	if(!njettiness_src.empty()){
+	  topjet.set_tau1(pat_topjet.userFloat(njettiness_src+":tau1"));
+	  topjet.set_tau2(pat_topjet.userFloat(njettiness_src+":tau2"));
+	  topjet.set_tau3(pat_topjet.userFloat(njettiness_src+":tau3"));
+	}
+	
 
         // loop over subjets to fill some more subjet info:
         for (unsigned int k = 0; k < pat_topjet.numberOfDaughters(); k++) {
