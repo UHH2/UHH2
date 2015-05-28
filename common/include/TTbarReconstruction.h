@@ -19,7 +19,7 @@ typedef std::function< std::vector<LorentzVector>  (const LorentzVector & lepton
  */
 class PrimaryLepton: public uhh2::AnalysisModule {
 public:
-    explicit PrimaryLepton(uhh2::Context & ctx);
+    explicit PrimaryLepton(uhh2::Context & ctx, const std::string & h_name="PrimaryLepton");
 
     virtual bool process(uhh2::Event & event) override;
 
