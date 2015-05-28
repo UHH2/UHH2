@@ -13,7 +13,7 @@ public:
   };
   
   enum tag {
-      /* for future use */
+      dummy = 0 /* for future use */
   };
   
   bool get_bool(bool_id i) const {
