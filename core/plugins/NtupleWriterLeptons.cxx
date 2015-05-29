@@ -49,7 +49,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_trackIso(pfiso.sumChargedParticlePt);
         ele.set_photonIso(pfiso.sumPhotonEt);
         ele.set_puChargedHadronIso(pfiso.sumPUPt);
-        ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->hitPattern().numberOfLostTrackerHits(reco::HitPattern::MISSING_INNER_HITS));
+        ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS));
         ele.set_gsfTrack_px( pat_ele.gsfTrack()->px());
         ele.set_gsfTrack_py( pat_ele.gsfTrack()->py());
         ele.set_gsfTrack_pz( pat_ele.gsfTrack()->pz());
