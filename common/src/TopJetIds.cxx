@@ -23,6 +23,89 @@ CMSTopTag::CMSTopTag(double mminLower, double mjetLower, double mjetUpper): m_mm
     m_mjetLower(mjetLower), m_mjetUpper(mjetUpper){}
 
 
+bool HEPTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const{
+    
+  double mjet;
+  double ptjet;
+  int nsubjets;
+  auto subjets = topjet.subjets();
+  sort_by_pt(subjets);
+  
+  double topmass=172.3;
+  double wmass=80.4;
+  
+  nsubjets=subjets.size();
+  
+  LorentzVector allsubjets(0,0,0,0);
+  
+  for(int j=0; j<nsubjets; ++j) {
+    allsubjets += subjets[j].v4();
+  }
+  if(!allsubjets.isTimelike()) {
+    mjet=0;
+    return false;
+  }
+  
+  mjet = allsubjets.M();
+  ptjet= topjet.pt();
+    
+  double m12, m13, m23;
+  
+  //Require exactly 3 subjets
+  if(nsubjets==3) {    
+    m12 = 0;
+    if( (subjets[0].v4()+subjets[1].v4()).isTimelike())
+      m12=(subjets[0].v4()+subjets[1].v4()).M();
+    m13 = 0;
+    if( (subjets[0].v4()+subjets[2].v4()).isTimelike() )
+      m13=(subjets[0].v4()+subjets[2].v4()).M();
+    m23 = 0;
+    if( (subjets[1].v4()+subjets[2].v4()).isTimelike()  )
+      m23 = (subjets[1].v4()+subjets[2].v4()).M();
+    
+  } 
+  else return false;
+
+  
+  double rmin=m_massWindowLower*wmass/topmass;
+  double rmax=m_massWindowUpper*wmass/topmass;
+  
+  int keep=0;
+  
+  //Conditions on the subjects: at least one has to be true
+  //1st condition
+  if(atan(m13/m12)>0.2 && atan(m13/m12)<1.3 && m23/mjet>rmin && m23/mjet<rmax) keep=1;
+  
+  //2nd condition
+  double cond2left=pow(rmin,2)*(1+pow((m13/m12),2));
+  double cond2cent=1-pow(m23/mjet,2);
+  double cond2right=pow(rmax,2)*(1+pow(m13/m12,2));
+  
+  if(cond2left<cond2cent && cond2cent<cond2right && m23/mjet>m_cutCondition2) keep=1;
+  
+  //3rd condition
+  double cond3left=pow(rmin,2)*(1+pow((m12/m13),2));
+  double cond3cent=1-pow(m23/mjet,2);
+  double cond3right=pow(rmax,2)*(1+pow(m12/m13,2));
+  
+  if(cond3left<cond3cent && cond3cent<cond3right && m23/mjet>m_cutCondition3) keep=1;
+  
+  if( mjet < 140 || mjet > 250) keep=0;
+  
+  //Final requirement: at least one of the three subjets conditions and total pt
+  if(keep==1 && ptjet>m_ptJetMin) {
+    return true;
+  } else {
+    return false;
+  }
+  
+  return true; 
+}
+
+HEPTopTag::HEPTopTag(double ptJetMin, double massWindowLower, double massWindowUpper, double cutCondition2, double cutCondition3): m_ptJetMin(ptJetMin),
+  m_massWindowLower(massWindowLower), m_massWindowUpper(massWindowUpper), m_cutCondition2(cutCondition2), m_cutCondition3(cutCondition3){}
+
+
     
 bool Tau32::operator()(const TopJet & topjet, const uhh2::Event &) const {
     auto tau2 = topjet.tau2();
