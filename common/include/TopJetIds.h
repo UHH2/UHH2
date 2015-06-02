@@ -29,6 +29,21 @@ public:
   double m_mjetUpper;
 };
 
+class HEPTopTag{
+public:
+  
+  explicit HEPTopTag(double ptJetMin=200., double massWindowLower=0.85, double massWindowUpper=1.15, double cutCondition2=0.35, double cutCondition3=0.35);
+  
+  bool operator()(const TopJet & topjet, const uhh2::Event & event) const;
+
+ private:
+  double m_ptJetMin;
+  double m_massWindowLower;
+  double m_massWindowUpper;
+  double m_cutCondition2;
+  double m_cutCondition3;
+};
+
 
 
 /** \brief Cut on tau3/tau2 < threshold
