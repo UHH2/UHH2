@@ -24,7 +24,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
-                            fileNames  = cms.untracked.vstring("file:/nfs/dust/cms/user/peiffer/ZprimeToTT_M-2000_W-200_50ns_MCRUN2_TEST_MINIAODSIM.root"),
+                            fileNames  = cms.untracked.vstring("file:../../../../../../../0A303F70-1DFE-E411-B2C7-001E67A4069F.root"),
+#                            fileNames  = cms.untracked.vstring("file:/nfs/dust/cms/user/peiffer/ZprimeToTT_M-2000_W-200_50ns_MCRUN2_TEST_MINIAODSIM.root"),
                             skipEvents = cms.untracked.uint32(0)
 )
 
@@ -344,10 +345,86 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 )
 """
 
+### LEPTON cfg
+
+# collections for lepton PF-isolation deposits
+process.load('UHH2.core.pfCandidatesByType_cff')
+process.load('CommonTools.ParticleFlow.deltaBetaWeights_cff')
+
+## MUON
+from UHH2.core.muon_pfMiniIsolation_cff import *
+
+mu_isovals = []
+
+load_muonPFMiniIso(process, 'muonPFMiniIsoSequenceSTAND', algo = 'STAND',
+  src = 'slimmedMuons',
+  src_charged_hadron = 'pfAllChargedHadrons',
+  src_neutral_hadron = 'pfAllNeutralHadrons',
+  src_photon         = 'pfAllPhotons',
+  src_charged_pileup = 'pfPileUpAllChargedParticles',
+  isoval_list = mu_isovals
+)
+
+load_muonPFMiniIso(process, 'muonPFMiniIsoSequencePFWGT', algo = 'PFWGT',
+  src = 'slimmedMuons',
+  src_neutral_hadron = 'pfWeightedNeutralHadrons',
+  src_photon         = 'pfWeightedPhotons',
+  isoval_list = mu_isovals
+)
+
+process.slimmedMuonsUSER = cms.EDProducer('PATMuonUserData',
+  src = cms.InputTag('slimmedMuons'),
+  float_vmaps = cms.vstring(mu_isovals),
+)
+
+## ELECTRON
+
+from UHH2.core.electron_pfMiniIsolation_cff import *
+
+el_isovals = []
+
+load_elecPFMiniIso(process, 'elecPFMiniIsoSequenceSTAND', algo = 'STAND',
+  src = 'slimmedElectrons',
+  src_charged_hadron = 'pfAllChargedHadrons',
+  src_neutral_hadron = 'pfAllNeutralHadrons',
+  src_photon         = 'pfAllPhotons',
+  src_charged_pileup = 'pfPileUpAllChargedParticles',
+  isoval_list = el_isovals
+)
+
+load_elecPFMiniIso(process, 'elecPFMiniIsoSequencePFWGT', algo = 'PFWGT',
+  src = 'slimmedElectrons',
+  src_neutral_hadron = 'pfWeightedNeutralHadrons',
+  src_photon         = 'pfWeightedPhotons',
+  isoval_list = el_isovals
+)
+
+process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
+  src = cms.InputTag('slimmedElectrons'),
+  float_vmaps = cms.vstring(el_isovals),
+
+  weights_mvaNoTrig = cms.vstring(
+    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EB_5_50ns_BDT.weights.xml',
+    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EE_5_50ns_BDT.weights.xml',
+    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EB_10_50ns_BDT.weights.xml',
+    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EE_10_50ns_BDT.weights.xml',
+#    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EB_5_25ns_BDT.weights.xml',
+#    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EE_5_25ns_BDT.weights.xml',
+#    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EB_10_25ns_BDT.weights.xml',
+#    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EE_10_25ns_BDT.weights.xml',
+  ),
+  weights_mvaTrig = cms.vstring(
+    'EgammaAnalysis/ElectronTools/data/CSA14/TrigIDMVA_50ns_EB_BDT.weights.xml',
+    'EgammaAnalysis/ElectronTools/data/CSA14/TrigIDMVA_50ns_EE_BDT.weights.xml',
+#    'EgammaAnalysis/ElectronTools/data/CSA14/TrigIDMVA_25ns_EB_BDT.weights.xml',
+#    'EgammaAnalysis/ElectronTools/data/CSA14/TrigIDMVA_25ns_EE_BDT.weights.xml',
+  ),
+)
+
 # electron id:
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 process.load("RecoEgamma.ElectronIdentification.egmGsfElectronIDs_cfi")
-process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectrons')
+process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectronsUSER')
 setupAllVIDIdsInModule(process, 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_PHYS14_PU20bx25_V2_cff', setupVIDElectronSelection)
 
 #NtupleWriter
@@ -364,7 +441,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doRho = cms.untracked.bool(True),
         rho_source = cms.InputTag("fixedGridRhoFastjetAll"),
         doElectrons = cms.bool(True),
-        electron_source = cms.InputTag("slimmedElectrons"),
+        electron_source = cms.InputTag("slimmedElectronsUSER"),
         electron_id_sources = cms.PSet (
             # use the Electron::tag enumeration as parameter name; value should be the InputTag
             # to use to read the ValueMap<float> from.
@@ -374,7 +451,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
             eid_PHYS14_20x25_tight = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-tight')
         ),
         doMuons = cms.bool(True),
-        muon_sources = cms.vstring("slimmedMuons"),
+        muon_sources = cms.vstring("slimmedMuonsUSER"),
         doTaus = cms.bool(True),
         tau_sources = cms.vstring("slimmedTaus" ),
         tau_ptmin = cms.double(0.0),

@@ -9,6 +9,9 @@
 <use  name="DataFormats/JetReco"/>
 <use  name="DataFormats/Provenance"/>
 <use  name="DataFormats/PatCandidates" />
+<use  name="PhysicsTools/IsolationAlgos" />
+<use  name="CommonTools/Utils" />
+<use  name="EgammaAnalysis/ElectronTools" />
 <use  name="RecoJets/JetAlgorithms" />
 <use  name="SimDataFormats/GeneratorProducts" />
 <use name="RecoBTau/JetTagComputer" />
