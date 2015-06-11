@@ -4,19 +4,25 @@
 #include "Tags.h"
 #include "FlavorParticle.h"
 
-class Electron: public Particle{
-public:
-    
-  enum tag {eid_PHYS14_20x25_veto, eid_PHYS14_20x25_loose, eid_PHYS14_20x25_medium, eid_PHYS14_20x25_tight };
-  
+class Electron: public Particle {
+
+ public:
+  enum tag {
+    eid_PHYS14_20x25_veto,
+    eid_PHYS14_20x25_loose,
+    eid_PHYS14_20x25_medium,
+    eid_PHYS14_20x25_tight,
+  };
+
   static tag tagname2tag(const std::string & tagname){
-      if(tagname == "eid_PHYS14_20x25_veto") return eid_PHYS14_20x25_veto;
-      if(tagname == "eid_PHYS14_20x25_loose") return eid_PHYS14_20x25_loose;
-      if(tagname == "eid_PHYS14_20x25_medium") return eid_PHYS14_20x25_medium;
-      if(tagname == "eid_PHYS14_20x25_tight") return eid_PHYS14_20x25_tight;
-      throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
+    if(tagname == "eid_PHYS14_20x25_veto")   return eid_PHYS14_20x25_veto;
+    if(tagname == "eid_PHYS14_20x25_loose")  return eid_PHYS14_20x25_loose;
+    if(tagname == "eid_PHYS14_20x25_medium") return eid_PHYS14_20x25_medium;
+    if(tagname == "eid_PHYS14_20x25_tight")  return eid_PHYS14_20x25_tight;
+
+    throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
   }
-  
+
   Electron(){
    m_supercluster_eta = 0; 
    m_supercluster_phi = 0; 
@@ -41,6 +47,15 @@ public:
    m_fbrem = 0;
    m_EoverPIn = 0;
    m_EcalEnergy = 0;
+   m_mvaNonTrigV0 = 0;
+   m_mvaTrigV0 = 0;
+
+   m_pfMINIIso_CH       = 0;
+   m_pfMINIIso_NH       = 0;
+   m_pfMINIIso_Ph       = 0;
+   m_pfMINIIso_PU       = 0;
+   m_pfMINIIso_NH_pfwgt = 0;
+   m_pfMINIIso_Ph_pfwgt = 0;
   }
 
   float supercluster_eta() const{return m_supercluster_eta;} 
@@ -66,6 +81,16 @@ public:
   float fbrem() const{return m_fbrem;}
   float EoverPIn() const{return m_EoverPIn;}
   float EcalEnergy() const{return m_EcalEnergy;}
+  float mvaNonTrigV0() const{return m_mvaNonTrigV0;}
+  float mvaTrigV0() const{return m_mvaTrigV0;}
+
+  float pfMINIIso_CH      () const { return m_pfMINIIso_CH; }
+  float pfMINIIso_NH      () const { return m_pfMINIIso_NH; }
+  float pfMINIIso_Ph      () const { return m_pfMINIIso_Ph; }
+  float pfMINIIso_PU      () const { return m_pfMINIIso_PU; }
+  float pfMINIIso_NH_pfwgt() const { return m_pfMINIIso_NH_pfwgt; }
+  float pfMINIIso_Ph_pfwgt() const { return m_pfMINIIso_Ph_pfwgt; }
+
   float get_tag(tag t)const {return tags.get_tag(static_cast<int>(t));}
   bool has_tag(tag t) const {return tags.has_tag(static_cast<int>(t));}
 
@@ -92,6 +117,16 @@ public:
   void set_fbrem(float x){m_fbrem=x;}
   void set_EoverPIn(float x){m_EoverPIn=x;}
   void set_EcalEnergy(float x){m_EcalEnergy=x;}
+  void set_mvaNonTrigV0(float x){m_mvaNonTrigV0=x;}
+  void set_mvaTrigV0(float x){m_mvaTrigV0=x;}
+
+  void set_pfMINIIso_CH      (float x){ m_pfMINIIso_CH       = x; }
+  void set_pfMINIIso_NH      (float x){ m_pfMINIIso_NH       = x; }
+  void set_pfMINIIso_Ph      (float x){ m_pfMINIIso_Ph       = x; }
+  void set_pfMINIIso_PU      (float x){ m_pfMINIIso_PU       = x; }
+  void set_pfMINIIso_NH_pfwgt(float x){ m_pfMINIIso_NH_pfwgt = x; }
+  void set_pfMINIIso_Ph_pfwgt(float x){ m_pfMINIIso_Ph_pfwgt = x; }
+
   void set_tag(tag t, float value) { tags.set_tag(static_cast<int>(t), value);}
 
   float gsfTrack_dxy_vertex(const float point_x, const float point_y) const{ 
@@ -145,9 +180,16 @@ public:
   float m_fbrem;
   float m_EoverPIn;
   float m_EcalEnergy;
-  float m_mvaTrigV0;
   float m_mvaNonTrigV0;
+  float m_mvaTrigV0;
   float m_AEff;
-  
+
+  float m_pfMINIIso_CH;
+  float m_pfMINIIso_NH;
+  float m_pfMINIIso_Ph;
+  float m_pfMINIIso_PU;
+  float m_pfMINIIso_NH_pfwgt;
+  float m_pfMINIIso_Ph_pfwgt;
+
   Tags tags;
 };
