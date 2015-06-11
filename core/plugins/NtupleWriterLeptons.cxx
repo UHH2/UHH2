@@ -201,6 +201,7 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          FILL_TAU_BIT(byTightIsolationMVA3newDMwLT);
          FILL_TAU_BIT(byVTightIsolationMVA3newDMwLT);  // 30
          FILL_TAU_BIT(byVVTightIsolationMVA3newDMwLT); // 31
+         FILL_TAU_BIT(decayModeFindingNewDMs);
          
          #undef FILL_TAU_BIT
          #define FILL_TAU_FLOAT(name) tau.set_##name (pat_tau.tauID(#name))
@@ -210,10 +211,14 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          FILL_TAU_FLOAT(byCombinedIsolationDeltaBetaCorrRaw3Hits);
          FILL_TAU_FLOAT(byIsolationMVA3newDMwoLTraw);
          FILL_TAU_FLOAT(byIsolationMVA3newDMwLTraw);
+         FILL_TAU_FLOAT(chargedIsoPtSum);
+         FILL_TAU_FLOAT(neutralIsoPtSum);
+         FILL_TAU_FLOAT(puCorrPtSum);
          
          #undef FILL_TAU_FLOAT
 
          tau.set_decayMode(pat_tau.decayMode());
+
     }
     uevent.set(handle, move(taus));
     if(taus_handle){
