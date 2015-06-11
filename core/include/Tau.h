@@ -25,7 +25,7 @@ public:
       decayModeFinding, 
       byLooseCombinedIsolationDeltaBetaCorr3Hits, byMediumCombinedIsolationDeltaBetaCorr3Hits, byTightCombinedIsolationDeltaBetaCorr3Hits /* = 19 */,
       byVLooseIsolationMVA3newDMwoLT, byLooseIsolationMVA3newDMwoLT, byMediumIsolationMVA3newDMwoLT, byTightIsolationMVA3newDMwoLT, byVTightIsolationMVA3newDMwoLT, byVVTightIsolationMVA3newDMwoLT,
-      byVLooseIsolationMVA3newDMwLT, byLooseIsolationMVA3newDMwLT, byMediumIsolationMVA3newDMwLT, byTightIsolationMVA3newDMwLT, byVTightIsolationMVA3newDMwLT, byVVTightIsolationMVA3newDMwLT /* = 31 */
+      byVLooseIsolationMVA3newDMwLT, byLooseIsolationMVA3newDMwLT, byMediumIsolationMVA3newDMwLT, byTightIsolationMVA3newDMwLT, byVTightIsolationMVA3newDMwLT, byVVTightIsolationMVA3newDMwLT, decayModeFindingNewDMs /* = 32 */
   };
   
   bool get_bool(bool_id i) const {
@@ -48,6 +48,10 @@ public:
   float byIsolationMVA3newDMwLTraw() const { return m_byIsolationMVA3newDMwLTraw; }
   float byIsolationMVA3newDMwoLTraw() const { return m_byIsolationMVA3newDMwoLTraw; }
   
+  float chargedIsoPtSum() const { return m_chargedIsoPtSum; }
+  float neutralIsoPtSum() const { return m_neutralIsoPtSum; }
+  float puCorrPtSum() const { return m_puCorrPtSum; }
+
   int decayMode() const { return m_decayMode; }
   
   
@@ -56,6 +60,10 @@ public:
   void set_byCombinedIsolationDeltaBetaCorrRaw3Hits(float value){ m_byCombinedIsolationDeltaBetaCorrRaw3Hits = value; }
   void set_byIsolationMVA3newDMwoLTraw(float value) { m_byIsolationMVA3newDMwoLTraw = value; }
   void set_byIsolationMVA3newDMwLTraw(float value) { m_byIsolationMVA3newDMwLTraw = value; }
+
+  void set_chargedIsoPtSum(float value) { m_chargedIsoPtSum = value; }
+  void set_neutralIsoPtSum(float value) { m_neutralIsoPtSum = value; }
+  void set_puCorrPtSum(float value) { m_puCorrPtSum = value; }
   
   void set_decayMode(int value){ m_decayMode = value; }
 
@@ -83,6 +91,9 @@ private:
     float m_byCombinedIsolationDeltaBetaCorrRaw3Hits;
     float m_byIsolationMVA3newDMwoLTraw;
     float m_byIsolationMVA3newDMwLTraw;
+    float m_chargedIsoPtSum;
+    float m_neutralIsoPtSum;
+    float m_puCorrPtSum;
     
     int m_decayMode;
   
