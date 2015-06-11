@@ -64,7 +64,17 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_fbrem(pat_ele.fbrem());
         ele.set_EoverPIn(pat_ele.eSuperClusterOverP());
         ele.set_EcalEnergy(pat_ele.ecalEnergy());
-        
+
+        ele.set_mvaNonTrigV0(pat_ele.hasUserFloat("mvaNoTrig") ? pat_ele.userFloat("mvaNoTrig") : -999.);
+        ele.set_mvaTrigV0   (pat_ele.hasUserFloat("mvaTrig")   ? pat_ele.userFloat("mvaTrig")   : -999.);
+
+        ele.set_pfMINIIso_CH      (pat_ele.hasUserFloat("elPFMiniIsoValueCHSTAND") ? pat_ele.userFloat("elPFMiniIsoValueCHSTAND") : -999.);
+        ele.set_pfMINIIso_NH      (pat_ele.hasUserFloat("elPFMiniIsoValueNHSTAND") ? pat_ele.userFloat("elPFMiniIsoValueNHSTAND") : -999.);
+        ele.set_pfMINIIso_Ph      (pat_ele.hasUserFloat("elPFMiniIsoValuePhSTAND") ? pat_ele.userFloat("elPFMiniIsoValuePhSTAND") : -999.);
+        ele.set_pfMINIIso_PU      (pat_ele.hasUserFloat("elPFMiniIsoValuePUSTAND") ? pat_ele.userFloat("elPFMiniIsoValuePUSTAND") : -999.);
+        ele.set_pfMINIIso_NH_pfwgt(pat_ele.hasUserFloat("elPFMiniIsoValueNHPFWGT") ? pat_ele.userFloat("elPFMiniIsoValueNHPFWGT") : -999.);
+        ele.set_pfMINIIso_Ph_pfwgt(pat_ele.hasUserFloat("elPFMiniIsoValuePhPFWGT") ? pat_ele.userFloat("elPFMiniIsoValuePhPFWGT") : -999.);
+
         const edm::Ptr<pat::Electron> eleptr(ele_handle, i);
         for(size_t i_id=0; i_id<id_tags.size(); ++i_id){
             ele.set_tag(id_tags[i_id], (*electron_ids[i_id])[eleptr]);
@@ -91,7 +101,7 @@ NtupleWriterMuons::~NtupleWriterMuons(){}
 void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
    edm::Handle<std::vector<pat::Muon>> mu_handle;
    event.getByToken(src_token, mu_handle);
-   
+
    edm::Handle<std::vector<reco::Vertex>> pv_handle;
    event.getByToken(pv_token, pv_handle);
    if(pv_handle->empty()){
@@ -99,7 +109,7 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
        return;
    }
    const auto & PV = pv_handle->front();
-   
+
    vector<Muon> mus;
    for (const pat::Muon & pat_mu : *mu_handle) {
      mus.emplace_back();
@@ -109,32 +119,40 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
      mu.set_eta( pat_mu.eta());
      mu.set_phi( pat_mu.phi());
      mu.set_energy( pat_mu.energy());
-     
+
      mu.set_dxy(pat_mu.muonBestTrack()->dxy(PV.position()));
      mu.set_dxy_error(pat_mu.muonBestTrack()->dxyError());
      mu.set_dz(pat_mu.muonBestTrack()->dz(PV.position()));
      mu.set_dz_error(pat_mu.muonBestTrack()->dzError());
-     
+
      mu.set_bool(Muon::global, pat_mu.isGlobalMuon());
      mu.set_bool(Muon::pf, pat_mu.isPFMuon());
      mu.set_bool(Muon::tracker, pat_mu.isTrackerMuon());
      mu.set_bool(Muon::standalone, pat_mu.isStandAloneMuon());
-     
-     mu.set_bool(Muon::soft, pat_mu.isSoftMuon(PV));
-     mu.set_bool(Muon::tight, pat_mu.isTightMuon(PV));
+
+     mu.set_bool(Muon::soft  , pat_mu.isSoftMuon(PV));
+     mu.set_bool(Muon::loose , pat_mu.isLooseMuon());
+     mu.set_bool(Muon::medium, pat_mu.isMediumMuon());
+     mu.set_bool(Muon::tight , pat_mu.isTightMuon(PV));
      mu.set_bool(Muon::highpt, pat_mu.isHighPtMuon(PV));
-     
+
      mu.set_sumChargedHadronPt(pat_mu.pfIsolationR04().sumChargedHadronPt);
      mu.set_sumNeutralHadronEt(pat_mu.pfIsolationR04().sumNeutralHadronEt);
      mu.set_sumPhotonEt(pat_mu.pfIsolationR04().sumPhotonEt);
      mu.set_sumPUPt(pat_mu.pfIsolationR04().sumPUPt);
+
+     mu.set_pfMINIIso_CH      (pat_mu.hasUserFloat("muPFMiniIsoValueCHSTAND") ? pat_mu.userFloat("muPFMiniIsoValueCHSTAND") : -999.);
+     mu.set_pfMINIIso_NH      (pat_mu.hasUserFloat("muPFMiniIsoValueNHSTAND") ? pat_mu.userFloat("muPFMiniIsoValueNHSTAND") : -999.);
+     mu.set_pfMINIIso_Ph      (pat_mu.hasUserFloat("muPFMiniIsoValuePhSTAND") ? pat_mu.userFloat("muPFMiniIsoValuePhSTAND") : -999.);
+     mu.set_pfMINIIso_PU      (pat_mu.hasUserFloat("muPFMiniIsoValuePUSTAND") ? pat_mu.userFloat("muPFMiniIsoValuePUSTAND") : -999.);
+     mu.set_pfMINIIso_NH_pfwgt(pat_mu.hasUserFloat("muPFMiniIsoValueNHPFWGT") ? pat_mu.userFloat("muPFMiniIsoValueNHPFWGT") : -999.);
+     mu.set_pfMINIIso_Ph_pfwgt(pat_mu.hasUserFloat("muPFMiniIsoValuePhPFWGT") ? pat_mu.userFloat("muPFMiniIsoValuePhPFWGT") : -999.);
    }
    uevent.set(handle, move(mus));
    if(muons_handle){
        EventAccess_::set_unmanaged(uevent, *muons_handle, &uevent.get(handle));
    }
 }
-
 
 
 NtupleWriterTaus::NtupleWriterTaus(Config & cfg, bool set_taus_member){
@@ -224,5 +242,4 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
     if(taus_handle){
        EventAccess_::set_unmanaged(uevent, *taus_handle, &uevent.get(handle));
     }
- }
-
+}
