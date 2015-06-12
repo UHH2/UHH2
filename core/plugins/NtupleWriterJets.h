@@ -38,6 +38,7 @@ public:
         edm::InputTag substructure_variables_src; // a jet collection from where to take the subjet variables (after DeltaR-matching)
         std::string njettiness_src;
         std::string qjets_src;
+	std::string subjet_src;
     };
 
     explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member);
@@ -51,7 +52,7 @@ private:
     float ptmin, etamax;
     bool do_btagging, do_btagging_subjets;
     edm::EDGetToken src_token, substructure_variables_src_token;
-    std::string njettiness_src, qjets_src;
+    std::string njettiness_src, qjets_src, subjet_src;
 
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;

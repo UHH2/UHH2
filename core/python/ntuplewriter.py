@@ -471,7 +471,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doTopJets = cms.bool(True),
         topjet_ptmin = cms.double(100.0),
         topjet_etamax = cms.double(5.0),
-        topjet_sources = cms.vstring("slimmedJetsAK8"),
+        topjet_sources = cms.vstring("slimmedJetsAK8","slimmedJetsAK8"),
+        #Note: use label "daughters" for  subjet_sources if you want to store as subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!)
+        #to store a subjet collection present in miniAOD indicate the proper label of the subjets method in pat::Jet: SoftDrop or CMSTopTag
+        subjet_sources = cms.vstring("CMSTopTag","SoftDrop"),
         #Note: topjet_substructure_variables_sources only needed for qjets; njettiness is now directly taken from UserFloat added to jets in MINIAOD (for Run II CMSSW_74 ntuples)
         topjet_njettiness_sources = cms.vstring("NjettinessAK8"),
 

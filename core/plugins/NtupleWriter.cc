@@ -237,11 +237,19 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   if(doTopJets){
     using uhh2::NtupleWriterTopJets;
     auto topjet_sources = iConfig.getParameter<std::vector<std::string> >("topjet_sources");
-    
+    auto subjet_sources = iConfig.getParameter<std::vector<std::string> >("subjet_sources");
     double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
     double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
     bool substructure_variables = false;
     std::vector<std::string> qjets_sources, njettiness_sources, topjet_substructure_variables_sources;
+    if(!iConfig.exists("subjet_sources")){
+      cerr << "Exception: it is necessary to specify the subjets for each topjet collection" << endl;
+      throw;
+    }
+    if(subjet_sources.size()!=topjet_sources.size()){
+      cerr << "Exception: it is necessary to specify the subjets for each topjet collection" << endl;
+      throw;
+    }
     if(iConfig.exists("topjet_qjets_sources")){
         qjets_sources = iConfig.getParameter<std::vector<std::string> >("topjet_qjets_sources");
         substructure_variables = true;
@@ -257,6 +265,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         NtupleWriterTopJets::Config cfg(*context, consumesCollector(), topjet_sources[j], topjet_sources[j]);
         cfg.ptmin = topjet_ptmin;
         cfg.etamax = topjet_etamax;
+	cfg.subjet_src = subjet_sources[j];
         if(j < topjet_substructure_variables_sources.size()){
             cfg.substructure_variables_src = topjet_substructure_variables_sources[j];
         }
@@ -266,6 +275,9 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         if(j < qjets_sources.size()){
             cfg.qjets_src = qjets_sources[j];
         }
+	std::string topbranch=topjet_sources[j]+"_"+subjet_sources[j];
+	cfg.dest_branchname = topbranch;
+	cfg.dest = topbranch;
         writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0));
     }
   }

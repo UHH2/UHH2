@@ -121,6 +121,7 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
     njettiness_src = cfg.njettiness_src;
     qjets_src = cfg.qjets_src;
+    subjet_src = cfg.subjet_src;
     src = cfg.src;
     do_btagging = cfg.do_btagging;
     do_btagging_subjets = cfg.do_btagging_subjets;
@@ -134,6 +135,7 @@ NtupleWriterTopJets::~NtupleWriterTopJets(){}
 
 
 void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent){
+  std::cout << " startting for top " << src << " and sub " << subjet_src << std::endl;
     edm::Handle<pat::JetCollection> h_pat_topjets;
     event.getByToken(src_token, h_pat_topjets);
     const vector<pat::Jet> & pat_topjets = *h_pat_topjets;
@@ -192,32 +194,55 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	
 
         // loop over subjets to fill some more subjet info:
-        for (unsigned int k = 0; k < pat_topjet.numberOfDaughters(); k++) {
+	if(subjet_src=="daughters"){
+	  for (unsigned int k = 0; k < pat_topjet.numberOfDaughters(); k++) {
             Jet subjet;
             auto patsubjetd = dynamic_cast<const pat::Jet *>(pat_topjet.daughter(k));
             if (patsubjetd) {
-                try{
-                    NtupleWriterJets::fill_jet_info(*patsubjetd, subjet, do_btagging_subjets);
-                }catch(runtime_error &){
-                    cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
-                    throw;
-                }
+	      try{
+		NtupleWriterJets::fill_jet_info(*patsubjetd, subjet, do_btagging_subjets);
+	      }catch(runtime_error &){
+		cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
+		throw;
+	      }
             }
             else {
-                //filling only standard information in case the subjet has not been pat-tified during the pattuples production
-                auto daughter = pat_topjet.daughter(k);
-                if(daughter){
-                    subjet.set_pt(daughter->pt());
-                    subjet.set_eta(daughter->eta());
-                    subjet.set_phi(daughter->phi());
-                    subjet.set_energy(daughter->energy());
-                }
-                else{
-                    throw runtime_error("subjet was nullptr");
-                }
+	      //filling only standard information in case the subjet has not been pat-tified during the pattuples production
+	      auto daughter = pat_topjet.daughter(k);
+	      if(daughter){
+		subjet.set_pt(daughter->pt());
+		subjet.set_eta(daughter->eta());
+		subjet.set_phi(daughter->phi());
+		subjet.set_energy(daughter->energy());
+	      }
+	      else{
+		throw runtime_error("subjet was nullptr");
+	      }
             }
             topjet.add_subjet(subjet);
-        }
+	  }
+	}//if label daughters
+	//taking subjets from existing miniAOD collection
+	else{
+	  auto tSubjets = pat_topjet.subjets(subjet_src);
+	  for( int sj = 0; sj < (int)tSubjets.size(); ++sj ){
+	    Jet subjet;
+	    auto tpatsubjet = dynamic_cast<const pat::Jet *>(tSubjets.at(sj).get());
+            if (tpatsubjet) {
+	      try{
+		NtupleWriterJets::fill_jet_info(*tpatsubjet, subjet, do_btagging_subjets);
+	      }catch(runtime_error &){
+		cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
+		throw;
+	      }
+	    }
+	    else{
+	      cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
+	      throw;
+	    }
+	    topjet.add_subjet(subjet);
+	  }//loop over subjets
+	}//if not daughters but subjets from miniAOD collection
     }// for topjets
     uevent.set(handle, move(topjets));
     if(topjets_handle){
