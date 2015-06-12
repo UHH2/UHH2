@@ -28,6 +28,8 @@ public:
     m_btag_combinedSecondaryVertexMVA = 0;
     m_btag_jetBProbability = 0;
     m_btag_jetProbability = 0;
+    m_btag_BoostedDoubleSecondaryVertexAK8 = 0;
+    m_btag_BoostedDoubleSecondaryVertexCA15 = 0;
     m_JEC_factor_raw = 0;
     m_genjet_index = 0;
   }
@@ -51,6 +53,8 @@ public:
   float btag_combinedSecondaryVertexMVA() const{return m_btag_combinedSecondaryVertexMVA;}
   float btag_jetBProbability() const{return m_btag_jetBProbability;}
   float btag_jetProbability() const{return m_btag_jetProbability;}
+  float btag_BoostedDoubleSecondaryVertexAK8() const{return m_btag_BoostedDoubleSecondaryVertexAK8;}
+  float btag_BoostedDoubleSecondaryVertexCA15() const{return m_btag_BoostedDoubleSecondaryVertexCA15;}
   float JEC_factor_raw() const{return m_JEC_factor_raw;}
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
 
@@ -73,6 +77,8 @@ public:
   void set_btag_combinedSecondaryVertexMVA(float x){m_btag_combinedSecondaryVertexMVA=x;}
   void set_btag_jetBProbability(float x){m_btag_jetBProbability=x;}
   void set_btag_jetProbability(float x){m_btag_jetProbability=x;}
+  void set_btag_BoostedDoubleSecondaryVertexAK8(float x){m_btag_BoostedDoubleSecondaryVertexAK8=x;}
+  void set_btag_BoostedDoubleSecondaryVertexCA15(float x){m_btag_BoostedDoubleSecondaryVertexCA15=x;}
   void set_JEC_factor_raw(float x){m_JEC_factor_raw=x;}
   void set_genjet_index(int x){m_genjet_index=x;}
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
@@ -116,6 +122,8 @@ public:
   float m_btag_combinedSecondaryVertexMVA;
   float m_btag_jetBProbability;
   float m_btag_jetProbability;
+  float m_btag_BoostedDoubleSecondaryVertexAK8;
+  float m_btag_BoostedDoubleSecondaryVertexCA15;
   float m_JEC_factor_raw;
   int m_genjet_index;
   

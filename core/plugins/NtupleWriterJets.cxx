@@ -72,7 +72,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
     jet.set_JEC_factor_raw(pat_jet.jecFactor("Uncorrected"));
     if(do_btagging){
         const auto & bdisc = pat_jet.getPairDiscri();
-        bool sv_he = false, sv_hp = false, csv = false, jetp = false, jetbp = false;
+        bool sv_he = false, sv_hp = false, csv = false, jetp = false, jetbp = false, doubleak8 = false, doubleca15 = false;
         for(const auto & name_value : bdisc){
             const auto & name = name_value.first;
             const auto & value = name_value.second;
@@ -96,9 +96,17 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
                 jet.set_btag_jetProbability(value);
                 jetbp = true;
             }
+	    else if(name == "pfBoostedDoubleSecondaryVertexAK8BJetTag"){
+                jet.set_btag_BoostedDoubleSecondaryVertexAK8(value);
+                doubleak8 = true;
+            }
+	    else if(name == "pfBoostedDoubleSecondaryVertexCA15BJetTag"){
+                jet.set_btag_BoostedDoubleSecondaryVertexCA15(value);
+                doubleca15 = true;
+            }
         }
         // NOTE: csvmva is NOT set.
-        if(!sv_he || !sv_hp || !csv || !jetp || !jetbp){
+        if(!sv_he || !sv_hp || !csv || !jetp || !jetbp || !doubleak8 ||!doubleca15){
 	    if(btag_warning){
 	        cout << "Warning in NtupleWriterJets: did not find all b-taggers! Available btaggers: ";
 		for(const auto & name_value : bdisc){
