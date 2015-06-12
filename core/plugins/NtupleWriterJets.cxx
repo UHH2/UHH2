@@ -135,7 +135,6 @@ NtupleWriterTopJets::~NtupleWriterTopJets(){}
 
 
 void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent){
-  std::cout << " startting for top " << src << " and sub " << subjet_src << std::endl;
     edm::Handle<pat::JetCollection> h_pat_topjets;
     event.getByToken(src_token, h_pat_topjets);
     const vector<pat::Jet> & pat_topjets = *h_pat_topjets;
