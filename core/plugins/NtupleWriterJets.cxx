@@ -96,11 +96,11 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
                 jet.set_btag_jetProbability(value);
                 jetbp = true;
             }
-	    else if(name == "pfBoostedDoubleSecondaryVertexAK8BJetTag"){
+	    else if(name == "pfBoostedDoubleSecondaryVertexAK8BJetTags"){
                 jet.set_btag_BoostedDoubleSecondaryVertexAK8(value);
                 doubleak8 = true;
             }
-	    else if(name == "pfBoostedDoubleSecondaryVertexCA15BJetTag"){
+	    else if(name == "pfBoostedDoubleSecondaryVertexCA15BJetTags"){
                 jet.set_btag_BoostedDoubleSecondaryVertexCA15(value);
                 doubleca15 = true;
             }
