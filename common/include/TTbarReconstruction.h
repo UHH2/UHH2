@@ -6,28 +6,10 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/TopJetIds.h"
+#include "UHH2/common/include/PrimaryLepton.h"
+
 
 typedef std::function< std::vector<LorentzVector>  (const LorentzVector & lepton, const LorentzVector & met)> NeutrinoReconstructionMethod;
-
-
-/** \brief Search the highest-pt lepton (electron or muon)
- *
- * The found lepton is written to the event as FlavourParticle
- * with name "PrimaryLepton". Should be called after proper cleaning
- * modules for electron and muon ID.
- *
- */
-class PrimaryLepton: public uhh2::AnalysisModule {
-public:
-    explicit PrimaryLepton(uhh2::Context & ctx, const std::string & h_name="PrimaryLepton");
-
-    virtual bool process(uhh2::Event & event) override;
-
-    virtual ~PrimaryLepton();
-
-private:
-    uhh2::Event::Handle<FlavorParticle> h_primlep;
-};
 
 
 /** \brief Make a list of ttbar reconstruction hypotheses as used in high-mass semileptonic ttbar 8 TeV analysis

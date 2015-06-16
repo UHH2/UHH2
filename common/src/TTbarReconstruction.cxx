@@ -8,36 +8,6 @@
 using namespace uhh2;
 using namespace std;
 
-PrimaryLepton::PrimaryLepton(Context & ctx, const std::string & h_name) {
-    h_primlep = ctx.get_handle<FlavorParticle>(h_name);
-}
-
-bool PrimaryLepton::process(uhh2::Event & event) {
-    assert(event.muons || event.electrons);
-    double ptmax = -infinity;
-    FlavorParticle primlep;
-    if(event.electrons) {
-        for(const auto & ele : *event.electrons) {
-            if(ele.pt() > ptmax) {
-                ptmax = ele.pt();
-                primlep = ele;
-            }
-        }
-    }
-    if(event.muons) {
-        for(const auto & mu : *event.muons) {
-            if(mu.pt() > ptmax) {
-                ptmax = mu.pt();
-                primlep = mu;
-            }
-        }
-    }
-    event.set(h_primlep, std::move(primlep));
-    return true;
-}
-
-PrimaryLepton::~PrimaryLepton() {}
-
 HighMassTTbarReconstruction::HighMassTTbarReconstruction(Context & ctx, const NeutrinoReconstructionMethod & neutrinofunction, const string & label): m_neutrinofunction(neutrinofunction) {
     h_recohyps = ctx.declare_event_output<vector<ReconstructionHypothesis>>(label);
     h_primlep = ctx.get_handle<FlavorParticle>("PrimaryLepton");
