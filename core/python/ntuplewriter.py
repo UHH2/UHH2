@@ -318,7 +318,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
 #add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop')
+add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 
 #add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsPruned', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 #add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsFiltered', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
@@ -518,13 +518,13 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         stablegenparticle_source = cms.InputTag("packedGenParticles"),
         doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
         doGenJets = cms.bool(not useData),
-        genjet_sources = cms.vstring("slimmedGenJets","slimmedGenJetsAK8"),
+        genjet_sources = cms.vstring("slimmedGenJets","slimmedGenJetsAK8","ak8GenJets"),
         genjet_ptmin = cms.double(10.0),
         genjet_etamax = cms.double(5.0),
-        
-        doGenTopJets = cms.bool(False),
-        gentopjet_sources = cms.vstring("ca8GenJetsPruned", "ca15GenJetsFiltered", "cmsTopTagGen", "hepTopTagGen"),
-        gentopjet_ptmin = cms.double(50.0), 
+                            
+        doGenTopJets = cms.bool(True),
+        gentopjet_sources = cms.vstring("ak8GenJetsSoftDrop"),
+        gentopjet_ptmin = cms.double(100.0), 
         gentopjet_etamax = cms.double(5.0),
         
         doGenJetsWithParts = cms.bool(False),
