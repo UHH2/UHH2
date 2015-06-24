@@ -15,6 +15,8 @@
 #pragma link C++ class std::vector<FlavorParticle>+;
 #pragma link C++ class Jet+;
 #pragma link C++ class std::vector<Jet>+;
+#pragma link C++ class JetBTagInfo+;
+#pragma link C++ class std::vector<JetBTagInfo>+;
 #pragma link C++ class TopJet+;
 #pragma link C++ class std::vector<TopJet>+;
 #pragma link C++ class GenTopJet+;
