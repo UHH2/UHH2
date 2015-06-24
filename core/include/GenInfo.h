@@ -19,10 +19,14 @@ class GenInfo{
     m_pileup_NumInteractions_ootbefore = 0; 
     m_pileup_NumInteractions_ootafter = 0;
     m_pileup_TrueNumInteractions = 0;  //poisson mean
+    m_originalXWGTUP = 0;
   }
 
   const std::vector<float> & binningValues() const{return m_binningValues;}
+  //nominal generator weights, for instance positive and negative weights from aMC@NLO
   const std::vector<float> & weights() const{return m_weights;}
+  //list of weights for systematic variations like PDF and Q^2
+  const std::vector<float> & systweights() const{return m_systweights;}
   float alphaQCD() const{return m_alphaQCD;}
   float alphaQED() const{return m_alphaQED;}
   float qScale() const{return m_qScale;}
@@ -37,11 +41,14 @@ class GenInfo{
   int pileup_NumInteractions_ootbefore() const{return m_pileup_NumInteractions_ootbefore;} 
   int pileup_NumInteractions_ootafter() const{return m_pileup_NumInteractions_ootafter;}
   float pileup_TrueNumInteractions() const{return m_pileup_TrueNumInteractions;}  
+  float originalXWGTUP() const{return m_originalXWGTUP;}
 
   void add_binningValue(float x){m_binningValues.push_back(x);}
   void add_weight(float x){m_weights.push_back(x);}
+  void add_systweight(float x){m_systweights.push_back(x);}
   void clear_binningValues(){m_binningValues.clear();}
   void clear_weights(){m_weights.clear();}
+  void clear_systweights(){m_systweights.clear();}
   void set_alphaQCD(float x){m_alphaQCD=x;}
   void set_alphaQED(float x){m_alphaQED=x;}
   void set_qScale(float x){m_qScale=x;}
@@ -56,10 +63,13 @@ class GenInfo{
   void set_pileup_NumInteractions_ootbefore(int x){m_pileup_NumInteractions_ootbefore=x;} 
   void set_pileup_NumInteractions_ootafter(int x){m_pileup_NumInteractions_ootafter=x;}
   void set_pileup_TrueNumInteractions(float x){m_pileup_TrueNumInteractions=x;}
+  void set_originalXWGTUP(float x){m_originalXWGTUP=x;}
 
  private:
   std::vector<float> m_binningValues;
   std::vector<float> m_weights;
+  std::vector<float> m_systweights; 
+  float m_originalXWGTUP;
   float m_alphaQCD;
   float m_alphaQED;
   float m_qScale;
@@ -74,6 +84,7 @@ class GenInfo{
   int m_pileup_NumInteractions_ootbefore; 
   int m_pileup_NumInteractions_ootafter;
   float m_pileup_TrueNumInteractions;  //poisson mean
+
 };
 
 #endif
