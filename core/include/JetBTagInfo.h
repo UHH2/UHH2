@@ -11,180 +11,177 @@ public:
   
   JetBTagInfo(){
     //clear track impact parameter tag info
-    m_subTrackMomentum.clear();
-    m_subTrackEta.clear();
-    m_subTrackEtaRel.clear();
-    m_subTrackDeltaR.clear();
-    m_subTrackSip3dVal.clear();
-    m_subTrackSip3dSig.clear();
-    m_subTrackSip2dVal.clear();
-    m_subTrackSip2dSig.clear();
-    m_subTrackDecayLenVal.clear();
-    m_subTrackChi2.clear();
-    m_subTrackNTotalHits.clear();
-    m_subTrackNPixelHits.clear();
-    m_subTrackPtRel.clear();
-    m_subTrackPPar.clear();
-    m_subTrackPtRatio.clear();
-    m_subTrackPParRatio.clear();
-    m_subTrackJetDistVal.clear();
-    m_subTrackJetDistSig.clear();
-    m_subTrackGhostTrackDistVal.clear();
-    m_subTrackGhostTrackDistSig.clear();
-    m_subTrackGhostTrackWeight.clear();
+    m_TrackMomentum.clear();
+    m_TrackEta.clear();
+    m_TrackEtaRel.clear();
+    m_TrackDeltaR.clear();
+    m_TrackSip3dVal.clear();
+    m_TrackSip3dSig.clear();
+    m_TrackSip2dVal.clear();
+    m_TrackSip2dSig.clear();
+    m_TrackDecayLenVal.clear();
+    m_TrackChi2.clear();
+    m_TrackNTotalHits.clear();
+    m_TrackNPixelHits.clear();
+    m_TrackPtRel.clear();
+    m_TrackPPar.clear();
+    m_TrackPtRatio.clear();
+    m_TrackPParRatio.clear();
+    m_TrackJetDistVal.clear();
+    m_TrackJetDistSig.clear();
+    m_TrackGhostTrackDistVal.clear();
+    m_TrackGhostTrackDistSig.clear();
+    m_TrackGhostTrackWeight.clear();
   
     //clear secondary vertex tag info
-    m_subFlightDistance2dVal.clear();
-    m_subFlightDistance2dSig.clear();
-    m_subFlightDistance3dVal.clear();
-    m_subFlightDistance3dSig.clear();
-    m_subVertexJetDeltaR.clear();
-    m_subJetNSecondaryVertices.clear();
-    m_subVertexNTracks.clear();
-    m_subSecondaryVertex.clear();
-    m_subVertexChi2.clear();                                
-    m_subVertexNdof.clear();                    
-    m_subVertexNormalizedChi2.clear();
-    m_subVertexTracksSize.clear();
+    m_FlightDistance2dVal.clear();
+    m_FlightDistance2dSig.clear();
+    m_FlightDistance3dVal.clear();
+    m_FlightDistance3dSig.clear();
+    m_VertexJetDeltaR.clear();
+    m_JetNSecondaryVertices=0;
+    m_VertexNTracks=0;
+    m_SecondaryVertex.clear();
+    m_VertexChi2.clear();                                
+    m_VertexNdof.clear();                    
+    m_VertexNormalizedChi2.clear();
+    m_VertexTracksSize.clear();
     //JTC SV variables
-    m_subVertexCategoryJTC.clear();
-    m_subVertexMassJTC.clear();
-    m_subVertexEnergyRatioJTC.clear();
-    m_subTrackSip3dSigAboveCharmJTC.clear();
+    m_VertexCategoryJTC=-999;
+    m_VertexMassJTC=-999.;
+    m_VertexEnergyRatioJTC=-999.;
+    m_TrackSip3dSigAboveCharmJTC=-999.;
 
   }
 
   //track impact parameter tag info getters
-  std::vector<std::vector<float> > subTrackMomentum() const{return m_subTrackMomentum;}
-  std::vector<std::vector<float> > subTrackEta() const{return m_subTrackEta;}
-  std::vector<std::vector<float> > subTrackEtaRel() const{return m_subTrackEtaRel;}
-  std::vector<std::vector<float> > subTrackDeltaR() const{return m_subTrackDeltaR;}
-  std::vector<std::vector<float> > subTrackSip3dVal() const{return m_subTrackSip3dVal;}
-  std::vector<std::vector<float> > subTrackSip3dSig() const{return m_subTrackSip3dSig;}
-  std::vector<std::vector<float> > subTrackSip2dVal() const{return m_subTrackSip2dVal;}
-  std::vector<std::vector<float> > subTrackSip2dSig() const{return m_subTrackSip2dSig;}
-  std::vector<std::vector<float> > subTrackDecayLenVal() const{return m_subTrackDecayLenVal;}
-  std::vector<std::vector<float> > subTrackChi2() const{return m_subTrackChi2;}
-  std::vector<std::vector<float> > subTrackNTotalHits() const{return m_subTrackNTotalHits;}
-  std::vector<std::vector<float> > subTrackNPixelHits() const{return m_subTrackNPixelHits;}
-  std::vector<std::vector<float> > subTrackPtRel() const{return m_subTrackPtRel;}
-  std::vector<std::vector<float> > subTrackPPar() const{return m_subTrackPPar;}
-  std::vector<std::vector<float> > subTrackPtRatio() const{return m_subTrackPtRatio;}
-  std::vector<std::vector<float> > subTrackPParRatio() const{return m_subTrackPParRatio;}
-  std::vector<std::vector<float> > subTrackJetDistVal() const{return m_subTrackJetDistVal;}
-  std::vector<std::vector<float> > subTrackJetDistSig() const{return m_subTrackJetDistSig;}
-  std::vector<std::vector<float> > subTrackGhostTrackDistVal() const{return m_subTrackGhostTrackDistVal;}
-  std::vector<std::vector<float> > subTrackGhostTrackDistSig() const{return m_subTrackGhostTrackDistSig;}
-  std::vector<std::vector<float> > subTrackGhostTrackWeight() const{return m_subTrackGhostTrackWeight;}
+  std::vector<float> TrackMomentum() const{return m_TrackMomentum;}
+  std::vector<float> TrackEta() const{return m_TrackEta;}
+  std::vector<float> TrackEtaRel() const{return m_TrackEtaRel;}
+  std::vector<float> TrackDeltaR() const{return m_TrackDeltaR;}
+  std::vector<float> TrackSip3dVal() const{return m_TrackSip3dVal;}
+  std::vector<float> TrackSip3dSig() const{return m_TrackSip3dSig;}
+  std::vector<float> TrackSip2dVal() const{return m_TrackSip2dVal;}
+  std::vector<float> TrackSip2dSig() const{return m_TrackSip2dSig;}
+  std::vector<float> TrackDecayLenVal() const{return m_TrackDecayLenVal;}
+  std::vector<float> TrackChi2() const{return m_TrackChi2;}
+  std::vector<float> TrackNTotalHits() const{return m_TrackNTotalHits;}
+  std::vector<float> TrackNPixelHits() const{return m_TrackNPixelHits;}
+  std::vector<float> TrackPtRel() const{return m_TrackPtRel;}
+  std::vector<float> TrackPPar() const{return m_TrackPPar;}
+  std::vector<float> TrackPtRatio() const{return m_TrackPtRatio;}
+  std::vector<float> TrackPParRatio() const{return m_TrackPParRatio;}
+  std::vector<float> TrackJetDistVal() const{return m_TrackJetDistVal;}
+  std::vector<float> TrackJetDistSig() const{return m_TrackJetDistSig;}
+  std::vector<float> TrackGhostTrackDistVal() const{return m_TrackGhostTrackDistVal;}
+  std::vector<float> TrackGhostTrackDistSig() const{return m_TrackGhostTrackDistSig;}
+  std::vector<float> TrackGhostTrackWeight() const{return m_TrackGhostTrackWeight;}
 
   //secondary vertex tag info getters
-  std::vector<std::vector<float> > subFlightDistance2dVal() const{return m_subFlightDistance2dVal;}
-  std::vector<std::vector<float> > subFlightDistance2dSig() const{return m_subFlightDistance2dSig;}
-  std::vector<std::vector<float> > subFlightDistance3dVal() const{return m_subFlightDistance3dVal;}
-  std::vector<std::vector<float> > subFlightDistance3dSig() const{return m_subFlightDistance3dSig;}
-  std::vector<std::vector<float> > subVertexJetDeltaR() const{return m_subVertexJetDeltaR;}
-  std::vector<float> subJetNSecondaryVertices() const{return m_subJetNSecondaryVertices;}
-  std::vector<float> subVertexNTracks() const{return m_subVertexNTracks;}
-  //std::vector<std::vector< ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > > subSecondaryVertex() const{return m_subSecondaryVertex;}
-  std::vector<std::vector<TLorentzVector > > subSecondaryVertex() const{return m_subSecondaryVertex;}
-  std::vector<std::vector<float> > subVertexChi2() const{return m_subVertexChi2;}
-  std::vector<std::vector<float> > subVertexNdof() const{return m_subVertexNdof;}
-  std::vector<std::vector<float> > subVertexNormalizedChi2() const{return m_subVertexNormalizedChi2;}
-  std::vector<std::vector<float> > subVertexTracksSize() const{return m_subVertexTracksSize;}
+  std::vector<float> FlightDistance2dVal() const{return m_FlightDistance2dVal;}
+  std::vector<float> FlightDistance2dSig() const{return m_FlightDistance2dSig;}
+  std::vector<float> FlightDistance3dVal() const{return m_FlightDistance3dVal;}
+  std::vector<float> FlightDistance3dSig() const{return m_FlightDistance3dSig;}
+  std::vector<float> VertexJetDeltaR() const{return m_VertexJetDeltaR;}
+  int JetNSecondaryVertices() const{return m_JetNSecondaryVertices;}
+  int VertexNTracks() const{return m_VertexNTracks;}
+  std::vector<TLorentzVector > SecondaryVertex() const{return m_SecondaryVertex;}
+  std::vector<float> VertexChi2() const{return m_VertexChi2;}
+  std::vector<float> VertexNdof() const{return m_VertexNdof;}
+  std::vector<float> VertexNormalizedChi2() const{return m_VertexNormalizedChi2;}
+  std::vector<float> VertexTracksSize() const{return m_VertexTracksSize;}
   //JTC SV variables
-  std::vector<int> subVertexCategoryJTC() const{return m_subVertexCategoryJTC;}
-  std::vector<float> subVertexMassJTC() const{return m_subVertexMassJTC;}
-  std::vector<float> subVertexEnergyRatioJTC() const{return m_subVertexEnergyRatioJTC;}
-  std::vector<float> subTrackSip3dSigAboveCharmJTC() const{return m_subTrackSip3dSigAboveCharmJTC;}
+  int VertexCategoryJTC() const{return m_VertexCategoryJTC;}
+  float VertexMassJTC() const{return m_VertexMassJTC;}
+  float VertexEnergyRatioJTC() const{return m_VertexEnergyRatioJTC;}
+  float TrackSip3dSigAboveCharmJTC() const{return m_TrackSip3dSigAboveCharmJTC;}
 
   //track impact parameter tag info setters
-  void add_subTrackMomentum(std::vector<float> t){ m_subTrackMomentum.push_back(t);}
-  void add_subTrackEta(std::vector<float> t){ m_subTrackEta.push_back(t);}
-  void add_subTrackEtaRel(std::vector<float> t){ m_subTrackEtaRel.push_back(t);}
-  void add_subTrackDeltaR(std::vector<float> t){ m_subTrackDeltaR.push_back(t);}
-  void add_subTrackSip3dVal(std::vector<float> t){ m_subTrackSip3dVal.push_back(t);}
-  void add_subTrackSip3dSig(std::vector<float> t){ m_subTrackSip3dSig.push_back(t);}
-  void add_subTrackSip2dVal(std::vector<float> t){ m_subTrackSip2dVal.push_back(t);}
-  void add_subTrackSip2dSig(std::vector<float> t){ m_subTrackSip2dSig.push_back(t);}
-  void add_subTrackDecayLenVal(std::vector<float> t){ m_subTrackDecayLenVal.push_back(t);}
-  void add_subTrackChi2(std::vector<float> t){ m_subTrackChi2.push_back(t);}
-  void add_subTrackNTotalHits(std::vector<float> t){ m_subTrackNTotalHits.push_back(t);}
-  void add_subTrackNPixelHits(std::vector<float> t){ m_subTrackNPixelHits.push_back(t);}
-  void add_subTrackPtRel(std::vector<float> t){ m_subTrackPtRel.push_back(t);}
-  void add_subTrackPPar(std::vector<float> t){ m_subTrackPPar.push_back(t);}
-  void add_subTrackPtRatio(std::vector<float> t){ m_subTrackPtRatio.push_back(t);}
-  void add_subTrackPParRatio(std::vector<float> t){ m_subTrackPParRatio.push_back(t);}
-  void add_subTrackJetDistVal(std::vector<float> t){ m_subTrackJetDistVal.push_back(t);}
-  void add_subTrackJetDistSig(std::vector<float> t){ m_subTrackJetDistSig.push_back(t);}
-  void add_subTrackGhostTrackDistVal(std::vector<float> t){ m_subTrackGhostTrackDistVal.push_back(t);}
-  void add_subTrackGhostTrackDistSig(std::vector<float> t){ m_subTrackGhostTrackDistSig.push_back(t);}
-  void add_subTrackGhostTrackWeight(std::vector<float> t){ m_subTrackGhostTrackWeight.push_back(t);}
+  void set_TrackMomentum(std::vector<float> t){ m_TrackMomentum=t;}
+  void set_TrackEta(std::vector<float> t){ m_TrackEta=t;}
+  void set_TrackEtaRel(std::vector<float> t){ m_TrackEtaRel=t;}
+  void set_TrackDeltaR(std::vector<float> t){ m_TrackDeltaR=t;}
+  void set_TrackSip3dVal(std::vector<float> t){ m_TrackSip3dVal=t;}
+  void set_TrackSip3dSig(std::vector<float> t){ m_TrackSip3dSig=t;}
+  void set_TrackSip2dVal(std::vector<float> t){ m_TrackSip2dVal=t;}
+  void set_TrackSip2dSig(std::vector<float> t){ m_TrackSip2dSig=t;}
+  void set_TrackDecayLenVal(std::vector<float> t){ m_TrackDecayLenVal=t;}
+  void set_TrackChi2(std::vector<float> t){ m_TrackChi2=t;}
+  void set_TrackNTotalHits(std::vector<float> t){ m_TrackNTotalHits=t;}
+  void set_TrackNPixelHits(std::vector<float> t){ m_TrackNPixelHits=t;}
+  void set_TrackPtRel(std::vector<float> t){ m_TrackPtRel=t;}
+  void set_TrackPPar(std::vector<float> t){ m_TrackPPar=t;}
+  void set_TrackPtRatio(std::vector<float> t){ m_TrackPtRatio=t;}
+  void set_TrackPParRatio(std::vector<float> t){ m_TrackPParRatio=t;}
+  void set_TrackJetDistVal(std::vector<float> t){ m_TrackJetDistVal=t;}
+  void set_TrackJetDistSig(std::vector<float> t){ m_TrackJetDistSig=t;}
+  void set_TrackGhostTrackDistVal(std::vector<float> t){ m_TrackGhostTrackDistVal=t;}
+  void set_TrackGhostTrackDistSig(std::vector<float> t){ m_TrackGhostTrackDistSig=t;}
+  void set_TrackGhostTrackWeight(std::vector<float> t){ m_TrackGhostTrackWeight=t;}
 
   //secondary vertex tag info setters
-  void add_subFlightDistance2dVal(std::vector<float> t){ m_subFlightDistance2dVal.push_back(t);}
-  void add_subFlightDistance2dSig(std::vector<float> t){ m_subFlightDistance2dSig.push_back(t);}
-  void add_subFlightDistance3dVal(std::vector<float> t){ m_subFlightDistance3dVal.push_back(t);}
-  void add_subFlightDistance3dSig(std::vector<float> t){ m_subFlightDistance3dSig.push_back(t);}
-  void add_subVertexJetDeltaR(std::vector<float> t){ m_subVertexJetDeltaR.push_back(t);}
-  void add_subJetNSecondaryVertices(float t){ m_subJetNSecondaryVertices.push_back(t);}
-  void add_subVertexNTracks(float t){ m_subVertexNTracks.push_back(t);}
-  //void add_subSecondaryVertex(std::vector< ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > t){ m_subSecondaryVertex.push_back(t);}
-  void add_subSecondaryVertex(std::vector<TLorentzVector > t){ m_subSecondaryVertex.push_back(t);}
-  void add_subVertexChi2(std::vector<float> t){ m_subVertexChi2.push_back(t);}
-  void add_subVertexNdof(std::vector<float> t){ m_subVertexNdof.push_back(t);}
-  void add_subVertexNormalizedChi2(std::vector<float> t){ m_subVertexNormalizedChi2.push_back(t);}
-  void add_subVertexTracksSize(std::vector<float> t){ m_subVertexTracksSize.push_back(t);}
+  void set_FlightDistance2dVal(std::vector<float> t){ m_FlightDistance2dVal=t;}
+  void set_FlightDistance2dSig(std::vector<float> t){ m_FlightDistance2dSig=t;}
+  void set_FlightDistance3dVal(std::vector<float> t){ m_FlightDistance3dVal=t;}
+  void set_FlightDistance3dSig(std::vector<float> t){ m_FlightDistance3dSig=t;}
+  void set_VertexJetDeltaR(std::vector<float> t){ m_VertexJetDeltaR=t;}
+  void set_JetNSecondaryVertices(int t){ m_JetNSecondaryVertices=t;}
+  void set_VertexNTracks(int t){ m_VertexNTracks=t;}
+  void set_SecondaryVertex(std::vector<TLorentzVector > t){ m_SecondaryVertex=t;}
+  void set_VertexChi2(std::vector<float> t){ m_VertexChi2=t;}
+  void set_VertexNdof(std::vector<float> t){ m_VertexNdof=t;}
+  void set_VertexNormalizedChi2(std::vector<float> t){ m_VertexNormalizedChi2=t;}
+  void set_VertexTracksSize(std::vector<float> t){ m_VertexTracksSize=t;}
   //JTC SV variables
-  void add_subVertexCategoryJTC(int t){ m_subVertexCategoryJTC.push_back(t);}
-  void add_subVertexMassJTC(float t){ m_subVertexMassJTC.push_back(t);}
-  void add_subVertexEnergyRatioJTC(float t){ m_subVertexEnergyRatioJTC.push_back(t);}
-  void add_subTrackSip3dSigAboveCharmJTC(float t){ m_subTrackSip3dSigAboveCharmJTC.push_back(t);}
+  void set_VertexCategoryJTC(int t){ m_VertexCategoryJTC=t;}
+  void set_VertexMassJTC(float t){ m_VertexMassJTC=t;}
+  void set_VertexEnergyRatioJTC(float t){ m_VertexEnergyRatioJTC=t;}
+  void set_TrackSip3dSigAboveCharmJTC(float t){ m_TrackSip3dSigAboveCharmJTC=t;}
 
  private:
   
   //track impact parameter tag info
-  std::vector<std::vector<float> > m_subTrackMomentum;
-  std::vector<std::vector<float> > m_subTrackEta;
-  std::vector<std::vector<float> > m_subTrackEtaRel;
-  std::vector<std::vector<float> > m_subTrackDeltaR;
-  std::vector<std::vector<float> > m_subTrackSip3dVal;
-  std::vector<std::vector<float> > m_subTrackSip3dSig;
-  std::vector<std::vector<float> > m_subTrackSip2dVal;
-  std::vector<std::vector<float> > m_subTrackSip2dSig;
-  std::vector<std::vector<float> > m_subTrackDecayLenVal;
-  std::vector<std::vector<float> > m_subTrackChi2;
-  std::vector<std::vector<float> > m_subTrackNTotalHits;
-  std::vector<std::vector<float> > m_subTrackNPixelHits;
-  std::vector<std::vector<float> > m_subTrackPtRel;
-  std::vector<std::vector<float> > m_subTrackPPar;
-  std::vector<std::vector<float> > m_subTrackPtRatio;
-  std::vector<std::vector<float> > m_subTrackPParRatio;
-  std::vector<std::vector<float> > m_subTrackJetDistVal;
-  std::vector<std::vector<float> > m_subTrackJetDistSig;
-  std::vector<std::vector<float> > m_subTrackGhostTrackDistVal;
-  std::vector<std::vector<float> > m_subTrackGhostTrackDistSig;
-  std::vector<std::vector<float> > m_subTrackGhostTrackWeight;
+  std::vector<float> m_TrackMomentum;
+  std::vector<float> m_TrackEta;
+  std::vector<float> m_TrackEtaRel;
+  std::vector<float> m_TrackDeltaR;
+  std::vector<float> m_TrackSip3dVal;
+  std::vector<float> m_TrackSip3dSig;
+  std::vector<float> m_TrackSip2dVal;
+  std::vector<float> m_TrackSip2dSig;
+  std::vector<float> m_TrackDecayLenVal;
+  std::vector<float> m_TrackChi2;
+  std::vector<float> m_TrackNTotalHits;
+  std::vector<float> m_TrackNPixelHits;
+  std::vector<float> m_TrackPtRel;
+  std::vector<float> m_TrackPPar;
+  std::vector<float> m_TrackPtRatio;
+  std::vector<float> m_TrackPParRatio;
+  std::vector<float> m_TrackJetDistVal;
+  std::vector<float> m_TrackJetDistSig;
+  std::vector<float> m_TrackGhostTrackDistVal;
+  std::vector<float> m_TrackGhostTrackDistSig;
+  std::vector<float> m_TrackGhostTrackWeight;
   
   //secondary vertex tag info
-  std::vector<std::vector<float> > m_subFlightDistance2dVal;
-  std::vector<std::vector<float> > m_subFlightDistance2dSig;
-  std::vector<std::vector<float> > m_subFlightDistance3dVal;
-  std::vector<std::vector<float> > m_subFlightDistance3dSig;
-  std::vector<std::vector<float> > m_subVertexJetDeltaR;
-  std::vector<float> m_subJetNSecondaryVertices;
-  std::vector<float> m_subVertexNTracks;
+  std::vector<float> m_FlightDistance2dVal;
+  std::vector<float> m_FlightDistance2dSig;
+  std::vector<float> m_FlightDistance3dVal;
+  std::vector<float> m_FlightDistance3dSig;
+  std::vector<float> m_VertexJetDeltaR;
+  int m_JetNSecondaryVertices;
+  int m_VertexNTracks;
 
-  //std::vector<std::vector< ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > > m_subSecondaryVertex;
-  std::vector<std::vector<TLorentzVector> > m_subSecondaryVertex;
-  std::vector<std::vector<float> > m_subVertexChi2;                                
-  std::vector<std::vector<float> > m_subVertexNdof;                    
-  std::vector<std::vector<float> > m_subVertexNormalizedChi2;
-  std::vector<std::vector<float> > m_subVertexTracksSize;
+  std::vector<TLorentzVector> m_SecondaryVertex;
+  std::vector<float> m_VertexChi2;                                
+  std::vector<float> m_VertexNdof;                    
+  std::vector<float> m_VertexNormalizedChi2;
+  std::vector<float> m_VertexTracksSize;
   //JTC SV variables
-  std::vector<int> m_subVertexCategoryJTC;
-  std::vector<float> m_subVertexMassJTC;
-  std::vector<float> m_subVertexEnergyRatioJTC;
-  std::vector<float> m_subTrackSip3dSigAboveCharmJTC;
+  int m_VertexCategoryJTC;
+  float m_VertexMassJTC;
+  float m_VertexEnergyRatioJTC;
+  float m_TrackSip3dSigAboveCharmJTC;
   
   Tags tags;
 };
