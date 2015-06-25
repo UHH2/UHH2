@@ -13,6 +13,8 @@
 #include "DataFormats/PatCandidates/interface/Photon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/PdfInfo.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
@@ -471,6 +473,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    
    if(doGenInfo && event->genInfo){
      event->genInfo->clear_weights();
+     event->genInfo->clear_systweights();  
      event->genInfo->clear_binningValues();
      event->genparticles->clear();
 
@@ -506,6 +509,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        event->genInfo->set_pdf_scalePDF(-999);
        event->genInfo->set_pdf_xPDF1(-999);
        event->genInfo->set_pdf_xPDF2(-999);
+     }
+
+     edm::Handle<LHEEventProduct> lhe;
+     iEvent.getByLabel("externalLHEProducer",lhe);
+     event->genInfo->set_originalXWGTUP(lhe->originalXWGTUP());
+     for(unsigned int k=0; k<lhe->weights().size(); k++){
+       event->genInfo->add_systweight(lhe->weights().at(k).wgt);
      }
 
      edm::Handle<std::vector<PileupSummaryInfo> > pus;
@@ -845,6 +855,22 @@ void NtupleWriter::beginRun(edm::Run const& iRun, edm::EventSetup const&  iSetup
     newrun=true;
   }
 
+  //print the LHE header to get the indices of the various systematic weights given on the sample
+  /*
+  edm::Handle<LHERunInfoProduct> run; 
+  typedef std::vector<LHERunInfoProduct::Header>::const_iterator headers_const_iterator;
+  
+  iRun.getByLabel( "externalLHEProducer", run );
+  LHERunInfoProduct myLHERunInfoProduct = *(run.product());
+  
+  for (headers_const_iterator iter=myLHERunInfoProduct.headers_begin(); iter!=myLHERunInfoProduct.headers_end(); iter++){
+    std::cout << iter->tag() << std::endl;
+    std::vector<std::string> lines = iter->lines();
+    for (unsigned int iLine = 0; iLine<lines.size(); iLine++) {
+      std::cout << lines.at(iLine);
+    }
+  }
+  */
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
