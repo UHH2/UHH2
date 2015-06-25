@@ -57,7 +57,7 @@ public:
   float btag_BoostedDoubleSecondaryVertexCA15() const{return m_btag_BoostedDoubleSecondaryVertexCA15;}
   float JEC_factor_raw() const{return m_JEC_factor_raw;}
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
-  const JetBTagInfo & btaginfo() const{return m_btaginfo;}
+  JetBTagInfo btaginfo() const{return m_btaginfo;}
 
   void set_jetArea(float x){m_jetArea=x;}
   void set_numberOfDaughters(int x){m_numberOfDaughters=x;} 
@@ -83,7 +83,7 @@ public:
   void set_JEC_factor_raw(float x){m_JEC_factor_raw=x;}
   void set_genjet_index(int x){m_genjet_index=x;}
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
-  void set_btaginfo(JetBTagInfo btaginfo){ std::swap(m_btaginfo, btaginfo);} // note: move not possible in C++98
+  void set_btaginfo(JetBTagInfo x){m_btaginfo=x;}
 
   bool pfID() const {
     //pf ID has already been applied when using goodPatJets
