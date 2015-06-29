@@ -190,6 +190,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
+  doTrigHTEmu = iConfig.getParameter<bool>("doTrigHTEmu");
   
   auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 
@@ -390,6 +391,10 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     branch(tr, "triggerNames", "std::vector<std::string>", &triggerNames_outbranch);
     branch(tr, "triggerResults", "std::vector<bool>", event->get_triggerResults());
     triggerBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("trigger_bits"));
+    if(doTrigHTEmu)
+    {
+      triggerObjects_ = consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("trigger_objects"));
+    }
   }
   newrun = true;
 }
@@ -814,6 +819,29 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
            triggerNames_outbranch.push_back(names.triggerName(i));
        }
      }
+   //PFHT800 emulation
+   if(doTrigHTEmu){
+     edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+     iEvent.getByToken(triggerObjects_, triggerObjects);
+     for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i){ 
+       //std::cout << names.triggerName(i)<< std::endl;
+       if (names.triggerName(i)=="HLT_PFHTForMC_v1" && triggerBits->accept(i)) {
+       //std::cout << "Found path pass... ";
+             for (pat::TriggerObjectStandAlone obj : *triggerObjects) {
+                 obj.unpackPathNames(names);
+                 for (unsigned h = 0; h < obj.filterIds().size(); ++h) {
+                     if (obj.filterIds()[h]==89 && obj.hasPathName( "HLT_PFHTForMC_v1", true, true )) { //look at https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_X/DataFormats/HLTReco/interface/TriggerTypeDefs.h for an explanation of trigger types
+                         //std::cout << "Found correct type and path object... ";
+                         triggerResults.push_back(obj.pt()>800.0);
+                         if(newrun){
+                           triggerNames_outbranch.push_back("HLT_PFHT800Emu_v1");
+                        }
+                     }
+                 }
+             }
+          }
+      }
+    }
      if(newrun){
          event->set_triggernames(triggerNames_outbranch);
      }
