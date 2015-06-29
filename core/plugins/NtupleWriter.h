@@ -10,6 +10,7 @@
 
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
+#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
@@ -57,6 +58,7 @@ class NtupleWriter : public edm::EDFilter {
       bool doTrigger;
       bool runOnMiniAOD;
       bool doRho;
+      bool doTrigHTEmu;
 
       // in order of initialization:
       std::unique_ptr<uhh2::GenericEventStructure> ges;
@@ -102,6 +104,7 @@ class NtupleWriter : public edm::EDFilter {
       bool newrun, setup_output_branches_done;
 
       edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
+      edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
 };
 
 

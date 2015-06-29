@@ -43,9 +43,14 @@ BOOST_LDFLAGS := -L$(call scramtag,boost,LIBDIR)
 INCLUDES := -I$(SFRAME_DIR) -I. -I$(CMSSW_BASE)/src
 LIBTARGET := $(SFRAME_LIB_PATH)/lib$(LIBRARY).so
 PARTARGET := $(SFRAME_LIB_PATH)/$(LIBRARY).par
+PCMTARGET := $(SFRAME_LIB_PATH)/$(LIBRARY)_dict_rdict.pcm
 
 # as default, build library only:
+ifneq ($(DICT),)
+all: $(LIBTARGET) $(PCMTARGET)
+else
 all: $(LIBTARGET) 
+endif 
 
 # build dictionary only if requested via $(DICT).
 ifneq ($(DICT),)
@@ -57,6 +62,10 @@ $(DICTCXXFILE): $(DICT)
 $(DICTOBJ): $(DICTCXXFILE)
 	@$(CXX_CMD)
 obj += $(DICTOBJ)
+# Rule to install the PCM file when using ROOT 6:
+$(PCMTARGET): $(DICTCXXFILE)
+	@echo "Installing $@"
+	@cp obj/$(LIBRARY)_dict_rdict.pcm $@
 endif
 
 $(LIBTARGET): $(obj)

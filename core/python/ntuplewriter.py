@@ -511,6 +511,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         trigger_bits = cms.InputTag("TriggerResults","","HLT"),
         # for now, save all the triggers:
         trigger_prefixes = cms.vstring("HLT_",),
+        doTrigHTEmu = cms.bool(True),
+        trigger_objects = cms.InputTag("selectedPatTrigger"),
         
         # *** gen stuff:
         doGenInfo = cms.bool(not useData),
