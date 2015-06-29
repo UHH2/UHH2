@@ -11,7 +11,7 @@ namespace uhh2 {
 class NtupleWriterJets: public NtupleWriterModule {
 public:
 
-    static void fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool do_btagging);
+    static void fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo);
 
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member);
 
@@ -33,9 +33,10 @@ public:
     struct Config: public NtupleWriterModule::Config {
         using NtupleWriterModule::Config::Config;
         
-        bool do_btagging = true, do_btagging_subjets = true;
+        bool do_btagging = true, do_btagging_subjets = true, do_taginfo_subjets;
 
-        edm::InputTag substructure_variables_src; // a jet collection from where to take the subjet variables (after DeltaR-matching)
+        edm::InputTag substructure_variables_src;// a jet collection from where to take the subjet variables (after DeltaR-matching)
+	edm::InputTag SVComputer;
         std::string njettiness_src;
         std::string qjets_src;
 	std::string subjet_src;
@@ -50,10 +51,9 @@ public:
 private:
     edm::InputTag src;
     float ptmin, etamax;
-    bool do_btagging, do_btagging_subjets;
+    bool do_btagging, do_btagging_subjets, do_taginfo_subjets;
     edm::EDGetToken src_token, substructure_variables_src_token;
     std::string njettiness_src, qjets_src, subjet_src;
-
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;
 };

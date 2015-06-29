@@ -241,6 +241,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     using uhh2::NtupleWriterTopJets;
     auto topjet_sources = iConfig.getParameter<std::vector<std::string> >("topjet_sources");
     auto subjet_sources = iConfig.getParameter<std::vector<std::string> >("subjet_sources");
+    auto subjet_taginfos = iConfig.getParameter<std::vector<std::string> >("subjet_taginfos");
     double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
     double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
     bool substructure_variables = false;
@@ -251,6 +252,10 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
     if(subjet_sources.size()!=topjet_sources.size()){
       cerr << "Exception: it is necessary to specify the subjets for each topjet collection" << endl;
+      throw;
+    }
+    if(subjet_sources.size()!=subjet_taginfos.size()){
+      cerr << "Exception: it is necessary to specify if you want to store taginfos for each subjet collection" << endl;
       throw;
     }
     if(iConfig.exists("topjet_qjets_sources")){
@@ -269,6 +274,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         cfg.ptmin = topjet_ptmin;
         cfg.etamax = topjet_etamax;
 	cfg.subjet_src = subjet_sources[j];
+	if(subjet_taginfos[j]=="store"){
+ 	  cfg.do_taginfo_subjets = true;
+ 	}
+ 	else{
+ 	  cfg.do_taginfo_subjets = false;
+ 	}
         if(j < topjet_substructure_variables_sources.size()){
             cfg.substructure_variables_src = topjet_substructure_variables_sources[j];
         }

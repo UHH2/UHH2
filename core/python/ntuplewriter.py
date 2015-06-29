@@ -36,7 +36,7 @@ process.source = cms.Source("PoolSource",
                             skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -290,7 +290,9 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         fatJets = cms.InputTag(fatjets_name), groomedFatJets = cms.InputTag(groomed_jets_name),
         genJetCollection = cms.InputTag(groomed_genjets_name, 'SubJets'),
         **common_btag_parameters)
-        
+        #Always add taginfos to subjets, but possible not to store them, configurable with ntuple writer parameter: subjet_taginfos
+    getattr(process,"patJets" + cap(subjets_name)).addTagInfos = True
+
     # add the merged jet collection which contains the links from fat jets to subjets:
     setattr(process, 'patJets' + cap(groomed_jets_name) + 'Packed',cms.EDProducer("BoostedJetMerger",
         jetSrc=cms.InputTag("patJets" + cap(groomed_jets_name)),
@@ -484,10 +486,14 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doTopJets = cms.bool(True),
         topjet_ptmin = cms.double(100.0),
         topjet_etamax = cms.double(5.0),
-        topjet_sources = cms.vstring("slimmedJetsAK8","patJetsAk8CHSJetsSoftDropPacked"),
+        topjet_sources = cms.vstring("slimmedJetsAK8","patJetsAk8CHSJetsSoftDropPacked"),                        
         #Note: use label "daughters" for  subjet_sources if you want to store as subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!)
         #to store a subjet collection present in miniAOD indicate the proper label of the subjets method in pat::Jet: SoftDrop or CMSTopTag
         subjet_sources = cms.vstring("CMSTopTag","daughters"),
+        #Specify "store" if you want to store b-tagging taginfos for subjet collection, make sure to have included them with .addTagInfos = True
+        #addTagInfos = True is currently true by default, however, only for collections produced and not read directly from miniAOD
+        #If you don't want to store stubjet taginfos leave string empy ""
+        subjet_taginfos = cms.vstring("","store"),
         #Note: topjet_substructure_variables_sources only needed for qjets; njettiness is now directly taken from UserFloat added to jets in MINIAOD (for Run II CMSSW_74 ntuples)
         topjet_njettiness_sources = cms.vstring("NjettinessAK8","NjettinessAK8"),
 
@@ -513,6 +519,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         trigger_prefixes = cms.vstring("HLT_",),
         doTrigHTEmu = cms.bool(True),
         trigger_objects = cms.InputTag("selectedPatTrigger"),
+
         
         # *** gen stuff:
         doGenInfo = cms.bool(not useData),

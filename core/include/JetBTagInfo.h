@@ -1,10 +1,9 @@
 #pragma once
 
-#include "FlavorParticle.h"
 #include "Tags.h"
 #include "TLorentzVector.h"
 
-class JetBTagInfo : public FlavorParticle{
+class JetBTagInfo{
 public:
     
   enum tag { /* for future use (more b-taggers, etc.) */ };
@@ -39,19 +38,11 @@ public:
     m_FlightDistance3dVal.clear();
     m_FlightDistance3dSig.clear();
     m_VertexJetDeltaR.clear();
-    m_JetNSecondaryVertices=0;
-    m_VertexNTracks=0;
+    m_VertexNTracks.clear();
     m_SecondaryVertex.clear();
     m_VertexChi2.clear();                                
     m_VertexNdof.clear();                    
     m_VertexNormalizedChi2.clear();
-    m_VertexTracksSize.clear();
-    //JTC SV variables
-    m_VertexCategoryJTC=-999;
-    m_VertexMassJTC=-999.;
-    m_VertexEnergyRatioJTC=-999.;
-    m_TrackSip3dSigAboveCharmJTC=-999.;
-
   }
 
   //track impact parameter tag info getters
@@ -84,12 +75,11 @@ public:
   std::vector<float> FlightDistance3dSig() const{return m_FlightDistance3dSig;}
   std::vector<float> VertexJetDeltaR() const{return m_VertexJetDeltaR;}
   int JetNSecondaryVertices() const{return m_JetNSecondaryVertices;}
-  int VertexNTracks() const{return m_VertexNTracks;}
+  std::vector<int> VertexNTracks() const{return m_VertexNTracks;}
   std::vector<TLorentzVector > SecondaryVertex() const{return m_SecondaryVertex;}
   std::vector<float> VertexChi2() const{return m_VertexChi2;}
   std::vector<float> VertexNdof() const{return m_VertexNdof;}
   std::vector<float> VertexNormalizedChi2() const{return m_VertexNormalizedChi2;}
-  std::vector<float> VertexTracksSize() const{return m_VertexTracksSize;}
   //JTC SV variables
   int VertexCategoryJTC() const{return m_VertexCategoryJTC;}
   float VertexMassJTC() const{return m_VertexMassJTC;}
@@ -126,12 +116,11 @@ public:
   void set_FlightDistance3dSig(std::vector<float> t){ m_FlightDistance3dSig=t;}
   void set_VertexJetDeltaR(std::vector<float> t){ m_VertexJetDeltaR=t;}
   void set_JetNSecondaryVertices(int t){ m_JetNSecondaryVertices=t;}
-  void set_VertexNTracks(int t){ m_VertexNTracks=t;}
+  void set_VertexNTracks(std::vector<int> t){ m_VertexNTracks=t;}
   void set_SecondaryVertex(std::vector<TLorentzVector > t){ m_SecondaryVertex=t;}
   void set_VertexChi2(std::vector<float> t){ m_VertexChi2=t;}
   void set_VertexNdof(std::vector<float> t){ m_VertexNdof=t;}
   void set_VertexNormalizedChi2(std::vector<float> t){ m_VertexNormalizedChi2=t;}
-  void set_VertexTracksSize(std::vector<float> t){ m_VertexTracksSize=t;}
   //JTC SV variables
   void set_VertexCategoryJTC(int t){ m_VertexCategoryJTC=t;}
   void set_VertexMassJTC(float t){ m_VertexMassJTC=t;}
@@ -170,13 +159,11 @@ public:
   std::vector<float> m_FlightDistance3dSig;
   std::vector<float> m_VertexJetDeltaR;
   int m_JetNSecondaryVertices;
-  int m_VertexNTracks;
-
+  std::vector<int> m_VertexNTracks;
   std::vector<TLorentzVector> m_SecondaryVertex;
   std::vector<float> m_VertexChi2;                                
   std::vector<float> m_VertexNdof;                    
   std::vector<float> m_VertexNormalizedChi2;
-  std::vector<float> m_VertexTracksSize;
   //JTC SV variables
   int m_VertexCategoryJTC;
   float m_VertexMassJTC;
