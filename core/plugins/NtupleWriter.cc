@@ -825,12 +825,12 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      iEvent.getByToken(triggerObjects_, triggerObjects);
      for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i){ 
        //std::cout << names.triggerName(i)<< std::endl;
-       if (names.triggerName(i)=="HLT_PFHTForMC_v1" && triggerBits->accept(i)) {
+       if (names.triggerName(i).find("HLT_PFHTForMC")!=string::npos && triggerBits->accept(i)) {
        //std::cout << "Found path pass... ";
              for (pat::TriggerObjectStandAlone obj : *triggerObjects) {
                  obj.unpackPathNames(names);
                  for (unsigned h = 0; h < obj.filterIds().size(); ++h) {
-                     if (obj.filterIds()[h]==89 && obj.hasPathName( "HLT_PFHTForMC_v1", true, true )) { //look at https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_X/DataFormats/HLTReco/interface/TriggerTypeDefs.h for an explanation of trigger types
+                     if (obj.filterIds()[h]==89 && obj.hasPathName( "HLT_PFHTForMC*", true, true )) { //look at https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_X/DataFormats/HLTReco/interface/TriggerTypeDefs.h for an explanation of trigger types
                          //std::cout << "Found correct type and path object... ";
                          triggerResults.push_back(obj.pt()>800.0);
                          if(newrun){
