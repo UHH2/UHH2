@@ -242,6 +242,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     auto topjet_sources = iConfig.getParameter<std::vector<std::string> >("topjet_sources");
     auto subjet_sources = iConfig.getParameter<std::vector<std::string> >("subjet_sources");
     auto subjet_taginfos = iConfig.getParameter<std::vector<std::string> >("subjet_taginfos");
+    auto higgstag_sources = iConfig.getParameter<std::vector<std::string> >("higgstag_sources");
+    auto higgstag_names = iConfig.getParameter<std::vector<std::string> >("higgstag_names");
     double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
     double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
     bool substructure_variables = false;
@@ -256,6 +258,14 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
     if(subjet_sources.size()!=subjet_taginfos.size()){
       cerr << "Exception: it is necessary to specify if you want to store taginfos for each subjet collection" << endl;
+      throw;
+    }
+    if(subjet_sources.size()!=higgstag_sources.size()){
+      cerr << "Exception: size of higgstag_sources is wrong" << endl;
+      throw;
+    }
+    if(higgstag_names.size()!=higgstag_sources.size()){
+      cerr << "Exception: size of higgstag_names is wrong" << endl;
       throw;
     }
     if(iConfig.exists("topjet_qjets_sources")){
@@ -273,6 +283,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         NtupleWriterTopJets::Config cfg(*context, consumesCollector(), topjet_sources[j], topjet_sources[j]);
         cfg.ptmin = topjet_ptmin;
         cfg.etamax = topjet_etamax;
+	cfg.higgs_src = higgstag_sources[j];
+	cfg.higgs_name = higgstag_names[j];
+	if(higgstag_sources[j]!=""&&higgstag_names[j]==""){
+	  cerr << "Exception: higgstag source specified, but no higgstag discriminator name" << endl;
+	  throw;
+	}
 	cfg.subjet_src = subjet_sources[j];
 	if(subjet_taginfos[j]=="store"){
  	  cfg.do_taginfo_subjets = true;

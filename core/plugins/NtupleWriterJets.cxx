@@ -212,6 +212,9 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     njettiness_src = cfg.njettiness_src;
     qjets_src = cfg.qjets_src;
     subjet_src = cfg.subjet_src;
+    higgs_src= cfg.higgs_src;
+    src_higgs_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.higgs_src);
+    higgs_name=cfg.higgs_name;
     do_taginfo_subjets = cfg.do_taginfo_subjets;
     src = cfg.src;
     do_btagging = cfg.do_btagging;
@@ -282,6 +285,30 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	  topjet.set_tau3(pat_topjet.userFloat(njettiness_src+":tau3"));
 	}
 	
+	if(higgs_src!=""){
+	  
+	  edm::Handle<pat::JetCollection> higgs_pat_topjets;
+	  event.getByToken(src_higgs_token, higgs_pat_topjets);
+	  const vector<pat::Jet> & pat_higgsjets = *higgs_pat_topjets;
+	  
+	  //match a jet from "higgs" collection
+	  int i_pat_higgsjet = -1;
+	  double drmin = numeric_limits<double>::infinity();
+	  for (unsigned int ih = 0; ih < pat_higgsjets.size(); ih++) {
+	    const pat::Jet & higgs_jet = pat_higgsjets[ih];
+	    auto dr = reco::deltaR(higgs_jet, pat_topjet);
+	    if(dr < drmin){
+	      i_pat_higgsjet = ih;
+	      drmin = dr;
+	    }
+	  }
+	  
+	  if (i_pat_higgsjet >= 0 && drmin < 1.0){
+	    const pat::Jet & higgs_jet = pat_higgsjets[i_pat_higgsjet];
+	    topjet.set_mvahiggsdiscr(higgs_jet.bDiscriminator(higgs_name.c_str()));
+	  }
+	  
+	}//higgs tag loop
 
         // loop over subjets to fill some more subjet info:
 	if(subjet_src=="daughters"){

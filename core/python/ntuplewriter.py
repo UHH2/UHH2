@@ -494,9 +494,12 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #addTagInfos = True is currently true by default, however, only for collections produced and not read directly from miniAOD
         #If you don't want to store stubjet taginfos leave string empy ""
         subjet_taginfos = cms.vstring("","store"),
+        #Note: if you want to store the MVA Higgs tagger discriminator, specify the jet collection from which to pick it up and the tagger name
+        #currently the discriminator is trained on ungroomed jets, so the discriminaotr has to be taken from ungroomed jets
+        higgstag_sources = cms.vstring("","patJetsAk8CHSJets"),
+        higgstag_names = cms.vstring("","pfBoostedDoubleSecondaryVertexAK8BJetTags"),                    
         #Note: topjet_substructure_variables_sources only needed for qjets; njettiness is now directly taken from UserFloat added to jets in MINIAOD (for Run II CMSSW_74 ntuples)
         topjet_njettiness_sources = cms.vstring("NjettinessAK8","NjettinessAK8"),
-
         #topjet_sources = cms.vstring("patJetsHepTopTagCHSPacked", "patJetsCmsTopTagCHSPacked", "patJetsCa8CHSJetsPrunedPacked", "patJetsCa15CHSJetsFilteredPacked",
         #        "patJetsHepTopTagPuppiPacked", "patJetsCmsTopTagPuppiPacked", "patJetsCa8PuppiJetsPrunedPacked", "patJetsCa15PuppiJetsFilteredPacked",
         #        'patJetsCa8CHSJetsSoftDropPacked', 'patJetsCa8PuppiJetsSoftDropPacked'
