@@ -213,6 +213,10 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     qjets_src = cfg.qjets_src;
     subjet_src = cfg.subjet_src;
     higgs_src= cfg.higgs_src;
+    pruned_src = cfg.pruned_src;
+    if(pruned_src.find("Mass")==string::npos){
+      src_pruned_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.pruned_src);
+    }
     src_higgs_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.higgs_src);
     higgs_name=cfg.higgs_name;
     do_taginfo_subjets = cfg.do_taginfo_subjets;
@@ -284,7 +288,33 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	  topjet.set_tau2(pat_topjet.userFloat(njettiness_src+":tau2"));
 	  topjet.set_tau3(pat_topjet.userFloat(njettiness_src+":tau3"));
 	}
-	
+
+	if(pruned_src.find("Mass")!=string::npos){
+	  topjet.set_prunedmass(pat_topjet.userFloat("ak8PFJetsCHSPrunedMass"));
+	}
+	else{
+	  edm::Handle<pat::JetCollection> pruned_pat_topjets;
+	  event.getByToken(src_pruned_token, pruned_pat_topjets);
+	  const vector<pat::Jet> & pat_prunedjets = *pruned_pat_topjets;
+	  
+	  //match a jet from pruned collection
+	  int i_pat_prunedjet = -1;
+	  double drmin = numeric_limits<double>::infinity();
+	  for (unsigned int ih = 0; ih < pat_prunedjets.size(); ih++) {
+	    const pat::Jet & pruned_jet = pat_prunedjets[ih];
+	    auto dr = reco::deltaR(pruned_jet, pat_topjet);
+	    if(dr < drmin){
+	      i_pat_prunedjet = ih;
+	      drmin = dr;
+	    }
+	  }
+	  
+	  if (i_pat_prunedjet >= 0 && drmin < 1.0){
+	    const pat::Jet & pruned_jet = pat_prunedjets[i_pat_prunedjet];
+	    topjet.set_prunedmass(pruned_jet.mass());
+	  }
+	}//pruned mass set through matching with pruned collection
+
 	if(higgs_src!=""){
 	  
 	  edm::Handle<pat::JetCollection> higgs_pat_topjets;

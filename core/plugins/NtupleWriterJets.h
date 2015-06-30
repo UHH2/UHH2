@@ -22,6 +22,7 @@ private:
     edm::InputTag src;
     edm::EDGetToken src_token;
     edm::EDGetToken src_higgs_token;
+    edm::EDGetToken src_pruned_token;
     float ptmin, etamax;
     Event::Handle<std::vector<Jet>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Jet>>> jets_handle; // handle of name "jets" in case set_jets_member is true
@@ -43,6 +44,7 @@ public:
 	std::string subjet_src;
 	std::string higgs_src;
 	std::string higgs_name;
+	std::string pruned_src;
     };
 
     explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member);
@@ -55,8 +57,8 @@ private:
     edm::InputTag src;
     float ptmin, etamax;
     bool do_btagging, do_btagging_subjets, do_taginfo_subjets;
-    edm::EDGetToken src_token, src_higgs_token, substructure_variables_src_token;
-    std::string njettiness_src, qjets_src, subjet_src, higgs_src, higgs_name;
+    edm::EDGetToken src_token, src_higgs_token,  src_pruned_token, substructure_variables_src_token;
+    std::string njettiness_src, qjets_src, subjet_src, higgs_src, higgs_name, pruned_src;
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;
 };

@@ -9,7 +9,7 @@ public:
   enum tag { /* for  future use ... */ };
   
   TopJet(){
-      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_mvahiggsdiscr = -1.0f;
+      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_mvahiggsdiscr = m_prunedmass = -1.0f;
   }
 
   // getters
@@ -19,6 +19,8 @@ public:
   float tau3() const {return m_tau3;}
   
   float mvahiggsdiscr() const {return m_mvahiggsdiscr;}
+
+  float prunedmass() const {return m_prunedmass;}
 
   const std::vector<Jet> & subjets() const{return m_subjets;}
   
@@ -31,6 +33,8 @@ public:
   void set_tau3(float x){m_tau3 = x;}
 
   void set_mvahiggsdiscr(float x){m_mvahiggsdiscr = x;}
+
+  void set_prunedmass(float x){m_prunedmass = x;}
 
   void add_subjet(const Jet & subjet){m_subjets.push_back(subjet);}
 
@@ -48,6 +52,8 @@ private:
   float m_tau3;
   
   float m_mvahiggsdiscr;
+
+  float m_prunedmass;
 
   Tags tags;
 };
