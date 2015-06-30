@@ -12,6 +12,7 @@
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 #include "DataFormats/PatCandidates/interface/Photon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
@@ -835,14 +836,11 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
      iEvent.getByToken(triggerObjects_, triggerObjects);
      for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i){ 
-       //std::cout << names.triggerName(i)<< std::endl;
        if (names.triggerName(i).find("HLT_PFHTForMC")!=string::npos && triggerBits->accept(i)) {
-       //std::cout << "Found path pass... ";
              for (pat::TriggerObjectStandAlone obj : *triggerObjects) {
                  obj.unpackPathNames(names);
                  for (unsigned h = 0; h < obj.filterIds().size(); ++h) {
-                     if (obj.filterIds()[h]==89 && obj.hasPathName( "HLT_PFHTForMC*", true, true )) { //look at https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_X/DataFormats/HLTReco/interface/TriggerTypeDefs.h for an explanation of trigger types
-                         //std::cout << "Found correct type and path object... ";
+                     if (obj.filterIds()[h]==trigger::TriggerTHT && obj.hasPathName( "HLT_PFHTForMC*", true, true )) {
                          triggerResults.push_back(obj.pt()>800.0);
                          if(newrun){
                            triggerNames_outbranch.push_back("HLT_PFHT800Emu_v1");
