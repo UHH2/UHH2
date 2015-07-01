@@ -82,7 +82,6 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
     JetBTagInfo jetbtaginfo;
     //ip tag info
     reco::TaggingVariableList tvlIP=pat_jet.tagInfoCandIP("pfImpactParameter")->taggingVariables();
-    std::vector<float> tagValList = tvlIP.getList(reco::btau::trackMomentum,false);
     jetbtaginfo.set_TrackMomentum(tvlIP.getList(reco::btau::trackMomentum,false));
     jetbtaginfo.set_TrackEta(tvlIP.getList(reco::btau::trackEta,false));
     jetbtaginfo.set_TrackEtaRel(tvlIP.getList(reco::btau::trackEtaRel,false));
