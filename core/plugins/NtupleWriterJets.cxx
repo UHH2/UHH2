@@ -290,7 +290,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	}
 
 	if(pruned_src.find("Mass")!=string::npos){
-	  topjet.set_prunedmass(pat_topjet.userFloat("ak8PFJetsCHSPrunedMass"));
+	  topjet.set_prunedmass(pat_topjet.userFloat(pruned_src));
 	}
 	else{
 	  edm::Handle<pat::JetCollection> pruned_pat_topjets;
