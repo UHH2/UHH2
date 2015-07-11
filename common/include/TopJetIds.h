@@ -16,10 +16,14 @@
  * 
  * The default values of the constructor correspond to the default values used in CMS.
  */
+
 class CMSTopTag {
 public:
   
-  explicit CMSTopTag(double mminLower=50., double mjetLower=140., double mjetUpper=250.);
+  enum class MassType {groomed, ungroomed};
+
+  explicit CMSTopTag(double mminLower=50., double mjetLower=140., double mjetUpper=250., MassType typeOfMass = MassType::ungroomed);
+  explicit CMSTopTag(MassType typeOfMass);
   
   bool operator()(const TopJet & topjet, const uhh2::Event & event) const;
 
@@ -27,6 +31,7 @@ public:
   double m_mminLower;
   double m_mjetLower;
   double m_mjetUpper;
+  MassType m_typeOfMass;
 };
 
 class HEPTopTag{
@@ -85,3 +90,9 @@ private:
 // It is provided as function here to allow calculating this variable for plotting, etc.
 double m_disubjet_min(const TopJet & topjet);
 double m_disubjet_min(const GenTopJet & topjet);
+
+//groomed TopJet mass, obtained using the sum of the four-vectors of all the subjets.
+//as used by CMSTopTagger and HEPTopTagger
+//returns -1 for space-like vectors
+double m_groomed(const TopJet & topjet);
+double m_groomed(const GenTopJet & topjet);

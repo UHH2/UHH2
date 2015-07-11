@@ -8,7 +8,13 @@ bool CMSTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const {
     auto subjets = topjet.subjets();
     if(subjets.size() < 3) return false;
     
-    auto mjet = topjet.v4().M();
+    float mjet = 0.0;
+    switch(m_typeOfMass)
+    {
+    	case MassType::ungroomed : mjet=topjet.v4().M(); break;
+    	case MassType::groomed : mjet=m_groomed(topjet); break;
+    	default: std::cout<<"CMSTopTag Mass type not valid"<<std::endl;
+    }
     if(mjet < m_mjetLower) return false;
     if(mjet > m_mjetUpper) return false;
 
@@ -18,9 +24,10 @@ bool CMSTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const {
     return true;
 }
 
+CMSTopTag::CMSTopTag(double mminLower, double mjetLower, double mjetUpper, MassType typeOfMass): m_mminLower(mminLower),
+    m_mjetLower(mjetLower), m_mjetUpper(mjetUpper), m_typeOfMass(typeOfMass){}
 
-CMSTopTag::CMSTopTag(double mminLower, double mjetLower, double mjetUpper): m_mminLower(mminLower),
-    m_mjetLower(mjetLower), m_mjetUpper(mjetUpper){}
+CMSTopTag::CMSTopTag(MassType typeOfMass): m_mminLower(50.), m_mjetLower(140.), m_mjetUpper(250.), m_typeOfMass(typeOfMass){}
 
 
 bool HEPTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const{
@@ -36,17 +43,9 @@ bool HEPTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const{
   
   nsubjets=subjets.size();
   
-  LorentzVector allsubjets(0,0,0,0);
-  
-  for(int j=0; j<nsubjets; ++j) {
-    allsubjets += subjets[j].v4();
-  }
-  if(!allsubjets.isTimelike()) {
-    mjet=0;
-    return false;
-  }
-  
-  mjet = allsubjets.M();
+  mjet=m_groomed(topjet);
+  if (mjet<0) return false;
+
   ptjet= topjet.pt();
     
   double m12, m13, m23;
@@ -162,6 +161,15 @@ double m_disubjet_minT(const T & topjet){
     return std::min(m01,std::min(m02, m12));
 }
 
+template<typename T>
+double m_groomedT(const T & topjet){
+    auto subjets = topjet.subjets();
+    LorentzVector sum(0,0,0,0);
+  	for(auto subjet : subjets) sum += subjet.v4();
+  	if(!sum.isTimelike()) return -1.0;
+  	else return sum.M();
+}
+
 }
 
 double m_disubjet_min(const TopJet & topjet){
@@ -173,3 +181,10 @@ double m_disubjet_min(const GenTopJet & topjet){
     return m_disubjet_minT<GenTopJet>(topjet);
 }
 
+double m_groomed(const TopJet & topjet){
+    return m_groomedT<TopJet>(topjet);
+}
+
+double m_groomed(const GenTopJet & topjet){
+    return m_groomedT<GenTopJet>(topjet);
+}
