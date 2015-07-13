@@ -13,9 +13,6 @@
 // non-default include files
 #include <DataFormats/PatCandidates/interface/Electron.h>
 
-#include <EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h>
-
-// class declaration
 class PATElectronUserData : public edm::EDProducer {
  public:
   explicit PATElectronUserData(const edm::ParameterSet&);
@@ -25,88 +22,129 @@ class PATElectronUserData : public edm::EDProducer {
   virtual void produce(edm::Event&, const edm::EventSetup&);
 
   edm::EDGetTokenT< edm::View<pat::Electron> > src_;
-  std::vector<std::string> float_vmaps_;
+  edm::EDGetTokenT< edm::View<reco::Vertex> > vertices_;
 
-  std::vector<std::string> weights_mvaNoTrig_;
-  std::unique_ptr<EGammaMvaEleEstimatorCSA14> egammaMVAnotrig;
+  struct vmap_link {
+    std::string     vname;
+    edm::EDGetToken token;
+  };
 
-  std::vector<std::string> weights_mvaTrig_;
-  std::unique_ptr<EGammaMvaEleEstimatorCSA14> egammaMVAtrig;
+  edm::ParameterSet      vmaps_bool_;
+  std::vector<vmap_link> vmaps_bool_links_;
+
+  edm::ParameterSet      vmaps_float_;
+  std::vector<vmap_link> vmaps_float_links_;
+
+  std::vector<std::string> vmaps_double_;
+
+  std::string mva_NoTrig_;
+  std::string mva_Trig_;
 };
 
-// constructor
 PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig){
 
   src_ = consumes< edm::View<pat::Electron> >(iConfig.getParameter<edm::InputTag>("src"));
-  if(iConfig.exists("float_vmaps")) float_vmaps_ = iConfig.getParameter<std::vector<std::string>>("float_vmaps");
 
-  if(iConfig.exists("weights_mvaTrig")){
+  vmaps_bool_ = iConfig.getParameter<edm::ParameterSet>("vmaps_bool");
+  for(unsigned int i=0; i<vmaps_bool_.getParameterNames().size(); ++i){
 
-    weights_mvaTrig_ = iConfig.getParameter<std::vector<std::string>>("weights_mvaTrig");
+    vmap_link link;
+    link.vname = vmaps_bool_.getParameterNames().at(i);
+    link.token = consumes< edm::ValueMap<bool> >(vmaps_bool_.getParameter<edm::InputTag>(link.vname));
 
-    std::vector<std::string> weights_mvaTrig_FP;
-    weights_mvaTrig_FP.reserve(weights_mvaTrig_.size());
-    for(int i=0; i<int(weights_mvaTrig_.size()); ++i){
-      weights_mvaTrig_FP.push_back(edm::FileInPath(weights_mvaTrig_.at(i)).fullPath());
-    }
-    
-    egammaMVAtrig.reset(new EGammaMvaEleEstimatorCSA14());
-    egammaMVAtrig->initialize("BDT", EGammaMvaEleEstimatorCSA14::kTrig, true, weights_mvaTrig_FP);
+    vmaps_bool_links_.push_back(link);
   }
 
-  if(iConfig.exists("weights_mvaNoTrig")){
+  vmaps_float_ = iConfig.getParameter<edm::ParameterSet>("vmaps_float");
+  for(unsigned int i=0; i<vmaps_float_.getParameterNames().size(); ++i){
 
-    weights_mvaNoTrig_ = iConfig.getParameter<std::vector<std::string>>("weights_mvaNoTrig");
+    vmap_link link;
+    link.vname = vmaps_float_.getParameterNames().at(i);
+    link.token = consumes< edm::ValueMap<float> >(vmaps_float_.getParameter<edm::InputTag>(link.vname));
 
-    std::vector<std::string> weights_mvaNoTrig_FP;
-    weights_mvaNoTrig_FP.reserve(weights_mvaNoTrig_.size());
-    for(int i=0; i<int(weights_mvaNoTrig_.size()); ++i){
-      weights_mvaNoTrig_FP.push_back(edm::FileInPath(weights_mvaNoTrig_.at(i)).fullPath());
-    }
-    
-    egammaMVAnotrig.reset(new EGammaMvaEleEstimatorCSA14());
-    egammaMVAnotrig->initialize("BDT", EGammaMvaEleEstimatorCSA14::kNonTrig, true, weights_mvaNoTrig_FP);
+    vmaps_float_links_.push_back(link);
   }
+
+  if(iConfig.exists("vmaps_double")) vmaps_double_ = iConfig.getParameter<std::vector<std::string>>("vmaps_double");
+
+  if(iConfig.exists("mva_NoTrig")) mva_NoTrig_ = iConfig.getParameter<std::string>("mva_NoTrig");
+  if(iConfig.exists("mva_Trig"))   mva_Trig_   = iConfig.getParameter<std::string>("mva_Trig");
 
   produces< pat::ElectronCollection >();
 }
 
-// ------------ method called to produce the data  ------------
 void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
   edm::Handle< edm::View<pat::Electron> > patElecs;
   iEvent.getByToken(src_, patElecs);
 
-  std::vector< edm::Handle< edm::ValueMap<double> > > fvmaps;
-  for(int i=0; i<int(float_vmaps_.size()); ++i){
+  std::vector< edm::Handle< edm::ValueMap<bool> > > vmapBs;
+  for(unsigned int i=0; i<vmaps_bool_links_.size(); ++i){
 
-    edm::Handle< edm::ValueMap<double> > fvmap;
-    iEvent.getByLabel(float_vmaps_.at(i), fvmap);
-    fvmaps.push_back(fvmap);
+    edm::Handle< edm::ValueMap<bool> > vmapB;
+    iEvent.getByToken(vmaps_bool_links_.at(i).token, vmapB);
+    vmapBs.push_back(vmapB);
+  }
+
+  std::vector< edm::Handle< edm::ValueMap<float> > > vmapFs;
+  for(unsigned int i=0; i<vmaps_float_links_.size(); ++i){
+
+    edm::Handle< edm::ValueMap<float> > vmapF;
+    iEvent.getByToken(vmaps_float_links_.at(i).token, vmapF);
+    vmapFs.push_back(vmapF);
+  }
+
+  std::vector< edm::Handle< edm::ValueMap<double> > > vmapDs;
+  for(unsigned int i=0; i<vmaps_double_.size(); ++i){
+
+    edm::Handle< edm::ValueMap<double> > vmapD;
+    iEvent.getByLabel(vmaps_double_.at(i), vmapD);
+    vmapDs.push_back(vmapD);
   }
 
   std::auto_ptr< pat::ElectronCollection > newElecs(new pat::ElectronCollection);
   newElecs->reserve(patElecs->size());
 
-  for(int i=0; i<int(patElecs->size()); ++i){
+  for(unsigned int i=0; i<patElecs->size(); ++i){
 
     newElecs->push_back(patElecs->at(i));
     pat::Electron& ele = newElecs->back();
 
-    float notrigMVA = egammaMVAnotrig->mvaValue(ele, false);
-    float trigMVA   = egammaMVAtrig  ->mvaValue(ele, false);
+    for(unsigned int j=0; j<vmapBs.size(); ++j){
+
+      if(ele.hasUserInt(vmaps_bool_links_.at(j).vname))
+	throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-int label already exists: " << vmaps_bool_links_.at(j).vname;
+
+      const bool& val = (*(vmapBs.at(j)))[patElecs->refAt(i)];
+      ele.addUserInt(vmaps_bool_links_.at(j).vname, int(val));
+    }
+
+    for(unsigned int j=0; j<vmapFs.size(); ++j){
+
+      if(ele.hasUserFloat(vmaps_float_links_.at(j).vname))
+	throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float label already exists: " << vmaps_float_links_.at(j).vname;
+
+      const float& val = (*(vmapFs.at(j)))[patElecs->refAt(i)];
+      ele.addUserFloat(vmaps_float_links_.at(j).vname, float(val));
+    }
+
+    for(unsigned int j=0; j<vmapDs.size(); ++j){
+
+      if(ele.hasUserFloat(vmaps_double_.at(j)))
+	throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float label already exists: " << vmaps_double_.at(j);
+
+      const double& val = (*(vmapDs.at(j)))[patElecs->refAt(i)];
+      ele.addUserFloat(vmaps_double_.at(j), float(val));
+    }
+
+    if(ele.hasUserFloat(mva_NoTrig_)) throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaNoTrig' not found";
+    if(ele.hasUserFloat(mva_Trig_))   throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaTrig' not found";
+
+    const float notrigMVA = ele.userFloat(mva_NoTrig_);
+    const float trigMVA   = ele.userFloat(mva_Trig_);
 
     ele.addUserFloat("mvaNoTrig", notrigMVA);
-    ele.addUserFloat("mvaTrig", trigMVA);
-
-    for(int j=0; j<int(fvmaps.size()); ++j){
-
-      if(ele.hasUserFloat(float_vmaps_.at(j)))
-	throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float label already exists: " << float_vmaps_.at(j);
-
-      const double& val = (*(fvmaps.at(j)))[patElecs->refAt(i)];
-      ele.addUserFloat(float_vmaps_.at(j), float(val));
-    }
+    ele.addUserFloat("mvaTrig"  ,   trigMVA);
   }
 
   iEvent.put(newElecs);

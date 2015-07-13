@@ -397,11 +397,12 @@ load_muonPFMiniIso(process, 'muonPFMiniIsoSequencePFWGT', algo = 'PFWGT',
 
 process.slimmedMuonsUSER = cms.EDProducer('PATMuonUserData',
   src = cms.InputTag('slimmedMuons'),
-  float_vmaps = cms.vstring(mu_isovals),
+  vmaps_double = cms.vstring(mu_isovals),
 )
 
 ## ELECTRON
 
+# mini-isolation
 from UHH2.core.electron_pfMiniIsolation_cff import *
 
 el_isovals = []
@@ -422,35 +423,46 @@ load_elecPFMiniIso(process, 'elecPFMiniIsoSequencePFWGT', algo = 'PFWGT',
   isoval_list = el_isovals
 )
 
+# electron ID from VID
+process.load('RecoEgamma.ElectronIdentification.egmGsfElectronIDs_cff')
+process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
+process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectrons')
+
+elecID_mod_ls = [
+  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_PHYS14_PU20bx25_nonTrig_V1_cff',
+  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_PHYS14_PU20bx25_V2_cff',
+  'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff',
+]
+
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+for mod in elecID_mod_ls: setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
+
+# slimmedElectronsUSER ( = slimmedElectrons + USER variables)
 process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
   src = cms.InputTag('slimmedElectrons'),
-  float_vmaps = cms.vstring(el_isovals),
 
-  weights_mvaNoTrig = cms.vstring(
-    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EB_5_50ns_BDT.weights.xml',
-    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EE_5_50ns_BDT.weights.xml',
-    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EB_10_50ns_BDT.weights.xml',
-    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EE_10_50ns_BDT.weights.xml',
-#    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EB_5_25ns_BDT.weights.xml',
-#    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EE_5_25ns_BDT.weights.xml',
-#    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EB_10_25ns_BDT.weights.xml',
-#    'EgammaAnalysis/ElectronTools/data/CSA14/EIDmva_EE_10_25ns_BDT.weights.xml',
+  vmaps_bool = cms.PSet(
+    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-veto'),
+    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-loose'),
+    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-medium'),
+    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-tight'),
+    heepElectronID_HEEPV60                                  = cms.InputTag('egmGsfElectronIDs:heepElectronID-HEEPV60'),
+    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80                = cms.InputTag('egmGsfElectronIDs:mvaEleID-PHYS14-PU20bx25-nonTrig-V1-wp80'),
+    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90                = cms.InputTag('egmGsfElectronIDs:mvaEleID-PHYS14-PU20bx25-nonTrig-V1-wp90'),
   ),
-  weights_mvaTrig = cms.vstring(
-    'EgammaAnalysis/ElectronTools/data/CSA14/TrigIDMVA_50ns_EB_BDT.weights.xml',
-    'EgammaAnalysis/ElectronTools/data/CSA14/TrigIDMVA_50ns_EE_BDT.weights.xml',
-#    'EgammaAnalysis/ElectronTools/data/CSA14/TrigIDMVA_25ns_EB_BDT.weights.xml',
-#    'EgammaAnalysis/ElectronTools/data/CSA14/TrigIDMVA_25ns_EE_BDT.weights.xml',
+
+  vmaps_float = cms.PSet(
+    ElectronMVAEstimatorRun2Phys14NonTrigValues = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Phys14NonTrigValues')
   ),
+
+  vmaps_double = cms.vstring(el_isovals),
+
+  mva_NoTrig = cms.string('ElectronMVAEstimatorRun2Phys14NonTrigValues'),
+  mva_Trig   = cms.string('ElectronMVAEstimatorRun2Phys14NonTrigValues'),
 )
 
-# electron id:
-from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
-process.load("RecoEgamma.ElectronIdentification.egmGsfElectronIDs_cfi")
-process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectronsUSER')
-setupAllVIDIdsInModule(process, 'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_PHYS14_PU20bx25_V2_cff', setupVIDElectronSelection)
+### NtupleWriter
 
-#NtupleWriter
 process.MyNtuple = cms.EDFilter('NtupleWriter',
         #AnalysisModule = cms.PSet(
         #    name = cms.string("NoopAnalysisModule"),
@@ -471,7 +483,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
             eid_PHYS14_20x25_veto = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-veto'),
             eid_PHYS14_20x25_loose = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-loose'),
             eid_PHYS14_20x25_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-medium'),
-            eid_PHYS14_20x25_tight = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-tight')
+            eid_PHYS14_20x25_tight = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-tight'),
         ),
         doMuons = cms.bool(True),
         muon_sources = cms.vstring("slimmedMuonsUSER"),
