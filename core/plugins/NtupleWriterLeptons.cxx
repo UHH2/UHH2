@@ -8,15 +8,10 @@ using namespace uhh2;
 using namespace std;
 
 NtupleWriterElectrons::NtupleWriterElectrons(Config & cfg, bool set_electrons_member){
-    handle = cfg.ctx.declare_event_output<vector<Electron>>(cfg.dest_branchname, cfg.dest);
-    if(set_electrons_member){
-        electrons_handle = cfg.ctx.get_handle<vector<Electron>>("electrons");
-    }
-    src_token = cfg.cc.consumes<std::vector<pat::Electron>>(cfg.src);
-    for(const auto & pname : cfg.id_sources.getParameterNames()){
-        id_tags.push_back(Electron::tagname2tag(pname));
-        id_src_tokens.push_back(cfg.cc.consumes<edm::ValueMap<float>>(cfg.id_sources.getParameter<edm::InputTag>(pname)));
-    }
+  handle = cfg.ctx.declare_event_output<vector<Electron>>(cfg.dest_branchname, cfg.dest);
+  if(set_electrons_member) electrons_handle = cfg.ctx.get_handle<vector<Electron>>("electrons");
+  src_token = cfg.cc.consumes<std::vector<pat::Electron>>(cfg.src);
+  IDtag_keys = cfg.id_keys;
 }
 
 NtupleWriterElectrons::~NtupleWriterElectrons(){}
@@ -26,10 +21,6 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     event.getByToken(src_token, ele_handle);
     std::vector<Electron> eles;
     
-    std::vector<edm::Handle<edm::ValueMap<float>>> electron_ids(id_src_tokens.size());
-    for(size_t i_id=0; i_id<id_src_tokens.size(); ++i_id){
-        event.getByToken(id_src_tokens[i_id], electron_ids[i_id]);
-    }
     const size_t n_ele = ele_handle->size();
     for (size_t i=0; i<n_ele; ++i){
         const auto & pat_ele = (*ele_handle)[i];
@@ -75,9 +66,10 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_pfMINIIso_NH_pfwgt(pat_ele.hasUserFloat("elPFMiniIsoValueNHPFWGT") ? pat_ele.userFloat("elPFMiniIsoValueNHPFWGT") : -999.);
         ele.set_pfMINIIso_Ph_pfwgt(pat_ele.hasUserFloat("elPFMiniIsoValuePhPFWGT") ? pat_ele.userFloat("elPFMiniIsoValuePhPFWGT") : -999.);
 
-        const edm::Ptr<pat::Electron> eleptr(ele_handle, i);
-        for(size_t i_id=0; i_id<id_tags.size(); ++i_id){
-            ele.set_tag(id_tags[i_id], (*electron_ids[i_id])[eleptr]);
+        for(const auto& tag_str : IDtag_keys){
+
+          if(!pat_ele.hasUserInt(tag_str)) throw std::runtime_error("NtupleWriterElectrons::process -- label for pat::Electron::userInt not found: "+tag_str);
+          ele.set_tag(Electron::tagname2tag(tag_str), float(pat_ele.userInt(tag_str)));
         }
     }
     uevent.set(handle, move(eles));

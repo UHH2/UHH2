@@ -12,13 +12,19 @@ class Electron: public Particle {
     eid_PHYS14_20x25_loose,
     eid_PHYS14_20x25_medium,
     eid_PHYS14_20x25_tight,
+    heepElectronID_HEEPV60,				    
+    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80,		    
+    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90,               
   };
 
   static tag tagname2tag(const std::string & tagname){
-    if(tagname == "eid_PHYS14_20x25_veto")   return eid_PHYS14_20x25_veto;
-    if(tagname == "eid_PHYS14_20x25_loose")  return eid_PHYS14_20x25_loose;
-    if(tagname == "eid_PHYS14_20x25_medium") return eid_PHYS14_20x25_medium;
-    if(tagname == "eid_PHYS14_20x25_tight")  return eid_PHYS14_20x25_tight;
+    if(tagname == "cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_veto")   return eid_PHYS14_20x25_veto;
+    if(tagname == "cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_loose")  return eid_PHYS14_20x25_loose;
+    if(tagname == "cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_medium") return eid_PHYS14_20x25_medium;
+    if(tagname == "cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_tight")  return eid_PHYS14_20x25_tight;
+    if(tagname == "heepElectronID_HEEPV60")                                  return heepElectronID_HEEPV60;
+    if(tagname == "mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80")                return mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80;
+    if(tagname == "mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90")                return mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90;
 
     throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
   }

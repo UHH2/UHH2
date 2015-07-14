@@ -201,7 +201,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       using uhh2::NtupleWriterElectrons;
       auto electron_source = iConfig.getParameter<edm::InputTag>("electron_source");
       NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
-      cfg.id_sources = iConfig.getParameter<edm::ParameterSet>("electron_id_sources");
+      cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("electron_IDtags");
       writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true));
   }
   if(doMuons){

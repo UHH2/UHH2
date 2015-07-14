@@ -477,13 +477,18 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         rho_source = cms.InputTag("fixedGridRhoFastjetAll"),
         doElectrons = cms.bool(True),
         electron_source = cms.InputTag("slimmedElectronsUSER"),
-        electron_id_sources = cms.PSet (
-            # use the Electron::tag enumeration as parameter name; value should be the InputTag
-            # to use to read the ValueMap<float> from.
-            eid_PHYS14_20x25_veto = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-veto'),
-            eid_PHYS14_20x25_loose = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-loose'),
-            eid_PHYS14_20x25_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-medium'),
-            eid_PHYS14_20x25_tight = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-tight'),
+        electron_IDtags = cms.vstring(
+          # keys to be stored in UHH2 Electron class via the tag mechanism:
+          # each string should correspond to a variable saved
+          # via the "userInt" method in the pat::Electron collection used 'electron_source'
+          # [the configuration of the pat::Electron::userInt variables should be done in PATElectronUserData]
+          'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_veto',
+          'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_loose',
+          'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_medium',
+          'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_tight',
+          'heepElectronID_HEEPV60',
+          'mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80',
+          'mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90',
         ),
         doMuons = cms.bool(True),
         muon_sources = cms.vstring("slimmedMuonsUSER"),
