@@ -137,8 +137,8 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
       ele.addUserFloat(vmaps_double_.at(j), float(val));
     }
 
-    if(ele.hasUserFloat(mva_NoTrig_)) throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaNoTrig' not found";
-    if(ele.hasUserFloat(mva_Trig_))   throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaTrig' not found";
+    if(!ele.hasUserFloat(mva_NoTrig_)) throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaNoTrig' not found";
+    if(!ele.hasUserFloat(mva_Trig_))   throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaTrig' not found";
 
     const float notrigMVA = ele.userFloat(mva_NoTrig_);
     const float trigMVA   = ele.userFloat(mva_Trig_);
