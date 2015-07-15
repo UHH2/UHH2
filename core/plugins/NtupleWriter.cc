@@ -551,10 +551,11 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
 
      edm::Handle<LHEEventProduct> lhe;
-     iEvent.getByLabel("externalLHEProducer",lhe);
-     event->genInfo->set_originalXWGTUP(lhe->originalXWGTUP());
-     for(unsigned int k=0; k<lhe->weights().size(); k++){
-       event->genInfo->add_systweight(lhe->weights().at(k).wgt);
+     if(iEvent.getByLabel("externalLHEProducer",lhe)){
+       event->genInfo->set_originalXWGTUP(lhe->originalXWGTUP());
+       for(unsigned int k=0; k<lhe->weights().size(); k++){
+	 event->genInfo->add_systweight(lhe->weights().at(k).wgt);
+       }
      }
 
      edm::Handle<std::vector<PileupSummaryInfo> > pus;
