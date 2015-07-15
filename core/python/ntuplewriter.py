@@ -28,15 +28,16 @@ bTagInfos = [
 process = cms.Process("USER")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
                             fileNames  = cms.untracked.vstring("file:/nfs/dust/cms/user/peiffer/ZprimeToTT_M-2000_W-200_50ns_MCRUN2_TEST_MINIAODSIM.root"),
+                            #fileNames = cms.untracked.vstring("/store/data/Run2015B/MuonEG/MINIAOD/PromptReco-v1/000/251/244/00000/10C5D0A8-7527-E511-BFE2-02163E0140E1.root"),
                             skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -81,7 +82,11 @@ process.out.outputCommands.extend([
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'  # NOTE: use V9A for 50ns and V9 for 25ns
+#see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
+if useData:
+    process.GlobalTag.globaltag = 'GR_P_V56' 
+else:
+    process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'  # NOTE: use V9A for 50ns and V9 for 25ns
 
 from RecoJets.Configuration.RecoPFJets_cff import *
 from RecoJets.JetProducers.fixedGridRhoProducerFastjet_cfi import *
@@ -171,7 +176,7 @@ process.hepTopTagCHS = cms.EDProducer(
          PFJetParameters.clone( src = cms.InputTag('chs'),
                                doAreaFastjet = cms.bool(True),
                                doRhoFastjet = cms.bool(False),
-                               jetPtMin = cms.double(100.0)
+                               jetPtMin = cms.double(fatjet_ptmin)
                                ),   
         AnomalousCellParameters,
         optimalR = cms.bool(True),
@@ -357,7 +362,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
 
 #add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered',genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
+add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', btagging = False)
 #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop', genjets_name = lambda s: s.replace('CHS', 'Gen'))
@@ -597,7 +602,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         genjet_ptmin = cms.double(10.0),
         genjet_etamax = cms.double(5.0),
                             
-        doGenTopJets = cms.bool(True),
+        doGenTopJets = cms.bool(not useData),
         gentopjet_sources = cms.vstring("ak8GenJetsSoftDrop"),
         gentopjet_ptmin = cms.double(100.0), 
         gentopjet_etamax = cms.double(5.0),
