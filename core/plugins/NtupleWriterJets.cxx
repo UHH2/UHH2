@@ -10,6 +10,7 @@
 #include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputerRecord.h"
 #include "FWCore/Framework/interface/ESHandle.h"
+#include "DataFormats/JetReco/interface/HTTTopJetTagInfo.h"
 
 using namespace uhh2;
 using namespace std;
@@ -226,6 +227,7 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
         substructure_variables_src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.substructure_variables_src);
     }
     btag_warning=true;
+    topjet_collection = cfg.dest_branchname;
 }
 
 NtupleWriterTopJets::~NtupleWriterTopJets(){}
@@ -248,54 +250,71 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     }
 
     vector<TopJet> topjets;
-
+    edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
+    event.getByLabel("hepTopTagCHS", top_jet_infos);
+    // Make sure both collections have the same size
+    if (topjet_collection.find("Hep")!=string::npos) assert(pat_topjets.size()==top_jet_infos->size());
+       
+    
     for (unsigned int i = 0; i < pat_topjets.size(); i++) {
         const pat::Jet & pat_topjet =  pat_topjets[i];
         if(pat_topjet.pt() < ptmin) continue;
         if(fabs(pat_topjet.eta()) > etamax) continue;
-
+        
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
         try{
-	  uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet, do_btagging, false);
+           uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet, do_btagging, false);
         }catch(runtime_error &){
-            cerr << "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " << src << "." << endl;
-            throw;
+           cerr << "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " << src << "." << endl;
+           throw;
         }
         
         // match a unpruned jet according to topjets_with_cands:
         int i_pat_topjet_wc = -1;
         if(!qjets_src.empty()){
-            double drmin = numeric_limits<double>::infinity();
-            for (size_t i_wc=0; i_wc < pat_topjets_with_cands->size(); ++i_wc) {
-                //const auto & cand = (*pat_topjets_with_cands)[i_wc];
-                auto dr = reco::deltaR((*pat_topjets_with_cands)[i_wc], pat_topjet);
-                if(dr < drmin){
-                    i_pat_topjet_wc = i_wc;
-                    drmin = dr;
-                }
-            }
-            if (i_pat_topjet_wc >= 0 && drmin < 1.0){ // be genereous: pruning can change jet axis quite a lot (esp. for DR=1.5 jets as in heptoptag)
-                auto ref = edm::Ref<pat::JetCollection>(pat_topjets_with_cands, i_pat_topjet_wc);
-		topjet.set_qjets_volatility((*h_qjets)[ref]);
-	    }
+           double drmin = numeric_limits<double>::infinity();
+           for (size_t i_wc=0; i_wc < pat_topjets_with_cands->size(); ++i_wc) {
+              //const auto & cand = (*pat_topjets_with_cands)[i_wc];
+              auto dr = reco::deltaR((*pat_topjets_with_cands)[i_wc], pat_topjet);
+              if(dr < drmin){
+                 i_pat_topjet_wc = i_wc;
+                 drmin = dr;
+              }
+           }
+           if (i_pat_topjet_wc >= 0 && drmin < 1.0){ // be genereous: pruning can change jet axis quite a lot (esp. for DR=1.5 jets as in heptoptag)
+              auto ref = edm::Ref<pat::JetCollection>(pat_topjets_with_cands, i_pat_topjet_wc);
+              topjet.set_qjets_volatility((*h_qjets)[ref]);
+           }
         }
+        if (topjet_collection.find("Hep")!=string::npos)
+           {
+              const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(i);
+              topjet.set_tag(TopJet::tagname2tag("fRec"), jet_info.properties().fRec);
+              topjet.set_tag(TopJet::tagname2tag("Ropt"), jet_info.properties().Ropt);
+              topjet.set_tag(TopJet::tagname2tag("massRatioPassed"), jet_info.properties().massRatioPassed);
+              topjet.set_tag(TopJet::tagname2tag("mass"),pat_topjet.mass());
+              topjet.set_tag(TopJet::tagname2tag("RoptCalc"), jet_info.properties().RoptCalc);
+              topjet.set_tag(TopJet::tagname2tag("ptForRoptCalc"), jet_info.properties().ptForRoptCalc);
+           }
+    
+  
 
-	//njettiness
-	if(!njettiness_src.empty()){
-	  topjet.set_tau1(pat_topjet.userFloat(njettiness_src+":tau1"));
-	  topjet.set_tau2(pat_topjet.userFloat(njettiness_src+":tau2"));
-	  topjet.set_tau3(pat_topjet.userFloat(njettiness_src+":tau3"));
-	}
-
-	if(pruned_src.find("Mass")!=string::npos){
-	  topjet.set_prunedmass(pat_topjet.userFloat(pruned_src));
-	}
-	else{
-	  edm::Handle<pat::JetCollection> pruned_pat_topjets;
-	  event.getByToken(src_pruned_token, pruned_pat_topjets);
-	  const vector<pat::Jet> & pat_prunedjets = *pruned_pat_topjets;
-	  
+    //njettiness
+    if(!njettiness_src.empty()){
+       topjet.set_tau1(pat_topjet.userFloat(njettiness_src+":tau1"));
+       topjet.set_tau2(pat_topjet.userFloat(njettiness_src+":tau2"));
+       topjet.set_tau3(pat_topjet.userFloat(njettiness_src+":tau3"));
+    }
+    
+    if(pruned_src.find("Mass")!=string::npos){
+       topjet.set_prunedmass(pat_topjet.userFloat(pruned_src));
+    }
+    else{
+       edm::Handle<pat::JetCollection> pruned_pat_topjets;
+       event.getByToken(src_pruned_token, pruned_pat_topjets);
+       const vector<pat::Jet> & pat_prunedjets = *pruned_pat_topjets;
+       
 	  //match a jet from pruned collection
 	  int i_pat_prunedjet = -1;
 	  double drmin = numeric_limits<double>::infinity();
