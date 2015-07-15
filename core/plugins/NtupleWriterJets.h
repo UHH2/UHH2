@@ -58,9 +58,11 @@ private:
     float ptmin, etamax;
     bool do_btagging, do_btagging_subjets, do_taginfo_subjets;
     edm::EDGetToken src_token, src_higgs_token,  src_pruned_token, substructure_variables_src_token;
-    std::string njettiness_src, qjets_src, subjet_src, higgs_src, higgs_name, pruned_src;
+   std::string njettiness_src, qjets_src, subjet_src, higgs_src, higgs_name, pruned_src, topjet_collection;
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;
+    std::vector<TopJet::tag> id_tags;
+
 };
 
 }

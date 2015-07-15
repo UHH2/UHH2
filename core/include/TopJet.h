@@ -5,8 +5,28 @@
 #include "Tags.h"
 
 class TopJet: public Jet{
+
 public:
-  enum tag { /* for  future use ... */ };
+   enum tag {
+      mass,
+      fRec,
+      Ropt,
+      massRatioPassed,
+      RoptCalc,
+      ptForRoptCalc,
+    };
+   
+   static tag tagname2tag(const std::string & tagname){
+      if(tagname == "mass") return mass;
+      if(tagname == "fRec") return fRec;
+      if(tagname == "Ropt") return Ropt;
+      if(tagname == "RoptCalc") return RoptCalc;
+      if(tagname == "ptForRoptCalc") return ptForRoptCalc;
+      if(tagname == "massRatioPassed") return massRatioPassed;
+      throw std::runtime_error("unknown tag '" + tagname + "'");
+   }
+
+   
   
   TopJet(){
       m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_mvahiggsdiscr = m_prunedmass = -1.0f;
