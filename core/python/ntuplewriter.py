@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 
-useData = False
+useData = True
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 100.0
@@ -32,8 +32,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
-                            fileNames  = cms.untracked.vstring("file:/nfs/dust/cms/user/peiffer/ZprimeToTT_M-2000_W-200_50ns_MCRUN2_TEST_MINIAODSIM.root"),
-                            #fileNames = cms.untracked.vstring("/store/data/Run2015B/MuonEG/MINIAOD/PromptReco-v1/000/251/244/00000/10C5D0A8-7527-E511-BFE2-02163E0140E1.root"),
+                            #fileNames  = cms.untracked.vstring("file:/nfs/dust/cms/user/peiffer/ZprimeToTT_M-2000_W-200_50ns_MCRUN2_TEST_MINIAODSIM.root"),
+                            fileNames = cms.untracked.vstring("/store/data/Run2015B/MuonEG/MINIAOD/PromptReco-v1/000/251/244/00000/10C5D0A8-7527-E511-BFE2-02163E0140E1.root"),
                             skipEvents = cms.untracked.uint32(0)
 )
 
@@ -92,6 +92,42 @@ from RecoJets.Configuration.RecoPFJets_cff import *
 from RecoJets.JetProducers.fixedGridRhoProducerFastjet_cfi import *
 
 process.fixedGridRhoFastjetAll = fixedGridRhoFastjetAll.clone(pfCandidatesTag = 'packedPFCandidates')
+
+
+if useData:
+##-------------------- Import the JEC services -----------------------
+    process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
+
+    from CondCore.DBCommon.CondDBSetup_cfi import *
+    process.jec = cms.ESSource("PoolDBESSource",CondDBSetup,
+                               connect = cms.string("frontier://PromptProd/CMS_COND_31X_PHYSICSTOOLS"),                                    
+                               toGet =  cms.VPSet(
+            cms.PSet(record = cms.string("JetCorrectionsRecord"),
+                     tag = cms.string("JetCorrectorParametersCollection_CSA14_V4_DATA_AK8PFchs"),
+                     label=cms.untracked.string("AK8PFchs")),
+            
+            cms.PSet(record = cms.string("JetCorrectionsRecord"),
+                     tag = cms.string("JetCorrectorParametersCollection_CSA14_V4_DATA_AK4PFchs"),
+                     label=cms.untracked.string("AK4PFchs")),
+            )
+                               
+                               )
+    es_prefer_jec = cms.ESPrefer("PoolDBESSource","jec")
+
+    process.BTagTrackProbability = cms.ESSource("PoolDBESSource",CondDBSetup,
+                               connect = cms.string("frontier://PromptProd/CMS_COND_31X_BTAU"),                                    
+
+                                                toGet = cms.VPSet(cms.PSet(
+                record = cms.string('BTagTrackProbability2DRcd'),
+                tag = cms.string('TrackProbabilityCalibration_PDF2D_express')
+                ), 
+                                                                  cms.PSet(
+                record = cms.string('BTagTrackProbability3DRcd'),
+                tag = cms.string('TrackProbabilityCalibration_PDF3D_express')
+                ))
+                                                
+            )
+
 
 ###############################################
 # GEN PARTICLES
@@ -361,11 +397,11 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
             producer.getJetMCFlavour = False
 
 #add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered',genjets_name = lambda s: s.replace('CHS', 'Gen'))
+add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered',genjets_name = lambda s: s.replace('CHS', 'Gen'), btagging = not useData)
 add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', btagging = False)
 #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop', genjets_name = lambda s: s.replace('CHS', 'Gen'))
+add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop', genjets_name = lambda s: s.replace('CHS', 'Gen'), btagging = not useData)
 #B-tagging not needed for pruned jets, they are just used to get the mass
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'), btagging = False)
 add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'), btagging = False)
@@ -500,6 +536,10 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 )
 
 ### NtupleWriter
+if not useData:
+    store_subjet_tags = cms.vstring("","store","store","")
+else:
+    store_subjet_tags = cms.vstring("","","","")
 
 process.MyNtuple = cms.EDFilter('NtupleWriter',
         #AnalysisModule = cms.PSet(
@@ -557,7 +597,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #Specify "store" if you want to store b-tagging taginfos for subjet collection, make sure to have included them with .addTagInfos = True
         #addTagInfos = True is currently true by default, however, only for collections produced and not read directly from miniAOD
         #If you don't want to store stubjet taginfos leave string empy ""
-        subjet_taginfos = cms.vstring("","store","store",""),
+        subjet_taginfos = store_subjet_tags,
         #Note: if you want to store the MVA Higgs tagger discriminator, specify the jet collection from which to pick it up and the tagger name
         #currently the discriminator is trained on ungroomed jets, so the discriminaotr has to be taken from ungroomed jets
         higgstag_sources = cms.vstring("patJetsAk8CHSJets","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15CHSJets"),
