@@ -280,6 +280,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
     if(iConfig.exists("topjet_njettiness_sources")){
         njettiness_sources = iConfig.getParameter<std::vector<std::string> >("topjet_njettiness_sources");
+        substructure_variables = true;
     }
     if(substructure_variables){
         topjet_substructure_variables_sources = iConfig.getParameter<std::vector<std::string> >("topjet_substructure_variables_sources");
