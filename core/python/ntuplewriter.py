@@ -4,7 +4,7 @@ import FWCore.ParameterSet.Config as cms
 useData = False
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
-fatjet_ptmin = 100.0
+fatjet_ptmin = 150.0
 
 bTagDiscriminators = [
     'pfJetProbabilityBJetTags',
@@ -551,7 +551,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         
         
         doTopJets = cms.bool(True),
-        topjet_ptmin = cms.double(100.0),
+        topjet_ptmin = cms.double(150.0),
         topjet_etamax = cms.double(5.0),                                                                               
         topjet_sources = cms.vstring("slimmedJetsAK8","patJetsAk8CHSJetsSoftDropPacked","patJetsCa15CHSJetsFilteredPacked","patJetsHepTopTagCHSPacked"),     
         #Note: use label "daughters" for  subjet_sources if you want to store as subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!)
@@ -608,7 +608,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                             
         doGenTopJets = cms.bool(not useData),
         gentopjet_sources = cms.vstring("ak8GenJetsSoftDrop"),
-        gentopjet_ptmin = cms.double(100.0), 
+        gentopjet_ptmin = cms.double(150.0), 
         gentopjet_etamax = cms.double(5.0),
         
         doGenJetsWithParts = cms.bool(False),
