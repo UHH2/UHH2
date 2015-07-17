@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 
-useData = True
+useData = False
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 100.0
@@ -32,8 +32,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
-                            #fileNames  = cms.untracked.vstring("file:/nfs/dust/cms/user/peiffer/ZprimeToTT_M-2000_W-200_50ns_MCRUN2_TEST_MINIAODSIM.root"),
-                            fileNames = cms.untracked.vstring("/store/data/Run2015B/MuonEG/MINIAOD/PromptReco-v1/000/251/244/00000/10C5D0A8-7527-E511-BFE2-02163E0140E1.root"),
+                            fileNames  = cms.untracked.vstring("file:/nfs/dust/cms/user/peiffer/ZprimeToTT_M-2000_W-200_50ns_MCRUN2_TEST_MINIAODSIM.root"),
+                            #fileNames = cms.untracked.vstring("/store/data/Run2015B/MuonEG/MINIAOD/PromptReco-v1/000/251/244/00000/10C5D0A8-7527-E511-BFE2-02163E0140E1.root"),
                             skipEvents = cms.untracked.uint32(0)
 )
 
@@ -81,11 +81,12 @@ process.out.outputCommands.extend([
 # RECO AND GEN SETUP
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
 if useData:
-    process.GlobalTag.globaltag = 'GR_P_V56::All' 
+    process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+    process.GlobalTag.globaltag = '74X_dataRun2_Prompt_v0' 
 else:
+    process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
     process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'  # NOTE: use V9A for 50ns and V9 for 25ns
 
 from RecoJets.Configuration.RecoPFJets_cff import *
