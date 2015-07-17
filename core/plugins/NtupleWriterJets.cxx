@@ -238,24 +238,28 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     event.getByToken(src_token, h_pat_topjets);
     const vector<pat::Jet> & pat_topjets = *h_pat_topjets;
     
+    edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3;
     edm::Handle<edm::ValueMap<float>> h_qjets;
     
     edm::Handle<pat::JetCollection> pat_topjets_with_cands;
     
+    if(!njettiness_src.empty()){
+        event.getByLabel(edm::InputTag(njettiness_src, "tau1"), h_njettiness1);
+        event.getByLabel(edm::InputTag(njettiness_src, "tau2"), h_njettiness2);
+        event.getByLabel(edm::InputTag(njettiness_src, "tau3"), h_njettiness3);
+    }
     if(!qjets_src.empty()){
         event.getByLabel(edm::InputTag(qjets_src, "QjetsVolatility"), h_qjets);
     }
-    if(!qjets_src.empty()){
+    if(!njettiness_src.empty() || !qjets_src.empty()){
         event.getByToken(substructure_variables_src_token, pat_topjets_with_cands);
     }
-
     vector<TopJet> topjets;
     edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
     event.getByLabel("hepTopTagCHS", top_jet_infos);
     // Make sure both collections have the same size
     if (topjet_collection.find("Hep")!=string::npos) assert(pat_topjets.size()==top_jet_infos->size());
        
-    
     for (unsigned int i = 0; i < pat_topjets.size(); i++) {
         const pat::Jet & pat_topjet =  pat_topjets[i];
         if(pat_topjet.pt() < ptmin) continue;
@@ -269,10 +273,9 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
            cerr << "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " << src << "." << endl;
            throw;
         }
-        
         // match a unpruned jet according to topjets_with_cands:
         int i_pat_topjet_wc = -1;
-        if(!qjets_src.empty()){
+        if(!njettiness_src.empty() || !qjets_src.empty()){
            double drmin = numeric_limits<double>::infinity();
            for (size_t i_wc=0; i_wc < pat_topjets_with_cands->size(); ++i_wc) {
               //const auto & cand = (*pat_topjets_with_cands)[i_wc];
@@ -284,7 +287,14 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
            }
            if (i_pat_topjet_wc >= 0 && drmin < 1.0){ // be genereous: pruning can change jet axis quite a lot (esp. for DR=1.5 jets as in heptoptag)
               auto ref = edm::Ref<pat::JetCollection>(pat_topjets_with_cands, i_pat_topjet_wc);
-              topjet.set_qjets_volatility((*h_qjets)[ref]);
+              if(!njettiness_src.empty()){
+                    topjet.set_tau1((*h_njettiness1)[ref]);
+                    topjet.set_tau2((*h_njettiness2)[ref]);
+                    topjet.set_tau3((*h_njettiness3)[ref]);
+              }
+              if(!qjets_src.empty()){
+                    topjet.set_qjets_volatility((*h_qjets)[ref]);
+              }
            }
         }
         if (topjet_collection.find("Hep")!=string::npos)
@@ -297,16 +307,13 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
               topjet.set_tag(TopJet::tagname2tag("RoptCalc"), jet_info.properties().RoptCalc);
               topjet.set_tag(TopJet::tagname2tag("ptForRoptCalc"), jet_info.properties().ptForRoptCalc);
            }
-    
-  
 
     //njettiness
-    if(!njettiness_src.empty()){
-       topjet.set_tau1(pat_topjet.userFloat(njettiness_src+":tau1"));
-       topjet.set_tau2(pat_topjet.userFloat(njettiness_src+":tau2"));
-       topjet.set_tau3(pat_topjet.userFloat(njettiness_src+":tau3"));
+    if(njettiness_src.empty()){
+       topjet.set_tau1(pat_topjet.userFloat("NjettinessAK8:tau1"));
+       topjet.set_tau2(pat_topjet.userFloat("NjettinessAK8:tau2"));
+       topjet.set_tau3(pat_topjet.userFloat("NjettinessAK8:tau3"));
     }
-    
     if(pruned_src.find("Mass")!=string::npos){
        topjet.set_prunedmass(pat_topjet.userFloat(pruned_src));
     }

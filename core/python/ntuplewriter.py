@@ -63,7 +63,7 @@ process.out = cms.OutputModule("PoolOutputModule",
 process.out.outputCommands.extend([
     'keep *_patJetsAk8CHS*_*_*',
     'keep *_patJetsCa15CHS*_*_*',
-    'keep *_NjettinessCa8CHS_*_*',
+    'keep *_NjettinessAk8CHS_*_*',
     'keep *_NjettinessCa15CHS_*_*',
     "keep *_patJetsCmsTopTagCHSPacked_*_*",
     "keep *_patJetsCmsTopTagCHSSubjets_*_*",
@@ -390,8 +390,8 @@ adaptPVs(process, pvCollection = cms.InputTag('offlineSlimmedPrimaryVertices'))
 from RecoJets.JetProducers.nJettinessAdder_cfi import Njettiness
 from RecoJets.JetProducers.qjetsadder_cfi import QJetsAdder
 
-#process.NjettinessCa8CHS = Njettiness.clone(src = cms.InputTag("patJetsCa8CHSJets"), cone = cms.double(0.8))
-#process.NjettinessCa15CHS = Njettiness.clone(src = cms.InputTag("patJetsCa15CHSJets"), cone = cms.double(1.5))
+process.NjettinessAk8CHS = Njettiness.clone(src = cms.InputTag("patJetsAk8CHSJets"), cone = cms.double(0.8))
+process.NjettinessCa15CHS = Njettiness.clone(src = cms.InputTag("patJetsCa15CHSJets"), cone = cms.double(1.5))
 #process.NjettinessCa8Puppi = Njettiness.clone(src = cms.InputTag("patJetsCa8PuppiJets"), cone = cms.double(0.8))
 #process.NjettinessCa15Puppi = Njettiness.clone(src = cms.InputTag("patJetsCa15PuppiJets"), cone = cms.double(1.5))
 
@@ -564,8 +564,9 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #currently the discriminator is trained on ungroomed jets, so the discriminaotr has to be taken from ungroomed jets
         higgstag_sources = cms.vstring("patJetsAk8CHSJets","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15CHSJets"),
         higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags"),                   
-        #Note: topjet_substructure_variables_sources only needed for qjets; njettiness is now directly taken from UserFloat added to jets in MINIAOD (for Run II CMSSW_74 ntuples)
-        topjet_njettiness_sources = cms.vstring("NjettinessAK8","","",""),
+        #Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
+        topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessCa15CHS","NjettinessCa15CHS"),
+        topjet_substructure_variables_sources = cms.vstring("","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15CHSJets"),
         #Note: for slimmedJetsAK8 on miniAOD, the pruned mass is available as user flot, with label ak8PFJetsCHSPrunedMass.
         #Alternatively it is possible to specify another pruned jet collection (to be produced here), from which to get it by jet-matching.
         #Finally, it is also possible to leave the pruned mass empty with ""
