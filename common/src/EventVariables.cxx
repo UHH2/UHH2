@@ -10,9 +10,11 @@ HTCalculator::HTCalculator(Context & ctx, const boost::optional<JetId> & jetid_,
 
 bool HTCalculator::process(Event & event){
     double ht = 0.0;
-    for(const auto & jet : *event.jets){
-        if(jetid && !(*jetid)(jet, event)) continue;
-        ht += jet.pt();
+    if(event.jets){
+        for(const auto & jet : *event.jets){
+            if(jetid && !(*jetid)(jet, event)) continue;
+	    ht += jet.pt();
+	}
     }
     event.set(h_ht, ht);
     return true;
