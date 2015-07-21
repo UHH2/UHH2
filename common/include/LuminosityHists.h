@@ -5,9 +5,15 @@
 /** \brief Create the "lumi plot", i.e. event yield vs. time in bins of equal integrated luminosity
  * 
  * Configuration from context:
- *  - "lumihists_lumi_file": path to root file with luminosity information
+ *  - "lumi_file": path to root file with luminosity information
  *  - "lumihists_lumi_per_bin": integrated luminosity per bin in the histogram (optional; default: 50.0)
  */
+
+struct run_lumi {
+  int run;
+  int lumiblock;
+};
+
 class LuminosityHists: public uhh2::Hists {
 public:
     LuminosityHists(uhh2::Context & ctx, const std::string & dirname);
@@ -15,10 +21,6 @@ public:
     virtual void fill(const uhh2::Event & ev) override;
     
 private:
-    struct run_lumi {
-        int run;
-        int lumiblock;
-    };
     
     friend bool operator<(const run_lumi &, const run_lumi & rl2);
     

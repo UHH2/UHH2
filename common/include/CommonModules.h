@@ -2,7 +2,7 @@
 
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
-
+#include "UHH2/common/include/NSelections.h"
 
 /** \brief Run a configurable list commonly used modules
  *
@@ -14,6 +14,7 @@
  * The AnalysisModules run are (in this order):
  *  - MCLumiWeight (for MC only; only has an effect if "use_sframe_weight" is set to false)
  *  - MCPileupReweight (for MC only)
+ *  - good run selection (for data only) based on lumi_file defined in xml input
  *  - JetCorrector using the latest PHYS14 corrections for MC
  *  - JetResolutionSmearer  (for MC only)
  *  - JetCleaner
@@ -50,6 +51,7 @@ public:
     void disable_mcpileupreweight();
     void disable_jec();
     void disable_jersmear();
+    void disable_lumisel();
 
     void set_jet_id(const JetId & jetid_){
         fail_if_init();
@@ -81,8 +83,10 @@ private:
     MuonId muid;
     TauId tauid;
     
-    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true;
+    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true;
 
     bool init_done = false;
+
+    std::unique_ptr<Selection> lumi_selection;
 };
 

@@ -4,6 +4,7 @@
 #include "UHH2/common/include/EventVariables.h"
 #include "UHH2/common/include/CleaningModules.h"
 #include "UHH2/common/include/EventVariables.h"
+#include "UHH2/common/include/LumiSelection.h"
 
 using namespace uhh2;
 using namespace std;
@@ -20,6 +21,7 @@ void CommonModules::init(Context & ctx){
     }
     init_done = true;
     bool is_mc = ctx.get("dataset_type") == "MC";
+
     if(is_mc){
         if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx));
@@ -27,6 +29,7 @@ void CommonModules::init(Context & ctx){
         if(jersmear) modules.emplace_back(new JetResolutionSmearer(ctx));
     }
     else{
+        if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
         if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_DATA));
     }
 
@@ -48,6 +51,9 @@ void CommonModules::init(Context & ctx){
 bool CommonModules::process(uhh2::Event & event){
     if(!init_done){
         throw runtime_error("CommonModules::init not called (has to be called in AnalysisModule constructor)");
+    }
+    if(event.isRealData && lumisel){
+        if(!lumi_selection->passes(event)) return false;
     }
     for(auto & m : modules){
         m->process(event);
@@ -76,6 +82,11 @@ void CommonModules::disable_jersmear(){
     jersmear = false;
 }
 
+void CommonModules::disable_lumisel(){
+    fail_if_init();
+    lumisel = false;
+}
+
 
 class TestCommonModules: public AnalysisModule {
 public:
@@ -88,8 +99,7 @@ public:
     }
     
     virtual bool process(Event & event) override {
-        common->process(event);
-        return true;
+        return common->process(event);
     }
 private:
     std::unique_ptr<CommonModules> common;

@@ -10,7 +10,7 @@ using namespace uhh2;
 using namespace std;
 
     
-bool operator<(const LuminosityHists::run_lumi & rl1, const LuminosityHists::run_lumi & rl2){
+bool operator<(const run_lumi & rl1, const run_lumi & rl2){
     if(rl1.run == rl2.run){
         return rl1.lumiblock < rl2.lumiblock;
     }
@@ -26,7 +26,7 @@ LuminosityHists::LuminosityHists(uhh2::Context & ctx, const std::string & dirnam
         throw runtime_error("lumihists_lumi_per_bin is <= 0.0; this is not allowed");
     }
     
-    string lumifile = ctx.get("lumihists_lumi_file");
+    string lumifile = ctx.get("lumi_file");
     std::unique_ptr<TFile> file(TFile::Open(lumifile.c_str(), "read"));
     TTree * tree = dynamic_cast<TTree*>(file->Get("AnalysisTree"));
     if(!tree){
@@ -81,7 +81,7 @@ LuminosityHists::LuminosityHists(uhh2::Context & ctx, const std::string & dirnam
 void LuminosityHists::fill(const uhh2::Event & ev){
     run_lumi rl{ev.run, ev.luminosityBlock};
     auto it = upper_bound(upper_binborders.begin(), upper_binborders.end(), rl);
-    int ibin = distance(upper_binborders.begin(), it) + 1; // can be upper_bounds.size() + 1 at most, which is nbins and thus Ok.
+    int ibin = distance(upper_binborders.begin(), it); // can be upper_bounds.size() at most, which is nbins and thus Ok.
     hlumi->Fill(ibin, ev.weight); // weight is usually 1.0 anyway, but who knows ...
 }
 
