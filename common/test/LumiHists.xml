@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
+<!ENTITY DATA_SingleMu SYSTEM "../../common/datasets/DATA_SingleMu.xml">
+<!ENTITY DATA_SingleElectron SYSTEM "../../common/datasets/DATA_SingleElectron.xml">
+]>
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
    <Library Name="libTestSUHH2common"/>
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
-        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="TestLumiHists" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/peiffer/Analysis53X_v3/PreSelectionMuon/ZprimePreSelectionCycle.DATA.DATA_A.root" Lumi="0.0"/> 
-            <In FileName="/nfs/dust/cms/user/peiffer/Analysis53X_v3/PreSelectionMuon/ZprimePreSelectionCycle.DATA.DATA_B.root" Lumi="0.0"/> 
-            <In FileName="/nfs/dust/cms/user/peiffer/Analysis53X_v3/PreSelectionMuon/ZprimePreSelectionCycle.DATA.DATA_C.root" Lumi="0.0"/> 
-            <In FileName="/nfs/dust/cms/user/peiffer/Analysis53X_v3/PreSelectionMuon/ZprimePreSelectionCycle.DATA.DATA_D.root" Lumi="0.0"/> 
+
+        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="SingleMu" Cacheable="False">
+	    &DATA_SingleMu;
             <InputTree Name="AnalysisTree" /> 
         </InputData>
-            
+
+	<InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="SingleElectron" Cacheable="False">
+	    &DATA_SingleElectron;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>  
+
         <UserConfig>
             
-            <Item Name="lumihists_lumi_file" Value="/nfs/dust/cms/user/peiffer/Analysis53X_v3/LumiFiles/Mu40_pixel.root" />
-            
+            <Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v1/Lumifile.root" />
+            <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
+
             <Item Name="AnalysisModule" Value="TestLumiHists" /> 
-        </UserConfig>
+	</UserConfig>
     </Cycle>
 </JobConfiguration>
