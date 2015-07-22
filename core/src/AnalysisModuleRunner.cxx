@@ -702,7 +702,7 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
     uhh2::Event & event = *pimpl->event;
     
     // setup weight depending on the "use_sframe_weight" configuration option:
-    if(pimpl->use_sframe_weight){
+    if(pimpl->use_sframe_weight && !event.isRealData){
         event.weight = w;
     }
     else{
