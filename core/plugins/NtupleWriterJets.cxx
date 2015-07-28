@@ -256,8 +256,8 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     }
     vector<TopJet> topjets;
     edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
-    event.getByLabel("hepTopTagCHS", top_jet_infos);
-    // Make sure both collections have the same size
+    if (topjet_collection.find("CHS")!=string::npos) event.getByLabel("hepTopTagCHS", top_jet_infos);
+    if (topjet_collection.find("Puppi")!=string::npos) event.getByLabel("hepTopTagPuppi", top_jet_infos); // Make sure both collections have the same size
     if (topjet_collection.find("Hep")!=string::npos) assert(pat_topjets.size()==top_jet_infos->size());
        
     for (unsigned int i = 0; i < pat_topjets.size(); i++) {
