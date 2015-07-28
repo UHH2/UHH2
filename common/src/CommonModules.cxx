@@ -5,6 +5,7 @@
 #include "UHH2/common/include/CleaningModules.h"
 #include "UHH2/common/include/EventVariables.h"
 #include "UHH2/common/include/LumiSelection.h"
+#include "UHH2/common/include/Utils.h" 
 
 using namespace uhh2;
 using namespace std;
@@ -21,30 +22,21 @@ void CommonModules::init(Context & ctx){
     }
     init_done = true;
     bool is_mc = ctx.get("dataset_type") == "MC";
-
     if(is_mc){
         if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx));
-        if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_MC));
-        if(jersmear) modules.emplace_back(new JetResolutionSmearer(ctx));
+	if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_MC));
+	if(jersmear) modules.emplace_back(new JetResolutionSmearer(ctx));
     }
     else{
         if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
-        if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_DATA));
+	if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_DATA));
     }
-
-    if(jetid){
-        modules.emplace_back(new JetCleaner(jetid));
-    }
-    if(eleid){
-        modules.emplace_back(new ElectronCleaner(eleid));
-    }
-    if(muid){
-        modules.emplace_back(new MuonCleaner(muid));
-    }
-    if(tauid){
-        modules.emplace_back(new TauCleaner(tauid));
-    }
+    if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
+    if(muid)  modules.emplace_back(new MuonCleaner(muid));
+    if(tauid) modules.emplace_back(new TauCleaner(tauid));
+    if(jetlepcleaner) modules.emplace_back(new JetLeptonCleaner(JERFiles::PHYS14_L123_MC));
+    if(jetid) modules.emplace_back(new JetCleaner(jetid));
     modules.emplace_back(new HTCalculator(ctx));
 }
 
@@ -57,6 +49,9 @@ bool CommonModules::process(uhh2::Event & event){
     }
     for(auto & m : modules){
         m->process(event);
+    }
+    if(jetptsort){
+      sort_by_pt(*event.jets);
     }
     return true;
 }
