@@ -26,16 +26,23 @@ class PtEtaSCCut {
   float min_pt, max_etaSC;
 };
 
-// see https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
-bool ElectronID_CSA14_50ns_loose(const Electron & electron, const uhh2::Event & event);
-bool ElectronID_CSA14_50ns_medium(const Electron & electron, const uhh2::Event & event);
-bool ElectronID_CSA14_50ns_tight(const Electron & electron, const uhh2::Event & event);
+// Electron Cut-Based ID
+// REF https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
+bool ElectronID_CSA14_50ns_loose (const Electron&, const uhh2::Event&);
+bool ElectronID_CSA14_50ns_medium(const Electron&, const uhh2::Event&);
+bool ElectronID_CSA14_50ns_tight (const Electron&, const uhh2::Event&);
 
-bool ElectronID_PHYS14_25ns_veto(const Electron & electron, const uhh2::Event & event);
-bool ElectronID_PHYS14_25ns_loose(const Electron & electron, const uhh2::Event & event);
-bool ElectronID_PHYS14_25ns_medium(const Electron & electron, const uhh2::Event & event);
-bool ElectronID_PHYS14_25ns_tight(const Electron & electron, const uhh2::Event & event);
+bool ElectronID_PHYS14_25ns_veto  (const Electron&, const uhh2::Event&);
+bool ElectronID_PHYS14_25ns_loose (const Electron&, const uhh2::Event&);
+bool ElectronID_PHYS14_25ns_medium(const Electron&, const uhh2::Event&);
+bool ElectronID_PHYS14_25ns_tight (const Electron&, const uhh2::Event&);
 
-bool ElectronID_PHYS14_25ns_loose_noIso(const Electron & electron, const uhh2::Event & event);
-bool ElectronID_PHYS14_25ns_medium_noIso(const Electron & electron, const uhh2::Event & event);
-bool ElectronID_PHYS14_25ns_tight_noIso(const Electron & electron, const uhh2::Event & event);
+bool ElectronID_PHYS14_25ns_veto_noIso  (const Electron&, const uhh2::Event&);
+bool ElectronID_PHYS14_25ns_loose_noIso (const Electron&, const uhh2::Event&);
+bool ElectronID_PHYS14_25ns_medium_noIso(const Electron&, const uhh2::Event&);
+bool ElectronID_PHYS14_25ns_tight_noIso (const Electron&, const uhh2::Event&);
+
+// Electron MVA ID
+// REF https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentificationRun2
+bool ElectronID_MVAnotrig_PHYS14_loose(const Electron&, const uhh2::Event&);
+bool ElectronID_MVAnotrig_PHYS14_tight(const Electron&, const uhh2::Event&);
