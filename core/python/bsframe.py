@@ -470,9 +470,8 @@ def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus):
                     os.system("echo 'Done' >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
                     jobstatus="Done"
                 else:
-                    hist = rootfile.Get("nprocessed")
+                    hist = rootfile.Get("input/pvN")
                     jobinfo += " Root File "+file+" is Valid: "+str(int(hist.GetEntries()))+" Events."
-                    if file.find("PostSelection") == -1: jobinfo += " Warning No AnalysisTree Found in "+file+""
                     os.system("echo 'Done' >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
                     jobstatus="Done"
                 if not iszombie: rootfile.Close()
