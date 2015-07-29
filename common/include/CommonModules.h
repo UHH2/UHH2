@@ -1,5 +1,4 @@
 #pragma once
-
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/NSelections.h"
@@ -12,15 +11,16 @@
  * to some extent by setting object ids or by disabling certain modules.
  *
  * The AnalysisModules run are (in this order):
+ *  - good run selection (for data only) based on lumi_file defined in xml input
  *  - MCLumiWeight (for MC only; only has an effect if "use_sframe_weight" is set to false)
  *  - MCPileupReweight (for MC only)
- *  - good run selection (for data only) based on lumi_file defined in xml input
  *  - JetCorrector using the latest PHYS14 corrections for MC
  *  - JetResolutionSmearer  (for MC only)
- *  - JetCleaner
  *  - ElectronCleaner
  *  - Muon Cleaner
  *  - Tau Cleaner
+ *  - Jet Lepton Cleaning
+ *  - JetCleaner
  *  - HTCalculator
  *
  * The cleaners are only run if an id was set via the according set methods, otherwise
@@ -52,6 +52,8 @@ public:
     void disable_jec();
     void disable_jersmear();
     void disable_lumisel();
+    void switch_jetlepcleaner(bool status = true){fail_if_init();jetlepcleaner=status;}
+    void switch_jetPtSorter(bool status = true){fail_if_init();jetptsort=status;}
 
     void set_jet_id(const JetId & jetid_){
         fail_if_init();
@@ -69,9 +71,7 @@ public:
         fail_if_init();
         tauid = tauid_;
     }
-
     virtual bool process(uhh2::Event & event) override;
-    
     void init(uhh2::Context & ctx);
 
 private:
@@ -83,7 +83,7 @@ private:
     MuonId muid;
     TauId tauid;
     
-    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true;
+    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, jetptsort = false;
 
     bool init_done = false;
 
