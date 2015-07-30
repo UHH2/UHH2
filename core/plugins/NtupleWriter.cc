@@ -857,8 +857,12 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
    //PFHT800 emulation
    if(doTrigHTEmu){
+     if(newrun){
+       triggerNames_outbranch.push_back("HLT_PFHT800Emu_v1");
+     }
      edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
      iEvent.getByToken(triggerObjects_, triggerObjects);
+     bool found=false;
      for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i){ 
        if (names.triggerName(i).find("HLT_PFHTForMC")!=string::npos && triggerBits->accept(i)) {
              for (pat::TriggerObjectStandAlone obj : *triggerObjects) {
@@ -866,15 +870,16 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
                  for (unsigned h = 0; h < obj.filterIds().size(); ++h) {
                      if (obj.filterIds()[h]==trigger::TriggerTHT && obj.hasPathName( "HLT_PFHTForMC*", true, true )) {
                          triggerResults.push_back(obj.pt()>800.0);
-                         if(newrun){
-                           triggerNames_outbranch.push_back("HLT_PFHT800Emu_v1");
-                        }
+                         found=true;   
                      }
                  }
              }
           }
       }
-    }
+      if (!found) {triggerResults.push_back(false);}
+
+    }//end PFHT800 emulation
+
      if(newrun){
          event->set_triggernames(triggerNames_outbranch);
      }
