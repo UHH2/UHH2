@@ -708,13 +708,13 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
     else{
         event.weight = 1.0;
     }
-
+    /*
     if(event.genInfo){
           for (unsigned int i=0; i<event.genInfo->weights().size(); i++){
 	      event.weight *= event.genInfo->weights().at(i);
 	  }
     }
-
+    */
     bool keep = pimpl->analysis->process(event);
 
     if (!keep) {
