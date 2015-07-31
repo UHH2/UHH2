@@ -46,3 +46,17 @@ bool ElectronID_PHYS14_25ns_tight_noIso (const Electron&, const uhh2::Event&);
 // REF https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentificationRun2
 bool ElectronID_MVAnotrig_PHYS14_loose(const Electron&, const uhh2::Event&);
 bool ElectronID_MVAnotrig_PHYS14_tight(const Electron&, const uhh2::Event&);
+
+// Electron selectors for PF MINI-Isolation
+class Electron_MINIIso {
+
+ public:
+  explicit Electron_MINIIso(const float iso_cut, const std::string& iso_key): iso_cut_(iso_cut), iso_key_(iso_key) {}
+  virtual ~Electron_MINIIso() {}
+
+  bool operator()(const Electron&, const uhh2::Event&) const;
+
+ protected:
+  float iso_cut_;
+  std::string iso_key_;
+};

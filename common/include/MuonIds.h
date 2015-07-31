@@ -31,3 +31,17 @@ class MuonIso {
  private:
   double iso;
 };
+
+// Muon selectors for PF MINI-Isolation
+class Muon_MINIIso {
+
+ public:
+  explicit Muon_MINIIso(const float iso_cut, const std::string& iso_key): iso_cut_(iso_cut), iso_key_(iso_key) {}
+  virtual ~Muon_MINIIso() {}
+
+  bool operator()(const Muon&, const uhh2::Event&) const;
+
+ protected:
+  float iso_cut_;
+  std::string iso_key_;
+};
