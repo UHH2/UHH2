@@ -2,6 +2,9 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/Utils.h"
 
+#include "TFile.h"
+#include "TH1F.h"
+
 #include <stdexcept>
 
 using namespace uhh2;
@@ -35,14 +38,47 @@ bool MCLumiWeight::process(uhh2::Event & event){
 
 
 MCPileupReweight::MCPileupReweight(Context & ctx){
-    auto pileup_directory = ctx.get("pileup_directory");
-    if(pileup_directory != ""){
-        throw runtime_error("MCPileupReweight: not yet implemented!");
-    }
+ 
+   TString pileup_directory_data = ctx.get("pileup_directory_data");
+   TString pileup_directory_50ns = ctx.get("pileup_directory_50ns");
+   TString pileup_directory_25ns;
+   if (ctx.get("dataset_version").find("25ns")!=std::string::npos) pileup_directory_25ns = ctx.get("pileup_directory_25ns");
+   
+   if(pileup_directory_data == ""){
+      throw runtime_error("MCPileupReweight: not yet implemented!");
+   }
+   TFile *file_mc;
+   if (ctx.get("dataset_version").find("25ns")!=std::string::npos) file_mc = new TFile(pileup_directory_25ns);
+   else file_mc = new TFile(pileup_directory_50ns);
+   TFile *file_data =  new TFile(pileup_directory_data);
+   
+   h_npu_mc=(TH1F*) file_mc->Get("input_Event/N_PrimVertices");
+   h_npu_data=(TH1F*) file_data->Get("input_Event/N_PrimVertices");
+   
+   
+   if(h_npu_mc->GetNbinsX() != h_npu_data->GetNbinsX()){
+      std::cerr << "ERROR: pile-up histograms for data and MC have different numbers of bins" <<std::endl;
+      exit(-1);
+   }
+   if( (h_npu_mc->GetXaxis()->GetXmax() != h_npu_data->GetXaxis()->GetXmax()) || (h_npu_mc->GetXaxis()->GetXmin() != h_npu_data->GetXaxis()->GetXmin())){
+      std::cerr << "ERROR: pile-up histograms for data and MC have different axis ranges" <<std::endl;
+      exit(-1);
+   }
+   
+   h_npu_mc->Scale(1./h_npu_mc->Integral());
+   h_npu_data->Scale(1./h_npu_data->Integral());
 }
 
-bool MCPileupReweight::process(Event &){
-    // FIXME: implement
-    return true;
+bool MCPileupReweight::process(Event &event){
+   
+   double weight =0;
+   int binnumber = h_npu_mc->GetXaxis()->FindBin(event.pvs->size());
+   
+   if(h_npu_mc->GetBinContent(binnumber)!=0){
+      weight = h_npu_data->GetBinContent(binnumber)/h_npu_mc->GetBinContent(binnumber);
+   }
+   
+   event.weight *= weight;       
+   return true;
 }
 
