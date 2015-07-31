@@ -382,3 +382,18 @@ bool ElectronID_MVAnotrig_PHYS14_tight(const Electron& electron, const uhh2::Eve
 
   return pass;
 }
+///
+
+bool Electron_MINIIso::operator()(const Electron& ele, const uhh2::Event&) const {
+
+  float iso(-1.);
+
+  if(!ele.pt()) throw std::runtime_error("Electron_MINIIso::operator() -- null electron transverse momentum: failed to calculate relative MINI-Isolation");
+
+  if     (iso_key_ == "uncorrected") iso = (ele.pfMINIIso_CH() + ele.pfMINIIso_NH() + ele.pfMINIIso_Ph())/ele.pt();
+  else if(iso_key_ == "delta-beta")  iso = (ele.pfMINIIso_CH() + std::max(0., ele.pfMINIIso_NH() + ele.pfMINIIso_Ph() - .5*ele.pfMINIIso_PU()))/ele.pt();
+  else if(iso_key_ == "pf-weight")   iso = (ele.pfMINIIso_CH() + ele.pfMINIIso_NH_pfwgt() + ele.pfMINIIso_Ph_pfwgt())/ele.pt();
+  else throw std::runtime_error("Electron_MINIIso::operator() -- invalid key for MINI-Isolation pileup correction: "+iso_key_);
+
+  return (iso < iso_cut_);
+}
