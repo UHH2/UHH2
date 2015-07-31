@@ -45,4 +45,8 @@ public:
     explicit MCPileupReweight(uhh2::Context & ctx);
 
     virtual bool process(uhh2::Event & event) override;
+
+private:
+   TH1F *h_npu_mc;
+   TH1F* h_npu_data;
 };
