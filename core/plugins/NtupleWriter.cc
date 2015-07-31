@@ -426,6 +426,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     branch(tr, "triggerNames", "std::vector<std::string>", &triggerNames_outbranch);
     branch(tr, "triggerResults", "std::vector<bool>", event->get_triggerResults());
     triggerBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("trigger_bits"));
+    metfilterBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("metfilter_bits"));
     if(doTrigHTEmu)
     {
       triggerObjects_ = consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("trigger_objects"));
@@ -838,48 +839,55 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 
    if(doTrigger){
-     edm::Handle<edm::TriggerResults> triggerBits;
-     iEvent.getByToken(triggerBits_, triggerBits);
      auto & triggerResults = *event->get_triggerResults();
      triggerResults.clear();
      triggerNames_outbranch.clear();
-     const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
-     for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) {
-       std::vector<std::string>::const_iterator it = trigger_prefixes.begin();
-       for(; it!=trigger_prefixes.end(); ++it){
-            if(names.triggerName(i).substr(0, it->size()) == *it)break;
-       }
-       if(it==trigger_prefixes.end()) continue;
-       triggerResults.push_back(triggerBits->accept(i));
-       if(newrun){
+
+     //read trigger info from triggerBits (k=0) and from metfilterBits (k=1)
+     for(int k=0;k<2; k++){
+       edm::Handle<edm::TriggerResults> triggerBits;
+       if(k==0) 
+         iEvent.getByToken(triggerBits_, triggerBits);
+       else
+         iEvent.getByToken(metfilterBits_, triggerBits);
+
+       const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
+       for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) {
+	 std::vector<std::string>::const_iterator it = trigger_prefixes.begin();
+	 for(; it!=trigger_prefixes.end(); ++it){
+	   if(names.triggerName(i).substr(0, it->size()) == *it)break;
+	 }
+	 if(it==trigger_prefixes.end()) continue;
+	 triggerResults.push_back(triggerBits->accept(i));
+	 if(newrun){
            triggerNames_outbranch.push_back(names.triggerName(i));
+	 }
        }
+       //PFHT800 emulation
+       if(doTrigHTEmu && k==0){
+	 if(newrun){
+	   triggerNames_outbranch.push_back("HLT_PFHT800Emu_v1");
+	 }
+	 edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+	 iEvent.getByToken(triggerObjects_, triggerObjects);
+	 bool found=false;
+	 for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i){ 
+	   if (names.triggerName(i).find("HLT_PFHTForMC")!=string::npos && triggerBits->accept(i)) {
+	     for (pat::TriggerObjectStandAlone obj : *triggerObjects) {
+	       obj.unpackPathNames(names);
+	       for (unsigned h = 0; h < obj.filterIds().size(); ++h) {
+		 if (obj.filterIds()[h]==trigger::TriggerTHT && obj.hasPathName( "HLT_PFHTForMC*", true, true )) {
+		   triggerResults.push_back(obj.pt()>800.0);
+		   found=true;   
+		 }
+	       }
+	     }
+	   }
+	 }
+	 if (!found) {triggerResults.push_back(false);}
+      
+       }//end PFHT800 emulation
      }
-   //PFHT800 emulation
-   if(doTrigHTEmu){
-     if(newrun){
-       triggerNames_outbranch.push_back("HLT_PFHT800Emu_v1");
-     }
-     edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
-     iEvent.getByToken(triggerObjects_, triggerObjects);
-     bool found=false;
-     for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i){ 
-       if (names.triggerName(i).find("HLT_PFHTForMC")!=string::npos && triggerBits->accept(i)) {
-             for (pat::TriggerObjectStandAlone obj : *triggerObjects) {
-                 obj.unpackPathNames(names);
-                 for (unsigned h = 0; h < obj.filterIds().size(); ++h) {
-                     if (obj.filterIds()[h]==trigger::TriggerTHT && obj.hasPathName( "HLT_PFHTForMC*", true, true )) {
-                         triggerResults.push_back(obj.pt()>800.0);
-                         found=true;   
-                     }
-                 }
-             }
-          }
-      }
-      if (!found) {triggerResults.push_back(false);}
-
-    }//end PFHT800 emulation
-
      if(newrun){
          event->set_triggernames(triggerNames_outbranch);
      }

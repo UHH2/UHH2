@@ -104,6 +104,7 @@ class NtupleWriter : public edm::EDFilter {
       bool newrun, setup_output_branches_done;
 
       edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
+      edm::EDGetTokenT<edm::TriggerResults>  metfilterBits_;
       edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
 };
 
