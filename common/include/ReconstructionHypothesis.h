@@ -23,8 +23,8 @@ public:
   LorentzVector tophad_v4() const{return m_tophad_v4;} 
   LorentzVector neutrino_v4() const{return m_neutrino_v4;} 
   Particle lepton() const{return m_lepton;}
-  std::vector<Particle> toplep_jets() const{return m_toplep_jets;}
-  std::vector<Particle> tophad_jets() const{return m_tophad_jets;}
+  std::vector<Jet> toplep_jets() const{return m_toplep_jets;}
+  std::vector<Jet> tophad_jets() const{return m_tophad_jets;}
   const TopJet* tophad_topjet_ptr() const{return m_tophad_topjet_ptr;}
   LorentzVector top_v4() const{ return m_lepton.charge() > 0 ? m_toplep_v4 : m_tophad_v4;}
   LorentzVector antitop_v4() const{ return m_lepton.charge() < 0 ? m_toplep_v4 : m_tophad_v4;}
@@ -49,8 +49,8 @@ public:
   void set_toplep_v4(LorentzVector v4){m_toplep_v4=v4;}
   void set_tophad_v4(LorentzVector v4){m_tophad_v4=v4;} 
   void set_neutrino_v4(LorentzVector v4){m_neutrino_v4=v4;}
-  void add_toplep_jet(const Particle& j){m_toplep_jets.push_back(j);}
-  void add_tophad_jet(const Particle& j){m_tophad_jets.push_back(j);}
+  void add_toplep_jet(const Jet& j){m_toplep_jets.push_back(j);}
+  void add_tophad_jet(const Jet& j){m_tophad_jets.push_back(j);}
   void set_tophad_topjet_ptr(const TopJet* const tjp){m_tophad_topjet_ptr = tjp;}
   void set_lepton(const Particle & l){m_lepton = l;}
   void set_discriminator(const std::string & label, float discr){
@@ -63,8 +63,8 @@ private:
   LorentzVector m_tophad_v4;
   LorentzVector m_neutrino_v4;
 
-  std::vector<Particle> m_toplep_jets;
-  std::vector<Particle> m_tophad_jets;
+  std::vector<Jet> m_toplep_jets;
+  std::vector<Jet> m_tophad_jets;
   const TopJet* m_tophad_topjet_ptr;
   Particle m_lepton;
 
