@@ -21,7 +21,7 @@ bool operator<(const run_lumi & rl1, const run_lumi & rl2){
 
 
 LuminosityHists::LuminosityHists(uhh2::Context & ctx, const std::string & dirname): Hists(ctx, dirname){
-    double lumi_per_bin = string2double(ctx.get("lumihists_lumi_per_bin", "50.0"));
+    lumi_per_bin = string2double(ctx.get("lumihists_lumi_per_bin", "50.0"));
     if(lumi_per_bin <= 0.0){
         throw runtime_error("lumihists_lumi_per_bin is <= 0.0; this is not allowed");
     }
@@ -68,20 +68,20 @@ LuminosityHists::LuminosityHists(uhh2::Context & ctx, const std::string & dirnam
     upper_binborders.reserve(nbins_estimated);
     double ilumi_current_bin = 0.0;
     for(const auto & rl : rl2lumi){
-        ilumi_current_bin += rl.second;
-        if(ilumi_current_bin >= lumi_per_bin){
-            upper_binborders.push_back(rl.first);
-            ilumi_current_bin = 0.0;
+       ilumi_current_bin += rl.second;
+       if(ilumi_current_bin >= lumi_per_bin){
+          upper_binborders.push_back(rl.first);
+            ilumi_current_bin = ilumi_current_bin - lumi_per_bin;
         }
     }
     int nbins = upper_binborders.size() + 1; // add one for the partial bin
-    hlumi = book<TH1D>("luminosity", "Events over time divided in equal lumi-size bins", nbins, 0, nbins);
+    hlumi = book<TH1D>("luminosity", "Events over time divided in equal lumi-size bins", nbins, 0, (total_lumi / lumi_per_bin + 1)*lumi_per_bin);
 }
     
 void LuminosityHists::fill(const uhh2::Event & ev){
     run_lumi rl{ev.run, ev.luminosityBlock};
     auto it = upper_bound(upper_binborders.begin(), upper_binborders.end(), rl);
-    int ibin = distance(upper_binborders.begin(), it); // can be upper_bounds.size() at most, which is nbins and thus Ok.
-    hlumi->Fill(ibin, ev.weight); // weight is usually 1.0 anyway, but who knows ...
+    int ibin = distance(upper_binborders.begin(), it)+1; // can be upper_bounds.size() at most, which is nbins and thus Ok.
+    hlumi->Fill(ibin*lumi_per_bin, ev.weight); // weight is usually 1.0 anyway, but who knows ...
 }
 

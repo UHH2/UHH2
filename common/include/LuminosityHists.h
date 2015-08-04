@@ -12,6 +12,7 @@
 struct run_lumi {
   int run;
   int lumiblock;
+
 };
 
 class LuminosityHists: public uhh2::Hists {
@@ -29,5 +30,6 @@ private:
     // nbins is the number of bins in the lumi histogram
     std::vector<run_lumi> upper_binborders;
     TH1D * hlumi;
+   double lumi_per_bin;
 };
 
