@@ -37,13 +37,11 @@ JetHists::JetHists(Context & ctx,
                    const unsigned int NumberOfPlottedJets,
                    const std::string & collection_): JetHistsBase(ctx, dname), collection(collection_){
     number = book<TH1F>("number","number of jets",21, -.5, 20.5);
-    
+    jetid = boost::none;
     alljets = book_jetHist("jet","_jet",20,1500);
-
     vector<double> minPt {20,20,20,20};
     vector<double> maxPt {1500,1000,500,350};
     vector<string> axis_suffix {"first jet","second jet","third jet","fourth jet"};
-
     for(unsigned int i =0; i<NumberOfPlottedJets; i++){
       if(i<4){
         single_jetHists.push_back(book_jetHist(axis_suffix[i],"_"+to_string(i+1),minPt[i],maxPt[i]));
@@ -52,10 +50,8 @@ JetHists::JetHists(Context & ctx,
         single_jetHists.push_back(book_jetHist(to_string(i+1)+"-th jet","_"+to_string(i+1),20,500));
       }
     }
-  
     deltaRmin_1 = book<TH1F>("deltaRmin_1", "#Delta R_{min}(first jet,nearest jet)", 40, 0, 8.0);
     deltaRmin_2 = book<TH1F>("deltaRmin_2", "#Delta R_{min}(2nd jet,nearest jet)", 40, 0, 8.0);
-
     if(!collection.empty()){
         h_jets = ctx.get_handle<std::vector<Jet> >(collection);
     }
@@ -66,15 +62,18 @@ void JetHists::add_iJetHists(unsigned int UserJet, double minPt, double maxPt, c
   userjets.push_back(book_jetHist(axisSuffix, histSuffix, minPt, maxPt));
 }
 
-
-
 void JetHists::fill(const Event & event){
     auto w = event.weight;
-    const auto jets = collection.empty() ? event.jets : &event.get(h_jets);
-    assert(jets);
-    number->Fill(jets->size(), w);
-    for(unsigned int i = 0; i <jets->size(); i++){
-      const auto & jet = (*jets)[i];
+    vector<Jet> jets = collection.empty() ? *event.jets : event.get(h_jets);
+    if(jetid){
+      vector<Jet> help_jets;
+      for(const auto jet : jets)
+	if(passes_id(jet,event,jetid)) help_jets.push_back(jet);
+      jets.swap(help_jets);
+    }
+    number->Fill(jets.size(), w);
+    for(unsigned int i = 0; i <jets.size(); i++){
+      const auto & jet = jets[i];
       fill_jetHist(jet,alljets,w);
       for (unsigned int m =0; m<m_userjet.size(); ++m) {
           if(m_userjet[m] == i)  fill_jetHist(jet, userjets[m], w);
@@ -83,7 +82,7 @@ void JetHists::fill(const Event & event){
         fill_jetHist(jet, single_jetHists[i], w);
       }
       if(i < 2){
-        auto next_jet = closestParticle(jet, *jets);
+        auto next_jet = closestParticle(jet, jets);
         auto drmin = next_jet ? deltaR(jet, *next_jet) : numeric_limits<float>::infinity();
         if(i==0) deltaRmin_1->Fill(drmin, w);
         else deltaRmin_2->Fill(drmin, w);
@@ -130,16 +129,13 @@ TopJetHists::TopJetHists(Context & ctx,
                 const std::string & collection_): JetHistsBase(ctx, dname), collection(collection_) {
 
   number = book<TH1F>("number","number of topjets",21, -.5, 20.5);
-  
+  topjetid = boost::none;
   alljets = book_jetHist("topjet","",20,1500);
   allsubjets = book_subjetHist("subjet","_subjets",0,500);
-
   vector<double> maxPt {900,600,400,300};
- 
   string axis_suffix = "topjet";
   string axis_subjetSuffix = "subjets ";
   vector<string> axis_singleSubjetSuffix {"first ","second ","third ","fourth "};
-
   for(unsigned int i =0; i<NumberOfPlottedJets; i++){
     if(i<4){
       single_jetHists.push_back(book_jetHist(axis_singleSubjetSuffix[i]+axis_suffix,string("_")+to_string(i+1),0,maxPt[i]));
@@ -166,11 +162,17 @@ void TopJetHists::add_iTopJetHists(unsigned int UserJet, double minPt, double ma
 
 void TopJetHists::fill(const Event & event){
     auto w = event.weight;
-    const auto jets = collection.empty() ? event.topjets : &event.get(h_topjets);
-    assert(jets);
-    number->Fill(jets->size(), w);
-    for(unsigned int i = 0; i <jets->size(); i++){
-      const auto & jet = (*jets)[i];
+    vector<TopJet> jets = collection.empty() ? *event.topjets : event.get(h_topjets);
+    //assert(jets);
+    if(topjetid){
+      vector<TopJet> help_jets;
+      for(const auto jet : jets)
+	if(passes_id(jet,event,topjetid)) help_jets.push_back(jet);
+      jets.swap(help_jets);
+    }
+    number->Fill(jets.size(), w);
+    for(unsigned int i = 0; i <jets.size(); i++){
+      const auto & jet = jets[i];
       fill_jetHist(jet,alljets,w);
       fill_subjetHist(jet,allsubjets,w);
       for (unsigned int m =0; m<m_usertopjet.size(); ++m){ 
@@ -184,7 +186,7 @@ void TopJetHists::fill(const Event & event){
           fill_subjetHist(jet,subjets[i],w);  
       }
       if(i<2){
-        auto next_jet = closestParticle(jet, *jets);
+        auto next_jet = closestParticle(jet, jets);
         auto drmin = next_jet ? deltaR(jet, *next_jet) : numeric_limits<float>::infinity();
         if(i==0)deltaRmin_1->Fill(drmin, w);
         else deltaRmin_2->Fill(drmin, w);
@@ -192,3 +194,9 @@ void TopJetHists::fill(const Event & event){
     }
 }
 
+template<typename T>
+  bool JetHistsBase::passes_id(const T & object, const Event & event, const boost::optional<std::function<bool (const T &, const Event & )>> & object_id){
+  if((*object_id)(object, event))
+    return true;
+  return false;
+}
