@@ -5,10 +5,9 @@
 
 /** \brief Set the event weight according to the sample lumi and a target lumi
  *
- * Only use for MC. Will throw an exception for data (i.e. if dataset_type != "MC").
- * 
  * This module only has an effect if "use_sframe_weight" is set to "false" to avoid
- * applying the same weight twice.
+ * applying the same weight twice. Also, it will only run, if "dataset_type"
+ * equals "MC".
  *
  * Interprets the following settings from the passed Context:
  *  - "dataset_lumi": the lumi of the current dataset, in inverse pb

@@ -16,16 +16,18 @@ MCLumiWeight::MCLumiWeight(Context & ctx){
         return;
     }
     auto dataset_type = ctx.get("dataset_type");
-    bool is_mc = dataset_type  == "MC";
+    bool is_mc = dataset_type == "MC";
     if(!is_mc){
-        throw runtime_error("MCLumiWeight created for a non-MC sample (dataset_type = '" + dataset_type + "'");
+        cout << "Warning: MCLumiWeight will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+        return;
+    } else {
+        double dataset_lumi = string2double(ctx.get("dataset_lumi"));
+        double reweight_to_lumi = string2double(ctx.get("target_lumi"));
+        if(reweight_to_lumi <= 0.0){
+            throw runtime_error("MCLumiWeight: target_lumi <= 0.0 not allowed");
+        }
+        factor = reweight_to_lumi / dataset_lumi;
     }
-    double dataset_lumi = string2double(ctx.get("dataset_lumi"));
-    double reweight_to_lumi = string2double(ctx.get("target_lumi"));
-    if(reweight_to_lumi <= 0.0){
-        throw runtime_error("MCLumiWeight: target_lumi <= 0.0 not allowed");
-    }
-    factor = reweight_to_lumi / dataset_lumi;
 }
 
 bool MCLumiWeight::process(uhh2::Event & event){
@@ -38,7 +40,14 @@ bool MCLumiWeight::process(uhh2::Event & event){
 
 
 MCPileupReweight::MCPileupReweight(Context & ctx){
- 
+
+   auto dataset_type = ctx.get("dataset_type");
+   bool is_mc = dataset_type == "MC";
+   if(!is_mc){
+       cout << "Warning: MCPileupReweight will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+       return;
+   }
+
    TString pileup_directory_data = ctx.get("pileup_directory_data");
    TString pileup_directory_50ns = ctx.get("pileup_directory_50ns");
    TString pileup_directory_25ns;
@@ -70,7 +79,11 @@ MCPileupReweight::MCPileupReweight(Context & ctx){
 }
 
 bool MCPileupReweight::process(Event &event){
-   
+
+   if (event.isRealData) {
+      return true;
+   }
+
    double weight =0;
    int binnumber = h_npu_mc->GetXaxis()->FindBin(event.pvs->size());
    
