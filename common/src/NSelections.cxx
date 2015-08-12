@@ -58,6 +58,13 @@ NTopJetSelection::NTopJetSelection(int nmin_, int nmax_,
 
 bool NTopJetSelection::passes(const Event & event){
     const auto & jets = topjetcollection ? event.get(*topjetcollection) : *event.topjets;
-  return passes_minmax(jets, nmin, nmax, event, topjetid);
+    return passes_minmax(jets, nmin, nmax, event, topjetid);
 }
 
+NPVSelection::NPVSelection(int nmin_, int nmax_,const boost::optional<PrimaryVertexId> & pvid_): nmin(nmin_), nmax(nmax_), pvid(pvid_){
+}
+
+bool NPVSelection::passes(const Event & event){
+  assert(event.pvs);
+  return passes_minmax(*event.pvs, nmin, nmax, event, pvid);
+}

@@ -72,3 +72,12 @@ private:
     boost::optional<TopJetId> topjetid;
     boost::optional<Event::Handle<std::vector<TopJet> > > topjetcollection;
 };
+
+class NPVSelection: public uhh2::Selection {
+public:
+    explicit NPVSelection(int nmin, int nmax = -1, const boost::optional<PrimaryVertexId> & pvid = boost::none);
+    virtual bool passes(const uhh2::Event & event);
+private:
+    int nmin, nmax;
+    boost::optional<PrimaryVertexId> pvid;
+};
