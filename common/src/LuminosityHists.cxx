@@ -79,6 +79,7 @@ LuminosityHists::LuminosityHists(uhh2::Context & ctx, const std::string & dirnam
 }
     
 void LuminosityHists::fill(const uhh2::Event & ev){
+    if(!ev.isRealData) return;
     run_lumi rl{ev.run, ev.luminosityBlock};
     auto it = upper_bound(upper_binborders.begin(), upper_binborders.end(), rl);
     int ibin = distance(upper_binborders.begin(), it)+1; // can be upper_bounds.size() at most, which is nbins and thus Ok.
