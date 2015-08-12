@@ -6,7 +6,7 @@ using namespace uhh2;
 class TestTrigger: public uhh2::AnalysisModule {
 public:
     explicit TestTrigger(Context &) {
-        trigger_selection.reset(new TriggerSelection("HLT_Mu40_v*"));
+        trigger_selection.reset(new TriggerSelection("HLT_PFHT800Emu_v*"));
     }
     
     virtual bool process(Event & e) override{

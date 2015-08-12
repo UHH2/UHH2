@@ -6,6 +6,7 @@
 #include "UHH2/common/include/EventVariables.h"
 #include "UHH2/common/include/LumiSelection.h"
 #include "UHH2/common/include/Utils.h" 
+#include "UHH2/common/include/TriggerSelection.h"
 
 using namespace uhh2;
 using namespace std;
@@ -22,20 +23,29 @@ void CommonModules::init(Context & ctx){
     }
     init_done = true;
     bool is_mc = ctx.get("dataset_type") == "MC";
+    //set default PV id;
+    PrimaryVertexId pvid=StandardPrimaryVertexId();
     if(is_mc){
         if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx));
-	if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_MC));
+	if(jec) modules.emplace_back(new JetCorrector(JERFiles::Summer15_50ns_L123_MC));
 	if(jersmear) modules.emplace_back(new JetResolutionSmearer(ctx));
     }
     else{
         if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
 	if(jec) modules.emplace_back(new JetCorrector(JERFiles::PHYS14_L123_DATA));
     }
+    if(metfilters){
+        metfilters_selection.reset(new AndSelection(ctx, "metfilters"));
+        metfilters_selection->add<TriggerSelection>("CSCTightHalo", "Flag_CSCTightHaloFilter");
+	metfilters_selection->add<TriggerSelection>("eeBadSc", "Flag_eeBadScFilter");
+	if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
+    }
+    if(pvfilter) modules.emplace_back(new PrimaryVertexCleaner(pvid));
     if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
     if(muid)  modules.emplace_back(new MuonCleaner(muid));
     if(tauid) modules.emplace_back(new TauCleaner(tauid));
-    if(jetlepcleaner) modules.emplace_back(new JetLeptonCleaner(JERFiles::PHYS14_L123_MC));
+    if(jetlepcleaner) modules.emplace_back(new JetLeptonCleaner(JERFiles::Summer15_50ns_L123_MC));
     if(jetid) modules.emplace_back(new JetCleaner(jetid));
     modules.emplace_back(new HTCalculator(ctx));
 }
@@ -46,6 +56,9 @@ bool CommonModules::process(uhh2::Event & event){
     }
     if(event.isRealData && lumisel){
         if(!lumi_selection->passes(event)) return false;
+    }
+    if(metfilters){
+        if(!metfilters_selection->passes(event)) return false;
     }
     for(auto & m : modules){
         m->process(event);
@@ -82,6 +95,15 @@ void CommonModules::disable_lumisel(){
     lumisel = false;
 }
 
+void CommonModules::disable_metfilters(){
+    fail_if_init();
+    metfilters = false;
+}
+
+void CommonModules::disable_pvfilter(){
+    fail_if_init();
+    pvfilter = false;
+}
 
 class TestCommonModules: public AnalysisModule {
 public:
@@ -94,7 +116,9 @@ public:
     }
     
     virtual bool process(Event & event) override {
-        return common->process(event);
+         bool pass_cm = common->process(event);
+ 	if(!pass_cm) std::cout << "Event rejected by common modules" << std::endl;
+	return pass_cm;
     }
 private:
     std::unique_ptr<CommonModules> common;

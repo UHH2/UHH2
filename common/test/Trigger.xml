@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"[
+<!ENTITY MC_QCD_Pt15to30  SYSTEM "../../common/datasets/MC_QCD_Pt15to30.xml">
+<!ENTITY MC_QCD_Pt50to80  SYSTEM "../../common/datasets/MC_QCD_Pt50to80.xml">
+]>
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
    <Library Name="libTestSUHH2common"/>
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="TestTrigger" Cacheable="False">
-            <!-- TODO: replace that file with a more recent one ... -->
-            <In FileName="/afs/desy.de/user/o/ottjoc/xxl-af-cms/CMSSW_7_2_1_patch4/src/UHH2/core/Ntuple.root" Lumi="0.0"/> 
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="MC_QCD_Pt15to30_TestTrigger" Cacheable="True">
+	  &MC_QCD_Pt15to30;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="MC_QCD_Pt50to80_TestTrigger" Cacheable="True">
+	  &MC_QCD_Pt50to80;
             <InputTree Name="AnalysisTree" /> 
         </InputData>
             

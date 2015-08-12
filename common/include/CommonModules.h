@@ -1,6 +1,7 @@
 #pragma once
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
+#include "UHH2/core/include/Selection.h"
 #include "UHH2/common/include/NSelections.h"
 
 /** \brief Run a configurable list commonly used modules
@@ -16,6 +17,8 @@
  *  - MCPileupReweight (for MC only)
  *  - JetCorrector using the latest PHYS14 corrections for MC
  *  - JetResolutionSmearer  (for MC only)
+ *  - apply MET filters (CSCTightHaloFilter and eeBadScFilter) and at least one good primary vertex (see https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2)
+ *  - Primary vertex cleaner (remove all non-good PVs from the list of primary vertices)
  *  - ElectronCleaner
  *  - Muon Cleaner
  *  - Tau Cleaner
@@ -37,7 +40,8 @@
  *  cm->init(context);
  * 
  * // in AnalysisModule::process:
- *  cm->process(event);
+ *  bool pass_cm = cm->process(event);
+ *  if(!pass_cm) return false;
  * \endcode
  *
  * In particular, call the 'set_*_id' methods in the constructor; call init after setting
@@ -52,6 +56,8 @@ public:
     void disable_jec();
     void disable_jersmear();
     void disable_lumisel();
+    void disable_metfilters();
+    void disable_pvfilter();
     void switch_jetlepcleaner(bool status = true){fail_if_init();jetlepcleaner=status;}
     void switch_jetPtSorter(bool status = true){fail_if_init();jetptsort=status;}
 
@@ -83,10 +89,11 @@ private:
     MuonId muid;
     TauId tauid;
     
-    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, jetptsort = false;
+    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, jetptsort = false, metfilters = true, pvfilter = true;
 
     bool init_done = false;
 
     std::unique_ptr<Selection> lumi_selection;
+    std::unique_ptr<AndSelection> metfilters_selection;
 };
 
