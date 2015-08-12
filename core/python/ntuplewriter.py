@@ -98,14 +98,14 @@ process.fixedGridRhoFastjetAll = fixedGridRhoFastjetAll.clone(pfCandidatesTag = 
 
 ###############################################
 # HCAL_Noise_Filter
-if useData:
-    process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
-    process.HBHENoiseFilterResultProducer.minZeros = cms.int32(99999)
+#if useData:
+process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
+process.HBHENoiseFilterResultProducer.minZeros = cms.int32(99999)
 
-    process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
-                                                        inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),
-                                                        reverseDecision = cms.bool(False)
-                                                        )
+process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
+                                                    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),
+                                                    reverseDecision = cms.bool(False)
+                                                    )
 
 
 ###############################################
@@ -572,6 +572,7 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
   mva_Trig   = cms.string('ElectronMVAEstimatorRun2Phys14NonTrigValues'),
 )
 
+
 ### NtupleWriter
 
 if useData:
@@ -694,14 +695,11 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
 # Note: we run in unscheduled mode, i.e. all modules are run as required; just make sure that MyNtuple runs:
-if useData:
-    #for 50ns data, the HBHE noise filter has to be re-evaluated (see https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2)
-    process.p = cms.Path(
-        process.HBHENoiseFilterResultProducer* #produces HBHE bools
-        process.ApplyBaselineHBHENoiseFilter*  #reject events based 
-        process.MyNtuple)
-else:
-    process.p = cms.Path(process.MyNtuple)
-#process.end = cms.EndPath(process.out)
+
+#for 50ns data, the HBHE noise filter has to be re-evaluated (see https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2)
+process.p = cms.Path(
+    process.HBHENoiseFilterResultProducer* #produces HBHE bools
+    process.ApplyBaselineHBHENoiseFilter*  #reject events based 
+    process.MyNtuple)
 
 open('pydump.py','w').write(process.dumpPython())
