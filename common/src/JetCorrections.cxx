@@ -26,6 +26,9 @@ const std::vector<std::string> JERFiles::PHYS14_L123_AK8PFchs_MC = {"JetMETObjec
 const std::vector<std::string> JERFiles::Summer15_50ns_L123_MC = {"JetMETObjects/data/Summer15_50nsV2_L1FastJet_AK4PFchs.txt",
   "JetMETObjects/data/Summer15_50nsV2_L2Relative_AK4PFchs.txt", "JetMETObjects/data/Summer15_50nsV2_L3Absolute_AK4PFchs.txt"};
 
+const std::vector<std::string> JERFiles::Summer15_25nsV2_MC = {"JetMETObjects/data/Summer15_25nsV2_MC_L1FastJet_AK4PFchs.txt",
+  "JetMETObjects/data/Summer15_25nsV2_MC_L2Relative_AK4PFchs.txt", "JetMETObjects/data/Summer15_25nsV2_MC_L3Absolute_AK4PFchs.txt"};
+
 namespace {
     
 // to share some code between JetCorrector and JetLeptonCleaner, provide some methods
