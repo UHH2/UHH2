@@ -168,14 +168,14 @@ from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMet
 #for a full met computation, remove the pfCandColl input
 runMetCorAndUncFromMiniAOD(process,
                            isData=useData,
-                           jecUnFile=jecUncertaintyFile
+                           jecUncFile=jecUncertaintyFile
                            )
 
 if not useHFCandidates:
     runMetCorAndUncFromMiniAOD(process,
                                isData=useData,
                                pfCandColl=cms.InputTag("noHFCands"),
-                               jecUnFile=jecUncertaintyFile,
+                               jecUncFile=jecUncertaintyFile,
                                postfix="NoHF"
                                )
 
