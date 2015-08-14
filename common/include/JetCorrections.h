@@ -11,6 +11,7 @@ namespace JERFiles {
     extern const std::vector<std::string> PHYS14_L123_DATA;
     extern const std::vector<std::string> PHYS14_L123_AK8PFchs_MC;
     extern const std::vector<std::string> Summer15_50ns_L123_MC;
+    extern const std::vector<std::string> Summer15_25nsV2_MC;
 }
 
 /** \brief (Re-)Correct jets according to the corrections in the passed txt files
