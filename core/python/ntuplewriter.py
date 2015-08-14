@@ -85,7 +85,7 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 #see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
 if useData:
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-    process.GlobalTag.globaltag = '74X_dataRun2_Prompt_v0' 
+    process.GlobalTag.globaltag = '74X_dataRun2_Prompt_v1' 
 else:
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
     process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'  # NOTE: use V9A for 50ns and V9 for 25ns
@@ -112,9 +112,43 @@ process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
 # MET without HF for 50ns run II data in CMSSW_74X
 
 #configurable options =======================================================================
+usePrivateSQlite=True #use external JECs (sqlite file)
 useHFCandidates=False #create an additionnal NoHF slimmed MET collection if the option is set to false
-applyResiduals=False #application of residual corrections. Have to be set to True once the 13 TeV residual corrections are available. False to be kept meanwhile. Can be kept to False later for private tests or for analysis checks and developments (not the official recommendation!).
+applyResiduals=True #application of residual corrections. Have to be set to True once the 13 TeV residual corrections are available. False to be kept meanwhile. Can be kept to False later for private tests or for analysis checks and developments (not the official recommendation!).
 #===================================================================
+
+
+### External JECs =====================================================================================================
+
+if usePrivateSQlite:
+    from CondCore.DBCommon.CondDBSetup_cfi import *
+    import os
+    if useData:
+      era="Summer15_50nsV4_DATA"
+    else:
+      era="Summer15_50nsV4_MC"
+    dBFile = os.path.expandvars("$CMSSW_BASE/src/PhysicsTools/PatAlgos/test/"+era+".db")
+    process.jec = cms.ESSource("PoolDBESSource",CondDBSetup,
+                               connect = cms.string( "sqlite_file://"+dBFile ),
+                               toGet =  cms.VPSet(
+            cms.PSet(
+                record = cms.string("JetCorrectionsRecord"),
+                tag = cms.string("JetCorrectorParametersCollection_"+era+"_AK4PF"),
+                label= cms.untracked.string("AK4PF")
+                ),
+            cms.PSet(
+                record = cms.string("JetCorrectionsRecord"),
+                tag = cms.string("JetCorrectorParametersCollection_"+era+"_AK4PFchs"),
+                label= cms.untracked.string("AK4PFchs")
+                ),
+            )
+                               )
+    process.es_prefer_jec = cms.ESPrefer("PoolDBESSource",'jec')
+
+#uncertainty file
+jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"
+
+### ------------------------------------------------------------------
 
 ### ---------------------------------------------------------------------------
 ### Removing the HF from the MET computation
@@ -134,12 +168,14 @@ from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMet
 #for a full met computation, remove the pfCandColl input
 runMetCorAndUncFromMiniAOD(process,
                            isData=useData,
+                           jecUnFile=jecUncertaintyFile
                            )
 
 if not useHFCandidates:
     runMetCorAndUncFromMiniAOD(process,
                                isData=useData,
                                pfCandColl=cms.InputTag("noHFCands"),
+                               jecUnFile=jecUncertaintyFile,
                                postfix="NoHF"
                                )
 
@@ -162,7 +198,6 @@ if not applyResiduals:
           process.shiftedPatJetEnDownNoHF.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFCHSL1FastL2L3Corrector")
           process.shiftedPatJetEnUpNoHF.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFCHSL1FastL2L3Corrector")
 ### ------------------------------------------------------------------
-
 
 
 

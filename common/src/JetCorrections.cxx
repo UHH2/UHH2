@@ -23,8 +23,29 @@ const std::vector<std::string> JERFiles::PHYS14_L123_DATA = {"JetMETObjects/data
 const std::vector<std::string> JERFiles::PHYS14_L123_AK8PFchs_MC = {"JetMETObjects/data/PHYS14_V2_MC_L1FastJet_AK8PFchs.txt",
   "JetMETObjects/data/PHYS14_V2_MC_L2Relative_AK8PFchs.txt", "JetMETObjects/data/PHYS14_V2_MC_L3Absolute_AK8PFchs.txt"};
 
-const std::vector<std::string> JERFiles::Summer15_50ns_L123_MC = {"JetMETObjects/data/Summer15_50nsV2_L1FastJet_AK4PFchs.txt",
-  "JetMETObjects/data/Summer15_50nsV2_L2Relative_AK4PFchs.txt", "JetMETObjects/data/Summer15_50nsV2_L3Absolute_AK4PFchs.txt"};
+const std::vector<std::string> JERFiles::Summer15_50ns_L123_AK4PFchs_MC = {"JetMETObjects/data/Summer15_50nsV4_MC_L1FastJet_AK4PFchs.txt",
+  "JetMETObjects/data/Summer15_50nsV4_MC_L2Relative_AK4PFchs.txt", "JetMETObjects/data/Summer15_50nsV4_MC_L3Absolute_AK4PFchs.txt"};
+
+const std::vector<std::string> JERFiles::Summer15_50ns_L123_AK4PFchs_DATA = {"JetMETObjects/data/Summer15_50nsV4_DATA_L1FastJet_AK4PFchs.txt",
+  "JetMETObjects/data/Summer15_50nsV4_DATA_L2Relative_AK4PFchs.txt", "JetMETObjects/data/Summer15_50nsV4_DATA_L3Absolute_AK4PFchs.txt"};
+
+const std::vector<std::string> JERFiles::Summer15_50ns_L123_AK8PFchs_MC = {"JetMETObjects/data/Summer15_50nsV4_MC_L1FastJet_AK8PFchs.txt",
+  "JetMETObjects/data/Summer15_50nsV4_MC_L2Relative_AK8PFchs.txt", "JetMETObjects/data/Summer15_50nsV4_MC_L3Absolute_AK8PFchs.txt"};
+
+const std::vector<std::string> JERFiles::Summer15_50ns_L123_AK8PFchs_DATA = {"JetMETObjects/data/Summer15_50nsV4_DATA_L1FastJet_AK8PFchs.txt",
+  "JetMETObjects/data/Summer15_50nsV4_DATA_L2Relative_AK8PFchs.txt", "JetMETObjects/data/Summer15_50nsV4_DATA_L3Absolute_AK8PFchs.txt"};
+
+const std::vector<std::string> JERFiles::Summer15_50ns_L123_AK4PFPuppi_MC = {"JetMETObjects/data/Summer15_50nsV4_MC_L1FastJet_AK4PFPuppi.txt",
+  "JetMETObjects/data/Summer15_50nsV4_MC_L2Relative_AK4PFPuppi.txt", "JetMETObjects/data/Summer15_50nsV4_MC_L3Absolute_AK4PFPuppi.txt"};
+
+const std::vector<std::string> JERFiles::Summer15_50ns_L123_AK4PFPuppi_DATA = {"JetMETObjects/data/Summer15_50nsV4_DATA_L1FastJet_AK4PFPuppi.txt",
+  "JetMETObjects/data/Summer15_50nsV4_DATA_L2Relative_AK4PFPuppi.txt", "JetMETObjects/data/Summer15_50nsV4_DATA_L3Absolute_AK4PFPuppi.txt"};
+
+const std::vector<std::string> JERFiles::Summer15_50ns_L123_AK8PFPuppi_MC = {"JetMETObjects/data/Summer15_50nsV4_MC_L1FastJet_AK8PFPuppi.txt",
+  "JetMETObjects/data/Summer15_50nsV4_MC_L2Relative_AK8PFPuppi.txt", "JetMETObjects/data/Summer15_50nsV4_MC_L3Absolute_AK8PFPuppi.txt"};
+
+const std::vector<std::string> JERFiles::Summer15_50ns_L123_AK8PFPuppi_DATA = {"JetMETObjects/data/Summer15_50nsV4_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JetMETObjects/data/Summer15_50nsV4_DATA_L2Relative_AK8PFPuppi.txt", "JetMETObjects/data/Summer15_50nsV4_DATA_L3Absolute_AK8PFPuppi.txt"};
 
 const std::vector<std::string> JERFiles::Summer15_25nsV2_MC = {"JetMETObjects/data/Summer15_25nsV2_MC_L1FastJet_AK4PFchs.txt",
   "JetMETObjects/data/Summer15_25nsV2_MC_L2Relative_AK4PFchs.txt", "JetMETObjects/data/Summer15_25nsV2_MC_L3Absolute_AK4PFchs.txt"};
