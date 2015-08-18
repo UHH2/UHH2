@@ -614,7 +614,6 @@ isPrompt = False
 for x in process.source.fileNames:
     if "PromptReco" in x:
         isPrompt = True
-        break;
 
 if isPrompt:
     metfilterpath="RECO"
