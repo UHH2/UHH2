@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 
-useData = False
+useData = True
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
@@ -610,7 +610,13 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 
 ### NtupleWriter
 
-if useData:
+isPrompt = False
+for x in process.source.fileNames:
+    if "PromptReco" in x:
+        isPrompt = True
+        break;
+
+if isPrompt:
     metfilterpath="RECO"
 else:
     metfilterpath="PAT"
