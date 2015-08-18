@@ -20,9 +20,14 @@ bool operator<(const run_lumi & rl1, const run_lumi & rl2){
 }
 
 
-LuminosityHists::LuminosityHists(uhh2::Context & ctx, const std::string & dirname): Hists(ctx, dirname){
+LuminosityHists::LuminosityHists(uhh2::Context & ctx,
+                                const std::string & dirname,
+                                const std::string & triggername) :
+    Hists(ctx, dirname),
+    triggername_(triggername)
+{
     lumi_per_bin = string2double(ctx.get("lumihists_lumi_per_bin", "50.0"));
-    if(lumi_per_bin <= 0.0){
+    if(lumi_per_bin <= 0.0) {
         throw runtime_error("lumihists_lumi_per_bin is <= 0.0; this is not allowed");
     }
     
@@ -80,9 +85,18 @@ LuminosityHists::LuminosityHists(uhh2::Context & ctx, const std::string & dirnam
     
 void LuminosityHists::fill(const uhh2::Event & ev){
     if(!ev.isRealData) return;
-    run_lumi rl{ev.run, ev.luminosityBlock};
-    auto it = upper_bound(upper_binborders.begin(), upper_binborders.end(), rl);
-    int ibin = distance(upper_binborders.begin(), it)+1; // can be upper_bounds.size() at most, which is nbins and thus Ok.
-    hlumi->Fill(ibin*lumi_per_bin, ev.weight); // weight is usually 1.0 anyway, but who knows ...
+
+    bool trigger_accepted = true;
+    if (!triggername_.empty()) {
+        auto trg_index = ev.get_trigger_index(triggername_);
+        trigger_accepted = ev.passes_trigger(trg_index);
+    }
+
+    if (trigger_accepted) {
+        run_lumi rl{ev.run, ev.luminosityBlock};
+        auto it = upper_bound(upper_binborders.begin(), upper_binborders.end(), rl);
+        int ibin = distance(upper_binborders.begin(), it)+1; // can be upper_bounds.size() at most, which is nbins and thus Ok.
+        hlumi->Fill(ibin*lumi_per_bin, ev.weight); // weight is usually 1.0 anyway, but who knows ...
+    }
 }
 

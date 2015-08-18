@@ -17,7 +17,9 @@ struct run_lumi {
 
 class LuminosityHists: public uhh2::Hists {
 public:
-    LuminosityHists(uhh2::Context & ctx, const std::string & dirname);
+    LuminosityHists(uhh2::Context & ctx,
+                    const std::string & dirname,
+                    const std::string & triggername = "");
     
     virtual void fill(const uhh2::Event & ev) override;
     
@@ -31,5 +33,6 @@ private:
     std::vector<run_lumi> upper_binborders;
     TH1D * hlumi;
    double lumi_per_bin;
+   const std::string triggername_;
 };
 
