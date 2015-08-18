@@ -85,24 +85,6 @@ public:
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
   void set_btaginfo(JetBTagInfo x){m_btaginfo=x;}
 
-  bool pfID() const {
-    //pf ID has already been applied when using goodPatJets
-    if(numberOfDaughters()>1 
-       && neutralHadronEnergyFraction()<0.99
-       && neutralEmEnergyFraction()<0.99){
-      
-      if(fabs(eta())>=2.4)
-        return true;
-      
-      if(chargedEmEnergyFraction()<0.99
-        && chargedHadronEnergyFraction()>0
-        && chargedMultiplicity()>0)
-        return true;   
-    }
-    return false;
-  }
-
-
  private:
   
   float m_jetArea;
