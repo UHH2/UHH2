@@ -610,7 +610,12 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 
 ### NtupleWriter
 
-if useData:
+isPrompt = False
+for x in process.source.fileNames:
+    if "PromptReco" in x:
+        isPrompt = True
+
+if isPrompt:
     metfilterpath="RECO"
 else:
     metfilterpath="PAT"
