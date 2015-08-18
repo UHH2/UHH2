@@ -29,7 +29,7 @@ JetPFID::JetPFID(wp working_point):m_working_point(working_point){}
 bool JetPFID::operator()(const Jet & jet, const Event &) const{
   switch(m_working_point){
   case WP_LOOSE:
-    return jet.pfID();
+    return looseID(jet);
   case WP_TIGHT:
     return tightID(jet);
   case  WP_TIGHT_LEPVETO:
@@ -40,13 +40,13 @@ bool JetPFID::operator()(const Jet & jet, const Event &) const{
   return false;
 }
 
-bool looseID(const jet & jet) const{
+bool JetPFID::looseID(const Jet & jet) const{
   if(fabs(jet.eta())<=3 
      && jet.numberOfDaughters()>1 
      && jet.neutralHadronEnergyFraction()<0.99
      && jet.neutralEmEnergyFraction()<0.99){
     
-    if(fabs(eta())>=2.4)
+    if(fabs(jet.eta())>=2.4)
       return true;
       
     if(jet.chargedEmEnergyFraction()<0.99
@@ -62,7 +62,7 @@ bool looseID(const jet & jet) const{
   return false;
 }
 
-bool JetPFID::tightID(const Jet & jet)const {
+bool JetPFID::tightID(const Jet & jet) const{
   if(!looseID(jet)) return false;
   if(fabs(jet.eta())<=3 
      && jet.neutralEmEnergyFraction()<0.90

@@ -17,6 +17,12 @@ void CommonModules::fail_if_init() const{
     }
 }
 
+
+CommonModules::CommonModules(){
+  working_point = JetPFID::WP_LOOSE;
+}
+
+
 void CommonModules::init(Context & ctx){
     if(init_done){
         throw invalid_argument("CommonModules::init called twice!");
@@ -45,6 +51,9 @@ void CommonModules::init(Context & ctx){
     if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
     if(muid)  modules.emplace_back(new MuonCleaner(muid));
     if(tauid) modules.emplace_back(new TauCleaner(tauid));
+    if(jetpfidcleaner){
+      modules.emplace_back(new JetCleaner(JetPFID(working_point)));
+    }
     if(jetlepcleaner) {
       if(is_mc) modules.emplace_back(new JetLeptonCleaner(JERFiles::Summer15_50ns_L123_AK4PFchs_MC));
       else modules.emplace_back(new JetLeptonCleaner(JERFiles::Summer15_50ns_L123_AK4PFchs_DATA));
