@@ -148,6 +148,11 @@ TopJetHists::TopJetHists(Context & ctx,
   }
   deltaRmin_1 = book<TH1F>("deltaRmin_1", "#Delta R_{min}(first jet,nearest jet)", 40, 0, 8.0);
   deltaRmin_2 = book<TH1F>("deltaRmin_2", "#Delta R_{min}(2nd jet,nearest jet)", 40, 0, 8.0);
+  tau32 = book<TH1F>("tau32", "#tau_{3}/#tau_{2}", 50, 0, 1.0);
+  tau21 = book<TH1F>("tau21", "#tau_{2}/#tau_{1}", 50, 0, 1.0);
+  deltaRmin_ak4jet= book<TH1F>("deltaRmin_ak4jet", "#Delta R_{min}(jet,nearest ak4 jet)", 40, 0, 8.0);
+  invmass_topjetnexak4jet = book<TH1F>("invmass_topjetnexak4jet", "invariant mass(jet,nearest ak4 jet)", 100, 0, 1000);
+
   if(!collection.empty()){
     h_topjets = ctx.get_handle<std::vector<TopJet> >(collection);
   }
@@ -175,6 +180,8 @@ void TopJetHists::fill(const Event & event){
       const auto & jet = jets[i];
       fill_jetHist(jet,alljets,w);
       fill_subjetHist(jet,allsubjets,w);
+      tau32->Fill(jet.tau3()/jet.tau2(),w);
+      tau21->Fill(jet.tau2()/jet.tau1(),w);
       for (unsigned int m =0; m<m_usertopjet.size(); ++m){ 
         if(m_usertopjet[m] == i){  
           fill_jetHist(jet,usertopjets[m],w);
@@ -191,6 +198,10 @@ void TopJetHists::fill(const Event & event){
         if(i==0)deltaRmin_1->Fill(drmin, w);
         else deltaRmin_2->Fill(drmin, w);
       }
+      auto nextak4jet = *closestParticle(jet, *event.jets);
+      auto drminak4jet = deltaR(jet, nextak4jet);
+      deltaRmin_ak4jet->Fill(drminak4jet,w);
+      invmass_topjetnexak4jet->Fill((jet.v4()+nextak4jet.v4()).M(),w);
     }
 }
 
