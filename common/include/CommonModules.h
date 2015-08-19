@@ -1,8 +1,11 @@
 #pragma once
 #include "UHH2/core/include/AnalysisModule.h"
-#include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/core/include/Selection.h"
+#include "UHH2/core/include/Utils.h" 
+
+#include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/NSelections.h"
+#include "UHH2/common/include/JetIds.h"
 
 /** \brief Run a configurable list commonly used modules
  *
@@ -22,6 +25,7 @@
  *  - ElectronCleaner
  *  - Muon Cleaner
  *  - Tau Cleaner
+ *  - PF ID JEt Cleaning
  *  - Jet Lepton Cleaning
  *  - JetCleaner
  *  - HTCalculator
@@ -49,7 +53,7 @@
  */
 class CommonModules: public uhh2::AnalysisModule {
 public:
-    
+    CommonModules();
     // disable certain modules; see list above
     void disable_mclumiweight();
     void disable_mcpileupreweight();
@@ -58,6 +62,7 @@ public:
     void disable_lumisel();
     void disable_metfilters();
     void disable_pvfilter();
+    void disable_jetpfidfilter(){fail_if_init();jetpfidcleaner=false;};
     void switch_jetlepcleaner(bool status = true){fail_if_init();jetlepcleaner=status;}
     void switch_jetPtSorter(bool status = true){fail_if_init();jetptsort=status;}
 
@@ -77,6 +82,10 @@ public:
         fail_if_init();
         tauid = tauid_;
     }
+    void change_pf_id(JetPFID::wp working_point_){
+      fail_if_init();
+      working_point=working_point_;
+    }
     virtual bool process(uhh2::Event & event) override;
     void init(uhh2::Context & ctx);
 
@@ -88,8 +97,9 @@ private:
     ElectronId eleid;
     MuonId muid;
     TauId tauid;
+    JetPFID::wp working_point;
     
-    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, jetptsort = false, metfilters = true, pvfilter = true;
+    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, jetptsort = false, metfilters = true, pvfilter = true, jetpfidcleaner=true; ;
 
     bool init_done = false;
 
