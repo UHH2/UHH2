@@ -66,24 +66,6 @@ namespace {
 
 }
 
-bool ElectronID_CSA14_50ns_loose(const Electron & ele, const uhh2::Event & event){
-    static const auto thresholds_barrel = ele_cutvalues{0.016f, 0.080f, 0.012f, 0.15f, 0.019f, 0.036f, 0.11f, 0.18f, 1.0f, 1.0f};
-    static const auto thresholds_endcap = ele_cutvalues{0.025f, 0.097f, 0.032f, 0.12f, 0.099f, 0.880f, 0.11f, 0.21f, 1.0f, 1.0f};
-    return passes_id(ele, event, thresholds_barrel, thresholds_endcap);
-}
-
-bool ElectronID_CSA14_50ns_medium(const Electron & ele, const uhh2::Event & event){
-    static const auto thresholds_barrel = ele_cutvalues{0.015f, 0.051f, 0.010f, 0.100f, 0.012f, 0.030f, 0.053f, 0.14f, 1.0f, 1.0f};
-    static const auto thresholds_endcap = ele_cutvalues{0.023f, 0.056f, 0.030f, 0.099f, 0.068f, 0.780f, 0.110f, 0.15f, 1.0f, 1.0f};
-    return passes_id(ele, event, thresholds_barrel, thresholds_endcap);
-}
-
-bool ElectronID_CSA14_50ns_tight(const Electron & ele, const uhh2::Event & event){
-    static const auto thresholds_barrel = ele_cutvalues{0.012f, 0.024f, 0.010f, 0.074f, 0.0091f, 0.017f, 0.026f, 0.10f, 1.0f, 1.0f};
-    static const auto thresholds_endcap = ele_cutvalues{0.019f, 0.043f, 0.029f, 0.080f, 0.0370f, 0.065f, 0.076f, 0.14f, 1.0f, 1.0f};
-    return passes_id(ele, event, thresholds_barrel, thresholds_endcap);
-}
-
 bool ElectronID_PHYS14_25ns_veto(const Electron& electron, const uhh2::Event& event){
 
   static constexpr const auto thresholds_barrel = ele_cutvalues{
@@ -306,7 +288,6 @@ bool ElectronID_PHYS14_25ns_medium_noIso(const Electron& electron, const uhh2::E
   return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
 }
 
-
 bool ElectronID_PHYS14_25ns_tight_noIso(const Electron& electron, const uhh2::Event& event){
 
   static constexpr const auto thresholds_barrel = ele_cutvalues{
@@ -337,6 +318,505 @@ bool ElectronID_PHYS14_25ns_tight_noIso(const Electron& electron, const uhh2::Ev
 
   return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
 }
+
+bool ElectronID_Spring15_25ns_veto(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0152,
+    .abs_dPhiIn                  = 0.216,
+    .full5x5_sigmaIetaIeta       = 0.0114,
+    .HoverE                      = 0.181,
+    .fabs_d0                     = 0.0564,
+    .fabs_dz                     = 0.472,
+    .fabs_1oE_1op                = 0.207,
+    .pfiso_dbeta_dr03            = 0.126,
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0113,
+    .abs_dPhiIn                  = 0.237,
+    .full5x5_sigmaIetaIeta       = 0.0352,
+    .HoverE                      = 0.116,
+    .fabs_d0                     = 0.222,
+    .fabs_dz                     = 0.921,
+    .fabs_1oE_1op                = 0.174,
+    .pfiso_dbeta_dr03            = 0.144,
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 3.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_25ns_loose(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0105,
+    .abs_dPhiIn                  = 0.115,
+    .full5x5_sigmaIetaIeta       = 0.0103,
+    .HoverE                      = 0.104,
+    .fabs_d0                     = 0.0261,
+    .fabs_dz                     = 0.41,
+    .fabs_1oE_1op                = 0.102,
+    .pfiso_dbeta_dr03            = 0.0893,
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00814,
+    .abs_dPhiIn                  = 0.182,
+    .full5x5_sigmaIetaIeta       = 0.0301,
+    .HoverE                      = 0.0897,
+    .fabs_d0                     = 0.118,
+    .fabs_dz                     = 0.822,
+    .fabs_1oE_1op                = 0.126,
+    .pfiso_dbeta_dr03            = 0.121,
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_25ns_medium(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0103,
+    .abs_dPhiIn                  = 0.0336,
+    .full5x5_sigmaIetaIeta       = 0.0101,
+    .HoverE                      = 0.0876,
+    .fabs_d0                     = 0.0118,
+    .fabs_dz                     = 0.373,
+    .fabs_1oE_1op                = 0.0174,
+    .pfiso_dbeta_dr03            = 0.0766,
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00733,
+    .abs_dPhiIn                  = 0.114,
+    .full5x5_sigmaIetaIeta       = 0.0283,
+    .HoverE                      = 0.0678,
+    .fabs_d0                     = 0.0739,
+    .fabs_dz                     = 0.602,
+    .fabs_1oE_1op                = 0.0898,
+    .pfiso_dbeta_dr03            = 0.0678,
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_25ns_tight(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00926,
+    .abs_dPhiIn                  = 0.0336,
+    .full5x5_sigmaIetaIeta       = 0.0101,
+    .HoverE                      = 0.0597,
+    .fabs_d0                     = 0.0111,
+    .fabs_dz                     = 0.0466,
+    .fabs_1oE_1op                = 0.012,
+    .pfiso_dbeta_dr03            = 0.0354,
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00724,
+    .abs_dPhiIn                  = 0.0918,
+    .full5x5_sigmaIetaIeta       = 0.0279,
+    .HoverE                      = 0.0615,
+    .fabs_d0                     = 0.0351,
+    .fabs_dz                     = 0.417,
+    .fabs_1oE_1op                = 0.00999,
+    .pfiso_dbeta_dr03            = 0.0646,
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_25ns_veto_noIso(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0152,
+    .abs_dPhiIn                  = 0.216,
+    .full5x5_sigmaIetaIeta       = 0.0114,
+    .HoverE                      = 0.181,
+    .fabs_d0                     = 0.0564,
+    .fabs_dz                     = 0.472,
+    .fabs_1oE_1op                = 0.207,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0113,
+    .abs_dPhiIn                  = 0.237,
+    .full5x5_sigmaIetaIeta       = 0.0352,
+    .HoverE                      = 0.116,
+    .fabs_d0                     = 0.222,
+    .fabs_dz                     = 0.921,
+    .fabs_1oE_1op                = 0.174,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 3.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_25ns_loose_noIso(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0105,
+    .abs_dPhiIn                  = 0.115,
+    .full5x5_sigmaIetaIeta       = 0.0103,
+    .HoverE                      = 0.104,
+    .fabs_d0                     = 0.0261,
+    .fabs_dz                     = 0.41,
+    .fabs_1oE_1op                = 0.102,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00814,
+    .abs_dPhiIn                  = 0.182,
+    .full5x5_sigmaIetaIeta       = 0.0301,
+    .HoverE                      = 0.0897,
+    .fabs_d0                     = 0.118,
+    .fabs_dz                     = 0.822,
+    .fabs_1oE_1op                = 0.126,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_25ns_medium_noIso(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0103,
+    .abs_dPhiIn                  = 0.0336,
+    .full5x5_sigmaIetaIeta       = 0.0101,
+    .HoverE                      = 0.0876,
+    .fabs_d0                     = 0.0118,
+    .fabs_dz                     = 0.373,
+    .fabs_1oE_1op                = 0.0174,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00733,
+    .abs_dPhiIn                  = 0.114,
+    .full5x5_sigmaIetaIeta       = 0.0283,
+    .HoverE                      = 0.0678,
+    .fabs_d0                     = 0.0739,
+    .fabs_dz                     = 0.602,
+    .fabs_1oE_1op                = 0.0898,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_25ns_tight_noIso(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00926,
+    .abs_dPhiIn                  = 0.0336,
+    .full5x5_sigmaIetaIeta       = 0.0101,
+    .HoverE                      = 0.0597,
+    .fabs_d0                     = 0.0111,
+    .fabs_dz                     = 0.0466,
+    .fabs_1oE_1op                = 0.012,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00724,
+    .abs_dPhiIn                  = 0.0918,
+    .full5x5_sigmaIetaIeta       = 0.0279,
+    .HoverE                      = 0.0615,
+    .fabs_d0                     = 0.0351,
+    .fabs_dz                     = 0.417,
+    .fabs_1oE_1op                = 0.00999,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_50ns_veto(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0126,
+    .abs_dPhiIn                  = 0.107,
+    .full5x5_sigmaIetaIeta       = 0.012,
+    .HoverE                      = 0.186,
+    .fabs_d0                     = 0.0621,
+    .fabs_dz                     = 0.613,
+    .fabs_1oE_1op                = 0.239,
+    .pfiso_dbeta_dr03            = 0.161,
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0109,
+    .abs_dPhiIn                  = 0.219,
+    .full5x5_sigmaIetaIeta       = 0.0339,
+    .HoverE                      = 0.0962,
+    .fabs_d0                     = 0.279,
+    .fabs_dz                     = 0.947,
+    .fabs_1oE_1op                = 0.141,
+    .pfiso_dbeta_dr03            = 0.193,
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 3.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+
+bool ElectronID_Spring15_50ns_loose(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00976,
+    .abs_dPhiIn                  = 0.0929,
+    .full5x5_sigmaIetaIeta       = 0.0105,
+    .HoverE                      = 0.0765,
+    .fabs_d0                     = 0.0227,
+    .fabs_dz                     = 0.379,
+    .fabs_1oE_1op                = 0.184,
+    .pfiso_dbeta_dr03            = 0.118,
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00952,
+    .abs_dPhiIn                  = 0.181,
+    .full5x5_sigmaIetaIeta       = 0.0318,
+    .HoverE                      = 0.0824,
+    .fabs_d0                     = 0.242,
+    .fabs_dz                     = 0.921,
+    .fabs_1oE_1op                = 0.125,
+    .pfiso_dbeta_dr03            = 0.118,
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_50ns_medium(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0094,
+    .abs_dPhiIn                  = 0.0296,
+    .full5x5_sigmaIetaIeta       = 0.0101,
+    .HoverE                      = 0.0372,
+    .fabs_d0                     = 0.0151,
+    .fabs_dz                     = 0.238,
+    .fabs_1oE_1op                = 0.118,
+    .pfiso_dbeta_dr03            = 0.0987,
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00773,
+    .abs_dPhiIn                  = 0.148,
+    .full5x5_sigmaIetaIeta       = 0.0287,
+    .HoverE                      = 0.0546,
+    .fabs_d0                     = 0.0535,
+    .fabs_dz                     = 0.572,
+    .fabs_1oE_1op                = 0.104,
+    .pfiso_dbeta_dr03            = 0.0902,
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_50ns_tight(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0095,
+    .abs_dPhiIn                  = 0.0291,
+    .full5x5_sigmaIetaIeta       = 0.0101,
+    .HoverE                      = 0.0372,
+    .fabs_d0                     = 0.0144,
+    .fabs_dz                     = 0.323,
+    .fabs_1oE_1op                = 0.0174,
+    .pfiso_dbeta_dr03            = 0.0468,
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00762,
+    .abs_dPhiIn                  = 0.0439,
+    .full5x5_sigmaIetaIeta       = 0.0287,
+    .HoverE                      = 0.0544,
+    .fabs_d0                     = 0.0377,
+    .fabs_dz                     = 0.571,
+    .fabs_1oE_1op                = 0.01,
+    .pfiso_dbeta_dr03            = 0.0759,
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_50ns_veto_noIso(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0126,
+    .abs_dPhiIn                  = 0.107,
+    .full5x5_sigmaIetaIeta       = 0.012,
+    .HoverE                      = 0.186,
+    .fabs_d0                     = 0.0621,
+    .fabs_dz                     = 0.613,
+    .fabs_1oE_1op                = 0.239,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0109,
+    .abs_dPhiIn                  = 0.219,
+    .full5x5_sigmaIetaIeta       = 0.0339,
+    .HoverE                      = 0.0962,
+    .fabs_d0                     = 0.279,
+    .fabs_dz                     = 0.947,
+    .fabs_1oE_1op                = 0.141,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 3.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+
+bool ElectronID_Spring15_50ns_loose_noIso(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00976,
+    .abs_dPhiIn                  = 0.0929,
+    .full5x5_sigmaIetaIeta       = 0.0105,
+    .HoverE                      = 0.0765,
+    .fabs_d0                     = 0.0227,
+    .fabs_dz                     = 0.379,
+    .fabs_1oE_1op                = 0.184,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00952,
+    .abs_dPhiIn                  = 0.181,
+    .full5x5_sigmaIetaIeta       = 0.0318,
+    .HoverE                      = 0.0824,
+    .fabs_d0                     = 0.242,
+    .fabs_dz                     = 0.921,
+    .fabs_1oE_1op                = 0.125,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_50ns_medium_noIso(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0094,
+    .abs_dPhiIn                  = 0.0296,
+    .full5x5_sigmaIetaIeta       = 0.0101,
+    .HoverE                      = 0.0372,
+    .fabs_d0                     = 0.0151,
+    .fabs_dz                     = 0.238,
+    .fabs_1oE_1op                = 0.118,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00773,
+    .abs_dPhiIn                  = 0.148,
+    .full5x5_sigmaIetaIeta       = 0.0287,
+    .HoverE                      = 0.0546,
+    .fabs_d0                     = 0.0535,
+    .fabs_dz                     = 0.572,
+    .fabs_1oE_1op                = 0.104,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
+bool ElectronID_Spring15_50ns_tight_noIso(const Electron& electron, const uhh2::Event& event){
+
+  static constexpr const auto thresholds_barrel = ele_cutvalues{
+    .abs_dEtaIn                  = 0.0095,
+    .abs_dPhiIn                  = 0.0291,
+    .full5x5_sigmaIetaIeta       = 0.0101,
+    .HoverE                      = 0.0372,
+    .fabs_d0                     = 0.0144,
+    .fabs_dz                     = 0.323,
+    .fabs_1oE_1op                = 0.0174,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.    ,
+    .cr_misshits                 = 2.
+  };
+
+  static constexpr const auto thresholds_endcap = ele_cutvalues{
+    .abs_dEtaIn                  = 0.00762,
+    .abs_dPhiIn                  = 0.0439,
+    .full5x5_sigmaIetaIeta       = 0.0287,
+    .HoverE                      = 0.0544,
+    .fabs_d0                     = 0.0377,
+    .fabs_dz                     = 0.571,
+    .fabs_1oE_1op                = 0.01,
+    .pfiso_dbeta_dr03            = std::numeric_limits<float>::infinity(),
+    .passes_conversion_rejection = 1.      ,
+    .cr_misshits                 = 1.
+  };
+
+  return passes_id(electron, event, thresholds_barrel, thresholds_endcap);
+}
+
 ////
 
 bool ElectronID_MVAnotrig_PHYS14_loose(const Electron& electron, const uhh2::Event&){
