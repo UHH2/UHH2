@@ -45,6 +45,8 @@ public:
   const std::vector<Jet> & subjets() const{return m_subjets;}
   
   float get_tag(tag t) const{ return tags.get_tag(static_cast<int>(t)); }
+  float has_tag(tag t) const{ return tags.has_tag(static_cast<int>(t)); }
+ 
 
   // setters
   void set_qjets_volatility(float x){m_qjets_volatility = x;}
