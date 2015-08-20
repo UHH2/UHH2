@@ -98,7 +98,7 @@ class TopJetHists: public JetHistsBase{
   std::vector<jetHist> usertopjets;
   std::vector<subjetHist> usersubjets;
   TH1F *number;
-   TH1F *deltaRmin_1, *deltaRmin_2, *tau32,*tau21,*deltaRmin_ak4jet,*invmass_topjetnexak4jet;
+   TH1F *deltaRmin_1, *deltaRmin_2, *tau32,*tau21,*deltaR_ak4jet,*invmass_topjetak4jet,*HTT_mass,*fRec;
 
   jetHist alljets;
   subjetHist allsubjets;
