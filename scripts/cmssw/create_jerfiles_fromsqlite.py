@@ -18,7 +18,7 @@ process.jec = cms.ESSource("PoolDBESSource",
       toGet = cms.VPSet(
       cms.PSet(
             record = cms.string('JetCorrectionsRecord'),
-            tag    = cms.string('JetCorrectorParametersCollection_Summer15_50nsV2_MC_AK4PFchs'),
+            tag    = cms.string('JetCorrectorParametersCollection_Summer15_50nsV4_MC_AK4PFchs'),
             label  = cms.untracked.string('AK4PFchs')
             ),
 
@@ -26,7 +26,7 @@ process.jec = cms.ESSource("PoolDBESSource",
       ## note that the tag name is specific for the particular sqlite file 
       ), 
       ##download the latest sqlite file from https://twiki.cern.ch/twiki/bin/viewauth/CMS/JECDataMC
-      connect = cms.string('sqlite:Summer15_50nsV2_MC.db')
+      connect = cms.string('sqlite:../../../PhysicsTools/PatAlgos/test/Summer15_50nsV4_MC.db')
 )
 ## add an es_prefer statement to resolve a possible conflict from simultaneous connection to a global tag
 process.es_prefer_jec = cms.ESPrefer('PoolDBESSource','jec')
