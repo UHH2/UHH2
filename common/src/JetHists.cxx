@@ -150,8 +150,10 @@ TopJetHists::TopJetHists(Context & ctx,
   deltaRmin_2 = book<TH1F>("deltaRmin_2", "#Delta R_{min}(2nd jet,nearest jet)", 40, 0, 8.0);
   tau32 = book<TH1F>("tau32", "#tau_{3}/#tau_{2}", 50, 0, 1.0);
   tau21 = book<TH1F>("tau21", "#tau_{2}/#tau_{1}", 50, 0, 1.0);
-  deltaRmin_ak4jet= book<TH1F>("deltaRmin_ak4jet", "#Delta R_{min}(jet,nearest ak4 jet)", 40, 0, 8.0);
-  invmass_topjetnexak4jet = book<TH1F>("invmass_topjetnexak4jet", "invariant mass(jet,nearest ak4 jet)", 100, 0, 1000);
+  deltaR_ak4jet= book<TH1F>("deltaR_ak4jet", "#Delta R(jet,ak4 jet)", 40, 0, 8.0);
+  invmass_topjetak4jet = book<TH1F>("invmass_topjetak4jet", "invariant mass(jet,ak4 jet)", 100, 0, 1000);
+  HTT_mass = book<TH1F>("HTT_mass", "HTT mass", 100, 0, 1000);
+  fRec = book<TH1F>("fRec", "fRec", 50,0,1); 
 
   if(!collection.empty()){
     h_topjets = ctx.get_handle<std::vector<TopJet> >(collection);
@@ -168,6 +170,8 @@ void TopJetHists::add_iTopJetHists(unsigned int UserJet, double minPt, double ma
 void TopJetHists::fill(const Event & event){
     auto w = event.weight;
     vector<TopJet> jets = collection.empty() ? *event.topjets : event.get(h_topjets);
+    vector<Jet> ak4jets = *event.jets;
+
     //assert(jets);
     if(topjetid){
       vector<TopJet> help_jets;
@@ -198,10 +202,16 @@ void TopJetHists::fill(const Event & event){
         if(i==0)deltaRmin_1->Fill(drmin, w);
         else deltaRmin_2->Fill(drmin, w);
       }
-      auto nextak4jet = *closestParticle(jet, *event.jets);
-      auto drminak4jet = deltaR(jet, nextak4jet);
-      deltaRmin_ak4jet->Fill(drminak4jet,w);
-      invmass_topjetnexak4jet->Fill((jet.v4()+nextak4jet.v4()).M(),w);
+    
+      for (unsigned int j = 0; j <ak4jets.size(); j++)
+         {
+            const auto & ak4jet = ak4jets[i];
+            double deltaRtopjetak4jet = deltaR(jet, ak4jet);
+            deltaR_ak4jet->Fill(deltaRtopjetak4jet,w);
+            invmass_topjetak4jet->Fill((jet.v4()+ak4jet.v4()).M(),w);
+         }
+      if (jet.has_tag(jet.tagname2tag("mass"))) HTT_mass ->Fill(jet.get_tag(jet.tagname2tag("mass")),w);
+      if (jet.has_tag(jet.tagname2tag("fRec"))) fRec ->Fill(jet.get_tag(jet.tagname2tag("fRec")),w);
     }
 }
 

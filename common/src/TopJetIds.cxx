@@ -30,6 +30,28 @@ CMSTopTag::CMSTopTag(double mminLower, double mjetLower, double mjetUpper, MassT
 CMSTopTag::CMSTopTag(MassType typeOfMass): m_mminLower(50.), m_mjetLower(140.), m_mjetUpper(250.), m_typeOfMass(typeOfMass){}
 
 
+bool Type2TopTag::operator()(const TopJet & topjet, const uhh2::Event &) const {
+   float mjet = 0.0;
+   switch(m_typeOfMass)
+    {
+    case MassType::ungroomed : mjet=topjet.v4().M(); break;
+    case MassType::groomed : mjet=m_groomed(topjet); break;
+    default: std::cout<<"Type2TopTag Mass type not valid"<<std::endl;
+    }
+    if(mjet < m_mjetLower) return false;
+    if(mjet > m_mjetUpper) return false;
+
+    return true;
+}
+
+Type2TopTag::Type2TopTag(double mjetLower, double mjetUpper, MassType typeOfMass):
+    m_mjetLower(mjetLower), m_mjetUpper(mjetUpper), m_typeOfMass(typeOfMass){}
+
+Type2TopTag::Type2TopTag(MassType typeOfMass): m_mjetLower(60.), m_mjetUpper(100.), m_typeOfMass(typeOfMass){}
+
+
+
+
 bool HEPTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const{
     
   double mjet;
@@ -105,6 +127,21 @@ HEPTopTag::HEPTopTag(double ptJetMin, double massWindowLower, double massWindowU
   m_massWindowLower(massWindowLower), m_massWindowUpper(massWindowUpper), m_cutCondition2(cutCondition2), m_cutCondition3(cutCondition3){}
 
 
+//uses WP with 40% signal efficiency as default (see https://indico.cern.ch/event/393337/#preview:1078843)
+HEPTopTagV2::HEPTopTagV2(double minHTTmass, double maxHTTmass, double maxfRec):m_minHTTmass(minHTTmass), m_maxHTTmass(maxHTTmass), m_maxfRec(maxfRec){}
+bool HEPTopTagV2::operator()(const TopJet & topjet, const uhh2::Event &) const{
+   if (!topjet.has_tag(topjet.tagname2tag("mass"))) return false;
+   if (!topjet.has_tag(topjet.tagname2tag("fRec"))) return false;
+   
+   double fRec = topjet.get_tag(topjet.tagname2tag("fRec"));
+   double HTTmass = topjet.get_tag(topjet.tagname2tag("mass"));
+   
+   if (HTTmass > m_minHTTmass && HTTmass < m_maxHTTmass && fRec <m_maxfRec) return true;
+
+   return false;
+}
+
+
     
 bool Tau32::operator()(const TopJet & topjet, const uhh2::Event &) const {
     auto tau2 = topjet.tau2();
@@ -113,6 +150,16 @@ bool Tau32::operator()(const TopJet & topjet, const uhh2::Event &) const {
     if(!std::isfinite(tau3)) return false;
     return tau3 / tau2 < threshold;
 }
+
+
+bool Tau21::operator()(const TopJet & topjet, const uhh2::Event &) const {
+    auto tau1 = topjet.tau1();
+    if(!std::isfinite(tau1) || tau1 == 0.0) return false;
+    auto tau2= topjet.tau2();
+    if(!std::isfinite(tau2)) return false;
+    return tau2 / tau1 < threshold;
+}
+
 
 
 bool HiggsTag::operator()(TopJet const & topjet, uhh2::Event const & event) const {
