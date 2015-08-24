@@ -36,7 +36,7 @@
 class JetHistsBase: public uhh2::Hists {
 protected:
   struct jetHist{
-      TH1F* pt, *eta, *phi, *mass, *csv; 
+      TH1F* pt, *eta, *phi, *mass, *csv, *mvahiggsdiscr, *prunedmass, *subjet_sum_mass; 
   };
     
   JetHistsBase(uhh2::Context & ctx, const std::string & dirname);
@@ -88,6 +88,9 @@ class TopJetHists: public JetHistsBase{
   //UserJet defines the i-th Jet to be plotted. The other variables are needed for plotting and to have different histogram names/axis. For each TopJet all its SubJets are also plotted. 
   void add_iTopJetHists(unsigned int UserJet, double minPt=0, double maxPt=800, double minPt_sub=0, double maxPt_sub=500, const std::string & axisSuffix="userjet", const std::string & histSuffix="userjet");
  protected:
+  JetHistsBase::jetHist book_topJetHist(const std::string & axisSuffix, const std::string & histSuffix, double minPt, double maxPt);
+  void fill_topJetHist(const TopJet & jet, JetHistsBase::jetHist & jet_hist, double  weight);
+
   struct subjetHist {
     TH1F* number, *sum4Vec, *pt, *eta, *phi, *mass, *csv;
   };
@@ -98,7 +101,7 @@ class TopJetHists: public JetHistsBase{
   std::vector<jetHist> usertopjets;
   std::vector<subjetHist> usersubjets;
   TH1F *number;
-   TH1F *deltaRmin_1, *deltaRmin_2, *tau32,*tau21,*deltaR_ak4jet,*invmass_topjetak4jet,*HTT_mass,*fRec;
+  TH1F *deltaRmin_1, *deltaRmin_2, *tau32,*tau21,*deltaR_ak4jet,*invmass_topjetak4jet,*HTT_mass,*fRec;
 
   jetHist alljets;
   subjetHist allsubjets;
