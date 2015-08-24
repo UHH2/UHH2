@@ -2,7 +2,6 @@
 #include "UHH2/common/include/LuminosityHists.h"
 #include "UHH2/common/include/NSelections.h"
 #include "UHH2/common/include/LumiSelection.h"
-#include "UHH2/common/include/ElectronIds.h"
 #include "UHH2/common/include/TriggerSelection.h"
 
 using namespace uhh2;
