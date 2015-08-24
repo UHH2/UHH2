@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
-<!ENTITY DATA_SingleMu SYSTEM "../../common/datasets/DATA_SingleMu.xml">
-<!ENTITY DATA_SingleElectron SYSTEM "../../common/datasets/DATA_SingleElectron.xml">
+<!ENTITY DATA_SingleMu SYSTEM "../../common/datasets/RunII_50ns_v2/DATA_SingleMu.xml">
+<!ENTITY DATA_SingleEle SYSTEM "../../common/datasets/RunII_50ns_v2/DATA_SingleEle.xml">
+<!ENTITY DATA_JetHT SYSTEM "../../common/datasets/RunII_50ns_v2/DATA_JetHT.xml">
 ]>
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
    <Library Name="libTestSUHH2common"/>
-   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
 
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+<!--
         <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="SingleMu" Cacheable="False">
 	    &DATA_SingleMu;
             <InputTree Name="AnalysisTree" /> 
         </InputData>
-
-	<InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="SingleElectron" Cacheable="False">
-	    &DATA_SingleElectron;
+-->
+	<InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="SingleEle" Cacheable="False">
+	    &DATA_SingleEle;
             <InputTree Name="AnalysisTree" /> 
         </InputData>  
 
+<!--
+	<InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="JetHT" Cacheable="False">
+	    &DATA_JetHT;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>  
+-->
         <UserConfig>
-            
-            <Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v1/Lumifile.root" />
-            <Item Name="lumihists_lumi_per_bin" Value="0.2"/>
+            <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
+	    <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
+            <Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v2/Lumifile.root" />
+            <Item Name="lumihists_lumi_per_bin" Value="1"/>
 
             <Item Name="AnalysisModule" Value="TestLumiHists" /> 
 	</UserConfig>
