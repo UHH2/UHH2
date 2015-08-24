@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
   <!ENTITY NEVT "-1">
-  <!ENTITY PRESELdir "/nfs/dust/cms/user/mameyer/TTDMDM/PU-reweighting/">
-  <!ENTITY TTbarDMJets_EFT_M-200 SYSTEM "../../common/datasets/MC_TTbarDMJets_EFT_M-200.xml">
-  <!ENTITY TTbar SYSTEM "../../common/datasets/MC_TTbar.xml">
-  <!ENTITY Data SYSTEM "../../common/datasets/DATA_SingleMu.xml">
+  <!ENTITY PRESELdir "/nfs/dust/cms/user/mameyer/TTDMDM/PU-reweighting_v2/">
+  <!ENTITY TTbarDMJets_pseudoscalar_Mchi-1_Mphi-300 SYSTEM "../../common/datasets/RunII_50ns_v2/MC_TTbarDMJets_pseudoscalar_Mchi-1_Mphi-300.xml">
+  <!ENTITY TTbar SYSTEM "../../common/datasets/RunII_50ns_v2/MC_TTbar.xml">
+  <!ENTITY Data SYSTEM "../../common/datasets/RunII_50ns_v2/DATA_SingleMu.xml">
 
 ]>
 
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
     <Library Name="libTestSUHH2common"/>
    
-   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&PRESELdir;/" PostFix="" TargetLumi="1" >
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&PRESELdir;/" PostFix="" TargetLumi="42.477" >
 
    
       <InputData Lumi="1" NEventsMax="&NEVT;" Type="Data" Version="Data" Cacheable="False">
@@ -20,8 +20,8 @@
         </InputData>
 
         
-         <InputData Lumi="1" NEventsMax="&NEVT;" Type="MC" Version="TTbarDMJets_EFT_M-200" Cacheable="False">
-          &TTbarDMJets_EFT_M-200;
+         <InputData Lumi="1" NEventsMax="&NEVT;" Type="MC" Version="TTbarDMJets_pseudoscalar_Mchi-1_Mphi-300" Cacheable="False">
+          &TTbarDMJets_pseudoscalar_Mchi-1_Mphi-300;
           <InputTree Name="AnalysisTree" />
         </InputData>
 
@@ -39,11 +39,16 @@
             <Item Name="TauCollection" Value="slimmedTaus" />
             <Item Name="JetCollection" Value="slimmedJets" />
             <Item Name="GenJetCollection" Value="slimmedGenJets" /> 
-            <Item Name="METName" Value="slimmedMETs" />
+            <Item Name="METName" Value="slimmedMETsNoHF" />
             <Item Name="TopJetCollection" Value="slimmedJetsAK8_CMSTopTag" />
            <Item Name="GenParticleCollection" Value="GenParticles" /> 
 
             <Item Name="use_sframe_weight" Value="false" />
+
+            <Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v2/Lumifile.root" />
+            
+            
+            
             <Item Name="AnalysisModule" Value="TestPUReweighting" />
         </UserConfig>
 

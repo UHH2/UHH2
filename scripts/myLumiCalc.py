@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
-#usage:
-#1. run lcr2.py:
-#  cd /afs/cern.ch/user/m/marlow/public/lcr2
-#  python lcr2.py -i /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-251252_13TeV_PromptReco_Collisions15_JSON.txt --lumibyls -o /afs/desy.de/user/p/peiffer/xxl-af-cms/CMSSW_7_4_7/src/UHH2/core/python/TempOut.csv
+# usage:
+# 1. install brilcalc (see http://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html)
+#  brilcalc lumi -i /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-254349_13TeV_PromptReco_Collisions15_JSON_v2.txt --byls -o TempOut.csv
 #
 # 2. run myLumiCalc.py:
-#  cd /afs/desy.de/user/p/peiffer/xxl-af-cms/CMSSW_7_4_7/src/UHH2/core/python
 #  ./myLumiCalc.py outfilename=Out.root infilename=TempOut.csv
 
 
@@ -70,6 +68,8 @@ infile = open("TempOut.csv", "r")
 infile.readline()
 for line in infile:
     #print line
+    if line.startswith('#'):
+        continue
     run = line[0:line.find(":")]
     s.runnr = int(run)
     line = line[len(run)+1:]
