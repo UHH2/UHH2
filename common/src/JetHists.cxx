@@ -201,7 +201,7 @@ void TopJetHists::fill(const Event & event){
     number->Fill(jets.size(), w);
     for(unsigned int i = 0; i <jets.size(); i++){
       const auto & jet = jets[i];
-      fill_jetHist(jet,alljets,w);
+      fill_topJetHist(jet,alljets,w);
       fill_subjetHist(jet,allsubjets,w);
       tau32->Fill(jet.tau3()/jet.tau2(),w);
       tau21->Fill(jet.tau2()/jet.tau1(),w);
