@@ -12,7 +12,10 @@
  */
 class PrimaryLepton: public uhh2::AnalysisModule {
 public:
-    explicit PrimaryLepton(uhh2::Context & ctx, const std::string & h_name="PrimaryLepton");
+    explicit PrimaryLepton(uhh2::Context & ctx, 
+    					   const std::string & h_name="PrimaryLepton",
+    					   float min_ele_pt = 0.,
+    					   float min_mu_pt = 0.);
 
     virtual bool process(uhh2::Event & event) override;
 
@@ -20,4 +23,6 @@ public:
 
 private:
     uhh2::Event::Handle<FlavorParticle> h_primlep;
+    float min_ele_pt_;
+    float min_mu_pt_;
 };
