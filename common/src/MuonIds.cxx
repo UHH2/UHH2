@@ -7,10 +7,10 @@ MuonIDKinematic::MuonIDKinematic(double ptmin_, double etamax_): ptmin(ptmin_), 
 bool MuonIDKinematic::operator()(const Muon & muon, const Event &) const {
     return muon.pt() > ptmin and fabs(muon.eta()) < etamax;
 }
-    
-bool MuonIDTight::operator()(const Muon & muon, const Event &) const {
-    return muon.get_bool(Muon::tight);
-}
+
+bool MuonIDLoose ::operator()(const Muon& muo, const Event&) const { return muo.get_bool(Muon::loose);  }
+bool MuonIDMedium::operator()(const Muon& muo, const Event&) const { return muo.get_bool(Muon::medium); }
+bool MuonIDTight ::operator()(const Muon& muo, const Event&) const { return muo.get_bool(Muon::tight);  }
 
 MuonIso::MuonIso(double iso_):iso(iso_){}
 

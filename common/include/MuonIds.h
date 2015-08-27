@@ -5,12 +5,20 @@
 
 // see also ElectronIds.h for general comments
 
+// https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2
+class MuonIDLoose {
+ public:
+  bool operator()(const Muon&, const uhh2::Event&) const;
+};
 
-// the tight muon id according to
-// https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId
+class MuonIDMedium {
+ public:
+  bool operator()(const Muon&, const uhh2::Event&) const;
+};
+
 class MuonIDTight {
-public:
-    bool operator()(const Muon & muon, const uhh2::Event & event) const;
+ public:
+  bool operator()(const Muon&, const uhh2::Event&) const;
 };
 
 // only kinematic cuts, with no further id
