@@ -49,3 +49,15 @@ private:
    TH1F *h_npu_mc;
    TH1F* h_npu_data;
 };
+
+class MCScaleVariation: public uhh2::AnalysisModule {
+ public:
+  explicit MCScaleVariation(uhh2::Context & ctx);
+
+  virtual bool process(uhh2::Event & event) override;
+
+  private:
+  double syst_weight;
+  int i_mu_r = 0, i_mu_f = 0;
+
+};
