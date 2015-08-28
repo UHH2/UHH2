@@ -50,6 +50,13 @@ private:
    TH1F* h_npu_data;
 };
 
+/** \brief Vary renormalization and factorization scale up or down by factor 2
+ *
+ * Interprets "ScaleVariationMuR" and "ScaleVariationMuF" from Context, the values may be "up" or "down".
+ * Any other value will result in no scale variation. This method also will have no effect on samples
+ * where genInfo.systweight is not filled. 
+ */
+
 class MCScaleVariation: public uhh2::AnalysisModule {
  public:
   explicit MCScaleVariation(uhh2::Context & ctx);
