@@ -38,30 +38,33 @@ bool ElectronID_PHYS14_25ns_loose_noIso (const Electron&, const uhh2::Event&);
 bool ElectronID_PHYS14_25ns_medium_noIso(const Electron&, const uhh2::Event&);
 bool ElectronID_PHYS14_25ns_tight_noIso (const Electron&, const uhh2::Event&);
 
-bool ElectronID_Spring15_25ns_veto (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring15_25ns_veto  (const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_25ns_loose (const Electron&, const uhh2::Event&);
-bool ElectronID_Spring15_25ns_medium (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring15_25ns_medium(const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_25ns_tight (const Electron&, const uhh2::Event&);
 
-bool ElectronID_Spring15_25ns_veto_noIso (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring15_25ns_veto_noIso  (const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_25ns_loose_noIso (const Electron&, const uhh2::Event&);
-bool ElectronID_Spring15_25ns_medium_noIso (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring15_25ns_medium_noIso(const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_25ns_tight_noIso (const Electron&, const uhh2::Event&);
 
-bool ElectronID_Spring15_50ns_veto (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring15_50ns_veto  (const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_50ns_loose (const Electron&, const uhh2::Event&);
-bool ElectronID_Spring15_50ns_medium (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring15_50ns_medium(const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_50ns_tight (const Electron&, const uhh2::Event&);
 
-bool ElectronID_Spring15_50ns_veto_noIso (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring15_50ns_veto_noIso  (const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_50ns_loose_noIso (const Electron&, const uhh2::Event&);
-bool ElectronID_Spring15_50ns_medium_noIso (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring15_50ns_medium_noIso(const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_50ns_tight_noIso (const Electron&, const uhh2::Event&);
 
 // Electron MVA ID
 // REF https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentificationRun2
 bool ElectronID_MVAnotrig_PHYS14_loose(const Electron&, const uhh2::Event&);
 bool ElectronID_MVAnotrig_PHYS14_tight(const Electron&, const uhh2::Event&);
+
+bool ElectronID_MVAnotrig_Spring15_25ns_loose(const Electron&, const uhh2::Event&);
+bool ElectronID_MVAnotrig_Spring15_25ns_tight(const Electron&, const uhh2::Event&);
 
 // Electron selectors for PF MINI-Isolation
 class Electron_MINIIso {

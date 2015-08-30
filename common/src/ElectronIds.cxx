@@ -862,6 +862,50 @@ bool ElectronID_MVAnotrig_PHYS14_tight(const Electron& electron, const uhh2::Eve
 
   return pass;
 }
+
+bool ElectronID_MVAnotrig_Spring15_25ns_loose(const Electron& electron, const uhh2::Event&){
+
+  bool pass(false);
+
+  const float MVA(electron.mvaNonTrigV0()), pt(electron.pt()), abs_etaSC(std::abs(electron.supercluster_eta()));
+
+  if(5. < pt && pt <= 10.){
+
+    if                         (abs_etaSC < 0.8)   pass = (MVA > -0.083313);
+    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) pass = (MVA > -0.235222);
+    else if                    (abs_etaSC < 2.5)   pass = (MVA > -0.670990);
+  }
+  else if(pt > 10.){
+
+    if                         (abs_etaSC < 0.8)   pass = (MVA >  0.913286);
+    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) pass = (MVA >  0.805013);
+    else if                    (abs_etaSC < 2.5)   pass = (MVA >  0.358969);
+  }
+
+  return pass;
+}
+
+bool ElectronID_MVAnotrig_Spring15_25ns_tight(const Electron& electron, const uhh2::Event&){
+
+  bool pass(false);
+
+  const float MVA(electron.mvaNonTrigV0()), pt(electron.pt()), abs_etaSC(std::abs(electron.supercluster_eta()));
+
+  if(5. < pt && pt <= 10.){
+
+    if                         (abs_etaSC < 0.8)   pass = (MVA >  0.287435);
+    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) pass = (MVA >  0.221846);
+    else if                    (abs_etaSC < 2.5)   pass = (MVA > -0.303263);
+  }
+  else if(pt > 10.){
+
+    if                         (abs_etaSC < 0.8)   pass = (MVA >  0.967083);
+    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) pass = (MVA >  0.929117);
+    else if                    (abs_etaSC < 2.5)   pass = (MVA >  0.726311);
+  }
+
+  return pass;
+}
 ///
 
 bool Electron_MINIIso::operator()(const Electron& ele, const uhh2::Event&) const {
