@@ -158,8 +158,8 @@ public:
     VetoId(const id_type & id): id_(id) {}
     
     bool operator()(const T & obj, const uhh2::Event & event) const {
-        if(id_(obj, event)) return true;
-        return false;
+        if(id_(obj, event)) return false;
+        return true;
     }
     
 private:
