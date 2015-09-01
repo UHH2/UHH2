@@ -31,6 +31,7 @@ void CommonModules::init(Context & ctx){
     bool is_mc = ctx.get("dataset_type") == "MC";
     //set default PV id;
     PrimaryVertexId pvid=StandardPrimaryVertexId();
+    if(pvfilter) modules.emplace_back(new PrimaryVertexCleaner(pvid));
     if(is_mc){
         if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx));
@@ -47,7 +48,6 @@ void CommonModules::init(Context & ctx){
        metfilters_selection->add<TriggerSelection>("eeBadSc", "Flag_eeBadScFilter");
        if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
     }
-    if(pvfilter) modules.emplace_back(new PrimaryVertexCleaner(pvid));
     if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
     if(muid)  modules.emplace_back(new MuonCleaner(muid));
     if(tauid) modules.emplace_back(new TauCleaner(tauid));
