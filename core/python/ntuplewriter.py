@@ -29,16 +29,16 @@ process = cms.Process("USER")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
-process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) , allowUnscheduled = cms.untracked.bool(True) )
+process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
-                            fileNames  = cms.untracked.vstring("/store/mc/RunIISpring15DR74/TprimeTprime_M-1400_TuneCUETP8M1_13TeV-madgraph-pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v1/00000/0ECF4F29-FA13-E511-A1CC-0025905A613C.root"),
+                            fileNames  = cms.untracked.vstring("file:/nfs/dust/cms/user/peiffer/ZprimeToTT_M-2000_W-200_50ns_MCRUN2_TEST_MINIAODSIM.root"),
                             #fileNames = cms.untracked.vstring("/store/data/Run2015B/MuonEG/MINIAOD/PromptReco-v1/000/251/244/00000/10C5D0A8-7527-E511-BFE2-02163E0140E1.root"),
                             #fileNames = cms.untracked.vstring("/store/data/Run2015B/SingleElectron/MINIAOD/PromptReco-v1/000/252/126/00000/AA0C0594-CA30-E511-BD15-02163E0123C0.root"),
                             skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -611,7 +611,13 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 
 ### NtupleWriter
 
-if useData:
+
+isPrompt = False
+for x in process.source.fileNames:
+    if "PromptReco" in x:
+        isPrompt = True
+
+if isPrompt:
     metfilterpath="RECO"
 else:
     metfilterpath="PAT"
