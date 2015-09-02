@@ -103,7 +103,8 @@ process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
 process.HBHENoiseFilterResultProducer.minZeros = cms.int32(99999)
 
 process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
-                                                    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),
+                                                    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'), #for 50ns
+                                                    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Loose'), #for 25ns
                                                     reverseDecision = cms.bool(False)
                                                     )
 
@@ -609,6 +610,7 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 
 
 ### NtupleWriter
+
 
 isPrompt = False
 for x in process.source.fileNames:
