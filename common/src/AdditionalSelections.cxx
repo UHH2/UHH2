@@ -46,3 +46,26 @@ bool OrSelection::passes(const Event & event)
     }
     return false;
 }
+
+MttbarGenSelection::MttbarGenSelection(double m_min, double m_max) : m_min_(m_min), m_max_(m_max){}
+
+bool MttbarGenSelection::passes(const Event & event)
+{
+  double m = 0;
+  LorentzVector top = {0.,0.,0.,0.}, antitop = {0.,0.,0.,0.};
+   for (const auto & genpart : *event.genparticles){
+    if (genpart.pdgId() == 6){
+      top = genpart.v4();     
+    }
+    if(genpart.pdgId() == -6){
+      antitop = genpart.v4(); 
+    }
+  }
+   m = (top+antitop).M();
+
+   if(m < m_min_) return false;
+   if(m > m_max_ && m_max_ > 0) return false;
+
+   return true;
+  
+}

@@ -60,3 +60,11 @@ private:
     
     std::vector<std::shared_ptr<Selection> > selections;
 };
+
+class MttbarGenSelection : public Selection {
+public:
+  explicit MttbarGenSelection(double m_min, double m_max);
+    virtual bool passes(const Event &);
+private:
+    double m_min_, m_max_;
+};
