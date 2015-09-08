@@ -2,6 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 
 useData = False
+use25ns = False #switch this flag to False when running on 50ns samples
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
@@ -88,7 +89,10 @@ if useData:
     process.GlobalTag.globaltag = '74X_dataRun2_Prompt_v1' 
 else:
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-    process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'  # NOTE: use V9A for 50ns and V9 for 25ns
+    if use25ns: 
+        process.GlobalTag.globaltag = 'MCRUN2_74_V9::All'  # NOTE: use V9A for 50ns and V9 for 25ns
+    else:
+        process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'  # NOTE: use V9A for 50ns and V9 for 25ns
 
 from RecoJets.Configuration.RecoPFJets_cff import *
 from RecoJets.JetProducers.fixedGridRhoProducerFastjet_cfi import *
@@ -102,15 +106,18 @@ process.fixedGridRhoFastjetAll = fixedGridRhoFastjetAll.clone(pfCandidatesTag = 
 process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
 process.HBHENoiseFilterResultProducer.minZeros = cms.int32(99999)
 
+if use25ns:
+    HBHElabel = 'HBHENoiseFilterResultRun2Loose'
+else:
+    HBHElabel = 'HBHENoiseFilterResult'
 process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
-                                                    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'), #for 50ns
-                                                    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Loose'), #for 25ns
+                                                    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer',HBHElabel), 
                                                     reverseDecision = cms.bool(False)
                                                     )
 
 
 ###############################################
-# MET without HF for 50ns run II data in CMSSW_74X
+# MET without HF for run II data in CMSSW_74X
 
 #configurable options =======================================================================
 usePrivateSQlite=True #use external JECs (sqlite file)
@@ -125,9 +132,16 @@ if usePrivateSQlite:
     from CondCore.DBCommon.CondDBSetup_cfi import *
     import os
     if useData:
-      era="Summer15_50nsV4_DATA"
+        if use25ns:
+            era="Summer15_25nsV4_DATA" #does not exist yet!!!!!!!!
+        else:
+            era="Summer15_50nsV4_DATA"
     else:
-      era="Summer15_50nsV4_MC"
+        if use25ns:
+            era="Summer15_25nsV4_MC" #does not exist yet!!!!!!!!
+        else:
+            era="Summer15_50nsV4_MC"
+
     dBFile = os.path.expandvars("$CMSSW_BASE/src/PhysicsTools/PatAlgos/test/"+era+".db")
     process.jec = cms.ESSource("PoolDBESSource",CondDBSetup,
                                connect = cms.string( "sqlite_file://"+dBFile ),
@@ -147,7 +161,10 @@ if usePrivateSQlite:
     process.es_prefer_jec = cms.ESPrefer("PoolDBESSource",'jec')
 
 #uncertainty file
-jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"
+if use25ns: 
+    jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_25nsV4_DATA_UncertaintySources_AK4PFchs.txt" #does not exist yet!!!!!!!!
+else:
+    jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"
 
 ### ------------------------------------------------------------------
 
