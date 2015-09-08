@@ -92,26 +92,13 @@ bool JetCorrector::process(uhh2::Event & event){
 JetCorrector::~JetCorrector(){}
 
 
-TopJetCorrector::TopJetCorrector(const std::vector<std::string> & filenames, uhh2::Context & ctx, const std::string & collection){
-    corrector = build_corrector(filenames);
-    m_collection = collection;
-    if(!collection.empty()){
-        h_topjets = ctx.get_handle<std::vector<TopJet> >(collection);
-    }
-}
-
 TopJetCorrector::TopJetCorrector(const std::vector<std::string> & filenames){
     corrector = build_corrector(filenames);
 }
     
-
-    
 bool TopJetCorrector::process(uhh2::Event & event){
     assert(event.topjets);
-    
-    vector<TopJet> topjets = m_collection.empty() ? *event.topjets : event.get(h_topjets);
-    
-    for(auto & jet : topjets){
+    for(auto & jet : *event.topjets){
         correct_jet(*corrector, jet, event);
     }
     return true;

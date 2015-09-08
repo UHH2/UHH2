@@ -45,18 +45,14 @@ private:
 
 class TopJetCorrector: public uhh2::AnalysisModule {
 public:
-   explicit TopJetCorrector(const std::vector<std::string> & filenames, uhh2::Context & ctx, const std::string & collection="");
-   
-   explicit TopJetCorrector(const std::vector<std::string> & filenames);
-   
-   virtual bool process(uhh2::Event & event) override;
+    explicit TopJetCorrector(const std::vector<std::string> & filenames);
     
-   virtual ~TopJetCorrector();
+    virtual bool process(uhh2::Event & event) override;
+    
+    virtual ~TopJetCorrector();
     
 private:
-   std::unique_ptr<FactorizedJetCorrector> corrector;
-   uhh2::Event::Handle<std::vector<TopJet> > h_topjets;
-   std::string m_collection;
+    std::unique_ptr<FactorizedJetCorrector> corrector;
 };
 
 class SubJetCorrector: public uhh2::AnalysisModule {
