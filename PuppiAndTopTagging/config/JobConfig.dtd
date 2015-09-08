@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- ======================================================================= -->
+<!-- @Project: SFrame - ROOT-based analysis framework for ATLAS              -->
+<!-- @Package: User                                                          -->
+<!--                                                                         -->
+<!-- @author Stefan Ask       <Stefan.Ask@cern.ch>           - Manchester    -->
+<!-- @author David Berge      <David.Berge@cern.ch>          - CERN          -->
+<!-- @author Johannes Haller  <Johannes.Haller@cern.ch>      - Hamburg       -->
+<!-- @author A. Krasznahorkay <Attila.Krasznahorkay@cern.ch> - CERN/Debrecen -->
+<!--                                                                         -->
+<!-- This is the dtd that can be used to configure an SFrame job             -->
+<!--                                                                         -->
+<!-- ======================================================================= -->
+
+<!ELEMENT JobConfiguration ((PyLibrary|Library|Package)*,Cycle+) >
+<!ATTLIST JobConfiguration
+        JobName              CDATA            #REQUIRED
+        OutputLevel          CDATA            "INFO"
+>
+
+<!ELEMENT PyLibrary EMPTY>
+<!ATTLIST PyLibrary
+        Name                 CDATA            #REQUIRED
+>
+
+<!ELEMENT Library EMPTY>
+<!ATTLIST Library
+        Name                 CDATA            #REQUIRED
+>
+
+<!ELEMENT Package EMPTY>
+<!ATTLIST Package
+        Name                 CDATA            #REQUIRED
+>
+
+<!ELEMENT Cycle (InputData+,UserConfig?)>
+<!ATTLIST Cycle
+        Name                 CDATA            #REQUIRED
+        TargetLumi           CDATA            #REQUIRED
+        OutputDirectory      CDATA            "./"
+        PostFix              CDATA            ""
+        RunMode              (LOCAL|PROOF)    "LOCAL"
+        ProofServer          CDATA            ""
+        ProofWorkDir         CDATA            ""
+        ProofNodes           CDATA            "-1"
+        UseTreeCache         (True|False|1|0) "False"
+        TreeCacheSize        CDATA            "30000000"
+        TreeCacheLearnEntries CDATA           "100"
+        ProcessOnlyLocal     (True|False|1|0) "False"
+>
+
+<!ELEMENT InputData ((GeneratorCut|DataSet|In|InputTree|OutputTree|
+                      MetadataInputTree|MetadataOutputTree)*) >
+<!ATTLIST InputData
+        Type                 CDATA            #REQUIRED
+        Version              CDATA            #REQUIRED
+        Lumi                 CDATA            "0.0"
+        NEventsMax           CDATA            "-1"
+        NEventsSkip          CDATA            "0"
+        Cacheable            (True|False)     "False"
+        SkipValid            (True|False)     "False"
+>
+
+<!ELEMENT GeneratorCut EMPTY>
+<!ATTLIST GeneratorCut
+        Tree                 CDATA            #REQUIRED
+        Formula              CDATA            #REQUIRED
+>
+
+<!ELEMENT DataSet EMPTY>
+<!ATTLIST DataSet
+        Name                  CDATA            #REQUIRED
+        Lumi                  CDATA            #REQUIRED
+>
+
+<!ELEMENT In EMPTY>
+<!ATTLIST In
+        FileName              CDATA            #REQUIRED
+        Lumi                  CDATA            #REQUIRED
+>
+
+<!ELEMENT OutputTree EMPTY>
+<!ATTLIST OutputTree
+        Name                  CDATA            #REQUIRED
+>
+
+<!ELEMENT InputTree EMPTY>
+<!ATTLIST InputTree
+        Name                  CDATA            #REQUIRED
+>
+
+<!ELEMENT MetadataInputTree EMPTY>
+<!ATTLIST MetadataInputTree
+        Name                  CDATA            #REQUIRED
+>
+
+<!ELEMENT MetadataOutputTree EMPTY>
+<!ATTLIST MetadataOutputTree
+        Name                  CDATA            #REQUIRED
+>
+
+<!ELEMENT UserConfig (Item*)>
+
+<!ELEMENT Item EMPTY>
+<!ATTLIST Item
+        Name                  CDATA            #REQUIRED
+        Value                 CDATA            #REQUIRED
+>
