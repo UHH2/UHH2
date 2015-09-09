@@ -35,6 +35,7 @@ public:
   MassType m_typeOfMass;
 };
 
+
 /** \type-2 top tag 
  * Cuts on the ungrommed 'fat jet mass' or on the groomed 'fat jet mass'.  
  *  
@@ -93,7 +94,6 @@ public:
    double m_maxHTTmass;
    double m_maxfRec;
 };
-
 
 
 /** \brief Cut on tau3/tau2 < threshold

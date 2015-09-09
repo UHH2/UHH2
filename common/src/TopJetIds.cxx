@@ -123,10 +123,6 @@ bool HEPTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const{
   return true; 
 }
 
-HEPTopTag::HEPTopTag(double ptJetMin, double massWindowLower, double massWindowUpper, double cutCondition2, double cutCondition3): m_ptJetMin(ptJetMin),
-  m_massWindowLower(massWindowLower), m_massWindowUpper(massWindowUpper), m_cutCondition2(cutCondition2), m_cutCondition3(cutCondition3){}
-
-
 //uses WP with 40% signal efficiency as default (see https://indico.cern.ch/event/393337/#preview:1078843)
 HEPTopTagV2::HEPTopTagV2(double minHTTmass, double maxHTTmass, double maxfRec):m_minHTTmass(minHTTmass), m_maxHTTmass(maxHTTmass), m_maxfRec(maxfRec){}
 bool HEPTopTagV2::operator()(const TopJet & topjet, const uhh2::Event &) const{
@@ -140,7 +136,6 @@ bool HEPTopTagV2::operator()(const TopJet & topjet, const uhh2::Event &) const{
 
    return false;
 }
-
 
     
 bool Tau32::operator()(const TopJet & topjet, const uhh2::Event &) const {
