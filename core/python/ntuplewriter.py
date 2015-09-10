@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 
 useData = False
-use25ns = False #switch this flag to False when running on 50ns samples
+use25ns = True #switch this flag to False when running on 50ns samples
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
@@ -33,9 +33,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
-                            fileNames  = cms.untracked.vstring("file:/nfs/dust/cms/user/peiffer/ZprimeToTT_M-2000_W-200_50ns_MCRUN2_TEST_MINIAODSIM.root"),
-                            #fileNames = cms.untracked.vstring("/store/data/Run2015B/MuonEG/MINIAOD/PromptReco-v1/000/251/244/00000/10C5D0A8-7527-E511-BFE2-02163E0140E1.root"),
-                            #fileNames = cms.untracked.vstring("/store/data/Run2015B/SingleElectron/MINIAOD/PromptReco-v1/000/252/126/00000/AA0C0594-CA30-E511-BD15-02163E0123C0.root"),
+                            fileNames  = cms.untracked.vstring("/store/mc/RunIISpring15DR74/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v2/00000/0AB045B5-BB0C-E511-81FD-0025905A60B8.root"),
                             skipEvents = cms.untracked.uint32(0)
 )
 
@@ -84,15 +82,14 @@ process.out.outputCommands.extend([
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 #see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 if useData:
-    process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-    process.GlobalTag.globaltag = '74X_dataRun2_Prompt_v1' 
+    process.GlobalTag.globaltag = '74X_dataRun2_v2' 
 else:
-    process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
     if use25ns: 
-        process.GlobalTag.globaltag = 'MCRUN2_74_V9::All'  # NOTE: use V9A for 50ns and V9 for 25ns
+        process.GlobalTag.globaltag = '74X_mcRun2_asymptotic_v2' 
     else:
-        process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'  # NOTE: use V9A for 50ns and V9 for 25ns
+        process.GlobalTag.globaltag = '74X_mcRun2_startup_v2' 
 
 from RecoJets.Configuration.RecoPFJets_cff import *
 from RecoJets.JetProducers.fixedGridRhoProducerFastjet_cfi import *
@@ -120,7 +117,7 @@ process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
 # MET without HF for run II data in CMSSW_74X
 
 #configurable options =======================================================================
-usePrivateSQlite=True #use external JECs (sqlite file)
+usePrivateSQlite=False #use external JECs (sqlite file)
 useHFCandidates=False #create an additionnal NoHF slimmed MET collection if the option is set to false
 applyResiduals=True #application of residual corrections. Have to be set to True once the 13 TeV residual corrections are available. False to be kept meanwhile. Can be kept to False later for private tests or for analysis checks and developments (not the official recommendation!).
 #===================================================================
@@ -162,7 +159,7 @@ if usePrivateSQlite:
 
 #uncertainty file
 if use25ns: 
-    jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_25nsV4_DATA_UncertaintySources_AK4PFchs.txt" #does not exist yet!!!!!!!!
+    jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt" #does not exist yet for 25ns data!!!!!!!!
 else:
     jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"
 
@@ -593,8 +590,8 @@ process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons'
 process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectrons')
 
 elecID_mod_ls = [
-  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_PHYS14_PU20bx25_nonTrig_V1_cff',
-  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_PHYS14_PU20bx25_V2_cff',
+#  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_PHYS14_PU20bx25_nonTrig_V1_cff',
+#  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_PHYS14_PU20bx25_V2_cff',
   'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff',
 ]
 
@@ -606,23 +603,24 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
   src = cms.InputTag('slimmedElectrons'),
 
   vmaps_bool = cms.PSet(
-    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-veto'),
-    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-loose'),
-    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-medium'),
-    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-tight'),
+#    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-veto'),
+#    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-loose'),
+#    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-medium'),
+#    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-tight'),
     heepElectronID_HEEPV60                                  = cms.InputTag('egmGsfElectronIDs:heepElectronID-HEEPV60'),
-    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80                = cms.InputTag('egmGsfElectronIDs:mvaEleID-PHYS14-PU20bx25-nonTrig-V1-wp80'),
-    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90                = cms.InputTag('egmGsfElectronIDs:mvaEleID-PHYS14-PU20bx25-nonTrig-V1-wp90'),
+#    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80                = cms.InputTag('egmGsfElectronIDs:mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80'),
+#    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90                = cms.InputTag('egmGsfElectronIDs:mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90'),
   ),
 
   vmaps_float = cms.PSet(
-    ElectronMVAEstimatorRun2Phys14NonTrigValues = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Phys14NonTrigValues')
+        #ElectronMVAEstimatorRun2Phys14NonTrigValues = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Phys14NonTrigValues')
+        ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')
   ),
 
   vmaps_double = cms.vstring(el_isovals),
 
-  mva_NoTrig = cms.string('ElectronMVAEstimatorRun2Phys14NonTrigValues'),
-  mva_Trig   = cms.string('ElectronMVAEstimatorRun2Phys14NonTrigValues'),
+  mva_NoTrig = cms.string('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values'),
+  mva_Trig   = cms.string('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values'),
 )
 
 
@@ -658,13 +656,13 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
           # each string should correspond to a variable saved
           # via the "userInt" method in the pat::Electron collection used 'electron_source'
           # [the configuration of the pat::Electron::userInt variables should be done in PATElectronUserData]
-          'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_veto',
-          'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_loose',
-          'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_medium',
-          'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_tight',
+         # 'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_veto',
+         # 'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_loose',
+         # 'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_medium',
+         # 'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_tight',
           'heepElectronID_HEEPV60',
-          'mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80',
-          'mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90',
+         # 'mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80',
+         # 'mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90',
         ),
         doMuons = cms.bool(True),
         muon_sources = cms.vstring("slimmedMuonsUSER"),
