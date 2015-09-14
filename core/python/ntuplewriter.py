@@ -590,8 +590,9 @@ process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons'
 process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectrons')
 
 elecID_mod_ls = [
-#  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_PHYS14_PU20bx25_nonTrig_V1_cff',
-#  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_PHYS14_PU20bx25_V2_cff',
+  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff',
+  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_50ns_V1_cff',
+  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
   'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff',
 ]
 
@@ -603,26 +604,36 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
   src = cms.InputTag('slimmedElectrons'),
 
   vmaps_bool = cms.PSet(
-#    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-veto'),
-#    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-loose'),
-#    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-medium'),
-#    cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-PHYS14-PU20bx25-V2-standalone-tight'),
-    heepElectronID_HEEPV60                                  = cms.InputTag('egmGsfElectronIDs:heepElectronID-HEEPV60'),
-#    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80                = cms.InputTag('egmGsfElectronIDs:mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80'),
-#    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90                = cms.InputTag('egmGsfElectronIDs:mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90'),
+
+    cutBasedElectronID_Spring15_25ns_V1_standalone_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-veto'),
+    cutBasedElectronID_Spring15_25ns_V1_standalone_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-loose'),
+    cutBasedElectronID_Spring15_25ns_V1_standalone_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-medium'),
+    cutBasedElectronID_Spring15_25ns_V1_standalone_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight'),
+
+    cutBasedElectronID_Spring15_50ns_V1_standalone_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-50ns-V1-standalone-veto'),
+    cutBasedElectronID_Spring15_50ns_V1_standalone_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-50ns-V1-standalone-loose'),
+    cutBasedElectronID_Spring15_50ns_V1_standalone_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-50ns-V1-standalone-medium'),
+    cutBasedElectronID_Spring15_50ns_V1_standalone_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-50ns-V1-standalone-tight'),
+
+    mvaEleID_Spring15_25ns_nonTrig_V1_wp90                = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp90'),
+    mvaEleID_Spring15_25ns_nonTrig_V1_wp80                = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp80'),
+
+    heepElectronID_HEEPV60                                = cms.InputTag('egmGsfElectronIDs:heepElectronID-HEEPV60'),
   ),
 
   vmaps_float = cms.PSet(
-        #ElectronMVAEstimatorRun2Phys14NonTrigValues = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Phys14NonTrigValues')
-        ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values')
+    ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values'),
   ),
 
   vmaps_double = cms.vstring(el_isovals),
+
+  effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Spring15/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_50ns.txt'),
 
   mva_NoTrig = cms.string('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values'),
   mva_Trig   = cms.string('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values'),
 )
 
+if use25ns: process.slimmedElectronsUSER.effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Spring15/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_25ns.txt')
 
 ### NtupleWriter
 
@@ -656,13 +667,20 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
           # each string should correspond to a variable saved
           # via the "userInt" method in the pat::Electron collection used 'electron_source'
           # [the configuration of the pat::Electron::userInt variables should be done in PATElectronUserData]
-         # 'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_veto',
-         # 'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_loose',
-         # 'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_medium',
-         # 'cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_tight',
+#          'cutBasedElectronID_Spring15_25ns_V1_standalone_veto',
+#          'cutBasedElectronID_Spring15_25ns_V1_standalone_loose',
+#          'cutBasedElectronID_Spring15_25ns_V1_standalone_medium',
+#          'cutBasedElectronID_Spring15_25ns_V1_standalone_tight',
+#
+#          'cutBasedElectronID_Spring15_50ns_V1_standalone_veto',
+#          'cutBasedElectronID_Spring15_50ns_V1_standalone_loose',
+#          'cutBasedElectronID_Spring15_50ns_V1_standalone_medium',
+#          'cutBasedElectronID_Spring15_50ns_V1_standalone_tight',
+#
+#          'mvaEleID_Spring15_25ns_nonTrig_V1_wp90',
+#          'mvaEleID_Spring15_25ns_nonTrig_V1_wp80',
+#
           'heepElectronID_HEEPV60',
-         # 'mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80',
-         # 'mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90',
         ),
         doMuons = cms.bool(True),
         muon_sources = cms.vstring("slimmedMuonsUSER"),

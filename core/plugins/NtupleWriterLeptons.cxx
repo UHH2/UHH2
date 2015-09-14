@@ -59,6 +59,8 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_mvaNonTrigV0(pat_ele.hasUserFloat("mvaNoTrig") ? pat_ele.userFloat("mvaNoTrig") : -999.);
         ele.set_mvaTrigV0   (pat_ele.hasUserFloat("mvaTrig")   ? pat_ele.userFloat("mvaTrig")   : -999.);
 
+        ele.set_effArea(pat_ele.hasUserFloat("EffArea") ? pat_ele.userFloat("EffArea") : -999.);
+
         ele.set_pfMINIIso_CH      (pat_ele.hasUserFloat("elPFMiniIsoValueCHSTAND") ? pat_ele.userFloat("elPFMiniIsoValueCHSTAND") : -999.);
         ele.set_pfMINIIso_NH      (pat_ele.hasUserFloat("elPFMiniIsoValueNHSTAND") ? pat_ele.userFloat("elPFMiniIsoValueNHSTAND") : -999.);
         ele.set_pfMINIIso_Ph      (pat_ele.hasUserFloat("elPFMiniIsoValuePhSTAND") ? pat_ele.userFloat("elPFMiniIsoValuePhSTAND") : -999.);

@@ -1,22 +1,21 @@
-// c++ include files
 #include <memory>
 #include <vector>
 #include <string>
 
-// default include files
 #include <FWCore/Framework/interface/Frameworkfwd.h>
 #include <FWCore/Framework/interface/EDProducer.h>
 #include <FWCore/Framework/interface/Event.h>
 #include <FWCore/Framework/interface/MakerMacros.h>
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
 
-// non-default include files
 #include <DataFormats/PatCandidates/interface/Electron.h>
+
+#include <RecoEgamma/EgammaTools/interface/EffectiveAreas.h>
 
 class PATElectronUserData : public edm::EDProducer {
  public:
   explicit PATElectronUserData(const edm::ParameterSet&);
-  ~PATElectronUserData() {}
+  virtual ~PATElectronUserData() {}
 
  private:
   virtual void produce(edm::Event&, const edm::EventSetup&);
@@ -37,11 +36,14 @@ class PATElectronUserData : public edm::EDProducer {
 
   std::vector<std::string> vmaps_double_;
 
+  EffectiveAreas effAreas_;
+
   std::string mva_NoTrig_;
   std::string mva_Trig_;
 };
 
-PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig){
+PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig):
+  effAreas_(iConfig.getParameter<edm::FileInPath>("effAreas_file").fullPath()) {
 
   src_ = consumes< edm::View<pat::Electron> >(iConfig.getParameter<edm::InputTag>("src"));
 
@@ -136,6 +138,9 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
       const double& val = (*(vmapDs.at(j)))[patElecs->refAt(i)];
       ele.addUserFloat(vmaps_double_.at(j), float(val));
     }
+
+    const float eA  = effAreas_.getEffectiveArea(fabs(ele.superCluster()->eta()));
+    ele.addUserFloat("EffArea", eA);
 
     if(!ele.hasUserFloat(mva_NoTrig_)) throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaNoTrig' not found";
     if(!ele.hasUserFloat(mva_Trig_))   throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaTrig' not found";
