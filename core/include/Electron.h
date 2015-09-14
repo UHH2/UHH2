@@ -8,23 +8,11 @@ class Electron: public Particle {
 
  public:
   enum tag {
-    eid_PHYS14_20x25_veto,
-    eid_PHYS14_20x25_loose,
-    eid_PHYS14_20x25_medium,
-    eid_PHYS14_20x25_tight,
     heepElectronID_HEEPV60,				    
-    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80,		    
-    mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90,               
   };
 
   static tag tagname2tag(const std::string & tagname){
-    if(tagname == "cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_veto")   return eid_PHYS14_20x25_veto;
-    if(tagname == "cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_loose")  return eid_PHYS14_20x25_loose;
-    if(tagname == "cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_medium") return eid_PHYS14_20x25_medium;
-    if(tagname == "cutBasedElectronID_PHYS14_PU20bx25_V2_standalone_tight")  return eid_PHYS14_20x25_tight;
     if(tagname == "heepElectronID_HEEPV60")                                  return heepElectronID_HEEPV60;
-    if(tagname == "mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80")                return mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp80;
-    if(tagname == "mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90")                return mvaEleID_PHYS14_PU20bx25_nonTrig_V1_wp90;
 
     throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
   }
@@ -55,6 +43,7 @@ class Electron: public Particle {
    m_EcalEnergy = 0;
    m_mvaNonTrigV0 = 0;
    m_mvaTrigV0 = 0;
+   m_AEff = 0;
 
    m_pfMINIIso_CH       = 0;
    m_pfMINIIso_NH       = 0;
@@ -89,6 +78,7 @@ class Electron: public Particle {
   float EcalEnergy() const{return m_EcalEnergy;}
   float mvaNonTrigV0() const{return m_mvaNonTrigV0;}
   float mvaTrigV0() const{return m_mvaTrigV0;}
+  float effArea() const{return m_AEff;}
 
   float pfMINIIso_CH      () const { return m_pfMINIIso_CH; }
   float pfMINIIso_NH      () const { return m_pfMINIIso_NH; }
@@ -125,6 +115,7 @@ class Electron: public Particle {
   void set_EcalEnergy(float x){m_EcalEnergy=x;}
   void set_mvaNonTrigV0(float x){m_mvaNonTrigV0=x;}
   void set_mvaTrigV0(float x){m_mvaTrigV0=x;}
+  void set_effArea(float x){m_AEff=x;}
 
   void set_pfMINIIso_CH      (float x){ m_pfMINIIso_CH       = x; }
   void set_pfMINIIso_NH      (float x){ m_pfMINIIso_NH       = x; }

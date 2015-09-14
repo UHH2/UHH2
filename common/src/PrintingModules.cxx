@@ -43,14 +43,14 @@ void ElectronPrinter::print(std::ostream & out, const Electron & ele, const Even
         fabs_1oE_1op = std::abs(1.0f/ele.EcalEnergy() - ele.EoverPIn()/ele.EcalEnergy());
     }
     const char * medium_id = "<N/A>";
-    if(ele.has_tag(Electron::eid_PHYS14_20x25_medium)){
-        if(ele.get_tag(Electron::eid_PHYS14_20x25_medium) > 0.5f){
-            medium_id = "pass";
-        }
-        else{
-            medium_id = "fail";
-        }
-    }
+//    if(ele.has_tag(Electron::eid_PHYS14_20x25_medium)){
+//      if(ele.get_tag(Electron::eid_PHYS14_20x25_medium) > 0.5f){
+//        medium_id = "pass";
+//      }
+//      else{
+//        medium_id = "fail";
+//      }
+//    }
     out << "E=" << ele.energy() << "; pt=" << ele.pt() << ", eta=" << ele.eta() << "; phi=" << ele.phi() << "; reliso_db03=" << ele.relIsodb()
         << "; dEtaIn=" << ele.dEtaIn() << "; dPhiIn=" << ele.dPhiIn() << "; sigma_ieie=" << ele.sigmaIEtaIEta() << "; H/E=" << ele.HoverE()
         << "; d0=" << pv_d0 << "; dz=" << pv_dz << "; |1/E-1/p|=" << fabs_1oE_1op << "; n_misshits=" << ele.gsfTrack_trackerExpectedHitsInner_numberOfLostHits()
