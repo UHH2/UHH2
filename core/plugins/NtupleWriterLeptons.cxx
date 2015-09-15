@@ -1,8 +1,11 @@
 #include "UHH2/core/plugins/NtupleWriterLeptons.h"
 #include "UHH2/core/include/AnalysisModule.h"
+
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Tau.h"
+
+#include "DataFormats/MuonReco/interface/MuonSelectors.h"
 
 using namespace uhh2;
 using namespace std;
@@ -114,26 +117,39 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
      mu.set_phi( pat_mu.phi());
      mu.set_energy( pat_mu.energy());
 
-     mu.set_dxy(pat_mu.muonBestTrack()->dxy(PV.position()));
-     mu.set_dxy_error(pat_mu.muonBestTrack()->dxyError());
-     mu.set_dz(pat_mu.muonBestTrack()->dz(PV.position()));
-     mu.set_dz_error(pat_mu.muonBestTrack()->dzError());
-
-     mu.set_bool(Muon::global, pat_mu.isGlobalMuon());
-     mu.set_bool(Muon::pf, pat_mu.isPFMuon());
-     mu.set_bool(Muon::tracker, pat_mu.isTrackerMuon());
+     mu.set_bool(Muon::global    , pat_mu.isGlobalMuon());
+     mu.set_bool(Muon::pf        , pat_mu.isPFMuon());
+     mu.set_bool(Muon::tracker   , pat_mu.isTrackerMuon());
      mu.set_bool(Muon::standalone, pat_mu.isStandAloneMuon());
+     mu.set_bool(Muon::soft      , pat_mu.isSoftMuon(PV));
+     mu.set_bool(Muon::loose     , pat_mu.isLooseMuon());
+     mu.set_bool(Muon::medium    , pat_mu.isMediumMuon());
+     mu.set_bool(Muon::tight     , pat_mu.isTightMuon(PV));
+     mu.set_bool(Muon::highpt    , pat_mu.isHighPtMuon(PV));
 
-     mu.set_bool(Muon::soft  , pat_mu.isSoftMuon(PV));
-     mu.set_bool(Muon::loose , pat_mu.isLooseMuon());
-     mu.set_bool(Muon::medium, pat_mu.isMediumMuon());
-     mu.set_bool(Muon::tight , pat_mu.isTightMuon(PV));
-     mu.set_bool(Muon::highpt, pat_mu.isHighPtMuon(PV));
+     mu.set_dxy      (pat_mu.muonBestTrack()->dxy(PV.position()));
+     mu.set_dxy_error(pat_mu.muonBestTrack()->dxyError());
+     mu.set_dz       (pat_mu.muonBestTrack()->dz(PV.position()));
+     mu.set_dz_error (pat_mu.muonBestTrack()->dzError());
+
+     mu.set_globalTrack_normalizedChi2       ( pat_mu.globalTrack().isNonnull() ? pat_mu.globalTrack()->normalizedChi2() : -999.);
+     mu.set_globalTrack_numberOfValidMuonHits( pat_mu.globalTrack().isNonnull() ? pat_mu.globalTrack()->hitPattern().numberOfValidMuonHits() : -1);
+
+     mu.set_numberOfMatchedStations(pat_mu.numberOfMatchedStations());
+
+     mu.set_innerTrack_trackerLayersWithMeasurement(pat_mu.innerTrack().isNonnull() ? pat_mu.innerTrack()->hitPattern().trackerLayersWithMeasurement() : -1);
+     mu.set_innerTrack_numberOfValidPixelHits      (pat_mu.innerTrack().isNonnull() ? pat_mu.innerTrack()->hitPattern().numberOfValidPixelHits() : -1);
+     mu.set_innerTrack_validFraction               (pat_mu.innerTrack().isNonnull() ? pat_mu.innerTrack()->validFraction() : -999.);
+
+     mu.set_combinedQuality_chi2LocalPosition(pat_mu.combinedQuality().chi2LocalPosition);
+     mu.set_combinedQuality_trkKink          (pat_mu.combinedQuality().trkKink);
+
+     mu.set_segmentCompatibility(muon::segmentCompatibility(pat_mu));
 
      mu.set_sumChargedHadronPt(pat_mu.pfIsolationR04().sumChargedHadronPt);
      mu.set_sumNeutralHadronEt(pat_mu.pfIsolationR04().sumNeutralHadronEt);
-     mu.set_sumPhotonEt(pat_mu.pfIsolationR04().sumPhotonEt);
-     mu.set_sumPUPt(pat_mu.pfIsolationR04().sumPUPt);
+     mu.set_sumPhotonEt       (pat_mu.pfIsolationR04().sumPhotonEt);
+     mu.set_sumPUPt           (pat_mu.pfIsolationR04().sumPUPt);
 
      mu.set_pfMINIIso_CH      (pat_mu.hasUserFloat("muPFMiniIsoValueCHSTAND") ? pat_mu.userFloat("muPFMiniIsoValueCHSTAND") : -999.);
      mu.set_pfMINIIso_NH      (pat_mu.hasUserFloat("muPFMiniIsoValueNHSTAND") ? pat_mu.userFloat("muPFMiniIsoValueNHSTAND") : -999.);
