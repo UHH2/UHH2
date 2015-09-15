@@ -1,9 +1,7 @@
-// system include files
 #include <memory>
 #include <vector>
 #include <string>
 
-// user include files
 #include <FWCore/Framework/interface/Frameworkfwd.h>
 #include <FWCore/Framework/interface/EDProducer.h>
 #include <FWCore/Framework/interface/Event.h>
@@ -12,11 +10,10 @@
 
 #include <DataFormats/PatCandidates/interface/Muon.h>
 
-// class declaration
 class PATMuonUserData : public edm::EDProducer {
  public:
   explicit PATMuonUserData(const edm::ParameterSet&);
-  ~PATMuonUserData() {}
+  virtual ~PATMuonUserData() {}
 
  private:
   virtual void produce(edm::Event&, const edm::EventSetup&);
