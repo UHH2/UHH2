@@ -13,7 +13,8 @@ class Muon: public Particle{
   };
 
   enum tag {
-    dummy = 0 /* for future use */
+    twodcut_dRmin,
+    twodcut_pTrel,
   };
 
   bool get_bool(bool_id i) const {

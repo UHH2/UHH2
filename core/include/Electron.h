@@ -8,6 +8,8 @@ class Electron: public Particle {
 
  public:
   enum tag {
+    twodcut_dRmin,
+    twodcut_pTrel,
     heepElectronID_HEEPV60,				    
   };
 
