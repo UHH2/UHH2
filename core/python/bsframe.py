@@ -438,7 +438,10 @@ def getjobstatus(statusdict, jobid, jobstatus):
     if jobstatuscode=="R": return "Running"
     if jobstatuscode=="H": return "Held"
     if jobstatuscode=="X": return "Killed"
-    return "Unknown: " + jobstatuscode
+    if jobstatuscode=="C": return "Completed"
+    if jobstatuscode=="<": return "Transfering Input"
+    if jobstatuscode==">": return "Transfering Ouput"
+    return "Unknown"
 
 def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus):
     rootfiles = getoutputfilenames(jobname+"/xml/"+jobname+"_"+str(jobnumber)+".xml").replace(".root","."+str(jobnumber)+".root").split(",")
@@ -653,6 +656,9 @@ if (options.status):
     if jobstatuslist.count("Submitted")>0: print "There are "+str(jobstatuslist.count("Submitted"))+" Submitted Jobs"
     if jobstatuslist.count("Idle")>0: print "There are "+str(jobstatuslist.count("Idle"))+" Idle Jobs"
     if jobstatuslist.count("Running")>0: print "There are "+str(jobstatuslist.count("Running"))+" Running Jobs"
+    if jobstatuslist.count("Completed")>0: print "There are "+str(jobstatuslist.count("Completed"))+" Completed Jobs"
+    if jobstatuslist.count("Transfering Input")>0: print "There are "+str(jobstatuslist.count("Transfering Input"))+" Transfering Input Jobs"
+    if jobstatuslist.count("Transfering Ouptut")>0: print "There are "+str(jobstatuslist.count("Transfering Output"))+" Transfering Output Jobs"
     if jobstatuslist.count("Held")>0: print "There are "+str(jobstatuslist.count("Held"))+" Held Jobs"
     if jobstatuslist.count("Killed")>0: print "There are "+str(jobstatuslist.count("Killed"))+" Killed Jobs"
     if jobstatuslist.count("Missing")>0: print "There are "+str(jobstatuslist.count("Error"))+" Missing Jobs"
