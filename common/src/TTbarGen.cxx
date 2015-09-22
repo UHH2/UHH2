@@ -181,7 +181,7 @@ bool is_neutrino(const GenParticle & gp){
 }
 
 GenParticle TTbarGen::ChargedLepton() const{
-   if (m_type != e_ehad &&  m_type != e_muhad ){ //&& m_type!= e_tauhad){    //tau+jets channel rausgenommen
+   if (m_type != e_ehad &&  m_type != e_muhad && m_type!= e_tauhad){
         throw runtime_error("TTbarGen::ChargedLepton called, but this is no l+jets ttbar event!");
     }
     for(const auto & wd : {m_Wdecay1, m_Wdecay2, m_WMinusdecay1, m_WMinusdecay2}){
@@ -191,7 +191,7 @@ GenParticle TTbarGen::ChargedLepton() const{
 }
 
 GenParticle TTbarGen::Neutrino() const{
-   if (m_type != e_ehad &&  m_type != e_muhad && m_type!= e_tauhad){ 
+   if (m_type != e_ehad &&  m_type != e_muhad && m_type!= e_tauhad){
         throw runtime_error("TTbarGen::ChargedLepton called, but this is no l+jets ttbar event!");
     }
     for(const auto & wd : {m_Wdecay1, m_Wdecay2, m_WMinusdecay1, m_WMinusdecay2}){
