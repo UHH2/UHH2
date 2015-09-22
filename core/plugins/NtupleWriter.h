@@ -106,6 +106,8 @@ class NtupleWriter : public edm::EDFilter {
       edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
       edm::EDGetTokenT<edm::TriggerResults>  metfilterBits_;
       edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
+
+   std::vector<bool> puppi;
 };
 
 
