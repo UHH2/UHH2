@@ -102,13 +102,13 @@ bool Event::passes_trigger(TriggerIndex & ti) const{
     if(!triggerResults){
         throw runtime_error("Event::passes_trigger: trigger Results have not beed read in");
     }
-    // if(triggerNames_currentrun.size() != triggerResults->size()){
-    //     stringstream ss;
-    //     ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger results for current event have size " << triggerResults->size()
-    //        << endl;
-    //     throw runtime_error(ss.str());
-    // }
-    // assert(triggerNames_currentrun.size() == triggerResults->size());
+     if(triggerNames_currentrun.size() != triggerResults->size()){
+         stringstream ss;
+         ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger results for current event have size " << triggerResults->size()
+            << endl;
+         throw runtime_error(ss.str());
+     }
+     assert(triggerNames_currentrun.size() == triggerResults->size());
     return triggerResults->at(ti.index);
 }
 

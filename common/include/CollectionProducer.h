@@ -52,7 +52,7 @@ public:
     bool process(Event & event) override {
         vector<TYPE> out_coll;
         for(const TYPE & obj : event.get(in_hndl)){
-           if (type_id_){
+            if (type_id_){
                 if ((*type_id_)(obj, event)) {
                     out_coll.push_back(obj);
                 }

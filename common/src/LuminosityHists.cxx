@@ -80,15 +80,14 @@ LuminosityHists::LuminosityHists(uhh2::Context & ctx,
         }
     }
     int nbins = upper_binborders.size() + 1; // add one for the partial bin
-
     hlumi = book<TH1D>("luminosity", "Events over time divided in equal lumi-size bins", nbins, 0, ( int(total_lumi / lumi_per_bin) + 1)*lumi_per_bin);
     //hlumi = book<TH1D>("luminosity", "Events over time divided in equal lumi-size bins", nbins, 0, nbins);
-
 }
     
 void LuminosityHists::fill(const uhh2::Event & ev){
     if(!ev.isRealData) return;
     
+
     bool trigger_accepted = true;
     if (!triggername_.empty()) {
         auto trg_index = ev.get_trigger_index(triggername_);

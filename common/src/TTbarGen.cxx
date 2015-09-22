@@ -162,7 +162,7 @@ bool TTbarGen::IsAntiTopHadronicDecay()  const{
 }
 
 bool TTbarGen::IsSemiLeptonicDecay() const{
-   return m_type == e_ehad ||  m_type == e_muhad;//||m_type == e_tauhad;     //tau+jets channel rausgenommen
+   return m_type == e_ehad ||  m_type == e_muhad ||m_type == e_tauhad;  
 }
 
 
@@ -191,7 +191,7 @@ GenParticle TTbarGen::ChargedLepton() const{
 }
 
 GenParticle TTbarGen::Neutrino() const{
-   if (m_type != e_ehad &&  m_type != e_muhad){//  && m_type!= e_tauhad){  //tau+jets channel rausgenommen
+   if (m_type != e_ehad &&  m_type != e_muhad && m_type!= e_tauhad){ 
         throw runtime_error("TTbarGen::ChargedLepton called, but this is no l+jets ttbar event!");
     }
     for(const auto & wd : {m_Wdecay1, m_Wdecay2, m_WMinusdecay1, m_WMinusdecay2}){
