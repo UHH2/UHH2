@@ -86,8 +86,8 @@ LuminosityHists::LuminosityHists(uhh2::Context & ctx,
     
 void LuminosityHists::fill(const uhh2::Event & ev){
     if(!ev.isRealData) return;
-
     
+
     bool trigger_accepted = true;
     if (!triggername_.empty()) {
         auto trg_index = ev.get_trigger_index(triggername_);

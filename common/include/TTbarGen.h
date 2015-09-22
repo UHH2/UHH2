@@ -67,6 +67,7 @@ public:
 
   bool IsTopHadronicDecay() const;
   bool IsAntiTopHadronicDecay() const;
+  bool IsSemiLeptonicDecay() const; 
 
   //only for l+jets decays
   GenParticle TopLep() const; 

@@ -140,9 +140,9 @@ bool HEPTopTagV2::operator()(const TopJet & topjet, const uhh2::Event &) const{
 
    return false;
 }
+ 
 
-
-    
+   
 bool Tau32::operator()(const TopJet & topjet, const uhh2::Event &) const {
     auto tau2 = topjet.tau2();
     if(!std::isfinite(tau2) || tau2 == 0.0) return false;
