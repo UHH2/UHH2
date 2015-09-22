@@ -829,6 +829,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          met[j].set_pt(pat_met.pt());
          met[j].set_phi(pat_met.phi());
          met[j].set_mEtSig(pat_met.mEtSig());
+         met[j].set_shiftedPx(pat_met.shiftedPx(METUncertaintySize,Type1));//HERE:UNCERTAINTY 
        }
      }
    }

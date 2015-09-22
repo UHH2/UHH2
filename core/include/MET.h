@@ -23,6 +23,8 @@ public:
   /// set transverse momentum significance
   void set_mEtSig(float mEtSig){m_mEtSig=mEtSig;}
 
+   void set_shiftedPx(double shiftedPx) {m_shiftedPx = shiftedPx;}
+
   /// convert missing transverse energy into 4-vector
   LorentzVector v4(){
       LorentzVector met(0,0,0,0);
@@ -35,4 +37,5 @@ public:
   float m_pt;
   float m_phi;
   float m_mEtSig;
+   double m_shiftedPx;
 };

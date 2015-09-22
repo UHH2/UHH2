@@ -41,6 +41,7 @@ public:
  *  
  */
 
+
 class Type2TopTag {
 public:
   
@@ -81,7 +82,6 @@ public:
  * 
  * The default values of the constructor correspond to the 40% efficiency WP presented in the top tagging talk on https://indico.cern.ch/event/393337/#preview:1078843.
  */
-
 class HEPTopTagV2{
 public:
   
@@ -94,6 +94,7 @@ public:
    double m_maxHTTmass;
    double m_maxfRec;
 };
+
 
 
 /** \brief Cut on tau3/tau2 < threshold
