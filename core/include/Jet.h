@@ -3,12 +3,14 @@
 #include "FlavorParticle.h"
 #include "Tags.h"
 #include "JetBTagInfo.h"
-class Jet : public FlavorParticle{
-public:
-    
+
+class Jet : public FlavorParticle {
+
+ public:
   enum tag { /* for future use (more b-taggers, etc.) */ };
-  
+
   Jet(){
+
     m_jetArea = 0;
     m_numberOfDaughters = 0;
     m_neutralEmEnergyFraction = 0;
@@ -32,6 +34,7 @@ public:
     m_btag_BoostedDoubleSecondaryVertexCA15 = 0;
     m_JEC_factor_raw = 0;
     m_genjet_index = 0;
+    m_hadronFlavor = 0;
   }
 
   float jetArea() const{return m_jetArea;}
@@ -58,6 +61,7 @@ public:
   float JEC_factor_raw() const{return m_JEC_factor_raw;}
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
   JetBTagInfo btaginfo() const{return m_btaginfo;}
+  int hadronFlavor() const { return m_hadronFlavor; }
 
   void set_jetArea(float x){m_jetArea=x;}
   void set_numberOfDaughters(int x){m_numberOfDaughters=x;} 
@@ -84,9 +88,9 @@ public:
   void set_genjet_index(int x){m_genjet_index=x;}
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
   void set_btaginfo(JetBTagInfo x){m_btaginfo=x;}
+  void set_hadronFlavor(int x){ m_hadronFlavor = x; }
 
  private:
-  
   float m_jetArea;
   int m_numberOfDaughters;
   float m_neutralEmEnergyFraction;
@@ -110,9 +114,9 @@ public:
   float m_btag_BoostedDoubleSecondaryVertexCA15;
   float m_JEC_factor_raw;
   int m_genjet_index;
-  
+  int m_hadronFlavor;
+
   JetBTagInfo m_btaginfo;
 
   Tags tags;
 };
-
