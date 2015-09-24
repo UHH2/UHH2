@@ -302,6 +302,7 @@ def resolveentities(input):
         if line.count("ENTITY")>0:
             entityname = line[line.find("ENTITY ")+7:line.find(" SYSTEM")]
             entityfile = line[line.find('"')+1:line.rfind('"')]
+            if not os.path.isfile(entityfile): continue
             entityfiles = open(entityfile).read()
             entitytemp = {entityname: entityfiles}
             entitydict.update(entitytemp)
