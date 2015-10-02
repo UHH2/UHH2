@@ -162,7 +162,7 @@ if usePrivateSQlite:
 
 #uncertainty file
 if use25ns: 
-    jecUncertaintyFile="UHH2/JetMETObjects/data/Summer15_25nsV2_DATA_UncertaintySources_AK4PFchs.txt" #does not exist yet for 25ns data!!!!!!!!
+    jecUncertaintyFile="UHH2/JetMETObjects/data/Summer15_25nsV2_DATA_UncertaintySources_AK4PFchs.txt" 
 else:
     jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"
 
