@@ -138,13 +138,13 @@ if usePrivateSQlite:
             era="Summer15_50nsV4_DATA"
     else:
         if use25ns:
-            era="Summer15_25nsV4_MC" #does not exist yet!!!!!!!!
+            era="Summer15_25nsV2_MC" 
         else:
             era="Summer15_50nsV4_MC"
 
-    dBFile = os.path.expandvars("$CMSSW_BASE/src/PhysicsTools/PatAlgos/test/"+era+".db")
+    dBFile = os.path.expandvars(era+".db")
     process.jec = cms.ESSource("PoolDBESSource",CondDBSetup,
-                               connect = cms.string( "sqlite_file://"+dBFile ),
+                               connect = cms.string( "sqlite_file:"+dBFile ),
                                toGet =  cms.VPSet(
             cms.PSet(
                 record = cms.string("JetCorrectionsRecord"),
@@ -162,7 +162,7 @@ if usePrivateSQlite:
 
 #uncertainty file
 if use25ns: 
-    jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt" #does not exist yet for 25ns data!!!!!!!!
+    jecUncertaintyFile="UHH2/JetMETObjects/data/Summer15_25nsV2_DATA_UncertaintySources_AK4PFchs.txt" #does not exist yet for 25ns data!!!!!!!!
 else:
     jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"
 
