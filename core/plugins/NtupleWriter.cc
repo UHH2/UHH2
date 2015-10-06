@@ -834,30 +834,30 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          met[j].set_mEtSig(pat_met.mEtSig());
          if(!puppi.at(j))
             {
-               met[j].set_shiftedPx_JetEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::JetEnUp, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPx_JetEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::JetEnDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPx_JetResUp(pat_met.shiftedPx(pat::MET::METUncertainty::JetResUp, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPx_JetResDown(pat_met.shiftedPx(pat::MET::METUncertainty::JetResDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPx_UnclusteredEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::UnclusteredEnUp, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPx_UnclusteredEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::UnclusteredEnDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPx_ElectronEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::ElectronEnUp, pat::MET::METUncertaintyLevel::Type1)); 	
-               met[j].set_shiftedPx_ElectronEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::ElectronEnDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPx_TauEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::TauEnUp, pat::MET::METUncertaintyLevel::Type1)); 	
-               met[j].set_shiftedPx_TauEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::TauEnDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPx_MuonEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::MuonEnDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPx_MuonEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::MuonEnUp, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPy_JetEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::JetEnUp, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPy_JetEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::JetEnDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPy_JetResUp(pat_met.shiftedPy(pat::MET::METUncertainty::JetResUp, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPy_JetResDown(pat_met.shiftedPy(pat::MET::METUncertainty::JetResDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPy_UnclusteredEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::UnclusteredEnUp, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPy_UnclusteredEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::UnclusteredEnDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPy_ElectronEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::ElectronEnUp, pat::MET::METUncertaintyLevel::Type1)); 	
-               met[j].set_shiftedPy_ElectronEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::ElectronEnDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPy_TauEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::TauEnUp, pat::MET::METUncertaintyLevel::Type1)); 	
-               met[j].set_shiftedPy_TauEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::TauEnDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPy_MuonEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::MuonEnDown, pat::MET::METUncertaintyLevel::Type1));
-               met[j].set_shiftedPy_MuonEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::MuonEnUp, pat::MET::METUncertaintyLevel::Type1));
+               met[j].set_shiftedPx_JetEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::JetEnUp, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPx_JetEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::JetEnDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPx_JetResUp(pat_met.shiftedPx(pat::MET::METUncertainty::JetResUp, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPx_JetResDown(pat_met.shiftedPx(pat::MET::METUncertainty::JetResDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPx_UnclusteredEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::UnclusteredEnUp, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPx_UnclusteredEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::UnclusteredEnDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPx_ElectronEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::ElectronEnUp, pat::MET::METCorrectionLevel::Type1)); 	
+               met[j].set_shiftedPx_ElectronEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::ElectronEnDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPx_TauEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::TauEnUp, pat::MET::METCorrectionLevel::Type1)); 	
+               met[j].set_shiftedPx_TauEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::TauEnDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPx_MuonEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::MuonEnDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPx_MuonEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::MuonEnUp, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPy_JetEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::JetEnUp, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPy_JetEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::JetEnDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPy_JetResUp(pat_met.shiftedPy(pat::MET::METUncertainty::JetResUp, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPy_JetResDown(pat_met.shiftedPy(pat::MET::METUncertainty::JetResDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPy_UnclusteredEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::UnclusteredEnUp, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPy_UnclusteredEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::UnclusteredEnDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPy_ElectronEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::ElectronEnUp, pat::MET::METCorrectionLevel::Type1)); 	
+               met[j].set_shiftedPy_ElectronEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::ElectronEnDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPy_TauEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::TauEnUp, pat::MET::METCorrectionLevel::Type1)); 	
+               met[j].set_shiftedPy_TauEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::TauEnDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPy_MuonEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::MuonEnDown, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_shiftedPy_MuonEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::MuonEnUp, pat::MET::METCorrectionLevel::Type1));
             }
        }
       }
