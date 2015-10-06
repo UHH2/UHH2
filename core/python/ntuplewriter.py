@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 
-useData = False
+useData = True
 use25ns = True #switch this flag to False when running on 50ns samples
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
@@ -33,7 +33,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
-                            fileNames  = cms.untracked.vstring("/store/mc/RunIISpring15DR74/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v2/00000/0AB045B5-BB0C-E511-81FD-0025905A60B8.root"),
+                            fileNames  = cms.untracked.vstring("/store/data/Run2015D/SingleMuon/MINIAOD/PromptReco-v3/000/256/629/00000/8EA4C10E-F35E-E511-ABF9-02163E014108.root"),
                             skipEvents = cms.untracked.uint32(0)
 )
 
@@ -87,7 +87,7 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 #see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 if useData:
-    process.GlobalTag.globaltag = '74X_dataRun2_v2' 
+    process.GlobalTag.globaltag = '74X_dataRun2_Prompt_v2' 
 else:
     if use25ns: 
         process.GlobalTag.globaltag = '74X_mcRun2_asymptotic_v2' 
@@ -114,108 +114,6 @@ process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
                                                     inputLabel = cms.InputTag('HBHENoiseFilterResultProducer',HBHElabel), 
                                                     reverseDecision = cms.bool(False)
                                                     )
-
-
-###############################################
-# MET without HF for run II data in CMSSW_74X
-
-#configurable options =======================================================================
-usePrivateSQlite=False #use external JECs (sqlite file)
-useHFCandidates=False #create an additionnal NoHF slimmed MET collection if the option is set to false
-applyResiduals=True #application of residual corrections. Have to be set to True once the 13 TeV residual corrections are available. False to be kept meanwhile. Can be kept to False later for private tests or for analysis checks and developments (not the official recommendation!).
-#===================================================================
-
-
-### External JECs =====================================================================================================
-
-if usePrivateSQlite:
-    from CondCore.DBCommon.CondDBSetup_cfi import *
-    import os
-    if useData:
-        if use25ns:
-            era="Summer15_25nsV4_DATA" #does not exist yet!!!!!!!!
-        else:
-            era="Summer15_50nsV4_DATA"
-    else:
-        if use25ns:
-            era="Summer15_25nsV4_MC" #does not exist yet!!!!!!!!
-        else:
-            era="Summer15_50nsV4_MC"
-
-    dBFile = os.path.expandvars("$CMSSW_BASE/src/PhysicsTools/PatAlgos/test/"+era+".db")
-    process.jec = cms.ESSource("PoolDBESSource",CondDBSetup,
-                               connect = cms.string( "sqlite_file://"+dBFile ),
-                               toGet =  cms.VPSet(
-            cms.PSet(
-                record = cms.string("JetCorrectionsRecord"),
-                tag = cms.string("JetCorrectorParametersCollection_"+era+"_AK4PF"),
-                label= cms.untracked.string("AK4PF")
-                ),
-            cms.PSet(
-                record = cms.string("JetCorrectionsRecord"),
-                tag = cms.string("JetCorrectorParametersCollection_"+era+"_AK4PFchs"),
-                label= cms.untracked.string("AK4PFchs")
-                ),
-            )
-                               )
-    process.es_prefer_jec = cms.ESPrefer("PoolDBESSource",'jec')
-
-#uncertainty file
-if use25ns: 
-    jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt" #does not exist yet for 25ns data!!!!!!!!
-else:
-    jecUncertaintyFile="PhysicsTools/PatUtils/data/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"
-
-### ------------------------------------------------------------------
-
-### ---------------------------------------------------------------------------
-### Removing the HF from the MET computation
-### ---------------------------------------------------------------------------
-if not useHFCandidates:
-    process.noHFCands = cms.EDFilter("CandPtrSelector",
-                                     src=cms.InputTag("packedPFCandidates"),
-                                     cut=cms.string("abs(pdgId)!=1 && abs(pdgId)!=2 && abs(eta)<3.0")
-                                     )
-
-#jets are rebuilt from those candidates by the tools, no need to do anything else
-### =================================================================================
-
-from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
-
-#default configuration for miniAOD reprocessing, change the isData flag to run on data
-#for a full met computation, remove the pfCandColl input
-runMetCorAndUncFromMiniAOD(process,
-                           isData=useData,
-                           jecUncFile=jecUncertaintyFile
-                           )
-
-if not useHFCandidates:
-    runMetCorAndUncFromMiniAOD(process,
-                               isData=useData,
-                               pfCandColl=cms.InputTag("noHFCands"),
-                               jecUncFile=jecUncertaintyFile,
-                               postfix="NoHF"
-                               )
-
-### -------------------------------------------------------------------
-### the lines below remove the L2L3 residual corrections when processing data
-### -------------------------------------------------------------------
-if not applyResiduals:
-    process.patPFMetT1T2Corr.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.patPFMetT1T2SmearCorr.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.patPFMetT2Corr.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.patPFMetT2SmearCorr.jetCorrLabelRes = cms.InputTag("L3Absolute")
-    process.shiftedPatJetEnDown.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFCHSL1FastL2L3Corrector")
-    process.shiftedPatJetEnUp.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFCHSL1FastL2L3Corrector")
-
-    if not useHFCandidates:
-          process.patPFMetT1T2CorrNoHF.jetCorrLabelRes = cms.InputTag("L3Absolute")
-          process.patPFMetT1T2SmearCorrNoHF.jetCorrLabelRes = cms.InputTag("L3Absolute")
-          process.patPFMetT2CorrNoHF.jetCorrLabelRes = cms.InputTag("L3Absolute")
-          process.patPFMetT2SmearCorrNoHF.jetCorrLabelRes = cms.InputTag("L3Absolute")
-          process.shiftedPatJetEnDownNoHF.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFCHSL1FastL2L3Corrector")
-          process.shiftedPatJetEnUpNoHF.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFCHSL1FastL2L3Corrector")
-### ------------------------------------------------------------------
 
 
 
