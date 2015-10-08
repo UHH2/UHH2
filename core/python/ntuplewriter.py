@@ -142,7 +142,7 @@ if usePrivateSQlite:
         else:
             era="Summer15_50nsV4_MC"
 
-    dBFile = os.path.expandvars("$CMSSW_BASE/src/UHH2/core/python/"+era+".db")
+    dBFile = os.path.expandvars(era+".db")
     process.jec = cms.ESSource("PoolDBESSource",CondDBSetup,
                                connect = cms.string( "sqlite_file:"+dBFile ),
                                toGet =  cms.VPSet(
