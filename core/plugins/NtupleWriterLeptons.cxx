@@ -197,9 +197,9 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          // used in the same as the string used for the pat tauID.
          #define FILL_TAU_BIT(tauidname) tau.set_bool(Tau:: tauidname, pat_tau.tauID(#tauidname) > 0.5)
         
-         FILL_TAU_BIT(againstElectronLoose);         //  0
-         FILL_TAU_BIT(againstElectronMedium);
-         FILL_TAU_BIT(againstElectronTight);
+	 //         FILL_TAU_BIT(againstElectronLoose);         //  0
+	 //         FILL_TAU_BIT(againstElectronMedium);
+	 //         FILL_TAU_BIT(againstElectronTight);
          FILL_TAU_BIT(againstElectronVLooseMVA5);
          FILL_TAU_BIT(againstElectronLooseMVA5);
          FILL_TAU_BIT(againstElectronMediumMVA5);

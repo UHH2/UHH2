@@ -18,7 +18,7 @@ public:
   // the names used in the twiki page above (e.g. 'by...Rejection' has the name 'against...' here). See at the end of this file for a list
   // of variable names in miniAOD.
   enum bool_id {
-      againstElectronLoose = 0, againstElectronMedium, againstElectronTight,
+    againstElectronLoose = 0, againstElectronMedium=0, againstElectronTight=0,
       againstElectronVLooseMVA5, againstElectronLooseMVA5, againstElectronMediumMVA5, againstElectronTightMVA5, againstElectronVTightMVA5, 
       againstMuonLoose, againstMuonMedium, againstMuonTight, againstMuonLoose3, againstMuonTight3,
       againstMuonLooseMVA, againstMuonMediumMVA, againstMuonTightMVA, 
