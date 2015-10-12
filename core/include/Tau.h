@@ -20,7 +20,7 @@ public:
   enum bool_id {
     againstElectronLoose = 0, againstElectronMedium=0, againstElectronTight=0,
       againstElectronVLooseMVA5, againstElectronLooseMVA5, againstElectronMediumMVA5, againstElectronTightMVA5, againstElectronVTightMVA5, 
-      againstMuonLoose, againstMuonMedium, againstMuonTight, againstMuonLoose3, againstMuonTight3,
+      againstMuonLoose =0 , againstMuonMedium =0 , againstMuonTight=0, againstMuonLoose3, againstMuonTight3,
       againstMuonLooseMVA, againstMuonMediumMVA, againstMuonTightMVA, 
       decayModeFinding, 
       byLooseCombinedIsolationDeltaBetaCorr3Hits, byMediumCombinedIsolationDeltaBetaCorr3Hits, byTightCombinedIsolationDeltaBetaCorr3Hits /* = 19 */,
