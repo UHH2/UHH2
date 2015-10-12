@@ -237,7 +237,7 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          FILL_TAU_FLOAT(againstElectronMVA5raw);
 	 //         FILL_TAU_FLOAT(againstMuonMVAraw);
          FILL_TAU_FLOAT(byCombinedIsolationDeltaBetaCorrRaw3Hits);
-         FILL_TAU_FLOAT(byIsolationMVA3newDMwoLTraw);
+         //FILL_TAU_FLOAT(byIsolationMVA3newDMwoLTraw);
          FILL_TAU_FLOAT(byIsolationMVA3newDMwLTraw);
          FILL_TAU_FLOAT(chargedIsoPtSum);
          FILL_TAU_FLOAT(neutralIsoPtSum);

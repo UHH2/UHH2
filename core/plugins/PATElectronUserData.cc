@@ -47,7 +47,7 @@ PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig):
 
   src_ = consumes< edm::View<pat::Electron> >(iConfig.getParameter<edm::InputTag>("src"));
 
-  vmaps_bool_ = iConfig.getParameter<edm::ParameterSet>("vmaps_bool");
+  if(iConfig.exists("vmaps_bool")) vmaps_bool_ = iConfig.getParameter<edm::ParameterSet>("vmaps_bool");
   for(unsigned int i=0; i<vmaps_bool_.getParameterNames().size(); ++i){
 
     vmap_link link;
@@ -57,7 +57,7 @@ PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig):
     vmaps_bool_links_.push_back(link);
   }
 
-  vmaps_float_ = iConfig.getParameter<edm::ParameterSet>("vmaps_float");
+  if(iConfig.exists("vmaps_float")) vmaps_float_ = iConfig.getParameter<edm::ParameterSet>("vmaps_float");
   for(unsigned int i=0; i<vmaps_float_.getParameterNames().size(); ++i){
 
     vmap_link link;
