@@ -21,7 +21,7 @@ public:
     againstElectronLoose = 0, againstElectronMedium=0, againstElectronTight=0,
       againstElectronVLooseMVA5, againstElectronLooseMVA5, againstElectronMediumMVA5, againstElectronTightMVA5, againstElectronVTightMVA5, 
       againstMuonLoose =0 , againstMuonMedium =0 , againstMuonTight=0, againstMuonLoose3, againstMuonTight3,
-      againstMuonLooseMVA, againstMuonMediumMVA, againstMuonTightMVA, 
+      againstMuonLooseMVA=0, againstMuonMediumMVA=0, againstMuonTightMVA=0, 
       decayModeFinding, 
       byLooseCombinedIsolationDeltaBetaCorr3Hits, byMediumCombinedIsolationDeltaBetaCorr3Hits, byTightCombinedIsolationDeltaBetaCorr3Hits /* = 19 */,
       byVLooseIsolationMVA3newDMwoLT, byLooseIsolationMVA3newDMwoLT, byMediumIsolationMVA3newDMwoLT, byTightIsolationMVA3newDMwoLT, byVTightIsolationMVA3newDMwoLT, byVVTightIsolationMVA3newDMwoLT,

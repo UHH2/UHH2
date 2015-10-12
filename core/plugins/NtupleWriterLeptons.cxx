@@ -210,9 +210,9 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          //FILL_TAU_BIT(againstMuonTight);            // 10
          FILL_TAU_BIT(againstMuonLoose3);
          FILL_TAU_BIT(againstMuonTight3);
-         FILL_TAU_BIT(againstMuonLooseMVA);
-         FILL_TAU_BIT(againstMuonMediumMVA);
-         FILL_TAU_BIT(againstMuonTightMVA);
+         //FILL_TAU_BIT(againstMuonLooseMVA);
+         //FILL_TAU_BIT(againstMuonMediumMVA);
+         //FILL_TAU_BIT(againstMuonTightMVA);
          FILL_TAU_BIT(decayModeFinding);
          FILL_TAU_BIT(byLooseCombinedIsolationDeltaBetaCorr3Hits);
          FILL_TAU_BIT(byMediumCombinedIsolationDeltaBetaCorr3Hits);
