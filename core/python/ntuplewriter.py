@@ -33,7 +33,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
-                            fileNames  = cms.untracked.vstring("/store/data/Run2015D/SingleMuon/MINIAOD/PromptReco-v3/000/256/629/00000/8EA4C10E-F35E-E511-ABF9-02163E014108.root"),
+                            fileNames  = cms.untracked.vstring("/store/data/Run2015D/SingleMuon/MINIAOD/PromptReco-v3/000/256/729/00000/2C0BE722-5960-E511-B834-02163E014421.root"),
                             skipEvents = cms.untracked.uint32(0)
 )
 
@@ -630,9 +630,10 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
     heepElectronID_HEEPV60                                = cms.InputTag('egmGsfElectronIDs:heepElectronID-HEEPV60'),
   ),
 
-  vmaps_float = cms.PSet(
-    ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values'),
-  ),
+  #Already embedded in miniAOD v2
+  #vmaps_float = cms.PSet(
+  #  ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values'),
+  #),
 
   vmaps_double = cms.vstring(el_isovals),
 
