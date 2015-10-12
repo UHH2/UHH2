@@ -24,7 +24,7 @@ public:
       againstMuonLooseMVA=0, againstMuonMediumMVA=0, againstMuonTightMVA=0, 
       decayModeFinding, 
       byLooseCombinedIsolationDeltaBetaCorr3Hits, byMediumCombinedIsolationDeltaBetaCorr3Hits, byTightCombinedIsolationDeltaBetaCorr3Hits /* = 19 */,
-      byVLooseIsolationMVA3newDMwoLT, byLooseIsolationMVA3newDMwoLT, byMediumIsolationMVA3newDMwoLT, byTightIsolationMVA3newDMwoLT, byVTightIsolationMVA3newDMwoLT, byVVTightIsolationMVA3newDMwoLT,
+      byVLooseIsolationMVA3newDMwoLT=0, byLooseIsolationMVA3newDMwoLT=0, byMediumIsolationMVA3newDMwoLT=0, byTightIsolationMVA3newDMwoLT=0, byVTightIsolationMVA3newDMwoLT=0, byVVTightIsolationMVA3newDMwoLT=0,
       byVLooseIsolationMVA3newDMwLT, byLooseIsolationMVA3newDMwLT, byMediumIsolationMVA3newDMwLT, byTightIsolationMVA3newDMwLT, byVTightIsolationMVA3newDMwLT, byVVTightIsolationMVA3newDMwLT, decayModeFindingNewDMs /* = 32 */
   };
   

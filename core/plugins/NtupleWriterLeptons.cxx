@@ -217,12 +217,12 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          FILL_TAU_BIT(byLooseCombinedIsolationDeltaBetaCorr3Hits);
          FILL_TAU_BIT(byMediumCombinedIsolationDeltaBetaCorr3Hits);
          FILL_TAU_BIT(byTightCombinedIsolationDeltaBetaCorr3Hits);
-         FILL_TAU_BIT(byVLooseIsolationMVA3newDMwoLT);  // 20
-         FILL_TAU_BIT(byLooseIsolationMVA3newDMwoLT);
-         FILL_TAU_BIT(byMediumIsolationMVA3newDMwoLT);
-         FILL_TAU_BIT(byTightIsolationMVA3newDMwoLT);
-         FILL_TAU_BIT(byVTightIsolationMVA3newDMwoLT);
-         FILL_TAU_BIT(byVVTightIsolationMVA3newDMwoLT);
+         //FILL_TAU_BIT(byVLooseIsolationMVA3newDMwoLT);  // 20
+         //FILL_TAU_BIT(byLooseIsolationMVA3newDMwoLT);
+         //FILL_TAU_BIT(byMediumIsolationMVA3newDMwoLT);
+         //FILL_TAU_BIT(byTightIsolationMVA3newDMwoLT);
+         //FILL_TAU_BIT(byVTightIsolationMVA3newDMwoLT);
+         //FILL_TAU_BIT(byVVTightIsolationMVA3newDMwoLT);
          FILL_TAU_BIT(byVLooseIsolationMVA3newDMwLT);
          FILL_TAU_BIT(byLooseIsolationMVA3newDMwLT);
          FILL_TAU_BIT(byMediumIsolationMVA3newDMwLT);
@@ -231,11 +231,13 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          FILL_TAU_BIT(byVVTightIsolationMVA3newDMwLT); // 31
          FILL_TAU_BIT(decayModeFindingNewDMs);
          
+	 'againstElectronLooseMVA5' 'againstElectronMVA5category' 'againstElectronMVA5raw' 'againstElectronMediumMVA5' 'againstElectronTightMVA5' 'againstElectronVLooseMVA5' 'againstElectronVTightMVA5' 'againstMuonLoose3' 'againstMuonTight3' 'byCombinedIsolationDeltaBetaCorrRaw3Hits' 'byIsolationMVA3newDMwLTraw' 'byIsolationMVA3oldDMwLTraw' 'byLooseCombinedIsolationDeltaBetaCorr3Hits' 'byLooseIsolationMVA3newDMwLT' 'byLooseIsolationMVA3oldDMwLT' 'byLoosePileupWeightedIsolation3Hits' 'byMediumCombinedIsolationDeltaBetaCorr3Hits' 'byMediumIsolationMVA3newDMwLT' 'byMediumIsolationMVA3oldDMwLT' 'byMediumPileupWeightedIsolation3Hits' 'byPhotonPtSumOutsideSignalCone' 'byPileupWeightedIsolationRaw3Hits' 'byTightCombinedIsolationDeltaBetaCorr3Hits' 'byTightIsolationMVA3newDMwLT' 'byTightIsolationMVA3oldDMwLT' 'byTightPileupWeightedIsolation3Hits' 'byVLooseIsolationMVA3newDMwLT' 'byVLooseIsolationMVA3oldDMwLT' 'byVTightIsolationMVA3newDMwLT' 'byVTightIsolationMVA3oldDMwLT' 'byVVTightIsolationMVA3newDMwLT' 'byVVTightIsolationMVA3oldDMwLT' 'chargedIsoPtSum' 'decayModeFinding' 'decayModeFindingNewDMs' 'footprintCorrection' 'neutralIsoPtSum' 'neutralIsoPtSumWeight' 'photonPtSumOutsideSignalCone' 'puCorrPtSum' 
+
          #undef FILL_TAU_BIT
          #define FILL_TAU_FLOAT(name) tau.set_##name (pat_tau.tauID(#name))
          
          FILL_TAU_FLOAT(againstElectronMVA5raw);
-         FILL_TAU_FLOAT(againstMuonMVAraw);
+	 //         FILL_TAU_FLOAT(againstMuonMVAraw);
          FILL_TAU_FLOAT(byCombinedIsolationDeltaBetaCorrRaw3Hits);
          FILL_TAU_FLOAT(byIsolationMVA3newDMwoLTraw);
          FILL_TAU_FLOAT(byIsolationMVA3newDMwLTraw);
