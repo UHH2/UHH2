@@ -18,13 +18,13 @@ public:
   // the names used in the twiki page above (e.g. 'by...Rejection' has the name 'against...' here). See at the end of this file for a list
   // of variable names in miniAOD.
   enum bool_id {
-      againstElectronLoose = 0, againstElectronMedium, againstElectronTight,
+    againstElectronLoose = 0, againstElectronMedium=0, againstElectronTight=0,
       againstElectronVLooseMVA5, againstElectronLooseMVA5, againstElectronMediumMVA5, againstElectronTightMVA5, againstElectronVTightMVA5, 
-      againstMuonLoose, againstMuonMedium, againstMuonTight, againstMuonLoose3, againstMuonTight3,
-      againstMuonLooseMVA, againstMuonMediumMVA, againstMuonTightMVA, 
+      againstMuonLoose =0 , againstMuonMedium =0 , againstMuonTight=0, againstMuonLoose3, againstMuonTight3,
+      againstMuonLooseMVA=0, againstMuonMediumMVA=0, againstMuonTightMVA=0, 
       decayModeFinding, 
       byLooseCombinedIsolationDeltaBetaCorr3Hits, byMediumCombinedIsolationDeltaBetaCorr3Hits, byTightCombinedIsolationDeltaBetaCorr3Hits /* = 19 */,
-      byVLooseIsolationMVA3newDMwoLT, byLooseIsolationMVA3newDMwoLT, byMediumIsolationMVA3newDMwoLT, byTightIsolationMVA3newDMwoLT, byVTightIsolationMVA3newDMwoLT, byVVTightIsolationMVA3newDMwoLT,
+      byVLooseIsolationMVA3newDMwoLT=0, byLooseIsolationMVA3newDMwoLT=0, byMediumIsolationMVA3newDMwoLT=0, byTightIsolationMVA3newDMwoLT=0, byVTightIsolationMVA3newDMwoLT=0, byVVTightIsolationMVA3newDMwoLT=0,
       byVLooseIsolationMVA3newDMwLT, byLooseIsolationMVA3newDMwLT, byMediumIsolationMVA3newDMwLT, byTightIsolationMVA3newDMwLT, byVTightIsolationMVA3newDMwLT, byVVTightIsolationMVA3newDMwLT, decayModeFindingNewDMs /* = 32 */
   };
   

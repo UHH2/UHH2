@@ -197,32 +197,32 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          // used in the same as the string used for the pat tauID.
          #define FILL_TAU_BIT(tauidname) tau.set_bool(Tau:: tauidname, pat_tau.tauID(#tauidname) > 0.5)
         
-         FILL_TAU_BIT(againstElectronLoose);         //  0
-         FILL_TAU_BIT(againstElectronMedium);
-         FILL_TAU_BIT(againstElectronTight);
+	 //         FILL_TAU_BIT(againstElectronLoose);         //  0
+	 //         FILL_TAU_BIT(againstElectronMedium);
+	 //         FILL_TAU_BIT(againstElectronTight);
          FILL_TAU_BIT(againstElectronVLooseMVA5);
          FILL_TAU_BIT(againstElectronLooseMVA5);
          FILL_TAU_BIT(againstElectronMediumMVA5);
          FILL_TAU_BIT(againstElectronTightMVA5);
          FILL_TAU_BIT(againstElectronVTightMVA5);
-         FILL_TAU_BIT(againstMuonLoose);
-         FILL_TAU_BIT(againstMuonMedium);
-         FILL_TAU_BIT(againstMuonTight);            // 10
+         //FILL_TAU_BIT(againstMuonLoose);
+         //FILL_TAU_BIT(againstMuonMedium);
+         //FILL_TAU_BIT(againstMuonTight);            // 10
          FILL_TAU_BIT(againstMuonLoose3);
          FILL_TAU_BIT(againstMuonTight3);
-         FILL_TAU_BIT(againstMuonLooseMVA);
-         FILL_TAU_BIT(againstMuonMediumMVA);
-         FILL_TAU_BIT(againstMuonTightMVA);
+         //FILL_TAU_BIT(againstMuonLooseMVA);
+         //FILL_TAU_BIT(againstMuonMediumMVA);
+         //FILL_TAU_BIT(againstMuonTightMVA);
          FILL_TAU_BIT(decayModeFinding);
          FILL_TAU_BIT(byLooseCombinedIsolationDeltaBetaCorr3Hits);
          FILL_TAU_BIT(byMediumCombinedIsolationDeltaBetaCorr3Hits);
          FILL_TAU_BIT(byTightCombinedIsolationDeltaBetaCorr3Hits);
-         FILL_TAU_BIT(byVLooseIsolationMVA3newDMwoLT);  // 20
-         FILL_TAU_BIT(byLooseIsolationMVA3newDMwoLT);
-         FILL_TAU_BIT(byMediumIsolationMVA3newDMwoLT);
-         FILL_TAU_BIT(byTightIsolationMVA3newDMwoLT);
-         FILL_TAU_BIT(byVTightIsolationMVA3newDMwoLT);
-         FILL_TAU_BIT(byVVTightIsolationMVA3newDMwoLT);
+         //FILL_TAU_BIT(byVLooseIsolationMVA3newDMwoLT);  // 20
+         //FILL_TAU_BIT(byLooseIsolationMVA3newDMwoLT);
+         //FILL_TAU_BIT(byMediumIsolationMVA3newDMwoLT);
+         //FILL_TAU_BIT(byTightIsolationMVA3newDMwoLT);
+         //FILL_TAU_BIT(byVTightIsolationMVA3newDMwoLT);
+         //FILL_TAU_BIT(byVVTightIsolationMVA3newDMwoLT);
          FILL_TAU_BIT(byVLooseIsolationMVA3newDMwLT);
          FILL_TAU_BIT(byLooseIsolationMVA3newDMwLT);
          FILL_TAU_BIT(byMediumIsolationMVA3newDMwLT);
@@ -230,14 +230,14 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          FILL_TAU_BIT(byVTightIsolationMVA3newDMwLT);  // 30
          FILL_TAU_BIT(byVVTightIsolationMVA3newDMwLT); // 31
          FILL_TAU_BIT(decayModeFindingNewDMs);
-         
+
          #undef FILL_TAU_BIT
          #define FILL_TAU_FLOAT(name) tau.set_##name (pat_tau.tauID(#name))
          
          FILL_TAU_FLOAT(againstElectronMVA5raw);
-         FILL_TAU_FLOAT(againstMuonMVAraw);
+	 //         FILL_TAU_FLOAT(againstMuonMVAraw);
          FILL_TAU_FLOAT(byCombinedIsolationDeltaBetaCorrRaw3Hits);
-         FILL_TAU_FLOAT(byIsolationMVA3newDMwoLTraw);
+         //FILL_TAU_FLOAT(byIsolationMVA3newDMwoLTraw);
          FILL_TAU_FLOAT(byIsolationMVA3newDMwLTraw);
          FILL_TAU_FLOAT(chargedIsoPtSum);
          FILL_TAU_FLOAT(neutralIsoPtSum);
