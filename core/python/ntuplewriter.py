@@ -90,7 +90,7 @@ if useData:
     process.GlobalTag.globaltag = '74X_dataRun2_Prompt_v2' 
 else:
     if use25ns: 
-        process.GlobalTag.globaltag = '74X_mcRun2_asymptotic_v2' 
+        process.GlobalTag.globaltag = 'MCRUN2_74_V9' 
     else:
         process.GlobalTag.globaltag = '74X_mcRun2_startup_v2' 
 
