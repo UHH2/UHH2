@@ -230,6 +230,7 @@ SFrameContext::SFrameContext(AnalysisModuleRunner & base_, const SInputData& sin
     set("dataset_version", sin.GetVersion().Data());
     set("dataset_lumi", double2string(sin.GetTotalLumi()));
     set("target_lumi", double2string(base_.GetConfig().GetTargetLumi()));
+    set("n_events_total", double2string(sin.GetEventsTotal())); // GetEventsTotal returns a long..
     // we need exactly one input event tree:
     bool found_input_tree = false;
     for (const auto & type_trees : sin.GetTrees()) {
