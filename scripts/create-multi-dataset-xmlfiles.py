@@ -28,6 +28,11 @@ basenames = set('_'.join(tok for tok in name.split('_')[:-2])
 basenames = sorted(basenames)
 print "Found these basenames: %s " % basenames
 
+if basenames == ['']:
+    print 'No basenames found. Did you give the pattern in the correct way? '
+    print 'E.g. "my/path/*" (with double quotes)'
+    exit(-1)
+
 # write out
 entity_template = """\
 <!ENTITY %s SYSTEM  "../../common/datasets/%s.xml">
@@ -47,7 +52,7 @@ for basename in basenames:
     n_events = 0
     with open(basename + postfix + '.xml', 'w') as out:
         for fname in files:
-            if not os.path.basename(fname).startswith(basename):
+            if not os.path.basename(fname).startswith(basename+'_'):
                 continue
             out.write('<In FileName="%s" Lumi="0.0"/>\n' % fname)
 
