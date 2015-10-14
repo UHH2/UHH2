@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
-  <!ENTITY NEVT "10">
+  <!ENTITY NEVT "-1">
   <!ENTITY PRESELdir "./">
   <!ENTITY TTbar SYSTEM "../../common/datasets/RunII_25ns_v1/MC_TTbar.xml">
 ]>
