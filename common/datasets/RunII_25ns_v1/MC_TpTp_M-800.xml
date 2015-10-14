@@ -2,6 +2,7 @@
 <In FileName="/nfs/dust/cms/user/nowatsd/grid_control_new/gc-output/RunII-ntuple-25ns/tptp_signals/MC_TpTp_M-800_22_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/nowatsd/grid_control_new/gc-output/RunII-ntuple-25ns/tptp_signals/MC_TpTp_M-800_23_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/nowatsd/grid_control_new/gc-output/RunII-ntuple-25ns/tptp_signals/MC_TpTp_M-800_24_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/nowatsd/grid_control_new/gc-output/RunII-ntuple-25ns/tptp_signals/MC_TpTp_M-800_25_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/nowatsd/grid_control_new/gc-output/RunII-ntuple-25ns/tptp_signals/MC_TpTp_M-800_26_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/nowatsd/grid_control_new/gc-output/RunII-ntuple-25ns/tptp_signals/MC_TpTp_M-800_27_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/nowatsd/grid_control_new/gc-output/RunII-ntuple-25ns/tptp_signals/MC_TpTp_M-800_28_Ntuple.root" Lumi="0.0"/>
@@ -24,4 +25,4 @@
 <In FileName="/nfs/dust/cms/user/nowatsd/grid_control_new/gc-output/RunII-ntuple-25ns/tptp_signals/MC_TpTp_M-800_45_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/nowatsd/grid_control_new/gc-output/RunII-ntuple-25ns/tptp_signals/MC_TpTp_M-800_46_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/nowatsd/grid_control_new/gc-output/RunII-ntuple-25ns/tptp_signals/MC_TpTp_M-800_47_Ntuple.root" Lumi="0.0"/>
-<!-- number of events: 775202 -->
+<!-- number of events: 820105 -->
