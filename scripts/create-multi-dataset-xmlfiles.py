@@ -52,7 +52,7 @@ for basename in basenames:
     n_events = 0
     with open(basename + postfix + '.xml', 'w') as out:
         for fname in files:
-            if not os.path.basename(fname).startswith(basename):
+            if not os.path.basename(fname).startswith(basename+'_'):
                 continue
             out.write('<In FileName="%s" Lumi="0.0"/>\n' % fname)
 
