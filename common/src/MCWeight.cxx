@@ -62,7 +62,7 @@ MCPileupReweight::MCPileupReweight(Context & ctx){
    TFile *file_data =  new TFile(pileup_directory_data);
    
    h_npu_mc=(TH1F*) file_mc->Get("input_Event/N_PrimVertices");
-   h_npu_data=(TH1F*) file_data->Get("input_Event/N_PrimVertices");
+   h_npu_data=(TH1F*) file_data->Get("pileup");
    
    
    if(h_npu_mc->GetNbinsX() != h_npu_data->GetNbinsX()){
@@ -85,7 +85,7 @@ bool MCPileupReweight::process(Event &event){
    }
 
    double weight =0;
-   int binnumber = h_npu_mc->GetXaxis()->FindBin(event.pvs->size());
+   int binnumber = h_npu_mc->GetXaxis()->FindBin(event.genInfo->pileup_TrueNumInteractions());
    
    if(h_npu_mc->GetBinContent(binnumber)!=0){
       weight = h_npu_data->GetBinContent(binnumber)/h_npu_mc->GetBinContent(binnumber);
