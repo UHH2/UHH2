@@ -61,7 +61,7 @@ MCPileupReweight::MCPileupReweight(Context & ctx){
    else file_mc = new TFile(pileup_directory_50ns);
    TFile *file_data =  new TFile(pileup_directory_data);
    
-   h_npu_mc=(TH1F*) file_mc->Get("input_Event/N_PrimVertices");
+   h_npu_mc=(TH1F*) file_mc->Get("input_Event/N_TrueInteractions");
    h_npu_data=(TH1F*) file_data->Get("pileup");
    
    
