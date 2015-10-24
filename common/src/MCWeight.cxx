@@ -49,16 +49,17 @@ MCPileupReweight::MCPileupReweight(Context & ctx){
    }
 
    TString pileup_directory_data = ctx.get("pileup_directory_data");
-   TString pileup_directory_50ns = ctx.get("pileup_directory_50ns");
+   TString pileup_directory_50ns;
    TString pileup_directory_25ns;
-   if (ctx.get("dataset_version").find("25ns")!=std::string::npos) pileup_directory_25ns = ctx.get("pileup_directory_25ns");
-   
+   if (ctx.get("dataset_version").find("50ns")!=std::string::npos) pileup_directory_50ns = ctx.get("pileup_directory_50ns"); 
+   else pileup_directory_25ns = ctx.get("pileup_directory_25ns");
+
    if(pileup_directory_data == ""){
       throw runtime_error("MCPileupReweight: not yet implemented!");
    }
    TFile *file_mc;
-   if (ctx.get("dataset_version").find("25ns")!=std::string::npos) file_mc = new TFile(pileup_directory_25ns);
-   else file_mc = new TFile(pileup_directory_50ns);
+   if (ctx.get("dataset_version").find("50ns")!=std::string::npos) file_mc = new TFile(pileup_directory_50ns);
+   else file_mc = new TFile(pileup_directory_25ns);
    TFile *file_data =  new TFile(pileup_directory_data);
    
    h_npu_mc=(TH1F*) file_mc->Get("input_Event/N_TrueInteractions");
