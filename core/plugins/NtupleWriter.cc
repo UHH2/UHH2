@@ -129,6 +129,10 @@ private:
         throw runtime_error("undeclare_event_output not implemented in CMSSW!");
     }
 
+    virtual void do_undeclare_all_event_output() override {
+        throw runtime_error("undeclare_all_event_output not implemented in CMSSW!");
+    }
+
     TFile * outfile;
     TTree * outtree;
     

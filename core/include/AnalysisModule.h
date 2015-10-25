@@ -183,6 +183,12 @@ public:
         do_undeclare_event_output(branch_name);
     }
 
+    /** \brief Remove all branches from the output event tree
+     */
+    void undeclare_all_event_output() {
+        do_undeclare_all_event_output();
+    }
+
 
     /** \brief Get a handle by type and name, allowing to set / get event contents
      *
@@ -205,6 +211,7 @@ protected:
     virtual void do_declare_event_input(const std::type_info & ti, const std::string & bname, const std::string & mname) = 0;
     virtual void do_declare_event_output(const std::type_info & ti, const std::string & bname, const std::string & mname) = 0;
     virtual void do_undeclare_event_output(const std::string & branch_name) = 0;
+    virtual void do_undeclare_all_event_output() = 0;
 
     std::map<std::string, std::string> settings;
 
