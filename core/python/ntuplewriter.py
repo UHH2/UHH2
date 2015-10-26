@@ -600,9 +600,9 @@ process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectrons')
 
 elecID_mod_ls = [
   'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff',
-  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_50ns_V1_cff',
-  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_nonTrig_V1_cff',
   'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff',
+  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_'+'nonTrig_V1_cff',
+  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_'+   'Trig_V1_cff',
 ]
 
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
@@ -619,28 +619,27 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
     cutBasedElectronID_Spring15_25ns_V1_standalone_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-medium'),
     cutBasedElectronID_Spring15_25ns_V1_standalone_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight'),
 
-    cutBasedElectronID_Spring15_50ns_V1_standalone_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-50ns-V1-standalone-veto'),
-    cutBasedElectronID_Spring15_50ns_V1_standalone_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-50ns-V1-standalone-loose'),
-    cutBasedElectronID_Spring15_50ns_V1_standalone_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-50ns-V1-standalone-medium'),
-    cutBasedElectronID_Spring15_50ns_V1_standalone_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-50ns-V1-standalone-tight'),
+    heepElectronID_HEEPV60                                = cms.InputTag('egmGsfElectronIDs:heepElectronID-HEEPV60'),
 
     mvaEleID_Spring15_25ns_nonTrig_V1_wp90                = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp90'),
     mvaEleID_Spring15_25ns_nonTrig_V1_wp80                = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp80'),
 
-    heepElectronID_HEEPV60                                = cms.InputTag('egmGsfElectronIDs:heepElectronID-HEEPV60'),
+    mvaEleID_Spring15_25ns_Trig_V1_wp90                   = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-Trig-V1-wp90'),
+    mvaEleID_Spring15_25ns_Trig_V1_wp80                   = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-Trig-V1-wp80'),
   ),
 
   #Already embedded in miniAOD v2
-  #vmaps_float = cms.PSet(
-  #  ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values'),
-  #),
+  vmaps_float = cms.PSet(
+    ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15'+'NonTrig25nsV1Values'),
+    ElectronMVAEstimatorRun2Spring15Trig25nsV1Values__user01    = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15'+   'Trig25nsV1Values'),
+  ),
 
   vmaps_double = cms.vstring(el_isovals),
 
   effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Spring15/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_50ns.txt'),
 
-  mva_NoTrig = cms.string('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values'),
-  mva_Trig   = cms.string('ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values'),
+  mva_NoTrig = cms.string('ElectronMVAEstimatorRun2Spring15'+'NonTrig25nsV1Values__user01'),
+  mva_Trig   = cms.string('ElectronMVAEstimatorRun2Spring15'+   'Trig25nsV1Values__user01'),
 )
 
 if use25ns: process.slimmedElectronsUSER.effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Spring15/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_25ns.txt')
