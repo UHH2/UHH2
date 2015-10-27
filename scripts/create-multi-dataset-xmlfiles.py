@@ -58,6 +58,7 @@ for basename in basenames:
 
             f = ROOT.TFile(fname)
             n_events += f.Get('AnalysisTree').GetEntriesFast()
+            f.Close()
 
         out.write('<!-- number of events: %d -->\n' % n_events)
         entity_lines.append(entity_template % (basename, basename))
