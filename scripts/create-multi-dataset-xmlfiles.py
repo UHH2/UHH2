@@ -19,13 +19,22 @@ files = glob.glob(pattern)
 print "Found %d files matching pattern" % len(files)
 files.sort()
 
+def get_basename(filename):
+    # remove jobnumber and 'Ntuple' and make a set
+    filename = os.path.splitext(filename)[0]
+    filename = os.path.basename(filename)
+    tokens = filename.split('_')
+    if tokens[-1] == 'Ntuple':
+        tokens = tokens[:-2]
+    else:
+        tokens = tokens[:-1]
+    basename = '_'.join(tokens)
+    return basename
+
 ### find common element in filenames
-# get filenames without ext and path
-basenames = map(lambda p: os.path.basename(os.path.splitext(p)[0]), files)
-# remove jobnumber and 'Ntuple' and make a set
-basenames = set('_'.join(tok for tok in name.split('_')[:-2])
-                for name in basenames)
-basenames = sorted(basenames)
+
+
+basenames = sorted(set(get_basename(name) for name in files))
 print "Found these basenames: %s " % basenames
 
 if basenames == ['']:
@@ -52,7 +61,7 @@ for basename in basenames:
     n_events = 0
     with open(basename + postfix + '.xml', 'w') as out:
         for fname in files:
-            if not os.path.basename(fname).startswith(basename+'_'):
+            if get_basename(fname) != basename:
                 continue
             out.write('<In FileName="%s" Lumi="0.0"/>\n' % fname)
 
