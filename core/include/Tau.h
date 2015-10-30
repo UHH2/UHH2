@@ -18,14 +18,12 @@ public:
   // the names used in the twiki page above (e.g. 'by...Rejection' has the name 'against...' here). See at the end of this file for a list
   // of variable names in miniAOD.
   enum bool_id {
-      againstElectronLoose = 0, againstElectronMedium, againstElectronTight,
       againstElectronVLooseMVA5, againstElectronLooseMVA5, againstElectronMediumMVA5, againstElectronTightMVA5, againstElectronVTightMVA5, 
-      againstMuonLoose, againstMuonMedium, againstMuonTight, againstMuonLoose3, againstMuonTight3,
-      againstMuonLooseMVA, againstMuonMediumMVA, againstMuonTightMVA, 
-      decayModeFinding, 
-      byLooseCombinedIsolationDeltaBetaCorr3Hits, byMediumCombinedIsolationDeltaBetaCorr3Hits, byTightCombinedIsolationDeltaBetaCorr3Hits /* = 19 */,
+      againstMuonLoose3, againstMuonTight3,
+      decayModeFindingOldDMs, decayModeFindingNewDMs,
+      byLooseCombinedIsolationDeltaBetaCorr3Hits, byMediumCombinedIsolationDeltaBetaCorr3Hits, byTightCombinedIsolationDeltaBetaCorr3Hits,
       byVLooseIsolationMVA3newDMwoLT, byLooseIsolationMVA3newDMwoLT, byMediumIsolationMVA3newDMwoLT, byTightIsolationMVA3newDMwoLT, byVTightIsolationMVA3newDMwoLT, byVVTightIsolationMVA3newDMwoLT,
-      byVLooseIsolationMVA3newDMwLT, byLooseIsolationMVA3newDMwLT, byMediumIsolationMVA3newDMwLT, byTightIsolationMVA3newDMwLT, byVTightIsolationMVA3newDMwLT, byVVTightIsolationMVA3newDMwLT, decayModeFindingNewDMs /* = 32 */
+      byVLooseIsolationMVA3newDMwLT, byLooseIsolationMVA3newDMwLT, byMediumIsolationMVA3newDMwLT, byTightIsolationMVA3newDMwLT, byVTightIsolationMVA3newDMwLT, byVVTightIsolationMVA3newDMwLT
   };
   
   bool get_bool(bool_id i) const {
@@ -42,8 +40,6 @@ public:
   }
   
   // some non-bool values ('raw'):
-  float againstElectronMVA5raw() const { return m_againstElectronMVA5raw; }
-  float againstMuonMVAraw() const { return m_againstMuonMVAraw;}
   float byCombinedIsolationDeltaBetaCorrRaw3Hits() const { return m_byCombinedIsolationDeltaBetaCorrRaw3Hits; }
   float byIsolationMVA3newDMwLTraw() const { return m_byIsolationMVA3newDMwLTraw; }
   float byIsolationMVA3newDMwoLTraw() const { return m_byIsolationMVA3newDMwoLTraw; }
@@ -51,12 +47,21 @@ public:
   float chargedIsoPtSum() const { return m_chargedIsoPtSum; }
   float neutralIsoPtSum() const { return m_neutralIsoPtSum; }
   float puCorrPtSum() const { return m_puCorrPtSum; }
+  
+
+  float byLoosePileupWeightedIsolation3Hits() const { return m_byLoosePileupWeightedIsolation3Hits; }
+  float byMediumPileupWeightedIsolation3Hits() const { return m_byMediumPileupWeightedIsolation3Hits; }
+  float byTightPileupWeightedIsolation3Hits() const { return m_byTightPileupWeightedIsolation3Hits; }
+  float byPileupWeightedIsolationRaw3Hits() const { return m_byPileupWeightedIsolationRaw3Hits; }
+  float neutralIsoPtSumWeight() const { return m_neutralIsoPtSumWeight; }
+  float footprintCorrection() const { return m_footprintCorrection; }
+  float photonPtSumOutsideSignalCone() const { return m_photonPtSumOutsideSignalCone; }
+  
+
+ 
 
   int decayMode() const { return m_decayMode; }
   
-  
-  void set_againstElectronMVA5raw(float value) { m_againstElectronMVA5raw = value;}
-  void set_againstMuonMVAraw(float value) { m_againstMuonMVAraw = value; }
   void set_byCombinedIsolationDeltaBetaCorrRaw3Hits(float value){ m_byCombinedIsolationDeltaBetaCorrRaw3Hits = value; }
   void set_byIsolationMVA3newDMwoLTraw(float value) { m_byIsolationMVA3newDMwoLTraw = value; }
   void set_byIsolationMVA3newDMwLTraw(float value) { m_byIsolationMVA3newDMwLTraw = value; }
@@ -67,14 +72,24 @@ public:
   
   void set_decayMode(int value){ m_decayMode = value; }
 
+  
+  void set_byLoosePileupWeightedIsolation3Hits(float value) { m_byLoosePileupWeightedIsolation3Hits = value;}
+  void set_byMediumPileupWeightedIsolation3Hits(float value) { m_byMediumPileupWeightedIsolation3Hits = value; }
+  void set_byTightPileupWeightedIsolation3Hits(float value){ m_byTightPileupWeightedIsolation3Hits = value; }
+
+  void set_byPileupWeightedIsolationRaw3Hits(float value) { m_byPileupWeightedIsolationRaw3Hits = value;}
+  void set_neutralIsoPtSumWeight(float value) { m_neutralIsoPtSumWeight = value;}
+  void set_footprintCorrection(float value) { m_footprintCorrection = value;}
+  void set_photonPtSumOutsideSignalCone(float value) { m_photonPtSumOutsideSignalCone = value;}
+  
+
+
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
   
   
   Tau(){
       id_bits = 0;
-      m_againstElectronMVA5raw = 0;
-      m_againstMuonMVAraw = 0;
       m_byCombinedIsolationDeltaBetaCorrRaw3Hits = 0;
       m_byIsolationMVA3newDMwoLTraw = 0;
       m_byIsolationMVA3newDMwLTraw = 0;
@@ -86,14 +101,21 @@ private:
     // the bit positions correspond to the int-converted values of the enum bool_id.
     uint64_t id_bits;
     
-    float m_againstElectronMVA5raw;
-    float m_againstMuonMVAraw;
     float m_byCombinedIsolationDeltaBetaCorrRaw3Hits;
     float m_byIsolationMVA3newDMwoLTraw;
     float m_byIsolationMVA3newDMwLTraw;
     float m_chargedIsoPtSum;
     float m_neutralIsoPtSum;
     float m_puCorrPtSum;
+    
+    float m_byLoosePileupWeightedIsolation3Hits;
+    float m_byMediumPileupWeightedIsolation3Hits;
+    float m_byTightPileupWeightedIsolation3Hits;
+    float m_byPileupWeightedIsolationRaw3Hits;
+    float m_neutralIsoPtSumWeight;
+    float m_footprintCorrection;
+    float m_photonPtSumOutsideSignalCone;
+    
     
     int m_decayMode;
   
