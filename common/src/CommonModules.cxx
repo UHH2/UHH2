@@ -44,6 +44,7 @@ void CommonModules::init(Context & ctx){
     }
     if(metfilters){
        metfilters_selection.reset(new AndSelection(ctx, "metfilters"));
+       metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
        metfilters_selection->add<TriggerSelection>("CSCTightHalo", "Flag_CSCTightHaloFilter");
        metfilters_selection->add<TriggerSelection>("eeBadSc", "Flag_eeBadScFilter");
        if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
