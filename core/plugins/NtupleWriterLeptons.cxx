@@ -220,11 +220,11 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
          FILL_TAU_BIT(byTightIsolationMVA3newDMwLT);
          FILL_TAU_BIT(byVTightIsolationMVA3newDMwLT);
          FILL_TAU_BIT(byVVTightIsolationMVA3newDMwLT);
-	 FILL_TAU_BIT(decayModeFindingOldDMs);
+	 FILL_TAU_BIT(decayModeFinding); 
          FILL_TAU_BIT(decayModeFindingNewDMs);
 
 
-         #undef FILL_TAU_BIT
+
          #define FILL_TAU_FLOAT(name) tau.set_##name (pat_tau.tauID(#name))
          
          FILL_TAU_FLOAT(byCombinedIsolationDeltaBetaCorrRaw3Hits);
@@ -237,12 +237,12 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
 	 FILL_TAU_BIT(byLoosePileupWeightedIsolation3Hits);
 	 FILL_TAU_BIT(byMediumPileupWeightedIsolation3Hits);
 	 FILL_TAU_BIT(byTightPileupWeightedIsolation3Hits);
-	 FILL_TAU_BIT(byPileupWeightedIsolationRaw3Hits);
-	 FILL_TAU_BIT(neutralIsoPtSumWeight);
-	 FILL_TAU_BIT(footprintCorrection);
-	 FILL_TAU_BIT(photonPtSumOutsideSignalCone);
+	 FILL_TAU_FLOAT(byPileupWeightedIsolationRaw3Hits);
+	 FILL_TAU_FLOAT(neutralIsoPtSumWeight);
+	 FILL_TAU_FLOAT(footprintCorrection);
+	 FILL_TAU_FLOAT(photonPtSumOutsideSignalCone);
          
-
+         #undef FILL_TAU_BIT
          #undef FILL_TAU_FLOAT
 
          tau.set_decayMode(pat_tau.decayMode());
