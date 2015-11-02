@@ -20,10 +20,11 @@ public:
   enum bool_id {
       againstElectronVLooseMVA5, againstElectronLooseMVA5, againstElectronMediumMVA5, againstElectronTightMVA5, againstElectronVTightMVA5, 
       againstMuonLoose3, againstMuonTight3,
-      decayModeFindingOldDMs, decayModeFindingNewDMs,
+      decayModeFinding, decayModeFindingNewDMs,
       byLooseCombinedIsolationDeltaBetaCorr3Hits, byMediumCombinedIsolationDeltaBetaCorr3Hits, byTightCombinedIsolationDeltaBetaCorr3Hits,
       byVLooseIsolationMVA3newDMwoLT, byLooseIsolationMVA3newDMwoLT, byMediumIsolationMVA3newDMwoLT, byTightIsolationMVA3newDMwoLT, byVTightIsolationMVA3newDMwoLT, byVVTightIsolationMVA3newDMwoLT,
-      byVLooseIsolationMVA3newDMwLT, byLooseIsolationMVA3newDMwLT, byMediumIsolationMVA3newDMwLT, byTightIsolationMVA3newDMwLT, byVTightIsolationMVA3newDMwLT, byVVTightIsolationMVA3newDMwLT
+      byVLooseIsolationMVA3newDMwLT, byLooseIsolationMVA3newDMwLT, byMediumIsolationMVA3newDMwLT, byTightIsolationMVA3newDMwLT, byVTightIsolationMVA3newDMwLT, byVVTightIsolationMVA3newDMwLT,
+      byLoosePileupWeightedIsolation3Hits, byMediumPileupWeightedIsolation3Hits, byTightPileupWeightedIsolation3Hits
   };
   
   bool get_bool(bool_id i) const {
@@ -49,10 +50,10 @@ public:
   float puCorrPtSum() const { return m_puCorrPtSum; }
   
 
-  float byLoosePileupWeightedIsolation3Hits() const { return m_byLoosePileupWeightedIsolation3Hits; }
-  float byMediumPileupWeightedIsolation3Hits() const { return m_byMediumPileupWeightedIsolation3Hits; }
-  float byTightPileupWeightedIsolation3Hits() const { return m_byTightPileupWeightedIsolation3Hits; }
-  float byPileupWeightedIsolationRaw3Hits() const { return m_byPileupWeightedIsolationRaw3Hits; }
+  /* float byLoosePileupWeightedIsolation3Hits() const { return m_byLoosePileupWeightedIsolation3Hits; }  */
+  /* float byMediumPileupWeightedIsolation3Hits() const { return m_byMediumPileupWeightedIsolation3Hits; }  */
+  /* float byTightPileupWeightedIsolation3Hits() const { return m_byTightPileupWeightedIsolation3Hits; }  */
+  float byPileupWeightedIsolationRaw3Hits() const { return m_byPileupWeightedIsolationRaw3Hits; } 
   float neutralIsoPtSumWeight() const { return m_neutralIsoPtSumWeight; }
   float footprintCorrection() const { return m_footprintCorrection; }
   float photonPtSumOutsideSignalCone() const { return m_photonPtSumOutsideSignalCone; }
@@ -73,11 +74,11 @@ public:
   void set_decayMode(int value){ m_decayMode = value; }
 
   
-  void set_byLoosePileupWeightedIsolation3Hits(float value) { m_byLoosePileupWeightedIsolation3Hits = value;}
-  void set_byMediumPileupWeightedIsolation3Hits(float value) { m_byMediumPileupWeightedIsolation3Hits = value; }
-  void set_byTightPileupWeightedIsolation3Hits(float value){ m_byTightPileupWeightedIsolation3Hits = value; }
+  /* void set_byLoosePileupWeightedIsolation3Hits(float value) { m_byLoosePileupWeightedIsolation3Hits = value;}  */
+  /* void set_byMediumPileupWeightedIsolation3Hits(float value) { m_byMediumPileupWeightedIsolation3Hits = value; }  */
+  /* void set_byTightPileupWeightedIsolation3Hits(float value){ m_byTightPileupWeightedIsolation3Hits = value; }  */
 
-  void set_byPileupWeightedIsolationRaw3Hits(float value) { m_byPileupWeightedIsolationRaw3Hits = value;}
+  void set_byPileupWeightedIsolationRaw3Hits(float value) { m_byPileupWeightedIsolationRaw3Hits = value;} 
   void set_neutralIsoPtSumWeight(float value) { m_neutralIsoPtSumWeight = value;}
   void set_footprintCorrection(float value) { m_footprintCorrection = value;}
   void set_photonPtSumOutsideSignalCone(float value) { m_photonPtSumOutsideSignalCone = value;}
@@ -93,6 +94,13 @@ public:
       m_byCombinedIsolationDeltaBetaCorrRaw3Hits = 0;
       m_byIsolationMVA3newDMwoLTraw = 0;
       m_byIsolationMVA3newDMwLTraw = 0;
+      m_chargedIsoPtSum = 0;
+      m_neutralIsoPtSum = 0;
+      m_puCorrPtSum = 0;
+      m_neutralIsoPtSumWeight = 0;
+      m_footprintCorrection = 0;
+      m_photonPtSumOutsideSignalCone = 0;
+      m_byPileupWeightedIsolationRaw3Hits = 0;
       m_decayMode = 0;
   }
 
@@ -108,10 +116,10 @@ private:
     float m_neutralIsoPtSum;
     float m_puCorrPtSum;
     
-    float m_byLoosePileupWeightedIsolation3Hits;
-    float m_byMediumPileupWeightedIsolation3Hits;
-    float m_byTightPileupWeightedIsolation3Hits;
-    float m_byPileupWeightedIsolationRaw3Hits;
+    /* float m_byLoosePileupWeightedIsolation3Hits;  */
+    /* float m_byMediumPileupWeightedIsolation3Hits; */
+    /* float m_byTightPileupWeightedIsolation3Hits;  */
+    float m_byPileupWeightedIsolationRaw3Hits; 
     float m_neutralIsoPtSumWeight;
     float m_footprintCorrection;
     float m_photonPtSumOutsideSignalCone;
@@ -122,11 +130,9 @@ private:
     Tags tags;
 };
 
-
-
 /*
- tau id variables available on PHYS14 miniAOD:
+ tau id variables available on Run II 2015 MINIAOD v2:
 
- 'againstElectronLoose' 'againstElectronLooseMVA5' 'againstElectronMVA5category' 'againstElectronMVA5raw' 'againstElectronMedium' 'againstElectronMediumMVA5' 'againstElectronTight' 'againstElectronTightMVA5' 'againstElectronVLooseMVA5' 'againstElectronVTightMVA5' 'againstMuonLoose' 'againstMuonLoose2' 'againstMuonLoose3' 'againstMuonLooseMVA' 'againstMuonMVAraw' 'againstMuonMedium' 'againstMuonMedium2' 'againstMuonMediumMVA' 'againstMuonTight' 'againstMuonTight2' 'againstMuonTight3' 'againstMuonTightMVA' 'byCombinedIsolationDeltaBetaCorrRaw3Hits' 'byIsolationMVA3newDMwLTraw' 'byIsolationMVA3newDMwoLTraw' 'byIsolationMVA3oldDMwLTraw' 'byIsolationMVA3oldDMwoLTraw' 'byLooseCombinedIsolationDeltaBetaCorr3Hits' 'byLooseIsolationMVA3newDMwLT' 'byLooseIsolationMVA3newDMwoLT' 'byLooseIsolationMVA3oldDMwLT' 'byLooseIsolationMVA3oldDMwoLT' 'byMediumCombinedIsolationDeltaBetaCorr3Hits' 'byMediumIsolationMVA3newDMwLT' 'byMediumIsolationMVA3newDMwoLT' 'byMediumIsolationMVA3oldDMwLT' 'byMediumIsolationMVA3oldDMwoLT' 'byTightCombinedIsolationDeltaBetaCorr3Hits' 'byTightIsolationMVA3newDMwLT' 'byTightIsolationMVA3newDMwoLT' 'byTightIsolationMVA3oldDMwLT' 'byTightIsolationMVA3oldDMwoLT' 'byVLooseIsolationMVA3newDMwLT' 'byVLooseIsolationMVA3newDMwoLT' 'byVLooseIsolationMVA3oldDMwLT' 'byVLooseIsolationMVA3oldDMwoLT' 'byVTightIsolationMVA3newDMwLT' 'byVTightIsolationMVA3newDMwoLT' 'byVTightIsolationMVA3oldDMwLT' 'byVTightIsolationMVA3oldDMwoLT' 'byVVTightIsolationMVA3newDMwLT' 'byVVTightIsolationMVA3newDMwoLT' 'byVVTightIsolationMVA3oldDMwLT' 'byVVTightIsolationMVA3oldDMwoLT' 'chargedIsoPtSum' 'decayModeFinding' 'decayModeFindingNewDMs' 'neutralIsoPtSum' 'puCorrPtSum'
- */
+The available IDs are: 'againstElectronLooseMVA5' 'againstElectronMVA5category' 'againstElectronMVA5raw' 'againstElectronMediumMVA5' 'againstElectronTightMVA5' 'againstElectronVLooseMVA5' 'againstElectronVTightMVA5' 'againstMuonLoose3' 'againstMuonTight3' 'byCombinedIsolationDeltaBetaCorrRaw3Hits' 'byIsolationMVA3newDMwLTraw' 'byIsolationMVA3oldDMwLTraw' 'byLooseCombinedIsolationDeltaBetaCorr3Hits' 'byLooseIsolationMVA3newDMwLT' 'byLooseIsolationMVA3oldDMwLT' 'byLoosePileupWeightedIsolation3Hits' 'byMediumCombinedIsolationDeltaBetaCorr3Hits' 'byMediumIsolationMVA3newDMwLT' 'byMediumIsolationMVA3oldDMwLT' 'byMediumPileupWeightedIsolation3Hits' 'byPhotonPtSumOutsideSignalCone' 'byPileupWeightedIsolationRaw3Hits' 'byTightCombinedIsolationDeltaBetaCorr3Hits' 'byTightIsolationMVA3newDMwLT' 'byTightIsolationMVA3oldDMwLT' 'byTightPileupWeightedIsolation3Hits' 'byVLooseIsolationMVA3newDMwLT' 'byVLooseIsolationMVA3oldDMwLT' 'byVTightIsolationMVA3newDMwLT' 'byVTightIsolationMVA3oldDMwLT' 'byVVTightIsolationMVA3newDMwLT' 'byVVTightIsolationMVA3oldDMwLT' 'chargedIsoPtSum' 'decayModeFinding' 'decayModeFindingNewDMs' 'footprintCorrection' 'neutralIsoPtSum' 'neutralIsoPtSumWeight' 'photonPtSumOutsideSignalCone' 'puCorrPtSum' 
 
+*/
