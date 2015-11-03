@@ -250,7 +250,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     auto subjet_taginfos = iConfig.getParameter<std::vector<std::string> >("subjet_taginfos");
     auto higgstag_sources = iConfig.getParameter<std::vector<std::string> >("higgstag_sources");
     auto higgstag_names = iConfig.getParameter<std::vector<std::string> >("higgstag_names");
-    auto topjet_prunedmass_sources = iConfig.getParameter<std::vector<std::string> >("topjet_prunedmass_sources");
+    auto topjet_prunedmass_sources   = iConfig.getParameter<std::vector<std::string> >("topjet_prunedmass_sources");
+    auto topjet_softdropmass_sources = iConfig.getParameter<std::vector<std::string> >("topjet_softdropmass_sources");
     double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
     double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
     bool substructure_variables = false;
@@ -265,6 +266,10 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
     if(topjet_prunedmass_sources.size()!=topjet_sources.size()){
       cerr << "Exception: wrong size of topjet_prunedmass_sources" << endl;
+      throw;
+    }
+    if(topjet_softdropmass_sources.size()!=topjet_sources.size()){
+      cerr << "Exception: wrong size of topjet_softdropmass_sources" << endl;
       throw;
     }
     if(subjet_sources.size()!=subjet_taginfos.size()){
@@ -298,6 +303,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 	cfg.higgs_src = higgstag_sources[j];
 	cfg.higgs_name = higgstag_names[j];
 	cfg.pruned_src = topjet_prunedmass_sources[j];
+        cfg.softdrop_src = topjet_softdropmass_sources[j];
 	if(higgstag_sources[j]!=""&&higgstag_names[j]==""){
 	  cerr << "Exception: higgstag source specified, but no higgstag discriminator name" << endl;
 	  throw;
