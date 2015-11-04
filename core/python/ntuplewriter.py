@@ -732,6 +732,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #Alternatively it is possible to specify another pruned jet collection (to be produced here), from which to get it by jet-matching.
         #Finally, it is also possible to leave the pruned mass empty with ""
         topjet_prunedmass_sources = cms.vstring("ak8PFJetsCHSPrunedMass","patJetsAk8CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked"),
+        topjet_softdropmass_sources = cms.vstring("ak8PFJetsCHSSoftDropMass", "", "", "", ""),
         #topjet_sources = cms.vstring("patJetsHepTopTagCHSPacked", "patJetsCmsTopTagCHSPacked", "patJetsCa8CHSJetsPrunedPacked", "patJetsCa15CHSJetsFilteredPacked",
         #        "patJetsHepTopTagPuppiPacked", "patJetsCmsTopTagPuppiPacked", "patJetsCa8PuppiJetsPrunedPacked", "patJetsCa15PuppiJetsFilteredPacked",
         #        'patJetsCa8CHSJetsSoftDropPacked', 'patJetsCa8PuppiJetsSoftDropPacked'
