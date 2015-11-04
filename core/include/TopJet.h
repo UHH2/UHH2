@@ -29,7 +29,7 @@ public:
    
   
   TopJet(){
-      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_mvahiggsdiscr = m_prunedmass = -1.0f;
+      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_mvahiggsdiscr = m_prunedmass = m_softdropmass = -1.0f;
   }
 
   // getters
@@ -41,6 +41,8 @@ public:
   float mvahiggsdiscr() const {return m_mvahiggsdiscr;}
 
   float prunedmass() const {return m_prunedmass;}
+
+  float softdropmass() const {return m_softdropmass;}
 
   const std::vector<Jet> & subjets() const{return m_subjets;}
   
@@ -57,6 +59,8 @@ public:
   void set_mvahiggsdiscr(float x){m_mvahiggsdiscr = x;}
 
   void set_prunedmass(float x){m_prunedmass = x;}
+
+  void set_softdropmass(float x){m_softdropmass = x;}
 
   void add_subjet(const Jet & subjet){m_subjets.push_back(subjet);}
 
@@ -76,6 +80,8 @@ private:
   float m_mvahiggsdiscr;
 
   float m_prunedmass;
+
+  float m_softdropmass;
 
   Tags tags;
 };
