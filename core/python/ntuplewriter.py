@@ -37,7 +37,7 @@ process.source = cms.Source("PoolSource",
                             skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -102,18 +102,21 @@ process.fixedGridRhoFastjetAll = fixedGridRhoFastjetAll.clone(pfCandidatesTag = 
 
 ###############################################
 # HCAL_Noise_Filter
-#if useData:
 process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
 process.HBHENoiseFilterResultProducer.minZeros = cms.int32(99999)
+process.HBHENoiseFilterResultProducer.IgnoreTS4TS5ifJetInLowBVRegion=cms.bool(False) 
+process.HBHENoiseFilterResultProducer.defaultDecision = cms.string("HBHENoiseFilterResultRun2Loose")
 
-if use25ns:
-    HBHElabel = 'HBHENoiseFilterResultRun2Loose'
-else:
-    HBHElabel = 'HBHENoiseFilterResult'
 process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
-                                                    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer',HBHElabel), 
-                                                    reverseDecision = cms.bool(False)
-                                                    )
+   inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),
+   reverseDecision = cms.bool(False)
+)
+
+process.ApplyBaselineHBHEIsoNoiseFilter = cms.EDFilter('BooleanFlagFilter',
+   inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHEIsoNoiseFilterResult'),
+   reverseDecision = cms.bool(False)
+)
+
 
 
 ###############################################
@@ -785,6 +788,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 process.p = cms.Path(
     process.HBHENoiseFilterResultProducer* #produces HBHE bools
     process.ApplyBaselineHBHENoiseFilter*  #reject events based 
+    process.ApplyBaselineHBHEIsoNoiseFilter*   #reject events based  < 10e-3 mistake rate 
     process.MyNtuple)
 
 open('pydump.py','w').write(process.dumpPython())
