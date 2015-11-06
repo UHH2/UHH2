@@ -398,7 +398,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
 
 #add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered',genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS',genjets_name = lambda s: s.replace('CHS', 'Gen'))
+add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
 #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop', genjets_name = lambda s: s.replace('CHS', 'Gen'))
