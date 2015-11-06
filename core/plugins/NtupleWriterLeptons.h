@@ -9,14 +9,15 @@ class NtupleWriterElectrons: public NtupleWriterModule {
 public:
     
     struct Config: public NtupleWriterModule::Config {        
-        std::vector<std::string> id_keys;
+      std::vector<std::string> id_keys;
 
-        // inherit constructor does not work yet :-(
-        Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_, const std::string & dest_,
-                const std::string & dest_branchname_ = ""): NtupleWriterModule::Config(ctx_, std::move(cc_), src_, dest_, dest_branchname_){}
+      // inherit constructor does not work yet :-(
+      Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_,
+             const std::string & dest_, const std::string & dest_branchname_ = ""):
+        NtupleWriterModule::Config(ctx_, std::move(cc_), src_, dest_, dest_branchname_) {}
     };
 
-    explicit NtupleWriterElectrons(Config & cfg, bool set_electrons_member);
+    explicit NtupleWriterElectrons(Config & cfg, bool set_electrons_member, const bool save_source_cands=0);
 
     virtual void process(const edm::Event &, uhh2::Event &);
 
@@ -26,20 +27,23 @@ private:
     std::vector<std::string> IDtag_keys;
     Event::Handle<std::vector<Electron>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Electron>>> electrons_handle; // handle of name "electrons" in case set_electrons_member is true
+
+    bool save_source_candidates_;
 };
 
 class NtupleWriterMuons: public NtupleWriterModule {
 public:
     
-    struct Config: public NtupleWriterModule::Config {        
-        edm::InputTag pv_src;
+    struct Config: public NtupleWriterModule::Config {
+      edm::InputTag pv_src;
 
-        // inherit constructor does not work yet :-(
-        Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_, const std::string & dest_,
-                const std::string & dest_branchname_ = ""): NtupleWriterModule::Config(ctx_, std::move(cc_), src_, dest_, dest_branchname_){}
+      // inherit constructor does not work yet :-(
+      Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_,
+             const std::string & dest_, const std::string & dest_branchname_ = ""):
+        NtupleWriterModule::Config(ctx_, std::move(cc_), src_, dest_, dest_branchname_) {}
     };
 
-    explicit NtupleWriterMuons(Config & cfg, bool set_muons_member);
+    explicit NtupleWriterMuons(Config & cfg, bool set_muons_member, const bool save_source_cands=0);
 
     virtual void process(const edm::Event &, uhh2::Event &);
 
@@ -49,6 +53,8 @@ private:
     edm::EDGetToken pv_token;
     Event::Handle<std::vector<Muon>> handle;
     boost::optional<Event::Handle<std::vector<Muon>>> muons_handle;
+
+    bool save_source_candidates_;
 };
 
 class NtupleWriterTaus: public NtupleWriterModule {

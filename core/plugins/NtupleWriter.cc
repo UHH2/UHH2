@@ -179,6 +179,9 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   // a edm::ParameterSet for each NtupleWriterModule.
   doPV = iConfig.getParameter<bool>("doPV");
   doRho = iConfig.getUntrackedParameter<bool>("doRho",true);
+
+  const bool save_lepton_keys = iConfig.exists("save_lepton_keys") ? iConfig.getParameter<bool>("save_lepton_keys") : false;
+
   bool doElectrons = iConfig.getParameter<bool>("doElectrons");
   bool doMuons = iConfig.getParameter<bool>("doMuons");
   bool doTaus = iConfig.getParameter<bool>("doTaus");
@@ -205,18 +208,22 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   if(doElectrons){
       using uhh2::NtupleWriterElectrons;
       auto electron_source = iConfig.getParameter<edm::InputTag>("electron_source");
+
       NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
       cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("electron_IDtags");
-      writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true));
+      writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true, save_lepton_keys));
   }
   if(doMuons){
       using uhh2::NtupleWriterMuons;
       auto muon_sources = iConfig.getParameter<std::vector<std::string> >("muon_sources");
+
       for(size_t i=0; i< muon_sources.size(); ++i){
-          NtupleWriterMuons::Config cfg(*context, consumesCollector(), muon_sources[i], muon_sources[i]);
-          assert(pv_sources.size() > 0); // note: pvs are required for muon id.
-          cfg.pv_src = pv_sources[0];
-          writer_modules.emplace_back(new NtupleWriterMuons(cfg, i==0));
+
+        NtupleWriterMuons::Config cfg(*context, consumesCollector(), muon_sources[i], muon_sources[i]);
+        assert(pv_sources.size() > 0); // note: pvs are required for muon id.
+
+        cfg.pv_src = pv_sources[0];
+        writer_modules.emplace_back(new NtupleWriterMuons(cfg, i==0, save_lepton_keys));
       }
   }
   if(doTaus){
@@ -234,13 +241,29 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   if(doJets){
       using uhh2::NtupleWriterJets;
       auto jet_sources = iConfig.getParameter<std::vector<std::string> >("jet_sources");
-      double jet_ptmin = iConfig.getParameter<double> ("jet_ptmin");
-      double jet_etamax = iConfig.getParameter<double> ("jet_etamax");
-      for(size_t i=0; i< jet_sources.size(); ++i){
-          NtupleWriterJets::Config cfg(*context, consumesCollector(), jet_sources[i], jet_sources[i]);
-          cfg.ptmin = jet_ptmin;
-          cfg.etamax = jet_etamax;
-          writer_modules.emplace_back(new NtupleWriterJets(cfg, i==0));
+      double jet_ptmin  = iConfig.getParameter<double>("jet_ptmin");
+      double jet_etamax = iConfig.getParameter<double>("jet_etamax");
+
+      /*--- lepton keys ---*/
+      std::vector<std::string> muon_sources, elec_sources;
+      if(save_lepton_keys){
+        if(doMuons){
+
+          muon_sources = iConfig.getParameter<std::vector<std::string>>("muon_sources");
+	}
+        if(doElectrons){
+
+          auto elec_source = iConfig.getParameter<edm::InputTag>("electron_source");
+          elec_sources.push_back(elec_source.label());
+        }
+      }
+      /*-------------------*/
+
+      for(size_t i=0; i<jet_sources.size(); ++i){
+        NtupleWriterJets::Config cfg(*context, consumesCollector(), jet_sources[i], jet_sources[i]);
+        cfg.ptmin = jet_ptmin;
+        cfg.etamax = jet_etamax;
+        writer_modules.emplace_back(new NtupleWriterJets(cfg, i==0, muon_sources, elec_sources));
       }
   }
   if(doTopJets){
@@ -296,6 +319,22 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         topjet_substructure_variables_sources = iConfig.getParameter<std::vector<std::string> >("topjet_substructure_variables_sources");
     }
     assert(qjets_sources.size() <= topjet_substructure_variables_sources.size());
+
+    /*--- lepton keys ---*/
+    std::vector<std::string> muon_sources, elec_sources;
+    if(save_lepton_keys){
+      if(doMuons){
+
+        muon_sources = iConfig.getParameter<std::vector<std::string>>("muon_sources");
+      }
+      if(doElectrons){
+
+        auto elec_source = iConfig.getParameter<edm::InputTag>("electron_source");
+        elec_sources.push_back(elec_source.label());
+      }
+    }
+    /*-------------------*/
+
     for(size_t j=0; j< topjet_sources.size(); ++j){
         NtupleWriterTopJets::Config cfg(*context, consumesCollector(), topjet_sources[j], topjet_sources[j]);
         cfg.ptmin = topjet_ptmin;

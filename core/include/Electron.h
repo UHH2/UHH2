@@ -4,7 +4,9 @@
 #include "Tags.h"
 #include "FlavorParticle.h"
 
-class Electron: public Particle {
+#include <vector>
+
+class Electron : public Particle {
 
  public:
   enum tag {
@@ -14,45 +16,57 @@ class Electron: public Particle {
   };
 
   static tag tagname2tag(const std::string & tagname){
-    if(tagname == "heepElectronID_HEEPV60")                                  return heepElectronID_HEEPV60;
+    if(tagname == "heepElectronID_HEEPV60") return heepElectronID_HEEPV60;
 
     throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
   }
 
-  Electron(){
-   m_supercluster_eta = 0; 
-   m_supercluster_phi = 0; 
-   m_dB = 0; 
-   m_neutralHadronIso = 0; 
-   m_chargedHadronIso = 0; 
-   m_photonIso = 0;
-   m_trackIso = 0; 
-   m_puChargedHadronIso = 0;
-   m_gsfTrack_trackerExpectedHitsInner_numberOfLostHits = 0;
-   m_gsfTrack_px = 0;
-   m_gsfTrack_py = 0;
-   m_gsfTrack_pz = 0;
-   m_gsfTrack_vx = 0;
-   m_gsfTrack_vy = 0;
-   m_gsfTrack_vz = 0;
-   m_passconversionveto = false;
-   m_dEtaIn = 0;
-   m_dPhiIn = 0; 
-   m_sigmaIEtaIEta = 0; 
-   m_HoverE = 0;
-   m_fbrem = 0;
-   m_EoverPIn = 0;
-   m_EcalEnergy = 0;
-   m_mvaNonTrigV0 = 0;
-   m_mvaTrigV0 = 0;
-   m_AEff = 0;
+  struct source_candidate {
 
-   m_pfMINIIso_CH       = 0;
-   m_pfMINIIso_NH       = 0;
-   m_pfMINIIso_Ph       = 0;
-   m_pfMINIIso_PU       = 0;
-   m_pfMINIIso_NH_pfwgt = 0;
-   m_pfMINIIso_Ph_pfwgt = 0;
+    long int key;
+    float px;
+    float py;
+    float pz;
+    float E;
+  };
+
+  Electron(){
+
+    m_supercluster_eta = 0; 
+    m_supercluster_phi = 0; 
+    m_dB = 0; 
+    m_neutralHadronIso = 0; 
+    m_chargedHadronIso = 0; 
+    m_photonIso = 0;
+    m_trackIso = 0; 
+    m_puChargedHadronIso = 0;
+    m_gsfTrack_trackerExpectedHitsInner_numberOfLostHits = 0;
+    m_gsfTrack_px = 0;
+    m_gsfTrack_py = 0;
+    m_gsfTrack_pz = 0;
+    m_gsfTrack_vx = 0;
+    m_gsfTrack_vy = 0;
+    m_gsfTrack_vz = 0;
+    m_passconversionveto = false;
+    m_dEtaIn = 0;
+    m_dPhiIn = 0; 
+    m_sigmaIEtaIEta = 0; 
+    m_HoverE = 0;
+    m_fbrem = 0;
+    m_EoverPIn = 0;
+    m_EcalEnergy = 0;
+    m_mvaNonTrigV0 = 0;
+    m_mvaTrigV0 = 0;
+    m_AEff = 0;
+
+    m_pfMINIIso_CH       = 0;
+    m_pfMINIIso_NH       = 0;
+    m_pfMINIIso_Ph       = 0;
+    m_pfMINIIso_PU       = 0;
+    m_pfMINIIso_NH_pfwgt = 0;
+    m_pfMINIIso_Ph_pfwgt = 0;
+
+    m_source_candidates.clear();
   }
 
   float supercluster_eta() const{return m_supercluster_eta;} 
@@ -89,8 +103,7 @@ class Electron: public Particle {
   float pfMINIIso_NH_pfwgt() const { return m_pfMINIIso_NH_pfwgt; }
   float pfMINIIso_Ph_pfwgt() const { return m_pfMINIIso_Ph_pfwgt; }
 
-  float get_tag(tag t)const {return tags.get_tag(static_cast<int>(t));}
-  bool has_tag(tag t) const {return tags.has_tag(static_cast<int>(t));}
+  std::vector<source_candidate> source_candidates() const { return m_source_candidates; }
 
   void set_supercluster_eta(float x){m_supercluster_eta=x;} 
   void set_supercluster_phi(float x){m_supercluster_phi=x;} 
@@ -126,25 +139,34 @@ class Electron: public Particle {
   void set_pfMINIIso_NH_pfwgt(float x){ m_pfMINIIso_NH_pfwgt = x; }
   void set_pfMINIIso_Ph_pfwgt(float x){ m_pfMINIIso_Ph_pfwgt = x; }
 
-  void set_tag(tag t, float value) { tags.set_tag(static_cast<int>(t), value);}
+  void add_source_candidate(const source_candidate& sc){ m_source_candidates.push_back(sc); }
+
+  bool  has_tag(tag t) const { return tags.has_tag(static_cast<int>(t)); }
+  float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
+  void  set_tag(tag t, float value) { tags.set_tag(static_cast<int>(t), value);}
 
   float gsfTrack_dxy_vertex(const float point_x, const float point_y) const{ 
     return ( - (m_gsfTrack_vx-point_x) * m_gsfTrack_py + (m_gsfTrack_vy-point_y) * m_gsfTrack_px ) / sqrt(m_gsfTrack_px*m_gsfTrack_px+m_gsfTrack_py*m_gsfTrack_py);  
   };
+
   float gsfTrack_dz_vertex(const float point_x, const float point_y, const float point_z) const{ 
     return (m_gsfTrack_vz-point_z) - ((m_gsfTrack_vx-point_x)*m_gsfTrack_px+(m_gsfTrack_vy-point_y)*m_gsfTrack_py)/(m_gsfTrack_px*m_gsfTrack_px+m_gsfTrack_py*m_gsfTrack_py) * m_gsfTrack_pz; 
   }
+
   float relIso() const{
     return ( m_chargedHadronIso +  m_neutralHadronIso + m_photonIso  ) / pt();
   }
+
   float relIsodb() const{
     return ( m_chargedHadronIso + std::max( 0.0, m_neutralHadronIso + m_photonIso - 0.5*m_puChargedHadronIso ) ) / pt();
   }
+
   float relIsorho(const double rho) const{
     return ( m_chargedHadronIso + std::max( 0.0, m_neutralHadronIso + m_photonIso - rho*m_AEff ) ) / pt();
   }
 
-  operator FlavorParticle() const{
+  operator FlavorParticle() const {
+
     FlavorParticle fp;
     fp.set_charge(this->charge());
     fp.set_pt(this->pt());
@@ -152,6 +174,7 @@ class Electron: public Particle {
     fp.set_phi(this->phi());
     fp.set_energy(this->energy());
     fp.set_pdgId(-13*this->charge());
+
     return fp;
   }
 
@@ -189,6 +212,8 @@ class Electron: public Particle {
   float m_pfMINIIso_PU;
   float m_pfMINIIso_NH_pfwgt;
   float m_pfMINIIso_Ph_pfwgt;
+
+  std::vector<source_candidate> m_source_candidates;
 
   Tags tags;
 };

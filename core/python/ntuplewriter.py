@@ -33,9 +33,12 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
-                            fileNames  = cms.untracked.vstring("/store/mc/RunIISpring15MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/40000/00087FEB-236E-E511-9ACB-003048FF86CA.root"),
-                            #fileNames  = cms.untracked.vstring("/store/data/Run2015D/SingleMuon/MINIAOD/PromptReco-v3/000/256/729/00000/2C0BE722-5960-E511-B834-02163E014421.root"),
-                            skipEvents = cms.untracked.uint32(0)
+  fileNames  = cms.untracked.vstring([
+#    '/store/mc/RunIISpring15MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/40000/00087FEB-236E-E511-9ACB-003048FF86CA.root',
+#    '/store/data/Run2015D/SingleMuon/MINIAOD/PromptReco-v3/000/256/729/00000/2C0BE722-5960-E511-B834-02163E014421.root',
+    '/store/mc/RunIISpring15MiniAODv2/ZprimeToTT_M-3000_W-30_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/40000/A679787E-496D-E511-AEDF-9CB654AEAE86.root',
+  ]),
+  skipEvents = cms.untracked.uint32(0)
 )
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
@@ -567,6 +570,9 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         pv_sources = cms.vstring("offlineSlimmedPrimaryVertices"),
         doRho = cms.untracked.bool(True),
         rho_source = cms.InputTag("fixedGridRhoFastjetAll"),
+
+        save_lepton_keys = cms.bool(True),
+
         doElectrons = cms.bool(True),
         electron_source = cms.InputTag("slimmedElectronsUSER"),
         electron_IDtags = cms.vstring(
