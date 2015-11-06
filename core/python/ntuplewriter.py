@@ -332,10 +332,13 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
 
     # patify ungroomed jets, if not already done:
     add_ungroomed = not hasattr(process, 'patJets' + cap(fatjets_name))
+    jetcorr_list = ['L1FastJet', 'L2Relative', 'L3Absolute']
+    if useData:
+        jetcorr_list = ['L1FastJet', 'L2Relative', 'L3Absolute','L2L3Residual']
     if add_ungroomed:
         if verbose: print "Adding ungroomed patJets" + cap(fatjets_name)
         addJetCollection(process, labelName = fatjets_name, jetSource = cms.InputTag(fatjets_name), algo = algo, rParam = rParam,
-            jetCorrections = (jetcorr_label, cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
+            jetCorrections = (jetcorr_label, cms.vstring(jetcorr_list), 'None'),
             genJetCollection = cms.InputTag(ungroomed_genjets_name),
             **common_btag_parameters
         )
@@ -343,7 +346,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
     # patify groomed fat jets, with b-tagging:
     if verbose: print "adding grommed jets patJets" + cap(groomed_jets_name)
     addJetCollection(process, labelName = groomed_jets_name, jetSource = cms.InputTag(groomed_jets_name), algo = algo, rParam = rParam,
-       jetCorrections = (jetcorr_label, cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
+       jetCorrections = (jetcorr_label, cms.vstring(jetcorr_list), 'None'),
        #genJetCollection = cms.InputTag(groomed_genjets_name), # nice try, but PAT looks for GenJets, whereas jets with subjets are BasicJets, so PAT cannot be used for this matching ...
        **common_btag_parameters)
     getattr(process,"patJets" + cap(groomed_jets_name)).addTagInfos = True
@@ -356,7 +359,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
     # patify subjets, with subjet b-tagging:
     if verbose: print "adding grommed jets' subjets patJets" + cap(subjets_name)
     addJetCollection(process, labelName = subjets_name, jetSource = cms.InputTag(groomed_jets_name, 'SubJets'), algo = algo, rParam = rParam,
-        jetCorrections = (jetcorr_label_subjets, cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
+        jetCorrections = (jetcorr_label_subjets, cms.vstring(jetcorr_list), 'None'),
         explicitJTA = True,
         svClustering = True,
         fatJets = cms.InputTag(fatjets_name), groomedFatJets = cms.InputTag(groomed_jets_name),
