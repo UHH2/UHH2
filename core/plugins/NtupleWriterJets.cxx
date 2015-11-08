@@ -105,6 +105,8 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent){
           const auto& jet_daughter_ptrs = pat_jet.daughterPtrVector();
           for(const auto & daughter_p : jet_daughter_ptrs){
 
+            if(!daughter_p.isAvailable()) continue;
+
             const auto& key = daughter_p.key();
 
             if(std::find(lepton_keys.begin(), lepton_keys.end(), key) == lepton_keys.end()) continue;

@@ -367,6 +367,10 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 	cfg.dest_branchname = topbranch;
 	cfg.dest = topbranch;
         writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0));
+/*
+        // switch on lepton-keys storage for TopJet collections
+        writer_modules.emplace_back(new NtupleWriterTopJets(cfg, i==0, muon_sources, elec_sources));
+*/
     }
   }
 
