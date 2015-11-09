@@ -574,7 +574,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
 
      edm::Handle<std::vector<PileupSummaryInfo> > pus;
-     iEvent.getByLabel(edm::InputTag("addPileupInfo"), pus);
+     iEvent.getByLabel(edm::InputTag("slimmedAddPileupInfo"), pus);
      event->genInfo->set_pileup_NumInteractions_intime(0);
      event->genInfo->set_pileup_NumInteractions_ootbefore(0);
      event->genInfo->set_pileup_NumInteractions_ootafter(0);
