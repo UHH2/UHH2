@@ -17,7 +17,7 @@ using namespace std;
 
 bool btag_warning;
 
-NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member) {
+NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member){
     handle = cfg.ctx.declare_event_output<vector<Jet>>(cfg.dest_branchname, cfg.dest);
     ptmin = cfg.ptmin;
     etamax = cfg.etamax;
@@ -27,6 +27,20 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member) {
     src = cfg.src;
     src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
     btag_warning=true;
+
+    save_lepton_keys_ = false;
+
+    h_muons.clear();
+    h_elecs.clear();
+}
+
+NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources):
+  NtupleWriterJets::NtupleWriterJets(cfg, set_jets_member) {
+
+    save_lepton_keys_ = true;
+
+    for(const auto& muo_src : muon_sources){ auto h_muon = cfg.ctx.get_handle<std::vector<Muon>    >(muo_src); h_muons.push_back(h_muon); }
+    for(const auto& ele_src : elec_sources){ auto h_elec = cfg.ctx.get_handle<std::vector<Electron>>(ele_src); h_elecs.push_back(h_elec); }
 }
 
 NtupleWriterJets::~NtupleWriterJets(){}
@@ -34,20 +48,73 @@ NtupleWriterJets::~NtupleWriterJets(){}
 void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent){
     edm::Handle< std::vector<pat::Jet> > jet_handle;
     event.getByToken(src_token, jet_handle);
-    std::vector<Jet> jets;
     const std::vector<pat::Jet> & pat_jets = *jet_handle;
+
+    /*--- lepton keys ---*/
+    std::vector<long int> lepton_keys;
+    if(save_lepton_keys_){
+
+      for(const auto& h_muo : h_muons){
+
+        const auto& muons = uevent.get(h_muo);
+
+        for(const auto& muo : muons){
+          for(const auto& sc : muo.source_candidates()){
+
+            lepton_keys.push_back(sc.key);
+          }
+        }
+      }
+
+      for(const auto& h_ele : h_elecs){
+
+        const auto& elecs = uevent.get(h_ele);
+
+        for(const auto& ele : elecs){
+          for(const auto& sc : ele.source_candidates()){
+
+            lepton_keys.push_back(sc.key);
+          }
+        }
+      }
+    }
+    /*-------------------*/
+
+    std::vector<Jet> jets;
     for (unsigned int i = 0; i < pat_jets.size(); ++i) {
         const pat::Jet & pat_jet = pat_jets[i];
         if(pat_jet.pt() < ptmin) continue;
         if(fabs(pat_jet.eta()) > etamax) continue;
         jets.emplace_back();
+
+        Jet& jet = jets.back();
+
         try {
-	  fill_jet_info(pat_jet, jets.back(), true, false);
+
+          fill_jet_info(pat_jet, jet, true, false);
         }
         catch(runtime_error & ex){
-            cerr << "Exception in fill_jet_info in NtupleWriterJets::process for jets with src=" << src << endl;
-            throw;
+
+          cerr << "Exception in fill_jet_info in NtupleWriterJets::process for jets with src=" << src << endl;
+          throw;
         }
+
+        /*--- lepton keys ---*/
+        if(save_lepton_keys_){
+
+          const auto& jet_daughter_ptrs = pat_jet.daughterPtrVector();
+          for(const auto & daughter_p : jet_daughter_ptrs){
+
+            if(!daughter_p.isAvailable()) continue;
+
+            const auto& key = daughter_p.key();
+
+            if(std::find(lepton_keys.begin(), lepton_keys.end(), key) == lepton_keys.end()) continue;
+
+            jet.add_lepton_key(key);
+          }
+        }
+        /*-------------------*/
     }
     uevent.set(handle, move(jets));
     if(jets_handle){
@@ -204,7 +271,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
 }
 
 
-NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): ptmin(cfg.ptmin), etamax(cfg.etamax){
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): ptmin(cfg.ptmin), etamax(cfg.etamax) {
     handle = cfg.ctx.declare_event_output<vector<TopJet>>(cfg.dest_branchname, cfg.dest);
     if(set_jets_member){
         topjets_handle = cfg.ctx.get_handle<vector<TopJet>>("topjets");
@@ -236,6 +303,20 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     }
     btag_warning=true;
     topjet_collection = cfg.dest_branchname;
+
+    save_lepton_keys_ = false;
+
+    h_muons.clear();
+    h_elecs.clear();
+}
+
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources):
+  NtupleWriterTopJets::NtupleWriterTopJets(cfg, set_jets_member) {
+
+    save_lepton_keys_ = true;
+
+    for(const auto& muo_src : muon_sources){ auto h_muon = cfg.ctx.get_handle<std::vector<Muon>    >(muo_src); h_muons.push_back(h_muon); }
+    for(const auto& ele_src : elec_sources){ auto h_elec = cfg.ctx.get_handle<std::vector<Electron>>(ele_src); h_elecs.push_back(h_elec); }
 }
 
 NtupleWriterTopJets::~NtupleWriterTopJets(){}
@@ -245,7 +326,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     edm::Handle<pat::JetCollection> h_pat_topjets;
     event.getByToken(src_token, h_pat_topjets);
     const vector<pat::Jet> & pat_topjets = *h_pat_topjets;
-    
+
     edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3;
     edm::Handle<edm::ValueMap<float>> h_qjets;
     
@@ -267,7 +348,37 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     if (topjet_collection.find("CHS")!=string::npos) event.getByLabel("hepTopTagCHS", top_jet_infos);
     if (topjet_collection.find("Puppi")!=string::npos) event.getByLabel("hepTopTagPuppi", top_jet_infos); // Make sure both collections have the same size
     if (topjet_collection.find("Hep")!=string::npos) assert(pat_topjets.size()==top_jet_infos->size());
-       
+
+    /*--- lepton keys ---*/
+    std::vector<long int> lepton_keys;
+    if(save_lepton_keys_){
+
+      for(const auto& h_muo : h_muons){
+
+        const auto& muons = uevent.get(h_muo);
+
+        for(const auto& muo : muons){
+          for(const auto& sc : muo.source_candidates()){
+
+            lepton_keys.push_back(sc.key);
+          }
+        }
+      }
+
+      for(const auto& h_ele : h_elecs){
+
+        const auto& elecs = uevent.get(h_ele);
+
+        for(const auto& ele : elecs){
+          for(const auto& sc : ele.source_candidates()){
+
+            lepton_keys.push_back(sc.key);
+          }
+        }
+      }
+    }
+    /*-------------------*/
+
     for (unsigned int i = 0; i < pat_topjets.size(); i++) {
         const pat::Jet & pat_topjet =  pat_topjets[i];
         if(pat_topjet.pt() < ptmin) continue;
@@ -281,6 +392,24 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
            cerr << "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " << src << "." << endl;
            throw;
         }
+
+        /*--- lepton keys ---*/
+        if(save_lepton_keys_){
+
+          const auto& jet_daughter_ptrs = pat_topjet.daughterPtrVector();
+          for(const auto & daughter_p : jet_daughter_ptrs){
+
+            if(!daughter_p.isAvailable()) continue;
+
+            const auto& key = daughter_p.key();
+
+            if(std::find(lepton_keys.begin(), lepton_keys.end(), key) == lepton_keys.end()) continue;
+
+            topjet.add_lepton_key(key);
+          }
+        }
+        /*-------------------*/
+
         // match a unpruned jet according to topjets_with_cands:
         int i_pat_topjet_wc = -1;
         if(!njettiness_src.empty() || !qjets_src.empty()){
@@ -316,7 +445,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
               topjet.set_tag(TopJet::tagname2tag("ptForRoptCalc"), jet_info.properties().ptForRoptCalc);
            }
 
-        /* --- Njettiness -----*/
+        /*--- Njettiness ------*/
         if(njettiness_src.empty()){
 
           topjet.set_tau1(pat_topjet.userFloat("NjettinessAK8:tau1"));
@@ -434,7 +563,24 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 		cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
 		throw;
 	      }
-	    }
+
+              /*--- lepton keys ---*/
+              if(save_lepton_keys_){
+
+                const auto& jet_daughter_ptrs = tpatsubjet->daughterPtrVector();
+                for(const auto & daughter_p : jet_daughter_ptrs){
+
+                  if(!daughter_p.isAvailable()) continue;
+
+                  const auto& key = daughter_p.key();
+
+                  if(std::find(lepton_keys.begin(), lepton_keys.end(), key) == lepton_keys.end()) continue;
+
+                  subjet.add_lepton_key(key);
+                }
+              }
+              /*-------------------*/
+            }
 	    else{
 	      cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
 	      throw;

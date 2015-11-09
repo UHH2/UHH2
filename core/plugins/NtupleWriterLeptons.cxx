@@ -10,7 +10,7 @@
 using namespace uhh2;
 using namespace std;
 
-NtupleWriterElectrons::NtupleWriterElectrons(Config & cfg, bool set_electrons_member){
+NtupleWriterElectrons::NtupleWriterElectrons(Config & cfg, bool set_electrons_member, const bool save_source_cands): save_source_candidates_(save_source_cands){
   handle = cfg.ctx.declare_event_output<vector<Electron>>(cfg.dest_branchname, cfg.dest);
   if(set_electrons_member) electrons_handle = cfg.ctx.get_handle<vector<Electron>>("electrons");
   src_token = cfg.cc.consumes<std::vector<pat::Electron>>(cfg.src);
@@ -22,8 +22,8 @@ NtupleWriterElectrons::~NtupleWriterElectrons(){}
 void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & uevent){
     edm::Handle< std::vector<pat::Electron> > ele_handle;
     event.getByToken(src_token, ele_handle);
+
     std::vector<Electron> eles;
-    
     const size_t n_ele = ele_handle->size();
     for (size_t i=0; i<n_ele; ++i){
         const auto & pat_ele = (*ele_handle)[i];
@@ -76,7 +76,27 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
           if(!pat_ele.hasUserInt(tag_str)) throw std::runtime_error("NtupleWriterElectrons::process -- label for pat::Electron::userInt not found: "+tag_str);
           ele.set_tag(Electron::tagname2tag(tag_str), float(pat_ele.userInt(tag_str)));
         }
+
+        /* source candidates */
+        if(save_source_candidates_){
+
+          for(unsigned int s=0; s<pat_ele.numberOfSourceCandidatePtrs(); ++s){
+
+            if(!pat_ele.sourceCandidatePtr(s).isAvailable()) continue;
+
+            Electron::source_candidate sc;
+            sc.key = pat_ele.sourceCandidatePtr(s).key();
+            sc.px  = pat_ele.sourceCandidatePtr(s)->px();
+            sc.py  = pat_ele.sourceCandidatePtr(s)->py();
+            sc.pz  = pat_ele.sourceCandidatePtr(s)->pz();
+            sc.E   = pat_ele.sourceCandidatePtr(s)->energy();
+
+            ele.add_source_candidate(std::move(sc));
+          }
+        }
+        /*-------------------*/
     }
+
     uevent.set(handle, move(eles));
     if(electrons_handle){
         EventAccess_::set_unmanaged(uevent, *electrons_handle, &uevent.get(handle));
@@ -84,13 +104,11 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
 }
 
 
-NtupleWriterMuons::NtupleWriterMuons(Config & cfg, bool set_muons_member){
-    handle = cfg.ctx.declare_event_output<vector<Muon>>(cfg.dest_branchname, cfg.dest);
-    if(set_muons_member){
-        muons_handle = cfg.ctx.get_handle<vector<Muon>>("muons");
-    }
-    src_token = cfg.cc.consumes<std::vector<pat::Muon>>(cfg.src);
-    pv_token = cfg.cc.consumes<std::vector<reco::Vertex>>(cfg.pv_src);
+NtupleWriterMuons::NtupleWriterMuons(Config & cfg, bool set_muons_member, const bool save_source_cands): save_source_candidates_(save_source_cands){
+  handle = cfg.ctx.declare_event_output<vector<Muon>>(cfg.dest_branchname, cfg.dest);
+  if(set_muons_member) muons_handle = cfg.ctx.get_handle<vector<Muon>>("muons");
+  src_token = cfg.cc.consumes<std::vector<pat::Muon>>(cfg.src);
+  pv_token = cfg.cc.consumes<std::vector<reco::Vertex>>(cfg.pv_src);
 }
 
 NtupleWriterMuons::~NtupleWriterMuons(){}
@@ -107,7 +125,7 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
    }
    const auto & PV = pv_handle->front();
 
-   vector<Muon> mus;
+   std::vector<Muon> mus;
    for (const pat::Muon & pat_mu : *mu_handle) {
      mus.emplace_back();
      Muon & mu = mus.back();
@@ -157,7 +175,27 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
      mu.set_pfMINIIso_PU      (pat_mu.hasUserFloat("muPFMiniIsoValuePUSTAND") ? pat_mu.userFloat("muPFMiniIsoValuePUSTAND") : -999.);
      mu.set_pfMINIIso_NH_pfwgt(pat_mu.hasUserFloat("muPFMiniIsoValueNHPFWGT") ? pat_mu.userFloat("muPFMiniIsoValueNHPFWGT") : -999.);
      mu.set_pfMINIIso_Ph_pfwgt(pat_mu.hasUserFloat("muPFMiniIsoValuePhPFWGT") ? pat_mu.userFloat("muPFMiniIsoValuePhPFWGT") : -999.);
+
+     /* source candidates */
+     if(save_source_candidates_){
+
+       for(unsigned int s=0; s<pat_mu.numberOfSourceCandidatePtrs(); ++s){
+
+         if(!pat_mu.sourceCandidatePtr(s).isAvailable()) continue;
+
+         Muon::source_candidate sc;
+         sc.key = pat_mu.sourceCandidatePtr(s).key();
+         sc.px  = pat_mu.sourceCandidatePtr(s)->px();
+         sc.py  = pat_mu.sourceCandidatePtr(s)->py();
+         sc.pz  = pat_mu.sourceCandidatePtr(s)->pz();
+         sc.E   = pat_mu.sourceCandidatePtr(s)->energy();
+
+         mu.add_source_candidate(std::move(sc));
+       }
+     }
+     /*-------------------*/
    }
+
    uevent.set(handle, move(mus));
    if(muons_handle){
        EventAccess_::set_unmanaged(uevent, *muons_handle, &uevent.get(handle));

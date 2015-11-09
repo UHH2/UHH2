@@ -4,6 +4,8 @@
 #include "Tags.h"
 #include "JetBTagInfo.h"
 
+#include <vector>
+
 class Jet : public FlavorParticle {
 
  public:
@@ -35,6 +37,8 @@ class Jet : public FlavorParticle {
     m_JEC_factor_raw = 0;
     m_genjet_index = 0;
     m_hadronFlavor = 0;
+
+    m_lepton_keys.clear();
   }
 
   float jetArea() const{return m_jetArea;}
@@ -63,6 +67,8 @@ class Jet : public FlavorParticle {
   JetBTagInfo btaginfo() const{return m_btaginfo;}
   int hadronFlavor() const { return m_hadronFlavor; }
 
+  std::vector<long int> lepton_keys() const { return m_lepton_keys; }
+
   void set_jetArea(float x){m_jetArea=x;}
   void set_numberOfDaughters(int x){m_numberOfDaughters=x;} 
   void set_neutralEmEnergyFraction(float x){m_neutralEmEnergyFraction=x;}
@@ -89,6 +95,8 @@ class Jet : public FlavorParticle {
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
   void set_btaginfo(JetBTagInfo x){m_btaginfo=x;}
   void set_hadronFlavor(int x){ m_hadronFlavor = x; }
+
+  void add_lepton_key(const long int k){ m_lepton_keys.push_back(k); }
 
  private:
   float m_jetArea;
@@ -117,6 +125,8 @@ class Jet : public FlavorParticle {
   int m_hadronFlavor;
 
   JetBTagInfo m_btaginfo;
+
+  std::vector<long int> m_lepton_keys;
 
   Tags tags;
 };

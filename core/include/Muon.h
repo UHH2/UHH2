@@ -4,8 +4,10 @@
 #include "FlavorParticle.h"
 
 #include <stdint.h>
+#include <vector>
 
-class Muon: public Particle{
+class Muon : public Particle {
+
  public:
   enum bool_id {
     soft = 0, loose, medium, tight, highpt,
@@ -25,6 +27,15 @@ class Muon: public Particle{
     if(value) id_bits |=   uint64_t(1) << static_cast<uint64_t>(i);
     else      id_bits &= ~(uint64_t(1) << static_cast<uint64_t>(i));
   }
+
+  struct source_candidate {
+
+    long int key;
+    float px;
+    float py;
+    float pz;
+    float E;
+  };
 
   Muon(){
 
@@ -56,8 +67,10 @@ class Muon: public Particle{
     m_pfMINIIso_PU       = 0;
     m_pfMINIIso_NH_pfwgt = 0;
     m_pfMINIIso_Ph_pfwgt = 0;
+
+    m_source_candidates.clear();
   }
-  
+
   float dxy() const{return m_dxy;}
   float dxy_error() const{return m_dxy_error;}
   float dz() const{return m_dz;}
@@ -84,6 +97,8 @@ class Muon: public Particle{
   float pfMINIIso_PU()       const { return m_pfMINIIso_PU; }
   float pfMINIIso_NH_pfwgt() const { return m_pfMINIIso_NH_pfwgt; }
   float pfMINIIso_Ph_pfwgt() const { return m_pfMINIIso_Ph_pfwgt; }
+
+  std::vector<source_candidate> source_candidates() const { return m_source_candidates; }
 
   void set_dxy(float x){m_dxy=x;}
   void set_dxy_error(float x){m_dxy_error=x;}
@@ -112,6 +127,8 @@ class Muon: public Particle{
   void set_pfMINIIso_NH_pfwgt(float x){ m_pfMINIIso_NH_pfwgt = x; }
   void set_pfMINIIso_Ph_pfwgt(float x){ m_pfMINIIso_Ph_pfwgt = x; }
 
+  void add_source_candidate(const source_candidate& sc){ m_source_candidates.push_back(sc); }
+
   bool  has_tag(tag t) const { return tags.has_tag(static_cast<int>(t)); }
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
   void  set_tag(tag t, float value) { tags.set_tag(static_cast<int>(t), value); }
@@ -120,7 +137,7 @@ class Muon: public Particle{
     return ( m_sumChargedHadronPt + std::max( 0.0, m_sumNeutralHadronEt + m_sumPhotonEt - 0.5*m_sumPUPt) ) / pt();
   }
 
-  operator FlavorParticle() const{
+  operator FlavorParticle() const {
 
     FlavorParticle fp;
     fp.set_charge(this->charge());
@@ -162,6 +179,8 @@ class Muon: public Particle{
   float m_pfMINIIso_PU;
   float m_pfMINIIso_NH_pfwgt;
   float m_pfMINIIso_Ph_pfwgt;
+
+  std::vector<source_candidate> m_source_candidates;
 
   Tags tags;
 };
