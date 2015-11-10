@@ -299,7 +299,8 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     do_btagging = cfg.do_btagging;
     do_btagging_subjets = cfg.do_btagging_subjets;
     if(!njettiness_src.empty() || !qjets_src.empty()){
-        substructure_variables_src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.substructure_variables_src);
+        substructure_variables_src_token = cfg.cc.consumes<reco::BasicJetCollection>(cfg.substructure_variables_src);
+	substructure_variables_src_tokenreco = cfg.cc.consumes<reco::PFJetCollection>(cfg.substructure_variables_src);
     }
     btag_warning=true;
     topjet_collection = cfg.dest_branchname;
@@ -323,6 +324,9 @@ NtupleWriterTopJets::~NtupleWriterTopJets(){}
 
 
 void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent){
+
+    bool checkjettype =0;
+
     edm::Handle<pat::JetCollection> h_pat_topjets;
     event.getByToken(src_token, h_pat_topjets);
     const vector<pat::Jet> & pat_topjets = *h_pat_topjets;
@@ -330,7 +334,8 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3;
     edm::Handle<edm::ValueMap<float>> h_qjets;
     
-    edm::Handle<pat::JetCollection> pat_topjets_with_cands;
+    edm::Handle<reco::BasicJetCollection> topjets_with_cands;
+    edm::Handle<reco::PFJetCollection> topjets_with_cands_reco;
     
     if(!njettiness_src.empty()){
         event.getByLabel(edm::InputTag(njettiness_src, "tau1"), h_njettiness1);
@@ -341,7 +346,13 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         event.getByLabel(edm::InputTag(qjets_src, "QjetsVolatility"), h_qjets);
     }
     if(!njettiness_src.empty() || !qjets_src.empty()){
-        event.getByToken(substructure_variables_src_token, pat_topjets_with_cands);
+      checkjettype = event.getByToken(substructure_variables_src_tokenreco, topjets_with_cands_reco);
+      if(checkjettype){
+        event.getByToken(substructure_variables_src_tokenreco, topjets_with_cands_reco);
+      }
+      else{
+        event.getByToken(substructure_variables_src_token, topjets_with_cands);
+      }
     }
     vector<TopJet> topjets;
     edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
@@ -413,26 +424,49 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         // match a unpruned jet according to topjets_with_cands:
         int i_pat_topjet_wc = -1;
         if(!njettiness_src.empty() || !qjets_src.empty()){
-           double drmin = numeric_limits<double>::infinity();
-           for (size_t i_wc=0; i_wc < pat_topjets_with_cands->size(); ++i_wc) {
-              //const auto & cand = (*pat_topjets_with_cands)[i_wc];
-              auto dr = reco::deltaR((*pat_topjets_with_cands)[i_wc], pat_topjet);
+          double drmin = numeric_limits<double>::infinity();
+          if(checkjettype){
+            for (size_t i_wc=0; i_wc < topjets_with_cands_reco->size(); ++i_wc) {
+              auto dr = reco::deltaR((*topjets_with_cands_reco)[i_wc], pat_topjet);
               if(dr < drmin){
-                 i_pat_topjet_wc = i_wc;
-                 drmin = dr;
+                i_pat_topjet_wc = i_wc;
+                drmin = dr;
               }
-           }
-           if (i_pat_topjet_wc >= 0 && drmin < 1.0){ // be genereous: pruning can change jet axis quite a lot (esp. for DR=1.5 jets as in heptoptag)
-              auto ref = edm::Ref<pat::JetCollection>(pat_topjets_with_cands, i_pat_topjet_wc);
+            }
+          }         
+          else{
+            for (size_t i_wc=0; i_wc < topjets_with_cands->size(); ++i_wc) {
+              auto dr = reco::deltaR((*topjets_with_cands)[i_wc], pat_topjet);
+              if(dr < drmin){
+                i_pat_topjet_wc = i_wc;
+                drmin = dr;
+              }
+            }
+          }
+          if (i_pat_topjet_wc >= 0 && drmin < 1.0){ // be genereous: pruning can change jet axis quite a lot (esp. for DR=1.5 jets as in heptoptag)
+            if(checkjettype){
+              auto ref = edm::Ref<reco::PFJetCollection>(topjets_with_cands_reco, i_pat_topjet_wc);
               if(!njettiness_src.empty()){
-                    topjet.set_tau1((*h_njettiness1)[ref]);
-                    topjet.set_tau2((*h_njettiness2)[ref]);
-                    topjet.set_tau3((*h_njettiness3)[ref]);
+                topjet.set_tau1((*h_njettiness1)[ref]);
+                topjet.set_tau2((*h_njettiness2)[ref]);
+                topjet.set_tau3((*h_njettiness3)[ref]);
               }
               if(!qjets_src.empty()){
-                    topjet.set_qjets_volatility((*h_qjets)[ref]);
+                topjet.set_qjets_volatility((*h_qjets)[ref]);
               }
-           }
+            }
+            else{
+              auto ref = edm::Ref<reco::BasicJetCollection>(topjets_with_cands, i_pat_topjet_wc);
+              if(!njettiness_src.empty()){
+                topjet.set_tau1((*h_njettiness1)[ref]);
+                topjet.set_tau2((*h_njettiness2)[ref]);
+                topjet.set_tau3((*h_njettiness3)[ref]);
+              }
+              if(!qjets_src.empty()){
+                topjet.set_qjets_volatility((*h_qjets)[ref]);
+              }
+            }
+          }
         }
         if (topjet_collection.find("Hep")!=string::npos)
            {

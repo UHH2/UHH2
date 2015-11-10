@@ -64,7 +64,7 @@ private:
     edm::InputTag src;
     float ptmin, etamax;
     bool do_btagging, do_btagging_subjets, do_taginfo_subjets;
-    edm::EDGetToken src_token, src_higgs_token, src_pruned_token, src_softdrop_token, substructure_variables_src_token;
+    edm::EDGetToken src_token, src_higgs_token, src_pruned_token, src_softdrop_token, substructure_variables_src_token, substructure_variables_src_tokenreco;
     std::string njettiness_src, qjets_src, subjet_src, higgs_src, higgs_name, pruned_src, softdrop_src, topjet_collection;
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;
