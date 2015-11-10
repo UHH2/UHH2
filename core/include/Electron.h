@@ -55,6 +55,10 @@ class Electron : public Particle {
     m_fbrem = 0;
     m_EoverPIn = 0;
     m_EcalEnergy = 0;
+    m_hcalOverEcal = 0;
+    m_ecalPFClusterIso = 0;
+    m_hcalPFClusterIso = 0;
+    m_dr03TkSumPt = 0;
     m_mvaNonTrigV0 = 0;
     m_mvaTrigV0 = 0;
     m_AEff = 0;
@@ -92,6 +96,10 @@ class Electron : public Particle {
   float fbrem() const{return m_fbrem;}
   float EoverPIn() const{return m_EoverPIn;}
   float EcalEnergy() const{return m_EcalEnergy;}
+  float hcalOverEcal    () const { return m_hcalOverEcal; }
+  float ecalPFClusterIso() const { return m_ecalPFClusterIso; }
+  float hcalPFClusterIso() const { return m_hcalPFClusterIso; }
+  float dr03TkSumPt     () const { return m_dr03TkSumPt; }
   float mvaNonTrigV0() const{return m_mvaNonTrigV0;}
   float mvaTrigV0() const{return m_mvaTrigV0;}
   float effArea() const{return m_AEff;}
@@ -128,6 +136,10 @@ class Electron : public Particle {
   void set_fbrem(float x){m_fbrem=x;}
   void set_EoverPIn(float x){m_EoverPIn=x;}
   void set_EcalEnergy(float x){m_EcalEnergy=x;}
+  void set_hcalOverEcal    (float x){ m_hcalOverEcal     = x; }
+  void set_ecalPFClusterIso(float x){ m_ecalPFClusterIso = x; }
+  void set_hcalPFClusterIso(float x){ m_hcalPFClusterIso = x; }
+  void set_dr03TkSumPt     (float x){ m_dr03TkSumPt      = x; }
   void set_mvaNonTrigV0(float x){m_mvaNonTrigV0=x;}
   void set_mvaTrigV0(float x){m_mvaTrigV0=x;}
   void set_effArea(float x){m_AEff=x;}
@@ -202,6 +214,10 @@ class Electron : public Particle {
   float m_fbrem;
   float m_EoverPIn;
   float m_EcalEnergy;
+  float m_hcalOverEcal;
+  float m_ecalPFClusterIso;
+  float m_hcalPFClusterIso;
+  float m_dr03TkSumPt;
   float m_mvaNonTrigV0;
   float m_mvaTrigV0;
   float m_AEff;
