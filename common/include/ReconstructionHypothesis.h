@@ -23,8 +23,8 @@ public:
   LorentzVector tophad_v4() const{return m_tophad_v4;} 
   LorentzVector neutrino_v4() const{return m_neutrino_v4;} 
   Particle lepton() const{return m_lepton;}
-  std::vector<Jet> toplep_jets() const{return m_toplep_jets;}
-  std::vector<Jet> tophad_jets() const{return m_tophad_jets;}
+  const std::vector<Jet>& toplep_jets() const{return m_toplep_jets;}
+  const std::vector<Jet>& tophad_jets() const{return m_tophad_jets;}
   const TopJet* tophad_topjet_ptr() const{return m_tophad_topjet_ptr;}
   LorentzVector top_v4() const{ return m_lepton.charge() > 0 ? m_toplep_v4 : m_tophad_v4;}
   LorentzVector antitop_v4() const{ return m_lepton.charge() < 0 ? m_toplep_v4 : m_tophad_v4;}
