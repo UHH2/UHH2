@@ -112,3 +112,33 @@ class TopJetHists: public JetHistsBase{
 };
 
 
+
+static const std::vector<float> BTagMCEffBinsEta = {-2.4, 2.4};
+static const std::vector<float> BTagMCEffBinsPt = {30., 50., 70., 100., 140., 200., 300., 670.};
+/** \brief measure btag efficiency in MC
+ *
+ * jets_handle_name should point to a handle of type vector<Jet> _or_
+ * vector<TopJet>, were in the latter case all of the subjets are used.
+ */
+class BTagMCEfficiencyHists: public uhh2::Hists {
+public:
+  BTagMCEfficiencyHists(uhh2::Context & ctx,
+                        const std::string & dirname,
+                        const CSVBTag::wp & working_point,
+                        const std::string & jets_handle_name="jets");
+
+  virtual void fill(const uhh2::Event & ev) override;
+
+protected:
+  void do_fill(const std::vector<TopJet> & jets, const uhh2::Event & event);
+
+  const CSVBTag btag_;
+  TH2F * hist_b_passing_;
+  TH2F * hist_b_total_;
+  TH2F * hist_c_passing_;
+  TH2F * hist_c_total_;
+  TH2F * hist_udsg_passing_;
+  TH2F * hist_udsg_total_;
+  uhh2::Event::Handle<std::vector<TopJet>> h_topjets_;
+  uhh2::Event::Handle<std::vector<Jet>>    h_jets_;
+};
