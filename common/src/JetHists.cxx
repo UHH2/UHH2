@@ -242,3 +242,61 @@ template<typename T>
 }
 
 
+
+BTagMCEfficiencyHists::BTagMCEfficiencyHists(
+  uhh2::Context & ctx,
+  const std::string & dirname,
+  const CSVBTag::wp & working_point,
+  const std::string & jets_handle_name
+):
+  Hists(ctx, dirname),
+  btag_(CSVBTag(working_point)),
+  hist_b_passing_(   book<TH2F>("BTagMCEffFlavBPassing",    ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
+  hist_b_total_(     book<TH2F>("BTagMCEffFlavBTotal",      ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
+  hist_c_passing_(   book<TH2F>("BTagMCEffFlavCPassing",    ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
+  hist_c_total_(     book<TH2F>("BTagMCEffFlavCTotal",      ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
+  hist_udsg_passing_(book<TH2F>("BTagMCEffFlavUDSGPassing", ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
+  hist_udsg_total_(  book<TH2F>("BTagMCEffFlavUDSGTotal",   ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
+  h_topjets_(ctx.get_handle<vector<TopJet>>(jets_handle_name)),
+  h_jets_(   ctx.get_handle<vector<Jet>>(   jets_handle_name))
+{}
+
+void BTagMCEfficiencyHists::fill(const Event & event)
+{
+  if (event.is_valid(h_topjets_)) {
+    do_fill(event.get(h_topjets_), event);
+  } else {
+    assert(event.is_valid(h_jets_));
+    TopJet tj;
+    tj.set_subjets(event.get(h_jets_));
+    do_fill(vector<TopJet>({tj}), event);
+  }
+}
+
+void BTagMCEfficiencyHists::do_fill(const std::vector<TopJet> & jets, const Event & event)
+{
+  for (const auto & topjet : jets) { for (const auto & jet : topjet.subjets()) {
+
+    auto flav = jet.hadronFlavor();
+    bool is_tagged = btag_(jet, event);
+    float pt = jet.pt(), eta = jet.eta(), w = event.weight;
+
+    if (flav == 5) {
+      hist_b_total_->Fill(pt, eta, w);
+      if (is_tagged) {
+        hist_b_passing_->Fill(pt, eta, w);
+      }
+    } else if (flav == 4) {
+      hist_c_total_->Fill(pt, eta, w);
+      if (is_tagged) {
+        hist_c_passing_->Fill(pt, eta, w);
+      }
+    } else {
+      hist_udsg_total_->Fill(pt, eta, w);
+      if (is_tagged) {
+        hist_udsg_passing_->Fill(pt, eta, w);
+      }
+    }
+
+  }}
+}
