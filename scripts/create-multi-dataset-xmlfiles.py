@@ -3,9 +3,11 @@
 import os, sys, glob, ROOT
 
 if len(sys.argv) < 2:
-   print "Usage: %s <rootfile pattern with full path> " \
+   print "Usage:\n" \
+         "    ./%s <rootfile pattern with full path> " \
          "<optional: xml output file POSTFIX> \n" \
-         "(it's a good idea to try this script in a test directory)"
+         "    (it's a good idea to try this script in a test directory)" \
+         % os.path.basename(sys.argv[0])
    sys.exit(1)
 
 if len(sys.argv) >= 3:
