@@ -1,3 +1,4 @@
+#include "UHH2/common/include/BTagCalibrationStandalone.h"
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/Utils.h"
@@ -136,3 +137,206 @@ bool MCScaleVariation::process(Event & event){
   return true;
 }
 
+
+
+MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
+                                     const CSVBTag::wp & working_point,
+                                     std::string jets_handle_name,
+                                     std::string sysType,
+                                     std::string measType_bc,
+                                     std::string measType_udsg):
+  btag_(CSVBTag(working_point)),
+  h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
+  h_topjets_(ctx.get_handle<std::vector<TopJet>>(jets_handle_name)),
+  sysType_(sysType),
+  h_btag_weight_(ctx.declare_event_output<float>("btag_weight")),
+  h_btag_weight_up_(ctx.declare_event_output<float>("btag_weight_up")),
+  h_btag_weight_down_(ctx.declare_event_output<float>("btag_weight_down"))
+{
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if (!is_mc) {
+    cout << "Warning: MCBTagScaleFactor will not have an effect on "
+         <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
+
+  TFile eff_file(ctx.get("MCBtagEfficiencies").c_str());
+  if (eff_file.IsZombie()) {
+    cout << "Warning: MCBTagScaleFactor will not have an effect because the root-file "
+         << "with MC-efficiencies not found: " << ctx.get("MCBtagEfficiencies") << endl;
+    eff_file.Close();
+    return;
+  }
+  eff_b_.reset((TH2*) eff_file.Get("BTagMCEffFlavBEff"));
+  eff_c_.reset((TH2*) eff_file.Get("BTagMCEffFlavCEff"));
+  eff_udsg_.reset((TH2*) eff_file.Get("BTagMCEffFlavUDSGEff"));
+  eff_b_->SetDirectory(0);
+  eff_c_->SetDirectory(0);
+  eff_udsg_->SetDirectory(0);
+  eff_file.Close();
+
+  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagCalibration
+  BTagCalibration calib_data("CSVv2", ctx.get("BTagCalibration"));
+  auto op = working_point == CSVBTag::WP_LOOSE ? BTagEntry::OP_LOOSE : (
+                working_point == CSVBTag::WP_MEDIUM ? BTagEntry::OP_MEDIUM :
+                    BTagEntry::OP_TIGHT);
+
+  calib_up_.reset(new BTagCalibrationReader(op, "up"));
+  calib_.reset(new BTagCalibrationReader(op, "central"));
+  calib_down_.reset(new BTagCalibrationReader(op, "down"));
+
+  calib_up_->load(calib_data, BTagEntry::FLAV_B, measType_bc);
+  calib_up_->load(calib_data, BTagEntry::FLAV_C, measType_bc);
+  calib_up_->load(calib_data, BTagEntry::FLAV_UDSG, measType_udsg);
+  calib_->load(calib_data, BTagEntry::FLAV_B, measType_bc);
+  calib_->load(calib_data, BTagEntry::FLAV_C, measType_bc);
+  calib_->load(calib_data, BTagEntry::FLAV_UDSG, measType_udsg);
+  calib_down_->load(calib_data, BTagEntry::FLAV_B, measType_bc);
+  calib_down_->load(calib_data, BTagEntry::FLAV_C, measType_bc);
+  calib_down_->load(calib_data, BTagEntry::FLAV_UDSG, measType_udsg);
+}
+
+bool MCBTagScaleFactor::process(Event & event) {
+
+  if (!calib_) {
+    event.set(h_btag_weight_up_, 1.);
+    event.set(h_btag_weight_, 1.);
+    event.set(h_btag_weight_down_, 1.);
+    return true;
+  }
+
+  float weight, weightErr;
+  if (event.is_valid(h_topjets_)) {
+    std::tie(weight, weightErr) = get_weight_btag(event.get(h_topjets_), event);
+  } else {
+    assert(event.is_valid(h_jets_));
+    TopJet tj;
+    tj.set_subjets(event.get(h_jets_));
+    std::tie(weight, weightErr) = get_weight_btag(vector<TopJet>({tj}), event);
+  }
+
+  float weight_up = weight + weightErr;
+  float weight_down = weight - weightErr;
+  event.set(h_btag_weight_up_, weight_up);
+  event.set(h_btag_weight_, weight);
+  event.set(h_btag_weight_down_, weight_down);
+
+  if (sysType_ == "up") {
+    event.weight *= weight_up;
+  } else if (sysType_ == "down") {
+    event.weight *= weight_down;
+  } else {
+    event.weight *= weight;
+  }
+
+  return true;
+}
+
+
+// originally taken from https://twiki.cern.ch/twiki/pub/CMS/BTagSFMethods/Method1aExampleCode_CSVM.cc.txt
+std::pair<float, float> MCBTagScaleFactor::get_weight_btag(const vector<TopJet> &jets, Event & event) {
+
+  float mcTag = 1.;
+  float mcNoTag = 1.;
+  float dataTag = 1.;
+  float dataNoTag = 1.;
+
+  float err1 = 0.;
+  float err2 = 0.;
+  float err3 = 0.;
+  float err4 = 0.;
+
+  //Here we loop over all selected jets
+  for (const auto & topjet : jets) { for (const auto & jet : topjet.subjets()) {
+
+    int hadronFlavor = abs(jet.hadronFlavor());
+    float abs_eta = fabs(jet.eta());
+    float pt = jet.pt();
+
+    if(abs_eta > 2.4) {
+      continue;
+    }
+
+    TH2* eff_hist;
+    if (hadronFlavor == 5) {
+      ///here one need to provide the pt/eta dependent efficiency for b-tag for "b jet"
+      eff_hist = eff_b_.get();
+    }else if( hadronFlavor==4){
+      ///here one need to provide the pt/eta dependent efficiency for b-tag for "c jet"
+      eff_hist = eff_c_.get();
+    }else{
+      ///here one need to provide the pt/eta dependent efficiency for b-tag for "light jet"
+      eff_hist = eff_udsg_.get();
+    }
+    const auto eff_pt_axis = eff_hist->GetXaxis();
+    float pt_low_edge = eff_pt_axis->GetBinLowEdge(eff_pt_axis->GetFirst());
+    float pt_high_edge = eff_pt_axis->GetBinUpEdge(eff_pt_axis->GetLast());
+    float pt_for_eff = (pt > pt_low_edge) ? pt : pt_low_edge + 1e-5;
+    pt_for_eff = (pt_for_eff < pt_high_edge) ? pt_for_eff : pt_high_edge - 1e-5;
+    float eff = eff_hist->GetBinContent(eff_hist->FindFixBin(pt_for_eff, abs_eta));
+
+    float SF = 0.;
+    float SFerr = 0.;
+    std::tie(SF, SFerr) = get_SF_btag(pt, abs_eta, hadronFlavor);
+
+    if (btag_(jet, event)) {
+      mcTag *= eff;
+      dataTag *= eff*SF;
+
+      if(hadronFlavor==5 || hadronFlavor ==4)  err1 += SFerr/SF; ///correlated for b/c
+      else err3 += SFerr/SF; //correlated for light
+
+    }else{
+      mcNoTag *= (1- eff);
+      dataNoTag *= (1- eff*SF);
+
+      if(hadronFlavor==5 || hadronFlavor ==4 ) err2 += (-eff*SFerr)/(1-eff*SF); /// /correlated for b/c
+      else err4 +=  (-eff*SFerr)/(1-eff*SF);  ////correlated for light
+
+    }
+
+  }}
+
+  float wtbtag = (dataNoTag * dataTag ) / ( mcNoTag * mcTag ); 
+  float wtbtagErr = sqrt( pow(err1+err2,2) + pow( err3 + err4,2)) * wtbtag;  ///un-correlated for b/c and light
+
+  return std::make_pair(wtbtag, wtbtagErr);
+}
+
+
+// originally taken from https://twiki.cern.ch/twiki/pub/CMS/BTagSFMethods/Method1aExampleCode_CSVM.cc.txt
+// (only the purpose of the function is the same, interface and implementation changed)
+std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, int flav) {
+
+  auto btagentry_flav = flav == 5 ? BTagEntry::FLAV_B : (
+                            flav == 4 ? BTagEntry::FLAV_C : 
+                                BTagEntry::FLAV_UDSG);
+
+  auto sf_bounds = calib_->min_max_pt(btagentry_flav, abs_eta);
+
+  float pt_for_eval = pt;
+  bool out_of_bounds = false;
+  if (pt < sf_bounds.first) {
+    pt_for_eval = sf_bounds.first + 1e-5;
+    out_of_bounds = true;
+  } else if (pt > sf_bounds.second) {
+    pt_for_eval = sf_bounds.second - 1e-5;
+    out_of_bounds = true;
+  }
+
+  float SF_up   = calib_up_->eval(btagentry_flav, abs_eta, pt_for_eval);
+  float SF      = calib_->eval(btagentry_flav, abs_eta, pt_for_eval);
+  float SF_down = calib_down_->eval(btagentry_flav, abs_eta, pt_for_eval);
+
+  float SFerr_up_ = fabs(SF - SF_up);
+  float SFerr_down_ = fabs(SF - SF_down);  // positive value!!
+
+  float SFerr = SFerr_up_ > SFerr_down_ ? SFerr_up_ : SFerr_down_;
+
+  if (out_of_bounds) {
+    SFerr *= 2;
+  }
+
+  return std::make_pair(SF, SFerr);
+}
