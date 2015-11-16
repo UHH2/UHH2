@@ -103,6 +103,17 @@ const std::vector<std::string> JERFiles::Summer15_25ns_L123_AK8PFchs_DATA = {
   "JetMETObjects/data/Summer15_25nsV6_DATA_L2L3Residual_AK8PFchs.txt",
 };
 
+const std::vector<std::string> JERFiles::Summer15_25ns_L23_AK8PFchs_MC = {
+  "JetMETObjects/data/Summer15_25nsV6_MC_L2Relative_AK8PFchs.txt",
+  "JetMETObjects/data/Summer15_25nsV6_MC_L3Absolute_AK8PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Summer15_25ns_L23_AK8PFchs_DATA = {
+  "JetMETObjects/data/Summer15_25nsV6_DATA_L2Relative_AK8PFchs.txt",
+  "JetMETObjects/data/Summer15_25nsV6_DATA_L3Absolute_AK8PFchs.txt",
+  "JetMETObjects/data/Summer15_25nsV6_DATA_L2L3Residual_AK8PFchs.txt",
+};
+
 const std::vector<std::string> JERFiles::Summer15_25ns_L123_AK4PFPuppi_MC = {
   "JetMETObjects/data/Summer15_25nsV6_MC_L1FastJet_AK4PFPuppi.txt",
   "JetMETObjects/data/Summer15_25nsV6_MC_L2Relative_AK4PFPuppi.txt",
