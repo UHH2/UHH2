@@ -88,7 +88,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
 
             if(!pat_ele.sourceCandidatePtr(s).isAvailable()) continue;
 
-            Electron::source_candidate sc;
+            source_candidate sc;
             sc.key = pat_ele.sourceCandidatePtr(s).key();
             sc.px  = pat_ele.sourceCandidatePtr(s)->px();
             sc.py  = pat_ele.sourceCandidatePtr(s)->py();
@@ -187,7 +187,7 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
 
          if(!pat_mu.sourceCandidatePtr(s).isAvailable()) continue;
 
-         Muon::source_candidate sc;
+         source_candidate sc;
          sc.key = pat_mu.sourceCandidatePtr(s).key();
          sc.px  = pat_mu.sourceCandidatePtr(s)->px();
          sc.py  = pat_mu.sourceCandidatePtr(s)->py();

@@ -3,6 +3,7 @@
 #include "Particle.h"
 #include "Tags.h"
 #include "FlavorParticle.h"
+#include "source_candidate.h"
 
 #include <vector>
 
@@ -21,14 +22,7 @@ class Electron : public Particle {
     throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
   }
 
-  struct source_candidate {
-
-    long int key;
-    float px;
-    float py;
-    float pz;
-    float E;
-  };
+  typedef class source_candidate source_candidate;
 
   Electron(){
 
@@ -111,7 +105,7 @@ class Electron : public Particle {
   float pfMINIIso_NH_pfwgt() const { return m_pfMINIIso_NH_pfwgt; }
   float pfMINIIso_Ph_pfwgt() const { return m_pfMINIIso_Ph_pfwgt; }
 
-  std::vector<source_candidate> source_candidates() const { return m_source_candidates; }
+  const std::vector<source_candidate>& source_candidates() const { return m_source_candidates; }
 
   void set_supercluster_eta(float x){m_supercluster_eta=x;} 
   void set_supercluster_phi(float x){m_supercluster_phi=x;} 
@@ -151,7 +145,8 @@ class Electron : public Particle {
   void set_pfMINIIso_NH_pfwgt(float x){ m_pfMINIIso_NH_pfwgt = x; }
   void set_pfMINIIso_Ph_pfwgt(float x){ m_pfMINIIso_Ph_pfwgt = x; }
 
-  void add_source_candidate(const source_candidate& sc){ m_source_candidates.push_back(sc); }
+  void set_source_candidates(const std::vector<source_candidate>& vsc){ m_source_candidates = vsc; }
+  void add_source_candidate (const source_candidate& sc){ m_source_candidates.push_back(sc); }
 
   bool  has_tag(tag t) const { return tags.has_tag(static_cast<int>(t)); }
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }

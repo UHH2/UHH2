@@ -67,7 +67,7 @@ class Jet : public FlavorParticle {
   JetBTagInfo btaginfo() const{return m_btaginfo;}
   int hadronFlavor() const { return m_hadronFlavor; }
 
-  std::vector<long int> lepton_keys() const { return m_lepton_keys; }
+  const std::vector<long int>& lepton_keys() const { return m_lepton_keys; }
 
   void set_jetArea(float x){m_jetArea=x;}
   void set_numberOfDaughters(int x){m_numberOfDaughters=x;} 
@@ -96,7 +96,8 @@ class Jet : public FlavorParticle {
   void set_btaginfo(JetBTagInfo x){m_btaginfo=x;}
   void set_hadronFlavor(int x){ m_hadronFlavor = x; }
 
-  void add_lepton_key(const long int k){ m_lepton_keys.push_back(k); }
+  void set_lepton_keys(const std::vector<long int>& vlk){ m_lepton_keys = vlk; }
+  void add_lepton_key (const long int k){ m_lepton_keys.push_back(k); }
 
  private:
   float m_jetArea;
