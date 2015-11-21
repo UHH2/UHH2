@@ -165,6 +165,31 @@ private:
     double drmax = 0.4;
 };
 
+
+
+/** \brief JetLeptonCleaner using the matching of candidates' keys
+ *
+ */
+class JetLeptonCleaner_by_KEYmatching: public uhh2::AnalysisModule {
+
+ public:
+  explicit JetLeptonCleaner_by_KEYmatching(uhh2::Context&, const std::vector<std::string>&, const std::string& jet_label="jets");
+  virtual ~JetLeptonCleaner_by_KEYmatching();
+
+  virtual bool process(uhh2::Event & event) override;
+
+  void set_muon_id(const MuonId& muo_id_){ muo_id = muo_id_; }
+
+  void set_electron_id(const ElectronId& ele_id_){ ele_id = ele_id_; }
+
+ private:
+  uhh2::Event::Handle<std::vector<Jet> > h_jets_;
+  std::unique_ptr<FactorizedJetCorrector> corrector;
+  MuonId     muo_id;
+  ElectronId ele_id;
+};
+
+
 /** \brief Smear the jet four-momenta in MC to match the resolution in data
  *
  * The corrections applied correspond to the values listed here:
