@@ -355,6 +355,93 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
 JetLeptonCleaner::~JetLeptonCleaner(){}
 
 
+//// jet-lepton cleaning module using the matching of the candidates' keys
+
+JetLeptonCleaner_by_KEYmatching::JetLeptonCleaner_by_KEYmatching(uhh2::Context& ctx, const std::vector<std::string> & filenames, const std::string& jet_label){
+
+  h_jets_ = ctx.get_handle<std::vector<Jet>>(jet_label);
+  corrector = build_corrector(filenames);
+}
+
+JetLeptonCleaner_by_KEYmatching::~JetLeptonCleaner_by_KEYmatching(){}
+
+bool JetLeptonCleaner_by_KEYmatching::process(uhh2::Event& event){
+
+  auto& jets = event.get(h_jets_);
+
+  for(auto& jet : jets){
+
+    bool correct_p4(false);
+    auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
+
+    const auto& jet_lepton_keys = jet.lepton_keys();
+
+    // muon-cleaning
+    if(event.muons){
+
+      for(const auto& muo : *event.muons){
+
+        if(muo_id && !(muo_id(muo, event))) continue;
+
+        for(const auto& muo_cand : muo.source_candidates()){
+
+          if(std::find(jet_lepton_keys.begin(), jet_lepton_keys.end(), muo_cand.key) != jet_lepton_keys.end()){
+
+            correct_p4 = true;
+
+            LorentzVectorXYZE muo_cand_p4;
+            muo_cand_p4.SetPx(muo_cand.px);
+            muo_cand_p4.SetPy(muo_cand.py);
+            muo_cand_p4.SetPz(muo_cand.pz);
+            muo_cand_p4.SetE (muo_cand.E);
+
+            jet_p4_raw -= muo_cand_p4;
+          }
+        }
+      }
+    }
+
+    // electron-cleaning
+    if(event.electrons){
+
+      for(const auto& ele : *event.electrons){
+
+        if(ele_id && !(ele_id(ele, event))) continue;
+
+        for(const auto& ele_cand : ele.source_candidates()){
+
+          if(std::find(jet_lepton_keys.begin(), jet_lepton_keys.end(), ele_cand.key) != jet_lepton_keys.end()){
+
+            correct_p4 = true;
+
+            LorentzVectorXYZE ele_cand_p4;
+            ele_cand_p4.SetPx(ele_cand.px);
+            ele_cand_p4.SetPy(ele_cand.py);
+            ele_cand_p4.SetPz(ele_cand.pz);
+            ele_cand_p4.SetE (ele_cand.E);
+
+            jet_p4_raw -= ele_cand_p4;
+          }
+        }
+      }
+    }
+
+    // jet-p4 correction
+    if(correct_p4){
+
+      jet.set_JEC_factor_raw(1.);
+      jet.set_v4(jet_p4_raw);
+
+      correct_jet(*corrector, jet, event);
+    }
+  }
+
+  return true;
+}
+
+////
+
+
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     smear_met = string2bool(ctx.get("jersmear_smear_met", "false"));
     auto dir = ctx.get("jersmear_direction", "nominal");
@@ -376,12 +463,12 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
     //numbers taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
-    // from 8TeV JER measurement.
+    // from 13TeV JER measurement.
     constexpr const size_t n = 7;
-    static float eta_hi[n] = {0.5, 1.1, 1.7, 2.3, 2.8, 3.2, 5.0};
-    static float c_nominal[n] = {1.079, 1.099, 1.121, 1.208, 1.254, 1.395, 1.056};
-    static float c_up[n] = {1.105, 1.127, 1.150, 1.254, 1.316, 1.458, 1.247};
-    static float c_down[n] = {1.053, 1.071, 1.092, 1.162, 1.192, 1.332, 0.865};
+    static float eta_hi[n] = {0.8, 1.3, 1.9, 2.5, 3.0, 3.2, 5.0};
+    static float c_nominal[n] = {1.061, 1.088, 1.106, 1.126, 1.343, 1.303, 1.320};
+    static float c_up[n] = {1.084, 1.117, 1.136, 1.220, 1.466, 1.414, 1.606};
+    static float c_down[n] = {1.038, 1.059, 1.076, 1.032, 1.220, 1.192, 1.034};
     
     
     if(!event.jets || !event.genjets){
