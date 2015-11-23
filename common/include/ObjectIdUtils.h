@@ -30,14 +30,14 @@ typedef std::function<bool (const GenParticle &, const uhh2::Event &)> GenPartic
  */
 class PtEtaCut {
 public:
-    PtEtaCut(float min_pt_, float max_eta_): min_pt(min_pt_), max_eta(max_eta_){}
-    
+ PtEtaCut(float min_pt_, float max_eta_, float max_pt_ =-1, float min_eta_=-1): min_pt(min_pt_), max_eta(max_eta_), max_pt(max_pt_),min_eta(min_eta_){}
+
     bool operator()(const Particle & p, const uhh2::Event & ) const{
-        return p.pt() > min_pt && std::abs(p.eta()) < max_eta;
+      return p.pt() > min_pt && (p.pt() < max_pt || max_pt == -1) && std::abs(p.eta()) < max_eta && std::abs(p.eta())> min_eta ;
     }
     
 private:
-    float min_pt, max_eta;
+    float min_pt, max_eta, max_pt,min_eta ;
 };
 
 /// The standard primary vertex id, i.e. ndof >= 4, |z| < 24cm, rho < 2cm
