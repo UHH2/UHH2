@@ -463,12 +463,12 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
     //numbers taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
-    // from 8TeV JER measurement.
+    // from 13TeV JER measurement.
     constexpr const size_t n = 7;
-    static float eta_hi[n] = {0.5, 1.1, 1.7, 2.3, 2.8, 3.2, 5.0};
-    static float c_nominal[n] = {1.079, 1.099, 1.121, 1.208, 1.254, 1.395, 1.056};
-    static float c_up[n] = {1.105, 1.127, 1.150, 1.254, 1.316, 1.458, 1.247};
-    static float c_down[n] = {1.053, 1.071, 1.092, 1.162, 1.192, 1.332, 0.865};
+    static float eta_hi[n] = {0.8, 1.3, 1.9, 2.5, 3.0, 3.2, 5.0};
+    static float c_nominal[n] = {1.061, 1.088, 1.106, 1.126, 1.343, 1.303, 1.320};
+    static float c_up[n] = {1.084, 1.117, 1.136, 1.220, 1.466, 1.414, 1.606};
+    static float c_down[n] = {1.038, 1.059, 1.076, 1.032, 1.220, 1.192, 1.034};
     
     
     if(!event.jets || !event.genjets){
