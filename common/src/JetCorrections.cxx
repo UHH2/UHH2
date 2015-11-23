@@ -355,6 +355,93 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
 JetLeptonCleaner::~JetLeptonCleaner(){}
 
 
+//// jet-lepton cleaning module using the matching of the candidates' keys
+
+JetLeptonCleaner_by_KEYmatching::JetLeptonCleaner_by_KEYmatching(uhh2::Context& ctx, const std::vector<std::string> & filenames, const std::string& jet_label){
+
+  h_jets_ = ctx.get_handle<std::vector<Jet>>(jet_label);
+  corrector = build_corrector(filenames);
+}
+
+JetLeptonCleaner_by_KEYmatching::~JetLeptonCleaner_by_KEYmatching(){}
+
+bool JetLeptonCleaner_by_KEYmatching::process(uhh2::Event& event){
+
+  auto& jets = event.get(h_jets_);
+
+  for(auto& jet : jets){
+
+    bool correct_p4(false);
+    auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
+
+    const auto& jet_lepton_keys = jet.lepton_keys();
+
+    // muon-cleaning
+    if(event.muons){
+
+      for(const auto& muo : *event.muons){
+
+        if(muo_id && !(muo_id(muo, event))) continue;
+
+        for(const auto& muo_cand : muo.source_candidates()){
+
+          if(std::find(jet_lepton_keys.begin(), jet_lepton_keys.end(), muo_cand.key) != jet_lepton_keys.end()){
+
+            correct_p4 = true;
+
+            LorentzVectorXYZE muo_cand_p4;
+            muo_cand_p4.SetPx(muo_cand.px);
+            muo_cand_p4.SetPy(muo_cand.py);
+            muo_cand_p4.SetPz(muo_cand.pz);
+            muo_cand_p4.SetE (muo_cand.E);
+
+            jet_p4_raw -= muo_cand_p4;
+          }
+        }
+      }
+    }
+
+    // electron-cleaning
+    if(event.electrons){
+
+      for(const auto& ele : *event.electrons){
+
+        if(ele_id && !(ele_id(ele, event))) continue;
+
+        for(const auto& ele_cand : ele.source_candidates()){
+
+          if(std::find(jet_lepton_keys.begin(), jet_lepton_keys.end(), ele_cand.key) != jet_lepton_keys.end()){
+
+            correct_p4 = true;
+
+            LorentzVectorXYZE ele_cand_p4;
+            ele_cand_p4.SetPx(ele_cand.px);
+            ele_cand_p4.SetPy(ele_cand.py);
+            ele_cand_p4.SetPz(ele_cand.pz);
+            ele_cand_p4.SetE (ele_cand.E);
+
+            jet_p4_raw -= ele_cand_p4;
+          }
+        }
+      }
+    }
+
+    // jet-p4 correction
+    if(correct_p4){
+
+      jet.set_JEC_factor_raw(1.);
+      jet.set_v4(jet_p4_raw);
+
+      correct_jet(*corrector, jet, event);
+    }
+  }
+
+  return true;
+}
+
+////
+
+
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     smear_met = string2bool(ctx.get("jersmear_smear_met", "false"));
     auto dir = ctx.get("jersmear_direction", "nominal");
