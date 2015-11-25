@@ -63,7 +63,7 @@ tr.Branch('intgRecLumi',AddressOf(s,'intgRecLumi'),'intgRecLumi/D')
 #tr.Branch('HLTpresc',AddressOf(s,'HLTpresc'),'HLTpresc/D')
 #tr.Branch('L1presc',AddressOf(s,'L1presc'),'L1presc/D')
 
-infile = open("TempOut.csv", "r")
+infile = open(options.infilename, "r")
 
 infile.readline()
 for line in infile:
