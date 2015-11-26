@@ -54,7 +54,7 @@ if __name__ == '__main__':
         args = parser.parse_args()
 
         for i in range(len(args.crab_options)):
-                if '--' in args.crab_options:
+                if '--' not in args.crab_options:
                         args.crab_options[i] = '--'+args.crab_options[i]
                 
         if args.ConfigFile.endswith('.py'):
