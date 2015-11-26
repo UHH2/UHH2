@@ -15,7 +15,7 @@ class CrabConfig:
 
     def _submit_(self, myconfig):
         try:
-            if 'submit' not in self.command:
+            if 'submit' not in self.command or 'resubmit' in self.command:
                 crabCommand(self.command, myconfig.General.workArea+'/crab_'+myconfig.General.requestName,*self.options)
             else:
                 if self.options:
