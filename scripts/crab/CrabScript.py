@@ -15,10 +15,13 @@ class CrabConfig:
 
     def _submit_(self, myconfig):
         try:
-            if self.options:
-                crabCommand(self.command, *self.options, config = myconfig)
+            if 'submit' not in self.command:
+                crabCommand(self.command, myconfig.General.workArea+'/crab_'+myconfig.General.requestName,*self.options)
             else:
-                crabCommand(self.command, config = myconfig)
+                if self.options:
+                    crabCommand(self.command, *self.options, config = myconfig)
+                else:
+                    crabCommand(self.command,config = myconfig)
         except HTTPException as hte:
             print "Failed submitting task: %s" % (hte.headers)
         except ClientException as cle:
