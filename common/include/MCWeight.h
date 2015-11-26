@@ -80,7 +80,9 @@ class BTagCalibrationReader;  // forward declaration
  * vector<TopJet>, were in the latter case all of the subjets are used.
  *
  * measurementType and sysType are interpreted by the BTagCalibration
- * (check https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagCalibration)
+ * (check https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagCalibration).
+ * Currently, sysType can be one of central, up, down, up_bc, down_bc, up_udsg, 
+ * down_udsg.
  *
  * This module is designed to be used with the CSVBTag class
  * (see include/JetIds.h) and only one operating point!
@@ -107,8 +109,8 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
   virtual bool process(uhh2::Event & event) override;
 
  protected:
-  std::pair<float, float> get_weight_btag(const std::vector<TopJet> &jets,
-                                          uhh2::Event & event);
+  std::tuple<float, float, float> get_weight_btag(const std::vector<TopJet> &jets,
+                                                  uhh2::Event & event);
   std::pair<float, float> get_SF_btag(float pt, float abs_eta, int flav);
 
   const CSVBTag btag_;
@@ -124,4 +126,8 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
   uhh2::Event::Handle<float> h_btag_weight_;
   uhh2::Event::Handle<float> h_btag_weight_up_;
   uhh2::Event::Handle<float> h_btag_weight_down_;
+  uhh2::Event::Handle<float> h_btag_weight_bc_up_;
+  uhh2::Event::Handle<float> h_btag_weight_bc_down_;
+  uhh2::Event::Handle<float> h_btag_weight_udsg_up_;
+  uhh2::Event::Handle<float> h_btag_weight_udsg_down_;
 };
