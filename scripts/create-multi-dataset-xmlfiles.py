@@ -22,13 +22,16 @@ print "Found %d files matching pattern" % len(files)
 files.sort()
 
 def get_basename(filename):
+    if filename.startswith('/pnfs/'):       # use crab-project name
+        return filename.split('/')[-4]
+
     # remove jobnumber and 'Ntuple' and make a set
     filename = os.path.splitext(filename)[0]
     filename = os.path.basename(filename)
     tokens = filename.split('_')
-    if tokens[-1] == 'Ntuple':
+    if tokens[-1] == 'Ntuple':              # grid control
         tokens = tokens[:-2]
-    else:
+    else:                                   # sframe batch
         tokens = tokens[:-1]
     basename = '_'.join(tokens)
     return basename

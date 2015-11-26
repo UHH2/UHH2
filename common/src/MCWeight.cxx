@@ -149,9 +149,13 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
   h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
   h_topjets_(ctx.get_handle<std::vector<TopJet>>(jets_handle_name)),
   sysType_(sysType),
-  h_btag_weight_(ctx.declare_event_output<float>("btag_weight")),
-  h_btag_weight_up_(ctx.declare_event_output<float>("btag_weight_up")),
-  h_btag_weight_down_(ctx.declare_event_output<float>("btag_weight_down"))
+  h_btag_weight_          (ctx.declare_event_output<float>("btag_weight")),
+  h_btag_weight_up_       (ctx.declare_event_output<float>("btag_weight_up")),
+  h_btag_weight_down_     (ctx.declare_event_output<float>("btag_weight_down")),
+  h_btag_weight_bc_up_    (ctx.declare_event_output<float>("btag_weight_bc_up")),
+  h_btag_weight_bc_down_  (ctx.declare_event_output<float>("btag_weight_bc_down")),
+  h_btag_weight_udsg_up_  (ctx.declare_event_output<float>("btag_weight_udsg_up")),
+  h_btag_weight_udsg_down_(ctx.declare_event_output<float>("btag_weight_udsg_down"))
 {
   auto dataset_type = ctx.get("dataset_type");
   bool is_mc = dataset_type == "MC";
@@ -200,42 +204,56 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
 bool MCBTagScaleFactor::process(Event & event) {
 
   if (!calib_) {
-    event.set(h_btag_weight_up_, 1.);
-    event.set(h_btag_weight_, 1.);
-    event.set(h_btag_weight_down_, 1.);
+    event.set(h_btag_weight_,           1.);
+    event.set(h_btag_weight_up_,        1.);
+    event.set(h_btag_weight_down_,      1.);
+    event.set(h_btag_weight_bc_up_,     1.);
+    event.set(h_btag_weight_bc_down_,   1.);
+    event.set(h_btag_weight_udsg_up_,   1.);
+    event.set(h_btag_weight_udsg_down_, 1.);
     return true;
   }
 
-  float weight, weightErr;
+  float weight, weightErrBC, weightErrUDSG;
   if (event.is_valid(h_topjets_)) {
-    std::tie(weight, weightErr) = get_weight_btag(event.get(h_topjets_), event);
+    std::tie(weight, weightErrBC, weightErrUDSG) = get_weight_btag(event.get(h_topjets_), event);
   } else {
     assert(event.is_valid(h_jets_));
     TopJet tj;
     tj.set_subjets(event.get(h_jets_));
-    std::tie(weight, weightErr) = get_weight_btag(vector<TopJet>({tj}), event);
+    std::tie(weight, weightErrBC, weightErrUDSG) = get_weight_btag(vector<TopJet>({tj}), event);
   }
+  float weightErr = sqrt(weightErrBC*weightErrBC + weightErrUDSG*weightErrUDSG);
 
-  float weight_up = weight + weightErr;
-  float weight_down = weight - weightErr;
-  event.set(h_btag_weight_up_, weight_up);
-  event.set(h_btag_weight_, weight);
-  event.set(h_btag_weight_down_, weight_down);
+  float weight_up        = weight + weightErr;
+  float weight_down      = weight - weightErr;
+  float weight_bc_up     = weight + weightErrBC;
+  float weight_bc_down   = weight - weightErrBC;
+  float weight_udsg_up   = weight + weightErrUDSG;
+  float weight_udsg_down = weight - weightErrUDSG;
 
-  if (sysType_ == "up") {
-    event.weight *= weight_up;
-  } else if (sysType_ == "down") {
-    event.weight *= weight_down;
-  } else {
-    event.weight *= weight;
-  }
+  event.set(h_btag_weight_,           weight);
+  event.set(h_btag_weight_up_,        weight_up);
+  event.set(h_btag_weight_down_,      weight_down);
+  event.set(h_btag_weight_bc_up_,     weight_bc_up);
+  event.set(h_btag_weight_bc_down_,   weight_bc_down);
+  event.set(h_btag_weight_udsg_up_,   weight_udsg_up);
+  event.set(h_btag_weight_udsg_down_, weight_udsg_down);
+
+       if (sysType_ == "up")        {event.weight *= weight_up;} 
+  else if (sysType_ == "down")      {event.weight *= weight_down;} 
+  else if (sysType_ == "up_bc")     {event.weight *= weight_bc_up;} 
+  else if (sysType_ == "down_bc")   {event.weight *= weight_bc_down;} 
+  else if (sysType_ == "up_udsg")   {event.weight *= weight_udsg_up;} 
+  else if (sysType_ == "down_udsg") {event.weight *= weight_udsg_down;} 
+  else                              {event.weight *= weight;}
 
   return true;
 }
 
 
 // originally taken from https://twiki.cern.ch/twiki/pub/CMS/BTagSFMethods/Method1aExampleCode_CSVM.cc.txt
-std::pair<float, float> MCBTagScaleFactor::get_weight_btag(const vector<TopJet> &jets, Event & event) {
+std::tuple<float, float, float> MCBTagScaleFactor::get_weight_btag(const vector<TopJet> &jets, Event & event) {
 
   float mcTag = 1.;
   float mcNoTag = 1.;
@@ -276,8 +294,7 @@ std::pair<float, float> MCBTagScaleFactor::get_weight_btag(const vector<TopJet> 
     pt_for_eff = (pt_for_eff < pt_high_edge) ? pt_for_eff : pt_high_edge - 1e-5;
     float eff = eff_hist->GetBinContent(eff_hist->FindFixBin(pt_for_eff, abs_eta));
 
-    float SF = 0.;
-    float SFerr = 0.;
+    float SF = 0., SFerr = 0.;
     std::tie(SF, SFerr) = get_SF_btag(pt, abs_eta, hadronFlavor);
 
     if (btag_(jet, event)) {
@@ -299,9 +316,10 @@ std::pair<float, float> MCBTagScaleFactor::get_weight_btag(const vector<TopJet> 
   }}
 
   float wtbtag = (dataNoTag * dataTag ) / ( mcNoTag * mcTag ); 
-  float wtbtagErr = sqrt( pow(err1+err2,2) + pow( err3 + err4,2)) * wtbtag;  ///un-correlated for b/c and light
+  float wtbtagErrBC = fabs(err1+err2) * wtbtag;
+  float wtbtagErrUDSG = fabs(err3+err4) * wtbtag;
 
-  return std::make_pair(wtbtag, wtbtagErr);
+  return std::make_tuple(wtbtag, wtbtagErrBC, wtbtagErrUDSG);
 }
 
 
