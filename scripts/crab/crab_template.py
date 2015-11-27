@@ -2,6 +2,8 @@
 # It has some additional features like also creating the xml files for you. 
 # For it to work you need inputDatasets & requestNames apart from the classical part 
 #
+# Make sure to have a unique directory where your joboutput is saved, otherwise the script gets confused and you too!!
+#
 # Usage ./CrabConfig ConfigFile [options]
 #
 # Take care here to make the request names *nice*
@@ -10,7 +12,7 @@
 #
 from DasQuery import autocomplete_Datasets
 
-inputDatasets = ['/BprimeTToTW_M-*H_TuneCUETP8M1_13TeV-madgraph-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v*/MINIAODSIM']
+inputDatasets = ['/BprimeTToTW_M-800_LH_TuneCUETP8M1_13TeV-madgraph-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v*/MINIAODSIM']
 inputDatasets = autocomplete_Datasets(inputDatasets)
 requestNames = []
 for x in inputDatasets:
@@ -26,7 +28,7 @@ from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 
 
 config = config()
-config.General.workArea = 'crab_projects'
+config.General.workArea = 'crab_Test'
 config.General.transferOutputs = True
 config.General.transferLogs = True
         
@@ -38,7 +40,7 @@ config.JobType.inputFiles = ['/nfs/dust/cms/user/gonvaq/CMSSW/CMSSW_7_4_15_patch
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'
 config.Data.unitsPerJob = 5000
-config.Data.outLFNDirBase = '/store/user/dagonzal/' # % (getUsernameFromSiteDB())
+config.Data.outLFNDirBase = '/store/user/%s/uniqueDir' % (getUsernameFromSiteDB())
 config.Data.publication = False
 #config.Data.allowNonValidInputDataset = True
 #config.Data.publishDataName = 'CRAB3_tutorial_May2015_MC_analysis'
