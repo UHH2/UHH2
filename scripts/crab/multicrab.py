@@ -108,8 +108,9 @@ if __name__ == '__main__':
 
         if args.xml_create:
                 for i,name in enumerate(ConfigFile.requestNames):
-                        help_name = ConfigFile.requestNames[i].split('/')[1]
-                        dirname = '/pnfs/desy.de/cms/tier2/'+ConfigFile.config.Data.outLFNDirBase+help_name+'/crab_'+name+args.postfix+'/**/**/*.root'
+                        help_name = ConfigFile.inputDatasets[i].split('/')[1]
+                        #print help_name
+                        dirname = '/pnfs/desy.de/cms/tier2/'+ConfigFile.config.Data.outLFNDirBase+'/'+help_name+'/crab_'+name+args.postfix+'/**/**/*.root'
                         xmlname = name+'.xml'
                         #print dirname
                         print 'For',xmlname 
