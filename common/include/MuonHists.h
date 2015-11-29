@@ -1,3 +1,4 @@
+#pragma once
 #include "UHH2/core/include/Hists.h"
 
 /** \brief Common muon histograms such as multiplicity, pt, eta, isolation, etc.
