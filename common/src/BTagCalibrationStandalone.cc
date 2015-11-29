@@ -504,11 +504,17 @@ std::pair<float, float> BTagCalibrationReader::BTagCalibrationReaderImpl::min_ma
   }
 
   const auto &entries = tmpData_.at(jf);
-  float min_pt = 0.f, max_pt = 0.f;
+  float min_pt = -1., max_pt = -1.;
   for (const auto & e: entries) {
     if (
       e.etaMin <= eta && eta < e.etaMax                   // find eta
     ){
+      if (min_pt < 0.) {                                  // init
+        min_pt = e.ptMin;
+        max_pt = e.ptMax;
+        continue;
+      }
+
       if (use_discr) {                                    // discr. reshaping?
         if (e.discrMin <= discr && discr < e.discrMax) {  // check discr
           min_pt = min_pt < e.ptMin ? min_pt : e.ptMin;
