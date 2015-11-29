@@ -40,7 +40,9 @@ bool MCLumiWeight::process(uhh2::Event & event){
 
 
 
-MCPileupReweight::MCPileupReweight(Context & ctx){
+MCPileupReweight::MCPileupReweight(Context & ctx):
+  h_pu_weight_(ctx.declare_event_output<float>("weight_pu"))
+{
 
    auto dataset_type = ctx.get("dataset_type");
    bool is_mc = dataset_type == "MC";
@@ -83,6 +85,7 @@ MCPileupReweight::MCPileupReweight(Context & ctx){
 bool MCPileupReweight::process(Event &event){
 
    if (event.isRealData) {
+      event.set(h_pu_weight_, 1.f);
       return true;
    }
 
@@ -93,7 +96,8 @@ bool MCPileupReweight::process(Event &event){
       weight = h_npu_data->GetBinContent(binnumber)/h_npu_mc->GetBinContent(binnumber);
    }
    
-   event.weight *= weight;       
+   event.weight *= weight;
+   event.set(h_pu_weight_, weight);
    return true;
 }
 
@@ -149,13 +153,13 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
   h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
   h_topjets_(ctx.get_handle<std::vector<TopJet>>(jets_handle_name)),
   sysType_(sysType),
-  h_btag_weight_          (ctx.declare_event_output<float>("btag_weight")),
-  h_btag_weight_up_       (ctx.declare_event_output<float>("btag_weight_up")),
-  h_btag_weight_down_     (ctx.declare_event_output<float>("btag_weight_down")),
-  h_btag_weight_bc_up_    (ctx.declare_event_output<float>("btag_weight_bc_up")),
-  h_btag_weight_bc_down_  (ctx.declare_event_output<float>("btag_weight_bc_down")),
-  h_btag_weight_udsg_up_  (ctx.declare_event_output<float>("btag_weight_udsg_up")),
-  h_btag_weight_udsg_down_(ctx.declare_event_output<float>("btag_weight_udsg_down"))
+  h_btag_weight_          (ctx.declare_event_output<float>("weight_btag")),
+  h_btag_weight_up_       (ctx.declare_event_output<float>("weight_btag_up")),
+  h_btag_weight_down_     (ctx.declare_event_output<float>("weight_btag_down")),
+  h_btag_weight_bc_up_    (ctx.declare_event_output<float>("weight_btag_bc_up")),
+  h_btag_weight_bc_down_  (ctx.declare_event_output<float>("weight_btag_bc_down")),
+  h_btag_weight_udsg_up_  (ctx.declare_event_output<float>("weight_btag_udsg_up")),
+  h_btag_weight_udsg_down_(ctx.declare_event_output<float>("weight_btag_udsg_down"))
 {
   auto dataset_type = ctx.get("dataset_type");
   bool is_mc = dataset_type == "MC";
