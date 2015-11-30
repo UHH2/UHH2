@@ -7,15 +7,18 @@ using namespace std;
 
 class TestJetCorrections: public uhh2::AnalysisModule {
 public:
-    explicit TestJetCorrections(Context & ) {
-        jec_mc.reset(new JetCorrector(JERFiles::PHYS14_L123_MC));
-        jec_data.reset(new JetCorrector(JERFiles::PHYS14_L123_DATA));
+    explicit TestJetCorrections(Context &ctx ) {
+        jec_mc.reset(new JetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
+	jec_data.reset(new JetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
+        printer_before.reset(new JetPrinter("before", 20.0));
+        printer_after.reset(new JetPrinter("after", 20.0));
     }
     
     virtual bool process(Event & e) override;
     
 private:
     std::unique_ptr<AnalysisModule> jec_mc, jec_data;
+    std::unique_ptr<AnalysisModule> printer_before, printer_after;
 };
 
 namespace {
@@ -43,7 +46,9 @@ bool TestJetCorrections::process(Event & e){
     // NOTE: we test here only that the jet correction module does 'something' to the jets which looks reasonable;
     // the size of the corrections are not tested, as this is a matter to verify centrally in CMS
     auto jets_before = *e.jets;
+    printer_before->process(e);
     jec_mc->process(e);
+    printer_after->process(e);
     // re-applying MC jet energy corrections should not change anything:
     auto jets_after_mc_jec = *e.jets;
     assert(compare_jets(jets_before, jets_after_mc_jec) <= 2);

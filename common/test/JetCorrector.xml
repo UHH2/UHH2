@@ -4,13 +4,14 @@
    <Library Name="libTestSUHH2common"/>
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
         <InputData Lumi="1" NEventsMax="10" Type="MC" Version="TestJetCorrector" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v0/signals/MC_BpJ_TW_M800_20x25_14_Ntuple.root" Lumi="0.0"/> 
+            <In FileName="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_25ns_v2/TTbar/MC_TTbar_1937_Ntuple.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
             <OutputTree Name="AnalysisTree" />
         </InputData>
             
         <UserConfig>
             <Item Name="JetCollection" Value="slimmedJets" />
+<!--	    <Item Name="jecsmear_direction" Value="down" /> -->
             <Item Name="AnalysisModule" Value="TestJetCorrections" /> 
         </UserConfig>
     </Cycle>
