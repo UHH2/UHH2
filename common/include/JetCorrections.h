@@ -154,7 +154,7 @@ private:
 class JetLeptonCleaner: public uhh2::AnalysisModule {
 public:
     // jec_filenames is teh same as for the JetCorrector.
-    explicit JetLeptonCleaner(const std::vector<std::string> & jec_filenames);
+    explicit JetLeptonCleaner(uhh2::Context & ctx, const std::vector<std::string> & jec_filenames);
     
     void set_muon_id(const MuonId & mu_id_){
         mu_id = mu_id_;
@@ -177,6 +177,8 @@ private:
     MuonId mu_id;
     ElectronId ele_id;
     double drmax = 0.4;
+    JetCorrectionUncertainty* jec_uncertainty;
+    int direction = 0; // -1 = down, +1 = up, 0 = nominal
 };
 
 
@@ -201,6 +203,8 @@ class JetLeptonCleaner_by_KEYmatching: public uhh2::AnalysisModule {
   std::unique_ptr<FactorizedJetCorrector> corrector;
   MuonId     muo_id;
   ElectronId ele_id;
+  JetCorrectionUncertainty* jec_uncertainty;
+  int direction = 0; // -1 = down, +1 = up, 0 = nominal
 };
 
 
