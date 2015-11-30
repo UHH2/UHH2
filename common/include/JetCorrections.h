@@ -2,6 +2,7 @@
 
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
+#include "UHH2/JetMETObjects/interface/JetCorrectionUncertainty.h"
 
 class FactorizedJetCorrector;
 
@@ -37,13 +38,16 @@ namespace JERFiles {
  * updated files.
  * 
  * For some standard jet energy corrections, you can use filenames defined in the JERFiles namespace.
+ *
+ * Options parsed from the given Context:
+ *  - "jecsmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing resp.
  * 
  * Please note that the JetCorrector does not sort the (re-)corrected jets by pt;
  * you might want to do that before running algorithms / plotting which assume that.
  */
 class JetCorrector: public uhh2::AnalysisModule {
 public:
-    explicit JetCorrector(const std::vector<std::string> & filenames);
+    explicit JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames);
     
     virtual bool process(uhh2::Event & event) override;
     
@@ -51,11 +55,14 @@ public:
     
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
+    
+    JetCorrectionUncertainty* jec_uncertainty;
+    int direction = 0; // -1 = down, +1 = up, 0 = nominal
 };
 
 class TopJetCorrector: public uhh2::AnalysisModule {
 public:
-    explicit TopJetCorrector(const std::vector<std::string> & filenames);
+    explicit TopJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames);
     
     virtual bool process(uhh2::Event & event) override;
     
@@ -63,6 +70,9 @@ public:
     
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
+
+    JetCorrectionUncertainty* jec_uncertainty;
+    int direction = 0; // -1 = down, +1 = up, 0 = nominal
 };
 
 class SubJetCorrector: public uhh2::AnalysisModule {
@@ -88,6 +98,8 @@ public:
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     uhh2::Event::Handle<std::vector<Jet> > h_jets;
+    JetCorrectionUncertainty* jec_uncertainty;
+    int direction = 0; // -1 = down, +1 = up, 0 = nominal
 };
 
 class GenericTopJetCorrector: public uhh2::AnalysisModule {
@@ -101,6 +113,8 @@ public:
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     uhh2::Event::Handle<std::vector<TopJet> > h_jets;
+    JetCorrectionUncertainty* jec_uncertainty;
+    int direction = 0; // -1 = down, +1 = up, 0 = nominal
 };
 
 class GenericSubJetCorrector: public uhh2::AnalysisModule {
