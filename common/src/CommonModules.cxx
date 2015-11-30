@@ -35,12 +35,12 @@ void CommonModules::init(Context & ctx){
     if(is_mc){
         if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx));
-        if(jec) modules.emplace_back(new JetCorrector(JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
+        if(jec) modules.emplace_back(new JetCorrector(ctx,JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
         if(jersmear) modules.emplace_back(new JetResolutionSmearer(ctx));
     }
     else{
        if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
-       if(jec) modules.emplace_back(new JetCorrector(JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
+       if(jec) modules.emplace_back(new JetCorrector(ctx,JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
     }
     if(metfilters){
        metfilters_selection.reset(new AndSelection(ctx, "metfilters"));
@@ -56,8 +56,8 @@ void CommonModules::init(Context & ctx){
       modules.emplace_back(new JetCleaner(JetPFID(working_point)));
     }
     if(jetlepcleaner) {
-      if(is_mc) modules.emplace_back(new JetLeptonCleaner(JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
-      else modules.emplace_back(new JetLeptonCleaner(JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
+      if(is_mc) modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
+      else modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
     }
     if(jetid) modules.emplace_back(new JetCleaner(jetid));
     modules.emplace_back(new HTCalculator(ctx));
