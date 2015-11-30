@@ -26,10 +26,10 @@ if __name__ == '__main__':
         parser.add_argument('--submit','-s', dest='submit_flag', action='store_true',
                             default=False,
                             help='Submit to the grid')
-        parser.add_argument('--status','-c', dest='status_flag', action='store_true',
+        parser.add_argument('--status', dest='status_flag', action='store_true',
                             default=False,
                             help='check status of all jobs. Have a lok at the dashbord')
-        parser.add_argument('--command', dest='crab_command', action='store',
+        parser.add_argument('--command','-c', dest='crab_command', action='store',
                             default='',
                             help='execute any crab command you want')
         parser.add_argument('--options','-o',dest='crab_options', action='append',
@@ -54,8 +54,8 @@ if __name__ == '__main__':
         args = parser.parse_args()
 
         for i in range(len(args.crab_options)):
-                print args.crab_options[i]
-                args.crab_options[i] = '--'+args.crab_options[i]
+                if '--' not in args.crab_options:
+                        args.crab_options[i] = '--'+args.crab_options[i]
                 
         if args.ConfigFile.endswith('.py'):
                 args.ConfigFile = args.ConfigFile.replace('.py','')
@@ -109,7 +109,8 @@ if __name__ == '__main__':
         if args.xml_create:
                 for i,name in enumerate(ConfigFile.requestNames):
                         help_name = ConfigFile.inputDatasets[i].split('/')[1]
-                        dirname = '/pnfs/desy.de/cms/tier2/'+ConfigFile.config.Data.outLFNDirBase+help_name+'/crab_'+name+args.postfix+'/**/**/*.root'
+                        #print help_name
+                        dirname = '/pnfs/desy.de/cms/tier2/'+ConfigFile.config.Data.outLFNDirBase+'/'+help_name+'/crab_'+name+args.postfix+'/**/**/*.root'
                         xmlname = name+'.xml'
                         #print dirname
                         print 'For',xmlname 
