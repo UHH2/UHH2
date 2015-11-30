@@ -40,7 +40,9 @@ bool MCLumiWeight::process(uhh2::Event & event){
 
 
 
-MCPileupReweight::MCPileupReweight(Context & ctx){
+MCPileupReweight::MCPileupReweight(Context & ctx):
+  h_pu_weight_(ctx.declare_event_output<float>("weight_pu"))
+{
 
    auto dataset_type = ctx.get("dataset_type");
    bool is_mc = dataset_type == "MC";
@@ -83,6 +85,7 @@ MCPileupReweight::MCPileupReweight(Context & ctx){
 bool MCPileupReweight::process(Event &event){
 
    if (event.isRealData) {
+      event.set(h_pu_weight_, 1.f);
       return true;
    }
 
@@ -93,7 +96,8 @@ bool MCPileupReweight::process(Event &event){
       weight = h_npu_data->GetBinContent(binnumber)/h_npu_mc->GetBinContent(binnumber);
    }
    
-   event.weight *= weight;       
+   event.weight *= weight;
+   event.set(h_pu_weight_, weight);
    return true;
 }
 
@@ -149,13 +153,13 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
   h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
   h_topjets_(ctx.get_handle<std::vector<TopJet>>(jets_handle_name)),
   sysType_(sysType),
-  h_btag_weight_          (ctx.declare_event_output<float>("btag_weight")),
-  h_btag_weight_up_       (ctx.declare_event_output<float>("btag_weight_up")),
-  h_btag_weight_down_     (ctx.declare_event_output<float>("btag_weight_down")),
-  h_btag_weight_bc_up_    (ctx.declare_event_output<float>("btag_weight_bc_up")),
-  h_btag_weight_bc_down_  (ctx.declare_event_output<float>("btag_weight_bc_down")),
-  h_btag_weight_udsg_up_  (ctx.declare_event_output<float>("btag_weight_udsg_up")),
-  h_btag_weight_udsg_down_(ctx.declare_event_output<float>("btag_weight_udsg_down"))
+  h_btag_weight_          (ctx.declare_event_output<float>("weight_btag")),
+  h_btag_weight_up_       (ctx.declare_event_output<float>("weight_btag_up")),
+  h_btag_weight_down_     (ctx.declare_event_output<float>("weight_btag_down")),
+  h_btag_weight_bc_up_    (ctx.declare_event_output<float>("weight_btag_bc_up")),
+  h_btag_weight_bc_down_  (ctx.declare_event_output<float>("weight_btag_bc_down")),
+  h_btag_weight_udsg_up_  (ctx.declare_event_output<float>("weight_btag_udsg_up")),
+  h_btag_weight_udsg_down_(ctx.declare_event_output<float>("weight_btag_udsg_down"))
 {
   auto dataset_type = ctx.get("dataset_type");
   bool is_mc = dataset_type == "MC";
@@ -290,11 +294,11 @@ std::tuple<float, float, float> MCBTagScaleFactor::get_weight_btag(const vector<
     const auto eff_pt_axis = eff_hist->GetXaxis();
     float pt_low_edge = eff_pt_axis->GetBinLowEdge(eff_pt_axis->GetFirst());
     float pt_high_edge = eff_pt_axis->GetBinUpEdge(eff_pt_axis->GetLast());
-    float pt_for_eff = (pt > pt_low_edge) ? pt : pt_low_edge + 1e-5;
-    pt_for_eff = (pt_for_eff < pt_high_edge) ? pt_for_eff : pt_high_edge - 1e-5;
+    float pt_for_eff = (pt > pt_low_edge) ? pt : pt_low_edge + 1.;
+    pt_for_eff = (pt_for_eff < pt_high_edge) ? pt_for_eff : pt_high_edge - 1.;
     float eff = eff_hist->GetBinContent(eff_hist->FindFixBin(pt_for_eff, abs_eta));
 
-    float SF = 0., SFerr = 0.;
+    float SF = 1., SFerr = 0.;
     std::tie(SF, SFerr) = get_SF_btag(pt, abs_eta, hadronFlavor);
 
     if (btag_(jet, event)) {
@@ -319,6 +323,17 @@ std::tuple<float, float, float> MCBTagScaleFactor::get_weight_btag(const vector<
   float wtbtagErrBC = fabs(err1+err2) * wtbtag;
   float wtbtagErrUDSG = fabs(err3+err4) * wtbtag;
 
+  string errStr = " is NaN in MCBTagScaleFactor::get_weight_btag. Please check that all efficiency-bins are greater than 0.";
+  if (isnan(wtbtag)) {
+    throw runtime_error("wtbtag" + errStr);
+  }
+  if (isnan(wtbtagErrBC)) {
+    throw runtime_error("wtbtagErrBC" + errStr);
+  }
+  if (isnan(wtbtagErrUDSG)) {
+    throw runtime_error("wtbtagErrUDSG" + errStr);
+  }
+
   return std::make_tuple(wtbtag, wtbtagErrBC, wtbtagErrUDSG);
 }
 
@@ -334,13 +349,13 @@ std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, 
   auto sf_bounds = calib_->min_max_pt(btagentry_flav, abs_eta);
 
   float pt_for_eval = pt;
-  bool out_of_bounds = false;
+  bool is_out_of_bounds = false;
   if (pt < sf_bounds.first) {
     pt_for_eval = sf_bounds.first + 1e-5;
-    out_of_bounds = true;
+    is_out_of_bounds = true;
   } else if (pt > sf_bounds.second) {
-    pt_for_eval = sf_bounds.second - 1e-5;
-    out_of_bounds = true;
+    pt_for_eval = sf_bounds.second - 0.1;
+    is_out_of_bounds = true;
   }
 
   float SF_up   = calib_up_->eval(btagentry_flav, abs_eta, pt_for_eval);
@@ -352,8 +367,18 @@ std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, 
 
   float SFerr = SFerr_up_ > SFerr_down_ ? SFerr_up_ : SFerr_down_;
 
-  if (out_of_bounds) {
+  if (is_out_of_bounds) {
     SFerr *= 2;
+  }
+
+  if (SF < 1e-10) {
+    cout << "WARNING: SF vanishes! Will return SF = 1., SFerr = 0., Values: "
+         << "(SF, SFerr, is_out_of_bounds, lowbound, highbound, pt, pt_for_eval, btagentry_flav): "
+         << SF << ", " << SFerr << ", " << is_out_of_bounds << ", "
+         << sf_bounds.first << ", " << sf_bounds.second << ", "
+         << pt << ", " << pt_for_eval << ", " << btagentry_flav << endl;
+    SF = 1.;
+    SFerr = 0.;
   }
 
   return std::make_pair(SF, SFerr);

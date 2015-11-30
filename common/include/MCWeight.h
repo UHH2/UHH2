@@ -48,6 +48,7 @@ public:
     virtual bool process(uhh2::Event & event) override;
 
 private:
+   uhh2::Event::Handle<float> h_pu_weight_;
    TH1F *h_npu_mc;
    TH1F* h_npu_data;
 };
