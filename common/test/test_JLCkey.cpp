@@ -66,8 +66,8 @@ test_JLCkey::test_JLCkey(uhh2::Context& ctx){
   }
 
   jet_IDcleaner.reset(new JetCleaner(jetID));
-  jet_corrector.reset(new JetCorrector(JEC_AK4));
-  jetlepton_cleaner1.reset(new JetLeptonCleaner(JEC_AK4));
+  jet_corrector.reset(new JetCorrector(ctx,JEC_AK4));
+  jetlepton_cleaner1.reset(new JetLeptonCleaner(ctx,JEC_AK4));
   jetlepton_cleaner1->set_drmax(.4);
   jetlepton_cleaner2.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JEC_AK4));
   ////

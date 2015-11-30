@@ -152,7 +152,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     return make_unique<FactorizedJetCorrector>(pars);
 }
 
-void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event){
+void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0){
     auto factor_raw = jet.JEC_factor_raw();
     corrector.setJetPt(jet.pt() * factor_raw);
     corrector.setJetEta(jet.eta());
@@ -160,20 +160,76 @@ void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & ev
     corrector.setJetA(jet.jetArea());
     corrector.setRho(event.rho);
     auto correctionfactor = corrector.getCorrection();
-    jet.set_v4(jet.v4() * (factor_raw * correctionfactor));
+
+    LorentzVector jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
+
+    if(jec_unc_direction!=0){
+      if (jec_unc==NULL){
+	std::cerr << "JEC variation should be applied, but JEC uncertainty object is NULL! Abort." << std::endl;
+	exit(EXIT_FAILURE);
+      }
+      // ignore jets with very low pt or high eta, avoiding a crash from the JESUncertainty tool
+      double pt = jet_v4_corrected.Pt();
+      double eta = jet_v4_corrected.Eta();
+      if (!(pt<5. || fabs(eta)>5.)) {
+      
+	jec_unc->setJetEta(eta);
+	jec_unc->setJetPt(pt);
+	
+	double unc = 0.;	  
+	if (jec_unc_direction == 1){
+	  unc = jec_unc->getUncertainty(1);
+	  correctionfactor *= (1 + fabs(unc));
+	} else if (jec_unc_direction == -1){
+	  unc = jec_unc->getUncertainty(-1);
+	  correctionfactor *= (1 - fabs(unc));
+	}
+	jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
+      }
+    }
+
+    jet.set_v4(jet_v4_corrected);
     jet.set_JEC_factor_raw(1. / correctionfactor);
 }
 
+JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::vector<std::string> & filenames, int &direction){
+    
+    auto dir = ctx.get("jecsmear_direction", "nominal");
+    if(dir == "up"){
+        direction = 1;
+    }
+    else if(dir == "down"){
+        direction = -1;
+    }
+    else if(dir != "nominal"){
+        // direction = 0 is default
+        throw runtime_error("JetCorrector: invalid value jecsmear_direction='" + dir + "' (valid: 'nominal', 'up', 'down')");
+    }
+
+    //initialize JetCorrectionUncertainty if shift direction is not "nominal", else return NULL pointer
+    if(direction!=0){
+      //take name from the L1FastJet correction (0th element of filenames) and replace "L1FastJet" by "Uncertainty" to get the proper name of the uncertainty file
+      TString unc_file = locate_file(filenames[0]);
+      unc_file.ReplaceAll("L1FastJet","Uncertainty");
+      JetCorrectionUncertainty* jec_uncertainty = new JetCorrectionUncertainty(unc_file.Data());
+      return jec_uncertainty;
+    }
+    return NULL;
+    
 }
 
-JetCorrector::JetCorrector(const std::vector<std::string> & filenames){
+}
+
+JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames){
     corrector = build_corrector(filenames);
+    direction = 0;
+    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
     
 bool JetCorrector::process(uhh2::Event & event){
     assert(event.jets);
     for(auto & jet : *event.jets){
-        correct_jet(*corrector, jet, event);
+        correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
     return true;
 }
@@ -182,14 +238,16 @@ bool JetCorrector::process(uhh2::Event & event){
 JetCorrector::~JetCorrector(){}
 
 
-TopJetCorrector::TopJetCorrector(const std::vector<std::string> & filenames){
+TopJetCorrector::TopJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames){
     corrector = build_corrector(filenames);
+    direction = 0;
+    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
     
 bool TopJetCorrector::process(uhh2::Event & event){
     assert(event.topjets);
     for(auto & jet : *event.topjets){
-        correct_jet(*corrector, jet, event);
+        correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
     return true;
 }
@@ -218,6 +276,8 @@ SubJetCorrector::~SubJetCorrector(){}
 
 GenericJetCorrector::GenericJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
     corrector = build_corrector(filenames);
+    direction = 0;
+    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
     h_jets = ctx.get_handle<std::vector<Jet> >(collectionname);
 }
     
@@ -226,7 +286,7 @@ bool GenericJetCorrector::process(uhh2::Event & event){
     const auto jets = &event.get(h_jets);
     assert(jets);
     for(auto & jet : *jets){
-        correct_jet(*corrector, jet, event);
+        correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
     return true;
 }
@@ -236,6 +296,8 @@ GenericJetCorrector::~GenericJetCorrector(){}
 
 GenericTopJetCorrector::GenericTopJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
     corrector = build_corrector(filenames);
+    direction = 0;
+    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
     h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
 }
     
@@ -244,7 +306,7 @@ bool GenericTopJetCorrector::process(uhh2::Event & event){
     const auto jets = &event.get(h_jets);
     assert(jets);
     for(auto & jet : *jets){
-        correct_jet(*corrector, jet, event);
+        correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
     return true;
 }
@@ -276,8 +338,10 @@ GenericSubJetCorrector::~GenericSubJetCorrector(){}
 
 // ** JetLeptonCleaner
 
-JetLeptonCleaner::JetLeptonCleaner(const std::vector<std::string> & filenames){
+JetLeptonCleaner::JetLeptonCleaner(uhh2::Context & ctx, const std::vector<std::string> & filenames){
     corrector = build_corrector(filenames);
+    direction = 0;
+    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
 
 bool JetLeptonCleaner::process(uhh2::Event & event){
@@ -315,7 +379,7 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
                     // set new muon multiplicity and muon energy fraction:
                     jet.set_muonMultiplicity(jet.muonMultiplicity() - 1);
                     jet.set_muonEnergyFraction(max(new_muon_energy_in_jet / jet_p4_raw.E(), 0.0));
-                    correct_jet(*corrector, jet, event);
+                    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
                 }
             }
         }
@@ -343,7 +407,7 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
                     jet.set_v4(jet_p4_raw);
                     jet.set_electronMultiplicity(jet.electronMultiplicity() - 1);
                     jet.set_chargedEmEnergyFraction(max(new_electron_energy_in_jet / jet_p4_raw.E(), 0.0));
-                    correct_jet(*corrector, jet, event);
+                    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
                 }
             }
         }
@@ -359,8 +423,10 @@ JetLeptonCleaner::~JetLeptonCleaner(){}
 
 JetLeptonCleaner_by_KEYmatching::JetLeptonCleaner_by_KEYmatching(uhh2::Context& ctx, const std::vector<std::string> & filenames, const std::string& jet_label){
 
-  h_jets_ = ctx.get_handle<std::vector<Jet>>(jet_label);
-  corrector = build_corrector(filenames);
+    h_jets_ = ctx.get_handle<std::vector<Jet>>(jet_label);
+    corrector = build_corrector(filenames);
+    direction = 0;
+    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
 
 JetLeptonCleaner_by_KEYmatching::~JetLeptonCleaner_by_KEYmatching(){}
@@ -432,7 +498,7 @@ bool JetLeptonCleaner_by_KEYmatching::process(uhh2::Event& event){
       jet.set_JEC_factor_raw(1.);
       jet.set_v4(jet_p4_raw);
 
-      correct_jet(*corrector, jet, event);
+      correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
   }
 
