@@ -56,8 +56,8 @@ void CommonModules::init(Context & ctx){
       modules.emplace_back(new JetCleaner(JetPFID(working_point)));
     }
     if(jetlepcleaner) {
-      if(is_mc) modules.emplace_back(new JetLeptonCleaner(JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
-      else modules.emplace_back(new JetLeptonCleaner(JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
+      if(is_mc) modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
+      else modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
     }
     if(jetid) modules.emplace_back(new JetCleaner(jetid));
     modules.emplace_back(new HTCalculator(ctx));

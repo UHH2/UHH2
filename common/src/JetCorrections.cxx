@@ -338,8 +338,10 @@ GenericSubJetCorrector::~GenericSubJetCorrector(){}
 
 // ** JetLeptonCleaner
 
-JetLeptonCleaner::JetLeptonCleaner(const std::vector<std::string> & filenames){
+JetLeptonCleaner::JetLeptonCleaner(uhh2::Context & ctx, const std::vector<std::string> & filenames){
     corrector = build_corrector(filenames);
+    direction = 0;
+    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
 
 bool JetLeptonCleaner::process(uhh2::Event & event){
@@ -377,7 +379,7 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
                     // set new muon multiplicity and muon energy fraction:
                     jet.set_muonMultiplicity(jet.muonMultiplicity() - 1);
                     jet.set_muonEnergyFraction(max(new_muon_energy_in_jet / jet_p4_raw.E(), 0.0));
-                    correct_jet(*corrector, jet, event);
+                    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
                 }
             }
         }
@@ -405,7 +407,7 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
                     jet.set_v4(jet_p4_raw);
                     jet.set_electronMultiplicity(jet.electronMultiplicity() - 1);
                     jet.set_chargedEmEnergyFraction(max(new_electron_energy_in_jet / jet_p4_raw.E(), 0.0));
-                    correct_jet(*corrector, jet, event);
+                    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
                 }
             }
         }
@@ -421,8 +423,10 @@ JetLeptonCleaner::~JetLeptonCleaner(){}
 
 JetLeptonCleaner_by_KEYmatching::JetLeptonCleaner_by_KEYmatching(uhh2::Context& ctx, const std::vector<std::string> & filenames, const std::string& jet_label){
 
-  h_jets_ = ctx.get_handle<std::vector<Jet>>(jet_label);
-  corrector = build_corrector(filenames);
+    h_jets_ = ctx.get_handle<std::vector<Jet>>(jet_label);
+    corrector = build_corrector(filenames);
+    direction = 0;
+    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
 
 JetLeptonCleaner_by_KEYmatching::~JetLeptonCleaner_by_KEYmatching(){}
@@ -494,7 +498,7 @@ bool JetLeptonCleaner_by_KEYmatching::process(uhh2::Event& event){
       jet.set_JEC_factor_raw(1.);
       jet.set_v4(jet_p4_raw);
 
-      correct_jet(*corrector, jet, event);
+      correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
   }
 
