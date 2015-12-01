@@ -11,7 +11,7 @@ bool MuonIDKinematic::operator()(const Muon & muon, const Event &) const {
 bool MuonIDLoose ::operator()(const Muon& muo, const Event&) const { return muo.get_bool(Muon::loose);  }
 bool MuonIDMedium::operator()(const Muon& muo, const Event&) const { return muo.get_bool(Muon::medium); }
 bool MuonIDTight ::operator()(const Muon& muo, const Event&) const { return muo.get_bool(Muon::tight);  }
-
+bool MuonIDHighPt::operator()(const Muon& muo, const Event&) const { return muo.get_bool(Muon::highpt); }
 MuonIso::MuonIso(double iso_):iso(iso_){}
 
 bool MuonIso::operator()(const Muon & muon, const uhh2::Event &) const {

@@ -21,6 +21,11 @@ class MuonIDTight {
   bool operator()(const Muon&, const uhh2::Event&) const;
 };
 
+class MuonIDHighPt {
+ public:
+  bool operator()(const Muon&, const uhh2::Event&) const;
+};
+
 // only kinematic cuts, with no further id
 class MuonIDKinematic {
 public:
