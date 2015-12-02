@@ -255,8 +255,10 @@ bool TopJetCorrector::process(uhh2::Event & event){
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
 TopJetCorrector::~TopJetCorrector(){}
 
-SubJetCorrector::SubJetCorrector(const std::vector<std::string> & filenames){
+SubJetCorrector::SubJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames){
     corrector = build_corrector(filenames);
+    direction = 0;
+    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
     
 bool SubJetCorrector::process(uhh2::Event & event){
@@ -264,7 +266,7 @@ bool SubJetCorrector::process(uhh2::Event & event){
     for(auto & topjet : *event.topjets){
         auto subjets = topjet.subjets();
         for (auto & subjet : subjets) { 
-            correct_jet(*corrector, subjet, event);
+            correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
         }
         topjet.set_subjets(move(subjets));
     }
@@ -316,6 +318,8 @@ GenericTopJetCorrector::~GenericTopJetCorrector(){}
 
 GenericSubJetCorrector::GenericSubJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
     corrector = build_corrector(filenames);
+    direction = 0;
+    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
     h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
 }
     
@@ -326,7 +330,7 @@ bool GenericSubJetCorrector::process(uhh2::Event & event){
     for(auto & topjet : *topjets){
         auto subjets = topjet.subjets();
         for (auto & subjet : subjets) { 
-            correct_jet(*corrector, subjet, event);
+            correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
         }
         topjet.set_subjets(move(subjets));
     }

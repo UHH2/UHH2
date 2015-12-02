@@ -77,7 +77,7 @@ private:
 
 class SubJetCorrector: public uhh2::AnalysisModule {
 public:
-    explicit SubJetCorrector(const std::vector<std::string> & filenames);
+    explicit SubJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames);
     
     virtual bool process(uhh2::Event & event) override;
     
@@ -85,6 +85,8 @@ public:
     
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
+    JetCorrectionUncertainty* jec_uncertainty;
+    int direction = 0; // -1 = down, +1 = up, 0 = nominal
 };
 
 class GenericJetCorrector: public uhh2::AnalysisModule {
@@ -128,6 +130,8 @@ public:
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     uhh2::Event::Handle<std::vector<TopJet> > h_jets;
+    JetCorrectionUncertainty* jec_uncertainty;
+    int direction = 0; // -1 = down, +1 = up, 0 = nominal
 };
 
 /** \brief Cross-clean lepton and jets by subtracting lepton four momenta from nearby jets
