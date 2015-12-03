@@ -143,12 +143,103 @@ bool MCScaleVariation::process(Event & event){
 
 
 
+
+MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
+                                     const std::string & sf_file_path,
+                                     const std::string & sf_name,
+                                     float sys_error_percantage,
+                                     const std::string & weight_postfix,
+                                     const std::string & sys_uncert,
+                                     const std::string & muons_handle_name): 
+  h_muons_            (ctx.get_handle<std::vector<Muon>>(muons_handle_name)),
+  h_muon_weight_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix)),
+  h_muon_weight_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_up")),
+  h_muon_weight_down_ (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_down")),
+  sys_error_factor_(sys_error_percantage/100.)
+{
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if (!is_mc) {
+    cout << "Warning: MCMuonScaleFactor will not have an effect on "
+         <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
+
+  TFile sf_file(sf_file_path.c_str());
+  if (sf_file.IsZombie()) {
+    throw runtime_error("Scale factor file for muons not found: " + sf_file_path);
+  }
+  
+  sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/pt_abseta_ratio").c_str()));
+  if (!sf_hist_.get()) {
+    throw runtime_error("Scale factor directory not found in file: " + sf_name);
+  }
+  sf_hist_->SetDirectory(0);
+  eta_min_ = sf_hist_->GetYaxis()->GetXmin();
+  eta_max_ = sf_hist_->GetYaxis()->GetXmax();
+  pt_min_  = sf_hist_->GetXaxis()->GetXmin();
+  pt_max_  = sf_hist_->GetXaxis()->GetXmax();
+
+  sys_direction_ = 0;
+  if (sys_uncert == "up") {
+    sys_direction_ = 1;
+  } else if (sys_uncert == "down") {
+    sys_direction_ = -1;
+  }
+}
+
+bool MCMuonScaleFactor::process(uhh2::Event & event) {
+
+  if (!sf_hist_) {  
+    event.set(h_muon_weight_,       1.);
+    event.set(h_muon_weight_up_,    1.);
+    event.set(h_muon_weight_down_,  1.);
+  }
+
+  const auto & muons = event.get(h_muons_);
+  float weight = 1., weight_up = 1., weight_down = 1.;
+  for (const auto & mu : muons) {
+    float eta = mu.eta();
+    float pt = mu.pt();
+    if (eta_min_ < eta &&
+        eta_max_ > eta &&
+        pt_min_  < pt &&
+        pt_max_  > pt) {
+      int bin       = sf_hist_->FindFixBin(pt, eta);
+      float w       = sf_hist_->GetBinContent(bin);
+      float err     = sf_hist_->GetBinError(bin);
+      float err_tot = sqrt(err*err + pow(w*sys_error_factor_, 2));
+
+      weight      *= w;
+      weight_up   *= w + err_tot;
+      weight_down *= w - err_tot;
+    }
+  }
+
+  event.set(h_muon_weight_,       weight);
+  event.set(h_muon_weight_up_,    weight_up);
+  event.set(h_muon_weight_down_,  weight_down);
+
+  if (sys_direction_ == 1) {
+    event.weight *= weight_up;
+  } else if (sys_direction_ == -1) {
+    event.weight *= weight_down;
+  } else {
+    event.weight *= weight;
+  }
+
+  return true;
+}
+
+
+
+
 MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
                                      const CSVBTag::wp & working_point,
-                                     std::string jets_handle_name,
-                                     std::string sysType,
-                                     std::string measType_bc,
-                                     std::string measType_udsg):
+                                     const std::string & jets_handle_name,
+                                     const std::string & sysType,
+                                     const std::string & measType_bc,
+                                     const std::string & measType_udsg):
   btag_(CSVBTag(working_point)),
   h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
   h_topjets_(ctx.get_handle<std::vector<TopJet>>(jets_handle_name)),
