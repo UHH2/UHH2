@@ -74,6 +74,49 @@ class MCScaleVariation: public uhh2::AnalysisModule {
 
 
 
+/** \brief Apply muon scale factors
+ *
+ * https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonReferenceEffsRun2#Results_for_2015_data
+ *
+ * - only for applying pt- _and_ eta-scale dependent scale factors
+ *
+ * - parameters:
+ *   - sf_file_path: path the root file with the scale factors
+ *   - sf_name: directory name in the root file
+ *   - sys_error_percantage: e.g. "1." for 1% of systematic error
+ *   - weight_postfix: handle name for weights, e.g. "trigger" will produce the
+ *     handles "weight_sfmu_trigger", "weight_sfmu_trigger_up" and 
+ *     "weight_sfmu_trigger_down"
+ *   - sys_uncert: which uncertainty is applied to event.weight, can be "up", 
+ *     "down" or "nominal".
+ *   - muons_handle_name: handle to the muon collection (the default points to 
+ *     event.muons)
+ */
+class MCMuonScaleFactor: public uhh2::AnalysisModule {
+public:
+  explicit MCMuonScaleFactor(uhh2::Context & ctx,
+                             const std::string & sf_file_path,
+                             const std::string & sf_name,
+                             float sys_error_percantage,
+                             const std::string & weight_postfix="",
+                             const std::string & sys_uncert="nominal",
+                             const std::string & muons_handle_name="muons"); 
+
+  virtual bool process(uhh2::Event & event) override;
+
+private:
+  uhh2::Event::Handle<std::vector<Muon>> h_muons_;
+  std::unique_ptr<TH2> sf_hist_;
+  uhh2::Event::Handle<float> h_muon_weight_;
+  uhh2::Event::Handle<float> h_muon_weight_up_;
+  uhh2::Event::Handle<float> h_muon_weight_down_;
+  float sys_error_factor_;
+  float eta_min_, eta_max_, pt_min_, pt_max_;
+  int sys_direction_;
+};
+
+
+
 class BTagCalibrationReader;  // forward declaration
 /** \brief apply btag scale factors
  *
@@ -102,10 +145,10 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
  public:
   explicit MCBTagScaleFactor(uhh2::Context & ctx,
                              const CSVBTag::wp & working_point,
-                             std::string jets_handle_name="jets",
-                             std::string sysType="central",
-                             std::string measType_bc="mujets",
-                             std::string measType_udsg="comb");
+                             const std::string & jets_handle_name="jets",
+                             const std::string & sysType="central",
+                             const std::string & measType_bc="mujets",
+                             const std::string & measType_udsg="comb");
 
   virtual bool process(uhh2::Event & event) override;
 
