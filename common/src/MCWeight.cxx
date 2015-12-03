@@ -149,12 +149,13 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
                                      const std::string & sf_name,
                                      float sys_error_percantage,
                                      const std::string & weight_postfix,
+                                     const std::string & sys_uncert,
                                      const std::string & muons_handle_name): 
   h_muons_            (ctx.get_handle<std::vector<Muon>>(muons_handle_name)),
   h_muon_weight_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix)),
   h_muon_weight_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_up")),
   h_muon_weight_down_ (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_down")),
-  sys_error_percantage_(sys_error_percantage/100.)
+  sys_error_factor_(sys_error_percantage/100.)
 {
   auto dataset_type = ctx.get("dataset_type");
   bool is_mc = dataset_type == "MC";
@@ -180,10 +181,9 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
   pt_max_  = sf_hist_->GetXaxis()->GetXmax();
 
   sys_direction_ = 0;
-  auto ctx_mu_sys_ = ctx.get("MCMuonScaleFactorSys", "");
-  if (ctx_mu_sys_ == "up") {
+  if (sys_uncert == "up") {
     sys_direction_ = 1;
-  } else if (ctx_mu_sys_ == "down") {
+  } else if (sys_uncert == "down") {
     sys_direction_ = -1;
   }
 }
@@ -205,13 +205,14 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
         eta_max_ > eta &&
         pt_min_  < pt &&
         pt_max_  > pt) {
-      int bin   = sf_hist_->FindFixBin(pt, eta);
-      float w   = sf_hist_->GetBinContent(bin);
-      float err = sf_hist_->GetBinError(bin);
+      int bin       = sf_hist_->FindFixBin(pt, eta);
+      float w       = sf_hist_->GetBinContent(bin);
+      float err     = sf_hist_->GetBinError(bin);
+      float err_tot = sqrt(err*err + pow(w*sys_error_factor_, 2));
 
       weight      *= w;
-      weight_up   *= (w*(1+sys_error_percantage_) + err);
-      weight_down *= (w*(1-sys_error_percantage_) - err);
+      weight_up   *= w + err_tot;
+      weight_down *= w - err_tot;
     }
   }
 

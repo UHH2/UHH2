@@ -76,9 +76,9 @@ class MCScaleVariation: public uhh2::AnalysisModule {
 
 /** \brief Apply muon scale factors
  *
+ * https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonReferenceEffsRun2#Results_for_2015_data
+ *
  * - only for applying pt- _and_ eta-scale dependent scale factors
- * - uncertainty can be set through config with UserConfig item "MCMuonScaleFactorSys":
- *   - nominal, up, down
  *
  * - parameters:
  *   - sf_file_path: path the root file with the scale factors
@@ -87,6 +87,8 @@ class MCScaleVariation: public uhh2::AnalysisModule {
  *   - weight_postfix: handle name for weights, e.g. "trigger" will produce the
  *     handles "weight_sfmu_trigger", "weight_sfmu_trigger_up" and 
  *     "weight_sfmu_trigger_down"
+ *   - sys_uncert: which uncertainty is applied to event.weight, can be "up", 
+ *     "down" or "nominal".
  *   - muons_handle_name: handle to the muon collection (the default points to 
  *     event.muons)
  */
@@ -97,6 +99,7 @@ public:
                              const std::string & sf_name,
                              float sys_error_percantage,
                              const std::string & weight_postfix="",
+                             const std::string & sys_uncert="nominal",
                              const std::string & muons_handle_name="muons"); 
 
   virtual bool process(uhh2::Event & event) override;
@@ -107,7 +110,7 @@ private:
   uhh2::Event::Handle<float> h_muon_weight_;
   uhh2::Event::Handle<float> h_muon_weight_up_;
   uhh2::Event::Handle<float> h_muon_weight_down_;
-  float sys_error_percantage_;
+  float sys_error_factor_;
   float eta_min_, eta_max_, pt_min_, pt_max_;
   int sys_direction_;
 };
