@@ -41,18 +41,40 @@ const ReconstructionHypothesis * get_best_hypothesis(const std::vector<Reconstru
  * they are the 8TeV values.
  */
 class Chi2Discriminator: public uhh2::AnalysisModule {
-public:
-    struct cfg {
-        std::string discriminator_label;
-        cfg(): discriminator_label("Chi2"){}
-    };
-    
-    Chi2Discriminator(uhh2::Context & ctx, const std::string & rechyps_name, const cfg & config = cfg());
-    virtual bool process(uhh2::Event & event) override;
-    
-private:
-    uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_hyps;
-    cfg config;
+
+ public:
+  struct cfg {
+
+   std::string discriminator_label;
+   cfg(): discriminator_label("Chi2"){}
+  };
+
+  Chi2Discriminator(uhh2::Context&, const std::string&, const cfg& config=cfg());
+  virtual bool process(uhh2::Event&) override;
+
+  virtual void set_Mtlep_mean (const float m){ Mtlep_mean_  = m; }
+  virtual void set_Mtlep_sigma(const float s){ Mtlep_sigma_ = s;
+
+    if(s <= 0.) throw std::runtime_error("Chi2Discriminator::set_Mtlep_sigma -- logic error: non-positive input value: "+std::to_string(s));
+  }
+
+  virtual void set_Mthad_mean (const float m){ Mthad_mean_  = m; }
+  virtual void set_Mthad_sigma(const float s){ Mthad_sigma_ = s;
+
+    if(s <= 0.) throw std::runtime_error("Chi2Discriminator::set_Mthad_sigma -- logic error: non-positive input value: "+std::to_string(s));
+  }
+
+  virtual float Mtlep_mean () const { return Mtlep_mean_; }
+  virtual float Mtlep_sigma() const { return Mtlep_sigma_; }
+
+  virtual float Mthad_mean () const { return Mthad_mean_; }
+  virtual float Mthad_sigma() const { return Mthad_sigma_; }
+
+ private:
+  cfg config;
+  uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_hyps;
+  float Mtlep_mean_, Mtlep_sigma_;
+  float Mthad_mean_, Mthad_sigma_;
 };
 
 /** \brief Calculate the chi-square reconstruction discriminator
@@ -63,18 +85,45 @@ private:
  * The chi2 term for the hadronic-top is calculated using the groomed mass of the top-tagged jet.
  */
 class Chi2DiscriminatorTTAG: public uhh2::AnalysisModule {
-public:
-    struct cfg {
-        std::string discriminator_label;
-        cfg(): discriminator_label("Chi2"){}
-    };
-    
-    Chi2DiscriminatorTTAG(uhh2::Context & ctx, const std::string & rechyps_name, const cfg & config = cfg());
-    virtual bool process(uhh2::Event & event) override;
-    
-private:
-    uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_hyps;
-    cfg config;
+
+ public:
+  struct cfg {
+
+    std::string discriminator_label;
+    cfg(): discriminator_label("Chi2"){}
+  };
+
+  Chi2DiscriminatorTTAG(uhh2::Context&, const std::string&, const cfg& config=cfg());
+  virtual bool process(uhh2::Event&) override;
+
+  virtual void set_Mtlep_mean (const float m){ Mtlep_mean_  = m; }
+  virtual void set_Mtlep_sigma(const float s){ Mtlep_sigma_ = s;
+
+    if(s <= 0.) throw std::runtime_error("Chi2Discriminator::set_Mtlep_sigma -- logic error: non-positive input value: "+std::to_string(s));
+  }
+
+  virtual void set_Mthad_mean (const float m){ Mthad_mean_  = m; }
+  virtual void set_Mthad_sigma(const float s){ Mthad_sigma_ = s;
+
+    if(s <= 0.) throw std::runtime_error("Chi2Discriminator::set_Mthad_sigma -- logic error: non-positive input value: "+std::to_string(s));
+  }
+
+  virtual void use_subjet_mass(const bool  b){ use_subjet_mass_ = b; }
+
+  virtual float Mtlep_mean () const { return Mtlep_mean_; }
+  virtual float Mtlep_sigma() const { return Mtlep_sigma_; }
+
+  virtual float Mthad_mean () const { return Mthad_mean_; }
+  virtual float Mthad_sigma() const { return Mthad_sigma_; }
+
+  virtual bool  use_subjet_mass() const { return use_subjet_mass_; }
+
+ private:
+  cfg config;
+  uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_hyps;
+  float Mtlep_mean_, Mtlep_sigma_;
+  float Mthad_mean_, Mthad_sigma_;
+  bool use_subjet_mass_;
 };
 
 /** \brief Top-DeltaR quality flag for Monte-Carlo
