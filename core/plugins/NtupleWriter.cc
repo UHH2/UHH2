@@ -392,6 +392,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     event->rho = -1;
   }
 
+  //input tokens for objects with fixed names, not defined in the ntuplewriter.py script
+  bs_token = consumes<reco::BeamSpot>( edm::InputTag("offlineBeamSpot"));
+  generator_token = consumes<GenEventInfoProduct>( edm::InputTag("generator"));
+  pus_token = consumes<std::vector<PileupSummaryInfo> > ( edm::InputTag("slimmedAddPileupInfo"));
+  lhe_token = consumes<LHEEventProduct> ( edm::InputTag("externalLHEProducer"));
+
   //if(doPV){
   branch(tr, "beamspot_x0",&event->beamspot_x0);
   branch(tr, "beamspot_y0",&event->beamspot_y0);
@@ -469,8 +475,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
   }
   if(doGenInfo){
-    genparticle_source= iConfig.getParameter<edm::InputTag>("genparticle_source");
-    if(doAllGenParticles) stablegenparticle_source = iConfig.getParameter<edm::InputTag>("stablegenparticle_source");
+    genparticle_token = consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genparticle_source"));
+    if(doAllGenParticles) stablegenparticle_token = consumes<edm::View<pat::PackedGenParticle> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
     event->genInfo = new GenInfo();
     event->genparticles = new vector<GenParticle>();
     branch(tr, "genInfo","GenInfo", event->genInfo);
@@ -551,7 +557,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
       
      edm::Handle<reco::BeamSpot> beamSpot;
-     iEvent.getByLabel(edm::InputTag("offlineBeamSpot"), beamSpot);
+     iEvent.getByToken(bs_token, beamSpot);
      const reco::BeamSpot & bsp = *beamSpot;
      
      event->beamspot_x0 = bsp.x0();
@@ -575,7 +581,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      event->genparticles->clear();
 
      edm::Handle<GenEventInfoProduct> genEventInfoProduct;
-     iEvent.getByLabel("generator", genEventInfoProduct);
+     iEvent.getByToken(generator_token, genEventInfoProduct);
      const GenEventInfoProduct& genEventInfo = *(genEventInfoProduct.product());
   
      for(unsigned int k=0; k<genEventInfo.binningValues().size();++k){
@@ -609,7 +615,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
 
      edm::Handle<LHEEventProduct> lhe;
-     if(iEvent.getByLabel("externalLHEProducer",lhe)){
+     if(iEvent.getByToken(lhe_token,lhe)){
        event->genInfo->set_originalXWGTUP(lhe->originalXWGTUP());
        for(unsigned int k=0; k<lhe->weights().size(); k++){
 	 event->genInfo->add_systweight(lhe->weights().at(k).wgt);
@@ -617,7 +623,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
 
      edm::Handle<std::vector<PileupSummaryInfo> > pus;
-     iEvent.getByLabel(edm::InputTag("slimmedAddPileupInfo"), pus);
+     iEvent.getByToken(pus_token, pus);
      event->genInfo->set_pileup_NumInteractions_intime(0);
      event->genInfo->set_pileup_NumInteractions_ootbefore(0);
      event->genInfo->set_pileup_NumInteractions_ootafter(0);
@@ -638,7 +644,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      edm::Handle<reco::GenParticleCollection> genPartColl;
      // use genPartColl for the Matrix-Element particles. Also use it for stable leptons
      // in case doAllGenParticles is false.
-     iEvent.getByLabel(genparticle_source, genPartColl);
+     iEvent.getByToken(genparticle_token, genPartColl);
      int index=-1;
      for(reco::GenParticleCollection::const_iterator iter = genPartColl->begin(); iter != genPartColl->end(); ++ iter){
        index++;
@@ -678,7 +684,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      if(doAllGenParticles){
        edm::Handle<edm::View<pat::PackedGenParticle> > packed;
        // use packed particle collection for all STABLE (status 1) particles
-       iEvent.getByLabel(stablegenparticle_source,packed);
+       iEvent.getByToken(stablegenparticle_token,packed);
 
        for(size_t j=0; j<packed->size();j++){
 

@@ -68,6 +68,10 @@ class NtupleWriter : public edm::EDFilter {
       std::unique_ptr<uhh2::AnalysisModule> module;
 
       edm::EDGetToken rho_token;
+      edm::EDGetToken bs_token;
+      edm::EDGetToken generator_token;
+      edm::EDGetToken pus_token;
+      edm::EDGetToken lhe_token;
 
       std::vector<edm::EDGetToken> genjet_tokens;
       std::vector<std::vector<Particle>> genjets;
@@ -95,8 +99,8 @@ class NtupleWriter : public edm::EDFilter {
       std::vector<edm::EDGetToken> pv_tokens;
       std::vector<std::vector<PrimaryVertex>> pvs;
 
-      edm::InputTag genparticle_source;
-      edm::InputTag stablegenparticle_source;   
+      edm::EDGetToken genparticle_token;
+      edm::EDGetToken stablegenparticle_token;   
       
       std::vector<std::string> trigger_prefixes;
       std::vector<std::string> triggerNames_outbranch;
