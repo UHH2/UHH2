@@ -149,7 +149,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     for(const auto & filename : filenames){
         pars.emplace_back(locate_file(filename));
     }
-    return make_unique<FactorizedJetCorrector>(pars);
+    return uhh2::make_unique<FactorizedJetCorrector>(pars);
 }
 
 void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0){
