@@ -36,7 +36,7 @@ process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
 #    '/store/mc/RunIISpring15MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/40000/00087FEB-236E-E511-9ACB-003048FF86CA.root',
 #    '/store/data/Run2015D/SingleMuon/MINIAOD/PromptReco-v3/000/256/729/00000/2C0BE722-5960-E511-B834-02163E014421.root',
-    '/store/mc/RunIISpring15MiniAODv2/ZprimeToTT_M-3000_W-30_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/40000/A679787E-496D-E511-AEDF-9CB654AEAE86.root',
+    '/store/mc/RunIIFall15MiniAODv1/LQLQToTopTau_M-700_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/70000/68FB06B5-DD98-E511-8FD5-6C3BE5B52368.root',
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
@@ -91,12 +91,12 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 #see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 if useData:
-    process.GlobalTag.globaltag = '74X_dataRun2_Prompt_v2' 
+    process.GlobalTag.globaltag = '76X_dataRun2_v15' 
 else:
     if use25ns: 
-        process.GlobalTag.globaltag = '74X_mcRun2_asymptotic_v2' 
+        process.GlobalTag.globaltag = '76X_mcRun2_asymptotic_v13' 
     else:
-        process.GlobalTag.globaltag = '74X_mcRun2_startup_v2' 
+        process.GlobalTag.globaltag = '76X_mcRun2_startup_v12' 
 
 from RecoJets.Configuration.RecoPFJets_cff import *
 from RecoJets.JetProducers.fixedGridRhoProducerFastjet_cfi import *
@@ -637,7 +637,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         jet_etamax = cms.double(999.0),
         
         doMET = cms.bool(True),
-        met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slimmedMETsNoHF"),
+        met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi"),
         
         
         doTopJets = cms.bool(True),
