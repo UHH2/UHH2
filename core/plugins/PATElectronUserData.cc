@@ -35,6 +35,7 @@ class PATElectronUserData : public edm::EDProducer {
   std::vector<vmap_link> vmaps_float_links_;
 
   std::vector<std::string> vmaps_double_;
+  std::vector<edm::EDGetToken> vmaps_token_;
 
   EffectiveAreas effAreas_;
 
@@ -67,7 +68,12 @@ PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig):
     vmaps_float_links_.push_back(link);
   }
 
-  if(iConfig.exists("vmaps_double")) vmaps_double_ = iConfig.getParameter<std::vector<std::string>>("vmaps_double");
+  if(iConfig.exists("vmaps_double")) {
+    vmaps_double_ = iConfig.getParameter<std::vector<std::string>>("vmaps_double");
+    for(unsigned int i=0; i<vmaps_double_.size(); i++){
+      vmaps_token_.push_back(consumes<edm::ValueMap<double> >(edm::InputTag(vmaps_double_.at(i))));
+    }
+  }
 
   if(iConfig.exists("mva_NoTrig")) mva_NoTrig_ = iConfig.getParameter<std::string>("mva_NoTrig");
   if(iConfig.exists("mva_Trig"))   mva_Trig_   = iConfig.getParameter<std::string>("mva_Trig");
@@ -97,10 +103,11 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
   }
 
   std::vector< edm::Handle< edm::ValueMap<double> > > vmapDs;
-  for(unsigned int i=0; i<vmaps_double_.size(); ++i){
+  for(unsigned int i=0; i<vmaps_token_.size(); ++i){
 
     edm::Handle< edm::ValueMap<double> > vmapD;
-    iEvent.getByLabel(vmaps_double_.at(i), vmapD);
+    //iEvent.getByLabel(vmaps_double_.at(i), vmapD);
+    iEvent.getByToken(vmaps_token_.at(i), vmapD);
     vmapDs.push_back(vmapD);
   }
 
