@@ -177,13 +177,12 @@ def getinputfilenames(configfile):
     filename = xmlparser.parse(rawxmlfile,"FileName")
     rootfilenamelist = ", "
     for file in filename:
-        if not file[:5]=="/eos/": rootfilenamelist += file+", "
+        if not file[:5]=="/eos/" and not file[:5]=="root:": rootfilenamelist += file+", "
     return rootfilenamelist[:-2]
 
 def createcondortxt(options, jobnumber, jobdir):
     rootfiles = getoutputfilenames(options.jobname+"/xml/"+options.jobname+"_"+str(jobnumber)+".xml").replace(".root","."+str(jobnumber)+".root")
-    md5file = 'md5sums.'+str(jobnumber)+'.txt'
-    outputfiles = rootfiles+", "+md5file
+    outputfiles = rootfiles
     additionalfiles = getinputfilenames(options.jobname+"/xml/"+options.jobname+"_"+str(jobnumber)+".xml")
     os.chdir(options.jobname+"/configs")
     condorfile = open(options.jobname+"_"+str(jobnumber)+".txt", 'w')
@@ -193,7 +192,7 @@ def createcondortxt(options, jobnumber, jobdir):
 Executable = %s/configs/%s_%d.sh
 Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
 +BigMemoryJob = TRUE
-request_memory = 200
+request_memory = 2047
 request_disk = 1000000
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
@@ -227,31 +226,31 @@ cd $ANALYSISDIR
 FILENAME=%s_%d.xml
 cp %s/xml/${FILENAME} .
 sed -i 's|FileName="/[^e][^o][^s].*/\(.*.root\)"|FileName="./\1"|' $FILENAME
-mv ${WORKINGDIR}/*.root .
+sed -i 's|FileName="/[^r][^o][^o][^t][^:].*/\(.*.root\)"|FileName="./\1"|' $FILENAME
+if [ `/bin/ls ${WORKINGDIR} | grep .root | wc -l` -gt 0 ]; then
+    mv ${WORKINGDIR}/*.root .
+fi
 sframe_main %s_%d.xml
 CYCLENAME=`grep "Cycle Name" %s_%d.xml | sed 's|.*<Cycle Name="\([^ \\t\\r\\n\\v\\f]*\)".*|\\1|'` | sed 's|::|.|'
 for filename in `/bin/ls ${CYCLENAME}*.root`; do
     newfilename=`echo $filename | sed 's|.root|.%d.root|'`
     mv $filename $newfilename
-    md5sum $newfilename >> md5sums.%d.txt
 done
-mv ${CYCLENAME}*.root $WORKINGDIR
-mv md5sums.%d.txt $WORKINGDIR""" %(options.jobname, jobnumber, options.jobname, options.jobname, jobnumber, options.jobname, jobnumber, jobnumber, jobnumber, jobnumber)
+mv ${CYCLENAME}*.root $WORKINGDIR""" %(options.jobname, jobnumber, options.jobname, options.jobname, jobnumber, options.jobname, jobnumber, jobnumber)
     if len(options.output)>5 and options.output[:5] == "/eos/": print >> scriptfile, """
 cd $WORKINGDIR
 OUTPUTDIR=%s/
-for FILE in ${CYCLENAME}*.root *.txt; do
-    /bin/cp $FILE $OUTPUTDIR
-    LOCALMD5=`md5sum $FILE | awk '{print $1}'`
-    REMOTEMD5=`md5sum ${OUTPUTDIR}/${FILE} | awk '{print $1}'`
-    COUNTER=0
-    while [ "$LOCALMD5" != "$REMOTEMD5" -a "$COUNTER" -lt 5 ]; do
-        sleep 30
-        /bin/cp $FILE $OUTPUTDIR
-        LOCALMD5=`md5sum $FILE | awk '{print $1}'`
-        REMOTEMD5=`md5sum ${OUTPUTDIR}/${FILE} | awk '{print $1}'`
-        let COUNTER+=1
-    done
+EOSDIR=`echo $OUTPUTDIR | sed 's|/eos/uscms/store/|root://cmsxrootd.fnal.gov///store/|'`
+for FILE in `/bin/ls ${CYCLENAME}*.root`; do
+    xrdcp -f $FILE $EOSDIR
+    XRDCPEXITCODE=$?
+    echo "xrdcp status: $XRDCPEXITCODE"
+#    COUNTER=0
+#    while [ "$XRDCPEXITCODE" != 0 -a "$COUNTER" -lt 5]; do
+#        xrdcp -f $FILE $EOSDIR
+#        XRDCPEXITCODE=$?
+#        let COUNTER+=1
+#    done
 done""" %(options.output)
     os.chmod(scriptname, 493) #493==755 in python chmod
     os.chdir("../..")
@@ -429,7 +428,7 @@ def checkstdout(jobname, jobnumber, offset):
         for error in errors: returnerror += offset+error
 #             if error.find(":") != -1: returnerror += offset+error.split(":")[-1:][0]
 #             else: returnerror += effset+error
-    return returnerror
+    return returnerror.strip('\n')
 
 def getjobstatus(statusdict, jobid, jobstatus):
     if jobid not in statusdict and jobstatus != "Killed" and jobstatus != "Cleaned": return "Missing"
@@ -444,7 +443,7 @@ def getjobstatus(statusdict, jobid, jobstatus):
     if jobstatuscode==">": return "Transfering Ouput"
     return "Unknown"
 
-def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus):
+def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus,jobid):
     rootfiles = getoutputfilenames(jobname+"/xml/"+jobname+"_"+str(jobnumber)+".xml").replace(".root","."+str(jobnumber)+".root").split(",")
     outputdirectory = os.popen("grep InitialDir "+jobname+"/configs/"+jobname+"_"+str(jobnumber)+".txt | awk '{print $3}'").readline().strip("\n")
     jobinfo=""
@@ -475,9 +474,13 @@ def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus):
                     jobstatus="Done"
                 else:
                     hist = rootfile.Get("input/pvN")
-                    jobinfo += " Root File "+file+" is Valid: "+str(int(hist.GetEntries()))+" Events."
-                    os.system("echo 'Done' >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
-                    jobstatus="Done"
+                    if not hist:
+                        jobstatus="Error"
+                        jobinfo += " No output histogram found in root file!"
+                    else:
+                        jobinfo += " Root File "+file+" is Valid: "+str(int(hist.GetEntries()))+" Events."
+                        os.system("echo 'Done' >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
+                        jobstatus="Done"
                 if not iszombie: rootfile.Close()
         elif jobstatus=="Done" or jobstatus=="Missing":
             jobinfo += " Output file "+file+" is not found!"
@@ -485,6 +488,18 @@ def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus):
             jobstatus="Error"
     if jobstatus=="Held":
         if resubmitjobs.count(jobnumber)<1: resubmitjobs.append(jobnumber)
+    if jobstatus=="Running":
+        condorstatus=os.popen("condor_q -submitter $USER").read()
+        if condorstatus.find(jobid) != -1:
+            subnode = getcondornode(jobid)
+            if subnode != -1:
+                if subnode==currentnode: jobinfo = os.popen("condor_tail "+jobid+".0 | tail -1").readline().strip("\n")
+                else: jobinfo = os.popen("ssh "+subnode+" 'condor_tail "+jobid+".0' | tail -1").readline().strip("\n")
+                if jobinfo.find("Processing entry")!=-1:
+                    numberator = float(jobinfo.split("(")[2].split(" ")[0])
+                    denominator = float(jobinfo.split("(")[2].split(" ")[2])
+                    jobinfo = " %.2f" %(numberator/denominator*100)+"% Complete"
+                else: jobinfo = " "+jobinfo[jobinfo.find(":")+1:].strip()
     if jobstatus=="Done" or jobstatus=="Error":
         stdouterror = checkstdout(jobname, jobnumber, offset)
         logerror = ""
@@ -643,12 +658,13 @@ if (options.status):
         jobinfo=""
         jobstatus=open(options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status").read().strip("\n")
         if jobstatus != "Created":
+            jobid = ""
             if jobstatus!="Done":
                 logfile = os.popen("/bin/ls -rt "+options.jobname+"/logs/"+options.jobname+"_"+str(jobnumber)+".log | tail -1").readline().strip('\n')
                 jobid = os.popen("grep submitted "+logfile+" | tail -1 | awk '{print $2}'").readline().strip("\n()").split(".")[0]
                 jobstatus = getjobstatus(statusdict, jobid, jobstatus)
                 os.system("echo '"+jobstatus+"' >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
-            jobinfo,jobstatus=getjobinfo(options.jobname,jobnumber,resubmitjobs,jobstatus)
+            jobinfo,jobstatus=getjobinfo(options.jobname,jobnumber,resubmitjobs,jobstatus,jobid)
             jobstatuslist.append(jobstatus)
             os.system("echo "+jobstatus+" >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
         print whitespace[:4]+str(jobnumber)+whitespace[:15-len(str(jobnumber))]+jobstatus+whitespace[:18-len(jobstatus)]+jobinfo
