@@ -6,7 +6,7 @@ using namespace uhh2;
 
 bool CMSTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const {
     auto subjets = topjet.subjets();
-    if(subjets.size() < 3) return false;
+    //if(subjets.size() < 3) return false;
     
     float mjet = 0.0;
     switch(m_typeOfMass)
