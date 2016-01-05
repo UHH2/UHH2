@@ -104,24 +104,6 @@ from RecoJets.JetProducers.fixedGridRhoProducerFastjet_cfi import *
 process.fixedGridRhoFastjetAll = fixedGridRhoFastjetAll.clone(pfCandidatesTag = 'packedPFCandidates')
 
 
-###############################################
-# HCAL_Noise_Filter
-process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
-process.HBHENoiseFilterResultProducer.minZeros = cms.int32(99999)
-process.HBHENoiseFilterResultProducer.IgnoreTS4TS5ifJetInLowBVRegion=cms.bool(False) 
-process.HBHENoiseFilterResultProducer.defaultDecision = cms.string("HBHENoiseFilterResultRun2Loose")
-
-process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
-   inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),
-   reverseDecision = cms.bool(False)
-)
-
-process.ApplyBaselineHBHEIsoNoiseFilter = cms.EDFilter('BooleanFlagFilter',
-   inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHEIsoNoiseFilterResult'),
-   reverseDecision = cms.bool(False)
-)
-
-
 
 ###############################################
 # GEN PARTICLES
@@ -712,9 +694,6 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
 #for 50ns data, the HBHE noise filter has to be re-evaluated (see https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2)
 process.p = cms.Path(
-    process.HBHENoiseFilterResultProducer* #produces HBHE bools
-    process.ApplyBaselineHBHENoiseFilter*  #reject events based 
-    process.ApplyBaselineHBHEIsoNoiseFilter*   #reject events based  < 10e-3 mistake rate 
     process.MyNtuple)
 
 open('pydump.py','w').write(process.dumpPython())
