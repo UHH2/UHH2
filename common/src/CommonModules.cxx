@@ -44,9 +44,14 @@ void CommonModules::init(Context & ctx){
     }
     if(metfilters){
        metfilters_selection.reset(new AndSelection(ctx, "metfilters"));
-       //metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
-       metfilters_selection->add<TriggerSelection>("CSCTightHalo", "Flag_CSCTightHaloFilter");
-       metfilters_selection->add<TriggerSelection>("eeBadSc", "Flag_eeBadScFilter");
+       metfilters_selection->add<TriggerSelection>("HBHENoiseFilter", "Flag_HBHENoiseFilter");
+       metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
+       metfilters_selection->add<TriggerSelection>("CSCTightHalo2015Filter", "Flag_CSCTightHalo2015Filter");
+       metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
+       metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
+       // to be added in 76X MiniAODv2, not yet available in v1:
+       //metfilters_selection->add<TriggerSelection>("chargedHadronTrackResolutionFilter", "Flag_chargedHadronTrackResolutionFilter"); 
+       //metfilters_selection->add<TriggerSelection>("muonBadTrackFilter", "Flag_muonBadTrackFilter");
        if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
     }
     if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
