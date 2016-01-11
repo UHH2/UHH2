@@ -421,11 +421,11 @@ process.NjettinessCa15SoftDropCHS = Njettiness.clone(
                                                  measureDefinition = cms.uint32( 0 ), # CMS default is normalized measure
                                                  beta = cms.double(1.0),              # CMS default is 1
                                                  R0 = cms.double(1.5),                  # CMS default is jet cone size
-                                                 Rcutoff = cms.double( -999.0),       # not used by default
+                                                 Rcutoff = cms.double( 999.0),       # not used by default
                                                  # variables for axes definition :
                                                  axesDefinition = cms.uint32( 6 ),    # CMS default is 1-pass KT axes
-                                                 nPass = cms.int32(-999),             # not used by default
-                                                 akAxesR0 = cms.double(-999.0)        # not used by default
+                                                 nPass = cms.int32(999),             # not used by default
+                                                 akAxesR0 = cms.double(999.0)        # not used by default
                                                  )
 process.NjettinessCa15SoftDropPuppi = process.NjettinessCa15SoftDropCHS.clone(src = cms.InputTag("ca15PuppiJetsSoftDropforsub"))
 #process.NjettinessCa15SoftDropCHS = Njettiness.clone(src = cms.InputTag("patJetsCa15CHSJetsSoftDrop"), cone = cms.double(1.5),R0 = cms.double(1.5))
@@ -631,7 +631,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #Specify "store" if you want to store b-tagging taginfos for subjet collection, make sure to have included them with .addTagInfos = True
         #addTagInfos = True is currently true by default, however, only for collections produced and not read directly from miniAOD
         #If you don't want to store stubjet taginfos leave string empy ""
-        subjet_taginfos = cms.vstring("","store","store","store","store",""),
+        subjet_taginfos = cms.vstring("","store","store","store","store","store"),
         #Note: if you want to store the MVA Higgs tagger discriminator, specify the jet collection from which to pick it up and the tagger name
         #currently the discriminator is trained on ungroomed jets, so the discriminaotr has to be taken from ungroomed jets
         higgstag_sources = cms.vstring("patJetsAk8CHSJets","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets"),
