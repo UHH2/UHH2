@@ -35,8 +35,8 @@ process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
 #    '/store/mc/RunIISpring15MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/40000/00087FEB-236E-E511-9ACB-003048FF86CA.root',
-#    '/store/data/Run2015D/SingleMuon/MINIAOD/PromptReco-v3/000/256/729/00000/2C0BE722-5960-E511-B834-02163E014421.root',
-    '/store/mc/RunIIFall15MiniAODv1/LQLQToTopTau_M-700_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/70000/68FB06B5-DD98-E511-8FD5-6C3BE5B52368.root',
+#    '/store/data/Run2015B/SingleMu/MINIAOD/16Dec2015-v1/20000/946AAF11-0EB4-E511-8E84-0CC47A4D76C0.root',
+    '/store/mc/RunIIFall15MiniAODv2/LQLQToTopMu_M-1200_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/60000/2283B483-37B8-E511-A109-6CC2173D7CD0.root',
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
@@ -555,12 +555,12 @@ if use25ns: process.slimmedElectronsUSER.effAreas_file = cms.FileInPath('RecoEga
 ### NtupleWriter
 
 
-isPrompt = False
-for x in process.source.fileNames:
-    if "PromptReco" in x:
-        isPrompt = True
+#isPrompt = False
+#for x in process.source.fileNames:
+#    if "PromptReco" in x:
+#        isPrompt = True
 
-if isPrompt:
+if useData:
     metfilterpath="RECO"
 else:
     metfilterpath="PAT"
@@ -667,7 +667,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         # for now, save all the triggers:
         trigger_prefixes = cms.vstring("HLT_","Flag_"),
         doTrigHTEmu = cms.bool(True),
+        # Give the names of triggers for that you want to store the trigger objects that have fired the respecitve trigger
+        triggerObjects_sources = cms.vstring("HLT_Mu45_eta2p1_v"),
         trigger_objects = cms.InputTag("selectedPatTrigger"),
+
 
         
         # *** gen stuff:
