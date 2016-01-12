@@ -489,10 +489,15 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     branch(tr, "triggerResults", "std::vector<bool>", event->get_triggerResults());
     triggerBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("trigger_bits"));
     metfilterBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("metfilter_bits"));
-    if(doTrigHTEmu)
-    {
-      triggerObjects_ = consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("trigger_objects"));
+    triggerObjects_ = consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("trigger_objects"));
+    triggerObjects_sources = iConfig.getParameter<std::vector<std::string> >("triggerObjects_sources");
+    triggerObjects_out.resize(triggerObjects_sources.size());
+    for (size_t j=0; j<triggerObjects_sources.size(); j++){
+      TString name = "triggerObjects_";
+      name += triggerObjects_sources[j].c_str();
+      branch(tr, name, "std::vector<FlavorParticle>", &triggerObjects_out[j]);
     }
+
   }
   newrun = true;
 }
@@ -952,13 +957,40 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
            triggerNames_outbranch.push_back(names.triggerName(i));
 	 }
        }
+
+       edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+       iEvent.getByToken(triggerObjects_, triggerObjects);
+
+       if(k==0){
+	 for(size_t j=0; j< triggerObjects_sources.size(); j++){
+	   triggerObjects_out[j].clear();
+	   for (pat::TriggerObjectStandAlone obj : *triggerObjects) { 
+	     obj.unpackPathNames(names);
+	     
+	     for (unsigned h = 0; h < obj.filterIds().size(); ++h) {
+	       TString trname = triggerObjects_sources[j].c_str();
+	       trname += "*";
+	       if (obj.hasPathName( trname.Data(), true, true )) {
+		 FlavorParticle p;
+		 p.set_pt(obj.pt());
+		 p.set_eta(obj.eta());
+		 p.set_phi(obj.phi());
+		 p.set_energy(obj.energy());
+		 p.set_charge(obj.charge());
+		 p.set_pdgId(obj.filterIds()[h]);
+		 triggerObjects_out[j].push_back(p);
+	       }
+	     }
+	   }
+	 }
+       }
+
        //PFHT800 emulation
        if(doTrigHTEmu && k==0){
 	 if(newrun){
 	   triggerNames_outbranch.push_back("HLT_PFHT800Emu_v1");
 	 }
-	 edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
-	 iEvent.getByToken(triggerObjects_, triggerObjects);
+
 	 bool found=false;
 	 for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i){ 
 	   if (names.triggerName(i).find("HLT_PFHTForMC")!=string::npos && triggerBits->accept(i)) {
