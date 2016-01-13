@@ -968,23 +968,27 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	     obj.unpackPathNames(names);
 	     
 	     for (unsigned h = 0; h < obj.filterIds().size(); ++h) {
-	       TString trname = triggerObjects_sources[j].c_str();
-	       trname += "*";
-	       if (obj.hasPathName( trname.Data(), true, true )) {
-		 FlavorParticle p;
-		 p.set_pt(obj.pt());
-		 p.set_eta(obj.eta());
-		 p.set_phi(obj.phi());
-		 p.set_energy(obj.energy());
-		 p.set_charge(obj.charge());
-		 p.set_pdgId(obj.filterIds()[h]);
-		 triggerObjects_out[j].push_back(p);
+	       if(obj.filterIds()[h]>=0){ // only take trigger objects with ID>0 (HLT trigger objects, see http://cmslxr.fnal.gov/source/DataFormats/HLTReco/interface/TriggerTypeDefs.h)
+		 std::string trname = triggerObjects_sources[j].c_str();
+		 std::vector<std::string> filters  = obj.filterLabels();
+		 for(size_t l=0; l<filters.size(); l++){
+		   if ( filters[l]== trname){
+		     FlavorParticle p;
+		     p.set_pt(obj.pt());
+		     p.set_eta(obj.eta());
+		     p.set_phi(obj.phi());
+		     p.set_energy(obj.energy());
+		     p.set_charge(obj.charge());
+		     p.set_pdgId(obj.filterIds()[h]);
+		     triggerObjects_out[j].push_back(p);
+		   }
+		 }
 	       }
 	     }
 	   }
 	 }
        }
-
+       
        //PFHT800 emulation
        if(doTrigHTEmu && k==0){
 	 if(newrun){
