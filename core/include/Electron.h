@@ -23,8 +23,6 @@ class Electron : public RecParticle {
     throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
   }
 
-  typedef class source_candidate source_candidate;
-
   Electron(){
 
     m_supercluster_eta = 0; 
