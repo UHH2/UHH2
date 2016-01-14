@@ -3,6 +3,8 @@
 <class name="Tags"/>
 <class name="std::map<int,float>" />
 <class name="std::vector<Particle>"/>
+<class name="RecParticle"/>
+<class name="std::vector<RecParticle>"/>
 <class name="FlavorParticle"/>
 <class name="std::vector<FlavorParticle>"/>
 <class name="Jet"/>

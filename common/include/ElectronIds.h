@@ -23,6 +23,8 @@ class PtEtaSCCut {
   PtEtaSCCut(float min_pt_, float max_etaSC_): min_pt(min_pt_), max_etaSC(max_etaSC_) {}
 
   bool operator()(const Electron& ele, const uhh2::Event&) const {
+    /* std::cout<<"ele.pt() = "<<ele.pt()<<std::endl; */
+    /* std::cout<<"ele.supercluster_eta() = "<<ele.supercluster_eta()<<std::endl; */
     return (ele.pt() > min_pt) && (fabs(ele.supercluster_eta()) < max_etaSC);
   }
 
@@ -45,6 +47,7 @@ class Electron_MINIIso {
 };
 
 // Electron IDs ------------------------------------------------------
+
 
 // --- Cut-Based ID
 bool Electron_CutBasedID(const Electron&, const uhh2::Event&, const std::string&, const std::string&, const bool);
@@ -249,4 +252,57 @@ namespace ElectronID {
 
   };
 
+}
+
+
+// --- Electron HEEP ID
+// REF https://twiki.cern.ch/twiki/bin/view/CMS/HEEPElectronIdentificationRun2
+bool Electron_HEEP(const Electron&, const std::string&, const std::string&);
+bool Electron_HEEP(const Electron&, const std::string&, const std::string&, const int);
+
+
+bool ElectronID_HEEP_RunII_25ns(const Electron&, const uhh2::Event& evt);
+
+
+
+namespace ElectronID {
+  const std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float> > > > HEEP_LUT = {
+ {"RunII_25ns", {
+
+      {"barrel", {
+                          /* CMS_WorkPoint_NoIso   */
+        {"Et" , { 35 }},
+        {"|dEtaInSeed|"        , { 0.004  }},
+        {"|dPhiIn|"      , { 0.06 }},
+        {"HoverE coef"     , { 1  }},
+        {"HoverE const"          , { 0.05 }},
+	{"sigmaIEtaIEta"          , { 1e6 }},
+	{"E2x5 over E5x5"          , { 0.94 }},
+	{"E1x5 over E5x5"          , { 0.83 }},
+	{"missingHits"   , { 1 }},
+	{"|dxy|", { 0.02 }},
+       },
+      },
+
+      {"endcap", {
+	                      /* CMS_WorkPoint_NoIso   */
+
+	  {"Et" , { 35 }},
+	  {"|dEtaInSeed|"        , { 0.006  }},
+	  {"|dPhiIn|"      , { 0.06 }},
+	  {"HoverE coef"     , { 5  }},
+	  {"HoverE const"          , { 0.05 }},
+	  {"sigmaIEtaIEta"          , { 0.03 }},
+	  {"E2x5 over E5x5"          , { -1e6 }},
+	  {"E1x5 over E5x5"          , { -1e6 }},
+	  {"missingHits"   , { 1 }},
+	  {"|dxy|", { 0.05 }},
+       },
+
+      },
+     },
+    },
+  /*******************/
+
+  };
 }
