@@ -14,6 +14,7 @@ NtupleWriterElectrons::NtupleWriterElectrons(Config & cfg, bool set_electrons_me
   handle = cfg.ctx.declare_event_output<vector<Electron>>(cfg.dest_branchname, cfg.dest);
   if(set_electrons_member) electrons_handle = cfg.ctx.get_handle<vector<Electron>>("electrons");
   src_token = cfg.cc.consumes<std::vector<pat::Electron>>(cfg.src);
+  pv_token = cfg.cc.consumes<std::vector<reco::Vertex>>(cfg.pv_src);
   IDtag_keys = cfg.id_keys;
 }
 
@@ -22,6 +23,14 @@ NtupleWriterElectrons::~NtupleWriterElectrons(){}
 void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & uevent){
     edm::Handle< std::vector<pat::Electron> > ele_handle;
     event.getByToken(src_token, ele_handle);
+
+    edm::Handle<std::vector<reco::Vertex>> pv_handle;
+   event.getByToken(pv_token, pv_handle);
+   if(pv_handle->empty()){
+       cout << "WARNING: no PVs found, not writing electrons!" << endl;
+       return;
+   }
+   const auto & PV = pv_handle->front();
 
     std::vector<Electron> eles;
     const size_t n_ele = ele_handle->size();
@@ -34,8 +43,13 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_eta( pat_ele.eta());
         ele.set_phi( pat_ele.phi());
         ele.set_energy( pat_ele.energy());
-        ele.set_supercluster_eta(pat_ele.superCluster()->eta());
-        ele.set_supercluster_phi(pat_ele.superCluster()->phi());
+	//	cout<<"pat_ele.pt() = "<<pat_ele.pt()<<endl;
+	ele.set_ptError( pat_ele.gsfTrack()->ptError());
+	ele.set_etaError( pat_ele.gsfTrack()->etaError());
+	ele.set_phiError( pat_ele.gsfTrack()->phiError());
+	//	ele.set_energyError( pat_ele.energyError());
+        ele.set_supercluster_eta( pat_ele.superCluster()->eta() );
+        ele.set_supercluster_phi( pat_ele.superCluster()->phi() );
         ele.set_dB(pat_ele.dB());
         const auto & pfiso = pat_ele.pfIsolationVariables();
         ele.set_neutralHadronIso(pfiso.sumNeutralHadronEt);
@@ -74,6 +88,17 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_pfMINIIso_PU      (pat_ele.hasUserFloat("elPFMiniIsoValuePUSTAND") ? pat_ele.userFloat("elPFMiniIsoValuePUSTAND") : -999.);
         ele.set_pfMINIIso_NH_pfwgt(pat_ele.hasUserFloat("elPFMiniIsoValueNHPFWGT") ? pat_ele.userFloat("elPFMiniIsoValueNHPFWGT") : -999.);
         ele.set_pfMINIIso_Ph_pfwgt(pat_ele.hasUserFloat("elPFMiniIsoValuePhPFWGT") ? pat_ele.userFloat("elPFMiniIsoValuePhPFWGT") : -999.);
+
+	ele.set_Nclusters(pat_ele.superCluster()->clusters().size());
+	ele.set_Class(pat_ele.classification()); 
+
+	ele.set_isEcalDriven(pat_ele.ecalDriven());
+	ele.set_full5x5_e1x5(pat_ele.full5x5_e1x5());
+	ele.set_full5x5_e2x5Max(pat_ele.full5x5_e2x5Max());
+	ele.set_full5x5_e5x5(pat_ele.full5x5_e5x5());
+	ele.set_dEtaInSeed(pat_ele.deltaEtaSeedClusterTrackAtVtx());
+
+	ele.set_dxy(pat_ele.gsfTrack()->dxy(PV.position()));// correct for vertex postion
 
         for(const auto& tag_str : IDtag_keys){
 
@@ -138,6 +163,10 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
      mu.set_eta( pat_mu.eta());
      mu.set_phi( pat_mu.phi());
      mu.set_energy( pat_mu.energy());
+     // mu.set_ptError( pat_mu.ptError());
+     // mu.set_etaError( pat_mu.etaError());
+     // mu.set_phiError( pat_mu.phiError());
+     // mu.set_energyError( pat_mu.energyError());
 
      mu.set_bool(Muon::global    , pat_mu.isGlobalMuon());
      mu.set_bool(Muon::pf        , pat_mu.isPFMuon());

@@ -211,6 +211,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 
       NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
       cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("electron_IDtags");
+      assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
+      cfg.pv_src = pv_sources[0];
       writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true, save_lepton_keys));
   }
   if(doMuons){
