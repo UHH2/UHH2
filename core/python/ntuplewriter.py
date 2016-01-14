@@ -670,9 +670,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         # Give the names of filters for that you want to store the trigger objects that have fired the respecitve trigger
         # filter paths for a given trigger can be found in https://cmsweb-testbed.cern.ch/confdb/
         # Example: for HLT_Mu45_eta2p1 the last trigger filter is hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q
-        #          for HLT_Ele35_CaloIdVT_GsfTrkIdT_PFJet150_PFJet50: relevant filters are hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter (last electron filter), hltEle35CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned and hltEle35CaloIdVTGsfTrkIdTCentralPFJet150EleCleaned
-        #          for HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50: relevant filters are hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter (last electron filter), hltEle45CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned and hltEle45CaloIdVTGsfTrkIdTCentralPFJet200EleCleaned
-        triggerObjects_sources = cms.vstring("hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q","hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter","hltEle35CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned","hltEle35CaloIdVTGsfTrkIdTCentralPFJet150EleCleaned","hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter","hltEle45CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned","hltEle45CaloIdVTGsfTrkIdTCentralPFJet200EleCleaned"),
+        #          for HLT_Ele35_CaloIdVT_GsfTrkIdT_PFJet150_PFJet50: relevant filters are hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter (last electron filter), hltEle35CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned and hltEle35CaloIdVTGsfTrkIdTCentralPFJet150EleCleaned (for the two jets). 
+        #          The  filter hltEle35CaloIdVTGsfTrkIdTCentralPFJet150EleCleaned only included redundant objects that are already included in hltEle35CaloIdVTGsfTrkIdTCentralPFJet50EleCleaned.
+        #          for HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50: relevant filters are hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter (last electron filter), hltEle45CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned
+        triggerObjects_sources = cms.vstring("hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q","hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter","hltEle35CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned","hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter","hltEle45CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned"),
         trigger_objects = cms.InputTag("selectedPatTrigger"),
 
 
