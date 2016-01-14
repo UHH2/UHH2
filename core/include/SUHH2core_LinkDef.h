@@ -11,6 +11,8 @@
 #pragma link C++ class Tags+;
 #pragma link C++ class Particle+;
 #pragma link C++ class std::vector<Particle>+;
+#pragma link C++ class RecParticle+;
+#pragma link C++ class std::vector<RecParticle>+;
 #pragma link C++ class FlavorParticle+;
 #pragma link C++ class std::vector<FlavorParticle>+;
 #pragma link C++ class Jet+;
