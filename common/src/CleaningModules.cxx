@@ -7,12 +7,19 @@ using namespace uhh2;
 using namespace std;
 
 
-JetCleaner::JetCleaner(const JetId & jet_id_): jet_id(jet_id_){}
+JetCleaner::JetCleaner(Context & ctx, const JetId & jet_id_, string const & label_):
+    jet_id(jet_id_), hndl(ctx.get_handle<vector<Jet>>(label_)) {}
 
-JetCleaner::JetCleaner(float minpt, float maxeta): jet_id(PtEtaCut(minpt, maxeta)){}
+JetCleaner::JetCleaner(Context & ctx, float minpt, float maxeta, string const & label_):
+    jet_id(PtEtaCut(minpt, maxeta)), hndl(ctx.get_handle<vector<Jet>>(label_)) {}
 
 bool JetCleaner::process(Event & event){
-    clean_collection(*event.jets, event, jet_id);
+    if (!event.is_valid(hndl)) {
+        cerr << "In JetCleaner: Handle not valid!\n";
+        assert(false);
+    }
+    vector<Jet> & jet_collection = event.get(hndl);
+    clean_collection(jet_collection, event, jet_id);
     return true;
 }
 
@@ -50,12 +57,15 @@ bool TauCleaner::process(uhh2::Event & event){
     return true;
 }
 
-
-
-TopJetCleaner::TopJetCleaner(const TopJetId & topjet_id_): topjet_id(topjet_id_){}
+TopJetCleaner::TopJetCleaner(Context & ctx, const TopJetId & topjet_id_, string const & label_):
+    topjet_id(topjet_id_), hndl(ctx.get_handle<vector<TopJet>>(label_)) {}
 
 bool TopJetCleaner::process(uhh2::Event & event){
-    assert(event.topjets);
-    clean_collection(*event.topjets, event, topjet_id);
+    if (!event.is_valid(hndl)) {
+        cerr << "In TopJetCleaner: Handle not valid!\n";
+        assert(false);
+    }
+    vector<TopJet> & topjet_collection = event.get(hndl);
+    clean_collection(topjet_collection, event, topjet_id);
     return true;
 }

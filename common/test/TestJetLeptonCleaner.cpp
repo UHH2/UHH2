@@ -78,9 +78,9 @@ JetLeptonSubtractionResult DoJetLeptonSubtraction(const Muon & mu, vector<Jet> &
 
 class TestJetLeptonCleaner: public uhh2::AnalysisModule {
 public:
-    explicit TestJetLeptonCleaner(Context &) {
+    explicit TestJetLeptonCleaner(Context & ctx) {
         jet_printer.reset(new JetPrinter("jets", 30.0));
-        jet_cleaner.reset(new JetCleaner(30.0, 2.4));
+        jet_cleaner.reset(new JetCleaner(ctx, 30.0, 2.4));
         muon_printer.reset(new MuonPrinter());
         muon_cleaner.reset(new MuonCleaner(AndId<Muon>(PtEtaCut(30., 2.4), MuonIDTight(), MuonIso(0.12))));
     }
