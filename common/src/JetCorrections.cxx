@@ -429,7 +429,6 @@ JetLeptonCleaner_by_KEYmatching::JetLeptonCleaner_by_KEYmatching(uhh2::Context& 
 
     h_jets_ = ctx.get_handle<std::vector<Jet>>(jet_label);
     h_topjets_ = ctx.get_handle<std::vector<TopJet>>(jet_label);
-    label_ = jet_label;
     corrector = build_corrector(filenames);
     direction = 0;
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
@@ -461,6 +460,8 @@ bool JetLeptonCleaner_by_KEYmatching::do_cleaning(Jet & jet, uhh2::Event& event)
           muo_cand_p4.SetPy(muo_cand.py);
           muo_cand_p4.SetPz(muo_cand.pz);
           muo_cand_p4.SetE (muo_cand.E);
+
+          jet_p4_raw -= muo_cand_p4;
         }
       }
     }
@@ -484,6 +485,8 @@ bool JetLeptonCleaner_by_KEYmatching::do_cleaning(Jet & jet, uhh2::Event& event)
           ele_cand_p4.SetPy(ele_cand.py);
           ele_cand_p4.SetPz(ele_cand.pz);
           ele_cand_p4.SetE (ele_cand.E);
+
+          jet_p4_raw -= ele_cand_p4;
         }
       }
     }
