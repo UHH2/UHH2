@@ -34,23 +34,28 @@ private:
 
 /** \brief Reweight MC based on simulated and actual pileup
  *
- * Interprets "pileup_directory" from Context, which should be set to the
- * path to root files which contain the pileup information for each MC sample and data.
- * If an empty value is given, no pileup reweighting is done.
+ * Interprets "pileup_directory" and "pileup_directory_data" from Context, which should
+ * be set to the path to root files which contain the pileup information for each MC
+ * sample and data. If an empty value is given, no pileup reweighting is done.
+ * "pileup_directory_data_up" and "pileup_directory_data_down" may be set as well.
  * 
- * NOTE: currently, this is a dummy class; construction will fail with an excpetion, unless
- * an empty value is given for "pileup_directory".
+ * If sysType is set to "up" or "down", both path are needed: pileup_directory_data_<up/down>
  */
 class MCPileupReweight: public uhh2::AnalysisModule {
 public:
-    explicit MCPileupReweight(uhh2::Context & ctx);
+    explicit MCPileupReweight(uhh2::Context & ctx, const std::string & sysType="central");
 
     virtual bool process(uhh2::Event & event) override;
 
 private:
    uhh2::Event::Handle<float> h_pu_weight_;
-   TH1F *h_npu_mc;
-   TH1F* h_npu_data;
+   uhh2::Event::Handle<float> h_pu_weight_up_;
+   uhh2::Event::Handle<float> h_pu_weight_down_;
+   TH1F * h_npu_mc;
+   TH1F * h_npu_data;
+   TH1F * h_npu_data_up;
+   TH1F * h_npu_data_down;
+   std::string sysType_;
 };
 
 
