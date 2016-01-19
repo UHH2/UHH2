@@ -13,12 +13,13 @@
 class JetCleaner: public uhh2::AnalysisModule {
 public:
     
-    explicit JetCleaner(const JetId & jet_id);
-    JetCleaner(float minpt, float maxeta);
+    explicit JetCleaner(uhh2::Context & ctx, const JetId & jet_id_, std::string const & label_ = "jets");
+    JetCleaner(uhh2::Context & ctx, float minpt, float maxeta, std::string const & label_ = "jets");
     virtual bool process(uhh2::Event & event) override;
     
 private:
     JetId jet_id;
+    uhh2::Event::Handle<std::vector<Jet>> hndl;
 };
 
 
@@ -93,10 +94,11 @@ private:
 class TopJetCleaner : public uhh2::AnalysisModule {
 public:
 
-    explicit TopJetCleaner(const TopJetId & topjet_id);
+    explicit TopJetCleaner(uhh2::Context & ctx, const TopJetId & jet_id_, std::string const & label_ = "topjets");
     virtual bool process(uhh2::Event & event) override;
 
 private:
     TopJetId topjet_id;
+    uhh2::Event::Handle<std::vector<TopJet>> hndl;
 };
 

@@ -46,7 +46,7 @@ ExampleTTbarRec::ExampleTTbarRec(Context & ctx): selection(ctx, "selection") {
     muid = AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.4));
     
     // clean the objects:
-    cleanermodules.emplace_back(new JetCleaner(jet_kinematic));
+    cleanermodules.emplace_back(new JetCleaner(ctx, jet_kinematic));
     cleanermodules.emplace_back(new MuonCleaner(muid));
     
     // make the selection, step-by-step. Note that in most cases, no explicit

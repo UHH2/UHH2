@@ -57,13 +57,13 @@ void CommonModules::init(Context & ctx){
     if(muid)  modules.emplace_back(new MuonCleaner(muid));
     if(tauid) modules.emplace_back(new TauCleaner(tauid));
     if(jetpfidcleaner){
-      modules.emplace_back(new JetCleaner(JetPFID(working_point)));
+      modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
     }
     if(jetlepcleaner) {
       if(is_mc) modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
       else modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
     }
-    if(jetid) modules.emplace_back(new JetCleaner(jetid));
+    if(jetid) modules.emplace_back(new JetCleaner(ctx, jetid));
     modules.emplace_back(new HTCalculator(ctx));
 }
 
