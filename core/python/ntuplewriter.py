@@ -13,6 +13,7 @@ bTagDiscriminators = [
     'pfSimpleSecondaryVertexHighEffBJetTags',
     'pfSimpleSecondaryVertexHighPurBJetTags',
     'pfCombinedInclusiveSecondaryVertexV2BJetTags',
+    'pfCombinedMVAV2BJetTags',
     'pfBoostedDoubleSecondaryVertexAK8BJetTags',
     'pfBoostedDoubleSecondaryVertexCA15BJetTags'
 ]
