@@ -222,7 +222,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
   }//do taginfos
   if(do_btagging){
     const auto & bdisc = pat_jet.getPairDiscri();
-    bool sv_he = false, sv_hp = false, csv = false, jetp = false, jetbp = false, doubleak8 = false, doubleca15 = false;
+    bool sv_he = false, sv_hp = false, csv = false, csvmva = false, jetp = false, jetbp = false, doubleak8 = false, doubleca15 = false;
     for(const auto & name_value : bdisc){
       const auto & name = name_value.first;
       const auto & value = name_value.second;
@@ -238,6 +238,10 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
 	jet.set_btag_combinedSecondaryVertex(value);
 	csv = true;
       }
+      else if(name == "pfCombinedMVAV2BJetTags"){                                                                                                            
+        jet.set_btag_combinedSecondaryVertexMVA(value);                                                                                                                              
+        csvmva = true;                                                                                                                                                               
+      }   
       else if(name == "pfJetBProbabilityBJetTags"){
 	jet.set_btag_jetBProbability(value);
 	jetp = true;
@@ -256,7 +260,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
       }
     }
     // NOTE: csvmva is NOT set.
-    if(!sv_he || !sv_hp || !csv || !jetp || !jetbp || !doubleak8 ||!doubleca15){
+    if(!sv_he || !sv_hp || !csv || !csvmva || !jetp || !jetbp || !doubleak8 ||!doubleca15){
       if(btag_warning){
 	cout << "Warning in NtupleWriterJets: did not find all b-taggers! Available btaggers: ";
 	for(const auto & name_value : bdisc){
@@ -277,10 +281,19 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
         topjets_handle = cfg.ctx.get_handle<vector<TopJet>>("topjets");
     }
     src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
-    njettiness_src = cfg.njettiness_src;
+    njettiness_src = cfg.njettiness_src;    
+    src_njettiness1_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau1"));
+    src_njettiness2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau2"));
+    src_njettiness3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau3"));
+
     qjets_src = cfg.qjets_src;
+    src_qjets_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(qjets_src, "QjetsVolatility"));
+
     subjet_src = cfg.subjet_src;
     higgs_src= cfg.higgs_src;
+
+    src_hepTopTagCHS_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagCHS"));
+    src_hepTopTagPuppi_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagPuppi"));
 
     pruned_src = cfg.pruned_src;
     if(pruned_src.find("Mass")==string::npos){
@@ -338,12 +351,12 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     edm::Handle<reco::PFJetCollection> topjets_with_cands_reco;
     
     if(!njettiness_src.empty()){
-        event.getByLabel(edm::InputTag(njettiness_src, "tau1"), h_njettiness1);
-        event.getByLabel(edm::InputTag(njettiness_src, "tau2"), h_njettiness2);
-        event.getByLabel(edm::InputTag(njettiness_src, "tau3"), h_njettiness3);
+        event.getByToken(src_njettiness1_token, h_njettiness1);
+        event.getByToken(src_njettiness2_token, h_njettiness2);
+        event.getByToken(src_njettiness3_token, h_njettiness3);
     }
     if(!qjets_src.empty()){
-        event.getByLabel(edm::InputTag(qjets_src, "QjetsVolatility"), h_qjets);
+        event.getByToken(src_qjets_token, h_qjets);
     }
     if(!njettiness_src.empty() || !qjets_src.empty()){
       checkjettype = event.getByToken(substructure_variables_src_tokenreco, topjets_with_cands_reco);
@@ -356,8 +369,8 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     }
     vector<TopJet> topjets;
     edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
-    if (topjet_collection.find("CHS")!=string::npos) event.getByLabel("hepTopTagCHS", top_jet_infos);
-    if (topjet_collection.find("Puppi")!=string::npos) event.getByLabel("hepTopTagPuppi", top_jet_infos); // Make sure both collections have the same size
+    if (topjet_collection.find("CHS")!=string::npos) event.getByToken(src_hepTopTagCHS_token, top_jet_infos);
+    if (topjet_collection.find("Puppi")!=string::npos) event.getByToken(src_hepTopTagPuppi_token, top_jet_infos); // Make sure both collections have the same size
     if (topjet_collection.find("Hep")!=string::npos) assert(pat_topjets.size()==top_jet_infos->size());
 
     /*--- lepton keys ---*/

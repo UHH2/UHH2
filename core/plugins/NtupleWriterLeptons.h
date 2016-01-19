@@ -8,7 +8,8 @@ namespace uhh2 {
 class NtupleWriterElectrons: public NtupleWriterModule {
 public:
     
-    struct Config: public NtupleWriterModule::Config {        
+    struct Config: public NtupleWriterModule::Config {     
+      edm::InputTag pv_src;
       std::vector<std::string> id_keys;
 
       // inherit constructor does not work yet :-(
@@ -24,6 +25,7 @@ public:
     virtual ~NtupleWriterElectrons();
 private:
     edm::EDGetToken src_token;
+    edm::EDGetToken pv_token;
     std::vector<std::string> IDtag_keys;
     Event::Handle<std::vector<Electron>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Electron>>> electrons_handle; // handle of name "electrons" in case set_electrons_member is true

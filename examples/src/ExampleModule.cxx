@@ -65,7 +65,7 @@ ExampleModule::ExampleModule(Context & ctx){
     // TODO: configure common here, e.g. by 
     // calling common->set_*_id or common->disable_*
     common->init(ctx);
-    jetcleaner.reset(new JetCleaner(30.0, 2.4)); 
+    jetcleaner.reset(new JetCleaner(ctx, 30.0, 2.4)); 
     
     // note that the JetCleaner is only kept for the sake of example;
     // instead of constructing a jetcleaner explicitly,

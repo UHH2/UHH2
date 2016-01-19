@@ -1,13 +1,14 @@
 #pragma once
 
-#include "Particle.h"
+#include "RecParticle.h"
+//#include "Particle.h"
 #include "Tags.h"
 #include "FlavorParticle.h"
 #include "source_candidate.h"
-
 #include <vector>
 
-class Electron : public Particle {
+//class Electron : public Particle {
+class Electron : public RecParticle {
 
  public:
   enum tag {
@@ -63,6 +64,16 @@ class Electron : public Particle {
     m_pfMINIIso_Ph_pfwgt = 0;
 
     m_source_candidates.clear();
+
+    m_Nclusters = 0;
+    m_Class = 0;
+
+    m_isEcalDriven = false;
+    m_dxy = 0;
+    m_dEtaInSeed = 0; 
+    m_full5x5_e1x5 = 0;
+    m_full5x5_e2x5Max = 0;
+    m_full5x5_e5x5 = 0;
   }
 
   float supercluster_eta() const{return m_supercluster_eta;} 
@@ -150,6 +161,15 @@ class Electron : public Particle {
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
   void  set_tag(tag t, float value) { tags.set_tag(static_cast<int>(t), value);}
 
+  void set_Nclusters(int x){m_Nclusters = x;}
+  void set_Class(int x){m_Class =x;}
+  void set_isEcalDriven(bool x){m_isEcalDriven = x;}
+  void set_dxy(float x){m_dxy = x;}
+  void set_dEtaInSeed(float x){m_dEtaInSeed=x;}
+  void set_full5x5_e1x5(float x){m_full5x5_e1x5 = x;}
+  void set_full5x5_e2x5Max(float x){m_full5x5_e2x5Max = x;}
+  void set_full5x5_e5x5(float x){m_full5x5_e5x5 = x;}
+
   float gsfTrack_dxy_vertex(const float point_x, const float point_y) const{ 
     return ( - (m_gsfTrack_vx-point_x) * m_gsfTrack_py + (m_gsfTrack_vy-point_y) * m_gsfTrack_px ) / sqrt(m_gsfTrack_px*m_gsfTrack_px+m_gsfTrack_py*m_gsfTrack_py);  
   };
@@ -182,6 +202,15 @@ class Electron : public Particle {
 
     return fp;
   }
+
+  int Nclusters() const {return m_Nclusters;}
+  int Class() const {return m_Class;}
+  bool isEcalDriven() const {return m_isEcalDriven;}
+  float dxy() const {return m_dxy;}
+  float full5x5_e1x5() const { return m_full5x5_e1x5;}
+  float full5x5_e2x5Max() const { return m_full5x5_e2x5Max;}
+  float full5x5_e5x5() const {return m_full5x5_e5x5;}
+  float dEtaInSeed() const {return m_dEtaInSeed;}
 
  private:
   float m_supercluster_eta; 
@@ -225,4 +254,15 @@ class Electron : public Particle {
   std::vector<source_candidate> m_source_candidates;
 
   Tags tags;
+
+  int m_Nclusters;//Number of clusters in Super Cluster
+  int m_Class;//Classification (see CMS-EGM-13-001) //UNKNOWN =-1, GOLDEN =0, BIGBREM =1, BADTRACK =2, SHOWERING =3, GAP =4
+
+  //additional vars for HEEP cut
+  bool m_isEcalDriven;
+  float m_dxy;
+  float m_dEtaInSeed;//instead of the super cluster eta, it uses the eta of the seed cluster of the super cluster, which should be more accurate
+  float m_full5x5_e1x5;
+  float m_full5x5_e2x5Max;
+  float m_full5x5_e5x5;
 };

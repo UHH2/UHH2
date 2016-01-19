@@ -211,6 +211,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 
       NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
       cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("electron_IDtags");
+      assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
+      cfg.pv_src = pv_sources[0];
       writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true, save_lepton_keys));
   }
   if(doMuons){
@@ -366,7 +368,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 	std::string topbranch=topjet_sources[j]+"_"+subjet_sources[j];
 	cfg.dest_branchname = topbranch;
 	cfg.dest = topbranch;
-        writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0));
+        writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0, muon_sources, elec_sources));
 /*
         // switch on lepton-keys storage for TopJet collections
         writer_modules.emplace_back(new NtupleWriterTopJets(cfg, i==0, muon_sources, elec_sources));
@@ -391,6 +393,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   else{
     event->rho = -1;
   }
+
+  //input tokens for objects with fixed names, not defined in the ntuplewriter.py script
+  bs_token = consumes<reco::BeamSpot>( edm::InputTag("offlineBeamSpot"));
+  generator_token = consumes<GenEventInfoProduct>( edm::InputTag("generator"));
+  pus_token = consumes<std::vector<PileupSummaryInfo> > ( edm::InputTag("slimmedAddPileupInfo"));
+  lhe_token = consumes<LHEEventProduct> ( edm::InputTag("externalLHEProducer"));
 
   //if(doPV){
   branch(tr, "beamspot_x0",&event->beamspot_x0);
@@ -469,8 +477,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
   }
   if(doGenInfo){
-    genparticle_source= iConfig.getParameter<edm::InputTag>("genparticle_source");
-    if(doAllGenParticles) stablegenparticle_source = iConfig.getParameter<edm::InputTag>("stablegenparticle_source");
+    genparticle_token = consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genparticle_source"));
+    if(doAllGenParticles) stablegenparticle_token = consumes<edm::View<pat::PackedGenParticle> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
     event->genInfo = new GenInfo();
     event->genparticles = new vector<GenParticle>();
     branch(tr, "genInfo","GenInfo", event->genInfo);
@@ -483,10 +491,15 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     branch(tr, "triggerResults", "std::vector<bool>", event->get_triggerResults());
     triggerBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("trigger_bits"));
     metfilterBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("metfilter_bits"));
-    if(doTrigHTEmu)
-    {
-      triggerObjects_ = consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("trigger_objects"));
+    triggerObjects_ = consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("trigger_objects"));
+    triggerObjects_sources = iConfig.getParameter<std::vector<std::string> >("triggerObjects_sources");
+    triggerObjects_out.resize(triggerObjects_sources.size());
+    for (size_t j=0; j<triggerObjects_sources.size(); j++){
+      TString name = "triggerObjects_";
+      name += triggerObjects_sources[j].c_str();
+      branch(tr, name, "std::vector<FlavorParticle>", &triggerObjects_out[j]);
     }
+
   }
   newrun = true;
 }
@@ -551,7 +564,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
       
      edm::Handle<reco::BeamSpot> beamSpot;
-     iEvent.getByLabel(edm::InputTag("offlineBeamSpot"), beamSpot);
+     iEvent.getByToken(bs_token, beamSpot);
      const reco::BeamSpot & bsp = *beamSpot;
      
      event->beamspot_x0 = bsp.x0();
@@ -575,7 +588,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      event->genparticles->clear();
 
      edm::Handle<GenEventInfoProduct> genEventInfoProduct;
-     iEvent.getByLabel("generator", genEventInfoProduct);
+     iEvent.getByToken(generator_token, genEventInfoProduct);
      const GenEventInfoProduct& genEventInfo = *(genEventInfoProduct.product());
   
      for(unsigned int k=0; k<genEventInfo.binningValues().size();++k){
@@ -609,7 +622,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
 
      edm::Handle<LHEEventProduct> lhe;
-     if(iEvent.getByLabel("externalLHEProducer",lhe)){
+     if(iEvent.getByToken(lhe_token,lhe)){
        event->genInfo->set_originalXWGTUP(lhe->originalXWGTUP());
        for(unsigned int k=0; k<lhe->weights().size(); k++){
 	 event->genInfo->add_systweight(lhe->weights().at(k).wgt);
@@ -617,7 +630,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
 
      edm::Handle<std::vector<PileupSummaryInfo> > pus;
-     iEvent.getByLabel(edm::InputTag("slimmedAddPileupInfo"), pus);
+     iEvent.getByToken(pus_token, pus);
      event->genInfo->set_pileup_NumInteractions_intime(0);
      event->genInfo->set_pileup_NumInteractions_ootbefore(0);
      event->genInfo->set_pileup_NumInteractions_ootafter(0);
@@ -638,7 +651,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      edm::Handle<reco::GenParticleCollection> genPartColl;
      // use genPartColl for the Matrix-Element particles. Also use it for stable leptons
      // in case doAllGenParticles is false.
-     iEvent.getByLabel(genparticle_source, genPartColl);
+     iEvent.getByToken(genparticle_token, genPartColl);
      int index=-1;
      for(reco::GenParticleCollection::const_iterator iter = genPartColl->begin(); iter != genPartColl->end(); ++ iter){
        index++;
@@ -678,7 +691,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      if(doAllGenParticles){
        edm::Handle<edm::View<pat::PackedGenParticle> > packed;
        // use packed particle collection for all STABLE (status 1) particles
-       iEvent.getByLabel(stablegenparticle_source,packed);
+       iEvent.getByToken(stablegenparticle_token,packed);
 
        for(size_t j=0; j<packed->size();j++){
 
@@ -946,13 +959,44 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
            triggerNames_outbranch.push_back(names.triggerName(i));
 	 }
        }
+
+       edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+       iEvent.getByToken(triggerObjects_, triggerObjects);
+
+       if(k==0){
+	 for(size_t j=0; j< triggerObjects_sources.size(); j++){
+	   triggerObjects_out[j].clear();
+	   for (pat::TriggerObjectStandAlone obj : *triggerObjects) { 
+	     obj.unpackPathNames(names);
+	     
+	     for (unsigned h = 0; h < obj.filterIds().size(); ++h) {
+	       if(obj.filterIds()[h]>=0){ // only take trigger objects with ID>0 (HLT trigger objects, see http://cmslxr.fnal.gov/source/DataFormats/HLTReco/interface/TriggerTypeDefs.h)
+		 std::string trname = triggerObjects_sources[j].c_str();
+		 std::vector<std::string> filters  = obj.filterLabels();
+		 for(size_t l=0; l<filters.size(); l++){
+		   if ( filters[l]== trname){
+		     FlavorParticle p;
+		     p.set_pt(obj.pt());
+		     p.set_eta(obj.eta());
+		     p.set_phi(obj.phi());
+		     p.set_energy(obj.energy());
+		     p.set_charge(obj.charge());
+		     p.set_pdgId(obj.filterIds()[h]);
+		     triggerObjects_out[j].push_back(p);
+		   }
+		 }
+	       }
+	     }
+	   }
+	 }
+       }
+       
        //PFHT800 emulation
        if(doTrigHTEmu && k==0){
 	 if(newrun){
 	   triggerNames_outbranch.push_back("HLT_PFHT800Emu_v1");
 	 }
-	 edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
-	 iEvent.getByToken(triggerObjects_, triggerObjects);
+
 	 bool found=false;
 	 for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i){ 
 	   if (names.triggerName(i).find("HLT_PFHTForMC")!=string::npos && triggerBits->accept(i)) {
