@@ -40,65 +40,129 @@ bool MCLumiWeight::process(uhh2::Event & event){
 
 
 
-MCPileupReweight::MCPileupReweight(Context & ctx):
-  h_pu_weight_(ctx.declare_event_output<float>("weight_pu"))
+MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
+    h_pu_weight_(ctx.declare_event_output<float>("weight_pu")),
+    h_npu_data_up(0),
+    h_npu_data_down(0),
+    sysType_(sysType)
 {
+    auto dataset_type = ctx.get("dataset_type");
+    bool is_mc = dataset_type == "MC";
+    if(!is_mc){
+        cout << "Warning: MCPileupReweight will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+        return;
+    }
 
-   auto dataset_type = ctx.get("dataset_type");
-   bool is_mc = dataset_type == "MC";
-   if(!is_mc){
-       cout << "Warning: MCPileupReweight will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
-       return;
-   }
+    // backward compatibility: (((no tag) is chosen over 25ns) is chosen over 50ns)
+    TString pileup_directory           = ctx.get("pileup_directory",
+                                             ctx.get("pileup_directory_25ns",
+                                                 ctx.get("pileup_directory_50ns", "")));
+    TString pileup_directory_data      = ctx.get("pileup_directory_data");
+    TString pileup_directory_data_up   = ctx.get("pileup_directory_data_up", "");
+    TString pileup_directory_data_down = ctx.get("pileup_directory_data_down", "");
 
-   TString pileup_directory_data = ctx.get("pileup_directory_data");
-   TString pileup_directory_50ns;
-   TString pileup_directory_25ns;
-   if (ctx.get("dataset_version").find("50ns")!=std::string::npos) pileup_directory_50ns = ctx.get("pileup_directory_50ns"); 
-   else pileup_directory_25ns = ctx.get("pileup_directory_25ns");
+    if(pileup_directory_data == ""){
+       throw runtime_error("MCPileupReweight: pileup_directory_data is needed!");
+    }
+    if(pileup_directory == ""){
+       throw runtime_error("MCPileupReweight: pileup_directory is needed!");
+    }
+    if (sysType == "up" && !pileup_directory_data_up) {
+        throw runtime_error("MCPileupReweight: pileup_directory_data_up is needed!");
+    }
+    if (sysType == "down" && !pileup_directory_data_down) {
+        throw runtime_error("MCPileupReweight: pileup_directory_data_down is needed!");
+    }
+    if (sysType != "up" && sysType != "down") {
+        sysType_ = "";  // this is checked first in the process function
+    }
 
-   if(pileup_directory_data == ""){
-      throw runtime_error("MCPileupReweight: not yet implemented!");
-   }
-   TFile *file_mc;
-   if (ctx.get("dataset_version").find("50ns")!=std::string::npos) file_mc = new TFile(pileup_directory_50ns);
-   else file_mc = new TFile(pileup_directory_25ns);
-   TFile *file_data =  new TFile(pileup_directory_data);
-   
-   h_npu_mc=(TH1F*) file_mc->Get("input_Event/N_TrueInteractions");
-   h_npu_data=(TH1F*) file_data->Get("pileup");
-   
-   
-   if(h_npu_mc->GetNbinsX() != h_npu_data->GetNbinsX()){
-      std::cerr << "ERROR: pile-up histograms for data and MC have different numbers of bins" <<std::endl;
-      exit(-1);
-   }
-   if( (h_npu_mc->GetXaxis()->GetXmax() != h_npu_data->GetXaxis()->GetXmax()) || (h_npu_mc->GetXaxis()->GetXmin() != h_npu_data->GetXaxis()->GetXmin())){
-      std::cerr << "ERROR: pile-up histograms for data and MC have different axis ranges" <<std::endl;
-      exit(-1);
-   }
-   
-   h_npu_mc->Scale(1./h_npu_mc->Integral());
-   h_npu_data->Scale(1./h_npu_data->Integral());
+    TFile file_mc(pileup_directory);
+    h_npu_mc   = (TH1F*) file_mc.Get("input_Event/N_TrueInteractions");
+    h_npu_mc->SetDirectory(0);
+    h_npu_mc->Scale(1./h_npu_mc->Integral());
+
+    TFile file_data(pileup_directory_data);
+    h_npu_data = (TH1F*) file_data.Get("pileup");
+    h_npu_data->SetDirectory(0);
+    h_npu_data->Scale(1./h_npu_data->Integral());
+
+    if(h_npu_mc->GetNbinsX() != h_npu_data->GetNbinsX()){
+        throw runtime_error("MCPileupReweight: pile-up histograms for data and MC have different numbers of bins");
+    }
+    if( (h_npu_mc->GetXaxis()->GetXmax() != h_npu_data->GetXaxis()->GetXmax())
+        || (h_npu_mc->GetXaxis()->GetXmin() != h_npu_data->GetXaxis()->GetXmin()))
+    {
+        throw runtime_error("MCPileupReweight: pile-up histograms for data and MC have different axis ranges");
+    }
+
+    if (pileup_directory_data_up) {
+        TFile file_data_up(pileup_directory_data_up);
+        h_npu_data_up = (TH1F*) file_data.Get("pileup");
+        h_npu_data_up->SetDirectory(0);
+        h_npu_data_up->Scale(1./h_npu_data_up->Integral());
+        if(h_npu_mc->GetNbinsX() != h_npu_data_up->GetNbinsX()){
+            throw runtime_error("MCPileupReweight: pile-up histograms for data_up and MC have different numbers of bins");
+        }
+        if( (h_npu_mc->GetXaxis()->GetXmax() != h_npu_data_up->GetXaxis()->GetXmax())
+            || (h_npu_mc->GetXaxis()->GetXmin() != h_npu_data_up->GetXaxis()->GetXmin()))
+        {
+            throw runtime_error("MCPileupReweight: pile-up histograms for data_up and MC have different axis ranges");
+        }
+        h_pu_weight_up_ = ctx.declare_event_output<float>("weight_pu_up");
+    }
+    if (pileup_directory_data_down) {
+        TFile file_data_down(pileup_directory_data_down);
+        h_npu_data_down = (TH1F*) file_data.Get("pileup");
+        h_npu_data_down->SetDirectory(0);
+        h_npu_data_down->Scale(1./h_npu_data_down->Integral());
+        if(h_npu_mc->GetNbinsX() != h_npu_data_down->GetNbinsX()){
+            throw runtime_error("MCPileupReweight: pile-up histograms for data_down and MC have different numbers of bins");
+        }
+        if( (h_npu_mc->GetXaxis()->GetXmax() != h_npu_data_down->GetXaxis()->GetXmax())
+            || (h_npu_mc->GetXaxis()->GetXmin() != h_npu_data_down->GetXaxis()->GetXmin()))
+        {
+            throw runtime_error("MCPileupReweight: pile-up histograms for data_down and MC have different axis ranges");
+        }
+        h_pu_weight_down_ = ctx.declare_event_output<float>("weight_pu_down");
+    }
 }
 
 bool MCPileupReweight::process(Event &event){
 
-   if (event.isRealData) {
-      event.set(h_pu_weight_, 1.f);
-      return true;
-   }
+    if (event.isRealData) {
+        event.set(h_pu_weight_, 1.f);
+        return true;
+    }
 
-   double weight =0;
-   int binnumber = h_npu_mc->GetXaxis()->FindBin(event.genInfo->pileup_TrueNumInteractions());
-   
-   if(h_npu_mc->GetBinContent(binnumber)!=0){
-      weight = h_npu_data->GetBinContent(binnumber)/h_npu_mc->GetBinContent(binnumber);
-   }
-   
-   event.weight *= weight;
-   event.set(h_pu_weight_, weight);
-   return true;
+    double weight = 0., weight_up = 0., weight_down = 0.;
+    int binnumber = h_npu_mc->GetXaxis()->FindBin(event.genInfo->pileup_TrueNumInteractions());
+    auto mc_cont = h_npu_mc->GetBinContent(binnumber);
+
+    if (mc_cont > 0) {
+        weight = h_npu_data->GetBinContent(binnumber)/mc_cont;
+        event.set(h_pu_weight_, weight);
+
+        if (h_npu_data_up) {
+            weight_up = h_npu_data_up->GetBinContent(binnumber)/mc_cont;
+            event.set(h_pu_weight_up_, weight_up);
+        }
+
+        if (h_npu_data_up) {
+            weight_down = h_npu_data_down->GetBinContent(binnumber)/mc_cont;
+            event.set(h_pu_weight_down_, weight_down);
+        }
+    }
+
+    if (sysType_ == "") {
+        event.weight *= weight;
+    } else if (sysType_ == "down") {
+        event.weight *= weight_down;
+    } else {
+        event.weight *= weight_up;
+    }
+
+    return true;
 }
 
 MCScaleVariation::MCScaleVariation(Context & ctx){
