@@ -2,6 +2,7 @@
 
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
+#include "UHH2/common/include/Utils.h"
 #include "UHH2/JetMETObjects/interface/JetCorrectionUncertainty.h"
 
 class FactorizedJetCorrector;
@@ -253,3 +254,89 @@ private:
     bool smear_met;
     int direction = 0; // -1 = down, +1 = up, 0 = nominal
 };
+
+////
+
+/** \brief generalization of JetResolutionSmearer (see the latter for additional info)
+ *         to apply jet-energy-resolution smearing on non-default jet collections
+ *
+ *  options parsed from Context:
+ *   - "jersmear_smear_met": if "true", propagate the jet resolution smearing to MET. Default is false.
+ *   - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing correction
+ *
+ */
+class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
+
+ public:
+  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const bool allow_met_smear=true);
+  virtual ~GenericJetResolutionSmearer() {}
+
+  virtual bool process(uhh2::Event&) override;
+
+  template<typename RJ, typename GJ> void apply_JER_smearing(std::vector<RJ>&, const std::vector<GJ>&, LorentzVector&);
+
+ private:
+  uhh2::Event::Handle<std::vector<Jet> >       h_recjets_;
+  uhh2::Event::Handle<std::vector<Particle> >  h_genjets_;
+  uhh2::Event::Handle<std::vector<TopJet> >    h_rectopjets_;
+  uhh2::Event::Handle<std::vector<GenTopJet> > h_gentopjets_;
+  bool smear_met;
+  int direction = 0; // -1 = down, +1 = up, 0 = nominal
+};
+
+template<typename RJ, typename GJ>
+void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, const std::vector<GJ>& gen_jets, LorentzVector& met){
+
+  // https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution [13TeV JER measurement]
+  constexpr const size_t n = 7;
+
+  static float eta_hi[n] = {0.8  , 1.3  , 1.9  , 2.5  , 3.0  , 3.2  , 5.0  };
+  static float c_ct  [n] = {1.061, 1.088, 1.106, 1.126, 1.343, 1.303, 1.320};
+  static float c_up  [n] = {1.084, 1.117, 1.136, 1.220, 1.466, 1.414, 1.606};
+  static float c_dn  [n] = {1.038, 1.059, 1.076, 1.032, 1.220, 1.192, 1.034};
+
+  for(unsigned int i=0; i<rec_jets.size(); ++i){
+
+    auto& jet = rec_jets.at(i);
+
+    // find next genjet:
+    auto closest_genjet = closestParticle(jet, gen_jets);
+    // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt:
+    if(closest_genjet == nullptr || uhh2::deltaR(*closest_genjet, jet) > 0.3) continue;
+    const float genpt = closest_genjet->pt();
+    if(genpt < 15.) continue;
+
+    LorentzVector jet_v4 = jet.v4();
+    LorentzVector jet_v4_raw = jet_v4 * jet.JEC_factor_raw();
+
+    const float recopt = jet_v4.pt();
+    const float abseta = fabs(jet_v4.eta());
+
+    size_t ieta = 0;
+    while(ieta < n && eta_hi[ieta] < abseta) ++ieta;
+    if(ieta == n) ieta = n-1;
+
+    float c;
+    if     (direction ==  0) c = c_ct[ieta];
+    else if(direction ==  1) c = c_up[ieta];
+    else if(direction == -1) c = c_dn[ieta];
+    else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid value for JER 'direction' (must be 0, +1 or -1): "+std::to_string(direction));
+
+    const float new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
+
+    jet_v4 *= new_pt / recopt;
+    jet.set_v4(jet_v4);
+
+    // propagate JER shifts to MET by using same factor, but for raw jet p4:
+    if(smear_met){
+
+      met += jet_v4_raw;
+      jet_v4_raw *= new_pt / recopt;
+      met -= jet_v4_raw;
+    }
+  }
+
+  return;
+}
+
+////

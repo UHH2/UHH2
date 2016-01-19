@@ -623,3 +623,66 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
 
 JetResolutionSmearer::~JetResolutionSmearer(){}
 
+////
+
+GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const bool allow_met_smearing){
+
+  if(ctx.get("meta_jer_applied__"+recjet_label, "") != "true") ctx.set_metadata("jer_applied__"+recjet_label, "true");
+  else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already applied to this RECO-jets collection: "+recjet_label);
+
+  const std::string& dir = ctx.get("jersmear_direction", "nominal");
+  if     (dir == "nominal") direction =  0;
+  else if(dir == "up")      direction =  1;
+  else if(dir == "down")    direction = -1;
+  else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- invalid value jersmear_direction='"+dir+"' (valid: 'nominal', 'up', 'down')");
+
+  h_recjets_    = ctx.get_handle<std::vector<Jet> >      (recjet_label);
+  h_rectopjets_ = ctx.get_handle<std::vector<TopJet> >   (recjet_label);
+
+  h_genjets_    = ctx.get_handle<std::vector<Particle> > (genjet_label);
+  h_gentopjets_ = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
+
+  smear_met = allow_met_smearing ? string2bool(ctx.get("jersmear_smear_met", "false")) : false;
+
+  if(smear_met){
+
+    if(ctx.get("meta_jer_applied_on_met", "") != "true") ctx.set_metadata("jer_applied_on_met", "true");
+    else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already propagated to MET measurement: jet_label="+recjet_label);
+  }
+}
+
+bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
+
+  if(evt.isRealData) return true;
+
+  std::vector<Jet>*    rec_jets(0);
+  std::vector<TopJet>* rec_topjets(0);
+
+  if     (evt.is_valid(h_recjets_))    rec_jets    = &evt.get(h_recjets_);
+  else if(evt.is_valid(h_rectopjets_)) rec_topjets = &evt.get(h_rectopjets_);
+  else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid handle to RECO-jets");
+
+  std::vector<Particle>*  gen_jets(0);
+  std::vector<GenTopJet>* gen_topjets(0);
+
+  if     (evt.is_valid(h_genjets_))    gen_jets    = &evt.get(h_genjets_);
+  else if(evt.is_valid(h_gentopjets_)) gen_topjets = &evt.get(h_gentopjets_);
+  else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid handle to GEN-jets");
+
+  LorentzVector met;
+  if(evt.met) met = evt.met->v4();
+
+  if     (rec_jets    && gen_jets)    apply_JER_smearing(*rec_jets   , *gen_jets   , met);
+  else if(rec_topjets && gen_jets)    apply_JER_smearing(*rec_topjets, *gen_jets   , met);
+  else if(rec_topjets && gen_topjets) apply_JER_smearing(*rec_topjets, *gen_topjets, met);
+  else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid combination of RECO-GEN jet collections");
+
+  // update MET
+  if(evt.met && smear_met){
+
+    evt.met->set_pt (met.Pt());
+    evt.met->set_phi(met.Phi());
+  }
+
+  return true;
+}
