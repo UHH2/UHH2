@@ -189,6 +189,14 @@ private:
 
 /** \brief JetLeptonCleaner using the matching of candidates' keys
  *
+ * Can now run on TopJet Collection as well; the class will first check whether a Jet collection with
+ * the given label name exists, if not, it will look for a TopJet collection with this name.
+ *
+ * Default is 'jets' so it will run over the standard Ak4 jet collection.
+ *
+ * DISCLAIMER: In case of Ak8 jets, this JetLeptonCleaner only runs over the fat jet itself, not
+ * the subjets of the Ak8 jets! Whether this is necessary and has any effects on subjet-related
+ * quantities might need to be tested in the future.
  */
 class JetLeptonCleaner_by_KEYmatching: public uhh2::AnalysisModule {
 
@@ -197,6 +205,7 @@ class JetLeptonCleaner_by_KEYmatching: public uhh2::AnalysisModule {
   virtual ~JetLeptonCleaner_by_KEYmatching();
 
   virtual bool process(uhh2::Event & event) override;
+  bool do_cleaning(Jet & jet, uhh2::Event & event);
 
   void set_muon_id(const MuonId& muo_id_){ muo_id = muo_id_; }
 
@@ -204,6 +213,7 @@ class JetLeptonCleaner_by_KEYmatching: public uhh2::AnalysisModule {
 
  private:
   uhh2::Event::Handle<std::vector<Jet> > h_jets_;
+  uhh2::Event::Handle<std::vector<TopJet> > h_topjets_;
   std::unique_ptr<FactorizedJetCorrector> corrector;
   MuonId     muo_id;
   ElectronId ele_id;

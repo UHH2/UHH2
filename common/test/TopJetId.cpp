@@ -13,7 +13,7 @@ using namespace std;
 class TestTopJetId: public uhh2::AnalysisModule {
 public:
     explicit TestTopJetId(Context & ctx) {
-        cleaner = make_unique<TopJetCleaner>(CMSTopTag());
+        cleaner.reset(new TopJetCleaner(ctx, CMSTopTag()));
         all_tops = new TH1D("all_tops", "all_tops", 100, 0, 1000.);
         tagged_tops = new TH1D("tagged_tops", "tagged_tops", 100, 0, 1000.);
         ctx.put("", all_tops);
