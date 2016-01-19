@@ -67,10 +67,10 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
     if(pileup_directory == ""){
        throw runtime_error("MCPileupReweight: pileup_directory is needed!");
     }
-    if (sysType == "up" && !pileup_directory_data_up) {
+    if (sysType == "up" && !pileup_directory_data_up.Length()) {
         throw runtime_error("MCPileupReweight: pileup_directory_data_up is needed!");
     }
-    if (sysType == "down" && !pileup_directory_data_down) {
+    if (sysType == "down" && !pileup_directory_data_down.Length()) {
         throw runtime_error("MCPileupReweight: pileup_directory_data_down is needed!");
     }
     if (sysType != "up" && sysType != "down") {
@@ -96,7 +96,7 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
         throw runtime_error("MCPileupReweight: pile-up histograms for data and MC have different axis ranges");
     }
 
-    if (pileup_directory_data_up) {
+    if (pileup_directory_data_up.Length()) {
         TFile file_data_up(pileup_directory_data_up);
         h_npu_data_up = (TH1F*) file_data_up.Get("pileup");
         h_npu_data_up->SetDirectory(0);
@@ -111,7 +111,7 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
         }
         h_pu_weight_up_ = ctx.declare_event_output<float>("weight_pu_up");
     }
-    if (pileup_directory_data_down) {
+    if (pileup_directory_data_down.Length()) {
         TFile file_data_down(pileup_directory_data_down);
         h_npu_data_down = (TH1F*) file_data_down.Get("pileup");
         h_npu_data_down->SetDirectory(0);
