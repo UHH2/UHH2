@@ -98,7 +98,7 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
 
     if (pileup_directory_data_up) {
         TFile file_data_up(pileup_directory_data_up);
-        h_npu_data_up = (TH1F*) file_data.Get("pileup");
+        h_npu_data_up = (TH1F*) file_data_up.Get("pileup");
         h_npu_data_up->SetDirectory(0);
         h_npu_data_up->Scale(1./h_npu_data_up->Integral());
         if(h_npu_mc->GetNbinsX() != h_npu_data_up->GetNbinsX()){
@@ -113,7 +113,7 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
     }
     if (pileup_directory_data_down) {
         TFile file_data_down(pileup_directory_data_down);
-        h_npu_data_down = (TH1F*) file_data.Get("pileup");
+        h_npu_data_down = (TH1F*) file_data_down.Get("pileup");
         h_npu_data_down->SetDirectory(0);
         h_npu_data_down->Scale(1./h_npu_data_down->Integral());
         if(h_npu_mc->GetNbinsX() != h_npu_data_down->GetNbinsX()){
