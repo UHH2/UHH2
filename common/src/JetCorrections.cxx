@@ -534,10 +534,27 @@ bool JetLeptonCleaner_by_KEYmatching::process(uhh2::Event& event){
     
 }
 
+
+//// ----- modules for Jet Energy Resolution data/MC corrections -----
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution [13TeV JER measurement]
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_2015 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.8, 1.061, 1.084, 1.038}},
+  {{1.3, 1.088, 1.117, 1.059}},
+  {{1.9, 1.106, 1.136, 1.076}},
+  {{2.5, 1.126, 1.220, 1.032}},
+  {{3.0, 1.343, 1.466, 1.220}},
+  {{3.2, 1.303, 1.414, 1.192}},
+  {{5.0, 1.320, 1.606, 1.034}},
+};
+
 ////
 
-
-JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
+JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf){
     smear_met = string2bool(ctx.get("jersmear_smear_met", "false"));
     auto dir = ctx.get("jersmear_direction", "nominal");
     if(dir == "up"){
@@ -554,18 +571,12 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
         throw runtime_error("JetResolutionSmearer: tried to apply jet resolution smearing, although metadata indicates that it already has been applied!");
     }
     ctx.set_metadata("jer_applied", "true");
+
+    JER_SFs_ = JER_sf;
 }
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
-    //numbers taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
-    // from 13TeV JER measurement.
-    constexpr const size_t n = 7;
-    static float eta_hi[n] = {0.8, 1.3, 1.9, 2.5, 3.0, 3.2, 5.0};
-    static float c_nominal[n] = {1.061, 1.088, 1.106, 1.126, 1.343, 1.303, 1.320};
-    static float c_up[n] = {1.084, 1.117, 1.136, 1.220, 1.466, 1.414, 1.606};
-    static float c_down[n] = {1.038, 1.059, 1.076, 1.032, 1.220, 1.192, 1.034};
-    
-    
+
     if(!event.jets || !event.genjets){
         throw runtime_error("JetResolutionSmearer: need jets and genjets to operate, but at least one of these is missing.");
     }
@@ -588,19 +599,26 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
         LorentzVector jet_v4_raw = jet_v4 * jet.JEC_factor_raw();
         float recopt = jet_v4.pt();
         float abseta = fabs(jet_v4.eta());
-        size_t ieta = 0;
-        while(ieta < n && eta_hi[ieta] < abseta) ++ieta;
-        if(ieta == n) ieta = n-1;
-        
+
+        int ieta(-1);
+        for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
+
+          const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
+          const float max_eta =       JER_SFs_.at(idx)  .at(0);
+
+          if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
+        }
+        if(ieta < 0) throw std::runtime_error("JetResolutionSmearer: index for JER-smearing SF not found");
+
         float c;
         if(direction == 0){
-            c = c_nominal[ieta];
+            c = JER_SFs_.at(ieta).at(1);
         }
         else if(direction == 1){
-            c = c_up[ieta];
+            c = JER_SFs_.at(ieta).at(2);
         }
         else{
-            c = c_down[ieta];
+            c = JER_SFs_.at(ieta).at(3);
         }
         float new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
         jet_v4 *= new_pt / recopt;
@@ -623,3 +641,70 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
 
 JetResolutionSmearer::~JetResolutionSmearer(){}
 
+////
+
+GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const bool allow_met_smearing, const JERSmearing::SFtype1& JER_sf){
+
+  if(ctx.get("meta_jer_applied__"+recjet_label, "") != "true") ctx.set_metadata("jer_applied__"+recjet_label, "true");
+  else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already applied to this RECO-jets collection: "+recjet_label);
+
+  const std::string& dir = ctx.get("jersmear_direction", "nominal");
+  if     (dir == "nominal") direction =  0;
+  else if(dir == "up")      direction =  1;
+  else if(dir == "down")    direction = -1;
+  else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- invalid value jersmear_direction='"+dir+"' (valid: 'nominal', 'up', 'down')");
+
+  h_recjets_    = ctx.get_handle<std::vector<Jet> >      (recjet_label);
+  h_rectopjets_ = ctx.get_handle<std::vector<TopJet> >   (recjet_label);
+
+  h_genjets_    = ctx.get_handle<std::vector<Particle> > (genjet_label);
+  h_gentopjets_ = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
+
+  smear_met = allow_met_smearing ? string2bool(ctx.get("jersmear_smear_met", "false")) : false;
+
+  if(smear_met){
+
+    if(ctx.get("meta_jer_applied_on_met", "") != "true") ctx.set_metadata("jer_applied_on_met", "true");
+    else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already propagated to MET measurement: jet_label="+recjet_label);
+  }
+
+  JER_SFs_ = JER_sf;
+}
+
+bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
+
+  if(evt.isRealData) return true;
+
+  std::vector<Jet>*    rec_jets(0);
+  std::vector<TopJet>* rec_topjets(0);
+
+  if     (evt.is_valid(h_recjets_))    rec_jets    = &evt.get(h_recjets_);
+  else if(evt.is_valid(h_rectopjets_)) rec_topjets = &evt.get(h_rectopjets_);
+  else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid handle to RECO-jets");
+
+  std::vector<Particle>*  gen_jets(0);
+  std::vector<GenTopJet>* gen_topjets(0);
+
+  if     (evt.is_valid(h_genjets_))    gen_jets    = &evt.get(h_genjets_);
+  else if(evt.is_valid(h_gentopjets_)) gen_topjets = &evt.get(h_gentopjets_);
+  else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid handle to GEN-jets");
+
+  LorentzVector met;
+  if(evt.met) met = evt.met->v4();
+
+  if     (rec_jets    && gen_jets)    apply_JER_smearing(*rec_jets   , *gen_jets   , met);
+  else if(rec_topjets && gen_jets)    apply_JER_smearing(*rec_topjets, *gen_jets   , met);
+  else if(rec_topjets && gen_topjets) apply_JER_smearing(*rec_topjets, *gen_topjets, met);
+  else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid combination of RECO-GEN jet collections");
+
+  // update MET
+  if(evt.met && smear_met){
+
+    evt.met->set_pt (met.Pt());
+    evt.met->set_phi(met.Phi());
+  }
+
+  return true;
+}
+
+//// -----------------------------------------------------------------

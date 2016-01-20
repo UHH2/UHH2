@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
+
+  <!ENTITY NEVT "10">
+
+  <!ENTITY OUTdir  ".">
+
+  <!ENTITY  Zp01w3000  SYSTEM  "../../common/datasets/RunII_25ns_v2/MC_ZprimeToTT_01w_M3000.xml">
+
+]>
+
+
+<JobConfiguration JobName="test_JERJob" OutputLevel="INFO">
+  <Library Name="libTestSUHH2common"/>
+
+  <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&OUTdir;/" PostFix="" TargetLumi="1">
+
+
+    <InputData Version="Zp01w3000" Lumi="1" Type="MC" NEventsMax="&NEVT;" Cacheable="False">
+                       &Zp01w3000; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/> </InputData>
+
+
+    <UserConfig>
+      <Item Name="JetCollection"           Value="slimmedJets"/>
+      <Item Name="GenJetCollection"        Value="slimmedGenJets"/>
+      <Item Name="TopJetCollection"        Value="slimmedJetsAK8_SoftDrop"/>
+      <Item Name="TopJetCollectionGEN"     Value="slimmedGenJetsAK8"/>
+      <Item Name="METName"                 Value="slimmedMETsNoHF"/>
+
+      <Item Name="use_sframe_weight" Value="false"/>
+
+      <Item Name="jersmear_smear_met" Value="true"/>
+      <Item Name="jersmear_direction" Value="nominal"/>
+
+      <Item Name="AnalysisModule" Value="test_JER"/>
+    </UserConfig>
+
+  </Cycle>
+</JobConfiguration>

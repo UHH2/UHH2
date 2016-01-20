@@ -44,7 +44,7 @@ test_JLCkey::test_JLCkey(uhh2::Context& ctx){
   ////
 
   //// OBJ CLEANING
-  const     MuonId muo(AndId<Muon>    (PtEtaCut  (50., 2.1), MuonIDTight()));
+  const     MuonId muo(AndId<Muon>    (PtEtaCut  (50., 2.1), MuonIDMedium()));
   const ElectronId ele(AndId<Electron>(PtEtaSCCut(50., 2.5), ElectronID_Spring15_25ns_tight_noIso));
 
   muo_cleaner.reset(new     MuonCleaner(muo));
@@ -66,8 +66,8 @@ test_JLCkey::test_JLCkey(uhh2::Context& ctx){
   }
 
   jet_IDcleaner.reset(new JetCleaner(ctx, jetID));
-  jet_corrector.reset(new JetCorrector(ctx,JEC_AK4));
-  jetlepton_cleaner1.reset(new JetLeptonCleaner(ctx,JEC_AK4));
+  jet_corrector.reset(new JetCorrector(ctx, JEC_AK4));
+  jetlepton_cleaner1.reset(new JetLeptonCleaner(ctx, JEC_AK4));
   jetlepton_cleaner1->set_drmax(.4);
   jetlepton_cleaner2.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JEC_AK4));
   ////
@@ -145,7 +145,7 @@ bool test_JLCkey::process(uhh2::Event& event){
 
   event.jets->clear();
   event.jets->reserve(jetsINI.size());
-  for(const auto& lep : jetsINI) event.jets->push_back(lep);
+  for(const auto& j : jetsINI) event.jets->push_back(j);
   sort_by_pt<Jet>(*event.jets);
 
   //
