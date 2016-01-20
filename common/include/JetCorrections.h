@@ -223,6 +223,15 @@ class JetLeptonCleaner_by_KEYmatching: public uhh2::AnalysisModule {
 };
 
 
+//// ----- modules for Jet Energy Resolution data/MC corrections -----
+
+namespace JERSmearing {
+
+  typedef std::vector<std::array<float, 4> > SFtype1;
+
+  extern const SFtype1 SF_13TeV_2015;
+}
+
 /** \brief Smear the jet four-momenta in MC to match the resolution in data
  *
  * The corrections applied correspond to the values listed here:
@@ -244,7 +253,7 @@ class JetLeptonCleaner_by_KEYmatching: public uhh2::AnalysisModule {
  */
 class JetResolutionSmearer: public uhh2::AnalysisModule {
 public:
-    explicit JetResolutionSmearer(uhh2::Context & ctx);
+    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2015);
 
     virtual bool process(uhh2::Event & event) override;
 
@@ -253,6 +262,7 @@ private:
     
     bool smear_met;
     int direction = 0; // -1 = down, +1 = up, 0 = nominal
+    JERSmearing::SFtype1 JER_SFs_;
 };
 
 ////
@@ -268,7 +278,8 @@ private:
 class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
  public:
-  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const bool allow_met_smear=true);
+  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const bool allow_met_smear=true,
+                                       const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2015);
   virtual ~GenericJetResolutionSmearer() {}
 
   virtual bool process(uhh2::Event&) override;
@@ -282,18 +293,11 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
   uhh2::Event::Handle<std::vector<GenTopJet> > h_gentopjets_;
   bool smear_met;
   int direction = 0; // -1 = down, +1 = up, 0 = nominal
+  JERSmearing::SFtype1 JER_SFs_;
 };
 
 template<typename RJ, typename GJ>
 void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, const std::vector<GJ>& gen_jets, LorentzVector& met){
-
-  // https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution [13TeV JER measurement]
-  constexpr const size_t n = 7;
-
-  static float eta_hi[n] = {0.8  , 1.3  , 1.9  , 2.5  , 3.0  , 3.2  , 5.0  };
-  static float c_ct  [n] = {1.061, 1.088, 1.106, 1.126, 1.343, 1.303, 1.320};
-  static float c_up  [n] = {1.084, 1.117, 1.136, 1.220, 1.466, 1.414, 1.606};
-  static float c_dn  [n] = {1.038, 1.059, 1.076, 1.032, 1.220, 1.192, 1.034};
 
   for(unsigned int i=0; i<rec_jets.size(); ++i){
 
@@ -312,14 +316,20 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
     const float recopt = jet_v4.pt();
     const float abseta = fabs(jet_v4.eta());
 
-    size_t ieta = 0;
-    while(ieta < n && eta_hi[ieta] < abseta) ++ieta;
-    if(ieta == n) ieta = n-1;
+    int ieta(-1);
+    for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
+
+      const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
+      const float max_eta =       JER_SFs_.at(idx)  .at(0);
+
+      if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break;}
+    }
+    if(ieta < 0) throw std::runtime_error("GenericJetResolutionSmearer::process -- index for JER-smearing data/MC correction not found (check input JER SFs)");
 
     float c;
-    if     (direction ==  0) c = c_ct[ieta];
-    else if(direction ==  1) c = c_up[ieta];
-    else if(direction == -1) c = c_dn[ieta];
+    if     (direction ==  0) c = JER_SFs_.at(ieta).at(1);
+    else if(direction ==  1) c = JER_SFs_.at(ieta).at(2);
+    else if(direction == -1) c = JER_SFs_.at(ieta).at(3);
     else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid value for JER 'direction' (must be 0, +1 or -1): "+std::to_string(direction));
 
     const float new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
@@ -339,4 +349,4 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
   return;
 }
 
-////
+//// -----------------------------------------------------------------

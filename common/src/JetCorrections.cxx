@@ -534,10 +534,27 @@ bool JetLeptonCleaner_by_KEYmatching::process(uhh2::Event& event){
     
 }
 
+
+//// ----- modules for Jet Energy Resolution data/MC corrections -----
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution [13TeV JER measurement]
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_2015 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.8, 1.061, 1.084, 1.038}},
+  {{1.3, 1.088, 1.117, 1.059}},
+  {{1.9, 1.106, 1.136, 1.076}},
+  {{2.5, 1.126, 1.220, 1.032}},
+  {{3.0, 1.343, 1.466, 1.220}},
+  {{3.2, 1.303, 1.414, 1.192}},
+  {{5.0, 1.320, 1.606, 1.034}},
+};
+
 ////
 
-
-JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
+JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf){
     smear_met = string2bool(ctx.get("jersmear_smear_met", "false"));
     auto dir = ctx.get("jersmear_direction", "nominal");
     if(dir == "up"){
@@ -554,18 +571,12 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
         throw runtime_error("JetResolutionSmearer: tried to apply jet resolution smearing, although metadata indicates that it already has been applied!");
     }
     ctx.set_metadata("jer_applied", "true");
+
+    JER_SFs_ = JER_sf;
 }
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
-    //numbers taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
-    // from 13TeV JER measurement.
-    constexpr const size_t n = 7;
-    static float eta_hi[n] = {0.8, 1.3, 1.9, 2.5, 3.0, 3.2, 5.0};
-    static float c_nominal[n] = {1.061, 1.088, 1.106, 1.126, 1.343, 1.303, 1.320};
-    static float c_up[n] = {1.084, 1.117, 1.136, 1.220, 1.466, 1.414, 1.606};
-    static float c_down[n] = {1.038, 1.059, 1.076, 1.032, 1.220, 1.192, 1.034};
-    
-    
+
     if(!event.jets || !event.genjets){
         throw runtime_error("JetResolutionSmearer: need jets and genjets to operate, but at least one of these is missing.");
     }
@@ -588,19 +599,26 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
         LorentzVector jet_v4_raw = jet_v4 * jet.JEC_factor_raw();
         float recopt = jet_v4.pt();
         float abseta = fabs(jet_v4.eta());
-        size_t ieta = 0;
-        while(ieta < n && eta_hi[ieta] < abseta) ++ieta;
-        if(ieta == n) ieta = n-1;
-        
+
+        int ieta(-1);
+        for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
+
+          const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
+          const float max_eta =       JER_SFs_.at(idx)  .at(0);
+
+          if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
+        }
+        if(ieta < 0) throw std::runtime_error("JetResolutionSmearer: index for JER-smearing SF not found");
+
         float c;
         if(direction == 0){
-            c = c_nominal[ieta];
+            c = JER_SFs_.at(ieta).at(1);
         }
         else if(direction == 1){
-            c = c_up[ieta];
+            c = JER_SFs_.at(ieta).at(2);
         }
         else{
-            c = c_down[ieta];
+            c = JER_SFs_.at(ieta).at(3);
         }
         float new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
         jet_v4 *= new_pt / recopt;
@@ -625,7 +643,7 @@ JetResolutionSmearer::~JetResolutionSmearer(){}
 
 ////
 
-GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const bool allow_met_smearing){
+GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const bool allow_met_smearing, const JERSmearing::SFtype1& JER_sf){
 
   if(ctx.get("meta_jer_applied__"+recjet_label, "") != "true") ctx.set_metadata("jer_applied__"+recjet_label, "true");
   else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already applied to this RECO-jets collection: "+recjet_label);
@@ -649,6 +667,8 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
     if(ctx.get("meta_jer_applied_on_met", "") != "true") ctx.set_metadata("jer_applied_on_met", "true");
     else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already propagated to MET measurement: jet_label="+recjet_label);
   }
+
+  JER_SFs_ = JER_sf;
 }
 
 bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
@@ -686,3 +706,5 @@ bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
 
   return true;
 }
+
+//// -----------------------------------------------------------------
