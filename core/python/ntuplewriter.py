@@ -670,12 +670,20 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         trigger_prefixes = cms.vstring("HLT_","Flag_"),
         doTrigHTEmu = cms.bool(True),
         # Give the names of filters for that you want to store the trigger objects that have fired the respecitve trigger
-        # filter paths for a given trigger can be found in https://cmsweb-testbed.cern.ch/confdb/
+        # filter paths for a given trigger can be found in https://cmsweb.cern.ch/confdb/
         # Example: for HLT_Mu45_eta2p1 the last trigger filter is hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q
         #          for HLT_Ele35_CaloIdVT_GsfTrkIdT_PFJet150_PFJet50: relevant filters are hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter (last electron filter), hltEle35CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned and hltEle35CaloIdVTGsfTrkIdTCentralPFJet150EleCleaned (for the two jets). 
         #          The  filter hltEle35CaloIdVTGsfTrkIdTCentralPFJet150EleCleaned only included redundant objects that are already included in hltEle35CaloIdVTGsfTrkIdTCentralPFJet50EleCleaned.
         #          for HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50: relevant filters are hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter (last electron filter), hltEle45CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned
-        triggerObjects_sources = cms.vstring("hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q","hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter","hltEle35CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned","hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter","hltEle45CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned"),
+        triggerObjects_sources = cms.vstring(
+          'hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q',        # HLT_Mu45_eta2p1_v*
+          'hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter',                # HLT_Ele35_CaloIdVT_GsfTrkIdT_PFJet150_PFJet50_v* (electron)
+          'hltEle35CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned',   # HLT_Ele35_CaloIdVT_GsfTrkIdT_PFJet150_PFJet50_v* (jets)
+          'hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter',                # HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v* (electron)
+          'hltEle45CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned',   # HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v* (jets)
+          'hltL3crIsoL1sMu25L1f0L2f10QL3f27QL3trkIsoFiltered0p09', # HLT_IsoMu27_v*
+          'hltEle27WPLooseGsfTrackIsoFilter',                      # HLT_Ele27_eta2p1_WPLoose_Gsf_v*
+        ),
         trigger_objects = cms.InputTag("selectedPatTrigger"),
 
 
