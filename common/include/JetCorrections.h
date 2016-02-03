@@ -9,18 +9,6 @@ class FactorizedJetCorrector;
 
 /// namespace to define some useful filename constants to be used for jet energy corrections
 namespace JERFiles {
-    extern const std::vector<std::string> PHYS14_L123_MC;
-    extern const std::vector<std::string> PHYS14_L123_DATA;
-    extern const std::vector<std::string> PHYS14_L123_AK8PFchs_MC;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK4PFchs_MC;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK8PFchs_MC;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK4PFPuppi_MC;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK8PFPuppi_MC;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Summer15_25nsV2_MC;
     extern const std::vector<std::string> Summer15_25ns_L123_AK4PFchs_MC;
     extern const std::vector<std::string> Summer15_25ns_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Summer15_25ns_L123_AK8PFchs_MC;
