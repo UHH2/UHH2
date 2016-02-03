@@ -88,7 +88,7 @@ public:
       working_point=working_point_;
     }
     virtual bool process(uhh2::Event & event) override;
-    void init(uhh2::Context & ctx);
+    void init(uhh2::Context & ctx, const std::string & SysType_PU = "central");
 
 private:
     void fail_if_init() const;
