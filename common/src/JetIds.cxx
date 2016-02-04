@@ -6,13 +6,13 @@ using namespace uhh2;
 CSVBTag::CSVBTag(wp working_point) {
     switch(working_point){
         case WP_LOOSE:
-            csv_threshold = 0.605f;
+            csv_threshold = 0.460f;
             break;
         case WP_MEDIUM:
-            csv_threshold = 0.890f;
+            csv_threshold = 0.800f;
             break;
         case WP_TIGHT:
-            csv_threshold = 0.970f;
+            csv_threshold = 0.935f;
             break;
         default:
             throw invalid_argument("invalid working point passed to CSVBTag");
