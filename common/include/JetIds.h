@@ -19,7 +19,8 @@ public:
     enum wp {WP_LOOSE, WP_MEDIUM, WP_TIGHT };
     
     explicit CSVBTag(wp working_point);
-    
+    explicit CSVBTag(float float_point);
+
     bool operator()(const Jet & jet, const uhh2::Event & event) const;
 private:
     float csv_threshold;
