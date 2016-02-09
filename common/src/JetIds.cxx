@@ -19,6 +19,8 @@ CSVBTag::CSVBTag(wp working_point) {
     }
 }
 
+CSVBTag::CSVBTag(float float_point):csv_threshold(float_point) {}
+
 
 bool CSVBTag::operator()(const Jet & jet, const Event &) const{
     return jet.btag_combinedSecondaryVertex() > csv_threshold;

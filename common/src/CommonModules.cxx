@@ -64,7 +64,7 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
       else modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
     }
     if(jetid) modules.emplace_back(new JetCleaner(ctx, jetid));
-    modules.emplace_back(new HTCalculator(ctx));
+    modules.emplace_back(new HTCalculator(ctx,HT_jetid));
 }
 
 bool CommonModules::process(uhh2::Event & event){
