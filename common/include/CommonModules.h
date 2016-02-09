@@ -64,7 +64,9 @@ public:
     void disable_pvfilter();
     void disable_jetpfidfilter(){fail_if_init();jetpfidcleaner=false;};
     void switch_jetlepcleaner(bool status = true){fail_if_init();jetlepcleaner=status;}
+    //void switch_topjetlepcleaner(bool status = true, double dR = 0.8){fail_if_init();topjetlepcleaner=status;topjetcleanerDR = dR;}
     void switch_jetPtSorter(bool status = true){fail_if_init();jetptsort=status;}
+    void set_HTjetid(const boost::optional<JetId> & jetid = boost::none) {HT_jetid = jetid;}
 
     void set_jet_id(const JetId & jetid_){
         fail_if_init();
@@ -99,11 +101,14 @@ private:
     TauId tauid;
     JetPFID::wp working_point;
     
-    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, jetptsort = false, metfilters = true, pvfilter = true, jetpfidcleaner=true; ;
-
+    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, topjetlepcleaner =false, jetptsort = false, metfilters = true, pvfilter = true, jetpfidcleaner=true; ;
+    
+    double topjetcleanerDR;
     bool init_done = false;
 
     std::unique_ptr<Selection> lumi_selection;
     std::unique_ptr<AndSelection> metfilters_selection;
+
+    boost::optional<JetId> HT_jetid;
 };
 

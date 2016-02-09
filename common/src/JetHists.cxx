@@ -6,8 +6,6 @@
 #include "TH1F.h"
 #include "TH2F.h"
 
-#include <vector>
-
 using namespace uhh2;
 using namespace std;
 
@@ -32,6 +30,7 @@ void JetHistsBase::fill_jetHist(const Jet & jet, JetHistsBase::jetHist & jet_his
   jet_hist.csv->Fill(jet.btag_combinedSecondaryVertex(), weight);
 }
 
+// JetHists
 JetHists::JetHists(Context & ctx,
                    const std::string & dname,
                    const unsigned int NumberOfPlottedJets,
@@ -64,7 +63,12 @@ void JetHists::add_iJetHists(unsigned int UserJet, double minPt, double maxPt, c
 
 void JetHists::fill(const Event & event){
     auto w = event.weight;
-    vector<Jet> jets = collection.empty() ? *event.jets : event.get(h_jets);
+    if (!collection.empty() && !event.is_valid(h_jets)){
+      cerr<<collection<<" is invalid. Going to abort from JetHists class"<<endl;
+      cerr<<" GenJets are stored as Particle which is not a Jet"<<endl;
+      assert(1==0);
+    }
+    vector<Jet> jets = collection.empty() ?  *event.jets : event.get(h_jets);
     if(jetid){
       vector<Jet> help_jets;
       for(const auto jet : jets)
@@ -241,7 +245,7 @@ template<typename T>
   return false;
 }
 
-
+//Btag stuff
 
 BTagMCEfficiencyHists::BTagMCEfficiencyHists(
   uhh2::Context & ctx,
