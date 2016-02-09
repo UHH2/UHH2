@@ -44,8 +44,7 @@ class Type2TopTag {
 public:
   
   enum class MassType {groomed, ungroomed};
-
-  explicit Type2TopTag(double mjetLower=60., double mjetUpper=100., MassType typeOfMass = MassType::ungroomed);
+  explicit Type2TopTag(double mjetLower=60., double mjetUpper=100., MassType typeOfMass = MassType::ungroomed, boost::optional<JetId> SubjetId=boost::none);
   explicit Type2TopTag(MassType typeOfMass);
   
   bool operator()(const TopJet & topjet, const uhh2::Event & event) const;
@@ -54,9 +53,8 @@ public:
    double m_mjetLower;
    double m_mjetUpper;
    MassType m_typeOfMass;
+   boost::optional<JetId> m_SubjetId;
 };
-
-
 
 
 class HEPTopTag{
