@@ -30,7 +30,7 @@ CMSTopTag::CMSTopTag(double mminLower, double mjetLower, double mjetUpper, MassT
 CMSTopTag::CMSTopTag(MassType typeOfMass): m_mminLower(50.), m_mjetLower(140.), m_mjetUpper(250.), m_typeOfMass(typeOfMass){}
 
 
-bool Type2TopTag::operator()(const TopJet & topjet, const uhh2::Event &) const {
+bool Type2TopTag::operator()(const TopJet & topjet, const uhh2::Event & event) const {
    float mjet = 0.0;
    switch(m_typeOfMass)
     {
@@ -38,18 +38,24 @@ bool Type2TopTag::operator()(const TopJet & topjet, const uhh2::Event &) const {
     case MassType::groomed : mjet=m_groomed(topjet); break;
     default: std::cout<<"Type2TopTag Mass type not valid"<<std::endl;
     }
-    if(mjet < m_mjetLower) return false;
-    if(mjet > m_mjetUpper) return false;
-
-    return true;
+   if(m_SubjetId){
+     bool pass_SubjetId = false;
+     for(auto subjet : topjet.subjets()){
+       if((*m_SubjetId)(subjet,event)){
+	 pass_SubjetId = true;
+	 break;
+       }
+     }
+     if(!pass_SubjetId) return false;
+   }
+   if(mjet < m_mjetLower) return false;
+   if(mjet > m_mjetUpper) return false;
+   return true;
 }
 
-Type2TopTag::Type2TopTag(double mjetLower, double mjetUpper, MassType typeOfMass):
-    m_mjetLower(mjetLower), m_mjetUpper(mjetUpper), m_typeOfMass(typeOfMass){}
+Type2TopTag::Type2TopTag(double mjetLower, double mjetUpper, MassType typeOfMass, boost::optional<JetId> SubjetId): m_mjetLower(mjetLower), m_mjetUpper(mjetUpper),  m_typeOfMass(typeOfMass), m_SubjetId(SubjetId){}
 
-Type2TopTag::Type2TopTag(MassType typeOfMass): m_mjetLower(60.), m_mjetUpper(100.), m_typeOfMass(typeOfMass){}
-
-
+Type2TopTag::Type2TopTag(MassType typeOfMass): m_mjetLower(60.), m_mjetUpper(100.), m_typeOfMass(typeOfMass), m_SubjetId(boost::none){}
 
 
 bool HEPTopTag::operator()(const TopJet & topjet, const uhh2::Event &) const{
