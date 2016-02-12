@@ -35,7 +35,7 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     if(is_mc){
         if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx,SysType_PU));
-        if(jec) modules.emplace_back(new JetCorrector(ctx,JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
+        if(jec) modules.emplace_back(new JetCorrector(ctx,JERFiles::Fall15_25ns_L123_AK4PFchs_MC));
         if(jersmear) modules.emplace_back(new JetResolutionSmearer(ctx));
     }
     else{

@@ -4,7 +4,7 @@
    <Library Name="libTestSUHH2common"/>
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
         <InputData Lumi="1" NEventsMax="10" Type="MC" Version="TestJetCorrector" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_25ns_v2/TTbar/MC_TTbar_1937_Ntuple.root" Lumi="0.0"/> 
+            <In FileName="/pnfs/desy.de/cms/tier2/store/user/missirol/ntuples/Run2_25ns/76X_v01/TT_Mtt0700to1000__fall15-v2_25ns/Ntuple_19_1_jBh.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
             <OutputTree Name="AnalysisTree" />
         </InputData>

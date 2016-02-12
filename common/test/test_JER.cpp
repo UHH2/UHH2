@@ -52,8 +52,8 @@ test_JER::test_JER(uhh2::Context& ctx){
   std::vector<std::string> JEC_AK4, JEC_AK8;
   if(isMC){
 
-    JEC_AK4 = JERFiles::Summer15_25ns_L123_AK4PFchs_MC;
-    JEC_AK8 = JERFiles::Summer15_25ns_L123_AK8PFchs_MC;
+    JEC_AK4 = JERFiles::Fall15_25ns_L123_AK4PFchs_MC;
+    JEC_AK8 = JERFiles::Fall15_25ns_L123_AK8PFchs_MC;
   }
   else {
 
