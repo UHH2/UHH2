@@ -8,7 +8,7 @@ using namespace std;
 class TestJetCorrections: public uhh2::AnalysisModule {
 public:
     explicit TestJetCorrections(Context &ctx ) {
-        jec_mc.reset(new JetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
+        jec_mc.reset(new JetCorrector(ctx, JERFiles::Fall15_25ns_L123_AK4PFchs_MC));
 	jec_data.reset(new JetCorrector(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
         printer_before.reset(new JetPrinter("before", 20.0));
         printer_after.reset(new JetPrinter("after", 20.0));
