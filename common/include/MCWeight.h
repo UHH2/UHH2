@@ -153,7 +153,8 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
                              const std::string & jets_handle_name="jets",
                              const std::string & sysType="central",
                              const std::string & measType_bc="mujets",
-                             const std::string & measType_udsg="comb");
+                             const std::string & measType_udsg="comb",
+                             const std::string & xml_param_name="MCBtagEfficiencies");
 
   virtual bool process(uhh2::Event & event) override;
 
