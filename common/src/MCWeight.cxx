@@ -303,7 +303,8 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
                                      const std::string & jets_handle_name,
                                      const std::string & sysType,
                                      const std::string & measType_bc,
-                                     const std::string & measType_udsg):
+                                     const std::string & measType_udsg,
+                                     const std::string & xml_param_name):
   btag_(CSVBTag(working_point)),
   h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
   h_topjets_(ctx.get_handle<std::vector<TopJet>>(jets_handle_name)),
@@ -324,10 +325,10 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
     return;
   }
 
-  TFile eff_file(ctx.get("MCBtagEfficiencies").c_str());
+  TFile eff_file(ctx.get(xml_param_name).c_str());
   if (eff_file.IsZombie()) {
     cout << "Warning: MCBTagScaleFactor will not have an effect because the root-file "
-         << "with MC-efficiencies not found: " << ctx.get("MCBtagEfficiencies") << endl;
+         << "with MC-efficiencies not found: " << ctx.get(xml_param_name) << endl;
     eff_file.Close();
     return;
   }
