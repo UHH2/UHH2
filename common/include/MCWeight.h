@@ -180,3 +180,28 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
   uhh2::Event::Handle<float> h_btag_weight_udsg_up_;
   uhh2::Event::Handle<float> h_btag_weight_udsg_down_;
 };
+
+/** \brief Reweight MC based on DATA/MC descripancy for one particluar variable
+ *
+ * Interprets "reweight_file" from Context, which should be set to 
+ * the root file (with correct path) which contain the reweighting information for MC samples
+ * If an empty value is given, no reweighting is done.
+ * 
+ * NOTE: currently, this is a dummy class; construction will fail with an excpetion, unless
+ * an empty value is given for "reweight_directory".
+ */
+class MCVarReweight: public uhh2::AnalysisModule {
+public:
+    explicit MCVarReweight(uhh2::Context & ctx);
+
+    virtual bool process(uhh2::Event & event) override;
+
+private:
+   uhh2::Event::Handle<float> h_var_weight_;
+   uhh2::Event::Handle<float> tt_x; // variable used to derive reweighting
+   TF1 *h_reweight_mc; //reweighting function
+   TF1 *h_reweight_mc_1,*h_reweight_mc_2,*h_reweight_mc_3; //several reweighting function, e.g for lep_eta variable
+   TString reweight_var; //variable
+   TString var_trans;//variable transformation
+   TString reweight_file;
+};
