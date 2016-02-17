@@ -540,3 +540,82 @@ std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, 
 
   return std::make_pair(SF, SFerr);
 }
+
+///////////
+MCVarReweight::MCVarReweight(Context & ctx):
+  h_var_weight_(ctx.declare_event_output<float>("weight_varMC"))
+{
+
+   auto dataset_type = ctx.get("dataset_type");
+   bool is_mc = dataset_type == "MC";
+   if(!is_mc){
+       cout << "Warning: MCVarReweight will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+       return;
+   }
+   reweight_file = ctx.get("reweight_file");
+   if(reweight_file!=""){
+   TFile *file_func =  new TFile(reweight_file);
+   reweight_var = ctx.get("reweight_var");
+   tt_x  = ctx.get_handle<float>(reweight_var.Data());
+   var_trans = ctx.get("reweight_var_trans");
+   if(reweight_var=="lep_eta"){ // lep_eta has 3 different regions
+     TString func_name = "f_"+reweight_var;
+     func_name +="_central_barrel";
+     h_reweight_mc_1 = (TF1*)file_func->Get(func_name);
+
+     TString func_name_2 = "f_"+reweight_var;
+     func_name_2 +="_outer_barrel";
+     h_reweight_mc_2 = (TF1*)file_func->Get(func_name_2);
+
+     TString func_name_3 = "f_"+reweight_var;
+     func_name_3 +="_forward_barrel";
+     h_reweight_mc_3 = (TF1*)file_func->Get(func_name_3);
+   }
+   else{
+     TString func_name = "f_"+reweight_var;
+     h_reweight_mc = (TF1*)file_func->Get(func_name);
+   }
+   }
+   // else{
+   //   reweight_var = "";
+   //   tt_x  = 0;
+   //   var_trans = 1;
+   // }
+}
+
+bool MCVarReweight::process(Event &event){
+
+   if (event.isRealData) {
+      event.set(h_var_weight_, 1.f);
+      return true;
+   }
+
+   if (reweight_file=="") {
+      event.set(h_var_weight_, 1.f);
+      return true;
+   }
+
+   double weight = 1;
+   float x__ =  event.get(tt_x); 
+   if(reweight_var!=""){
+     if(var_trans!=""){
+       if(var_trans=="log" || var_trans=="Log") x__ = log(x__);
+       if((var_trans=="fabs" || var_trans=="abs")) x__ = fabs(x__);
+       if(var_trans=="trans_dR") x__ = log(fabs((x__-3.14)/3.14));//special transformation for dR_cljet_ljet used in Z'
+     }
+     if(reweight_var=="lep_eta"){ // lep_eta has 3 different regions
+       if(x__<0.8) h_reweight_mc = h_reweight_mc_1;
+       else 
+	 if(x__<1.55) h_reweight_mc = h_reweight_mc_2;
+	 else h_reweight_mc = h_reweight_mc_3;
+     }
+     //     if(reweight_var=="ljet_CSV" && fabs(x__)>1.5) weight = 0;//suppress unphysical results
+     
+     weight = h_reweight_mc->Eval(x__);   
+     //     std::cout<<"eta = "<<x__<<" weight = "<<weight<<std::endl;
+   }
+   event.weight *= weight;
+   event.set(h_var_weight_, weight);
+   return true;
+}
+/////////////
