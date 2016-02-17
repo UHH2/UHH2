@@ -304,18 +304,19 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
                                      const std::string & sysType,
                                      const std::string & measType_bc,
                                      const std::string & measType_udsg,
-                                     const std::string & xml_param_name):
+                                     const std::string & xml_param_name,
+                                     const std::string & weights_name_postfix):
   btag_(CSVBTag(working_point)),
   h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
   h_topjets_(ctx.get_handle<std::vector<TopJet>>(jets_handle_name)),
   sysType_(sysType),
-  h_btag_weight_          (ctx.declare_event_output<float>("weight_btag")),
-  h_btag_weight_up_       (ctx.declare_event_output<float>("weight_btag_up")),
-  h_btag_weight_down_     (ctx.declare_event_output<float>("weight_btag_down")),
-  h_btag_weight_bc_up_    (ctx.declare_event_output<float>("weight_btag_bc_up")),
-  h_btag_weight_bc_down_  (ctx.declare_event_output<float>("weight_btag_bc_down")),
-  h_btag_weight_udsg_up_  (ctx.declare_event_output<float>("weight_btag_udsg_up")),
-  h_btag_weight_udsg_down_(ctx.declare_event_output<float>("weight_btag_udsg_down"))
+  h_btag_weight_          (ctx.declare_event_output<float>("weight_btag"+weights_name_postfix)),
+  h_btag_weight_up_       (ctx.declare_event_output<float>("weight_btag_up"+weights_name_postfix)),
+  h_btag_weight_down_     (ctx.declare_event_output<float>("weight_btag_down"+weights_name_postfix)),
+  h_btag_weight_bc_up_    (ctx.declare_event_output<float>("weight_btag_bc_up"+weights_name_postfix)),
+  h_btag_weight_bc_down_  (ctx.declare_event_output<float>("weight_btag_bc_down"+weights_name_postfix)),
+  h_btag_weight_udsg_up_  (ctx.declare_event_output<float>("weight_btag_udsg_up"+weights_name_postfix)),
+  h_btag_weight_udsg_down_(ctx.declare_event_output<float>("weight_btag_udsg_down"+weights_name_postfix))
 {
   auto dataset_type = ctx.get("dataset_type");
   bool is_mc = dataset_type == "MC";
