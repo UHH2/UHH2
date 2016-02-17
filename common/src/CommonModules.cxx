@@ -23,7 +23,7 @@ CommonModules::CommonModules(){
 }
 
 
-void CommonModules::init(Context & ctx){
+void CommonModules::init(Context & ctx,const std::string & SysType_PU){
     if(init_done){
         throw invalid_argument("CommonModules::init called twice!");
     }
@@ -34,7 +34,7 @@ void CommonModules::init(Context & ctx){
     if(pvfilter) modules.emplace_back(new PrimaryVertexCleaner(pvid));
     if(is_mc){
         if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
-        if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx));
+        if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx,SysType_PU));
         if(jec) modules.emplace_back(new JetCorrector(ctx,JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
         if(jersmear) modules.emplace_back(new JetResolutionSmearer(ctx));
     }
