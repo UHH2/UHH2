@@ -146,7 +146,15 @@ JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::
     if(direction!=0){
       //take name from the L1FastJet correction (0th element of filenames) and replace "L1FastJet" by "Uncertainty" to get the proper name of the uncertainty file
       TString unc_file = locate_file(filenames[0]);
-      unc_file.ReplaceAll("L1FastJet","Uncertainty");
+      if (unc_file.Contains("L1FastJet")) {
+        unc_file.ReplaceAll("L1FastJet","Uncertainty");
+      }
+      else if (unc_file.Contains("L2Relative")) {
+        unc_file.ReplaceAll("L2Relative","Uncertainty");
+      }
+      else {
+        throw runtime_error("WARNING No JEC Uncertainty File found!");
+      }
       JetCorrectionUncertainty* jec_uncertainty = new JetCorrectionUncertainty(unc_file.Data());
       return jec_uncertainty;
     }
