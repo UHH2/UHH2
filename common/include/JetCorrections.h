@@ -33,6 +33,11 @@ namespace JERFiles {
     extern const std::vector<std::string> Fall15_25ns_L23_AK8PFchs_MC;
     extern const std::vector<std::string> Fall15_25ns_L123_AK4PFPuppi_MC;
     extern const std::vector<std::string> Fall15_25ns_L123_AK8PFPuppi_MC;
+    extern const std::vector<std::string> Fall15_25ns_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall15_25ns_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall15_25ns_L23_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall15_25ns_L123_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall15_25ns_L123_AK8PFPuppi_DATA;
 }
 
 /** \brief (Re-)Correct jets according to the corrections in the passed txt files
