@@ -61,8 +61,8 @@ test_JLCkey::test_JLCkey(uhh2::Context& ctx){
   }
   else {
 
-    JEC_AK4 = JERFiles::Summer15_25ns_L123_AK4PFchs_DATA;
-    JEC_AK8 = JERFiles::Summer15_25ns_L123_AK8PFchs_DATA;
+    JEC_AK4 = JERFiles::Fall15_25ns_L123_AK4PFchs_DATA;
+    JEC_AK8 = JERFiles::Fall15_25ns_L123_AK8PFchs_DATA;
   }
 
   jet_IDcleaner.reset(new JetCleaner(ctx, jetID));

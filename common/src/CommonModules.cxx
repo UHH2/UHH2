@@ -40,7 +40,7 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     }
     else{
        if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
-       if(jec) modules.emplace_back(new JetCorrector(ctx,JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
+       if(jec) modules.emplace_back(new JetCorrector(ctx,JERFiles::Fall15_25ns_L123_AK4PFchs_DATA));
     }
     if(metfilters){
        metfilters_selection.reset(new AndSelection(ctx, "metfilters"));
@@ -60,8 +60,8 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
       modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
     }
     if(jetlepcleaner) {
-      if(is_mc) modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_MC));
-      else modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Summer15_25ns_L123_AK4PFchs_DATA));
+      if(is_mc) modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Fall15_25ns_L123_AK4PFchs_MC));
+      else modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Fall15_25ns_L123_AK4PFchs_DATA));
     }
     if(jetid) modules.emplace_back(new JetCleaner(ctx, jetid));
     modules.emplace_back(new HTCalculator(ctx,HT_jetid));
