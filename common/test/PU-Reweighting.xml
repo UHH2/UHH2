@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
-  <!ENTITY NEVT "10">
+  <!ENTITY NEVT "-1">
   <!ENTITY PRESELdir "./">
-  <!ENTITY TTbar SYSTEM "../../common/datasets/RunII_25ns_v1/MC_TTbar.xml">
+  <!ENTITY TTbar SYSTEM "../../common/datasets/RunII_76X_v1/MC_TTbar.xml">
 ]>
+
+<!--
+   <ConfigParse NEventsBreak="0" FileSplit="30" />
+   <ConfigSGE RAM ="2" DISK ="2" Mail="thomas.peiffer@desy.de" Notification="as" Workdir="workdir"/>
+-->
 
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
     <Library Name="libTestSUHH2common"/>
@@ -19,7 +24,7 @@
 
       -->       
           
-         <InputData Lumi="1" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="True">
+         <InputData Lumi="1" NEventsMax="&NEVT;" Type="MC" Version="TTbar" Cacheable="False">
           &TTbar;
           <InputTree Name="AnalysisTree" />
         </InputData>     
@@ -32,8 +37,8 @@
             <Item Name="TauCollection" Value="slimmedTaus" />
             <Item Name="JetCollection" Value="slimmedJets" />
             <Item Name="GenJetCollection" Value="slimmedGenJets" /> 
-            <Item Name="METName" Value="slimmedMETsNoHF" />
-            <Item Name="TopJetCollection" Value="slimmedJetsAK8_CMSTopTag" />
+            <Item Name="METName" Value="slimmedMETs" />
+            <Item Name="TopJetCollection" Value="slimmedJetsAK8_SoftDrop" />
            <Item Name="GenParticleCollection" Value="GenParticles" /> 
 
             <Item Name="use_sframe_weight" Value="false" />
