@@ -20,11 +20,13 @@ public:
 private:
     Event::Handle<int> h_myint;
     Event::Handle<vector<Jet>> h_myjets;
+    Event::Handle<vector<Particle>> h_mygenjets;
 };
 
 ExampleModuleEventInput::ExampleModuleEventInput(Context & ctx) {
     // declare input in analogy to output (see ExampleModuleEventOutput).
     h_myjets = ctx.declare_event_input<vector<Jet>>("myjets");
+    h_mygenjets = ctx.declare_event_input<vector<Particle>>("mygenjets");
     h_myint = ctx.declare_event_input<int>(ctx.get("int_branchname"), "myint");
 }
 
@@ -36,6 +38,9 @@ bool ExampleModuleEventInput::process(Event & event) {
     const vector<Jet> & myjets = event.get(h_myjets); // note: using a reference avoids copying the jet vector.
     cout << "Njets = " << myjets.size() << endl;
     
+    const vector<Particle> & mygenjets = event.get(h_mygenjets); 
+    cout << "Ngenjets = " << mygenjets.size() << endl;
+
     return true;
 }
 
