@@ -669,7 +669,8 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
         for(const auto & bname : pimpl->additional_branches){
             auto branch = intree->GetBranch(bname.c_str());
             if(!branch){
-                throw runtime_error("While setting up additional branches: did not find branch '" + bname + "' in input tree");
+  	        m_logger  << WARNING << "While setting up additional branches: did not find branch '" << bname << "' in input tree" << SLogger::endmsg;
+		continue;
             }
             const auto & ti = InTree::get_type(branch);
             m_logger << VERBOSE  << "Setting up additional branch '" << bname << "';  with (auto-detected) type: " << demangle(ti.name()) << SLogger::endmsg;
