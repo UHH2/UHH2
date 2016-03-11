@@ -18,13 +18,17 @@ public:
 private:
     Event::Handle<int> h_myint;
     Event::Handle<vector<Jet>> h_myjets;
-    
+    Event::Handle<vector<Particle>> h_mygenjets;
+
     int myint;
 };
 
 ExampleModuleEventOutput::ExampleModuleEventOutput(Context & ctx): myint(0){
     // declare the output. The branchname will be "myjets" and the product will be named "myjets" in the event container as well.
     h_myjets = ctx.declare_event_output<vector<Jet>>("myjets");
+
+    // declare the output "mygenjets", the output will only be stored for datasets with Type="MC"
+    h_mygenjets = ctx.declare_event_output<vector<Particle>>("mygenjets");
     
     // declare output where the branchname is different from the name in the event:
     h_myint = ctx.declare_event_output<int>(ctx.get("int_branchname"), "myint");
@@ -35,7 +39,7 @@ ExampleModuleEventOutput::ExampleModuleEventOutput(Context & ctx): myint(0){
 
 
 bool ExampleModuleEventOutput::process(Event & event) {
-    // set myint to some, here runid + eventid:
+    // set myint to some value, here just a counter of events
     event.set(h_myint, myint);
     ++myint;
     
@@ -46,9 +50,21 @@ bool ExampleModuleEventOutput::process(Event & event) {
             myjets.push_back(jet);
         }
     }
+
+    // create a vector of gen jets with some filter criterion:
+    vector<Particle> mygenjets;
+    if(event.genjets){
+        for(const Particle & genjet : *event.genjets){
+            if(genjet.pt() > 30.0 && fabs(genjet.eta() < 2.4)){
+	        mygenjets.push_back(genjet);
+	    }
+	}
+    }
+
     // note on std::move: this is not strictly required, but used as an optimization 
     // to avoid copying the whole vector.
     event.set(h_myjets, std::move(myjets));
+    event.set(h_mygenjets, std::move(mygenjets));
     return true;
 }
 
