@@ -263,21 +263,31 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
   const auto & muons = event.get(h_muons_);
   float weight = 1., weight_up = 1., weight_down = 1.;
   for (const auto & mu : muons) {
-    float eta = mu.eta();
+    float eta = fabs(mu.eta());
     float pt = mu.pt();
-    if (eta_min_ < eta &&
-        eta_max_ > eta &&
-        pt_min_  < pt &&
-        pt_max_  > pt) {
+    if (eta_min_ < eta && eta_max_ > eta){
+      bool out_of_range = false;
+      //take scale factor from the last measured pT bin in case of too large/small pT
+      if(pt_min_ >= pt) {
+	pt=pt_min_+0.0001;
+	out_of_range = true;
+      }
+      if(pt_max_ <= pt) {
+	pt=pt_max_-0.0001;
+	out_of_range = true;
+      }
       int bin       = sf_hist_->FindFixBin(pt, eta);
       float w       = sf_hist_->GetBinContent(bin);
       float err     = sf_hist_->GetBinError(bin);
       float err_tot = sqrt(err*err + pow(w*sys_error_factor_, 2));
+      //take twice the uncertainty if the pT is outside the measured pT range
+      if(out_of_range) err_tot*=2;
 
       weight      *= w;
       weight_up   *= w + err_tot;
       weight_down *= w - err_tot;
     }
+
   }
 
   event.set(h_muon_weight_,       weight);
