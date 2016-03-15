@@ -208,6 +208,13 @@ private:
    TString reweight_file;
 };
 
+/** \brief Vary Tau efficiency
+ *
+ * https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV#Tau_ID_efficiency
+ *
+ * Interprets "TauIdVariation" from Context, the values may be "up" or "down".
+ * Any other value will result in no scale variation. 
+ */
 class TauEffVariation: public uhh2::AnalysisModule {
  public:
   explicit TauEffVariation(uhh2::Context & ctx);
@@ -218,6 +225,13 @@ class TauEffVariation: public uhh2::AnalysisModule {
   int i_TauEff = 0;
 };
 
+/** \brief Vary Tau charge
+ *
+ * https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV#Tau_charge_misidentification_rat
+ *
+ * Interprets "TauChargeVariation" from Context, the values may be "up" or "down".
+ * Any other value will result in no scale variation. 
+ */
 class TauChargeVariation: public uhh2::AnalysisModule {
  public:
   explicit TauChargeVariation(uhh2::Context & ctx);
