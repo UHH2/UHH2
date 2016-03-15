@@ -207,3 +207,23 @@ private:
    TString var_trans;//variable transformation
    TString reweight_file;
 };
+
+class TauEffVariation: public uhh2::AnalysisModule {
+ public:
+  explicit TauEffVariation(uhh2::Context & ctx);
+
+  virtual bool process(uhh2::Event & event) override;
+
+  private:
+  int i_TauEff = 0;
+};
+
+class TauChargeVariation: public uhh2::AnalysisModule {
+ public:
+  explicit TauChargeVariation(uhh2::Context & ctx);
+
+  virtual bool process(uhh2::Event & event) override;
+
+  private:
+  int i_TauCharge = 0;
+};
