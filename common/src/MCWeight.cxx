@@ -550,3 +550,90 @@ std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, 
 
   return std::make_pair(SF, SFerr);
 }
+
+
+TauEffVariation::TauEffVariation(Context & ctx){
+
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if(!is_mc){
+    cout << "Warning: TauIdVariation will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
+  auto s_TauEff = ctx.get("TauIdVariation");
+
+  if(s_TauEff == "up") {i_TauEff = 1;}
+  else if(s_TauEff == "down"){i_TauEff = 2;}
+
+}
+bool TauEffVariation::process(Event & event){
+  if (event.isRealData) return true;
+  
+  std::vector<Tau> real_taus;
+  for(unsigned int j=0; j<event.taus->size(); ++j)
+    {
+      bool real = false;
+      Tau tau = event.taus->at(j);
+      for(unsigned int i=0; i<event.genparticles->size(); ++i)
+	{
+	  GenParticle genp = event.genparticles->at(i);
+	  double dr = deltaR(genp,tau);
+	  if (dr < 0.4 && abs(genp.pdgId())==15) real = true;
+	}
+      if(real) real_taus.push_back(tau);
+    }
+  for(unsigned int i=0; i<real_taus.size(); ++i)
+    {
+      Tau realtau = real_taus.at(i);
+      if(i_TauEff==0) {return true;}
+      if (i_TauEff==1)
+	{
+	  event.weight *= 1.06+0.2*realtau.pt()/1000;
+	}
+      if (i_TauEff==2)
+	{
+	  event.weight *= 0.94-0.2*realtau.pt()/1000;
+	}
+    }
+  return true;
+}
+
+TauChargeVariation::TauChargeVariation(Context & ctx){
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if(!is_mc){
+    cout << "Warning: TauChargeVariation will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
+  auto s_TauCharge = ctx.get("TauChargeVariation");
+
+  if(s_TauCharge == "up") {i_TauCharge = 1;}
+  else if(s_TauCharge == "down"){i_TauCharge = 2;}
+
+}
+bool TauChargeVariation::process(Event & event){
+  if (event.isRealData) return true;
+  
+  for(unsigned int j=0; j<event.taus->size(); ++j)
+    {
+      Tau tau = event.taus->at(j);
+      for(unsigned int i=0; i<event.genparticles->size(); ++i)
+	{
+	  GenParticle genp = event.genparticles->at(i);
+	  double dr = deltaR(genp,tau);
+	  if (dr < 0.4 && abs(genp.pdgId())==15){
+	    if(tau.charge()!=genp.charge()){
+	      if(i_TauCharge==0) {return true;}
+	      if(i_TauCharge==1){
+		event.weight *= 1.02;
+	      }
+	      if(i_TauCharge==2){
+		event.weight *= 0.98;
+	      }
+	    }
+	  } 
+	}
+    }
+  return true;
+}
+
