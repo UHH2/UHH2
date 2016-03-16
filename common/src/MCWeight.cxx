@@ -263,21 +263,31 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
   const auto & muons = event.get(h_muons_);
   float weight = 1., weight_up = 1., weight_down = 1.;
   for (const auto & mu : muons) {
-    float eta = mu.eta();
+    float eta = fabs(mu.eta());
     float pt = mu.pt();
-    if (eta_min_ < eta &&
-        eta_max_ > eta &&
-        pt_min_  < pt &&
-        pt_max_  > pt) {
+    if (eta_min_ < eta && eta_max_ > eta){
+      bool out_of_range = false;
+      //take scale factor from the last measured pT bin in case of too large/small pT
+      if(pt_min_ >= pt) {
+	pt=pt_min_+0.0001;
+	out_of_range = true;
+      }
+      if(pt_max_ <= pt) {
+	pt=pt_max_-0.0001;
+	out_of_range = true;
+      }
       int bin       = sf_hist_->FindFixBin(pt, eta);
       float w       = sf_hist_->GetBinContent(bin);
       float err     = sf_hist_->GetBinError(bin);
       float err_tot = sqrt(err*err + pow(w*sys_error_factor_, 2));
+      //take twice the uncertainty if the pT is outside the measured pT range
+      if(out_of_range) err_tot*=2;
 
       weight      *= w;
       weight_up   *= w + err_tot;
       weight_down *= w - err_tot;
     }
+
   }
 
   event.set(h_muon_weight_,       weight);
@@ -619,3 +629,90 @@ bool MCVarReweight::process(Event &event){
    return true;
 }
 /////////////
+
+TauEffVariation::TauEffVariation(Context & ctx){
+
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if(!is_mc){
+    cout << "Warning: TauIdVariation will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
+  auto s_TauEff = ctx.get("TauIdVariation");
+
+  if(s_TauEff == "up") {i_TauEff = 1;}
+  else if(s_TauEff == "down"){i_TauEff = 2;}
+
+}
+bool TauEffVariation::process(Event & event){
+  if (event.isRealData) return true;
+  
+  std::vector<Tau> real_taus;
+  for(unsigned int j=0; j<event.taus->size(); ++j)
+    {
+      bool real = false;
+      Tau tau = event.taus->at(j);
+      for(unsigned int i=0; i<event.genparticles->size(); ++i)
+	{
+	  GenParticle genp = event.genparticles->at(i);
+	  double dr = deltaR(genp,tau);
+	  if (dr < 0.4 && abs(genp.pdgId())==15) real = true;
+	}
+      if(real) real_taus.push_back(tau);
+    }
+  for(unsigned int i=0; i<real_taus.size(); ++i)
+    {
+      Tau realtau = real_taus.at(i);
+      if(i_TauEff==0) {return true;}
+      if (i_TauEff==1)
+	{
+	  event.weight *= 1.06+0.2*realtau.pt()/1000;
+	}
+      if (i_TauEff==2)
+	{
+	  event.weight *= 0.94-0.2*realtau.pt()/1000;
+	}
+    }
+  return true;
+}
+
+TauChargeVariation::TauChargeVariation(Context & ctx){
+
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if(!is_mc){
+    cout << "Warning: TauChargeVariation will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
+  auto s_TauCharge = ctx.get("TauChargeVariation");
+
+  if(s_TauCharge == "up") {i_TauCharge = 1;}
+  else if(s_TauCharge == "down"){i_TauCharge = 2;}
+
+}
+bool TauChargeVariation::process(Event & event){
+  if (event.isRealData) return true;
+  
+  for(unsigned int j=0; j<event.taus->size(); ++j)
+    {
+      Tau tau = event.taus->at(j);
+      for(unsigned int i=0; i<event.genparticles->size(); ++i)
+	{
+	  GenParticle genp = event.genparticles->at(i);
+	  double dr = deltaR(genp,tau);
+	  if (dr < 0.4 && abs(genp.pdgId())==15){
+	    if(tau.charge()!=genp.charge()){
+	      if(i_TauCharge==0) {return true;}
+	      if(i_TauCharge==1){
+		event.weight *= 1.02;
+	      }
+	      if(i_TauCharge==2){
+		event.weight *= 0.98;
+	      }
+	    }
+	  } 
+	}
+    }
+  return true;
+}
+
