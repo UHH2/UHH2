@@ -148,70 +148,72 @@ bool ElectronID_MVAnotrig_Spring15_25ns_loose(const Electron& ele, const uhh2::E
 bool ElectronID_MVAnotrig_Spring15_25ns_tight(const Electron& ele, const uhh2::Event& evt){ return Electron_NonTrigMVAID(ele, evt, "Spring15", "80p_sigeff"); }
 ////
 
-bool ElectronID_HEEP_RunII_25ns(const Electron& ele, const uhh2::Event& evt){ return Electron_HEEP(ele, "RunII_25ns","CMS_WorkPoint_NoIso"); }
-
+bool ElectronID_HEEP_RunII_25ns(const Electron& ele, const uhh2::Event&){ return Electron_HEEP(ele, "RunII_25ns", "CMS_WorkPoint_NoIso"); }
 
 bool Electron_HEEP(const Electron& ele_, const std::string& tuning_, const std::string& wp_){
 
   bool pass(false);
 
   int wp_idx(-1);
-  if     (wp_ == "CMS_WorkPoint_NoIso") wp_idx = 0;
+  if(wp_ == "CMS_WorkPoint_NoIso") wp_idx = 0;
   else throw std::runtime_error("Electron_HEEP -- undefined working-point tag: "+wp_);
 
   const float abs_etaSC(fabs(ele_.supercluster_eta()));
 
-  if     (                     abs_etaSC <= 1.4442) pass = Electron_HEEP(ele_, tuning_, "barrel", wp_idx);
-  else if(1.566 < abs_etaSC && abs_etaSC <  2.5  ) pass = Electron_HEEP(ele_, tuning_, "endcap", wp_idx); 
-  //else if( abs_etaSC <  2.5  ) pass = Electron_HEEP(ele_, tuning_, "endcap", wp_idx); 
-  else {
-    std::cout<<"! Electron_HEEP is not defined for eta_SC = "<<abs_etaSC<<std::endl;
-    return pass = false;
-  }
+  if     (                     abs_etaSC < 1.4442) pass = Electron_HEEP(ele_, tuning_, "barrel", wp_idx);
+  else if(1.566 < abs_etaSC && abs_etaSC < 2.5   ) pass = Electron_HEEP(ele_, tuning_, "endcap", wp_idx); 
+  else                                             pass = false;
+
   return pass;
 }
 
-//bool Electron_HEEP(const Electron& ele_, const uhh2::Event& evt_, const std::string& tuning_, const std::string& eleSC_pos_, const int wp_idx_){
 bool Electron_HEEP(const Electron& ele_, const std::string& tuning_, const std::string& eleSC_pos_, const int wp_idx_){
-  // assert(evt_.pvs);
-  // if(!evt_.pvs->size()) return false;
-  // const auto& pv = (*evt_.pvs)[0];
+
+  const float Et            = ele_.pt();
+  const float dEtaInSeed    = ele_.dEtaInSeed();
+  const float dPhiIn        = ele_.dPhiIn();
+  const float HoverE        = ele_.HoverE();
+  const float sigmaIEtaIEta = ele_.sigmaIEtaIEta();
+  const float E25over55     = ele_.full5x5_e5x5() ? ele_.full5x5_e2x5Max()/ele_.full5x5_e5x5() : -1;
+  const float E15over55     = ele_.full5x5_e5x5() ? ele_.full5x5_e1x5()   /ele_.full5x5_e5x5() : -1;
+  const float misshits      = ele_.gsfTrack_trackerExpectedHitsInner_numberOfLostHits();
+  const float dxy           = fabs(ele_.dxy());
+
+  float HoverE_threshold(-1);
+  if(ele_.energy()){
+
+    HoverE_threshold  = ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("HoverE coef") .at(wp_idx_) * (1./ele_.energy());
+    HoverE_threshold += ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("HoverE const").at(wp_idx_);
+  }
+
+//  /* debugging */
+//  std::cout << std::endl;
+//  std::cout << "Et"            << " = " << Et            << std::endl;
+//  std::cout << "dEtaInSeed"    << " = " << dEtaInSeed    << std::endl;
+//  std::cout << "dPhiIn"        << " = " << dPhiIn        << std::endl;
+//  std::cout << "HoverE"        << " = " << HoverE        << std::endl;
+//  std::cout << "sigmaIEtaIEta" << " = " << sigmaIEtaIEta << std::endl;
+//  std::cout << "E25over55"     << " = " << E25over55     << std::endl;
+//  std::cout << "E15over55"     << " = " << E15over55     << std::endl;
+//  std::cout << "misshits"      << " = " << misshits      << std::endl;
+//  std::cout << "dxy"           << " = " << dxy           << std::endl;
+//  std::cout << std::endl;
+//  /*************/
 
   if(!ele_.isEcalDriven()) return false;
 
-  const float Et = ele_.pt();
-  const float dEtaInSeed = ele_.dEtaInSeed();
-  const float dPhiIn = ele_.dPhiIn();
-  const float HoverE = ele_.HoverE();
-  const float E = ele_.energy();
-  const float sigmaIEtaIEta = ele_.sigmaIEtaIEta();
-  const float E25over55 = ele_.full5x5_e2x5Max()/ele_.full5x5_e5x5();
-  const float E15over55 = ele_.full5x5_e1x5()/ele_.full5x5_e5x5();
-  const float misshits = ele_.gsfTrack_trackerExpectedHitsInner_numberOfLostHits();
-  const float dxy = fabs(ele_.dxy());
-  // std::cout<<" "<<std::endl;
-  // std::cout<<"Et = "<<Et<<std::endl;
-  // std::cout<<"dEtaInSeed = "<<dEtaInSeed<<std::endl;
-  // std::cout<<"dPhiIn = "<<dPhiIn<<std::endl;
-  // std::cout<<"HoverE = "<<HoverE<<" cut at"<<((ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("HoverE coef").at(wp_idx_))/E+ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("HoverE const").at(wp_idx_))<<std::endl;
-  // std::cout<<"sigmaIEtaIEta = "<<sigmaIEtaIEta<<std::endl;
-  // std::cout<<"E25over55 = "<<E25over55<<" E15over55 = "<<E15over55<<std::endl;
-  // std::cout<<"misshits = "<<misshits<<std::endl;
-  // std::cout<<"dxy = "<<dxy<<std::endl;
-  if(!(Et>ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("Et").at(wp_idx_))) return false;
+  if(!( Et               >  ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("Et")           .at(wp_idx_) )) return false;
+  if(!( fabs(dEtaInSeed) <  ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("|dEtaInSeed|") .at(wp_idx_) )) return false;
+  if(!( fabs(dPhiIn)     <  ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("|dPhiIn|")     .at(wp_idx_) )) return false;
+  if(!( sigmaIEtaIEta    <  ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("sigmaIEtaIEta").at(wp_idx_) )) return false;
+  if(!( misshits         <= ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("missingHits")  .at(wp_idx_) )) return false;
+  if(!( fabs(dxy)        <  ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("|dxy|")        .at(wp_idx_) )) return false;
 
-  if(!(dEtaInSeed<ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("|dEtaInSeed|").at(wp_idx_))) return false;
+  if(!( HoverE           < HoverE_threshold )) return false;
 
-  if(!(dPhiIn<ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("|dPhiIn|").at(wp_idx_))) return false;
+  const bool E25over55_pass = (E25over55 > ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("E2x5 over E5x5").at(wp_idx_));
+  const bool E15over55_pass = (E15over55 > ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("E1x5 over E5x5").at(wp_idx_));
+  if(!( E25over55_pass || E15over55_pass )) return false;
 
-  if(!(HoverE<((ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("HoverE coef").at(wp_idx_))/E+ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("HoverE const").at(wp_idx_)))) return false;
-
-  if(!(sigmaIEtaIEta<ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("sigmaIEtaIEta").at(wp_idx_))) return false;
-
-  if(!(E25over55>ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("E2x5 over E5x5").at(wp_idx_) || E15over55>ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("E1x5 over E5x5").at(wp_idx_))) return false;
-  
-  if(!(misshits<=ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("missingHits").at(wp_idx_))) return false;
-  if(!(dxy<ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("|dxy|").at(wp_idx_))) return false;
-  // std::cout<<"!!! HEEP is TRUE!!!"<<std::endl;
   return true;
 }
