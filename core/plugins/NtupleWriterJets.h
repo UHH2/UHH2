@@ -2,8 +2,20 @@
 
 #include "UHH2/core/plugins/NtupleWriterModule.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
-
-
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Framework/interface/ESHandle.h"
+#include "CommonTools/Utils/interface/TMVAEvaluator.h"
+#include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"
+#include "DataFormats/JetReco/interface/JetCollection.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+#include "DataFormats/Candidate/interface/VertexCompositePtrCandidate.h"
+#include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
+#include "TrackingTools/Records/interface/TransientTrackRecord.h"
+#include "TrackingTools/IPTools/interface/IPTools.h"
+#include "fastjet/PseudoJet.hh"
+#include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
 class GenericMVAJetTagComputer;
 
 namespace uhh2 {
@@ -15,7 +27,7 @@ public:
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member);
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&);
 
-    virtual void process(const edm::Event &, uhh2::Event &);
+    virtual void process(const edm::Event &, uhh2::Event &,  const edm::EventSetup&);
 
     virtual ~NtupleWriterJets();
 private:
@@ -56,11 +68,41 @@ public:
     explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member);
     explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&);
 
-    virtual void process(const edm::Event &, uhh2::Event &);
+    virtual void process(const edm::Event &, uhh2::Event &,  const edm::EventSetup&);
 
     virtual ~NtupleWriterTopJets();
 
 private:
+    //Higgs tagger commissioning
+    bool trackPairV0Filter(const reco::Track *const *tracks, unsigned int n);
+    void recalcNsubjettiness(const reco::JetBaseRef & jet, float & tau1, float & tau2, std::vector<fastjet::PseudoJet> & currentAxes);
+    void setTracksPVBase(const reco::TrackRef & trackRef, const reco::VertexRef & vertexRef, float & PVweight);
+    void setTracksPV(const reco::CandidatePtr & trackRef, const reco::VertexRef & vertexRef, float & PVweight);
+    void etaRelToTauAxis(const reco::VertexCompositePtrCandidate & vertex, fastjet::PseudoJet & tauAxis, std::vector<float> & tau_trackEtaRel); 
+    void vertexKinematics(const reco::VertexCompositePtrCandidate & vertex, reco::TrackKinematics & vertexKinematics);
+    const double beta_=1.0;
+    const double R0_=0.8;
+
+    const double maxSVDeltaRToJet_=0.7;
+    const double maxDistToAxis_=0.07;
+    const double maxDecayLen_=5;
+
+    edm::ESHandle<TransientTrackBuilder> trackBuilder;
+
+    // static variables
+    static constexpr float dummyZ_ratio             = -3.0f;
+    static constexpr float dummyTrackSip3dSig       = -50.0f;
+    static constexpr float dummyTrackSip2dSigAbove  = -19.0f;
+    static constexpr float dummyTrackEtaRel         = -1.0f;
+    static constexpr float dummyVertexMass          = -1.0f;
+    static constexpr float dummyVertexEnergyRatio   = -1.0f;
+    static constexpr float dummyVertexDeltaR        = -1.0f;
+    static constexpr float dummyFlightDistance2dSig = -1.0f;
+
+    static constexpr float charmThreshold  = 1.5f;
+    static constexpr float bottomThreshold = 5.2f;
+
+    //end Higgs tagger commissioning
     edm::InputTag src;
     float ptmin, etamax;
     bool do_btagging, do_btagging_subjets, do_taginfo_subjets;

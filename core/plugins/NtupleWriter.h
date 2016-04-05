@@ -14,7 +14,6 @@
 
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
-
 #include "TTree.h"
 
 #include <memory>
@@ -114,8 +113,8 @@ class NtupleWriter : public edm::EDFilter {
       std::vector<std::vector<FlavorParticle> > triggerObjects_out;
       std::vector<std::string> triggerObjects_sources;
 
-   std::vector<bool> puppi;
-};
+      std::vector<bool> puppi;
 
+};
 
 #endif

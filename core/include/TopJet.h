@@ -14,6 +14,33 @@ public:
       massRatioPassed,
       RoptCalc,
       ptForRoptCalc,
+      z_ratio,
+      trackSipdSig_3,
+      trackSipdSig_2,
+      trackSipdSig_1,
+      trackSipdSig_0,
+      trackSipdSig_1_0,
+      trackSipdSig_0_0,
+      trackSipdSig_1_1,
+      trackSipdSig_0_1,
+      trackSip2dSigAboveCharm_0,
+      trackSip2dSigAboveBottom_0,
+      trackSip2dSigAboveBottom_1,
+      tau1_trackEtaRel_0,
+      tau1_trackEtaRel_1,
+      tau1_trackEtaRel_2,
+      tau0_trackEtaRel_0,
+      tau0_trackEtaRel_1,
+      tau0_trackEtaRel_2,
+      tau_vertexMass_0,
+      tau_vertexEnergyRatio_0,
+      tau_vertexDeltaR_0,
+      tau_flightDistance2dSig_0,
+      tau_vertexMass_1,
+      tau_vertexEnergyRatio_1,
+      tau_flightDistance2dSig_1,
+      jetNTracks,
+      nSV
     };
    
    static tag tagname2tag(const std::string & tagname){
@@ -23,11 +50,36 @@ public:
       if(tagname == "RoptCalc") return RoptCalc;
       if(tagname == "ptForRoptCalc") return ptForRoptCalc;
       if(tagname == "massRatioPassed") return massRatioPassed;
+      if(tagname == "z_ratio") return z_ratio;
+      if(tagname == "trackSipdSig_3") return trackSipdSig_3;
+      if(tagname == "trackSipdSig_2") return trackSipdSig_2;
+      if(tagname == "trackSipdSig_1") return trackSipdSig_1;
+      if(tagname == "trackSipdSig_0") return trackSipdSig_0;
+      if(tagname == "trackSipdSig_1_0") return trackSipdSig_1_0;
+      if(tagname == "trackSipdSig_0_0") return trackSipdSig_0_0;
+      if(tagname == "trackSipdSig_1_1") return trackSipdSig_1_1;
+      if(tagname == "trackSipdSig_0_1") return trackSipdSig_0_1;
+      if(tagname == "trackSip2dSigAboveCharm_0") return trackSip2dSigAboveCharm_0;
+      if(tagname == "trackSip2dSigAboveBottom_0") return trackSip2dSigAboveBottom_0;
+      if(tagname == "trackSip2dSigAboveBottom_1") return trackSip2dSigAboveBottom_1;
+      if(tagname == "tau1_trackEtaRel_0") return tau1_trackEtaRel_0;
+      if(tagname == "tau1_trackEtaRel_1") return tau1_trackEtaRel_1;
+      if(tagname == "tau1_trackEtaRel_2") return tau1_trackEtaRel_2;
+      if(tagname == "tau0_trackEtaRel_0") return tau0_trackEtaRel_0;
+      if(tagname == "tau0_trackEtaRel_1") return tau0_trackEtaRel_1;
+      if(tagname == "tau0_trackEtaRel_2") return tau0_trackEtaRel_2;
+      if(tagname == "tau_vertexMass_0") return tau_vertexMass_0;
+      if(tagname == "tau_vertexEnergyRatio_0") return tau_vertexEnergyRatio_0;
+      if(tagname == "tau_vertexDeltaR_0") return tau_vertexDeltaR_0;
+      if(tagname == "tau_flightDistance2dSig_0") return tau_flightDistance2dSig_0;
+      if(tagname == "tau_vertexMass_1") return tau_vertexMass_1;
+      if(tagname == "tau_vertexEnergyRatio_1") return tau_vertexEnergyRatio_1;
+      if(tagname == "tau_flightDistance2dSig_1") return tau_flightDistance2dSig_1;
+      if(tagname == "jetNTracks") return jetNTracks;
+      if(tagname == "nSV") return nSV;
       throw std::runtime_error("unknown tag '" + tagname + "'");
    }
 
-   
-  
   TopJet(){
       m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_mvahiggsdiscr = m_prunedmass = m_softdropmass = -1.0f;
   }

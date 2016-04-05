@@ -20,7 +20,7 @@ NtupleWriterElectrons::NtupleWriterElectrons(Config & cfg, bool set_electrons_me
 
 NtupleWriterElectrons::~NtupleWriterElectrons(){}
 
-void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & uevent){
+void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & uevent, const edm::EventSetup& iSetup){
     edm::Handle< std::vector<pat::Electron> > ele_handle;
     event.getByToken(src_token, ele_handle);
 
@@ -142,7 +142,7 @@ NtupleWriterMuons::NtupleWriterMuons(Config & cfg, bool set_muons_member, const 
 
 NtupleWriterMuons::~NtupleWriterMuons(){}
 
-void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent){
+void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent,  const edm::EventSetup& iSetup){
    edm::Handle<std::vector<pat::Muon>> mu_handle;
    event.getByToken(src_token, mu_handle);
 
@@ -248,7 +248,7 @@ NtupleWriterTaus::NtupleWriterTaus(Config & cfg, bool set_taus_member){
 
 NtupleWriterTaus::~NtupleWriterTaus(){}
 
-void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent){
+void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent,  const edm::EventSetup& iSetup){
     edm::Handle< std::vector<pat::Tau> > tau_handle;
     event.getByToken(src_token, tau_handle);
     std::vector<Tau> taus;

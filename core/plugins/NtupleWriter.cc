@@ -523,6 +523,7 @@ namespace {
 
 // ------------ method called for each event  ------------
 bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
+
    edm::CPUTimer timer;
    timer.start();
    
@@ -818,12 +819,12 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    print_times(timer, "genjetswithparts");
    
    for(auto & m : writer_modules){
-       m->process(iEvent, *event);
+       m->process(iEvent, *event, iSetup);
    }
-   
 
    // ------------- generator top jets -------------
    if(doGenTopJets){
+
      for(size_t j=0; j< gentopjet_tokens.size(); ++j){
        gentopjets[j].clear();
        edm::Handle<reco::BasicJetCollection> reco_gentopjets;
@@ -1050,6 +1051,7 @@ void NtupleWriter::endJob(){
 
 
 void NtupleWriter::beginRun(edm::Run const& iRun, edm::EventSetup const&  iSetup){
+
   if(doTrigger){
     //bool setup_changed = false;
     //hlt_cfg.init(iRun, iSetup, "HLT", setup_changed);

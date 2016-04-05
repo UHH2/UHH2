@@ -24,6 +24,16 @@
 <use  name="JetMETCorrections/Objects"/>
 <use  name="RecoEgamma/EgammaTools"/>
 <use  name="RecoBTau/JetTagComputer"/> -->
+<use name="RecoVertex/VertexTools"/>
+<use name="TrackingTools/TransientTrack"/>
+<use name="CommonTools/UtilAlgos"/>
+<use name="TrackingTools/IPTools"/>
+<use name="TrackingTools/Records"/>
+<use name="DataFormats/TrackReco"/>
+<use name="DataFormats/VertexReco"/>
+<use name="DataFormats/BTauReco"/>
+<use name="RecoBTag/SecondaryVertex"/> 
 <use  name="fastjet"/>
+<use name="fastjet-contrib"/>
 <use  name="UHH2/core"/>
 <Flags CXXFLAGS="-g" LDFLAGS="-g" />

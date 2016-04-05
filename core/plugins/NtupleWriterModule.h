@@ -44,7 +44,8 @@ public:
     };
 
     // transfer content from the edm event to the uhh2 event:
-    virtual void process(const edm::Event &, uhh2::Event &) = 0;
+    //virtual void process(const edm::Event &, uhh2::Event &) = 0;
+    virtual void process(const edm::Event &, uhh2::Event &,const edm::EventSetup&) = 0;
     virtual ~NtupleWriterModule();
 };
 

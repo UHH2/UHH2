@@ -337,6 +337,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
             genJetCollection = cms.InputTag(ungroomed_genjets_name),
             **common_btag_parameters
         )
+        getattr(process,"patJets" + cap(fatjets_name)).addTagInfos = True
     
     # patify groomed fat jets, with b-tagging:
     if verbose: print "adding grommed jets patJets" + cap(groomed_jets_name)

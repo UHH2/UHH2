@@ -20,7 +20,7 @@ public:
 
     explicit NtupleWriterElectrons(Config & cfg, bool set_electrons_member, const bool save_source_cands=0);
 
-    virtual void process(const edm::Event &, uhh2::Event &);
+    virtual void process(const edm::Event &, uhh2::Event &, const edm::EventSetup& iSetup);
 
     virtual ~NtupleWriterElectrons();
 private:
@@ -47,7 +47,7 @@ public:
 
     explicit NtupleWriterMuons(Config & cfg, bool set_muons_member, const bool save_source_cands=0);
 
-    virtual void process(const edm::Event &, uhh2::Event &);
+    virtual void process(const edm::Event &, uhh2::Event &, const edm::EventSetup& iSetup);
 
     virtual ~NtupleWriterMuons();
 private:
@@ -64,7 +64,7 @@ public:
 
     explicit NtupleWriterTaus(Config & cfg, bool set_taus_member);
 
-    virtual void process(const edm::Event &, uhh2::Event &);
+    virtual void process(const edm::Event &, uhh2::Event &, const edm::EventSetup& iSetup);
 
     virtual ~NtupleWriterTaus();
 private:
