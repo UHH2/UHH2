@@ -27,7 +27,6 @@ class Jet : public FlavorParticle {
     m_electronMultiplicity = 0;
     m_photonMultiplicity = 0;
     m_btag_simpleSecondaryVertexHighEff = 0;
-    m_btag_simpleSecondaryVertexHighPur = 0;
     m_btag_combinedSecondaryVertex = 0;
     m_btag_combinedSecondaryVertexMVA = 0;
     m_btag_jetBProbability = 0;
@@ -55,7 +54,6 @@ class Jet : public FlavorParticle {
   int electronMultiplicity() const{return m_electronMultiplicity;}
   int photonMultiplicity() const{return m_photonMultiplicity;}
   float btag_simpleSecondaryVertexHighEff() const{return m_btag_simpleSecondaryVertexHighEff;}
-  float btag_simpleSecondaryVertexHighPur() const{return m_btag_simpleSecondaryVertexHighPur;}
   float btag_combinedSecondaryVertex() const{return m_btag_combinedSecondaryVertex;} // combinedInclusiveSecondaryVertexV2BJetTags
   float btag_combinedSecondaryVertexMVA() const{return m_btag_combinedSecondaryVertexMVA;}
   float btag_jetBProbability() const{return m_btag_jetBProbability;}
@@ -83,7 +81,6 @@ class Jet : public FlavorParticle {
   void set_electronMultiplicity(int x){m_electronMultiplicity=x;}
   void set_photonMultiplicity(int x){m_photonMultiplicity=x;}
   void set_btag_simpleSecondaryVertexHighEff(float x){m_btag_simpleSecondaryVertexHighEff=x;}
-  void set_btag_simpleSecondaryVertexHighPur(float x){m_btag_simpleSecondaryVertexHighPur=x;}
   void set_btag_combinedSecondaryVertex(float x){m_btag_combinedSecondaryVertex=x;} // for 72, this is combinedInclusiveSecondaryVertexV2BJetTags
   void set_btag_combinedSecondaryVertexMVA(float x){m_btag_combinedSecondaryVertexMVA=x;}
   void set_btag_jetBProbability(float x){m_btag_jetBProbability=x;}
@@ -114,7 +111,6 @@ class Jet : public FlavorParticle {
   int m_electronMultiplicity;
   int m_photonMultiplicity;
   float m_btag_simpleSecondaryVertexHighEff;
-  float m_btag_simpleSecondaryVertexHighPur;
   float m_btag_combinedSecondaryVertex;
   float m_btag_combinedSecondaryVertexMVA;
   float m_btag_jetBProbability;

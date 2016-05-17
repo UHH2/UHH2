@@ -199,7 +199,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
-  doTrigHTEmu = iConfig.getParameter<bool>("doTrigHTEmu");
+  //doTrigHTEmu = iConfig.getParameter<bool>("doTrigHTEmu");
   
   auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 
@@ -993,6 +993,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        }
        
        //PFHT800 emulation
+       /*
        if(doTrigHTEmu && k==0){
 	 if(newrun){
 	   triggerNames_outbranch.push_back("HLT_PFHT800Emu_v1");
@@ -1015,6 +1016,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 if (!found) {triggerResults.push_back(false);}
       
        }//end PFHT800 emulation
+       */
      }
      if(newrun){
          event->set_triggernames(triggerNames_outbranch);
