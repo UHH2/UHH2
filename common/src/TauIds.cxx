@@ -4,7 +4,7 @@ using namespace uhh2;
 
 bool TauIDMedium::operator()(const Tau & tau, const Event & event) const {
     if(!tau.get_bool(Tau::decayModeFindingNewDMs)) return false;
-    if(!tau.get_bool(Tau::againstElectronMediumMVA5)) return false;
+    if(!tau.get_bool(Tau::againstElectronMediumMVA6)) return false;
     if(!tau.get_bool(Tau::againstMuonTight3)) return false;
     if(!tau.get_bool(Tau::byMediumCombinedIsolationDeltaBetaCorr3Hits)) return false;
     if(event.muons){
@@ -17,7 +17,7 @@ bool TauIDMedium::operator()(const Tau & tau, const Event & event) const {
 
 bool TauIDMediumInverted::operator()(const Tau & tau, const Event & event) const {
     if(!tau.get_bool(Tau::decayModeFindingNewDMs)) return false;
-    if(!tau.get_bool(Tau::againstElectronMediumMVA5)) return false;
+    if(!tau.get_bool(Tau::againstElectronMediumMVA6)) return false;
     if(!tau.get_bool(Tau::againstMuonTight3)) return false;
     if(tau.get_bool(Tau::byMediumCombinedIsolationDeltaBetaCorr3Hits)) return false;
     if(event.muons){
@@ -36,7 +36,7 @@ bool TauIDDecayModeFinding::operator()(const Tau & tau, const Event &) const {
 
 bool TauIDTight::operator()(const Tau & tau, const Event & event) const {
     if(!tau.get_bool(Tau::decayModeFindingNewDMs)) return false;
-    if(!tau.get_bool(Tau::againstElectronMediumMVA5)) return false;
+    if(!tau.get_bool(Tau::againstElectronMediumMVA6)) return false;
     if(!tau.get_bool(Tau::againstMuonTight3)) return false;
     if(!tau.get_bool(Tau::byTightCombinedIsolationDeltaBetaCorr3Hits)) return false;
     if(event.muons){

@@ -268,29 +268,24 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent,  
          // used in the same as the string used for the pat tauID.
          #define FILL_TAU_BIT(tauidname) tau.set_bool(Tau:: tauidname, pat_tau.tauID(#tauidname) > 0.5)
         
-         FILL_TAU_BIT(againstElectronVLooseMVA5);
-         FILL_TAU_BIT(againstElectronLooseMVA5);
-         FILL_TAU_BIT(againstElectronMediumMVA5);
-         FILL_TAU_BIT(againstElectronTightMVA5);
-         FILL_TAU_BIT(againstElectronVTightMVA5);
+         FILL_TAU_BIT(againstElectronVLooseMVA6);
+         FILL_TAU_BIT(againstElectronLooseMVA6);
+         FILL_TAU_BIT(againstElectronMediumMVA6);
+         FILL_TAU_BIT(againstElectronTightMVA6);
+         FILL_TAU_BIT(againstElectronVTightMVA6);
          FILL_TAU_BIT(againstMuonLoose3);
          FILL_TAU_BIT(againstMuonTight3);
          FILL_TAU_BIT(byLooseCombinedIsolationDeltaBetaCorr3Hits);
          FILL_TAU_BIT(byMediumCombinedIsolationDeltaBetaCorr3Hits);
          FILL_TAU_BIT(byTightCombinedIsolationDeltaBetaCorr3Hits);
 	 // MVA based isolation discriminators not yet recommended for RunII (need to be retrained)
-         //FILL_TAU_BIT(byVLooseIsolationMVA3newDMwoLT);
-         //FILL_TAU_BIT(byLooseIsolationMVA3newDMwoLT);
-         //FILL_TAU_BIT(byMediumIsolationMVA3newDMwoLT);
-         //FILL_TAU_BIT(byTightIsolationMVA3newDMwoLT);
-         //FILL_TAU_BIT(byVTightIsolationMVA3newDMwoLT);
-         //FILL_TAU_BIT(byVVTightIsolationMVA3newDMwoLT);
-         FILL_TAU_BIT(byVLooseIsolationMVA3newDMwLT);
-         FILL_TAU_BIT(byLooseIsolationMVA3newDMwLT);
-         FILL_TAU_BIT(byMediumIsolationMVA3newDMwLT);
-         FILL_TAU_BIT(byTightIsolationMVA3newDMwLT);
-         FILL_TAU_BIT(byVTightIsolationMVA3newDMwLT);
-         FILL_TAU_BIT(byVVTightIsolationMVA3newDMwLT);
+	 FILL_TAU_BIT(byVLooseIsolationMVArun2v1DBnewDMwLT);
+         FILL_TAU_BIT(byLooseIsolationMVArun2v1DBnewDMwLT);
+         FILL_TAU_BIT(byMediumIsolationMVArun2v1DBnewDMwLT);
+         FILL_TAU_BIT(byTightIsolationMVArun2v1DBnewDMwLT);
+         FILL_TAU_BIT(byVTightIsolationMVArun2v1DBnewDMwLT);
+         FILL_TAU_BIT(byVVTightIsolationMVArun2v1DBnewDMwLT);
+	 
 	 FILL_TAU_BIT(decayModeFinding); 
          FILL_TAU_BIT(decayModeFindingNewDMs);
 
@@ -299,16 +294,16 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent,  
          #define FILL_TAU_FLOAT(name) tau.set_##name (pat_tau.tauID(#name))
          
          FILL_TAU_FLOAT(byCombinedIsolationDeltaBetaCorrRaw3Hits);
-         FILL_TAU_FLOAT(byIsolationMVA3newDMwLTraw);
+         FILL_TAU_FLOAT(byIsolationMVArun2v1DBnewDMwLTraw);
          FILL_TAU_FLOAT(chargedIsoPtSum);
          FILL_TAU_FLOAT(neutralIsoPtSum);
          FILL_TAU_FLOAT(puCorrPtSum);
 
 	 // note: only available with dynamic strip reconstruction (included by default from CMSSW_7_4_14)
-	 FILL_TAU_BIT(byLoosePileupWeightedIsolation3Hits);
-	 FILL_TAU_BIT(byMediumPileupWeightedIsolation3Hits);
-	 FILL_TAU_BIT(byTightPileupWeightedIsolation3Hits);
-	 FILL_TAU_FLOAT(byPileupWeightedIsolationRaw3Hits);
+	 // FILL_TAU_BIT(byLoosePileupWeightedIsolation3Hits);
+	 // FILL_TAU_BIT(byMediumPileupWeightedIsolation3Hits);
+	 // FILL_TAU_BIT(byTightPileupWeightedIsolation3Hits);
+	 // FILL_TAU_FLOAT(byPileupWeightedIsolationRaw3Hits);
 	 FILL_TAU_FLOAT(neutralIsoPtSumWeight);
 	 FILL_TAU_FLOAT(footprintCorrection);
 	 FILL_TAU_FLOAT(photonPtSumOutsideSignalCone);
