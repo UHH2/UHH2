@@ -58,6 +58,7 @@ class NtupleWriter : public edm::EDFilter {
       bool runOnMiniAOD;
       bool doRho;
       bool doTrigHTEmu;
+      bool doAllPFParticles;
 
       // in order of initialization:
       std::unique_ptr<uhh2::GenericEventStructure> ges;
@@ -77,7 +78,7 @@ class NtupleWriter : public edm::EDFilter {
       double genjet_ptmin;
       double genjet_etamax;
 
-      std::vector<std::string> pf_constituents_sources;
+      edm::EDGetToken pf_collection_token;
 
       std::vector<edm::EDGetToken> gentopjet_tokens;
       std::vector<std::vector<GenTopJet>> gentopjets;
