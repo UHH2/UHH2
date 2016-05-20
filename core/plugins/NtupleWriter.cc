@@ -194,6 +194,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doMET = iConfig.getParameter<bool>("doMET");
   doGenInfo = iConfig.getParameter<bool>("doGenInfo");
   doAllGenParticles = iConfig.getParameter<bool>("doAllGenParticles");
+  doAllPFParticles = iConfig.getParameter<bool>("doAllPFParticles");
 
   // topjet configuration:
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
@@ -501,6 +502,13 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
 
   }
+  if(doAllPFParticles){
+    event->pfparticles = new vector<PFParticle>;
+    pf_collection_token = consumes<vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("pf_collection_source"));
+    branch(tr, "PFParticles", "std::vector<PFParticle>", &event->pfparticles);
+  }
+  
+
   newrun = true;
 }
 
@@ -887,7 +895,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    // ------------- MET -------------
    if(doMET){
       for(size_t j=0; j< met_tokens.size(); ++j){
-         edm::Handle< std::vector<pat::MET> > met_handle;
+	edm::Handle< std::vector<pat::MET> > met_handle;
        iEvent.getByToken(met_tokens[j], met_handle);
        const std::vector<pat::MET>& pat_mets = *met_handle;
        if(pat_mets.size()!=1){
@@ -930,6 +938,45 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    }
    
    print_times(timer, "met");
+
+   // ------------- PF constituents --------------
+
+   if(doAllPFParticles){
+     event->pfparticles->clear();
+     edm::Handle<vector<pat::PackedCandidate> > pfColl_handle;
+     iEvent.getByToken(pf_collection_token, pfColl_handle);
+
+     const std::vector<pat::PackedCandidate>& pf_coll = *(pfColl_handle.product()); 
+
+     for ( unsigned int j = 0; j<pf_coll.size(); ++j){
+       const pat::PackedCandidate pf = pf_coll.at(j);
+       
+       PFParticle part;
+       part.set_pt(pf.pt());
+       part.set_eta(pf.eta());
+       part.set_phi(pf.phi());
+       part.set_energy(pf.energy());
+       part.set_charge(pf.charge());
+       part.set_puppiWeight(pf.puppiWeight());
+       part.set_puppiWeightNoLep(pf.puppiWeightNoLep());
+       PFParticle::EParticleID id = PFParticle::eX;
+       reco::PFCandidate reco_pf;
+       switch ( reco_pf.translatePdgIdToType(pf.pdgId()) ){
+       case reco::PFCandidate::X : id = PFParticle::eX; break;
+       case reco::PFCandidate::h : id = PFParticle::eH; break;
+       case reco::PFCandidate::e : id = PFParticle::eE; break;
+       case reco::PFCandidate::mu : id = PFParticle::eMu; break;
+       case reco::PFCandidate::gamma : id = PFParticle::eGamma; break;
+       case reco::PFCandidate::h0 : id = PFParticle::eH0; break;
+       case reco::PFCandidate::h_HF : id = PFParticle::eH_HF; break;
+       case reco::PFCandidate::egamma_HF : id = PFParticle::eEgamma_HF; break;
+       }
+       part.set_particleID(id);
+ 
+       event->pfparticles->push_back(part);
+     }
+
+   }
   
    // ------------- trigger -------------
 
@@ -1086,7 +1133,7 @@ void NtupleWriter::fillDescriptions(edm::ConfigurationDescriptions& descriptions
 
 void NtupleWriter::fill_genparticles_jet(const reco::GenJet& reco_genjet, GenJetWithParts& genjet)
 {
-  // loop over all jet consituents, fill into gen_particle collection
+  // loop over all jet constituents, fill into gen_particle collection
 	 
   std::vector<const reco::GenParticle*> jetgenps = reco_genjet.getGenConstituents();
   for(unsigned int l = 0; l<jetgenps.size(); ++l){

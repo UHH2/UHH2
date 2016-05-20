@@ -14,6 +14,7 @@
 #include "UHH2/core/include/GenTopJet.h"
 #include "UHH2/core/include/GenInfo.h"
 #include "UHH2/core/include/GenParticle.h"
+#include "UHH2/core/include/PFParticle.h"
 #include "UHH2/core/include/source_candidate.h"
 
 #include <vector>
@@ -51,6 +52,8 @@ namespace {
     GenInfo genInfo;
     GenParticle genp;
     std::vector<GenParticle> genps;
+    PFParticle pfp;
+    std::vector<PFParticle> pfps;
     source_candidate sc;
     std::vector<source_candidate> scs;
   }
