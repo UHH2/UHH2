@@ -39,6 +39,8 @@
 #pragma link C++ class GenInfo+;
 #pragma link C++ class GenParticle+;
 #pragma link C++ class std::vector<GenParticle>+;
+#pragma link C++ class PFParticle+;
+#pragma link C++ class std::vector<PFParticle>+;
 #pragma link C++ class source_candidate+;
 #pragma link C++ class std::vector<source_candidate>+;
 

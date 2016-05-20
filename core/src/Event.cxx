@@ -18,6 +18,7 @@ void Event::clear(){
     gentopjets = 0;
     genparticles = 0;
     genjets = 0;
+    pfparticles = 0;
     met = 0;
     genInfo = 0;
     triggerResults = 0;
