@@ -31,6 +31,8 @@
 <class name="GenInfo"/>
 <class name="GenParticle"/>
 <class name="std::vector<GenParticle>"/>
+<class name="PFParticle"/>
+<class name="std::vector<PFParticle>"/>
 <class name="source_candidate"/>
 <class name="std::vector<source_candidate>"/>
 </lcgdict>
