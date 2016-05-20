@@ -704,6 +704,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         gentopjet_etamax = cms.double(5.0),
         
         doGenJetsWithParts = cms.bool(False),
+        doAllPFParticles = cms.bool(False),
+        pf_collection_source = cms.InputTag("packedPFCandidates"),
 )
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
