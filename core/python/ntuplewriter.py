@@ -44,7 +44,7 @@ process.source = cms.Source("PoolSource",
   skipEvents = cms.untracked.uint32(0)
 )
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -674,8 +674,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         higgstag_sources = cms.vstring("patJetsAk8CHSJets","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets"),
         higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags"),                   
         #Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
-        topjet_njettiness_sources = cms.vstring("NjettinessAk8CHS","NjettinessAk8CHS","NjettinessCa15SoftDropPuppi","NjettinessCa15CHS","NjettinessCa15SoftDropCHS","NjettinessCa15Puppi"),
-        topjet_substructure_variables_sources = cms.vstring("ak8CHSJets","ak8CHSJets","ca15PuppiJetsSoftDropforsub","ca15CHSJets","ca15CHSJetsSoftDropforsub", "ca15PuppiJets"),
+        topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessCa15SoftDropPuppi","NjettinessCa15CHS","NjettinessCa15SoftDropCHS","NjettinessCa15Puppi"),
+        topjet_substructure_variables_sources = cms.vstring("","ak8CHSJets","ca15PuppiJetsSoftDropforsub","ca15CHSJets","ca15CHSJetsSoftDropforsub", "ca15PuppiJets"),
         #Note: for slimmedJetsAK8 on miniAOD, the pruned mass is available as user flot, with label ak8PFJetsCHSPrunedMass.
         #Alternatively it is possible to specify another pruned jet collection (to be produced here), from which to get it by jet-matching.
         #Finally, it is also possible to leave the pruned mass empty with ""
@@ -725,7 +725,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         
         # *** gen stuff:
         doGenInfo = cms.bool(not useData),
-        genparticle_source = cms.InputTag("prunedGenParticles"),
+        genparticle_source = cms.InputTag("prunedPrunedGenParticles"),
         stablegenparticle_source = cms.InputTag("packedGenParticles"),
         doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
         doGenJets = cms.bool(not useData),
