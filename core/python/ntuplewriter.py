@@ -6,6 +6,7 @@ use25ns = True #switch this flag to False when running on 50ns samples
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
+#fatjet_ptmin = 10.0 #TEST
 
 bTagDiscriminators = [
     'pfJetProbabilityBJetTags',
@@ -32,16 +33,18 @@ process = cms.Process("USER")
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
+#process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-            '/store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1mpiOFF_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/323B1524-8B09-E611-9D5D-00266CFCC9F8.root' #MC test file
+           # '/store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1mpiOFF_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/323B1524-8B09-E611-9D5D-00266CFCC9F8.root' #MC test file
+            '/store/mc/RunIISpring16MiniAODv1/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/MINIAODSIM/PUFlat0to50_magnetOn_80X_mcRun2_asymptotic_2016_v3-v1/20000/0059094A-B5F2-E511-AD70-008CFA166014.root'
            # 'file:/nfs/dust/cms/user/peiffer/98CCBD01-0517-E611-A464-02163E011F40.root', #Data test file
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -66,8 +69,10 @@ process.out = cms.OutputModule("PoolOutputModule",
 
 process.out.outputCommands.extend([
     'keep *_patJetsAk8CHS*_*_*',
+    'keep *_patJetsAk8Puppi*_*_*',
     'keep *_patJetsCa15CHS*_*_*',
     'keep *_NjettinessAk8CHS_*_*',
+    'keep *_NjettinessAk8Puppi_*_*',
     'keep *_NjettinessCa15CHS_*_*',
     'keep *_NjettinessCa15SoftDropCHS_*_*',
     "keep *_patJetsCmsTopTagCHSPacked_*_*",
@@ -76,6 +81,8 @@ process.out.outputCommands.extend([
     "keep *_patJetsHepTopTagCHSSubjets_*_*",
     "keep *_patJetsAk8CHSJetsSoftDropPacked_*_*",
     "keep *_patJetsAk8CHSJetsSoftDropSubjets_*_*",
+    "keep *_patJetsAk8PuppiJetsSoftDropPacked_*_*",
+    "keep *_patJetsAk8PuppiJetsSoftDropSubjets_*_*",
     "keep *_patJetsCa15CHSJetsSoftDropPacked_*_*",
     "keep *_patJetsCa15CHSJetsSoftDropSubjets_*_*",
     "keep *_patJetsAk8CHSJetsPrunedPacked_*_*",
@@ -142,7 +149,7 @@ process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
 process.chs = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string("fromPV"))
 
 process.ca8CHSJets  = ca8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = fatjet_ptmin)
-process.ak8CHSJets  = ak8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = fatjet_ptmin)
+process.ak8CHSJets  = ak8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = 10.)
 process.ca15CHSJets = process.ca8CHSJets.clone (rParam = 1.5)
 
 from RecoJets.JetProducers.ak4PFJetsPruned_cfi import ak4PFJetsPruned
@@ -215,6 +222,8 @@ process.hepTopTagCHS = cms.EDProducer(
 #process.ak8PFCHS =process.ak4PFCHS.clone(rParam = 0.8)
 
 
+
+
 #################################################
 ### Softdrop
 
@@ -227,6 +236,7 @@ from RecoJets.JetProducers.ak4PFJetsPruned_cfi import ak4PFJetsPruned
 #Note low pt threshold as jets currently not stored but used just to derived pruned mass
 process.ak8CHSJetsPruned = ak4PFJetsPruned.clone(rParam = 0.8, doAreaFastjet = True, src = 'chs', jetPtMin = 70)
 process.ca15CHSJetsPruned = ak4PFJetsPruned.clone(rParam = 1.5, jetAlgorithm = "CambridgeAachen", doAreaFastjet = True, src = 'chs', jetPtMin = 70)
+
 ###############################################
 # PUPPI JETS
 process.load('CommonTools/PileupAlgos/Puppi_cff')
@@ -240,6 +250,8 @@ process.ca15PuppiJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('p
 process.ca15PuppiJetsSoftDropforsub = process.ca8CHSJets.clone (rParam = 1.5, jetPtMin = fatjet_ptmin, zcut = cms.double(0.2), beta = cms.double(1.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(1.5), src = cms.InputTag('puppi'))
 
 process.ca15PuppiJets = process.ca8CHSJets.clone (rParam = 1.5, src='puppi')
+
+process.ak8PuppiJets  = ak8PFJets.clone (src = 'puppi', doAreaFastjet = True, jetPtMin = 10.)
 
 # copy all the jet collections above; just use 'puppi' instead of 'chs' as input:
 for name in ['ca8CHSJets', 'ca15CHSJets', 'ca8CHSJetsPruned', 'ca15CHSJetsFiltered', 'cmsTopTagCHS', 'hepTopTagCHS']:
@@ -255,6 +267,7 @@ for name in ['ca8CHSJets', 'ca15CHSJets', 'ca8CHSJetsPruned', 'ca15CHSJetsFilter
 def cap(s): return s[0].upper() + s[1:]
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
+
 #process.load('PhysicsTools.PatAlgos.slimming.unpackedTracksAndVertices_cfi')
 
 # common parameters for the addJetCollection function, see below.
@@ -448,6 +461,27 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 )
 """
 
+
+# for JEC cluster AK8 jets with lower pt (compare to miniAOD)
+addJetCollection(process,labelName = 'AK8PFPUPPI', jetSource = cms.InputTag('ak8PuppiJets'), algo = 'AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),pfCandidates = cms.InputTag('packedPFCandidates'),
+    pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
+    svSource = cms.InputTag('slimmedSecondaryVertices'),
+    muSource =cms.InputTag( 'slimmedMuons'),
+    elSource = cms.InputTag('slimmedElectrons')
+)
+addJetCollection(process,labelName = 'AK8PFCHS', jetSource = cms.InputTag('ak8CHSJets'), algo = 'AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),pfCandidates = cms.InputTag('packedPFCandidates'),
+    pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
+    svSource = cms.InputTag('slimmedSecondaryVertices'),
+    muSource =cms.InputTag( 'slimmedMuons'),
+    elSource = cms.InputTag('slimmedElectrons')
+)
+#addJetCollection(process,labelName = 'AK8PFPUPPI', jetSource = cms.InputTag('ak8PuppiJets'), algo = 'AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections = None)
+#                  **common_btag_parameters
+#) 
+
+# #setattr(process, ungroomed_genjets_name, ungroomed_jetproducer.clone(src = cms.InputTag('packedGenParticlesForJetsNoNu'), jetType = 'GenJet'))
+# #getattr(process,'patJetsAK8PFPuppi').addTagInfos = cms.bool(True)
+
 ### LEPTON cfg
 
 # collections for lepton PF-isolation deposits
@@ -615,14 +649,15 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         
         doJets = cms.bool(True),
         #jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
-        jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi"),
+#        jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi"),
+        jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi","patJetsAK8PFPUPPI","patJetsAK8PFCHS"),
         jet_ptmin = cms.double(10.0),
         jet_etamax = cms.double(999.0),
         
         doMET = cms.bool(True),
         met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi"),
         
-        
+       
         doTopJets = cms.bool(True),
         topjet_ptmin = cms.double(150.0),
         topjet_etamax = cms.double(5.0),                                                                               
@@ -710,7 +745,13 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
+#process.load("FWCore.MessageLogger.MessageLogger_cfi")
+#process.MessageLogger = cms.Service("MessageLogger")
+
+
+
 # Note: we run in unscheduled mode, i.e. all modules are run as required; just make sure that MyNtuple runs:
+
 
 process.p = cms.Path(
     process.MyNtuple)
