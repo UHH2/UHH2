@@ -258,6 +258,7 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
     event.set(h_muon_weight_,       1.);
     event.set(h_muon_weight_up_,    1.);
     event.set(h_muon_weight_down_,  1.);
+    return true;
   }
 
   const auto & muons = event.get(h_muons_);
