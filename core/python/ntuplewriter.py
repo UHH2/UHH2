@@ -44,7 +44,7 @@ process.source = cms.Source("PoolSource",
   skipEvents = cms.untracked.uint32(0)
 )
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
