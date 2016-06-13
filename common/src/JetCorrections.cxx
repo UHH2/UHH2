@@ -194,6 +194,71 @@ const std::vector<std::string> JERFiles::Fall15_25ns_L123_AK8PFPuppi_DATA = {
 };
 
 
+//Spring16_25nsV3
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFchs_MC = {
+  "JetMETObjects/data/Spring16_25nsV3_MC_L1FastJet_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_MC_L2Relative_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_MC_L3Absolute_AK4PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFchs_MC = {
+  "JetMETObjects/data/Spring16_25nsV3_MC_L1FastJet_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_MC_L2Relative_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_MC_L3Absolute_AK8PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L23_AK8PFchs_MC = {
+  "JetMETObjects/data/Spring16_25nsV3_MC_L2Relative_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_MC_L3Absolute_AK8PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFPuppi_MC = {
+  "JetMETObjects/data/Spring16_25nsV3_MC_L1FastJet_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV3_MC_L2Relative_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV3_MC_L3Absolute_AK4PFPuppi.txt"
+};
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFPuppi_MC = {
+  "JetMETObjects/data/Spring16_25nsV3_MC_L1FastJet_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV3_MC_L2Relative_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV3_MC_L3Absolute_AK8PFPuppi.txt"
+};
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFchs_DATA = {
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L1FastJet_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L2Relative_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L3Absolute_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L2L3Residual_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFchs_DATA = {
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L1FastJet_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L2Relative_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L3Absolute_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L2L3Residual_AK8PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L23_AK8PFchs_DATA = {
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L2Relative_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L3Absolute_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L2L3Residual_AK8PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFPuppi_DATA = {
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L1FastJet_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L2Relative_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L3Absolute_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L2L3Residual_AK4PFPuppi.txt",
+};
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFPuppi_DATA = {
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L2Relative_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV3_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+
+
 
 namespace {
     
@@ -670,6 +735,7 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
         float abseta = fabs(jet_v4.eta());
 
         int ieta(-1);
+
         for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
 
           const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
@@ -677,7 +743,11 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
 
           if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
         }
-        if(ieta < 0) throw std::runtime_error("JetResolutionSmearer: index for JER-smearing SF not found");
+        if(ieta < 0) {
+	  cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << endl;
+	  cout << "         no JER smearing is applied." << endl;
+	  continue;
+	}
 
         float c;
         if(direction == 0){

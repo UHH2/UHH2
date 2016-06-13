@@ -3,14 +3,15 @@
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
    <Library Name="libTestSUHH2common"/>
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
-
+<!--
         <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="TestCommonModules" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v2/SingleMu//DATA_SingleMu_70_Ntuple.root" Lumi="0.0"/> 
+            <In FileName="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_80X_v1/SingleMuon/DATA_SingleMuon_Run2016B_1329_Ntuple.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
             <OutputTree Name="AnalysisTree" />
         </InputData>
+-->
         <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="TestCommonModules" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v2/QCD/MC_QCD_Pt15to30_10_Ntuple.root" Lumi="0.0"/> 
+            <In FileName="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_80X_v1/TTbar/MC_TTbar_424_Ntuple.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
             <OutputTree Name="AnalysisTree" />
         </InputData>
@@ -25,10 +26,10 @@
             <Item Name="GenJetCollection" Value="slimmedGenJets" />
             <Item Name="METName" Value="slimmedMETs" />
             
-	    <Item Name="pileup_directory_data" Value="/nfs/dust/cms/user/reimersa/LQToTopMu/Run2/MCPUReweight/uhh2.AnalysisModuleRunner.DATA.DATA.root" /> 
-	    <Item Name="pileup_directory_50ns" Value="/nfs/dust/cms/user/mameyer/TTDMDM/preselection_RunII/uhh2.AnalysisModuleRunner.MC.TTbar.root"/>
+	    <Item Name="pileup_directory"           Value="../../common/data/MyMCPileupHistogram.root"/>
+	    <Item Name="pileup_directory_data" Value="../../common/data/MyDataPileupHistogram.root"/>
 
-	    <Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v1/Lumifile.root" />
+	    <Item Name="lumi_file" Value="../data/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.root" />
 
             <Item Name="AnalysisModule" Value="TestCommonModules" /> 
         </UserConfig>
