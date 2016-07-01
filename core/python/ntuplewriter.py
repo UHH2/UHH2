@@ -37,14 +37,15 @@ process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , 
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-           # '/store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1mpiOFF_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/323B1524-8B09-E611-9D5D-00266CFCC9F8.root' #MC test file
-            '/store/mc/RunIISpring16MiniAODv1/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/MINIAODSIM/PUFlat0to50_magnetOn_80X_mcRun2_asymptotic_2016_v3-v1/20000/0059094A-B5F2-E511-AD70-008CFA166014.root'
+           # '/store/mc/RunIISpring16MiniAODv2/RSGluonToTT_M-3000_TuneCUETP8M1_13TeV-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/00000/A84CE6CA-8E24-E611-855F-44A84225C629.root' #MC test file
+            'file:/nfs/dust/cms/user/peiffer/TEST_RSGluonToTT_M-3000_reHLT_MINIAODSIM_F058BE0A-9638-E611-8115-0025905C42FE.root', #MC test file with reHLT
+           # '/store/mc/RunIISpring16MiniAODv1/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/MINIAODSIM/PUFlat0to50_magnetOn_80X_mcRun2_asymptotic_2016_v3-v1/20000/0059094A-B5F2-E511-AD70-008CFA166014.root'
            # 'file:/nfs/dust/cms/user/peiffer/98CCBD01-0517-E611-A464-02163E011F40.root', #Data test file
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -601,10 +602,30 @@ if use25ns: process.slimmedElectronsUSER.effAreas_file = cms.FileInPath('RecoEga
 #    if "PromptReco" in x:
 #        isPrompt = True
 
+
+
+## additional MET filters, directly applied 
+process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
+process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
+
+process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
+process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+
+process.BadChargedCandidateFilter.debug = cms.bool(False)
+
+process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
+process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+
+process.BadPFMuonFilter.debug = cms.bool(False)
+
 if useData:
     metfilterpath="RECO"
 else:
     metfilterpath="PAT"
+
+hltpath = "HLT"
+if "reHLT" in process.source.fileNames[0] :
+    hltpath = "HLT2"
 
 process.MyNtuple = cms.EDFilter('NtupleWriter',
         #AnalysisModule = cms.PSet(
@@ -703,7 +724,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #topjet_qjets_sources = cms.vstring("QJetsCa15CHS", "QJetsCa8CHS", "QJetsCa8CHS", "QJetsCa15CHS"),
         
         doTrigger = cms.bool(True), 
-        trigger_bits = cms.InputTag("TriggerResults","","HLT"),
+        trigger_bits = cms.InputTag("TriggerResults","",hltpath),
         # MET filters (HBHE noise, CSC, etc.) are stored as trigger Bits in MINIAOD produced in path "PAT"/"RECO" with prefix "Flag_"
         metfilter_bits = cms.InputTag("TriggerResults","",metfilterpath),
         # for now, save all the triggers:
@@ -759,6 +780,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
 
 process.p = cms.Path(
+    process.BadChargedCandidateFilter*
+    process.BadPFMuonFilter*
     process.MyNtuple)
 
 open('pydump.py','w').write(process.dumpPython())
