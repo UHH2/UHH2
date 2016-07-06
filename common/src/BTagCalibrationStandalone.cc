@@ -304,7 +304,7 @@ const std::vector<BTagEntry>& BTagCalibration::getEntries(
   if (!data_.count(tok)) {
 std::cerr << "ERROR in BTagCalibration: "
           << "(OperatingPoint, measurementType, sysType) not available: "
-          << tok;
+          << tok <<" ";
 throw std::exception();
   }
   return data_.at(tok);

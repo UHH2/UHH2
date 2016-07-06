@@ -236,7 +236,10 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
   
   sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/pt_abseta_ratio").c_str()));
   if (!sf_hist_.get()) {
-    throw runtime_error("Scale factor directory not found in file: " + sf_name);
+    sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/ptetadata").c_str()));
+    if (!sf_hist_.get()) {
+      throw runtime_error("Scale factor directory not found in file: " + sf_name);
+    }
   }
   sf_hist_->SetDirectory(0);
   eta_min_ = sf_hist_->GetYaxis()->GetXmin();
@@ -540,15 +543,17 @@ std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, 
   }
 
   if (SF < 1e-10) {
-    cout << "WARNING: SF vanishes! Will return SF = 1., SFerr = 0., Values: "
-         << "(SF, SFerr, is_out_of_bounds, lowbound, highbound, pt, pt_for_eval, btagentry_flav): "
-         << SF << ", " << SFerr << ", " << is_out_of_bounds << ", "
-         << sf_bounds.first << ", " << sf_bounds.second << ", "
-         << pt << ", " << pt_for_eval << ", " << btagentry_flav << endl;
+    // cout << "WARNING: SF vanishes! Will return SF = 1., SFerr = 0., Values: "
+    //      << "(SF, SFerr, is_out_of_bounds, lowbound, highbound, pt, pt_for_eval, btagentry_flav): "
+    //      << SF << ", " << SFerr << ", " << is_out_of_bounds << ", "
+    //      << sf_bounds.first << ", " << sf_bounds.second << ", "
+    //      << pt << ", " << pt_for_eval << ", " << btagentry_flav << endl;
     SF = 1.;
     SFerr = 0.;
   }
-
+  // else{
+  //   cout<<"TEST b-tag SF = "<<SF<<endl;
+  // }
   return std::make_pair(SF, SFerr);
 }
 
