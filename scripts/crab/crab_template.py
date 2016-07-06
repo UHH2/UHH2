@@ -12,22 +12,17 @@
 #
 from DasQuery import autocomplete_Datasets
 
-inputDatasets = ['/WJetsToLNu_HT-*To*_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3*/MINIAODSIM']
+inputDatasets = ['/BprimeTToTW_M-800_LH_TuneCUETP8M1_13TeV-madgraph-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v*/MINIAODSIM']
 inputDatasets = autocomplete_Datasets(inputDatasets)
-
 requestNames = []
 for x in inputDatasets:
     name = x.split('/')[1]
-    modified_name =name.replace('TuneCUETP8M1_13TeV-madgraphMLM-pythia8','25ns')
-    if 'ext' in x:  
-        modified_name = modified_name.replace('25ns','25ns_ext')
+    modified_name =name.replace('TuneCUETP8M1_13TeV-madgraph-pythia8','25ns')
     requestNames.append(modified_name)
-
 
 # ===============================================================================
 # Classical part of crab, after resolving the * it uses in the example below just the first entry
 #
-print requestNames
 
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 
@@ -38,15 +33,14 @@ config.General.transferOutputs = True
 config.General.transferLogs = True
         
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '/afs/desy.de/user/p/peiffer/xxl-af-cms/CMSSW_8_0_8/src/UHH2/core/python/ntuplewriter.py'
+config.JobType.psetName = '/nfs/dust/cms/user/gonvaq/CMSSW/CMSSW_7_4_15_patch1/src/UHH2/core/python/ntuplewriter.py'
 config.JobType.outputFiles = ["Ntuple.root"]
-#config.JobType.inputFiles = ['/nfs/dust/cms/user/gonvaq/CMSSW/CMSSW_8_0_8/src/UHH2/core/python/Summer15_25nsV2_MC.db']
-config.JobType.allowUndistributedCMSSW = True
-   
+config.JobType.inputFiles = ['/nfs/dust/cms/user/gonvaq/CMSSW/CMSSW_7_4_15_patch1/src/UHH2/core/python/Summer15_25nsV2_MC.db']
+        
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'
 config.Data.unitsPerJob = 5000
-config.Data.outLFNDirBase = '/store/user/%s/RunII_80X_v1/' % (getUsernameFromSiteDB())
+config.Data.outLFNDirBase = '/store/user/%s/uniqueDir' % (getUsernameFromSiteDB())
 config.Data.publication = False
 #config.Data.allowNonValidInputDataset = True
 #config.Data.publishDataName = 'CRAB3_tutorial_May2015_MC_analysis'
