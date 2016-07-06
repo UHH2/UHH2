@@ -49,7 +49,7 @@ public:
     // default constructor
     Parameters(
       OperatingPoint op=OP_TIGHT,
-      std::string measurement_type="comb",
+      std::string measurement_type="mujets",
       std::string sys_type="central",
       JetFlavor jf=FLAV_B,
       float eta_min=-99999.,
