@@ -196,66 +196,66 @@ const std::vector<std::string> JERFiles::Fall15_25ns_L123_AK8PFPuppi_DATA = {
 
 //Spring16_25nsV3
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFchs_MC = {
-  "JetMETObjects/data/Spring16_25nsV3_MC_L1FastJet_AK4PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_MC_L2Relative_AK4PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_MC_L3Absolute_AK4PFchs.txt"
+  "JetMETObjects/data/Spring16_25nsV6_MC_L1FastJet_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_MC_L2Relative_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_MC_L3Absolute_AK4PFchs.txt"
 };
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFchs_MC = {
-  "JetMETObjects/data/Spring16_25nsV3_MC_L1FastJet_AK8PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_MC_L2Relative_AK8PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_MC_L3Absolute_AK8PFchs.txt"
+  "JetMETObjects/data/Spring16_25nsV6_MC_L1FastJet_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_MC_L2Relative_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_MC_L3Absolute_AK8PFchs.txt"
 };
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L23_AK8PFchs_MC = {
-  "JetMETObjects/data/Spring16_25nsV3_MC_L2Relative_AK8PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_MC_L3Absolute_AK8PFchs.txt"
+  "JetMETObjects/data/Spring16_25nsV6_MC_L2Relative_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_MC_L3Absolute_AK8PFchs.txt"
 };
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFPuppi_MC = {
-  "JetMETObjects/data/Spring16_25nsV3_MC_L1FastJet_AK4PFPuppi.txt",
-  "JetMETObjects/data/Spring16_25nsV3_MC_L2Relative_AK4PFPuppi.txt",
-  "JetMETObjects/data/Spring16_25nsV3_MC_L3Absolute_AK4PFPuppi.txt"
+  "JetMETObjects/data/Spring16_25nsV6_MC_L1FastJet_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_MC_L2Relative_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_MC_L3Absolute_AK4PFPuppi.txt"
 };
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFPuppi_MC = {
-  "JetMETObjects/data/Spring16_25nsV3_MC_L1FastJet_AK8PFPuppi.txt",
-  "JetMETObjects/data/Spring16_25nsV3_MC_L2Relative_AK8PFPuppi.txt",
-  "JetMETObjects/data/Spring16_25nsV3_MC_L3Absolute_AK8PFPuppi.txt"
+  "JetMETObjects/data/Spring16_25nsV6_MC_L1FastJet_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_MC_L2Relative_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_MC_L3Absolute_AK8PFPuppi.txt"
 };
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFchs_DATA = {
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L1FastJet_AK4PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L2Relative_AK4PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L3Absolute_AK4PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L2L3Residual_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L1FastJet_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PFchs.txt",
 };
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFchs_DATA = {
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L1FastJet_AK8PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L2Relative_AK8PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L3Absolute_AK8PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L2L3Residual_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L1FastJet_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK8PFchs.txt",
 };
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L23_AK8PFchs_DATA = {
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L2Relative_AK8PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L3Absolute_AK8PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L2L3Residual_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK8PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK8PFchs.txt",
 };
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFPuppi_DATA = {
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L2Relative_AK4PFPuppi.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L3Absolute_AK4PFPuppi.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L2L3Residual_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L1FastJet_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PFPuppi.txt",
 };
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFPuppi_DATA = {
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L2Relative_AK8PFPuppi.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L3Absolute_AK8PFPuppi.txt",
-  "JetMETObjects/data/Spring16_25nsV3_DATA_L2L3Residual_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK8PFPuppi.txt",
 };
 
 
@@ -671,19 +671,19 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_2015 = {
   // 1 = JER SF
   // 2 = JER SF + 1sigma
   // 3 = JER SF - 1sigma
-  {{0.5, 1.095, 1.113, 1.077}},
-  {{0.8, 1.120, 1.148, 1.092}},
-  {{1.1, 1.097, 1.114, 1.080}},
-  {{1.3, 1.103, 1.136, 1.070}},
-  {{1.7, 1.118, 1.132, 1.104}},
-  {{1.9, 1.100, 1.133, 1.067}},
-  {{2.1, 1.162, 1.206, 1.116}},
-  {{2.3, 1.160, 1.208, 1.112}},
-  {{2.5, 1.161, 1.221, 1.101}},
-  {{2.8, 1.209, 1.268 ,1.150}},
-  {{3.0, 1.564, 1.885, 1.243}},
-  {{3.2, 1.384, 1.417, 1.351}},
-  {{5.0, 1.216, 1.266, 1.166}},
+  {{0.5, 1.122, 1.148, 1.096}},
+  {{0.8, 1.167, 1.215, 1.119}},
+  {{1.1, 1.168, 1.214, 1.122}},
+  {{1.3, 1.029, 1.095, 0.963}},
+  {{1.7, 1.115, 1.145, 1.085}},
+  {{1.9, 1.041, 1.103, 0.979}},
+  {{2.1, 1.167, 1.253, 1.081}},
+  {{2.3, 1.094, 1.187, 1.001}},
+  {{2.5, 1.168, 1.288, 1.048}},
+  {{2.8, 1.266, 1.398, 1.134}},
+  {{3.0, 1.595, 1.770, 1.420}},
+  {{3.2, 0.998, 1.064, 0.932}},
+  {{5.0, 1.226, 1.371, 1.081}},
 };
 
 ////
