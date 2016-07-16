@@ -3,6 +3,7 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/Utils.h"
 
+#include "Riostream.h"
 #include "TFile.h"
 #include "TH1F.h"
 
@@ -309,6 +310,206 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
   return true;
 }
 
+MCMuonTrkScaleFactor::MCMuonTrkScaleFactor(uhh2::Context & ctx,
+                                     const std::string & sf_file_path,
+                                     float sys_error_percantage,
+                                     const std::string & weight_postfix,
+                                     const std::string & sys_uncert,
+                                     const std::string & muons_handle_name): 
+  h_muons_            (ctx.get_handle<std::vector<Muon>>(muons_handle_name)),
+  h_muontrk_weight_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix)),
+  h_muontrk_weight_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_up")),
+  h_muontrk_weight_down_ (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_down")),
+  sys_error_factor_(sys_error_percantage/100.)
+{
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if (!is_mc) {
+    cout << "Warning: MCMuonTrkScaleFactor will not have an effect on "
+         <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
+
+
+  std::ifstream in;
+  //std::cout<<sf_file_path.c_str()<<std::endl;
+  in.open(sf_file_path.c_str());
+  //  std::cout<<"Muon TRK SF "<<std::endl;
+  Int_t nlines = 0;
+  double eta_min,eta_max,eta_ave,factor, err_dn, err_up;
+  char tmp;
+  eta_min_ = 5;
+  eta_max_ = -5;
+  while (1) {
+    in >> eta_min >> eta_ave >> eta_max >> factor >> err_dn >> err_up;
+    if (!in.good()) break;
+    // std::cout<<" eta_min = "<<eta_min<<" factor = "<<factor<<" err_dn = "<<err_dn<<" err_up = "<<err_up<<std::endl;
+    eta_.push_back(eta_max);
+    SFs_.push_back(factor);
+    SFs_err_dn_.push_back(err_dn);
+    SFs_err_up_.push_back(err_up);
+    if(eta_min_>eta_min) eta_min_ = eta_min;
+    if(eta_max_<eta_max) eta_max_ = eta_max;
+    nlines++;
+  }
+  in.close();
+  //printf("MuonTrk SF: found %d points\n",nlines);
+
+  sys_direction_ = 0;
+  if (sys_uncert == "up") {
+    sys_direction_ = 1;
+  } else if (sys_uncert == "down") {
+    sys_direction_ = -1;
+  }
+}
+
+bool MCMuonTrkScaleFactor::process(uhh2::Event & event) {
+
+  // if (!sf_hist_) {  
+    event.set(h_muontrk_weight_,       1.);
+    event.set(h_muontrk_weight_up_,    1.);
+    event.set(h_muontrk_weight_down_,  1.);
+  //   return true;
+  // }
+
+  const auto & muons = event.get(h_muons_);
+  float weight = 1., weight_up = 1., weight_down = 1.;
+  for (const auto & mu : muons) {
+    float eta = fabs(mu.eta());
+    float pt = mu.pt();
+    if(pt<10.){
+      std::cout<<"For muons with pt<10 another input file with SFs should be used!"<<std::endl;
+      return true;
+    }
+
+    if (eta_min_ < eta && eta_max_ > eta){
+      //      bool out_of_range = false;
+      for(unsigned int i=1;i<eta_.size();i++){
+	if(eta<=eta_[i] && eta>=eta_[i-1]){
+	  float w = 0.01*SFs_[i];
+	  float err_dn =  0.01*SFs_err_dn_[i];
+	  float err_up =  0.01*SFs_err_up_[i];
+	  //	  std::cout<<" eta = "<<eta<<" SF = "<<w<<std::endl;
+	  weight      *= w;
+	  weight_up   *= w + fabs(err_up);
+	  weight_down *= w - fabs(err_dn);
+	}
+      }
+    }
+  }
+  event.set(h_muontrk_weight_,       weight);
+  event.set(h_muontrk_weight_up_,    weight_up);
+  event.set(h_muontrk_weight_down_,  weight_down);
+  
+  if (sys_direction_ == 1) {
+    event.weight *= weight_up;
+  } else if (sys_direction_ == -1) {
+    event.weight *= weight_down;
+  } else {
+    event.weight *= weight;
+  }
+  
+  return true;
+}
+
+
+
+MCElecScaleFactor::MCElecScaleFactor(uhh2::Context & ctx,
+                                     const std::string & sf_file_path,
+                                     float sys_error_percantage,
+                                     const std::string & weight_postfix,
+                                     const std::string & sys_uncert,
+                                     const std::string & elecs_handle_name): 
+  h_elecs_            (ctx.get_handle<std::vector<Electron>>(elecs_handle_name)),
+  h_elec_weight_      (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix)),
+  h_elec_weight_up_   (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_up")),
+  h_elec_weight_down_ (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_down")),
+  sys_error_factor_(sys_error_percantage/100.)
+{
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if (!is_mc) {
+    cout << "Warning: MCElecScaleFactor will not have an effect on "
+         <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
+
+  TFile sf_file(sf_file_path.c_str());
+  if (sf_file.IsZombie()) {
+    throw runtime_error("Scale factor file for electrons not found: " + sf_file_path);
+  }
+  
+  sf_hist_.reset((TH2*) sf_file.Get("EGamma_SF2D"));
+  if (!sf_hist_.get()) {
+    throw runtime_error("Electron scale factor histogram not found in file");
+  }
+  sf_hist_->SetDirectory(0);
+  eta_min_ = sf_hist_->GetXaxis()->GetXmin();
+  eta_max_ = sf_hist_->GetXaxis()->GetXmax();
+  pt_min_  = sf_hist_->GetYaxis()->GetXmin();
+  pt_max_  = sf_hist_->GetYaxis()->GetXmax();
+
+  sys_direction_ = 0;
+  if (sys_uncert == "up") {
+    sys_direction_ = 1;
+  } else if (sys_uncert == "down") {
+    sys_direction_ = -1;
+  }
+}
+
+bool MCElecScaleFactor::process(uhh2::Event & event) {
+
+  if (!sf_hist_) {  
+    event.set(h_elec_weight_,       1.);
+    event.set(h_elec_weight_up_,    1.);
+    event.set(h_elec_weight_down_,  1.);
+    return true;
+  }
+
+  const auto & elecs = event.get(h_elecs_);
+  float weight = 1., weight_up = 1., weight_down = 1.;
+  for (const auto & el : elecs) {
+    float eta = fabs(el.eta());
+    float pt = el.pt();
+    if (eta_min_ < eta && eta_max_ > eta){
+      bool out_of_range = false;
+      //take scale factor from the last measured pT bin in case of too large/small pT
+      if(pt_min_ >= pt) {
+	pt=pt_min_+0.0001;
+	out_of_range = true;
+      }
+      if(pt_max_ <= pt) {
+	pt=pt_max_-0.0001;
+	out_of_range = true;
+      }
+      int bin       = sf_hist_->FindFixBin(eta, pt);
+      float w       = sf_hist_->GetBinContent(bin);
+      float err     = sf_hist_->GetBinError(bin);
+      float err_tot = sqrt(err*err + pow(w*sys_error_factor_, 2));
+      //take twice the uncertainty if the pT is outside the measured pT range
+      if(out_of_range) err_tot*=2;
+
+      weight      *= w;
+      weight_up   *= w + err_tot;
+      weight_down *= w - err_tot;
+    }
+
+  }
+
+  event.set(h_elec_weight_,       weight);
+  event.set(h_elec_weight_up_,    weight_up);
+  event.set(h_elec_weight_down_,  weight_down);
+
+  if (sys_direction_ == 1) {
+    event.weight *= weight_up;
+  } else if (sys_direction_ == -1) {
+    event.weight *= weight_down;
+  } else {
+    event.weight *= weight;
+  }
+
+  return true;
+}
 
 
 
