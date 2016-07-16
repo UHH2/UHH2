@@ -120,6 +120,74 @@ private:
   int sys_direction_;
 };
 
+// Muon tracking efficiency 
+// https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffsRun2
+class MCMuonTrkScaleFactor: public uhh2::AnalysisModule {
+public:
+  explicit MCMuonTrkScaleFactor(uhh2::Context & ctx,
+                             const std::string & sf_file_path,
+                             float sys_error_percantage,
+                             const std::string & weight_postfix="",
+                             const std::string & sys_uncert="nominal",
+                             const std::string & muons_handle_name="muons"); 
+
+  virtual bool process(uhh2::Event & event) override;
+
+private:
+  uhh2::Event::Handle<std::vector<Muon>> h_muons_;
+  //  std::unique_ptr<TH2> sf_hist_;
+  std::vector<float> eta_;
+  std::vector<float> SFs_;
+  std::vector<float> SFs_err_dn_;
+  std::vector<float> SFs_err_up_;
+  uhh2::Event::Handle<float> h_muontrk_weight_;
+  uhh2::Event::Handle<float> h_muontrk_weight_up_;
+  uhh2::Event::Handle<float> h_muontrk_weight_down_;
+  float sys_error_factor_;
+  float eta_min_, eta_max_;
+  int sys_direction_;
+};
+
+
+
+/** \brief Apply electron scale factors
+ *
+ * https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2
+ *
+ * - only for applying pt- _and_ eta-scale dependent scale factors
+ *
+ * - parameters:
+ *   - sf_file_path: path the root file with the scale factors
+ *   - sys_error_percantage: e.g. "1." for 1% of systematic error
+ *   - weight_postfix: handle name for weights, e.g. "trigger" will produce the
+ *     handles "weight_sfel_trigger", "weight_sfel_trigger_up" and 
+ *     "weight_sfel_trigger_down"
+ *   - sys_uncert: which uncertainty is applied to event.weight, can be "up", 
+ *     "down" or "nominal".
+ *   - electrons_handle_name: handle to the electrons collection (the default points to 
+ *     event.electrons)
+ */
+class MCElecScaleFactor: public uhh2::AnalysisModule {
+public:
+  explicit MCElecScaleFactor(uhh2::Context & ctx,
+                             const std::string & sf_file_path,
+                             float sys_error_percantage,
+                             const std::string & weight_postfix="",
+                             const std::string & sys_uncert="nominal",
+                             const std::string & elecs_handle_name="electrons"); 
+
+  virtual bool process(uhh2::Event & event) override;
+
+private:
+  uhh2::Event::Handle<std::vector<Electron>> h_elecs_;
+  std::unique_ptr<TH2> sf_hist_;
+  uhh2::Event::Handle<float> h_elec_weight_;
+  uhh2::Event::Handle<float> h_elec_weight_up_;
+  uhh2::Event::Handle<float> h_elec_weight_down_;
+  float sys_error_factor_;
+  float eta_min_, eta_max_, pt_min_, pt_max_;
+  int sys_direction_;
+};
 
 
 class BTagCalibrationReader;  // forward declaration
