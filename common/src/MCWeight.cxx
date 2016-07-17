@@ -214,13 +214,14 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
                                      const std::string & sf_name,
                                      float sys_error_percantage,
                                      const std::string & weight_postfix,
+				     bool etaYaxis,
                                      const std::string & sys_uncert,
                                      const std::string & muons_handle_name): 
   h_muons_            (ctx.get_handle<std::vector<Muon>>(muons_handle_name)),
   h_muon_weight_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix)),
   h_muon_weight_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_up")),
   h_muon_weight_down_ (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_down")),
-  sys_error_factor_(sys_error_percantage/100.)
+  sys_error_factor_(sys_error_percantage/100.), etaYaxis_(etaYaxis)
 {
   auto dataset_type = ctx.get("dataset_type");
   bool is_mc = dataset_type == "MC";
@@ -243,17 +244,25 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
     }
   }
   sf_hist_->SetDirectory(0);
+  if(etaYaxis_){
   eta_min_ = sf_hist_->GetYaxis()->GetXmin();
   eta_max_ = sf_hist_->GetYaxis()->GetXmax();
   pt_min_  = sf_hist_->GetXaxis()->GetXmin();
   pt_max_  = sf_hist_->GetXaxis()->GetXmax();
-
+  }
+  else{
+    eta_min_ = sf_hist_->GetXaxis()->GetXmin();
+    eta_max_ = sf_hist_->GetXaxis()->GetXmax();
+    pt_min_  = sf_hist_->GetYaxis()->GetXmin();
+    pt_max_  = sf_hist_->GetYaxis()->GetXmax();
+  }
   sys_direction_ = 0;
   if (sys_uncert == "up") {
     sys_direction_ = 1;
   } else if (sys_uncert == "down") {
     sys_direction_ = -1;
   }
+  //  std::cout<<" eta_min = "<<eta_min_<<" eta_max = "<<eta_max_<<std::endl;
 }
 
 bool MCMuonScaleFactor::process(uhh2::Event & event) {
@@ -281,7 +290,13 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
 	pt=pt_max_-0.0001;
 	out_of_range = true;
       }
-      int bin       = sf_hist_->FindFixBin(pt, eta);
+
+      int bin;
+      if(etaYaxis_)
+	bin       = sf_hist_->FindFixBin(pt, eta);
+      else
+	bin       = sf_hist_->FindFixBin(eta, pt);
+
       float w       = sf_hist_->GetBinContent(bin);
       float err     = sf_hist_->GetBinError(bin);
       float err_tot = sqrt(err*err + pow(w*sys_error_factor_, 2));
@@ -291,9 +306,11 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
       weight      *= w;
       weight_up   *= w + err_tot;
       weight_down *= w - err_tot;
+      //      std::cout<<"weight = "<<weight<<" eta = "<<eta<<" pt = "<<pt<<std::endl;
     }
 
   }
+  
 
   event.set(h_muon_weight_,       weight);
   event.set(h_muon_weight_up_,    weight_up);
