@@ -104,6 +104,7 @@ public:
                              const std::string & sf_name,
                              float sys_error_percantage,
                              const std::string & weight_postfix="",
+			     bool etaYaxis=true,
                              const std::string & sys_uncert="nominal",
                              const std::string & muons_handle_name="muons"); 
 
@@ -118,6 +119,7 @@ private:
   float sys_error_factor_;
   float eta_min_, eta_max_, pt_min_, pt_max_;
   int sys_direction_;
+  bool etaYaxis_;
 };
 
 // Muon tracking efficiency 
