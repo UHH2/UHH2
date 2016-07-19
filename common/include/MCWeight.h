@@ -191,7 +191,7 @@ private:
   int sys_direction_;
 };
 
-//Apply reweighted SFs(according to luminocity)
+//Apply reweighted SFs (according to luminosity)
 //Only errors from the second SFs file are used
 class MCElecScaleFactor2: public uhh2::AnalysisModule {
 public:
