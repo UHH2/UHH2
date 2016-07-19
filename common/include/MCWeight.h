@@ -191,6 +191,36 @@ private:
   int sys_direction_;
 };
 
+//Apply reweighted SFs(according to luminocity)
+//Only errors from the second SFs file are used
+class MCElecScaleFactor2: public uhh2::AnalysisModule {
+public:
+  explicit MCElecScaleFactor2(uhh2::Context & ctx,
+                             const std::string & sf_file_path,
+			     const std::string & sf_file_path2,
+			     float lumi1, float lumi2,
+                             float sys_error_percantage,
+                             const std::string & weight_postfix="",
+                             const std::string & sys_uncert="nominal",
+                             const std::string & elecs_handle_name="electrons"); 
+
+  virtual bool process(uhh2::Event & event) override;
+
+private:
+  uhh2::Event::Handle<std::vector<Electron>> h_elecs_;
+  std::unique_ptr<TH2> sf_hist_;
+  std::unique_ptr<TH2> sf_hist2_;
+  uhh2::Event::Handle<float> h_elec_weight_;
+  uhh2::Event::Handle<float> h_elec_weight_up_;
+  uhh2::Event::Handle<float> h_elec_weight_down_;
+  float sys_error_factor_;
+  float lumi1_,lumi2_;
+  float eta_min_, eta_max_, pt_min_, pt_max_;
+  int sys_direction_;
+};
+
+
+
 
 class BTagCalibrationReader;  // forward declaration
 /** \brief apply btag scale factors
