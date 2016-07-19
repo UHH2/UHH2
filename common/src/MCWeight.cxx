@@ -486,7 +486,7 @@ bool MCElecScaleFactor::process(uhh2::Event & event) {
   const auto & elecs = event.get(h_elecs_);
   float weight = 1., weight_up = 1., weight_down = 1.;
   for (const auto & el : elecs) {
-    float eta = fabs(el.eta());
+    float eta = fabs(el.supercluster_eta());
     float pt = el.pt();
     if (eta_min_ < eta && eta_max_ > eta){
       bool out_of_range = false;
@@ -509,6 +509,123 @@ bool MCElecScaleFactor::process(uhh2::Event & event) {
       weight      *= w;
       weight_up   *= w + err_tot;
       weight_down *= w - err_tot;
+    }
+
+  }
+
+  event.set(h_elec_weight_,       weight);
+  event.set(h_elec_weight_up_,    weight_up);
+  event.set(h_elec_weight_down_,  weight_down);
+
+  if (sys_direction_ == 1) {
+    event.weight *= weight_up;
+  } else if (sys_direction_ == -1) {
+    event.weight *= weight_down;
+  } else {
+    event.weight *= weight;
+  }
+
+  return true;
+}
+
+
+MCElecScaleFactor2::MCElecScaleFactor2(uhh2::Context & ctx,
+                                     const std::string & sf_file_path,
+				     const std::string & sf_file_path2,
+				     float lumi1,float lumi2,
+                                     float sys_error_percantage,
+                                     const std::string & weight_postfix,
+                                     const std::string & sys_uncert,
+                                     const std::string & elecs_handle_name): 
+  h_elecs_            (ctx.get_handle<std::vector<Electron>>(elecs_handle_name)),
+  h_elec_weight_      (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix)),
+  h_elec_weight_up_   (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_up")),
+  h_elec_weight_down_ (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_down")),
+  sys_error_factor_(sys_error_percantage/100.),
+  lumi1_(lumi1),lumi2_(lumi2)
+{
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if (!is_mc) {
+    cout << "Warning: MCElecScaleFactor2 will not have an effect on "
+         <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
+
+  TFile sf_file(sf_file_path.c_str());
+  if (sf_file.IsZombie()) {
+    throw runtime_error("Scale factor file for electrons not found: " + sf_file_path);
+  }
+  
+  sf_hist_.reset((TH2*) sf_file.Get("EGamma_SF2D"));
+  if (!sf_hist_.get()) {
+    throw runtime_error("Electron scale factor histogram not found in file");
+  }
+  sf_hist_->SetDirectory(0);
+  eta_min_ = sf_hist_->GetXaxis()->GetXmin();
+  eta_max_ = sf_hist_->GetXaxis()->GetXmax();
+  pt_min_  = sf_hist_->GetYaxis()->GetXmin();
+  pt_max_  = sf_hist_->GetYaxis()->GetXmax();
+
+ TFile sf_file2(sf_file_path2.c_str());
+  if (sf_file2.IsZombie()) {
+    throw runtime_error("Scale factor file for electrons not found: " + sf_file_path2);
+  }
+  sf_hist2_.reset((TH2*) sf_file.Get("EGamma_SF2D"));
+  if (!sf_hist2_.get()) {
+    throw runtime_error("Electron scale factor histogram not found in file");
+  }
+  sf_hist2_->SetDirectory(0);
+
+
+  sys_direction_ = 0;
+  if (sys_uncert == "up") {
+    sys_direction_ = 1;
+  } else if (sys_uncert == "down") {
+    sys_direction_ = -1;
+  }
+}
+
+bool MCElecScaleFactor2::process(uhh2::Event & event) {
+
+  if (!sf_hist_ || !sf_hist2_) {  
+    event.set(h_elec_weight_,       1.);
+    event.set(h_elec_weight_up_,    1.);
+    event.set(h_elec_weight_down_,  1.);
+    return true;
+  }
+
+  const auto & elecs = event.get(h_elecs_);
+  float weight = 1., weight_up = 1., weight_down = 1.;
+  for (const auto & el : elecs) {
+    float eta = fabs(el.supercluster_eta());
+    float pt = el.pt();
+    if (eta_min_ < eta && eta_max_ > eta){
+      bool out_of_range = false;
+      //take scale factor from the last measured pT bin in case of too large/small pT
+      if(pt_min_ >= pt) {
+	pt=pt_min_+0.0001;
+	out_of_range = true;
+      }
+      if(pt_max_ <= pt) {
+	pt=pt_max_-0.0001;
+	out_of_range = true;
+      }
+      int bin       = sf_hist_->FindFixBin(eta, pt);
+      float w       = sf_hist_->GetBinContent(bin);
+      float err     = sf_hist_->GetBinError(bin);
+      int bin2       = sf_hist2_->FindFixBin(eta, pt);
+      float w2       = sf_hist2_->GetBinContent(bin);
+      float err2     = sf_hist2_->GetBinError(bin2);
+
+      float err_tot = sqrt(err2*err2 + pow(w*sys_error_factor_, 2));
+      //take twice the uncertainty if the pT is outside the measured pT range
+      if(out_of_range) err_tot*=2;
+      float w_tot = (lumi1_*w+lumi2_*w2)/(lumi1_+lumi2_);//reweight weight according to lumi
+      //      std::cout<<"lumi1_ "<<lumi1_<<" lumi2_ "<<lumi2_<<" w = "<<w<<" w2 = "<<w2<<" w_tot = "<<w_tot<<std::endl;
+      weight      *= w_tot;
+      weight_up   *= w_tot + err_tot;
+      weight_down *= w_tot - err_tot;
     }
 
   }
@@ -689,7 +806,7 @@ std::tuple<float, float, float> MCBTagScaleFactor::get_weight_btag(const vector<
 
     float SF = 1., SFerr = 0.;
     std::tie(SF, SFerr) = get_SF_btag(pt, abs_eta, hadronFlavor);
-
+    
     if (btag_(jet, event)) {
       mcTag *= eff;
       dataTag *= eff*SF;
