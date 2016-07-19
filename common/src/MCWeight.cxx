@@ -486,7 +486,7 @@ bool MCElecScaleFactor::process(uhh2::Event & event) {
   const auto & elecs = event.get(h_elecs_);
   float weight = 1., weight_up = 1., weight_down = 1.;
   for (const auto & el : elecs) {
-    float eta = fabs(el.eta());
+    float eta = fabs(el.supercluster_eta());
     float pt = el.pt();
     if (eta_min_ < eta && eta_max_ > eta){
       bool out_of_range = false;
