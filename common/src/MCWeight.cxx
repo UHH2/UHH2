@@ -475,7 +475,6 @@ MCElecScaleFactor::MCElecScaleFactor(uhh2::Context & ctx,
 }
 
 bool MCElecScaleFactor::process(uhh2::Event & event) {
-
   if (!sf_hist_) {  
     event.set(h_elec_weight_,       1.);
     event.set(h_elec_weight_up_,    1.);
@@ -571,7 +570,7 @@ MCElecScaleFactor2::MCElecScaleFactor2(uhh2::Context & ctx,
   if (sf_file2.IsZombie()) {
     throw runtime_error("Scale factor file for electrons not found: " + sf_file_path2);
   }
-  sf_hist2_.reset((TH2*) sf_file.Get("EGamma_SF2D"));
+  sf_hist2_.reset((TH2*) sf_file2.Get("EGamma_SF2D"));
   if (!sf_hist2_.get()) {
     throw runtime_error("Electron scale factor histogram not found in file");
   }
@@ -613,7 +612,7 @@ bool MCElecScaleFactor2::process(uhh2::Event & event) {
       }
       int bin       = sf_hist_->FindFixBin(eta, pt);
       float w       = sf_hist_->GetBinContent(bin);
-      float err     = sf_hist_->GetBinError(bin);
+      //      float err     = sf_hist_->GetBinError(bin);
       int bin2       = sf_hist2_->FindFixBin(eta, pt);
       float w2       = sf_hist2_->GetBinContent(bin);
       float err2     = sf_hist2_->GetBinError(bin2);
