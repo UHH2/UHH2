@@ -354,7 +354,7 @@ MCMuonTrkScaleFactor::MCMuonTrkScaleFactor(uhh2::Context & ctx,
   //  std::cout<<"Muon TRK SF "<<std::endl;
   Int_t nlines = 0;
   double eta_min,eta_max,eta_ave,factor, err_dn, err_up;
-  char tmp;
+
   eta_min_ = 5;
   eta_max_ = -5;
   while (1) {
