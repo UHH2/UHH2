@@ -78,6 +78,7 @@ private:
     
     JetCorrectionUncertainty* jec_uncertainty;
     int direction = 0; // -1 = down, +1 = up, 0 = nominal
+    bool used_ak4chs = false, propagate_to_met = false;
 };
 
 class TopJetCorrector: public uhh2::AnalysisModule {
@@ -343,7 +344,11 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 
       if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break;}
     }
-    if(ieta < 0) throw std::runtime_error("GenericJetResolutionSmearer::process -- index for JER-smearing data/MC correction not found (check input JER SFs)");
+    if(ieta < 0) {
+      cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << endl;
+      cout << "         no JER smearing is applied." << endl;
+      continue;
+    }
 
     float c;
     if     (direction ==  0) c = JER_SFs_.at(ieta).at(1);
