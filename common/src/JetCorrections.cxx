@@ -281,7 +281,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     return uhh2::make_unique<FactorizedJetCorrector>(pars);
 }
 
-void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0){
+  void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0, bool propagate_to_met = false){
     auto factor_raw = jet.JEC_factor_raw();
     corrector.setJetPt(jet.pt() * factor_raw);
     corrector.setJetEta(jet.eta());
@@ -314,6 +314,21 @@ void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & ev
 	  correctionfactor *= (1 - fabs(unc));
 	}
 	jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
+      }
+    }
+
+    //propagate to MET
+    // subtract the new corrected (smeared) jet v4 from/to MET, if the corrected pt is > 15GeV.
+    // Note that this implementation does not do exactly the same as re-applying typeI corrections of the new corrected jets to raw met as it does not
+    // consider the cases in which the new corrections makes some jets flip-flop over the pt = 15GeV threshold used in the typeI-met correction.
+    // To consider that, we would need the pure L1 corrected jet here as well ...
+    if(propagate_to_met){
+      if(jet.v4().Pt() > 15){
+	LorentzVector metv4 = event.met->v4();
+	metv4 += jet.v4();
+	metv4 -= jet_v4_corrected;
+	event.met->set_pt(metv4.Pt());
+	event.met->set_phi(metv4.Phi());
       }
     }
 
@@ -360,13 +375,15 @@ JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::
 JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames){
     corrector = build_corrector(filenames);
     direction = 0;
+    bool used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
+    propagate_to_met = used_ak4chs;
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
     
 bool JetCorrector::process(uhh2::Event & event){
     assert(event.jets);
     for(auto & jet : *event.jets){
-        correct_jet(*corrector, jet, event, jec_uncertainty, direction);
+      correct_jet(*corrector, jet, event, jec_uncertainty, direction, propagate_to_met);
     }
     return true;
 }
