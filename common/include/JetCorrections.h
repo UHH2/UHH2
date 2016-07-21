@@ -345,8 +345,8 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
       if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break;}
     }
     if(ieta < 0) {
-      cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << endl;
-      cout << "         no JER smearing is applied." << endl;
+      std::cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << std::endl;
+      std::cout << "         no JER smearing is applied." << std::endl;
       continue;
     }
 
