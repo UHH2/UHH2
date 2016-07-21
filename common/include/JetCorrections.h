@@ -78,7 +78,7 @@ private:
     
     JetCorrectionUncertainty* jec_uncertainty;
     int direction = 0; // -1 = down, +1 = up, 0 = nominal
-    bool used_ak4chs = false, propagate_to_met = false;
+    bool propagate_to_met = false;
 };
 
 class TopJetCorrector: public uhh2::AnalysisModule {

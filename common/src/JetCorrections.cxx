@@ -375,7 +375,7 @@ JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::
 JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames){
     corrector = build_corrector(filenames);
     direction = 0;
-    used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
+    bool used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
     propagate_to_met = used_ak4chs;
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
