@@ -240,9 +240,13 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
   if (!sf_hist_.get()) {
     sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/ptetadata").c_str()));
     if (!sf_hist_.get()) {
-      throw runtime_error("Scale factor directory not found in file: " + sf_name);
+      sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/pt_abseta_DATA").c_str())); //For muon HLT efficiency
+      if (!sf_hist_.get()) {
+	throw runtime_error("Scale factor directory not found in file: " + sf_name);
+      }
     }
   }
+
   sf_hist_->SetDirectory(0);
   if(etaYaxis_){
   eta_min_ = sf_hist_->GetYaxis()->GetXmin();

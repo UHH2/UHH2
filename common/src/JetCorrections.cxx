@@ -288,10 +288,17 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     corrector.setJetE(jet.energy() * factor_raw);
     corrector.setJetA(jet.jetArea());
     corrector.setRho(event.rho);
+    float correctionfactor_L1  = corrector.getSubCorrections().front();
+    corrector.setJetPt(jet.pt() * factor_raw);
+    corrector.setJetEta(jet.eta());
+    corrector.setJetE(jet.energy() * factor_raw);
+    corrector.setJetA(jet.jetArea());
+    corrector.setRho(event.rho);
+
     auto correctionfactor = corrector.getCorrection();
 
     LorentzVector jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-
+    LorentzVector jet_v4_corrected_L1L2L3_L1 = jet.v4() * (factor_raw *correctionfactor/correctionfactor_L1);
     if(jec_unc_direction!=0){
       if (jec_unc==NULL){
 	std::cerr << "JEC variation should be applied, but JEC uncertainty object is NULL! Abort." << std::endl;
@@ -314,6 +321,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 	  correctionfactor *= (1 - fabs(unc));
 	}
 	jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
+	jet_v4_corrected_L1L2L3_L1 = jet.v4() * (factor_raw *correctionfactor/correctionfactor_L1);
       }
     }
 
@@ -326,7 +334,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       if(jet.v4().Pt() > 15){
 	LorentzVector metv4 = event.met->v4();
 	metv4 += jet.v4();
-	metv4 -= jet_v4_corrected;
+	metv4 -= jet_v4_corrected_L1L2L3_L1;
 	event.met->set_pt(metv4.Pt());
 	event.met->set_phi(metv4.Phi());
       }
