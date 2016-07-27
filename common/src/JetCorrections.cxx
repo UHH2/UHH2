@@ -296,9 +296,10 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     corrector.setRho(event.rho);
 
     auto correctionfactor = corrector.getCorrection();
-
+    //    LorentzVector jet_v4_raw = jet.v4() * (factor_raw);
     LorentzVector jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-    LorentzVector jet_v4_corrected_L1L2L3_L1 = jet.v4() * (factor_raw *correctionfactor/correctionfactor_L1);
+    LorentzVector jet_v4_corrected_L1 = jet.v4() * (factor_raw *correctionfactor_L1);
+    //    LorentzVector jet_v4_corrected_L1L2L3_L1 = jet.v4() * (factor_raw *correctionfactor/correctionfactor_L1);
     if(jec_unc_direction!=0){
       if (jec_unc==NULL){
 	std::cerr << "JEC variation should be applied, but JEC uncertainty object is NULL! Abort." << std::endl;
@@ -321,20 +322,19 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 	  correctionfactor *= (1 - fabs(unc));
 	}
 	jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-	jet_v4_corrected_L1L2L3_L1 = jet.v4() * (factor_raw *correctionfactor/correctionfactor_L1);
+	jet_v4_corrected_L1 = jet.v4() * (factor_raw *correctionfactor_L1);
       }
     }
 
     //propagate to MET
-    // subtract the new corrected (smeared) jet v4 from/to MET, if the corrected pt is > 15GeV.
-    // Note that this implementation does not do exactly the same as re-applying typeI corrections of the new corrected jets to raw met as it does not
-    // consider the cases in which the new corrections makes some jets flip-flop over the pt = 15GeV threshold used in the typeI-met correction.
-    // To consider that, we would need the pure L1 corrected jet here as well ...
+    //apply type1 MET correction
+    //NB: jet with substracted muon Pt should be used
     if(propagate_to_met){
-      if(jet.v4().Pt() > 15){
+      if(jet_v4_corrected.Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){//cut applied on the corrected jets with EM fraction <0.9
+	LorentzVector type1METcorr = -jet_v4_corrected + jet_v4_corrected_L1;
 	LorentzVector metv4 = event.met->v4();
 	metv4 += jet.v4();
-	metv4 -= jet_v4_corrected_L1L2L3_L1;
+	metv4 += type1METcorr;
 	event.met->set_pt(metv4.Pt());
 	event.met->set_phi(metv4.Phi());
       }
@@ -545,7 +545,7 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
                     // set new muon multiplicity and muon energy fraction:
                     jet.set_muonMultiplicity(jet.muonMultiplicity() - 1);
                     jet.set_muonEnergyFraction(max(new_muon_energy_in_jet / jet_p4_raw.E(), 0.0));
-                    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
+                    correct_jet(*corrector, jet, event, jec_uncertainty, direction, false);
                 }
             }
         }
