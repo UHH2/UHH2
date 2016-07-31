@@ -7,6 +7,8 @@ public:
       m_pt = 0;
       m_phi = 0;
       m_mEtSig = 0;
+      m_uncorr_pt = 0;
+      m_uncorr_phi = 0;
       m_shiftedPx_JetEnUp = 0;
       m_shiftedPx_JetEnDown = 0;
       m_shiftedPx_JetResUp = 0;
@@ -31,6 +33,9 @@ public:
       m_shiftedPy_TauEnDown = 0;
       m_shiftedPy_MuonEnDown = 0;
       m_shiftedPy_MuonEnUp = 0;
+      /* m_corr_x = 0; */
+      /* m_corr_y = 0; */
+      /* //  m_corr_SumEt = 0; */
   }
 
   /// transverse momentum
@@ -39,6 +44,17 @@ public:
    float phi() const{return m_phi;}
    /// transverse momentum significance
    float mEtSig() const{return m_mEtSig;}
+
+   /// uncorrected transverse momentum
+   float uncorr_pt() const{return m_uncorr_pt;}
+   /// uncorrected phi
+   float uncorr_phi() const{return m_uncorr_phi;}
+   /* /// corr in Px */
+   /* float corr_x() const{return m_corr_x;} */
+   /* /// corr in Py */
+   /* float corr_y() const{return m_corr_y;} */
+   /// corr in SumEt
+   //   float corr_SumEt() const{return m_corr_SumEt;}
    
    float shiftedPx_JetEnUp() const{return m_shiftedPx_JetEnUp;}
    
@@ -93,7 +109,17 @@ public:
    void set_phi(float phi){m_phi=phi;}
    /// set transverse momentum significance
    void set_mEtSig(float mEtSig){m_mEtSig=mEtSig;}
-   
+
+   /// set uncorrected transverse momentum
+   void set_uncorr_pt(float pt){m_uncorr_pt=pt;}  
+   /// set uncorrected phi
+   void set_uncorr_phi(float phi){m_uncorr_phi=phi;}
+
+   /* /// set corr in Px, Py, SumEt */
+   /* void set_corr_x(float x){m_corr_x=x;} */
+   /* void set_corr_y(float x){m_corr_y=x;} */
+   /* //   void set_corr_SumEt(float x)(m_corr_SumEt=x;} */
+
    void set_shiftedPx_JetEnUp(float shiftedPx_JetEnUp) {m_shiftedPx_JetEnUp = shiftedPx_JetEnUp;}
    
    void set_shiftedPx_JetEnDown(float shiftedPx_JetEnDown) {m_shiftedPx_JetEnDown = shiftedPx_JetEnDown;}
@@ -149,6 +175,14 @@ public:
       met.SetPhi(m_phi);
       return met;
    }
+
+   /// convert missing transverse energy into 4-vector
+   LorentzVector uncorr_v4(){
+      LorentzVector met(0,0,0,0);
+      met.SetPt(m_uncorr_pt);
+      met.SetPhi(m_uncorr_phi);
+      return met;
+   }
    
 private:
    float m_pt;
@@ -178,4 +212,9 @@ private:
    float m_shiftedPy_TauEnDown;
    float m_shiftedPy_MuonEnDown;
    float m_shiftedPy_MuonEnUp;
+   float m_uncorr_pt;
+   float m_uncorr_phi;
+   /* float m_corr_x; */
+   /* float m_corr_y; */
+   //   float m_corr_SumEt;
 };
