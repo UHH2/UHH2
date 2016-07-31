@@ -1,7 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
 
-useData = False
+#useData = False
+useData = True
 use25ns = True #switch this flag to False when running on 50ns samples
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
@@ -31,20 +32,23 @@ bTagInfos = [
 process = cms.Process("USER")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
+#process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 #process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) , allowUnscheduled = cms.untracked.bool(True) )
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-           # '/store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1mpiOFF_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/323B1524-8B09-E611-9D5D-00266CFCC9F8.root' #MC test file
-            '/store/mc/RunIISpring16MiniAODv1/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/MINIAODSIM/PUFlat0to50_magnetOn_80X_mcRun2_asymptotic_2016_v3-v1/20000/0059094A-B5F2-E511-AD70-008CFA166014.root'
+            #'/store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1mpiOFF_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/323B1524-8B09-E611-9D5D-00266CFCC9F8.root' #MC test file
+            '/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/503/00000/069FE912-3E1F-E611-8EE4-02163E011DF3.root'
            # 'file:/nfs/dust/cms/user/peiffer/98CCBD01-0517-E611-A464-02163E011F40.root', #Data test file
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -98,10 +102,11 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 #see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 if useData:
-    process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v8' 
+   # process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v8' 
+    process.GlobalTag.globaltag = '80X_dataRun2_Prompt_ICHEP16JEC_v0' 
 else:
     if use25ns: 
-        process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2' 
+        process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1' 
     else:
         process.GlobalTag.globaltag = '76X_mcRun2_startup_v12' 
 
@@ -487,6 +492,59 @@ addJetCollection(process,labelName = 'AK8PFCHS', jetSource = cms.InputTag('ak8CH
 # #setattr(process, ungroomed_genjets_name, ungroomed_jetproducer.clone(src = cms.InputTag('packedGenParticlesForJetsNoNu'), jetType = 'GenJet'))
 # #getattr(process,'patJetsAK8PFPuppi').addTagInfos = cms.bool(True)
 
+
+### MET
+
+## MET CHS (not available as slimmedMET collection)
+## copied from https://github.com/cms-jet/JMEValidator/blob/CMSSW_7_6_X/python/FrameworkConfiguration.py
+def clean_met_(met):
+    del met.t01Variation
+    del met.t1Uncertainties
+    del met.t1SmearedVarsAndUncs
+    del met.tXYUncForRaw
+    del met.tXYUncForT1
+    del met.tXYUncForT01
+    del met.tXYUncForT1Smear
+    del met.tXYUncForT01Smear
+
+from PhysicsTools.PatAlgos.tools.metTools import addMETCollection
+
+## Raw PF METs
+process.load('RecoMET.METProducers.PFMET_cfi')
+
+process.pfMet.src = cms.InputTag('packedPFCandidates')
+addMETCollection(process, labelName='patPFMet', metSource='pfMet') # RAW MET
+process.patPFMet.addGenMET = False
+
+process.pfMetCHS = process.pfMet.clone()
+process.pfMetCHS.src = cms.InputTag("chs")
+process.pfMetCHS.alias = cms.string('pfMetCHS')
+addMETCollection(process, labelName='patPFMetCHS', metSource='pfMetCHS') # RAW CHS MET
+process.patPFMetCHS.addGenMET = False
+
+
+## Slimmed METs
+from PhysicsTools.PatAlgos.slimming.slimmedMETs_cfi import slimmedMETs
+#### CaloMET is not available in MiniAOD
+del slimmedMETs.caloMET
+
+### CHS
+process.slimmedMETsCHS = slimmedMETs.clone()
+if hasattr(process, "patPFMetCHS"):
+    # Create MET from Type 1 PF collection
+    process.patPFMetCHS.addGenMET = False
+    process.slimmedMETsCHS.src = cms.InputTag("patPFMetCHS")
+    process.slimmedMETsCHS.rawUncertainties = cms.InputTag("patPFMetCHS") # only central value
+else:
+    # Create MET from RAW PF collection
+    process.patPFMetCHS.addGenMET = False
+    process.slimmedMETsCHS.src = cms.InputTag("patPFMetCHS")
+    del process.slimmedMETsCHS.rawUncertainties # not available
+    
+clean_met_(process.slimmedMETsCHS)
+addMETCollection(process, labelName="slMETsCHS", metSource="slimmedMETsCHS")
+process.slMETsCHS.addGenMET = False
+
 ### LEPTON cfg
 
 # collections for lepton PF-isolation deposits
@@ -660,8 +718,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         jet_etamax = cms.double(999.0),
         
         doMET = cms.bool(True),
-        met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi"),
-        
+#        met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi"),
+        met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS"),
        
         doTopJets = cms.bool(True),
         topjet_ptmin = cms.double(150.0),
