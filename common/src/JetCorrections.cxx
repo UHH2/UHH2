@@ -281,25 +281,19 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     return uhh2::make_unique<FactorizedJetCorrector>(pars);
 }
 
-  void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0, bool propagate_to_met = false){
+  void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0){
     auto factor_raw = jet.JEC_factor_raw();
     corrector.setJetPt(jet.pt() * factor_raw);
     corrector.setJetEta(jet.eta());
     corrector.setJetE(jet.energy() * factor_raw);
     corrector.setJetA(jet.jetArea());
     corrector.setRho(event.rho);
-    float correctionfactor_L1  = corrector.getSubCorrections().front();
-    corrector.setJetPt(jet.pt() * factor_raw);
-    corrector.setJetEta(jet.eta());
-    corrector.setJetE(jet.energy() * factor_raw);
-    corrector.setJetA(jet.jetArea());
-    corrector.setRho(event.rho);
-
-    auto correctionfactor = corrector.getCorrection();
-    //    LorentzVector jet_v4_raw = jet.v4() * (factor_raw);
+    auto correctionfactors = corrector.getSubCorrections();
+    auto correctionfactor_L1  = correctionfactors.front();
+    auto correctionfactor = correctionfactors.back();
+  
     LorentzVector jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-    LorentzVector jet_v4_corrected_L1 = jet.v4() * (factor_raw *correctionfactor_L1);
-    //    LorentzVector jet_v4_corrected_L1L2L3_L1 = jet.v4() * (factor_raw *correctionfactor/correctionfactor_L1);
+   
     if(jec_unc_direction!=0){
       if (jec_unc==NULL){
 	std::cerr << "JEC variation should be applied, but JEC uncertainty object is NULL! Abort." << std::endl;
@@ -322,27 +316,38 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 	  correctionfactor *= (1 - fabs(unc));
 	}
 	jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-	jet_v4_corrected_L1 = jet.v4() * (factor_raw *correctionfactor_L1);
       }
     }
 
-    //propagate to MET
-    //apply type1 MET correction
-    //NB: jet with substracted muon Pt should be used
-    if(propagate_to_met){
-      if(jet_v4_corrected.Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){//cut applied on the corrected jets with EM fraction <0.9
-	LorentzVector type1METcorr = -jet_v4_corrected + jet_v4_corrected_L1;
-	LorentzVector metv4 = event.met->v4();
-	metv4 += jet.v4();
-	metv4 += type1METcorr;
-	event.met->set_pt(metv4.Pt());
-	event.met->set_phi(metv4.Phi());
-      }
-    }
-
+  
     jet.set_v4(jet_v4_corrected);
     jet.set_JEC_factor_raw(1. / correctionfactor);
-}
+    jet.set_JEC_L1factor_raw(correctionfactor_L1);
+  }
+
+  
+  //propagate to MET
+  //apply type1 MET correction to RAW MET
+  //NB: jet with substracted muon Pt should be used
+  void correct_MET(const Event & event){
+    //    LorentzVector metv4= event.met->uncorr_v4();
+    LorentzVector metv4= event.met->v4();
+    //std::cout<<"Initial uncorrected MET.pT = "<<metv4.Pt()<<" MET.phi = "<<metv4.Phi()<<std::endl;
+    for(auto & jet : *event.jets){
+      if(jet.v4().Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){//cut applied on the corrected jets with EM fraction <0.9
+	auto factor_raw = jet.JEC_factor_raw();
+	auto L1factor_raw = jet.JEC_L1factor_raw();
+	LorentzVector type1METcorr = jet.v4();
+	LorentzVector type1METoffsetcorr = (L1factor_raw*factor_raw)*jet.v4();//Raw jet!
+	metv4 -= type1METcorr;
+	metv4 += type1METoffsetcorr;
+      }
+    }
+    event.met->set_pt(metv4.Pt());
+    event.met->set_phi(metv4.Phi());
+    //    std::cout<<"Final MET.pT = "<<metv4.Pt()<<" MET.phi = "<<metv4.Phi()<<std::endl;
+  }
+
 
 JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::vector<std::string> & filenames, int &direction){
     
@@ -385,14 +390,19 @@ JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> &
     direction = 0;
     bool used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
     propagate_to_met = used_ak4chs;
+    // bool used_ak4puppi = ctx.get("JetCollection")=="slimmedJetsPuppi"; //TEST PUPPI
+    // propagate_to_met = used_ak4puppi; //TEST PUPPI
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
     
 bool JetCorrector::process(uhh2::Event & event){
     assert(event.jets);
+  
     for(auto & jet : *event.jets){
-      correct_jet(*corrector, jet, event, jec_uncertainty, direction, propagate_to_met);
+      correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
+    if(propagate_to_met)
+      correct_MET(event);
     return true;
 }
 
@@ -545,7 +555,8 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
                     // set new muon multiplicity and muon energy fraction:
                     jet.set_muonMultiplicity(jet.muonMultiplicity() - 1);
                     jet.set_muonEnergyFraction(max(new_muon_energy_in_jet / jet_p4_raw.E(), 0.0));
-                    correct_jet(*corrector, jet, event, jec_uncertainty, direction, false);
+		    //                    correct_jet(*corrector, jet, event, jec_uncertainty, direction, false);
+                    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
                 }
             }
         }
