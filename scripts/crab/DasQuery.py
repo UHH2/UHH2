@@ -7,6 +7,7 @@ from das_client import get_data
 
 def autocomplete_Datasets(data):
     result_array =[]
+    os.environ['SSL_CERT_DIR'] = '/etc/grid-security/certificates/'
     for element in data:
         if '*' in element:
             jsondict = get_data('https://cmsweb.cern.ch',"dataset="+element,0,0,0)
