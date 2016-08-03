@@ -460,7 +460,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     for(size_t j=0; j< met_sources.size(); ++j){  
       met_tokens.push_back(consumes<vector<pat::MET>>(met_sources[j]));
       branch(tr, met_sources[j].c_str(), "MET", &met[j]);
-      if (met_sources[j]=="slimmedMETsPuppi") puppi.push_back(true);
+      //      if (met_sources[j]=="slimmedMETsPuppi") puppi.push_back(true);
+      if (met_sources[j]=="slimmedMETsPuppi" || met_sources[j]=="slMETsCHST1") puppi.push_back(true); //Puppi and CHS don't have METUncertainty
       else puppi.push_back(false);
     }
     if(!met_sources.empty()){
@@ -903,10 +904,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          std::cout<< "WARNING: number of METs = " << pat_mets.size() <<", should be 1" << std::endl;
        }
        else{
-         pat::MET pat_met = pat_mets[0];
+	 pat::MET pat_met = pat_mets[0];
          met[j].set_pt(pat_met.pt());
          met[j].set_phi(pat_met.phi());
          met[j].set_mEtSig(pat_met.mEtSig());
+	 met[j].set_uncorr_pt(pat_met.uncorPt());
+	 met[j].set_uncorr_phi(pat_met.uncorPhi());
+	 //	 std::cout<<"MET uncorrPt = "<<pat_met.uncorPt()<<" uncorrPhi = "<<pat_met.uncorPhi()<<" corrPt = "<<pat_met.pt()<<" corrPhi = "<<pat_met.phi()<<std::endl;
          if(!puppi.at(j))
             {
                met[j].set_shiftedPx_JetEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::JetEnUp, pat::MET::METCorrectionLevel::Type1));
