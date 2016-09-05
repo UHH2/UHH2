@@ -1,0 +1,61 @@
+# Config File for SFrameBatch to automagically construct 
+# SFrame XML Files just with CrossSections and XML Paths 
+# Format is Process Name, Path to XML File, Cross Section, either number of events/ cores,method (True for fast and false for weights)
+# Usage sframe_batch.py --XMLDatabase SampleInfo FILENAME_TO_STORE.xml
+
+#NickName               Directory     	    	  	   	Cross section    Number of Events/Cores   Methods  
+SingleMuData 	    	DATA_SingleMuon.xml              
+BprimeB* 		BprimeBToTW_M-*_v1.xml		         1
+BprimeT*             	BprimeTToTW_M-*_v1.xml                   1
+TTbar_Mtt1000toInf	MC_TT_Mtt1000toInf.xml	  	         20.578            23168980
+SingleT_t		MC_ST_t-channel_4f.xml	         	 26.38		   1666000
+SingleT_t_top		MC_ST_t-channel_top_4f_leptonDecays.xml	 44.33		   3206600
+SingleTWtop		MC_STpos_tW_inc.xml			 35.6   	   998400
+SingleTWAntitop		MC_STneg_tW_inc.xml			 35.6  		   967600
+SingleT_s		MC_ST_s-channel-4f.xml	 	 	 3.36  	           337066841375
+TTbar 			MC_TTbar.xml				 831.76            33364899
+TTbar_ext 		MC_TTbar_ext.xml			 831.76 	   182424800
+WW 			MC_WW.xml				 118.7		   993214
+WZ 			MC_WZ.xml 				 47.13		   1000000
+ZZ 			MC_ZZ.xml 				 16.523		   989312
+QCD_20toInf_Mu		MC_QCD_20toInf_MuEnrichedPt15.xml	 720648000*0.00042 22093630
+QCD_15to20_Mu		MC_QCD_Pt-15to20_MuEnrichedPt5.xml	 1273190000*0.003  4613847		
+QCD_20to30_Mu		MC_QCD_Pt-20to30_MuEnrichedPt5.xml	 558528000*0.0053  31556346475	
+QCD_30to50_Mu		MC_QCD_Pt-30to50_MuEnrichedPt5.xml	 139803000*0.01182 275633615592	
+QCD_50to80_Mu		MC_QCD_Pt-50to80_MuEnrichedPt5.xml	 19222500*0.02276  20314042	
+QCD_80to120_Mu		MC_QCD_Pt-80to120_MuEnrichedPt5.xml	 2758420*0.03844   136848342702	
+QCD_120to170_Mu		MC_QCD_Pt-120to170_MuEnrichedPt5.xml	 469797*0.05362	   766305342545	
+QCD_170to300_Mu		MC_QCD_Pt-170to300_MuEnrichedPt5.xml	 117989*0.07335	   7815165		
+QCD_300to470_Mu		MC_QCD_Pt-300to470_MuEnrichedPt5.xml	 7820.25*0.10196   7490138		
+QCD_470to600_Mu		MC_QCD_Pt-470to600_MuEnrichedPt5.xml	 645.528*0.12242   370257504188	
+QCD_600to800_Mu		MC_QCD_Pt-600to800_MuEnrichedPt5.xml	 187.109*0.13412   3969731		
+QCD_800to1000_Mu 	MC_QCD_Pt-800to1000_MuEnrichedPt5.xml  	 32.3486*0.14552   396184224859	
+QCD_1000toInf_Mu 	MC_QCD_Pt-1000toInf_MuEnrichedPt5.xml 	 10.4305*0.15544   3879642		
+WJets_HT100to200 	MC_WJets_LNu_HT100To200.xml 		 1345*1.21	   29521944	
+WJets_HT200to400 	MC_WJets_LNu_HT200To400.xml 		 359.7*1.21	   19957497	
+WJets_HT400to600 	MC_WJets_LNu_HT400To600.xml 		 48.91*1.21	   7174379		
+WJets_HT600to800 	MC_WJets_LNu_HT600To800.xml		 12.05*1.21	   3723054		
+WJets_HT800to1200 	MC_WJets_LNu_HT800To1200.xml 		 5.501*1.21	   7456227		
+WJets_HT1200to2500 	MC_WJets_LNu_HT1200To2500.xml 		 1.329*1.21	   6736297		
+WJets_HT2500toInf 	MC_WJets_LNu_HT2500ToInf.xml 		 0.03216*1.21	   2486059         
+ZJets_M10to50 		MC_DYJetsToLL_NLO_M10to50.xml 		 18610		   9.32173870097E+11
+ZJets_M50 		MC_DYJetsToLL_NLO_M50.xml 		 6025.2		   4.51201113827E+11
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
