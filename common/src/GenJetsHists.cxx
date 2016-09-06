@@ -41,18 +41,19 @@ GenJetsHists::ParticleHist GenJetsHists::book_ParticleHist(const string & axisSu
 }
 
 void GenJetsHists::fill(const uhh2::Event & event){
+  if(event.isRealData) return;
   auto w = event.weight;
-    if (!collection.empty() && !event.is_valid(h_jets)){
-      cerr<<collection<<" is invalid. Going to abort from GenJetsHists class"<<endl;
-      assert(1==0);
+  if (!collection.empty() && !event.is_valid(h_jets)){
+    cerr<<collection<<" is invalid. Going to abort from GenJetsHists class"<<endl;
+    assert(1==0);
+  }
+  vector<Particle> jets = collection.empty() ?  *event.genjets : event.get(h_jets);
+  number->Fill(jets.size(), w);
+  for(unsigned int i = 0; i <jets.size(); i++){
+    const auto & jet = jets[i];
+    fill_ParticleHist(jet,alljets,w);
+    if(i < single_ParticleHists.size()){
+      fill_ParticleHist(jet, single_ParticleHists[i], w);
     }
-    vector<Particle> jets = collection.empty() ?  *event.genjets : event.get(h_jets);
-    number->Fill(jets.size(), w);
-    for(unsigned int i = 0; i <jets.size(); i++){
-      const auto & jet = jets[i];
-      fill_ParticleHist(jet,alljets,w);
-      if(i < single_ParticleHists.size()){
-        fill_ParticleHist(jet, single_ParticleHists[i], w);
-      }
-    }
+  }
 }
