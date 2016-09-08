@@ -62,7 +62,7 @@ public:
   
 private:    
     class AnalysisModuleRunnerImpl;
-    std::auto_ptr<AnalysisModuleRunnerImpl> pimpl;
+    std::unique_ptr<AnalysisModuleRunnerImpl> pimpl;
 };
 
 }
