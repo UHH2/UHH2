@@ -199,7 +199,22 @@ const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFchs_MC = {
   "JetMETObjects/data/Spring16_25nsV6_MC_L1FastJet_AK4PFchs.txt",
   "JetMETObjects/data/Spring16_25nsV6_MC_L2Relative_AK4PFchs.txt",
   "JetMETObjects/data/Spring16_25nsV6_MC_L3Absolute_AK4PFchs.txt"
-};
+  };
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L23_AK4PFchs_MC = {                                                                       
+  "JetMETObjects/data/Spring16_25nsV6_MC_L2Relative_AK4PFchs.txt",                                                                               
+  "JetMETObjects/data/Spring16_25nsV6_MC_L3Absolute_AK4PFchs.txt"
+};  
+
+
+/* //TEST MET collections
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFchs_MC = {
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PF_MISCORR.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PF_MISCORR2.txt"
+  };
+*/
+
+
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFchs_MC = {
   "JetMETObjects/data/Spring16_25nsV6_MC_L1FastJet_AK8PFchs.txt",
@@ -217,6 +232,20 @@ const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFPuppi_MC = {
   "JetMETObjects/data/Spring16_25nsV6_MC_L2Relative_AK4PFPuppi.txt",
   "JetMETObjects/data/Spring16_25nsV6_MC_L3Absolute_AK4PFPuppi.txt"
 };
+const std::vector<std::string> JERFiles::Spring16_25ns_L23_AK4PFPuppi_MC = {
+  "JetMETObjects/data/Spring16_25nsV6_MC_L2Relative_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_MC_L3Absolute_AK4PFPuppi.txt"
+};
+
+//TEST MET Collections
+/*const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFPuppi_MC = {
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PF_MISCORR.txt"
+  };*/
+
+/* const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFPuppi_MC = {
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PF_MISCORR.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PF_MISCORR2.txt"
+  }; */
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFPuppi_MC = {
   "JetMETObjects/data/Spring16_25nsV6_MC_L1FastJet_AK8PFPuppi.txt",
@@ -228,7 +257,7 @@ const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFPuppi_MC = {
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_noRes_AK4PFchs_DATA = {
   "JetMETObjects/data/Spring16_25nsV6_DATA_L1FastJet_AK4PFchs.txt",
   "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK4PFchs.txt",
-  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK4PFchs.txt"
 };
 
 
@@ -239,6 +268,11 @@ const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFchs_DATA = {
   "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PFchs.txt",
 };
 
+const std::vector<std::string> JERFiles::Spring16_25ns_L23_AK4PFchs_DATA = {
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK4PFchs.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PFchs.txt"                                                                            
+};     
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFchs_DATA = {
   "JetMETObjects/data/Spring16_25nsV6_DATA_L1FastJet_AK8PFchs.txt",
@@ -259,6 +293,29 @@ const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK4PFPuppi_DATA = {
   "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK4PFPuppi.txt",
   "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PFPuppi.txt",
 };
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L23_AK4PFPuppi_DATA = {
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK4PFPuppi.txt",
+};
+
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L23_noRes_AK4PFPuppi_DATA = {
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK4PFPuppi.txt"
+};      
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_noRes_AK4PFPuppi_DATA = {
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L1FastJet_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK4PFPuppi.txt",
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK4PFPuppi.txt"
+};
+
+const std::vector<std::string> JERFiles::Spring16_25ns_L23_noRes_AK4PFchs_DATA = {                                                             
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK4PFchs.txt", 
+  "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK4PFchs.txt"
+};    
 
 const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFPuppi_DATA = {
   "JetMETObjects/data/Spring16_25nsV6_DATA_L1FastJet_AK8PFPuppi.txt",
@@ -281,24 +338,19 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     return uhh2::make_unique<FactorizedJetCorrector>(pars);
 }
 
-  void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0, bool propagate_to_met = false){
+  void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0){
     auto factor_raw = jet.JEC_factor_raw();
     corrector.setJetPt(jet.pt() * factor_raw);
     corrector.setJetEta(jet.eta());
     corrector.setJetE(jet.energy() * factor_raw);
     corrector.setJetA(jet.jetArea());
     corrector.setRho(event.rho);
-    float correctionfactor_L1  = corrector.getSubCorrections().front();
-    corrector.setJetPt(jet.pt() * factor_raw);
-    corrector.setJetEta(jet.eta());
-    corrector.setJetE(jet.energy() * factor_raw);
-    corrector.setJetA(jet.jetArea());
-    corrector.setRho(event.rho);
-
-    auto correctionfactor = corrector.getCorrection();
-
+    auto correctionfactors = corrector.getSubCorrections();
+    auto correctionfactor_L1  = correctionfactors.front();
+    auto correctionfactor = correctionfactors.back();
+    //    std::cout<<"Number of corrections: "<<correctionfactors.size()<<std::endl;
     LorentzVector jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-    LorentzVector jet_v4_corrected_L1L2L3_L1 = jet.v4() * (factor_raw *correctionfactor/correctionfactor_L1);
+   
     if(jec_unc_direction!=0){
       if (jec_unc==NULL){
 	std::cerr << "JEC variation should be applied, but JEC uncertainty object is NULL! Abort." << std::endl;
@@ -321,28 +373,38 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 	  correctionfactor *= (1 - fabs(unc));
 	}
 	jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-	jet_v4_corrected_L1L2L3_L1 = jet.v4() * (factor_raw *correctionfactor/correctionfactor_L1);
       }
     }
 
-    //propagate to MET
-    // subtract the new corrected (smeared) jet v4 from/to MET, if the corrected pt is > 15GeV.
-    // Note that this implementation does not do exactly the same as re-applying typeI corrections of the new corrected jets to raw met as it does not
-    // consider the cases in which the new corrections makes some jets flip-flop over the pt = 15GeV threshold used in the typeI-met correction.
-    // To consider that, we would need the pure L1 corrected jet here as well ...
-    if(propagate_to_met){
-      if(jet.v4().Pt() > 15){
-	LorentzVector metv4 = event.met->v4();
-	metv4 += jet.v4();
-	metv4 -= jet_v4_corrected_L1L2L3_L1;
-	event.met->set_pt(metv4.Pt());
-	event.met->set_phi(metv4.Phi());
-      }
-    }
-
+  
     jet.set_v4(jet_v4_corrected);
     jet.set_JEC_factor_raw(1. / correctionfactor);
-}
+    jet.set_JEC_L1factor_raw(correctionfactor_L1);
+    //    std::cout<<" eta = "<<jet_v4_corrected.Eta()<<" correctionfactor = "<<correctionfactor<<std::endl;
+  }
+
+  
+  //propagate to MET
+  //apply type1 MET correction to RAW MET
+  //NB: jet with substracted muon Pt should be used
+  void correct_MET(const Event & event, bool used_ak4chs, int dir=-1){
+    //    LorentzVector metv4= event.met->uncorr_v4();
+    LorentzVector metv4= event.met->v4();
+    for(auto & jet : *event.jets){
+      if(jet.v4().Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){//cut applied on the corrected jets with EM fraction <0.9
+	auto factor_raw = jet.JEC_factor_raw();
+	auto L1factor_raw = jet.JEC_L1factor_raw();
+	LorentzVector type1METcorr = jet.v4();
+	LorentzVector type1METoffsetcorr = (L1factor_raw*factor_raw)*jet.v4();//Raw jet!
+	metv4 += dir*type1METcorr;
+	if(used_ak4chs) 
+	  metv4 += type1METoffsetcorr;
+      }
+    }
+    event.met->set_pt(metv4.Pt());
+    event.met->set_phi(metv4.Phi());
+  }
+
 
 JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::vector<std::string> & filenames, int &direction){
     
@@ -383,16 +445,22 @@ JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::
 JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames){
     corrector = build_corrector(filenames);
     direction = 0;
-    bool used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
-    propagate_to_met = used_ak4chs;
+    used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
+    used_ak4puppi = ctx.get("JetCollection")=="slimmedJetsPuppi";
+    propagate_to_met = used_ak4chs || used_ak4puppi;
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
     
 bool JetCorrector::process(uhh2::Event & event){
     assert(event.jets);
+
+    if(propagate_to_met && used_ak4puppi)
+      correct_MET(event, used_ak4chs,+1);//TEST
     for(auto & jet : *event.jets){
-      correct_jet(*corrector, jet, event, jec_uncertainty, direction, propagate_to_met);
+      correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
+    if(propagate_to_met)
+      correct_MET(event, used_ak4chs,-1);
     return true;
 }
 
@@ -545,6 +613,7 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
                     // set new muon multiplicity and muon energy fraction:
                     jet.set_muonMultiplicity(jet.muonMultiplicity() - 1);
                     jet.set_muonEnergyFraction(max(new_muon_energy_in_jet / jet_p4_raw.E(), 0.0));
+		    //                    correct_jet(*corrector, jet, event, jec_uncertainty, direction, false);
                     correct_jet(*corrector, jet, event, jec_uncertainty, direction);
                 }
             }

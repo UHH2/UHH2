@@ -39,16 +39,23 @@ namespace JERFiles {
     extern const std::vector<std::string> Fall15_25ns_L123_AK4PFPuppi_DATA;
     extern const std::vector<std::string> Fall15_25ns_L123_AK8PFPuppi_DATA;
     extern const std::vector<std::string> Spring16_25ns_L123_AK4PFchs_MC;
+    extern const std::vector<std::string> Spring16_25ns_L23_AK4PFchs_MC;
     extern const std::vector<std::string> Spring16_25ns_L123_AK8PFchs_MC;
     extern const std::vector<std::string> Spring16_25ns_L23_AK8PFchs_MC;
     extern const std::vector<std::string> Spring16_25ns_L123_AK4PFPuppi_MC;
+    extern const std::vector<std::string> Spring16_25ns_L23_AK4PFPuppi_MC;
     extern const std::vector<std::string> Spring16_25ns_L123_AK8PFPuppi_MC;
     extern const std::vector<std::string> Spring16_25ns_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Spring16_25ns_L23_AK4PFchs_DATA;
     extern const std::vector<std::string> Spring16_25ns_L123_noRes_AK4PFchs_DATA;
     extern const std::vector<std::string> Spring16_25ns_L123_AK8PFchs_DATA;
     extern const std::vector<std::string> Spring16_25ns_L23_AK8PFchs_DATA;
     extern const std::vector<std::string> Spring16_25ns_L123_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Spring16_25ns_L23_AK4PFPuppi_DATA;
     extern const std::vector<std::string> Spring16_25ns_L123_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Spring16_25ns_L123_noRes_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Spring16_25ns_L23_noRes_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Spring16_25ns_L23_noRes_AK4PFchs_DATA;
 
 }
 
@@ -79,6 +86,8 @@ private:
     JetCorrectionUncertainty* jec_uncertainty;
     int direction = 0; // -1 = down, +1 = up, 0 = nominal
     bool propagate_to_met = false;
+    bool used_ak4puppi = false;
+    bool used_ak4chs = false;
 };
 
 class TopJetCorrector: public uhh2::AnalysisModule {
@@ -175,6 +184,7 @@ private:
  * 
  * Please note that the JetLeptonCleaner does not sort the (re-)corrected jets by pt;
  * you might want to do that before running algorithms / plotting which assume that.
+ * 
  */
 class JetLeptonCleaner: public uhh2::AnalysisModule {
 public:
