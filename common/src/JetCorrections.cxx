@@ -326,19 +326,19 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       }
     }
 
-    //propagate to MET
-    //apply type1 MET correction
-    //NB: jet with substracted muon Pt should be used
-    if(propagate_to_met){
-      if(jet_v4_corrected.Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){//cut applied on the corrected jets with EM fraction <0.9
-	LorentzVector type1METcorr = -jet_v4_corrected + jet_v4_corrected_L1;
-	LorentzVector metv4 = event.met->v4();
-	metv4 += jet.v4();
-	metv4 += type1METcorr;
-	event.met->set_pt(metv4.Pt());
-	event.met->set_phi(metv4.Phi());
-      }
-    }
+    // //propagate to MET
+    // //apply type1 MET correction
+    // //NB: jet with substracted muon Pt should be used
+    // if(propagate_to_met){
+    //   if(jet_v4_corrected.Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){//cut applied on the corrected jets with EM fraction <0.9
+    // 	LorentzVector type1METcorr = -jet_v4_corrected + jet_v4_corrected_L1;
+    // 	LorentzVector metv4 = event.met->v4();
+    // 	metv4 += jet.v4();
+    // 	metv4 += type1METcorr;
+    // 	event.met->set_pt(metv4.Pt());
+    // 	event.met->set_phi(metv4.Phi());
+    //   }
+    // }
 
     jet.set_v4(jet_v4_corrected);
     jet.set_JEC_factor_raw(1. / correctionfactor);
