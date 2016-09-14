@@ -247,7 +247,7 @@ const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFchs_DATA = {
   "JetMETObjects/data/Spring16_25nsV6_DATA_L2L3Residual_AK8PFchs.txt",
 };
 
-onst std::vector<std::string> JERFiles::Spring16_25ns_L123_noRes_AK8PFchs_DATA = {
+const std::vector<std::string> JERFiles::Spring16_25ns_L123_noRes_AK8PFchs_DATA = {
   "JetMETObjects/data/Spring16_25nsV6_DATA_L1FastJet_AK8PFchs.txt",
   "JetMETObjects/data/Spring16_25nsV6_DATA_L2Relative_AK8PFchs.txt",
   "JetMETObjects/data/Spring16_25nsV6_DATA_L3Absolute_AK8PFchs.txt",
