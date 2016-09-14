@@ -13,6 +13,8 @@ struct run_lumi {
   int run;
   int lumiblock;
 
+  friend bool operator<(const run_lumi &, const run_lumi & rl2);
+
 };
 
 class LuminosityHists: public uhh2::Hists {
@@ -24,8 +26,6 @@ public:
     virtual void fill(const uhh2::Event & ev) override;
     
 private:
-    
-    friend bool operator<(const run_lumi &, const run_lumi & rl2);
     
     // save the upper bin borders of those run/lumi numbers to
     // still include in the bin. Has size = nbins - 1, where
