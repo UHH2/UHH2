@@ -101,7 +101,7 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 #see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 if useData:
-    process.GlobalTag.globaltag = '80X_dataRun2_ICHEP16_repro_v0' 
+    process.GlobalTag.globaltag = '80X_dataRun2_Prompt_ICHEP16JEC_v0' 
 else:
     process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1' 
 
