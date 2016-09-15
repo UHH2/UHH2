@@ -14,12 +14,22 @@ class Electron : public RecParticle {
   enum tag {
     twodcut_dRmin,
     twodcut_pTrel,
-    heepElectronID_HEEPV60,				    
+    heepElectronID_HEEPV60,		
+    cutBasedElectronID_Summer16_80X_V1_veto,
+    cutBasedElectronID_Summer16_80X_V1_loose,
+    cutBasedElectronID_Summer16_80X_V1_medium,
+    cutBasedElectronID_Summer16_80X_V1_tight,
+    cutBasedElectronHLTPreselection_Summer16_V1
+
   };
 
   static tag tagname2tag(const std::string & tagname){
     if(tagname == "heepElectronID_HEEPV60") return heepElectronID_HEEPV60;
-
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_veto") return cutBasedElectronID_Summer16_80X_V1_veto;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_loose") return cutBasedElectronID_Summer16_80X_V1_loose;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_medium") return cutBasedElectronID_Summer16_80X_V1_medium;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_tight") return cutBasedElectronID_Summer16_80X_V1_tight;
+    if(tagname == "cutBasedElectronHLTPreselection_Summer16_V1") return cutBasedElectronHLTPreselection_Summer16_V1;
     throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
   }
 
