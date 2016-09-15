@@ -3,7 +3,6 @@ import FWCore.ParameterSet.Config as cms
 
 #useData = False
 useData = True
-use25ns = True #switch this flag to False when running on 50ns samples
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
@@ -39,9 +38,9 @@ process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , 
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-            #'/store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1mpiOFF_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/323B1524-8B09-E611-9D5D-00266CFCC9F8.root' #MC test file
-            '/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/503/00000/069FE912-3E1F-E611-8EE4-02163E011DF3.root'
-           # 'file:/nfs/dust/cms/user/peiffer/98CCBD01-0517-E611-A464-02163E011F40.root', #Data test file
+           #'/store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14_ext3-v1/00000/0064B539-803A-E611-BDEA-002590D0B060.root' #MC test file
+           #'/store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext3-v2/70000/00287FF4-0E40-E611-8D06-00266CFE78EC.root'
+           '/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/503/00000/069FE912-3E1F-E611-8EE4-02163E011DF3.root'
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
@@ -102,13 +101,10 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 #see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 if useData:
-   # process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v8' 
     process.GlobalTag.globaltag = '80X_dataRun2_Prompt_ICHEP16JEC_v0' 
 else:
-    if use25ns: 
-        process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1' 
-    else:
-        process.GlobalTag.globaltag = '76X_mcRun2_startup_v12' 
+    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1' 
+
 
 from RecoJets.Configuration.RecoPFJets_cff import *
 from RecoJets.JetProducers.fixedGridRhoProducerFastjet_cfi import *
@@ -606,7 +602,8 @@ process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons'
 process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectrons')
 
 elecID_mod_ls = [
-  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Spring15_25ns_V1_cff',
+  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff',
+  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronHLTPreselecition_Summer16_V1_cff',
   'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff',
   'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_'+'nonTrig_V1_cff',
   'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_'+   'Trig_V1_cff',
@@ -621,21 +618,17 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 
   vmaps_bool = cms.PSet(
 
-    cutBasedElectronID_Spring15_25ns_V1_standalone_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-veto'),
-    cutBasedElectronID_Spring15_25ns_V1_standalone_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-loose'),
-    cutBasedElectronID_Spring15_25ns_V1_standalone_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-medium'),
-    cutBasedElectronID_Spring15_25ns_V1_standalone_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Spring15-25ns-V1-standalone-tight'),
+    cutBasedElectronID_Summer16_80X_V1_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto'),
+    cutBasedElectronID_Summer16_80X_V1_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose'),
+    cutBasedElectronID_Summer16_80X_V1_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-medium'),
+    cutBasedElectronID_Summer16_80X_V1_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight'),
+
+    cutBasedElectronHLTPreselection_Summer16_V1 = cms.InputTag('egmGsfElectronIDs:cutBasedElectronHLTPreselection-Summer16-V1'),
 
     heepElectronID_HEEPV60                                = cms.InputTag('egmGsfElectronIDs:heepElectronID-HEEPV60'),
 
-    mvaEleID_Spring15_25ns_nonTrig_V1_wp90                = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp90'),
-    mvaEleID_Spring15_25ns_nonTrig_V1_wp80                = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-nonTrig-V1-wp80'),
-
-    mvaEleID_Spring15_25ns_Trig_V1_wp90                   = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-Trig-V1-wp90'),
-    mvaEleID_Spring15_25ns_Trig_V1_wp80                   = cms.InputTag('egmGsfElectronIDs:mvaEleID-Spring15-25ns-Trig-V1-wp80'),
   ),
 
-  #Already embedded in miniAOD v2
   vmaps_float = cms.PSet(
     ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15'+'NonTrig25nsV1Values'),
     ElectronMVAEstimatorRun2Spring15Trig25nsV1Values__user01    = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15'+   'Trig25nsV1Values'),
@@ -643,21 +636,25 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 
   vmaps_double = cms.vstring(el_isovals),
 
-  effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Spring15/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_50ns.txt'),
+  effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt'),
 
   mva_NoTrig = cms.string('ElectronMVAEstimatorRun2Spring15'+'NonTrig25nsV1Values__user01'),
   mva_Trig   = cms.string('ElectronMVAEstimatorRun2Spring15'+   'Trig25nsV1Values__user01'),
 )
 
-if use25ns: process.slimmedElectronsUSER.effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Spring15/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_25ns.txt')
+
 
 ### NtupleWriter
 
 
-#isPrompt = False
-#for x in process.source.fileNames:
-#    if "PromptReco" in x:
-#        isPrompt = True
+isreHLT = False
+for x in process.source.fileNames:
+    if "reHLT" in x:
+        isreHLT = True
+
+triggerpath="HLT"
+if isreHLT:
+    triggerpath="HLT2"
 
 if useData:
     metfilterpath="RECO"
@@ -686,19 +683,11 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
           # each string should correspond to a variable saved
           # via the "userInt" method in the pat::Electron collection used 'electron_source'
           # [the configuration of the pat::Electron::userInt variables should be done in PATElectronUserData]
-#          'cutBasedElectronID_Spring15_25ns_V1_standalone_veto',
-#          'cutBasedElectronID_Spring15_25ns_V1_standalone_loose',
-#          'cutBasedElectronID_Spring15_25ns_V1_standalone_medium',
-#          'cutBasedElectronID_Spring15_25ns_V1_standalone_tight',
-#
-#          'cutBasedElectronID_Spring15_50ns_V1_standalone_veto',
-#          'cutBasedElectronID_Spring15_50ns_V1_standalone_loose',
-#          'cutBasedElectronID_Spring15_50ns_V1_standalone_medium',
-#          'cutBasedElectronID_Spring15_50ns_V1_standalone_tight',
-#
-#          'mvaEleID_Spring15_25ns_nonTrig_V1_wp90',
-#          'mvaEleID_Spring15_25ns_nonTrig_V1_wp80',
-#
+          'cutBasedElectronID_Summer16_80X_V1_veto',
+          'cutBasedElectronID_Summer16_80X_V1_loose',
+          'cutBasedElectronID_Summer16_80X_V1_medium',
+          'cutBasedElectronID_Summer16_80X_V1_tight',
+          'cutBasedElectronHLTPreselection_Summer16_V1',
           'heepElectronID_HEEPV60',
         ),
         doMuons = cms.bool(True),
@@ -761,7 +750,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #topjet_qjets_sources = cms.vstring("QJetsCa15CHS", "QJetsCa8CHS", "QJetsCa8CHS", "QJetsCa15CHS"),
         
         doTrigger = cms.bool(True), 
-        trigger_bits = cms.InputTag("TriggerResults","","HLT"),
+        trigger_bits = cms.InputTag("TriggerResults","",triggerpath),
         # MET filters (HBHE noise, CSC, etc.) are stored as trigger Bits in MINIAOD produced in path "PAT"/"RECO" with prefix "Flag_"
         metfilter_bits = cms.InputTag("TriggerResults","",metfilterpath),
         # for now, save all the triggers:
