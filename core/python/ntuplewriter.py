@@ -151,6 +151,7 @@ process.chs = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandid
 
 process.ca8CHSJets  = ca8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = fatjet_ptmin)
 process.ak8CHSJets  = ak8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = 10.)
+process.ak8CHSJetsFat  = ak8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = fatjet_ptmin)
 process.ca15CHSJets = process.ca8CHSJets.clone (rParam = 1.5)
 
 from RecoJets.JetProducers.ak4PFJetsPruned_cfi import ak4PFJetsPruned
@@ -232,6 +233,7 @@ from RecoJets.Configuration.RecoPFJets_cff import ak8PFJetsCHS
 process.ak8CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('chs'), jetPtMin = fatjet_ptmin)
 process.ca15CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('chs'), jetPtMin = fatjet_ptmin, jetAlgorithm = cms.string("CambridgeAachen"), rParam = 1.5, R0 = 1.5, zcut = cms.double(0.2), beta = cms.double(1.0))
 process.ca15CHSJetsSoftDropforsub = process.ca8CHSJets.clone (rParam = 1.5, jetPtMin = fatjet_ptmin, zcut = cms.double(0.2), beta = cms.double(1.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(1.5))
+process.ak8CHSJetsSoftDropforsub = process.ak8CHSJetsFat.clone (rParam = 0.8, jetPtMin = fatjet_ptmin, zcut = cms.double(0.1), beta = cms.double(0.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(0.8))
 
 from RecoJets.JetProducers.ak4PFJetsPruned_cfi import ak4PFJetsPruned
 #Note low pt threshold as jets currently not stored but used just to derived pruned mass
@@ -251,6 +253,7 @@ process.ca15PuppiJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('p
 process.ak8PuppiJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('puppi'), jetPtMin = fatjet_ptmin)
 
 process.ca15PuppiJetsSoftDropforsub = process.ca8CHSJets.clone (rParam = 1.5, jetPtMin = fatjet_ptmin, zcut = cms.double(0.2), beta = cms.double(1.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(1.5), src = cms.InputTag('puppi'))
+process.ak8PuppiJetsSoftDropforsub = process.ak8CHSJetsFat.clone (rParam = 0.8, jetPtMin = fatjet_ptmin, zcut = cms.double(0.1), beta = cms.double(0.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(0.8), src = cms.InputTag('puppi'))
 
 process.ca15PuppiJets = process.ca8CHSJets.clone (rParam = 1.5, src='puppi')
 
@@ -449,9 +452,23 @@ process.NjettinessCa15SoftDropCHS = Njettiness.clone(
                                                  akAxesR0 = cms.double(999.0)        # not used by default
                                                  )
 process.NjettinessCa15SoftDropPuppi = process.NjettinessCa15SoftDropCHS.clone(src = cms.InputTag("ca15PuppiJetsSoftDropforsub"))
+process.NjettinessAk8SoftDropCHS = Njettiness.clone(
+                                                 src = cms.InputTag("ak8CHSJetsSoftDropforsub"),
+                                                 Njets=cms.vuint32(1,2,3),          # compute 1-, 2-, 3- subjettiness
+                                                 # variables for measure definition : 
+                                                 measureDefinition = cms.uint32( 0 ), # CMS default is normalized measure
+                                                 beta = cms.double(1.0),              # CMS default is 1
+                                                 R0 = cms.double(0.8),                  # CMS default is jet cone size
+                                                 Rcutoff = cms.double( 999.0),       # not used by default
+                                                 # variables for axes definition :
+                                                 axesDefinition = cms.uint32( 6 ),    # CMS default is 1-pass KT axes
+                                                 nPass = cms.int32(999),             # not used by default
+                                                 akAxesR0 = cms.double(999.0)        # not used by default
+                                                 )
+process.NjettinessAk8SoftDropPuppi = process.NjettinessAk8SoftDropCHS.clone(src = cms.InputTag("ak8PuppiJetsSoftDropforsub"))
 #process.NjettinessCa15SoftDropCHS = Njettiness.clone(src = cms.InputTag("patJetsCa15CHSJetsSoftDrop"), cone = cms.double(1.5),R0 = cms.double(1.5))
 #process.NjettinessCa8Puppi = Njettiness.clone(src = cms.InputTag("patJetsCa8PuppiJets"), cone = cms.double(0.8))
-process.NjettinessCa15Puppi = Njettiness.clone(src = cms.InputTag("ca15PuppiJets"), cone = cms.double(1.5))
+process.NjettinessCa15Puppi = Njettiness.clone(src = cms.InputTag("ca15PuppiJets"), cone = cms.double(1.5),R0 = cms.double(1.5))
 process.NjettinessAk8Puppi = Njettiness.clone(src = cms.InputTag("ak8PuppiJetsFat"), cone = cms.double(0.8))
 """
 process.QJetsCa8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa8CHSJets"), jetRad = cms.double(0.8))
@@ -726,8 +743,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         higgstag_sources = cms.vstring("patJetsAk8CHSJets","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets","patJetsAk8PuppiJetsFat"),
         higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags"),
         #Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
-        topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessCa15SoftDropCHS","NjettinessCa15SoftDropPuppi","NjettinessAk8Puppi"),
-        topjet_substructure_variables_sources = cms.vstring("","ak8CHSJets","ca15CHSJetsSoftDropforsub", "ca15PuppiJetsSoftDropforsub", "ak8PuppiJetsFat"),
+        topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessCa15CHS","NjettinessCa15Puppi","NjettinessAk8Puppi"),
+        topjet_substructure_variables_sources = cms.vstring("","ak8CHSJets","ca15CHSJets", "ca15PuppiJets", "ak8PuppiJetsFat"),
+        topjet_njettiness_groomed_sources = cms.vstring("","NjettinessAk8SoftDropCHS","NjettinessCa15SoftDropCHS","NjettinessCa15SoftDropPuppi","NjettinessAk8SoftDropPuppi"),
+        topjet_substructure_groomed_variables_sources = cms.vstring("","ak8CHSJetsSoftDropforsub","ca15CHSJetsSoftDropforsub", "ca15PuppiJetsSoftDropforsub", "ak8PuppiJetsSoftDropforsub"),
         #Note: for slimmedJetsAK8 on miniAOD, the pruned mass is available as user flot, with label ak8PFJetsCHSPrunedMass.
         #Alternatively it is possible to specify another pruned jet collection (to be produced here), from which to get it by jet-matching.
         #Finally, it is also possible to leave the pruned mass empty with ""

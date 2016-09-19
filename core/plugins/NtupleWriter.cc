@@ -281,7 +281,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
     double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
     bool substructure_variables = false;
-    std::vector<std::string> qjets_sources, njettiness_sources, topjet_substructure_variables_sources;
+    bool substructure_groomed_variables = false;
+    std::vector<std::string> qjets_sources, njettiness_sources, topjet_substructure_variables_sources, njettiness_groomed_sources, topjet_substructure_groomed_variables_sources;
     if(!iConfig.exists("subjet_sources")){
       cerr << "Exception: it is necessary to specify the subjets for each topjet collection" << endl;
       throw;
@@ -322,6 +323,13 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         topjet_substructure_variables_sources = iConfig.getParameter<std::vector<std::string> >("topjet_substructure_variables_sources");
     }
     assert(qjets_sources.size() <= topjet_substructure_variables_sources.size());
+    if(iConfig.exists("topjet_njettiness_groomed_sources")){
+        njettiness_groomed_sources = iConfig.getParameter<std::vector<std::string> >("topjet_njettiness_groomed_sources");
+        substructure_groomed_variables = true;
+    }
+    if(substructure_groomed_variables){
+        topjet_substructure_groomed_variables_sources = iConfig.getParameter<std::vector<std::string> >("topjet_substructure_groomed_variables_sources");
+    }
 
     /*--- lepton keys ---*/
     std::vector<std::string> muon_sources, elec_sources;
@@ -362,6 +370,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         }
         if(j < njettiness_sources.size()){
             cfg.njettiness_src = njettiness_sources[j];
+        }
+	if(j < topjet_substructure_groomed_variables_sources.size()){
+            cfg.substructure_groomed_variables_src = topjet_substructure_groomed_variables_sources[j];
+        }
+        if(j < njettiness_groomed_sources.size()){
+            cfg.njettiness_groomed_src = njettiness_groomed_sources[j];
         }
         if(j < qjets_sources.size()){
             cfg.qjets_src = qjets_sources[j];
