@@ -92,7 +92,7 @@ if __name__ == '__main__':
         
 
 
-        print 'Goint to print the Request-Name / Input-Dataset pairs'
+        print 'Going to print the Request-Name / Input-Dataset pairs'
         for i in range(len(ConfigFile.requestNames)):
                 print ConfigFile.requestNames[i],ConfigFile.inputDatasets[i]
 
