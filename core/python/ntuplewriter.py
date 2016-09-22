@@ -1,8 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
 
-#useData = False
-useData = True
+useData = False
+#useData = True
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
