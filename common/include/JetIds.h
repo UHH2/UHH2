@@ -30,10 +30,14 @@ private:
  * Jet Id following recomandations for 13 TeV:
  * https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
  *
- * For |eta|<=3.0 Apply
+ * For |eta|<=2.7 Apply
  * looseJetID = (NHF<0.99 && NEMF<0.99 && NumConst>1) && ((abs(eta)<=2.4 && CHF>0 && CHM>0 && CEMF<0.99) || abs(eta)>2.4) && abs(eta)<=3.0
  * tightJetID = (NHF<0.90 && NEMF<0.90 && NumConst>1) && ((abs(eta)<=2.4 && CHF>0 && CHM>0 && CEMF<0.99) || abs(eta)>2.4) && abs(eta)<=3.0
  * tightLepVetoJetID = (NHF<0.90 && NEMF<0.90 && NumConst>1 && MUF<0.8) && ((abs(eta)<=2.4 && CHF>0 && CHM>0 && CEMF<0.90) || abs(eta)>2.4) && abs(eta)<=3.0
+ *
+ * For |eta|>2.7 && |eta|<=3.0 Apply
+ * looseJetID = (NEMF<0.90 && NumNeutralParticle>2 && abs(eta)>2.7 && abs(eta)<=3.0)
+ * tightJetID = (NEMF<0.90 && NumNeutralParticle>2 && abs(eta)>2.7 && abs(eta)<=3.0)
  *
  * For |eta|> 3.0 Apply
  * looseJetID = (NEMF<0.90 && NumNeutralParticle>10 && abs(eta)>3.0 )
