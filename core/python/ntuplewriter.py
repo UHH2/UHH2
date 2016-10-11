@@ -1,8 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
 
-#useData = False
-useData = True
+useData = False
+#useData = True
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
@@ -39,8 +39,9 @@ process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
            #'/store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14_ext3-v1/00000/0064B539-803A-E611-BDEA-002590D0B060.root' #MC test file
-           #'/store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext3-v2/70000/00287FF4-0E40-E611-8D06-00266CFE78EC.root'
-           '/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/503/00000/069FE912-3E1F-E611-8EE4-02163E011DF3.root'
+           '/store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext3-v2/70000/00287FF4-0E40-E611-8D06-00266CFE78EC.root'
+           #'/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/503/00000/069FE912-3E1F-E611-8EE4-02163E011DF3.root'
+           #'/store/data/Run2016B/SingleMuon/MINIAOD/PromptReco-v2/000/273/150/00000/34A57FB8-D819-E611-B0A4-02163E0144EE.root'
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
@@ -660,6 +661,16 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 )
 
 
+### additional MET filters not given in MiniAOD
+
+process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
+process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
+process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+
+process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
+process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
+process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+
 
 ### NtupleWriter
 
@@ -825,6 +836,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
 
 process.p = cms.Path(
+    process.BadPFMuonFilter *
+    process.BadChargedCandidateFilter *
     process.MyNtuple)
 
 open('pydump.py','w').write(process.dumpPython())
