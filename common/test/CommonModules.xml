@@ -3,15 +3,15 @@
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
    <Library Name="libTestSUHH2common"/>
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
-<!--
+
         <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="TestCommonModules" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_80X_v1/SingleMuon/DATA_SingleMuon_Run2016B_1329_Ntuple.root" Lumi="0.0"/> 
+            <In FileName="/pnfs/desy.de/cms/tier2/store/user/isandova/NTuples_8020_Fall16/DATA/SingleMuon/crab_SingleMuon_Run2016F/161006_191007/0000/Ntuple_100.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
             <OutputTree Name="AnalysisTree" />
         </InputData>
--->
+
         <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="TestCommonModules" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_80X_v1/TTbar/MC_TTbar_424_Ntuple.root" Lumi="0.0"/> 
+            <In FileName="/pnfs/desy.de/cms/tier2//store/user/dagonzal/80Xv2_try2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/crab_TT_TuneCUETP8M1_13TeV-powheg-pythia8/160926_085948/0000/Ntuple_108.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
             <OutputTree Name="AnalysisTree" />
         </InputData>
@@ -29,7 +29,7 @@
 	    <Item Name="pileup_directory"           Value="../../common/data/MyMCPileupHistogram.root"/>
 	    <Item Name="pileup_directory_data" Value="../../common/data/MyDataPileupHistogram.root"/>
 
-	    <Item Name="lumi_file" Value="../data/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.root" />
+	    <Item Name="lumi_file" Value="../data/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.root" />
 
             <Item Name="AnalysisModule" Value="TestCommonModules" /> 
         </UserConfig>
