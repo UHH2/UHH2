@@ -803,14 +803,17 @@ bool TauEffVariation::process(Event & event){
   for(unsigned int i=0; i<real_taus.size(); ++i)
     {
       Tau realtau = real_taus.at(i);
-      if(i_TauEff==0) {return true;}
+      if (i_TauEff==0)
+	{
+	  event.weight *= SF_TauId;
+	}
       if (i_TauEff==1)
 	{
-	  event.weight *= 1.06+0.2*realtau.pt()/1000;
+	  event.weight *= (SF_TauId+0.06)+0.2*realtau.pt()/1000;
 	}
       if (i_TauEff==2)
 	{
-	  event.weight *= 0.94-0.2*realtau.pt()/1000;
+	  event.weight *= (SF_TauId-0.06)-0.2*realtau.pt()/1000;
 	}
     }
   return true;
