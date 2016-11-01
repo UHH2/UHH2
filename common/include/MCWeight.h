@@ -269,6 +269,8 @@ class TauEffVariation: public uhh2::AnalysisModule {
 
   private:
   int i_TauEff = 0;
+  // SF for Run-2 2016 is 0.83 while SF for Run-1 and Run-2 2015 is equal to 1.
+  double SF_TauId = 0.83; 
 };
 
 /** \brief Vary Tau charge
