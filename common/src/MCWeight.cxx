@@ -809,11 +809,11 @@ bool TauEffVariation::process(Event & event){
 	}
       if (i_TauEff==1)
 	{
-	  event.weight *= (SF_TauId+0.06)+0.2*realtau.pt()/1000;
+	  event.weight *= (SF_TauId+0.10)+0.2*realtau.pt()/1000;
 	}
       if (i_TauEff==2)
 	{
-	  event.weight *= (SF_TauId-0.06)-0.2*realtau.pt()/1000;
+	  event.weight *= (SF_TauId-0.10)-0.2*realtau.pt()/1000;
 	}
     }
   return true;
