@@ -331,7 +331,6 @@ const std::vector<std::string> JERFiles::Spring16_25ns_L123_AK8PFPuppi_DATA = {
 };
 
 
-
 namespace {
     
 // to share some code between JetCorrector and JetLeptonCleaner, provide some methods
