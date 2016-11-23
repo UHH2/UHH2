@@ -58,6 +58,13 @@ namespace JERFiles {
     extern const std::vector<std::string> Spring16_25ns_L23_noRes_AK4PFPuppi_DATA;
     extern const std::vector<std::string> Spring16_25ns_L23_noRes_AK4PFchs_DATA;
 
+   
+
+
+
+
+
+
 }
 
 /** \brief (Re-)Correct jets according to the corrections in the passed txt files
@@ -75,7 +82,7 @@ namespace JERFiles {
  */
 class JetCorrector: public uhh2::AnalysisModule {
 public:
-    explicit JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames);
+  explicit JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::vector<std::string> & filenames_L1RC = {});
     
     virtual bool process(uhh2::Event & event) override;
     
@@ -83,12 +90,19 @@ public:
     
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
+    std::unique_ptr<FactorizedJetCorrector> corrector_L1RC;
     
     JetCorrectionUncertainty* jec_uncertainty;
     int direction = 0; // -1 = down, +1 = up, 0 = nominal
     bool propagate_to_met = false;
     bool used_ak4puppi = false;
     bool used_ak4chs = false;
+    bool metprop_possible_ak8chs = false;
+    bool metprop_possible_ak8puppi = false;
+    bool used_slimmedmet = false;
+    bool used_puppimet = false;
+    bool used_chsmet = false;
+    bool do_metL1RC = false;
 };
 
 class TopJetCorrector: public uhh2::AnalysisModule {
