@@ -58,13 +58,6 @@ namespace JERFiles {
     extern const std::vector<std::string> Spring16_25ns_L23_noRes_AK4PFPuppi_DATA;
     extern const std::vector<std::string> Spring16_25ns_L23_noRes_AK4PFchs_DATA;
 
-   
-
-
-
-
-
-
 }
 
 /** \brief (Re-)Correct jets according to the corrections in the passed txt files
