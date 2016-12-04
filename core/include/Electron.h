@@ -62,8 +62,8 @@ class Electron : public RecParticle {
     m_ecalPFClusterIso = 0;
     m_hcalPFClusterIso = 0;
     m_dr03TkSumPt = 0;
-    m_mvaNonTrigV0 = 0;
-    m_mvaTrigV0 = 0;
+    m_mvaGeneralPurpose = 0;
+    m_mvaHZZ = 0;
     m_AEff = 0;
 
     m_pfMINIIso_CH       = 0;
@@ -113,8 +113,8 @@ class Electron : public RecParticle {
   float ecalPFClusterIso() const { return m_ecalPFClusterIso; }
   float hcalPFClusterIso() const { return m_hcalPFClusterIso; }
   float dr03TkSumPt     () const { return m_dr03TkSumPt; }
-  float mvaNonTrigV0() const{return m_mvaNonTrigV0;}
-  float mvaTrigV0() const{return m_mvaTrigV0;}
+  float mvaGeneralPurpose() const{return m_mvaGeneralPurpose;}
+  float mvaHZZ() const{return m_mvaHZZ;}  
   float effArea() const{return m_AEff;}
 
   float pfMINIIso_CH      () const { return m_pfMINIIso_CH; }
@@ -153,8 +153,8 @@ class Electron : public RecParticle {
   void set_ecalPFClusterIso(float x){ m_ecalPFClusterIso = x; }
   void set_hcalPFClusterIso(float x){ m_hcalPFClusterIso = x; }
   void set_dr03TkSumPt     (float x){ m_dr03TkSumPt      = x; }
-  void set_mvaNonTrigV0(float x){m_mvaNonTrigV0=x;}
-  void set_mvaTrigV0(float x){m_mvaTrigV0=x;}
+  void set_mvaGeneralPurpose(float x){m_mvaGeneralPurpose=x;}
+  void set_mvaHZZ(float x){m_mvaHZZ=x;}
   void set_effArea(float x){m_AEff=x;}
 
   void set_pfMINIIso_CH      (float x){ m_pfMINIIso_CH       = x; }
@@ -250,8 +250,8 @@ class Electron : public RecParticle {
   float m_ecalPFClusterIso;
   float m_hcalPFClusterIso;
   float m_dr03TkSumPt;
-  float m_mvaNonTrigV0;
-  float m_mvaTrigV0;
+  float m_mvaGeneralPurpose;
+  float m_mvaHZZ;
   float m_AEff;
 
   float m_pfMINIIso_CH;

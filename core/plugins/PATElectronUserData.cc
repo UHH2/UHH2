@@ -39,8 +39,8 @@ class PATElectronUserData : public edm::EDProducer {
 
   EffectiveAreas effAreas_;
 
-  std::string mva_NoTrig_;
-  std::string mva_Trig_;
+  std::string mva_GeneralPurpose_;
+  std::string mva_HZZ_;
 };
 
 PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig):
@@ -75,8 +75,8 @@ PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig):
     }
   }
 
-  if(iConfig.exists("mva_NoTrig")) mva_NoTrig_ = iConfig.getParameter<std::string>("mva_NoTrig");
-  if(iConfig.exists("mva_Trig"))   mva_Trig_   = iConfig.getParameter<std::string>("mva_Trig");
+  if(iConfig.exists("mva_GeneralPurpose")) mva_GeneralPurpose_ = iConfig.getParameter<std::string>("mva_GeneralPurpose"); 
+  if(iConfig.exists("mva_HZZ"))   mva_HZZ_   = iConfig.getParameter<std::string>("mva_HZZ"); 
 
   produces< pat::ElectronCollection >();
 }
@@ -149,14 +149,14 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     const float eA  = effAreas_.getEffectiveArea(fabs(ele.superCluster()->eta()));
     ele.addUserFloat("EffArea", eA);
 
-    if(!ele.hasUserFloat(mva_NoTrig_)) throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaNoTrig' not found";
-    if(!ele.hasUserFloat(mva_Trig_))   throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaTrig' not found";
+    if(!ele.hasUserFloat(mva_GeneralPurpose_)) throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaGeneralPurpose' not found";
+    if(!ele.hasUserFloat(mva_HZZ_))   throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaHZZ' not found"; 
 
-    const float notrigMVA = ele.userFloat(mva_NoTrig_);
-    const float trigMVA   = ele.userFloat(mva_Trig_);
+    const float GeneralPurposeMVA = ele.userFloat(mva_GeneralPurpose_); 
+    const float HZZMVA   = ele.userFloat(mva_HZZ_);                                                                                                                                                                                                              
+    ele.addUserFloat("mvaGeneralPurpose", GeneralPurposeMVA); 
+    ele.addUserFloat("mvaHZZ"  ,   HZZMVA); 
 
-    ele.addUserFloat("mvaNoTrig", notrigMVA);
-    ele.addUserFloat("mvaTrig"  ,   trigMVA);
   }
 
   iEvent.put(newElecs);

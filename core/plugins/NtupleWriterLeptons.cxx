@@ -77,8 +77,8 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_hcalPFClusterIso(pat_ele.hcalPFClusterIso());
         ele.set_dr03TkSumPt     (pat_ele.dr03TkSumPt());
 
-        ele.set_mvaNonTrigV0(pat_ele.hasUserFloat("mvaNoTrig") ? pat_ele.userFloat("mvaNoTrig") : -999.);
-        ele.set_mvaTrigV0   (pat_ele.hasUserFloat("mvaTrig")   ? pat_ele.userFloat("mvaTrig")   : -999.);
+	ele.set_mvaGeneralPurpose   (pat_ele.hasUserFloat("mvaGeneralPurpose")   ? pat_ele.userFloat("mvaGeneralPurpose")   : -999.);
+	ele.set_mvaHZZ   (pat_ele.hasUserFloat("mvaHZZ")   ? pat_ele.userFloat("mvaHZZ")   : -999.);
 
         ele.set_effArea(pat_ele.hasUserFloat("EffArea") ? pat_ele.userFloat("EffArea") : -999.);
 

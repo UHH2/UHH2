@@ -110,20 +110,14 @@ bool ElectronID_Spring15_25ns_tight       (const Electron& ele, const uhh2::Even
 bool ElectronID_Spring15_25ns_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "TIGHT" , false); }
 ////
 
-//// Non-Triggering MVA ID
+//// General Purpose MVA ID
 
-bool Electron_NonTrigMVAID(const Electron& ele_, const uhh2::Event&, const std::string& tuning_, const std::string& wp_){
+bool Electron_GeneralPurposeMVAID(const Electron& ele_, const uhh2::Event&, const std::string& tuning_, const std::string& wp_){
 
   std::string category("");
 
   const float pt(ele_.pt()), abs_etaSC(fabs(ele_.supercluster_eta()));
-  if(5. < pt && pt <= 10.){
-
-    if                         (abs_etaSC < 0.8)   category = "low-pt_barrel1";
-    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) category = "low-pt_barrel2";
-    else if                    (abs_etaSC < 2.5)   category = "low-pt_endcap";
-  }
-  else if(pt > 10.){
+  if(pt > 10.){
 
     if                         (abs_etaSC < 0.8)   category = "high-pt_barrel1";
     else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) category = "high-pt_barrel2";
@@ -134,18 +128,47 @@ bool Electron_NonTrigMVAID(const Electron& ele_, const uhh2::Event&, const std::
   int wp_idx(-1);
   if     (wp_ == "80p_sigeff") wp_idx = 0;
   else if(wp_ == "90p_sigeff") wp_idx = 1;
-  else throw std::runtime_error("Electron_NonTrigMVAID -- undefined working-point tag: "+wp_);
+  else throw std::runtime_error("Electron_GeneralPurposeMVAID -- undefined working-point tag: "+wp_);
 
-  const float MVA(ele_.mvaNonTrigV0());
+  const float MVA(ele_.mvaGeneralPurpose());
 
-  return (MVA > ElectronID::NonTrigMVA_LUT.at(tuning_).at(category).at(wp_idx));
+  return (MVA > ElectronID::GeneralPurposeMVA_LUT.at(tuning_).at(category).at(wp_idx));
 }
 
-bool ElectronID_MVAnotrig_PHYS14_loose(const Electron& ele, const uhh2::Event& evt){ return Electron_NonTrigMVAID(ele, evt, "PHYS14", "90p_sigeff"); }
-bool ElectronID_MVAnotrig_PHYS14_tight(const Electron& ele, const uhh2::Event& evt){ return Electron_NonTrigMVAID(ele, evt, "PHYS14", "80p_sigeff"); }
+bool ElectronID_MVAGeneralPurpose_Spring16_loose(const Electron& ele, const uhh2::Event& evt){ return Electron_GeneralPurposeMVAID(ele, evt, "Spring16", "90p_sigeff"); }
+bool ElectronID_MVAGeneralPurpose_Spring16_tight(const Electron& ele, const uhh2::Event& evt){ return Electron_GeneralPurposeMVAID(ele, evt, "Spring16", "80p_sigeff"); }
 
-bool ElectronID_MVAnotrig_Spring15_25ns_loose(const Electron& ele, const uhh2::Event& evt){ return Electron_NonTrigMVAID(ele, evt, "Spring15", "90p_sigeff"); }
-bool ElectronID_MVAnotrig_Spring15_25ns_tight(const Electron& ele, const uhh2::Event& evt){ return Electron_NonTrigMVAID(ele, evt, "Spring15", "80p_sigeff"); }
+
+//// HZZ MVA ID
+
+bool Electron_HZZMVAID(const Electron& ele_, const uhh2::Event&, const std::string& tuning_, const std::string& wp_){ 
+
+  std::string category("");
+  const float pt(ele_.pt()), abs_etaSC(fabs(ele_.supercluster_eta()));
+  if(5. < pt && pt <= 10.){ 
+    if                         (abs_etaSC < 0.8)   category = "low-pt_barrel1";
+    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) category = "low-pt_barrel2";
+    else if                    (abs_etaSC < 2.5)   category = "low-pt_endcap";
+  }
+  if(pt > 10.){
+    if                         (abs_etaSC < 0.8)   category = "high-pt_barrel1";
+    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) category = "high-pt_barrel2";
+    else if                    (abs_etaSC < 2.5)   category = "high-pt_endcap";
+  }
+  else return false; 
+
+  int wp_idx(-1);
+  if     (wp_ == "98p_sigeff") wp_idx = 0;
+  else throw std::runtime_error("Electron_HZZPurposeMVAID -- undefined working-point tag: "+wp_);
+
+  const float MVA(ele_.mvaHZZ());
+
+  return (MVA > ElectronID::HZZMVA_LUT.at(tuning_).at(category).at(wp_idx));
+
+}
+
+bool ElectronID_MVAHZZ_Spring16_loose(const Electron& ele, const uhh2::Event& evt){ return Electron_HZZMVAID(ele, evt, "Spring16", "98p_sigeff"); }
+
 ////
 
 bool ElectronID_HEEP_RunII_25ns(const Electron& ele, const uhh2::Event&){ return Electron_HEEP(ele, "RunII_25ns", "CMS_WorkPoint_NoIso"); }
