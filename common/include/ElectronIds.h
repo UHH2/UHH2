@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <UHH2/core/include/Event.h>
+#include <UHH2/core/include/Utils.h>
 
 // Note that the electronIds are implemented not by inheriting from a common base class, but
 // rather as 'something' that can be used as function with the signature
@@ -82,6 +83,16 @@ bool ElectronID_Spring15_25ns_medium      (const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_25ns_medium_noIso(const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_25ns_tight       (const Electron&, const uhh2::Event&);
 bool ElectronID_Spring15_25ns_tight_noIso (const Electron&, const uhh2::Event&);
+
+// --- Cut-Based ID: Spring16
+bool ElectronID_Spring16_veto        (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring16_veto_noIso  (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring16_loose       (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring16_loose_noIso (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring16_medium      (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring16_medium_noIso(const Electron&, const uhh2::Event&);
+bool ElectronID_Spring16_tight       (const Electron&, const uhh2::Event&);
+bool ElectronID_Spring16_tight_noIso (const Electron&, const uhh2::Event&);
 
 // --- Cut-Based ID: look-up table for ID working points
 // REF https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
@@ -200,6 +211,43 @@ namespace ElectronID {
     },
   /*******************/
 
+
+    /** Spring16 **/
+    {"Spring16", {
+ 
+	{"barrel", {
+                          /* Veto   , Loose   , Medium  , Tight   */
+	{"sigmaIetaIeta" , { 0.0115, 0.011, 	0.00998,   0.00998  }},
+        {"|dEtaIn|"      , { 0.00749, 0.00477, 	0.00311,  0.00308 }},
+        {"|dPhiIn|"      , { 0.228, 	0.222, 	0.103, 	0.0816  }},
+        {"HoverE"        , { 0.356, 	0.298, 	0.253, 	0.0414  }},
+        {"relIsoEA"      , { 0.175, 	0.0994, 0.0695, 0.0588  }},
+        {"|ooEmooP|"     , { 0.299, 	0.241, 	0.134, 	0.0129  }},
+        {"|d0|"          , { float(uhh2::infinity), float(uhh2::infinity)  , float(uhh2::infinity)  , float(uhh2::infinity)  }},
+        {"|dz|"          , { float(uhh2::infinity) , float(uhh2::infinity)    , float(uhh2::infinity)   , float(uhh2::infinity)  }},
+        {"missingHits"   , { 2,       1, 	1, 	1   }},
+        {"passConvVeto"  , { 1      , 1       , 1       , 1       }},
+       },
+      },
+      
+	{"endcap", {
+                          /* Veto   , Loose   , Medium  , Tight   */
+	{"sigmaIetaIeta" , { 0.037, 	0.0314,   0.0298,     0.0292 }},
+        {"|dEtaIn|"      , { 0.00895, 	0.00868,  0.00609,    0.00605 }},
+        {"|dPhiIn|"      , { 0.213, 	0.213, 	  0.045,      0.0394  }},
+        {"HoverE"        , { 0.211, 	0.101, 	  0.0878,     0.0641 }},
+        {"relIsoEA"      , { 0.159, 	0.107, 	  0.0821,     0.0571  }},
+        {"|ooEmooP|"     , { 0.15, 	0.14, 	  0.13,       0.0129}},
+        {"|d0|"          , { float(uhh2::infinity)  , float(uhh2::infinity)   , float(uhh2::infinity)  , float(uhh2::infinity)  }},
+        {"|dz|"          , { float(uhh2::infinity)  , float(uhh2::infinity)   , float(uhh2::infinity)   , float(uhh2::infinity)   }},
+        {"missingHits"   , { 3      , 1       , 1       , 1       }},
+        {"passConvVeto"  , { 1      , 1       , 1       , 1       }},
+       },
+
+      },
+     },
+    },
+  /*******************/
   };
 
 }
