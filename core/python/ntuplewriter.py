@@ -623,8 +623,8 @@ elecID_mod_ls = [
   'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff',
   'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronHLTPreselecition_Summer16_V1_cff',
   'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff',
-  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_'+'nonTrig_V1_cff',
-  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring15_25ns_'+   'Trig_V1_cff',
+  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
+  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_HZZ_V1_cff',
 ]
 
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
@@ -648,16 +648,16 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
   ),
 
   vmaps_float = cms.PSet(
-    ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15'+'NonTrig25nsV1Values'),
-    ElectronMVAEstimatorRun2Spring15Trig25nsV1Values__user01    = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring15'+   'Trig25nsV1Values'),
+    ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values'),
+    ElectronMVAEstimatorRun2Spring16HZZV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16HZZV1Values'),
   ),
 
   vmaps_double = cms.vstring(el_isovals),
 
   effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt'),
 
-  mva_NoTrig = cms.string('ElectronMVAEstimatorRun2Spring15'+'NonTrig25nsV1Values__user01'),
-  mva_Trig   = cms.string('ElectronMVAEstimatorRun2Spring15'+   'Trig25nsV1Values__user01'),
+  mva_GeneralPurpose = cms.string('ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values__user01'),
+  mva_HZZ = cms.string('ElectronMVAEstimatorRun2Spring16HZZV1Values__user01'),
 )
 
 

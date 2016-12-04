@@ -207,44 +207,34 @@ namespace ElectronID {
 // Electron MVA IDs
 // REF https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentificationRun2
 
-// --- Non-Triggering MVA ID
-bool Electron_NonTrigMVAID(const Electron&, const uhh2::Event&, const std::string&, const std::string&);
+// --- General Purpose MVA ID
+bool Electron_GeneralPurposeMVAID(const Electron&, const uhh2::Event&, const std::string&, const std::string&);
 
-// --- Non-Triggering MVA ID: PHYS14
-bool ElectronID_MVAnotrig_PHYS14_loose(const Electron&, const uhh2::Event&);
-bool ElectronID_MVAnotrig_PHYS14_tight(const Electron&, const uhh2::Event&);
+// --- General Purpose MVA ID: Spring16
+bool ElectronID_MVAGeneralPurpose_Spring16_loose(const Electron&, const uhh2::Event&);
+bool ElectronID_MVAGeneralPurpose_Spring16_tight(const Electron&, const uhh2::Event&);
 
-// --- Non-Triggering MVA ID: Spring15
-bool ElectronID_MVAnotrig_Spring15_25ns_loose(const Electron&, const uhh2::Event&);
-bool ElectronID_MVAnotrig_Spring15_25ns_tight(const Electron&, const uhh2::Event&);
+// --- HZZ MVA ID
+bool Electron_HZZMVAID(const Electron&, const uhh2::Event&, const std::string&, const std::string&);
+
+// --- HZZ MVA ID: Spring16
+bool ElectronID_MVAHZZ_Spring16(const Electron&, const uhh2::Event&);
+
 
 namespace ElectronID {
 
-  const std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float> > > NonTrigMVA_LUT = {
+  const std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float> > > GeneralPurposeMVA_LUT = {
 
-  /** PHYS14 **/
-    {"PHYS14", {
-                         /* 80% SE , 90% SE */
-      {"low-pt_barrel1" , { -0.253 , -0.483 }},
-      {"low-pt_barrel2" , {  0.081 , -0.267 }},
-      {"low-pt_endcap"  , { -0.081 , -0.323 }},
-      {"high-pt_barrel1", {  0.965 ,  0.933 }},
-      {"high-pt_barrel2", {  0.917 ,  0.825 }},
-      {"high-pt_endcap" , {  0.683 ,  0.337 }},
-
-     },
-    },
   /************/
 
-  /** Spring15 **/
-    {"Spring15", {
+  /** Spring16 **/
+    {"Spring16", 
+     {
                          /* 80% SE    , 90% SE    */
-      {"low-pt_barrel1" , {  0.287435 , -0.083313 }},
-      {"low-pt_barrel2" , {  0.221846 , -0.235222 }},
-      {"low-pt_endcap"  , { -0.303263 , -0.67099  }},
-      {"high-pt_barrel1", {  0.967083 ,  0.913286 }},
-      {"high-pt_barrel2", {  0.929117 ,  0.805013 }},
-      {"high-pt_endcap" , {  0.726311 ,  0.358969 }},
+      //no GeneralPurpose ID below 10 GeV
+      {"high-pt_barrel1", {  0.941 ,  0.837 }},
+      {"high-pt_barrel2", {  0.899 ,  0.715 }},
+      {"high-pt_endcap" , {  0.758 ,  0.357 }},
 
      },
     },
@@ -252,7 +242,26 @@ namespace ElectronID {
 
   };
 
+  const std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float> > > HZZMVA_LUT = {
+
+
+    /** Spring16 **/
+    {"Spring16", 
+     {   
+	/* 98% SE      */
+	{"low-pt_barrel1" , {  -0.211  }}, 
+	{"low-pt_barrel2" , {  -0.396  }}, 
+	{"low-pt_endcap"  , {  -0.215  }},
+	{"high-pt_barrel1", {  -0.870 }},
+	{"high-pt_barrel2", {  -0.838 }},
+	{"high-pt_endcap" , {  -0.763 }}, 
+      },
+    },
+    /**************/ 
+
+  };
 }
+
 
 // --- Electron HEEP ID
 // REF https://twiki.cern.ch/twiki/bin/view/CMS/HEEPElectronIdentificationRun2
