@@ -108,6 +108,20 @@ bool ElectronID_Spring15_25ns_medium_noIso(const Electron& ele, const uhh2::Even
 
 bool ElectronID_Spring15_25ns_tight       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "TIGHT" , true) ; }
 bool ElectronID_Spring15_25ns_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "TIGHT" , false); }
+
+// --- Cut-Based ID: Spring15 25ns
+bool ElectronID_Spring16_veto        (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "VETO"  , true) ; }
+bool ElectronID_Spring16_veto_noIso  (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "VETO"  , false); }
+
+bool ElectronID_Spring16_loose       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "LOOSE" , true) ; }
+bool ElectronID_Spring16_loose_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "LOOSE" , false); }
+
+bool ElectronID_Spring16_medium      (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "MEDIUM", true) ; }
+bool ElectronID_Spring16_medium_noIso(const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "MEDIUM", false); }
+
+bool ElectronID_Spring16_tight       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "TIGHT" , true) ; }
+bool ElectronID_Spring16_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "TIGHT" , false); }
+
 ////
 
 //// Non-Triggering MVA ID
