@@ -25,7 +25,7 @@ def get_basename(filename):
     if filename.startswith('/pnfs/'):       # use crab-project name
         return filename.split('/')[-4]
 
-    # remove jobnumber and 'Ntuple' and make a set
+    #remove jobnumber and 'Ntuple' and make a set
     filename = os.path.splitext(filename)[0]
     filename = os.path.basename(filename)
     tokens = filename.split('_')

@@ -81,15 +81,16 @@ public:
 
 class HEPTopTagV2{
 public:
-  
-  explicit HEPTopTagV2(double minHTTmass=128., double maxHTTmass=171., double maxfRec=0.18);
-  
+
+   explicit HEPTopTagV2(double minHTTmass=128., double maxHTTmass=171., double maxfRec=0.18, boost::optional<JetId> SubjetId=boost::none);
+
   bool operator()(const TopJet & topjet, const uhh2::Event & event) const;
 
  private:
    double m_minHTTmass;
    double m_maxHTTmass;
    double m_maxfRec;
+   boost::optional<JetId> m_SubjetId;
 };
 
 

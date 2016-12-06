@@ -23,6 +23,25 @@ bool JetCleaner::process(Event & event){
     return true;
 }
 
+JetMuonOverlapRemoval::JetMuonOverlapRemoval(double deltaRmin):
+deltaRmin_(deltaRmin){}
+
+bool JetMuonOverlapRemoval::process(Event & event){
+   
+   assert(event.muons);
+   std::vector<Jet> result;
+   Muon lepton =event.muons->at(0);
+
+   for(const auto & jet : *event.jets){
+      if(deltaR(jet, lepton) > deltaRmin_){
+         result.push_back(jet);
+      }
+   }
+   std::swap(result, *event.jets);
+   
+   return true;
+}
+
 
 PrimaryVertexCleaner::PrimaryVertexCleaner(const PrimaryVertexId & vtx_id_): vtx_id(vtx_id_){}
 

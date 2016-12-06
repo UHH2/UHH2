@@ -109,6 +109,7 @@ public:
                              const std::string & muons_handle_name="muons"); 
 
   virtual bool process(uhh2::Event & event) override;
+  virtual bool process_onemuon(uhh2::Event & event, int i); 
 
 private:
   uhh2::Event::Handle<std::vector<Muon>> h_muons_;
