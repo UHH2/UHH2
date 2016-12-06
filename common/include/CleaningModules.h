@@ -102,3 +102,11 @@ private:
     uhh2::Event::Handle<std::vector<TopJet>> hndl;
 };
 
+class JetMuonOverlapRemoval: public uhh2::AnalysisModule {
+   public:
+      explicit JetMuonOverlapRemoval(double deltaRmax);
+      virtual bool process(uhh2::Event & event) override;
+      
+   private:
+      double deltaRmin_;
+ };
