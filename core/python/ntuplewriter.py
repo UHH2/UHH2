@@ -102,9 +102,9 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 #see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 if useData:
-    process.GlobalTag.globaltag = '80X_dataRun2_Prompt_ICHEP16JEC_v0' 
+    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v5' 
 else:
-    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1' 
+    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6' 
 
 
 from RecoJets.Configuration.RecoPFJets_cff import *
