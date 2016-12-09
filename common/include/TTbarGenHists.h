@@ -17,4 +17,17 @@ protected:
 
     TH2F* M_ttbar_vs_shat, *M_ttbar_vs_deltaR_top, *M_ttbar_vs_deltaR_antitop, *shat_vs_deltaR_top, *shat_vs_deltaR_antitop, *Pt_top_vs_deltaR_top, *Pt_antitop_vs_deltaR_antitop, *M_ttbar_vs_deltaR_Wplus, *M_ttbar_vs_deltaR_Wminus, *M_ttbar_vs_Pt_top, *M_ttbar_vs_Pt_antitop, *shat_vs_Pt_top, *shat_vs_Pt_antitop, *Pt_top_vs_Pt_antitop, *M_ttbar_vs_Pt_top_ttframe, *M_ttbar_vs_Pt_antitop_ttframe, *M_ttbar_vs_eta_top, *M_ttbar_vs_eta_antitop;
     uhh2::Event::Handle<TTbarGen> h_ttbargen;
+
+    TH1F* dileptop_emu_mupt;
+    TH1F* dileptop_emu_mueta;
+    TH1F* dileptop_emu_ept;
+    TH1F* dileptop_emu_eeta;
+    TH1F* dileptop_taumu_mupt;
+    TH1F* dileptop_taumu_mueta;
+    TH1F* dileptop_taumu_taupt;
+    TH1F* dileptop_taumu_taueta;
+    TH1F* dileptop_mumu_mu1pt;
+    TH1F* dileptop_mumu_mu1eta;
+    TH1F* dileptop_mumu_mu2pt;
+    TH1F* dileptop_mumu_mu2eta;
 };

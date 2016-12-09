@@ -134,20 +134,31 @@ HEPTopTag::HEPTopTag(double ptJetMin, double massWindowLower, double massWindowU
 
 
 //uses WP with 40% signal efficiency as default (see https://indico.cern.ch/event/393337/#preview:1078843)
-HEPTopTagV2::HEPTopTagV2(double minHTTmass, double maxHTTmass, double maxfRec):m_minHTTmass(minHTTmass), m_maxHTTmass(maxHTTmass), m_maxfRec(maxfRec){}
-bool HEPTopTagV2::operator()(const TopJet & topjet, const uhh2::Event &) const{
+HEPTopTagV2::HEPTopTagV2(double minHTTmass, double maxHTTmass, double maxfRec, boost::optional<JetId> SubjetId):m_minHTTmass(minHTTmass), m_maxHTTmass(maxHTTmass), m_maxfRec(maxfRec), m_SubjetId(SubjetId){}
+bool HEPTopTagV2::operator()(const TopJet & topjet, const uhh2::Event &event) const{
    if (!topjet.has_tag(topjet.tagname2tag("mass"))) return false;
    if (!topjet.has_tag(topjet.tagname2tag("fRec"))) return false;
-   
+
    double fRec = topjet.get_tag(topjet.tagname2tag("fRec"));
    double HTTmass = topjet.get_tag(topjet.tagname2tag("mass"));
-   
+   HTTmass = HTTmass*1/topjet.JEC_factor_raw(); 
+
+   if(m_SubjetId){
+      bool pass_SubjetId = false;
+      for(auto subjet : topjet.subjets()){
+         if((*m_SubjetId)(subjet,event)){
+            pass_SubjetId = true;
+            break;
+         }
+      }
+      if(!pass_SubjetId) return false;
+   }
+
    if (HTTmass > m_minHTTmass && HTTmass < m_maxHTTmass && fRec <m_maxfRec) return true;
 
    return false;
 }
  
-
    
 bool Tau32::operator()(const TopJet & topjet, const uhh2::Event &) const {
     auto tau2 = topjet.tau2();
