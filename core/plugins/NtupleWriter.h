@@ -18,6 +18,10 @@
 
 #include <memory>
 
+// Jet Cluster for HOTVR & XCone by Alex and Dennis
+#include "UHH2/core/include/UniversalJetCluster.h"
+#include "UHH2/core/include/UniversalGenJetCluster.h"
+
 namespace uhh2 {
     class CMSSWContext;
     class NtupleWriterModule;
@@ -41,6 +45,7 @@ class NtupleWriter : public edm::EDFilter {
       // fill gen particles from a gen topjet
       void fill_genparticles_jet(const reco::GenJet& reco_genjet, GenJetWithParts& genjet);
 
+
       // ----------member data ---------------------------
       TFile *outfile;
       TTree *tr;
@@ -59,6 +64,12 @@ class NtupleWriter : public edm::EDFilter {
       bool doRho;
       bool doTrigHTEmu;
       bool doAllPFParticles;
+
+      // added by Alex and Dennis
+      bool doHOTVR;
+      bool doXCone;
+      bool doGenHOTVR;
+      bool doGenXCone;
 
       // in order of initialization:
       std::unique_ptr<uhh2::GenericEventStructure> ges;
@@ -115,6 +126,13 @@ class NtupleWriter : public edm::EDFilter {
       std::vector<std::string> triggerObjects_sources;
 
       std::vector<bool> puppi;
+
+      std::vector<TopJet> hotvrJets;
+      std::vector<TopJet> xconeJets;
+      std::vector<GenTopJet> genhotvrJets;
+      std::vector<GenTopJet> genxcone33Jets;
+      std::vector<GenTopJet> genxcone33Jets_softdrop;
+      std::vector<GenTopJet> genxcone23Jets;
 
 };
 

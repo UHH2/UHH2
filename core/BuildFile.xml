@@ -1,6 +1,8 @@
 <use name="root"/>
 <use name="rootrflx"/>
 <use name="boost"/>
+<use name="fastjet"/>
+<use name="fastjet-contrib"/>
 <Flags CPPDEFINES="CMSSW" />
 <export>
     <lib name="1" />

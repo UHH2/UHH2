@@ -823,6 +823,13 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doGenJetsWithParts = cms.bool(False),
         doAllPFParticles = cms.bool(False),
         pf_collection_source = cms.InputTag("packedPFCandidates"),
+
+        # *** HOTVR & XCone stuff
+        doHOTVR = cms.bool(True),
+        doXCone = cms.bool(True),
+        doGenHOTVR = cms.bool(not useData),
+        doGenXCone = cms.bool(not useData),             
+
 )
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
