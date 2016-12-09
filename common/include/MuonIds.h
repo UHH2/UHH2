@@ -58,3 +58,8 @@ class Muon_MINIIso {
   float iso_cut_;
   std::string iso_key_;
 };
+
+class MuonIDMedium_ICHEP {
+ public:
+  bool operator()(const Muon&, const uhh2::Event&) const;
+};
