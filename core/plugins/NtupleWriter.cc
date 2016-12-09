@@ -201,7 +201,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
   //doTrigHTEmu = iConfig.getParameter<bool>("doTrigHTEmu");
-  
+ 
+  doHOTVR = iConfig.getParameter<bool>("doHOTVR");
+  doXCone = iConfig.getParameter<bool>("doXCone");
+  doGenHOTVR = iConfig.getParameter<bool>("doGenHOTVR");
+  doGenXCone = iConfig.getParameter<bool>("doGenXCone");
+
   auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 
   // important: initialize first all module_writers, so that they can
@@ -446,6 +451,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         event->gentopjets = &gentopjets[0];
     }
   }
+
   if(doGenJetsWithParts){
     auto genjetwithparts_sources = iConfig.getParameter<std::vector<std::string> >("genjetwithparts_sources");
     genjetwithparts_ptmin = iConfig.getParameter<double> ("genjetwithparts_ptmin");
@@ -522,8 +528,36 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     pf_collection_token = consumes<vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("pf_collection_source"));
     branch(tr, "PFParticles", "std::vector<PFParticle>", &event->pfparticles);
   }
-  
-
+  // HOTVR and XCone Jet Cluster - added by Alex and Dennis
+  // PF Jets
+  if(doHOTVR || doXCone)
+    // HOTVR and XCone need full pf_collection for clustering
+    {
+      pf_collection_token = consumes<vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("pf_collection_source"));
+      if(doHOTVR)
+	{      
+	  branch(tr, "HOTVRTopJets", "std::vector<TopJet>", &hotvrJets);
+	}
+      if(doXCone)
+	{
+	  branch(tr, "XConeTopJets", "std::vector<TopJet>", &xconeJets);
+	}
+    }
+  // GenJets
+  if(doGenHOTVR || doGenXCone)
+    {
+      stablegenparticle_token = consumes<edm::View<pat::PackedGenParticle> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
+     if(doGenHOTVR)
+	{      
+	  branch(tr, "genHOTVRTopJets", "std::vector<GenTopJet>", &genhotvrJets);
+	}
+      if(doGenXCone)
+	{
+	  branch(tr, "genXCone33TopJets", "std::vector<GenTopJet>", &genxcone33Jets);
+	  branch(tr, "genXCone33TopJets_softdrop", "std::vector<GenTopJet>", &genxcone33Jets_softdrop);
+	  branch(tr, "genXCone23TopJets", "std::vector<GenTopJet>", &genxcone23Jets);
+	}
+    }
   newrun = true;
 }
 
@@ -546,6 +580,8 @@ namespace {
 
 // ------------ method called for each event  ------------
 bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
+
+  
 
    edm::CPUTimer timer;
    timer.start();
@@ -1057,6 +1093,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 }
        }
        
+
        //PFHT800 emulation
        /*
        if(doTrigHTEmu && k==0){
@@ -1090,6 +1127,71 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    }
    
    print_times(timer, "trigger");
+
+   // ------------- HOTVR and XCone Jets  -------------
+   if(doHOTVR || doXCone)
+     {
+       // get PFParticles
+       edm::Handle<vector<pat::PackedCandidate>> pfColl_handle;
+       iEvent.getByToken(pf_collection_token, pfColl_handle);
+
+       const std::vector<pat::PackedCandidate>& pf_coll = *(pfColl_handle.product()); 
+       std::vector<PFParticle> pfparticles;
+       for ( unsigned int j = 0; j<pf_coll.size(); ++j){
+	 const pat::PackedCandidate pf = pf_coll.at(j);
+       
+	 PFParticle part;
+	 part.set_pt(pf.pt());
+	 part.set_eta(pf.eta());
+	 part.set_phi(pf.phi());
+	 part.set_energy(pf.energy());
+	 pfparticles.push_back(part);
+       }
+
+       UniversalJetCluster jetCluster(&pfparticles);
+       if (doHOTVR)
+	 {
+       hotvrJets = jetCluster.GetHOTVRTopJets();
+	 }
+       if (doXCone)
+	 {
+	   xconeJets = jetCluster.GetXCone33Jets();
+	 }
+     }
+   if(doGenHOTVR || doGenXCone)
+     {
+       edm::Handle<edm::View<pat::PackedGenParticle> > packed;
+       // use packed particle collection for all STABLE (status 1) particles
+       iEvent.getByToken(stablegenparticle_token,packed);
+       vector<GenParticle> genparticles;
+       for(size_t j=0; j<packed->size();j++){
+
+	 const pat::PackedGenParticle* iter = &(*packed)[j];
+	 if(iter->status()!=1) continue;
+
+	 GenParticle genp;
+	 genp.set_pt(iter->p4().pt());
+	 genp.set_eta(iter->p4().eta());
+	 genp.set_phi(iter->p4().phi());
+	 genp.set_energy(iter->p4().E());
+	 genp.set_status( iter->status());
+	 genp.set_pdgId( iter->pdgId());
+
+	 genparticles.push_back(genp);
+       }
+
+       UniversalGenJetCluster genjetCluster(&genparticles);
+       if (doGenHOTVR)
+	 {
+	   genhotvrJets = genjetCluster.GetHOTVRTopJets();
+	 }
+       if (doGenXCone)
+	 {
+	   genxcone33Jets = genjetCluster.GetXCone33Jets();
+	   genxcone33Jets_softdrop = genjetCluster.GetXCone33Jets_softdrop();
+	   genxcone23Jets = genjetCluster.GetXCone23Jets();
+	 }
+     }
    
    // * done filling the event; call the AnalysisModule if configured:
    bool keep = true;
