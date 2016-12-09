@@ -175,6 +175,7 @@ TopJetHists::TopJetHists(Context & ctx,
   tau21 = book<TH1F>("tau21", "#tau_{2}/#tau_{1}", 50, 0, 1.0);
   deltaR_ak4jet= book<TH1F>("deltaR_ak4jet", "#Delta R(jet,ak4 jet)", 40, 0, 8.0);
   invmass_topjetak4jet = book<TH1F>("invmass_topjetak4jet", "invariant mass(jet,ak4 jet)", 100, 0, 1000);
+  deltaR_lepton= book<TH1F>("deltaR_lepton", "#Delta R(jet,lepton)", 40, 0, 8.0);
   HTT_mass = book<TH1F>("HTT_mass", "HTT mass", 100, 0, 1000);
   fRec = book<TH1F>("fRec", "fRec", 50,0,1); 
 
@@ -235,7 +236,20 @@ void TopJetHists::fill(const Event & event){
          }
       if (jet.has_tag(jet.tagname2tag("mass"))) HTT_mass ->Fill(jet.get_tag(jet.tagname2tag("mass")),w);
       if (jet.has_tag(jet.tagname2tag("fRec"))) fRec ->Fill(jet.get_tag(jet.tagname2tag("fRec")),w);
+  
+      vector<Muon> muons = *event.muons;
+      for (unsigned int j = 0; j <muons.size(); j++){
+         double deltaRtjlepton = deltaR(jet, muons[j]);
+         deltaR_lepton->Fill(deltaRtjlepton, w);
+      }
+      vector<Electron> electrons = *event.electrons;
+      for (unsigned int j = 0; j <electrons.size(); j++){
+         double deltaRtjlepton = deltaR(jet, electrons[j]);
+         deltaR_lepton->Fill(deltaRtjlepton, w);
+      }
+      
     }
+  
 }
 
 template<typename T>

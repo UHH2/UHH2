@@ -33,3 +33,17 @@ bool Muon_MINIIso::operator()(const Muon& muo, const uhh2::Event&) const {
 
   return (iso < iso_cut_);
 }
+
+bool MuonIDMedium_ICHEP::operator()(const Muon& muo, const Event&) const { 
+   
+   bool goodglobalmu = false;
+   bool tightsegmentcomp =false;
+   
+   if (!muo.get_bool(Muon::loose)) return false;
+   if (!(muo.innerTrack_validFraction() > 0.49 )) return false;
+   
+   if((muo.get_bool(Muon::global)) &&  (muo.globalTrack_normalizedChi2() < 3) && (muo.combinedQuality_chi2LocalPosition() < 12) && (muo.combinedQuality_trkKink() < 20) && (muo.segmentCompatibility() > 0.303)) goodglobalmu =true;
+   if(muo.segmentCompatibility() > 0.451) tightsegmentcomp = true;
+
+   return (goodglobalmu || tightsegmentcomp);
+}
