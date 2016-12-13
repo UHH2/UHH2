@@ -21,9 +21,6 @@ UniversalJetCluster::UniversalJetCluster(vector<PFParticle> *pfparticles)
 
 // HOTVR 
 
-// NOTE: The error seems to be, that HOTVR unfortunately cannot handle
-// ClusterSequenceArea. With only ClusterSequence erverything seems to
-// be just fine.
 void UniversalJetCluster::ClusterHOTVR()
 {
   double mu(30.),                 // massjump threshold
@@ -37,12 +34,9 @@ void UniversalJetCluster::ClusterHOTVR()
   HOTVR hotvr_plugin(mu, theta, min_r, max_r, rho, hotvr_pt_min, HOTVR::CALIKE); 
   JetDefinition jet_def(&hotvr_plugin);
 
-  // area definition
-  // double ghost_maxrap = 5.0;      // maxiumum y of ghost particles
-  // AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
- 
-  // setup cluster sequence with area
-  // ClusterSequenceArea cs(_psj, jet_def, area_def);
+   // Setup cluster sequence
+  ClusterSequence cs(_psj, jet_def);
+  vector<PseudoJet> hotvr_jets = hotvr_plugin.get_jets();
 
   // NOTE: There is a problem when getting Nsubjettiness directly
   // from HOTVR jets, because the link to the cluster sequence got lost
@@ -50,35 +44,39 @@ void UniversalJetCluster::ClusterHOTVR()
   // the cluster sequence with the hotvr_jets by comparing their
   // four-vectors.
 
-  // vector<PseudoJet> cs_jets = cs.inclusive_jets(hotvr_pt_min);
-  // vector<PseudoJet> hotvr_cs_jets;
-  // for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
-  //   {
-  //     double hotvreta = hotvr_jets[i].eta();
-  //     double hotvrphi = hotvr_jets[i].phi();
-  //     double hotvrpt = hotvr_jets[i].pt();
-  //     double hotvre = hotvr_jets[i].E();
-  //     for (unsigned int j = 0; j < cs_jets.size(); ++j)
-  // 	{
-  // 	  double cseta = cs_jets[j].eta();
-  // 	  double csphi = cs_jets[j].phi();
-  // 	  double cspt = cs_jets[j].pt();
-  // 	  double cse = cs_jets[j].E();
-  // 	  if ((hotvreta == cseta) && (hotvrphi == csphi) && (hotvrpt == cspt) && (hotvre == cse))
-  // 	    {
-  // 	      hotvr_cs_jets.push_back(cs_jets[j]);
-  // 	      break;
-  // 	    }
-  // 	}
-  //   }
-  // cout << "#HOTVR Jets == # new Jets? " << (hotvr_jets.size() == hotvr_cs_jets.size()) << endl;
-  // cout << "new Jets have valid cs? " << hotvr_cs_jets[0].has_valid_cluster_sequence() << endl;
-  // cout << "new Jets has pieces? " << hotvr_cs_jets[0].has_pieces() << endl;
+  // area definition
+  double ghost_maxrap = 5.0;      // maxiumum y of ghost particles
+  AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
 
-  // Setup cluster sequence
-  ClusterSequence cs(_psj, jet_def);
-  vector<PseudoJet> hotvr_jets = hotvr_plugin.get_jets();	 
- 
+  // setup cluster sequence with area
+  ClusterSequenceArea cs_area(_psj, jet_def, area_def);
+  vector<PseudoJet> cs_jets = cs_area.inclusive_jets(hotvr_pt_min);
+
+  vector<PseudoJet> hotvr_jets_area;;
+  for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
+    {
+      double hotvreta = hotvr_jets[i].eta();
+      double hotvrphi = hotvr_jets[i].phi();
+      double hotvrpt = hotvr_jets[i].pt();
+      double hotvre = hotvr_jets[i].E();
+      for (unsigned int j = 0; j < cs_jets.size(); ++j)
+   	{
+   	  double cseta = cs_jets[j].eta();
+   	  double csphi = cs_jets[j].phi();
+   	  double cspt = cs_jets[j].pt();
+   	  double cse = cs_jets[j].E();
+   	  if ((hotvreta == cseta) && (hotvrphi == csphi) && (hotvrpt == cspt) && (hotvre == cse))
+   	    {
+   	      hotvr_jets_area.push_back( cs_jets[j] );
+   	      break;
+   	    }
+   	}
+    }
+
+  if(hotvr_jets_area.size() != hotvr_jets.size()){
+    throw runtime_error("ERROR in UniversalJetCluster::ClusterHOTVR: number of jets found with ClusterSequence does not match number of jets with ClusterSequenceArea.");
+  }
+
   for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
     {
       double beta = 1.0;
@@ -90,13 +88,15 @@ void UniversalJetCluster::ClusterHOTVR()
       double tau1 =  nSub1(hotvr_jets[i]);
       double tau2 =  nSub2(hotvr_jets[i]);
       double tau3 =  nSub3(hotvr_jets[i]);
-
-      // gettin jet and subjet area
-      // double jet_area = hotvr_cs_jets[i].area();
-      // vector<double> subjet_area;
-      // for (unsigned int j = 0; j < subjets2.size(); ++j) subjet_area.push_back(subjets2[j].area());
-      _hotvrTopJets.push_back(ConvertPsjToTopJet(hotvr_jets[i], subjets, tau1, tau2, tau3));
+      // getting jet and subjet area
+      double jet_area = hotvr_jets_area[i].area();
+      //vector<double> subjet_area;
+      //HOTVRinfo hi2 = hotvr_jets_area[i].user_info<HOTVRinfo>();
+      //vector<PseudoJet> subjets2 = hi2.subjets();
+      //for (unsigned int j = 0; j < subjets2.size(); ++j) subjet_area.push_back(subjets2[j].area());
+      _hotvrTopJets.push_back(ConvertPsjToTopJet(hotvr_jets[i], subjets, tau1, tau2, tau3, jet_area));
     }
+  
 }
 vector<TopJet> UniversalJetCluster::GetHOTVRTopJets()
 {
@@ -218,7 +218,7 @@ Jet UniversalJetCluster::ConvertPsjToJet(const PseudoJet & psj)
 }
 
 // Convert to TopJets with groomed Nsubjettiness
-TopJet UniversalJetCluster::ConvertPsjToTopJet(const PseudoJet & psj, const vector<PseudoJet> &subpsj, double tau1, double tau2, double tau3)
+TopJet UniversalJetCluster::ConvertPsjToTopJet(const PseudoJet & psj, const vector<PseudoJet> &subpsj, double tau1, double tau2, double tau3, double jet_area)
 {
   TopJet topjet;
   topjet.set_pt(psj.pt());
@@ -228,6 +228,7 @@ TopJet UniversalJetCluster::ConvertPsjToTopJet(const PseudoJet & psj, const vect
   topjet.set_tau1_groomed(tau1);
   topjet.set_tau2_groomed(tau2);
   topjet.set_tau3_groomed(tau3);
+  topjet.set_jetArea(jet_area);
   for (unsigned int i = 0; i < subpsj.size(); ++i) 
     {
       topjet.add_subjet(ConvertPsjToJet(subpsj[i]));
