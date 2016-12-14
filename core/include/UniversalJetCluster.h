@@ -36,7 +36,7 @@ class UniversalJetCluster
   fastjet::PseudoJet ConvertPFToPsj(PFParticle * pfp);
   Jet ConvertPsjToJet(const fastjet::PseudoJet & psj, double jet_area);
   Jet ConvertPsjToJet(const fastjet::PseudoJet & psj);
-  TopJet ConvertPsjToTopJet(const fastjet::PseudoJet & psj, const std::vector<fastjet::PseudoJet> & subpsj, double tau1, double tau2, double tau3, double jet_area);
+  TopJet ConvertPsjToTopJet(const fastjet::PseudoJet & psj, const std::vector<fastjet::PseudoJet> & subpsj, double tau1, double tau2, double tau3, double jet_area, std::vector<double> subjet_area);
   TopJet ConvertPsjToTopJet(const fastjet::PseudoJet & psj, const std::vector<fastjet::PseudoJet> &subpsj, double jet_area, std::vector<double> subjet_area, float sd_mass);
 
   void ClusterHOTVR();

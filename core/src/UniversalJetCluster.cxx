@@ -46,56 +46,40 @@ void UniversalJetCluster::ClusterHOTVR()
 
   // area definition
   double ghost_maxrap = 5.0;      // maxiumum y of ghost particles
-  AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
+  AreaDefinition area_def(active_area_explicit_ghosts, GhostedAreaSpec(ghost_maxrap));
 
   // setup cluster sequence with area
-  ClusterSequenceArea cs_area(_psj, jet_def, area_def);
-  vector<PseudoJet> cs_jets = cs_area.inclusive_jets(hotvr_pt_min);
-
-  vector<PseudoJet> hotvr_jets_area;;
-  for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
-    {
-      double hotvreta = hotvr_jets[i].eta();
-      double hotvrphi = hotvr_jets[i].phi();
-      double hotvrpt = hotvr_jets[i].pt();
-      double hotvre = hotvr_jets[i].E();
-      for (unsigned int j = 0; j < cs_jets.size(); ++j)
-   	{
-   	  double cseta = cs_jets[j].eta();
-   	  double csphi = cs_jets[j].phi();
-   	  double cspt = cs_jets[j].pt();
-   	  double cse = cs_jets[j].E();
-   	  if ((hotvreta == cseta) && (hotvrphi == csphi) && (hotvrpt == cspt) && (hotvre == cse))
-   	    {
-   	      hotvr_jets_area.push_back( cs_jets[j] );
-   	      break;
-   	    }
-   	}
-    }
+  HOTVR hotvr_plugin_area(mu, theta, min_r, max_r, rho, hotvr_pt_min, HOTVR::CALIKE); 
+  JetDefinition jet_def_area(&hotvr_plugin_area);
+  ClusterSequenceArea cs_area(_psj, jet_def_area, area_def);
+  //vector<PseudoJet> cs_jets = cs_area.inclusive_jets(hotvr_pt_min);
+  vector<PseudoJet> hotvr_jets_area = hotvr_plugin_area.get_jets();
 
   if(hotvr_jets_area.size() != hotvr_jets.size()){
-    throw runtime_error("ERROR in UniversalJetCluster::ClusterHOTVR: number of jets found with ClusterSequence does not match number of jets with ClusterSequenceArea.");
-  }
-
+     throw runtime_error("ERROR in UniversalJetCluster::ClusterHOTVR: number of jets found with ClusterSequence does not match number of jets with ClusterSequenceArea.");
+   }
+  
   for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
     {
       double beta = 1.0;
       HOTVRinfo hi = hotvr_jets[i].user_info<HOTVRinfo>();
-      vector<PseudoJet> subjets = hi.subjets();
       Nsubjettiness nSub1(1,   OnePass_WTA_KT_Axes(), NormalizedMeasure(beta, hi.max_distance()));
       Nsubjettiness nSub2(2,   OnePass_WTA_KT_Axes(), NormalizedMeasure(beta, hi.max_distance()));
       Nsubjettiness nSub3(3,   OnePass_WTA_KT_Axes(), NormalizedMeasure(beta, hi.max_distance()));
       double tau1 =  nSub1(hotvr_jets[i]);
       double tau2 =  nSub2(hotvr_jets[i]);
       double tau3 =  nSub3(hotvr_jets[i]);
-      // getting jet and subjet area
+      //getting jet and subjet area
       double jet_area = hotvr_jets_area[i].area();
-      //vector<double> subjet_area;
-      //HOTVRinfo hi2 = hotvr_jets_area[i].user_info<HOTVRinfo>();
-      //vector<PseudoJet> subjets2 = hi2.subjets();
-      //for (unsigned int j = 0; j < subjets2.size(); ++j) subjet_area.push_back(subjets2[j].area());
-      _hotvrTopJets.push_back(ConvertPsjToTopJet(hotvr_jets[i], subjets, tau1, tau2, tau3, jet_area));
+      vector<double> subjet_area;
+      HOTVRinfo hi_area = hotvr_jets_area[i].user_info<HOTVRinfo>();
+      vector<PseudoJet> subjets = hi_area.subjets();
+      for (unsigned int j = 0; j < subjets.size(); ++j) {
+	subjet_area.push_back(subjets[j].area());
+      }
+      _hotvrTopJets.push_back(ConvertPsjToTopJet(hotvr_jets[i], subjets, tau1, tau2, tau3, jet_area, subjet_area));
     }
+  
   
 }
 vector<TopJet> UniversalJetCluster::GetHOTVRTopJets()
@@ -218,7 +202,7 @@ Jet UniversalJetCluster::ConvertPsjToJet(const PseudoJet & psj)
 }
 
 // Convert to TopJets with groomed Nsubjettiness
-TopJet UniversalJetCluster::ConvertPsjToTopJet(const PseudoJet & psj, const vector<PseudoJet> &subpsj, double tau1, double tau2, double tau3, double jet_area)
+TopJet UniversalJetCluster::ConvertPsjToTopJet(const PseudoJet & psj, const vector<PseudoJet> &subpsj, double tau1, double tau2, double tau3, double jet_area, vector<double> subjet_area)
 {
   TopJet topjet;
   topjet.set_pt(psj.pt());
@@ -231,7 +215,7 @@ TopJet UniversalJetCluster::ConvertPsjToTopJet(const PseudoJet & psj, const vect
   topjet.set_jetArea(jet_area);
   for (unsigned int i = 0; i < subpsj.size(); ++i) 
     {
-      topjet.add_subjet(ConvertPsjToJet(subpsj[i]));
+      topjet.add_subjet(ConvertPsjToJet(subpsj[i], subjet_area[i]));
     }
   return topjet;
 }
