@@ -55,9 +55,58 @@ void UniversalJetCluster::ClusterHOTVR()
   //vector<PseudoJet> cs_jets = cs_area.inclusive_jets(hotvr_pt_min);
   vector<PseudoJet> hotvr_jets_area = hotvr_plugin_area.get_jets();
 
+
+  //sometimes, there are more jets in the area clustering
+  //->filter out jets from the area collection which are not matched to any jet in the original clustering
+  if(hotvr_jets_area.size() > hotvr_jets.size())
+    {
+
+    for (unsigned int i = 0; i < hotvr_jets_area.size(); ++i)
+      {
+	bool matched=false;
+	for (unsigned int j = 0; j < hotvr_jets.size(); ++j)
+	  {
+	    if( fabs(hotvr_jets[j].pt() - hotvr_jets_area[i].pt())<0.0001 && fabs(hotvr_jets[j].eta() - hotvr_jets_area[i].eta())<0.0001)
+	      {
+		matched = true;
+		break;
+	      }
+	  }
+	if(!matched)
+	  {
+	    hotvr_jets_area.erase(hotvr_jets_area.begin()+i);
+	    i--;
+	  }
+      }
+    }
+  //in a few other cases, there are jets in the original clustering without a corresponding jet in the area clustering
+  //->add a dummy jet into the area collection and throw a warning because we cannot determine the area for these jets
+  if (hotvr_jets_area.size() < hotvr_jets.size()){
+
+    for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
+      {
+	bool matched=false;
+	for (unsigned int j = 0; j < hotvr_jets_area.size(); ++j)
+	  {
+	    if( fabs(hotvr_jets[i].pt() - hotvr_jets_area[j].pt())<0.0001 && fabs(hotvr_jets[i].eta() - hotvr_jets_area[j].eta())<0.0001)
+	      {
+		matched = true;
+		break;
+	      }
+	  }
+	if(!matched)
+	  {
+	    PseudoJet dummy_jet(0,0,0,0);
+	    hotvr_jets_area.insert(hotvr_jets_area.begin()+i, dummy_jet);
+	  }
+      }
+  }
+
+
+  //this should hopefully not happen anymore
   if(hotvr_jets_area.size() != hotvr_jets.size()){
-     throw runtime_error("ERROR in UniversalJetCluster::ClusterHOTVR: number of jets found with ClusterSequence does not match number of jets with ClusterSequenceArea.");
-   }
+    throw runtime_error("ERROR in UniversalJetCluster::ClusterHOTVR: number of jets found with ClusterSequence does not match number of jets with ClusterSequenceArea.");
+  }
   
   for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
     {
@@ -70,12 +119,23 @@ void UniversalJetCluster::ClusterHOTVR()
       double tau2 =  nSub2(hotvr_jets[i]);
       double tau3 =  nSub3(hotvr_jets[i]);
       //getting jet and subjet area
-      double jet_area = hotvr_jets_area[i].area();
+      double jet_area = 0;
       vector<double> subjet_area;
-      HOTVRinfo hi_area = hotvr_jets_area[i].user_info<HOTVRinfo>();
-      vector<PseudoJet> subjets = hi_area.subjets();
-      for (unsigned int j = 0; j < subjets.size(); ++j) {
-	subjet_area.push_back(subjets[j].area());
+      vector<PseudoJet> subjets;
+      if(hotvr_jets_area[i].pt()>0){
+	jet_area = hotvr_jets_area[i].area();
+	HOTVRinfo hi_area = hotvr_jets_area[i].user_info<HOTVRinfo>();
+	subjets = hi_area.subjets();
+	for (unsigned int j = 0; j < subjets.size(); ++j) {
+	  subjet_area.push_back(subjets[j].area());
+	}
+      }
+      else{
+	subjets = hi.subjets();
+	for (unsigned int j = 0; j < subjets.size(); ++j) {
+	  subjet_area.push_back(0);
+	}
+	std::cout << "WARNING in UniversalJetCluster::ClusterHOTVR: could not find area jet for a HOTVR jet; set area and subjet areas to 0." << std::endl;
       }
       _hotvrTopJets.push_back(ConvertPsjToTopJet(hotvr_jets[i], subjets, tau1, tau2, tau3, jet_area, subjet_area));
     }
