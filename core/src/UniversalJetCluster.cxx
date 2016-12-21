@@ -55,31 +55,20 @@ void UniversalJetCluster::ClusterHOTVR()
   //vector<PseudoJet> cs_jets = cs_area.inclusive_jets(hotvr_pt_min);
   vector<PseudoJet> hotvr_jets_area = hotvr_plugin_area.get_jets();
 
-
-  //sometimes, there are more jets in the area clustering
-  //->filter out jets from the area collection which are not matched to any jet in the original clustering
-  if(hotvr_jets_area.size() > hotvr_jets.size())
+  std::cout << "Vorher:" << std::endl;
+  std::cout << "   Area:" << std::endl;
+  for (unsigned int i = 0; i < hotvr_jets_area.size(); ++i)
     {
-
-    for (unsigned int i = 0; i < hotvr_jets_area.size(); ++i)
-      {
-	bool matched=false;
-	for (unsigned int j = 0; j < hotvr_jets.size(); ++j)
-	  {
-	    if( fabs(hotvr_jets[j].pt() - hotvr_jets_area[i].pt())<0.0001 && fabs(hotvr_jets[j].eta() - hotvr_jets_area[i].eta())<0.0001)
-	      {
-		matched = true;
-		break;
-	      }
-	  }
-	if(!matched)
-	  {
-	    hotvr_jets_area.erase(hotvr_jets_area.begin()+i);
-	    i--;
-	  }
-      }
+      std::cout << i<< "   " << hotvr_jets_area[i].pt() << "   " <<  hotvr_jets_area[i].eta() << std::endl;
     }
-  //in a few other cases, there are jets in the original clustering without a corresponding jet in the area clustering
+    std::cout << "   Normal:" << std::endl;
+  for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
+    {
+      std::cout << i<< "   " <<hotvr_jets[i].pt() << "   " <<  hotvr_jets[i].eta() << std::endl;
+    }
+
+
+  //in a few cases, there are jets in the original clustering without a corresponding jet in the area clustering
   //->add a dummy jet into the area collection and throw a warning because we cannot determine the area for these jets
   if (hotvr_jets_area.size() < hotvr_jets.size()){
 
@@ -101,6 +90,44 @@ void UniversalJetCluster::ClusterHOTVR()
 	  }
       }
   }
+
+  //sometimes, there are more jets in the area clustering
+  //->filter out jets from the area collection which are not matched to any jet in the original clustering
+  if(hotvr_jets_area.size() > hotvr_jets.size())
+    {
+
+    for (unsigned int i = 0; i < hotvr_jets_area.size(); ++i)
+      {
+	//skip dummy jets from previous iteration
+	if(hotvr_jets_area[i].pt()==0) continue;
+	bool matched=false;
+	for (unsigned int j = 0; j < hotvr_jets.size(); ++j)
+	  {
+	    if( fabs(hotvr_jets[j].pt() - hotvr_jets_area[i].pt())<0.0001 && fabs(hotvr_jets[j].eta() - hotvr_jets_area[i].eta())<0.0001)
+	      {
+		matched = true;
+		break;
+	      }
+	  }
+	if(!matched)
+	  {
+	    hotvr_jets_area.erase(hotvr_jets_area.begin()+i);
+	    i--;
+	  }
+      }
+    }
+
+  std::cout << "Nachher:" << std::endl;
+  std::cout << "   Area:" << std::endl;
+  for (unsigned int i = 0; i < hotvr_jets_area.size(); ++i)
+    {
+      std::cout << i<< "   " << hotvr_jets_area[i].pt() << "   " <<  hotvr_jets_area[i].eta() << std::endl;
+    }
+    std::cout << "   Normal:" << std::endl;
+  for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
+    {
+      std::cout << i<< "   " <<hotvr_jets[i].pt() << "   " <<  hotvr_jets[i].eta() << std::endl;
+    }
 
 
   //this should hopefully not happen anymore
