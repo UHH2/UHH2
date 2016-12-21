@@ -55,18 +55,6 @@ void UniversalJetCluster::ClusterHOTVR()
   //vector<PseudoJet> cs_jets = cs_area.inclusive_jets(hotvr_pt_min);
   vector<PseudoJet> hotvr_jets_area = hotvr_plugin_area.get_jets();
 
-  std::cout << "Vorher:" << std::endl;
-  std::cout << "   Area:" << std::endl;
-  for (unsigned int i = 0; i < hotvr_jets_area.size(); ++i)
-    {
-      std::cout << i<< "   " << hotvr_jets_area[i].pt() << "   " <<  hotvr_jets_area[i].eta() << std::endl;
-    }
-    std::cout << "   Normal:" << std::endl;
-  for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
-    {
-      std::cout << i<< "   " <<hotvr_jets[i].pt() << "   " <<  hotvr_jets[i].eta() << std::endl;
-    }
-
 
   //in a few cases, there are jets in the original clustering without a corresponding jet in the area clustering
   //->add a dummy jet into the area collection and throw a warning because we cannot determine the area for these jets
