@@ -117,18 +117,6 @@ void UniversalJetCluster::ClusterHOTVR()
       }
     }
 
-  std::cout << "Nachher:" << std::endl;
-  std::cout << "   Area:" << std::endl;
-  for (unsigned int i = 0; i < hotvr_jets_area.size(); ++i)
-    {
-      std::cout << i<< "   " << hotvr_jets_area[i].pt() << "   " <<  hotvr_jets_area[i].eta() << std::endl;
-    }
-    std::cout << "   Normal:" << std::endl;
-  for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
-    {
-      std::cout << i<< "   " <<hotvr_jets[i].pt() << "   " <<  hotvr_jets[i].eta() << std::endl;
-    }
-
 
   //this should hopefully not happen anymore
   if(hotvr_jets_area.size() != hotvr_jets.size()){
