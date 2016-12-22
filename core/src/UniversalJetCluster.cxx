@@ -55,10 +55,10 @@ void UniversalJetCluster::ClusterHOTVR()
   //vector<PseudoJet> cs_jets = cs_area.inclusive_jets(hotvr_pt_min);
   vector<PseudoJet> hotvr_jets_area = hotvr_plugin_area.get_jets();
 
-
   //in a few cases, there are jets in the original clustering without a corresponding jet in the area clustering
   //->add a dummy jet into the area collection and throw a warning because we cannot determine the area for these jets
-  if (hotvr_jets_area.size() < hotvr_jets.size()){
+  if (hotvr_jets_area.size() != hotvr_jets.size())
+    {
 
     for (unsigned int i = 0; i < hotvr_jets.size(); ++i)
       {
@@ -77,12 +77,9 @@ void UniversalJetCluster::ClusterHOTVR()
 	    hotvr_jets_area.insert(hotvr_jets_area.begin()+i, dummy_jet);
 	  }
       }
-  }
 
-  //sometimes, there are more jets in the area clustering
-  //->filter out jets from the area collection which are not matched to any jet in the original clustering
-  if(hotvr_jets_area.size() > hotvr_jets.size())
-    {
+    //sometimes, there are more jets in the area clustering
+    //->filter out jets from the area collection which are not matched to any jet in the original clustering
 
     for (unsigned int i = 0; i < hotvr_jets_area.size(); ++i)
       {
@@ -104,8 +101,7 @@ void UniversalJetCluster::ClusterHOTVR()
 	  }
       }
     }
-
-
+  
   //this should hopefully not happen anymore
   if(hotvr_jets_area.size() != hotvr_jets.size()){
     throw runtime_error("ERROR in UniversalJetCluster::ClusterHOTVR: number of jets found with ClusterSequence does not match number of jets with ClusterSequenceArea.");
