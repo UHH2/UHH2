@@ -13,7 +13,9 @@ UniversalJetCluster::UniversalJetCluster(vector<PFParticle> *pfparticles)
       _psj.push_back(ConvertPFToPsj(&(pfparticles->at(i))));
     }
   ClusterHOTVR();
-  ClusterXCone33();
+  //fastjet crashes with segmentation violation if not enough PFParticle are present!
+  if( pfparticles->size()>1)
+    ClusterXCone33();
 }
 
 // ---------------------------------------------------------------
