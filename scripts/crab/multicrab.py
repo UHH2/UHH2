@@ -3,7 +3,7 @@
 """
 *
 * Usage :
-* ./CrabConfig.py ConfigFile [options] 
+* ./multicrab.py ConfigFile [options] 
 *
 *
 """
@@ -66,6 +66,11 @@ if __name__ == '__main__':
         __import__(module_name)
         ConfigFile = sys.modules[module_name]
 
+	if not os.path.exists(ConfigFile.config.General.workArea):
+		os.makedirs(ConfigFile.config.General.workArea)
+
+
+
         if len(ConfigFile.requestNames) != len(ConfigFile.inputDatasets):
                 print 'Number of Request-Names',len(ConfigFile.requestNames),' unequal to number of Input-Datasets',len(ConfigFile.inputDatasets)
                 print 'prefere to exit'
@@ -92,7 +97,8 @@ if __name__ == '__main__':
         
 
 
-        print 'Going to print the Request-Name / Input-Dataset pairs'
+        print 'Going to print the Request-Name / Input-Dataset pairs' 
+	print 'Number of Samples',len(ConfigFile.requestNames)
         for i in range(len(ConfigFile.requestNames)):
                 print ConfigFile.requestNames[i],ConfigFile.inputDatasets[i]
 
