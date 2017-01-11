@@ -1,9 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
-#isDebug = True
-isDebug = False
-useData = False
-#useData = True
+
+#useData = False
+useData = True
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
@@ -32,30 +31,17 @@ bTagInfos = [
 process = cms.Process("USER")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(2000)
 #process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
 #process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) , allowUnscheduled = cms.untracked.bool(True) )
-
-# DEBUG ----------------
-if isDebug:
-    process.Timing = cms.Service("Timing",
-    summaryOnly = cms.untracked.bool(False),
-    useJobReport = cms.untracked.bool(True)
-    )
-
-    process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",
-    ignoreTotal = cms.untracked.int32(1)
-    )
-
-# DEBUG ----------------
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
            #'/store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14_ext3-v1/00000/0064B539-803A-E611-BDEA-002590D0B060.root' #MC test file
 #           '/store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext3-v2/70000/00287FF4-0E40-E611-8D06-00266CFE78EC.root'
-#           '/store/mc/RunIISummer16MiniAODv2/QCD_Pt_15to6500_FwdEnriched_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/26DF5A94-14BE-E611-99FC-0CC47A78A3EE.root'
-            '/store/mc/RunIISummer16MiniAODv2/ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/50000/3495D426-73C1-E611-B11B-0CC47A4D764A.root'
+#           '/store/mc/RunIISummer16MiniAODv2/QCD_Pt-15to7000_TuneCUETP8M1_FlatP6_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/60000/6C325DFE-5EBE-E611-9E4D-0025904C6620.root'
+           '/store/data/Run2016B/SingleMuon/MINIAOD/23Sep2016-v1/70000/04E2D97A-AF87-E611-991F-008CFA1660F8.root'
            #'/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/503/00000/069FE912-3E1F-E611-8EE4-02163E011DF3.root'
            #'/store/data/Run2016B/SingleMuon/MINIAOD/PromptReco-v2/000/273/150/00000/34A57FB8-D819-E611-B0A4-02163E0144EE.root'
   ]),
@@ -63,8 +49,8 @@ process.source = cms.Source("PoolSource",
 )
 
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2))
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000))
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
