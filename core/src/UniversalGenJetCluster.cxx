@@ -12,7 +12,8 @@ UniversalGenJetCluster::UniversalGenJetCluster(vector<GenParticle> *genparticles
   GenParticle lepton;
   for(unsigned int i = 0; i < genparticles->size(); ++i) 
     {
-      _psj.push_back(ConvertGenToPsj(&(genparticles->at(i))));
+      //      _psj.push_back(ConvertGenToPsj(&(genparticles->at(i))));
+      _psj.push_back(ConvertGenToPsj(genparticles->at(i))); //TEST
       if(abs(genparticles->at(i).pdgId()==11) || abs(genparticles->at(i).pdgId()==13)){
 	if(genparticles->at(i).v4().Pt() > pt_max){
 	  pt_max = genparticles->at(i).v4().Pt();
@@ -230,9 +231,11 @@ vector<GenTopJet> UniversalGenJetCluster::GetXCone33Jets_softdrop()
 // ---------------------------------------------------------------
 // Converters
 
-PseudoJet UniversalGenJetCluster::ConvertGenToPsj(GenParticle * genp)
+//PseudoJet UniversalGenJetCluster::ConvertGenToPsj(GenParticle * genp)
+ PseudoJet UniversalGenJetCluster::ConvertGenToPsj(const GenParticle & genp) //TEST
 {
-  PseudoJet psj(genp->v4().X(), genp->v4().Y(), genp->v4().Z(), genp->v4().T());
+  //  PseudoJet psj(genp->v4().X(), genp->v4().Y(), genp->v4().Z(), genp->v4().T());
+  PseudoJet psj(genp.v4().X(), genp.v4().Y(), genp.v4().Z(), genp.v4().T());//TEST
   return psj;
 }
 

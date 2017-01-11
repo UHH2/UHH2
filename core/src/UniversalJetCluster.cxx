@@ -1,3 +1,4 @@
+//#include "FWCore/Utilities/interface/CPUTimer.h"
 #include "UHH2/core/include/UniversalJetCluster.h"
 
 using namespace std;
@@ -6,14 +7,15 @@ using namespace fastjet;
 using namespace contrib;
 
 
-UniversalJetCluster::UniversalJetCluster(vector<PFParticle> *pfparticles)
+UniversalJetCluster::UniversalJetCluster(vector<PFParticle> *pfparticles, bool doHOTVR=true, bool doXCone=true)
 {
   for(unsigned int i = 0; i < pfparticles->size(); ++i) 
     {
-      _psj.push_back(ConvertPFToPsj(&(pfparticles->at(i))));
+      _psj.push_back(ConvertPFToPsj(pfparticles->at(i)));
     }
-  ClusterHOTVR();
-  ClusterXCone33();
+
+  if(doHOTVR)  ClusterHOTVR();
+  if(doXCone) ClusterXCone33();
 }
 
 // ---------------------------------------------------------------
@@ -167,7 +169,7 @@ void UniversalJetCluster::ClusterXCone33()
   float sd_mass2 = sdjet2.m();
   ////
 
-  // get and wirte list: if particle i ist clustered in jet j, the i-th entry of the list == j
+  // get and wirte list: if particle i is clustered in jet j, the i-th entry of the list == j
   vector<int> list_fat;
   list_fat.clear();
   list_fat = clust_seq_xcone.particle_jet_indices(fatjets);
@@ -183,7 +185,7 @@ void UniversalJetCluster::ClusterXCone33()
    }
   }
   ////
-
+ 
   // Run second clustering step (N=3, R=0.4) for each fat jet
   vector<PseudoJet> subjets_1, subjets_2;
 
@@ -192,14 +194,14 @@ void UniversalJetCluster::ClusterXCone33()
   JetDefinition jet_def_sub1(&plugin_xcone_sub1);
   ClusterSequenceArea clust_seq_sub1(particle_in_fat1, jet_def_sub1, area_def);
   subjets_1 = sorted_by_pt(clust_seq_sub1.inclusive_jets(0));
-
-  // subjets from fat jet 2 
+  
+  //subjets from fat jet 2 
   XConePlugin plugin_xcone_sub2(3, 0.4, 2.0);
   JetDefinition jet_def_sub2(&plugin_xcone_sub2);
-  ClusterSequenceArea clust_seq_sub2(particle_in_fat2, jet_def_sub2, area_def);
+  ClusterSequenceArea clust_seq_sub2(particle_in_fat2, jet_def_sub2, area_def); //THIS!
   subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
   ////
-
+  
   // set TopJets with subjets and JetArea
   double jet1_area = fatjets[0].area();
   double jet2_area = fatjets[1].area();
@@ -211,8 +213,8 @@ void UniversalJetCluster::ClusterXCone33()
   _xcone33TopJets.push_back(ConvertPsjToTopJet(fatjets[0], subjets_1, jet1_area, subjet1_area, sd_mass1));
   _xcone33TopJets.push_back(ConvertPsjToTopJet(fatjets[1], subjets_2, jet2_area, subjet2_area, sd_mass2));
   ////
-
-
+ 
+ 
   // delete pseudojets and lists
   subjets_1.clear();
   subjets_2.clear();
@@ -220,6 +222,7 @@ void UniversalJetCluster::ClusterXCone33()
   particle_in_fat1.clear();
   particle_in_fat2.clear();
   ////
+ 
 }
 vector<TopJet> UniversalJetCluster::GetXCone33Jets()
 {
@@ -231,9 +234,9 @@ vector<TopJet> UniversalJetCluster::GetXCone33Jets()
 // Converters
 
 // Convert PFParticle to PseudoJet
-PseudoJet UniversalJetCluster::ConvertPFToPsj(PFParticle * pfp)
+PseudoJet UniversalJetCluster::ConvertPFToPsj(const PFParticle & pfp)
 {
-  PseudoJet psj(pfp->v4().X(), pfp->v4().Y(), pfp->v4().Z(), pfp->v4().T());
+  PseudoJet psj(pfp.v4().X(), pfp.v4().Y(), pfp.v4().Z(), pfp.v4().T());
   return psj;
 }
 
