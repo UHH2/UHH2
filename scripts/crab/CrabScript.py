@@ -36,7 +36,11 @@ class CrabConfig:
                 #print "DataSet", listOfDatasets[i],"Request Name", listOfNames[i]+namePostfix
 		#self._submit_(self.config)
 		p = Process(target=self._submit_,args=(self.config,))
-		p.start()
+                try:
+                    p.start()
+                    p.join()
+                except Exeption as e:
+                    print e
         else:
             print "Number of Datasets & Names are unequal"
                 

@@ -14,8 +14,17 @@ UniversalJetCluster::UniversalJetCluster(vector<PFParticle> *pfparticles, bool d
       _psj.push_back(ConvertPFToPsj(pfparticles->at(i)));
     }
 
-  if(doHOTVR)  ClusterHOTVR();
-  if(doXCone) ClusterXCone33();
+
+  if(doHOTVR) ClusterHOTVR();
+  if(doXCone) {
+  //fastjet crashes with segmentation violation if not enough PFParticle are present!
+    if(pfparticles->size()>15)
+      ClusterXCone33();
+   }
+  // to calculate the area information for both hotvr and xcone makes the ntuplewrite 3-4 times slower!
+  // therefore we only calculate the area with reduced max eta of 4. For xcone only subjets have an area and for 
+  // hotvr the ghost area is set to 0.02 instead of 0.01
+
 }
 
 // ---------------------------------------------------------------
@@ -47,15 +56,17 @@ void UniversalJetCluster::ClusterHOTVR()
   // four-vectors.
 
   // area definition
-  double ghost_maxrap = 5.0;      // maxiumum y of ghost particles
-  AreaDefinition area_def(active_area_explicit_ghosts, GhostedAreaSpec(ghost_maxrap));
+  double ghost_maxrap = 4.0;      // maxiumum y of ghost particles
+  AreaDefinition area_def(active_area_explicit_ghosts, GhostedAreaSpec(ghost_maxrap, 1, 0.02));
 
   // setup cluster sequence with area
   HOTVR hotvr_plugin_area(mu, theta, min_r, max_r, rho, hotvr_pt_min, HOTVR::CALIKE); 
   JetDefinition jet_def_area(&hotvr_plugin_area);
   ClusterSequenceArea cs_area(_psj, jet_def_area, area_def);
+  //ClusterSequence cs_area(_psj, jet_def_area);
   //vector<PseudoJet> cs_jets = cs_area.inclusive_jets(hotvr_pt_min);
   vector<PseudoJet> hotvr_jets_area = hotvr_plugin_area.get_jets();
+
 
   //in a few cases, there are jets in the original clustering without a corresponding jet in the area clustering
   //->add a dummy jet into the area collection and throw a warning because we cannot determine the area for these jets
@@ -129,6 +140,7 @@ void UniversalJetCluster::ClusterHOTVR()
 	subjets = hi_area.subjets();
 	for (unsigned int j = 0; j < subjets.size(); ++j) {
 	  subjet_area.push_back(subjets[j].area());
+	  //subjet_area.push_back(0.);
 	}
       }
       else{
@@ -154,10 +166,11 @@ void UniversalJetCluster::ClusterXCone33()
   // Run first clustering step (N=2, R=1.2) 
   vector<PseudoJet> fatjets;
   XConePlugin plugin_xcone(2, 1.2, 2.0);
-  double ghost_maxrap = 5.0;      // maxiumum y of ghost particles
+  double ghost_maxrap = 4.0;      // maxiumum y of ghost particles
   AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
   JetDefinition jet_def_xcone(&plugin_xcone);
-  ClusterSequenceArea clust_seq_xcone(_psj, jet_def_xcone, area_def);
+  //ClusterSequenceArea clust_seq_xcone(_psj, jet_def_xcone, area_def);
+  ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
   ////
 
@@ -193,23 +206,33 @@ void UniversalJetCluster::ClusterXCone33()
   XConePlugin plugin_xcone_sub1(3, 0.4, 2.0);
   JetDefinition jet_def_sub1(&plugin_xcone_sub1);
   ClusterSequenceArea clust_seq_sub1(particle_in_fat1, jet_def_sub1, area_def);
+  //ClusterSequence clust_seq_sub1(particle_in_fat1, jet_def_sub1);
   subjets_1 = sorted_by_pt(clust_seq_sub1.inclusive_jets(0));
   
   //subjets from fat jet 2 
   XConePlugin plugin_xcone_sub2(3, 0.4, 2.0);
   JetDefinition jet_def_sub2(&plugin_xcone_sub2);
-  ClusterSequenceArea clust_seq_sub2(particle_in_fat2, jet_def_sub2, area_def); //THIS!
+  ClusterSequenceArea clust_seq_sub2(particle_in_fat2, jet_def_sub2, area_def); 
   subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
   ////
   
   // set TopJets with subjets and JetArea
-  double jet1_area = fatjets[0].area();
-  double jet2_area = fatjets[1].area();
+  
+  //double jet1_area = fatjets[0].area();
+  //double jet2_area = fatjets[1].area();
   vector<double> subjet1_area;
   vector<double> subjet2_area;
   for (unsigned int j = 0; j < subjets_1.size(); ++j) subjet1_area.push_back(subjets_1[j].area());
   for (unsigned int k = 0; k < subjets_2.size(); ++k) subjet2_area.push_back(subjets_2[k].area());
-
+  
+  double jet1_area = 0;
+  double jet2_area = 0;
+  /*
+  vector<double> subjet1_area;
+  vector<double> subjet2_area;
+  for (unsigned int j = 0; j < subjets_1.size(); ++j) subjet1_area.push_back(0.);
+  for (unsigned int k = 0; k < subjets_2.size(); ++k) subjet2_area.push_back(0.);
+  */
   _xcone33TopJets.push_back(ConvertPsjToTopJet(fatjets[0], subjets_1, jet1_area, subjet1_area, sd_mass1));
   _xcone33TopJets.push_back(ConvertPsjToTopJet(fatjets[1], subjets_2, jet2_area, subjet2_area, sd_mass2));
   ////
