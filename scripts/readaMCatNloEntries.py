@@ -9,7 +9,9 @@ def read_xml(xmlFileDir):
     xmlFile = open(xmlFileDir)
     rootFileStore = []
     for line in xmlFile:
+        if '<!--' in line:continue
         rootFileStore.append(line.split('"')[1])
+    xmlFile.close()
     return rootFileStore
     #except:
     #    print "No able to read file Dir", xmlFileDir
@@ -49,7 +51,8 @@ def main():
         pool.close()
         pool.join()
         print "number of events in",arg,sum(result.get())
-
+        xmlFile = open(arg,'a')
+        xmlFile.write('<!-- < NumberEntries="'+str(result_list[i])+'" Method=weights /> -->')
 
     #except:
     #    "usage of script: number of cores, first file, second file, ..."
