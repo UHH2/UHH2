@@ -35,7 +35,8 @@ class UniversalGenJetCluster
   GenParticle _lepton;
   bool _lep_found;
 
-  fastjet::PseudoJet ConvertGenToPsj(GenParticle * genp);
+  //  fastjet::PseudoJet ConvertGenToPsj(GenParticle * genp);
+  fastjet::PseudoJet ConvertGenToPsj(const GenParticle & genp); //TEST
   Particle ConvertPsjToParticle(const fastjet::PseudoJet & psj);
   GenTopJet ConvertPsjToGenTopJet(const fastjet::PseudoJet & psj, const std::vector<fastjet::PseudoJet> & subpsj);
 
