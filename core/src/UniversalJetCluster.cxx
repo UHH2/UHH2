@@ -6,15 +6,16 @@ using namespace fastjet;
 using namespace contrib;
 
 
-UniversalJetCluster::UniversalJetCluster(vector<PFParticle> *pfparticles)
+UniversalJetCluster::UniversalJetCluster(vector<PFParticle> *pfparticles, bool doXCone, bool doHOTVR)
 {
   for(unsigned int i = 0; i < pfparticles->size(); ++i) 
     {
       _psj.push_back(ConvertPFToPsj(&(pfparticles->at(i))));
     }
-  ClusterHOTVR();
+  if(doHOTVR)ClusterHOTVR();
   //fastjet crashes with segmentation violation if not enough PFParticle are present!
-  if(pfparticles->size()>15)
+  
+  if(doXCone && pfparticles->size()>15)
     ClusterXCone33();
 
   // to calculate the area information for both hotvr and xcone makes the ntuplewrite 3-4 times slower!

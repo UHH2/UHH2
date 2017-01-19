@@ -22,7 +22,7 @@ class UniversalJetCluster
 {
  public:
 
-  UniversalJetCluster(std::vector<PFParticle> *pfparticles);
+  UniversalJetCluster(std::vector<PFParticle> *pfparticles, bool doXCone=true, bool doHOTVR=true);
 
   // getter
   std::vector<TopJet> GetHOTVRTopJets();

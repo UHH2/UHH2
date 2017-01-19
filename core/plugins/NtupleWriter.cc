@@ -1148,7 +1148,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 pfparticles.push_back(part);
        }
 
-       UniversalJetCluster jetCluster(&pfparticles);
+       UniversalJetCluster jetCluster(&pfparticles,doXCone,doHOTVR);
        if (doHOTVR)
 	 {
        hotvrJets = jetCluster.GetHOTVRTopJets();
