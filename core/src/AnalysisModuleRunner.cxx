@@ -155,6 +155,7 @@ public:
     void begin_input_file(Event & event);
     void begin_event(Event & event);
     void setup_output(Event & event); // should be called after processing the first event which is written to the output
+    void check_output(Event & event); // checks if all objetcs written to the output have been assigned a correct value during the process routine; called at the end of each event
     
     void write_metadata_tree();
     void first_input_file(); // called for the first input file of the dataset, in addition to begin_input_file, but with no event (yet)
@@ -401,7 +402,16 @@ void SFrameContext::begin_event(Event & event) {
     }
 }
 
+void SFrameContext::check_output(Event & event) {
 
+    for (auto & name_bi : event_output_bname2bi) {
+        auto & bi = *name_bi.second;
+	bi.addr = EventAccess_::get(event, bi.ti, bi.handle, true, false);
+	if(!bi.addr){
+	  throw runtime_error("check_output failed with invalid pointer to " + name_bi.first);
+	}
+    }
+}
 
 void SFrameContext::setup_output(Event & event) {
     assert(!outtree); // prevent calling it twice
@@ -728,6 +738,8 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
     if (!keep) {
         throw SError(SError::SkipEvent);
     }
+
+    pimpl->context->check_output(*pimpl->event);
 
     if(!pimpl->m_userEventFormat){
         pimpl->eh->event_write();
