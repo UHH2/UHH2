@@ -9,18 +9,17 @@ using namespace contrib;
 
 UniversalJetCluster::UniversalJetCluster(vector<PFParticle> *pfparticles, bool doHOTVR=true, bool doXCone=true)
 {
-  for(unsigned int i = 0; i < pfparticles->size(); ++i) 
+  for(auto pf : *pfparticles) 
     {
-      _psj.push_back(ConvertPFToPsj(pfparticles->at(i)));
+      if(std::isnan(pf.v4().Px()) || std::isnan(pf.v4().Py()) || std::isnan(pf.v4().Pz()) || std::isinf(pf.v4().Px()) || std::isinf(pf.v4().Py())  || std::isinf(pf.v4().Pz()))
+	continue;
+      _psj.push_back(ConvertPFToPsj(pf));
     }
-
-
-  if(doHOTVR) ClusterHOTVR();
-  if(doXCone) {
+  if(doHOTVR)ClusterHOTVR();
   //fastjet crashes with segmentation violation if not enough PFParticle are present!
-    if(pfparticles->size()>15)
-      ClusterXCone33();
-   }
+  
+  if(doXCone && pfparticles->size()>15)
+    ClusterXCone33();
   // to calculate the area information for both hotvr and xcone makes the ntuplewrite 3-4 times slower!
   // therefore we only calculate the area with reduced max eta of 4. For xcone only subjets have an area and for 
   // hotvr the ghost area is set to 0.02 instead of 0.01
@@ -163,6 +162,28 @@ vector<TopJet> UniversalJetCluster::GetHOTVRTopJets()
 // XCone
 void UniversalJetCluster::ClusterXCone33()
 {
+  /*
+  cout<<"=============================="<<endl;
+  cout<<"Entering into XCone clustering"<<endl;
+  cout<<"total number "<<_psj.size()<<endl;
+  ofstream out;
+  out.open("minimal.txt");
+  out<<"Format: px py pz E"<<endl;
+  for(auto jet : _psj)
+    out<<jet.px()<<" "<<jet.py()<<" "<<jet.pz()<<" "<<jet.E()<<endl;
+    //cout<<"phi "<<jet.phi_std()<<" eta "<< jet.eta()<<" pt "<<jet.pt()<<endl;
+
+  out.close();
+  */
+
+
+  if(_psj.size()<2){
+    cerr<<"Less then 2 particles for first XCone step"<<endl;
+    return;
+  }
+  
+
+
   // Run first clustering step (N=2, R=1.2) 
   vector<PseudoJet> fatjets;
   XConePlugin plugin_xcone(2, 1.2, 2.0);
@@ -174,6 +195,7 @@ void UniversalJetCluster::ClusterXCone33()
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
   ////
 
+  //cout<<"getting softdrop mass"<<endl;
   // get SoftDrop Mass
   SoftDrop sd(0.0, 0.1, 1.2);
   PseudoJet sdjet1 = sd(fatjets[0]);
@@ -182,12 +204,15 @@ void UniversalJetCluster::ClusterXCone33()
   float sd_mass2 = sdjet2.m();
   ////
 
+  //cout<<"setting list of particles"<<endl;
+
   // get and wirte list: if particle i is clustered in jet j, the i-th entry of the list == j
   vector<int> list_fat;
   list_fat.clear();
   list_fat = clust_seq_xcone.particle_jet_indices(fatjets);
   vector<PseudoJet> particle_in_fat1, particle_in_fat2;
 
+ 
   // get one set of particles for each jet
   for (unsigned int ipart=0; ipart < _psj.size(); ++ipart){
     if (list_fat[ipart]==0){
@@ -198,7 +223,17 @@ void UniversalJetCluster::ClusterXCone33()
    }
   }
   ////
- 
+  /*
+  //====================
+  cout<<"Number of particles per jet"<<endl;
+  cout<<"jet 1: "<<particle_in_fat1.size()<<" jet 2: "<< particle_in_fat2.size()<<endl;
+  //====================
+  */  
+  if(particle_in_fat1.size() < 3 || particle_in_fat2.size()<3){
+    cerr<<"not enough particles to run second XCone step"<<endl;
+    cerr<<"particles 1: "<< particle_in_fat1.size()<<" particles 2: "<<particle_in_fat2.size()<<endl;
+    return;
+  }
   // Run second clustering step (N=3, R=0.4) for each fat jet
   vector<PseudoJet> subjets_1, subjets_2;
 
@@ -209,11 +244,17 @@ void UniversalJetCluster::ClusterXCone33()
   //ClusterSequence clust_seq_sub1(particle_in_fat1, jet_def_sub1);
   subjets_1 = sorted_by_pt(clust_seq_sub1.inclusive_jets(0));
   
+  //cout<<"cluster jet 1 into 04AKjets done"<<endl;
+
+
   //subjets from fat jet 2 
   XConePlugin plugin_xcone_sub2(3, 0.4, 2.0);
   JetDefinition jet_def_sub2(&plugin_xcone_sub2);
   ClusterSequenceArea clust_seq_sub2(particle_in_fat2, jet_def_sub2, area_def); 
   subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
+
+  //cout<<"cluster jet 2 into 04AKjets done"<<endl;
+
   ////
   
   // set TopJets with subjets and JetArea
