@@ -31,9 +31,10 @@ class CrabConfig:
         #print "DataSets", listOfDatasets,"Request Name", listOfNames, "Postfix",namePostfix
         if(len(listOfNames)==len(listOfDatasets)):
             for i in range(0,len(listOfDatasets)):
+                print "Working on", listOfNames[i]+namePostfix
                 self.config.Data.inputDataset = listOfDatasets[i]
                 self.config.General.requestName = listOfNames[i]+namePostfix
-                #print "DataSet", listOfDatasets[i],"Request Name", listOfNames[i]+namePostfix
+                #print "Working on DataSet", listOfDatasets[i],"Request Name", listOfNames[i]+namePostfix
 		#self._submit_(self.config)
 		p = Process(target=self._submit_,args=(self.config,))
                 try:

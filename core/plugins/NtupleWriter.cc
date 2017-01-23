@@ -567,7 +567,7 @@ NtupleWriter::~NtupleWriter() {}
 namespace {
     inline void print_times(const edm::CPUTimer & timer, const char * point){
         // uncomment to study timing.
-        //cout << point << ": cpu = "<< (timer.cpuTime() * 1000.) << "ms; real = " << (timer.realTime() * 1000.) << "ms" << endl;
+      //      cout << point << ": cpu = "<< (timer.cpuTime() * 1000.) << "ms; real = " << (timer.realTime() * 1000.) << "ms" << endl;
         
         // To interpret timing results, keep in mind that event.getByLabel in general
         // triggers reading the product from the input file (which needs some time), while for event.getByToken
@@ -1147,18 +1147,23 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 part.set_energy(pf.energy());
 	 pfparticles.push_back(part);
        }
+       print_times(timer, "HOTVR_loop_packedCands"); 
 
-       UniversalJetCluster jetCluster(&pfparticles,doXCone,doHOTVR);
+       UniversalJetCluster jetCluster(&pfparticles,doHOTVR,doXCone);
+       print_times(timer, "HOTVR_jetCluster"); 
        if (doHOTVR)
 	 {
        hotvrJets = jetCluster.GetHOTVRTopJets();
+       print_times(timer, "HOTVR_GetHOTVRTopJets"); 
 	 }
        if (doXCone)
 	 {
 	   xconeJets = jetCluster.GetXCone33Jets();
 	 }
+       print_times(timer, "HOTVR_end"); 
      }
-   if(doGenHOTVR || doGenXCone)
+
+  if(doGenHOTVR || doGenXCone)
      {
        edm::Handle<edm::View<pat::PackedGenParticle> > packed;
        // use packed particle collection for all STABLE (status 1) particles
@@ -1191,8 +1196,10 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	   genxcone33Jets_softdrop = genjetCluster.GetXCone33Jets_softdrop();
 	   genxcone23Jets = genjetCluster.GetXCone23Jets();
 	 }
+       print_times(timer, "genHOTVR"); 
      }
    
+
    // * done filling the event; call the AnalysisModule if configured:
    bool keep = true;
    if(module){ // if no AnalysisModule is configured: always keep event

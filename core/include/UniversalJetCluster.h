@@ -15,6 +15,8 @@
 #include "fastjet/contrib/SoftDrop.hh"
 
 #include "vector"
+//#include <fstream>
+
 /*
  * UniversalJetCluster implements a tool for clustering XCone and HOTVR Jets
  */
@@ -22,7 +24,7 @@ class UniversalJetCluster
 {
  public:
 
-  UniversalJetCluster(std::vector<PFParticle> *pfparticles, bool doXCone=true, bool doHOTVR=true);
+  UniversalJetCluster(std::vector<PFParticle> *pfparticles, bool, bool);
 
   // getter
   std::vector<TopJet> GetHOTVRTopJets();
@@ -33,7 +35,7 @@ class UniversalJetCluster
   std::vector<TopJet> _hotvrTopJets;
   std::vector<TopJet> _xcone33TopJets;
 
-  fastjet::PseudoJet ConvertPFToPsj(PFParticle * pfp);
+  fastjet::PseudoJet ConvertPFToPsj(const PFParticle & pfp);
   Jet ConvertPsjToJet(const fastjet::PseudoJet & psj, double jet_area);
   Jet ConvertPsjToJet(const fastjet::PseudoJet & psj);
   TopJet ConvertPsjToTopJet(const fastjet::PseudoJet & psj, const std::vector<fastjet::PseudoJet> & subpsj, double tau1, double tau2, double tau3, double jet_area, std::vector<double> subjet_area);
