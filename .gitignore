@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Put temporary objects in 'obj', (test) binaries in 'bin',
 # and other stuff (such as test root files) in tmp.
 */obj
@@ -11,11 +10,3 @@ core/python/__init__.py
 *.local
 VLQToHiggsPairProd/*
 ZprimeSemiLeptonic/*
-=======
-*~
-*#
-.*
-obj/*
-*.root
-*.txt
->>>>>>> 828a8ea2b10461b1d6b7dd002b5d546b5f430850
