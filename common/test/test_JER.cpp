@@ -52,13 +52,13 @@ test_JER::test_JER(uhh2::Context& ctx){
   std::vector<std::string> JEC_AK4, JEC_AK8;
   if(isMC){
 
-    JEC_AK4 = JERFiles::Spring16_25ns_L123_AK4PFchs_MC;
-    JEC_AK8 = JERFiles::Spring16_25ns_L123_AK8PFchs_MC;
+    JEC_AK4 = JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC;
+    JEC_AK8 = JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC;
   }
   else {
 
-    JEC_AK4 = JERFiles::Spring16_25ns_L123_AK4PFchs_DATA;
-    JEC_AK8 = JERFiles::Spring16_25ns_L123_AK8PFchs_DATA;
+    JEC_AK4 = JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA;
+    JEC_AK8 = JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA;
   }
 
   jet_IDcleaner.reset(new JetCleaner(ctx, jetID));
