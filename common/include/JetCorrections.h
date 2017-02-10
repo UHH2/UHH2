@@ -9,54 +9,25 @@ class FactorizedJetCorrector;
 
 /// namespace to define some useful filename constants to be used for jet energy corrections
 namespace JERFiles {
-    extern const std::vector<std::string> Summer15_50ns_L123_AK4PFchs_MC;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK8PFchs_MC;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK4PFPuppi_MC;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK8PFPuppi_MC;
-    extern const std::vector<std::string> Summer15_50ns_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Summer15_25nsV2_MC;
-    extern const std::vector<std::string> Summer15_25ns_L123_AK4PFchs_MC;
-    extern const std::vector<std::string> Summer15_25ns_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer15_25ns_L123_AK8PFchs_MC;
-    extern const std::vector<std::string> Summer15_25ns_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer15_25ns_L23_AK8PFchs_MC;
-    extern const std::vector<std::string> Summer15_25ns_L23_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer15_25ns_L123_AK4PFPuppi_MC;
-    extern const std::vector<std::string> Summer15_25ns_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Summer15_25ns_L123_AK8PFPuppi_MC;
-    extern const std::vector<std::string> Summer15_25ns_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall15_25ns_L123_AK4PFchs_MC;
-    extern const std::vector<std::string> Fall15_25ns_L123_AK8PFchs_MC;
-    extern const std::vector<std::string> Fall15_25ns_L23_AK8PFchs_MC;
-    extern const std::vector<std::string> Fall15_25ns_L123_AK4PFPuppi_MC;
-    extern const std::vector<std::string> Fall15_25ns_L123_AK8PFPuppi_MC;
-    extern const std::vector<std::string> Fall15_25ns_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall15_25ns_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall15_25ns_L23_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall15_25ns_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall15_25ns_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L123_AK4PFchs_MC;
-    extern const std::vector<std::string> Spring16_25ns_L23_AK4PFchs_MC;
-    extern const std::vector<std::string> Spring16_25ns_L123_AK8PFchs_MC;
-    extern const std::vector<std::string> Spring16_25ns_L23_AK8PFchs_MC;
-    extern const std::vector<std::string> Spring16_25ns_L123_AK4PFPuppi_MC;
-    extern const std::vector<std::string> Spring16_25ns_L23_AK4PFPuppi_MC;
-    extern const std::vector<std::string> Spring16_25ns_L123_AK8PFPuppi_MC;
-    extern const std::vector<std::string> Spring16_25ns_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L23_AK4PFchs_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L123_noRes_AK8PFchs_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L23_AK8PFchs_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L23_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L123_noRes_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L23_noRes_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Spring16_25ns_L23_noRes_AK4PFchs_DATA;
+    //Summer16_23Sep2016_V4_noRes needed for L2Res people
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L123_noRes_AK4PFchs_DATA;
+
+    //Summer16_23Sep2016_V4 --> Official JEC recommendation for Moriond17
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_L123_AK4PFchs_MC;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_L1RC_AK4PFchs_MC; 
+
+
 
 }
 
@@ -78,6 +49,7 @@ public:
   explicit JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::vector<std::string> & filenames_L1RC = {});
     
     virtual bool process(uhh2::Event & event) override;
+    virtual bool correct_met(uhh2::Event & event);
     
     virtual ~JetCorrector();
     
@@ -267,7 +239,8 @@ namespace JERSmearing {
 
   typedef std::vector<std::array<float, 4> > SFtype1;
 
-  extern const SFtype1 SF_13TeV_2015;
+  extern const SFtype1 SF_13TeV_2016;
+
 }
 
 /** \brief Smear the jet four-momenta in MC to match the resolution in data
@@ -291,7 +264,7 @@ namespace JERSmearing {
  */
 class JetResolutionSmearer: public uhh2::AnalysisModule {
 public:
-    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2015);
+    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016);
 
     virtual bool process(uhh2::Event & event) override;
 
@@ -317,7 +290,7 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
  public:
   explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const bool allow_met_smear=true,
-                                       const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2015);
+                                       const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016);
   virtual ~GenericJetResolutionSmearer() {}
 
   virtual bool process(uhh2::Event&) override;
@@ -375,8 +348,12 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
     else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid value for JER 'direction' (must be 0, +1 or -1): "+std::to_string(direction));
 
     const float new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
-
     jet_v4 *= new_pt / recopt;
+
+    float factor_raw = jet.JEC_factor_raw();
+    factor_raw *= recopt/new_pt;
+
+    jet.set_JEC_factor_raw(factor_raw);
     jet.set_v4(jet_v4);
 
     // propagate JER shifts to MET by using same factor, but for raw jet p4:

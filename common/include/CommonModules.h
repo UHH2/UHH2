@@ -6,6 +6,7 @@
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/NSelections.h"
 #include "UHH2/common/include/JetIds.h"
+#include "UHH2/common/include/JetCorrections.h"
 
 /** \brief Run a configurable list commonly used modules
  *
@@ -67,6 +68,7 @@ public:
     void switch_jetlepcleaner(bool status = true){fail_if_init();jetlepcleaner=status;}
     //void switch_topjetlepcleaner(bool status = true, double dR = 0.8){fail_if_init();topjetlepcleaner=status;topjetcleanerDR = dR;}
     void switch_jetPtSorter(bool status = true){fail_if_init();jetptsort=status;}
+    void switch_metcorrection(bool status = true){fail_if_init();do_metcorrection=status;};
     void set_HTjetid(const boost::optional<JetId> & jetid = boost::none) {HT_jetid = jetid;}
 
     void set_jet_id(const JetId & jetid_){
@@ -101,10 +103,17 @@ private:
     MuonId muid;
     TauId tauid;
     JetPFID::wp working_point;
+    std::unique_ptr<JetCorrector> jet_corrector_MC, jet_corrector_BCD, jet_corrector_EFearly, jet_corrector_FlateG, jet_corrector_H;
+    std::unique_ptr<JetLeptonCleaner> JLC_MC, JLC_BCD, JLC_EFearly, JLC_FlateG, JLC_H;
+    std::unique_ptr<JetResolutionSmearer> jet_resolution_smearer;
+    const int runnr_BCD = 276811;
+    const int runnr_EFearly = 278802;
+    const int runnr_FlateG = 280385;
     
-    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, topjetlepcleaner =false, jetptsort = false, metfilters = true, pvfilter = true, jetpfidcleaner=true; ;
+    bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, topjetlepcleaner =false, jetptsort = false, metfilters = true, pvfilter = true, jetpfidcleaner=true, do_metcorrection = false;
     
     double topjetcleanerDR;
+    bool is_mc;
     bool init_done = false;
 
     std::unique_ptr<Selection> lumi_selection;
