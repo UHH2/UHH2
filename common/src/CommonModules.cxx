@@ -28,19 +28,26 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
         throw invalid_argument("CommonModules::init called twice!");
     }
     init_done = true;
-    bool is_mc = ctx.get("dataset_type") == "MC";
+    is_mc = ctx.get("dataset_type") == "MC";
     //set default PV id;
     PrimaryVertexId pvid=StandardPrimaryVertexId();
     if(pvfilter) modules.emplace_back(new PrimaryVertexCleaner(pvid));
     if(is_mc){
         if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx,SysType_PU));
-        if(jec) modules.emplace_back(new JetCorrector(ctx,JERFiles::Spring16_25ns_L123_AK4PFchs_MC));
-        if(jersmear) modules.emplace_back(new JetResolutionSmearer(ctx));
+        if(jec){
+	  jet_corrector_MC.reset(new JetCorrector(ctx, JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC));
+	}
+        if(jersmear) jet_resolution_smearer.reset(new JetResolutionSmearer(ctx));
     }
     else{
        if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
-       if(jec) modules.emplace_back(new JetCorrector(ctx,JERFiles::Spring16_25ns_L123_AK4PFchs_DATA));
+       if(jec){
+	 jet_corrector_BCD.reset(new JetCorrector(ctx, JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA));
+	 jet_corrector_EFearly.reset(new JetCorrector(ctx, JERFiles::Summer16_23Sep2016_V4_EF_L123_AK4PFchs_DATA));
+	 jet_corrector_FlateG.reset(new JetCorrector(ctx, JERFiles::Summer16_23Sep2016_V4_G_L123_AK4PFchs_DATA));
+	 jet_corrector_H.reset(new JetCorrector(ctx, JERFiles::Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA));
+       }
     }
     if(metfilters){
        metfilters_selection.reset(new AndSelection(ctx, "metfilters"));
@@ -60,8 +67,13 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
       modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
     }
     if(jetlepcleaner) {
-      if(is_mc) modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Spring16_25ns_L123_AK4PFchs_MC));
-      else modules.emplace_back(new JetLeptonCleaner(ctx, JERFiles::Spring16_25ns_L123_AK4PFchs_DATA));
+      if(is_mc)	JLC_MC.reset(new JetLeptonCleaner(ctx, JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC));
+      else{
+	JLC_BCD.reset(new JetLeptonCleaner(ctx, JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA));
+	JLC_EFearly.reset(new JetLeptonCleaner(ctx, JERFiles::Summer16_23Sep2016_V4_EF_L123_AK4PFchs_DATA));
+	JLC_FlateG.reset(new JetLeptonCleaner(ctx, JERFiles::Summer16_23Sep2016_V4_G_L123_AK4PFchs_DATA));
+	JLC_H.reset(new JetLeptonCleaner(ctx, JERFiles::Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA));
+      }
     }
     if(jetid) modules.emplace_back(new JetCleaner(ctx, jetid));
     modules.emplace_back(new HTCalculator(ctx,HT_jetid));
@@ -80,6 +92,44 @@ bool CommonModules::process(uhh2::Event & event){
     for(auto & m : modules){
         m->process(event);
     }
+
+    if(jetlepcleaner){
+      if(is_mc) JLC_MC->process(event);
+      else{
+	if(event.run <= runnr_BCD)         JLC_BCD->process(event);
+	else if(event.run < runnr_EFearly) JLC_EFearly->process(event); //< is correct, not <= 
+	else if(event.run <= runnr_FlateG) JLC_FlateG->process(event);
+	else if(event.run > runnr_FlateG)  JLC_H->process(event);
+	else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
+      }
+    }
+
+    if(jec){
+      if(is_mc)jet_corrector_MC->process(event);
+      else{
+	if(event.run <= runnr_BCD)         jet_corrector_BCD->process(event);
+	else if(event.run < runnr_EFearly) jet_corrector_EFearly->process(event); //< is correct, not <= 
+	else if(event.run <= runnr_FlateG) jet_corrector_FlateG->process(event);
+	else if(event.run > runnr_FlateG)  jet_corrector_H->process(event);
+	else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
+      }
+    }
+
+    if(jersmear && is_mc) jet_resolution_smearer->process(event);
+
+    //set do_metcorrection = true in case you applied jet lepton cleaning by yourself and before calling common modules
+    if((jetlepcleaner && jec) || (do_metcorrection && jec)){
+      if(is_mc) jet_corrector_MC->correct_met(event);
+      else{
+	if(event.run <= runnr_BCD)         jet_corrector_BCD->correct_met(event);
+	else if(event.run < runnr_EFearly) jet_corrector_EFearly->correct_met(event); //< is correct, not <= 
+	else if(event.run <= runnr_FlateG) jet_corrector_FlateG->correct_met(event);
+	else if(event.run > runnr_FlateG)  jet_corrector_H->correct_met(event);
+	else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
+      }
+    }
+    else if(jec || jetlepcleaner) cout <<"WARNING: You used CommonModules for either JEC or jet-lepton-cleaning but MET is not corrected. Please be aware of this." << endl;
+
     if(jetptsort){
       sort_by_pt(*event.jets);
     }
