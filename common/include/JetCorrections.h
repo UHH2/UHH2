@@ -256,7 +256,6 @@ namespace JERSmearing {
  * is too much.
  *
  * Options parsed from the given Context:
- *  - "jersmear_smear_met": if "true", propagate the jet resolution smearing to MET. Default is false.
  *  - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing resp.
  * 
  * Please note that the JetResolutionSmearer does not sort the (re-)corrected jets by pt;
@@ -270,8 +269,7 @@ public:
 
     virtual ~JetResolutionSmearer();
 private:
-    
-    bool smear_met;
+
     int direction = 0; // -1 = down, +1 = up, 0 = nominal
     JERSmearing::SFtype1 JER_SFs_;
 };
@@ -282,7 +280,6 @@ private:
  *         to apply jet-energy-resolution smearing on non-default jet collections
  *
  *  options parsed from Context:
- *   - "jersmear_smear_met": if "true", propagate the jet resolution smearing to MET. Default is false.
  *   - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing correction
  *
  */
@@ -302,7 +299,7 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
   uhh2::Event::Handle<std::vector<Particle> >  h_genjets_;
   uhh2::Event::Handle<std::vector<TopJet> >    h_rectopjets_;
   uhh2::Event::Handle<std::vector<GenTopJet> > h_gentopjets_;
-  bool smear_met;
+
   int direction = 0; // -1 = down, +1 = up, 0 = nominal
   JERSmearing::SFtype1 JER_SFs_;
 };
@@ -355,14 +352,6 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 
     jet.set_JEC_factor_raw(factor_raw);
     jet.set_v4(jet_v4);
-
-    // propagate JER shifts to MET by using same factor, but for raw jet p4:
-    if(smear_met){
-
-      met += jet_v4_raw;
-      jet_v4_raw *= new_pt / recopt;
-      met -= jet_v4_raw;
-    }
   }
 
   return;
