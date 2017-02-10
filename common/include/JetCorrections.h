@@ -319,7 +319,6 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
     if(genpt < 15.) continue;
 
     LorentzVector jet_v4 = jet.v4();
-    LorentzVector jet_v4_raw = jet_v4 * jet.JEC_factor_raw();
 
     const float recopt = jet_v4.pt();
     const float abseta = fabs(jet_v4.eta());
