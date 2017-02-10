@@ -518,12 +518,22 @@ bool JetCorrector::process(uhh2::Event & event){
     for(auto & jet : *event.jets){
       correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
- 
+    /*
     //propagate jet corrections to MET
     bool correct_with_chs = used_ak4chs || metprop_possible_ak8chs;
     correct_MET(event, correct_with_chs, do_metL1RC, *corrector_L1RC); 
-	
+    */	
     return true;
+}
+
+bool JetCorrector::correct_met(uhh2::Event & event){
+  assert(event.jets);
+
+  //propagate jet corrections to MET
+  bool correct_with_chs = used_ak4chs || metprop_possible_ak8chs;
+  correct_MET(event, correct_with_chs, do_metL1RC, *corrector_L1RC); 
+  
+  return true;
 }
 
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
@@ -854,7 +864,6 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_2015 = {
 ////
 
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf){
-    smear_met = string2bool(ctx.get("jersmear_smear_met", "false"));
     auto dir = ctx.get("jersmear_direction", "nominal");
     if(dir == "up"){
         direction = 1;
@@ -885,62 +894,55 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
         met = event.met->v4();
     }
     for(unsigned int i=0; i<event.jets->size(); ++i) {
-        auto & jet = event.jets->at(i);
-        // find next genjet:
-        auto closest_genjet = closestParticle(jet, *event.genjets);
-        // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt:
-        if(closest_genjet == nullptr || deltaR(*closest_genjet, jet) > 0.3) continue;
-        auto genpt = closest_genjet->pt();
-        if(genpt < 15.0f) {
-            continue;
-        }
-        LorentzVector jet_v4 = jet.v4();
-        LorentzVector jet_v4_raw = jet_v4 * jet.JEC_factor_raw();
-        float recopt = jet_v4.pt();
-        float abseta = fabs(jet_v4.eta());
+      auto & jet = event.jets->at(i);
+      // find next genjet:
+      auto closest_genjet = closestParticle(jet, *event.genjets);
+      // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt:
+      if(closest_genjet == nullptr || deltaR(*closest_genjet, jet) > 0.3) continue;
+      auto genpt = closest_genjet->pt();
+      if(genpt < 15.0f) {
+	continue;
+      }
+      LorentzVector jet_v4 = jet.v4();
+      float recopt = jet_v4.pt();
+      float abseta = fabs(jet_v4.eta());
 
-        int ieta(-1);
+      int ieta(-1);
 
-        for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
+      for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
 
-          const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
-          const float max_eta =       JER_SFs_.at(idx)  .at(0);
+	const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
+	const float max_eta =       JER_SFs_.at(idx)  .at(0);
 
-          if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
-        }
-        if(ieta < 0) {
-	  cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << endl;
-	  cout << "         no JER smearing is applied." << endl;
-	  continue;
-	}
+	if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
+      }
+      if(ieta < 0) {
+	cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << endl;
+	cout << "         no JER smearing is applied." << endl;
+	continue;
+      }
 
-        float c;
-        if(direction == 0){
-            c = JER_SFs_.at(ieta).at(1);
-        }
-        else if(direction == 1){
-            c = JER_SFs_.at(ieta).at(2);
-        }
-        else{
-            c = JER_SFs_.at(ieta).at(3);
-        }
-        float new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
-        jet_v4 *= new_pt / recopt;
-        jet.set_v4(jet_v4);
-    
-        //propagate JER shifts to MET by using same factor, but for raw jet p4:
-        if(smear_met){
-            met += jet_v4_raw;
-            jet_v4_raw *= new_pt / recopt;
-            met -= jet_v4_raw;
-        }
-    }
-    //store changed MET
-    if(event.met) {
-        event.met->set_pt(met.Pt());
-        event.met->set_phi(met.Phi());
-    }
-    return true;
+      float c;
+      if(direction == 0){
+	c = JER_SFs_.at(ieta).at(1);
+      }
+      else if(direction == 1){
+	c = JER_SFs_.at(ieta).at(2);
+      }
+      else{
+	c = JER_SFs_.at(ieta).at(3);
+      }
+      float new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
+      jet_v4 *= new_pt / recopt;
+
+      //update JEC_factor_raw needed for smearing MET
+      float factor_raw = jet.JEC_factor_raw();
+      factor_raw *= recopt/new_pt;
+
+      jet.set_JEC_factor_raw(factor_raw);
+      jet.set_v4(jet_v4);
+
+      return true;
 }
 
 JetResolutionSmearer::~JetResolutionSmearer(){}
@@ -963,14 +965,6 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
 
   h_genjets_    = ctx.get_handle<std::vector<Particle> > (genjet_label);
   h_gentopjets_ = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
-
-  smear_met = allow_met_smearing ? string2bool(ctx.get("jersmear_smear_met", "false")) : false;
-
-  if(smear_met){
-
-    if(ctx.get("meta_jer_applied_on_met", "") != "true") ctx.set_metadata("jer_applied_on_met", "true");
-    else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already propagated to MET measurement: jet_label="+recjet_label);
-  }
 
   JER_SFs_ = JER_sf;
 }
@@ -1000,13 +994,6 @@ bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
   else if(rec_topjets && gen_jets)    apply_JER_smearing(*rec_topjets, *gen_jets   , met);
   else if(rec_topjets && gen_topjets) apply_JER_smearing(*rec_topjets, *gen_topjets, met);
   else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid combination of RECO-GEN jet collections");
-
-  // update MET
-  if(evt.met && smear_met){
-
-    evt.met->set_pt (met.Pt());
-    evt.met->set_phi(met.Phi());
-  }
 
   return true;
 }
