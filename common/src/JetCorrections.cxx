@@ -657,7 +657,7 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
     
     LorentzVector met;
     if(event.met) {
-        met = event.met->v4();
+      met = event.met->v4();
     }
     for(unsigned int i=0; i<event.jets->size(); ++i) {
       auto & jet = event.jets->at(i);
@@ -670,7 +670,6 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
 	continue;
       }
       LorentzVector jet_v4 = jet.v4();
-      LorentzVector jet_v4_raw = jet_v4 * jet.JEC_factor_raw();
       float recopt = jet_v4.pt();
       float abseta = fabs(jet_v4.eta());
 
@@ -708,8 +707,9 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
 
       jet.set_JEC_factor_raw(factor_raw);
       jet.set_v4(jet_v4);
+    }
 
-      return true;
+    return true;
 }
 
 JetResolutionSmearer::~JetResolutionSmearer(){}
