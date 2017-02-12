@@ -20,7 +20,12 @@ namespace JERFiles {
     extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L123_AK8PFchs_DATA;
     extern const std::vector<std::string> Summer16_23Sep2016_V4_L123_AK4PFchs_MC;
+    extern const std::vector<std::string> Summer16_23Sep2016_V4_L123_AK8PFchs_MC;
     extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L1RC_AK4PFchs_DATA;
