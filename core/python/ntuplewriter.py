@@ -32,10 +32,10 @@ bTagInfos = [
 process = cms.Process("USER")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
-#process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
-process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
-#process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) , allowUnscheduled = cms.untracked.bool(True) )
+#process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
+#process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
+process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) , allowUnscheduled = cms.untracked.bool(True) )
 
 # DEBUG ----------------
 if isDebug:
@@ -62,8 +62,8 @@ process.source = cms.Source("PoolSource",
   skipEvents = cms.untracked.uint32(0)
 )
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2))
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000))
 
 # Grid-control changes:
@@ -756,45 +756,90 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
        
         doTopJets = cms.bool(True),
         topjet_ptmin = cms.double(150.0),
-        topjet_etamax = cms.double(5.0),                                                                               
-        topjet_sources = cms.vstring("slimmedJetsAK8","patJetsAk8CHSJetsSoftDropPacked","patJetsHepTopTagCHSPacked","patJetsHepTopTagPuppiPacked","patJetsAk8PuppiJetsSoftDropPacked"),
-        #Note: use label "daughters" for  subjet_sources if you want to store as subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!)
-        #to store a subjet collection present in miniAOD indicate the proper label of the subjets method in pat::Jet: SoftDrop or CMSTopTag
-        subjet_sources = cms.vstring("SoftDrop","daughters","daughters","daughters","daughters"),
-        #Specify "store" if you want to store b-tagging taginfos for subjet collection, make sure to have included them with .addTagInfos = True
-        #addTagInfos = True is currently true by default, however, only for collections produced and not read directly from miniAOD
-        #If you don't want to store stubjet taginfos leave string empy ""
-        subjet_taginfos = cms.vstring("","store","store","store","store"),
-        #Note: if you want to store the MVA Higgs tagger discriminator, specify the jet collection from which to pick it up and the tagger name
-        #currently the discriminator is trained on ungroomed jets, so the discriminaotr has to be taken from ungroomed jets
-        higgstag_sources = cms.vstring("patJetsAk8CHSJets","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets","patJetsAk8PuppiJetsFat"),
-        higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-        #Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
-        topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessCa15CHS","NjettinessCa15Puppi","NjettinessAk8Puppi"),
-        topjet_substructure_variables_sources = cms.vstring("","ak8CHSJets","ca15CHSJets", "ca15PuppiJets", "ak8PuppiJetsFat"),
-        topjet_njettiness_groomed_sources = cms.vstring("","NjettinessAk8SoftDropCHS","NjettinessCa15SoftDropCHS","NjettinessCa15SoftDropPuppi","NjettinessAk8SoftDropPuppi"),
-        topjet_substructure_groomed_variables_sources = cms.vstring("","ak8CHSJetsSoftDropforsub","ca15CHSJetsSoftDropforsub", "ca15PuppiJetsSoftDropforsub", "ak8PuppiJetsSoftDropforsub"),
-        #Note: for slimmedJetsAK8 on miniAOD, the pruned mass is available as user flot, with label ak8PFJetsCHSPrunedMass.
-        #Alternatively it is possible to specify another pruned jet collection (to be produced here), from which to get it by jet-matching.
-        #Finally, it is also possible to leave the pruned mass empty with ""
-        topjet_prunedmass_sources = cms.vstring("ak8PFJetsCHSPrunedMass","patJetsAk8CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked","patJetsAk8CHSJetsPrunedPacked"),
-        topjet_softdropmass_sources = cms.vstring("ak8PFJetsCHSSoftDropMass", "", "", "", ""),
-        #topjet_sources = cms.vstring("patJetsHepTopTagCHSPacked", "patJetsCmsTopTagCHSPacked", "patJetsCa8CHSJetsPrunedPacked", "patJetsCa15CHSJetsFilteredPacked",
-        #        "patJetsHepTopTagPuppiPacked", "patJetsCmsTopTagPuppiPacked", "patJetsCa8PuppiJetsPrunedPacked", "patJetsCa15PuppiJetsFilteredPacked",
-        #        'patJetsCa8CHSJetsSoftDropPacked', 'patJetsCa8PuppiJetsSoftDropPacked'
-        #        ),
-        # jets to match to the topjets in order to get njettiness, in the same order as topjet_sources.
-        # Note that no substructure variables are added for the softdrop jets.
-        #topjet_substructure_variables_sources = cms.vstring("patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa8CHSJets", "patJetsCa15CHSJets",
-        #        "patJetsCa15PuppiJets", "patJetsCa8PuppiJets", "patJetsCa8PuppiJets", "patJetsCa15PuppiJets",
-        #        "patJetsCa8CHSJets", "patJetsCa8PuppiJets"),
-        #topjet_njettiness_sources = cms.vstring("NjettinessCa15CHS", "NjettinessCa8CHS", "NjettinessCa8CHS", "NjettinessCa15CHS",
-        #        "NjettinessCa15Puppi", "NjettinessCa8Puppi", "NjettinessCa8Puppi", "NjettinessCa15Puppi",
-        #        "NjettinessCa8CHS", "NjettinessCa8Puppi"),
+        topjet_etamax = cms.double(5.0), 
 
-        # switch off qjets for now, as it takes a long time:
-        #topjet_qjets_sources = cms.vstring("QJetsCa15CHS", "QJetsCa8CHS", "QJetsCa8CHS", "QJetsCa15CHS"),
-        
+        TopJets = cms.VPSet( 
+             cms.PSet(
+                 topjet_source = cms.string("slimmedJetsAK8"),
+                 #Note: use label "daughters" for  subjet_source if you want to store as subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!)
+                 #to store a subjet collection present in miniAOD indicate the proper label of the subjets method in pat::Jet: SoftDrop or CMSTopTag
+                 subjet_source = cms.string("SoftDrop"),
+                 #Specify if you want to store b-tagging taginfos for subjet collection, make sure to have included them with .addTagInfos = True
+                 #addTagInfos = True is currently true by default, however, only for collections produced and not read directly from miniAOD
+                 #Default is do_subjet_taginfo=False
+                 do_subjet_taginfo = cms.bool(False),
+                 #Note: if you want to store the MVA Higgs tagger discriminator, specify the jet collection from which to pick it up and the tagger name
+                 #currently the discriminator is trained on ungroomed jets, so the discriminator has to be taken from ungroomed jets
+                 higgstag_source = cms.string("patJetsAk8CHSJets"),
+                 higgstag_name = cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                 #Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
+                 #njettiness_source = cms.string(""),
+                 #substructure_variables_source = cms.string(""),
+                 #njettiness_groomed_source = cms.string(""),
+                 #substructure_groomed_variables_source = cms.string(""),
+                 #Note: for slimmedJetsAK8 on miniAOD, the pruned mass is available as user float, with label ak8PFJetsCHSPrunedMass.
+                 #Alternatively it is possible to specify another pruned jet collection (to be produced here), from which to get it by jet-matching.
+                 #Finally, it is also possible to leave the pruned mass empty with "" 
+                 prunedmass_source = cms.string("ak8PFJetsCHSPrunedMass"),
+                 softdropmass_source  = cms.string("ak8PFJetsCHSSoftDropMass"),
+                 # switch off qjets for now, as it takes a long time:
+                 #qjets_source = cms.string("QJetsCa8CHS")
+             ) ,
+             cms.PSet(
+                 topjet_source = cms.string("patJetsAk8CHSJetsSoftDropPacked"),
+                 subjet_source = cms.string("daughters"),
+                 do_subjet_taginfo = cms.bool(True),
+                 higgstag_source = cms.string("patJetsAk8CHSJets"),
+                 higgstag_name = cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                 njettiness_source = cms.string("NjettinessAk8CHS"),
+                 substructure_variables_source = cms.string("ak8CHSJets"),
+                 njettiness_groomed_source = cms.string("NjettinessAk8SoftDropCHS"),
+                 substructure_groomed_variables_source = cms.string("ak8CHSJetsSoftDropforsub"),
+                 prunedmass_source = cms.string("patJetsAk8CHSJetsPrunedPacked"),
+                 #softdropmass_source  = cms.string(""),
+             ) ,
+             cms.PSet(
+                 topjet_source = cms.string("patJetsHepTopTagCHSPacked"),
+                 subjet_source = cms.string("daughters"),
+                 do_subjet_taginfo = cms.bool(True),
+                 higgstag_source = cms.string("patJetsCa15CHSJets"),
+                 higgstag_name = cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                 njettiness_source = cms.string("NjettinessCa15CHS"),
+                 substructure_variables_source = cms.string("ca15CHSJets"),
+                 njettiness_groomed_source = cms.string("NjettinessCa15SoftDropCHS"),
+                 substructure_groomed_variables_source = cms.string("ca15CHSJetsSoftDropforsub"),
+                 prunedmass_source = cms.string("patJetsCa15CHSJetsPrunedPacked"),
+                 #softdropmass_source  = cms.string(""),
+             ) ,
+             cms.PSet(
+                 topjet_source = cms.string("patJetsHepTopTagPuppiPacked"),
+                 subjet_source = cms.string("daughters"),
+                 do_subjet_taginfo = cms.bool(True),
+                 higgstag_source = cms.string("patJetsCa15PuppiJets"),
+                 higgstag_name = cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                 njettiness_source = cms.string("NjettinessCa15Puppi"),
+                 substructure_variables_source = cms.string("ca15PuppiJets"),
+                 njettiness_groomed_source = cms.string("NjettinessCa15SoftDropPuppi"),
+                 substructure_groomed_variables_source = cms.string("ca15PuppiJetsSoftDropforsub"),
+                 prunedmass_source = cms.string("patJetsCa15CHSJetsPrunedPacked"),
+                 #softdropmass_source  = cms.string(""),
+             ) ,
+             cms.PSet(
+                 topjet_source = cms.string("patJetsAk8PuppiJetsSoftDropPacked"),
+                 subjet_source = cms.string("daughters"),
+                 do_subjet_taginfo = cms.bool(True),
+                 higgstag_source = cms.string("patJetsAk8PuppiJetsFat"),
+                 higgstag_name = cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                 njettiness_source = cms.string("NjettinessAk8Puppi"),
+                 substructure_variables_source = cms.string("ak8PuppiJetsFat"),
+                 njettiness_groomed_source = cms.string("NjettinessAk8SoftDropPuppi"),
+                 substructure_groomed_variables_source = cms.string("ak8PuppiJetsSoftDropforsub"),
+                 prunedmass_source = cms.string("patJetsAk8CHSJetsPrunedPacked"),
+                 #softdropmass_source  = cms.string(""),
+             ) ,
+
+        ),
+
         doTrigger = cms.bool(True), 
         trigger_bits = cms.InputTag("TriggerResults","",triggerpath),
         # MET filters (HBHE noise, CSC, etc.) are stored as trigger Bits in MINIAOD produced in path "PAT"/"RECO" with prefix "Flag_"
