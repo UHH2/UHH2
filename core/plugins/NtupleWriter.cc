@@ -173,6 +173,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   else{
       context.reset(new uhh2::CMSSWContext(*ges, outfile, tr));
   }
+
   
   // TODO: cleanup the configuration by better grouping which
   // parameters are for which objects. Could even pass
@@ -276,123 +277,103 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   }
   if(doTopJets){
     using uhh2::NtupleWriterTopJets;
-    auto topjet_sources = iConfig.getParameter<std::vector<std::string> >("topjet_sources");
-    auto subjet_sources = iConfig.getParameter<std::vector<std::string> >("subjet_sources");
-    auto subjet_taginfos = iConfig.getParameter<std::vector<std::string> >("subjet_taginfos");
-    auto higgstag_sources = iConfig.getParameter<std::vector<std::string> >("higgstag_sources");
-    auto higgstag_names = iConfig.getParameter<std::vector<std::string> >("higgstag_names");
-    auto topjet_prunedmass_sources   = iConfig.getParameter<std::vector<std::string> >("topjet_prunedmass_sources");
-    auto topjet_softdropmass_sources = iConfig.getParameter<std::vector<std::string> >("topjet_softdropmass_sources");
-    double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
-    double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
-    bool substructure_variables = false;
-    bool substructure_groomed_variables = false;
-    std::vector<std::string> qjets_sources, njettiness_sources, topjet_substructure_variables_sources, njettiness_groomed_sources, topjet_substructure_groomed_variables_sources;
-    if(!iConfig.exists("subjet_sources")){
-      cerr << "Exception: it is necessary to specify the subjets for each topjet collection" << endl;
-      throw;
-    }
-    if(subjet_sources.size()!=topjet_sources.size()){
-      cerr << "Exception: it is necessary to specify the subjets for each topjet collection" << endl;
-      throw;
-    }
-    if(topjet_prunedmass_sources.size()!=topjet_sources.size()){
-      cerr << "Exception: wrong size of topjet_prunedmass_sources" << endl;
-      throw;
-    }
-    if(topjet_softdropmass_sources.size()!=topjet_sources.size()){
-      cerr << "Exception: wrong size of topjet_softdropmass_sources" << endl;
-      throw;
-    }
-    if(subjet_sources.size()!=subjet_taginfos.size()){
-      cerr << "Exception: it is necessary to specify if you want to store taginfos for each subjet collection" << endl;
-      throw;
-    }
-    if(subjet_sources.size()!=higgstag_sources.size()){
-      cerr << "Exception: size of higgstag_sources is wrong" << endl;
-      throw;
-    }
-    if(higgstag_names.size()!=higgstag_sources.size()){
-      cerr << "Exception: size of higgstag_names is wrong" << endl;
-      throw;
-    }
-    if(iConfig.exists("topjet_qjets_sources")){
-        qjets_sources = iConfig.getParameter<std::vector<std::string> >("topjet_qjets_sources");
-        substructure_variables = true;
-    }
-    if(iConfig.exists("topjet_njettiness_sources")){
-        njettiness_sources = iConfig.getParameter<std::vector<std::string> >("topjet_njettiness_sources");
-        substructure_variables = true;
-    }
-    if(substructure_variables){
-        topjet_substructure_variables_sources = iConfig.getParameter<std::vector<std::string> >("topjet_substructure_variables_sources");
-    }
-    assert(qjets_sources.size() <= topjet_substructure_variables_sources.size());
-    if(iConfig.exists("topjet_njettiness_groomed_sources")){
-        njettiness_groomed_sources = iConfig.getParameter<std::vector<std::string> >("topjet_njettiness_groomed_sources");
-        substructure_groomed_variables = true;
-    }
-    if(substructure_groomed_variables){
-        topjet_substructure_groomed_variables_sources = iConfig.getParameter<std::vector<std::string> >("topjet_substructure_groomed_variables_sources");
-    }
+    if(iConfig.exists("TopJets")){
+      double topjet_ptmin = iConfig.getParameter<double> ("topjet_ptmin");
+      double topjet_etamax = iConfig.getParameter<double> ("topjet_etamax");
 
-    /*--- lepton keys ---*/
-    std::vector<std::string> muon_sources, elec_sources;
-    if(save_lepton_keys){
-      if(doMuons){
-
-        muon_sources = iConfig.getParameter<std::vector<std::string>>("muon_sources");
+      /*--- lepton keys ---*/
+      std::vector<std::string> muon_sources, elec_sources;
+      if(save_lepton_keys){
+	if(doMuons){
+	  
+	  muon_sources = iConfig.getParameter<std::vector<std::string>>("muon_sources");
+	}
+	if(doElectrons){
+	  
+	  auto elec_source = iConfig.getParameter<edm::InputTag>("electron_source");
+	  elec_sources.push_back(elec_source.label());
+	}
       }
-      if(doElectrons){
 
-        auto elec_source = iConfig.getParameter<edm::InputTag>("electron_source");
-        elec_sources.push_back(elec_source.label());
-      }
-    }
-    /*-------------------*/
+      edm::VParameterSet topjets_list = iConfig.getParameterSetVector("TopJets");
 
-    for(size_t j=0; j< topjet_sources.size(); ++j){
-        NtupleWriterTopJets::Config cfg(*context, consumesCollector(), topjet_sources[j], topjet_sources[j]);
+      for(unsigned int j=0; j<topjets_list.size(); ++j){
+	if(!topjets_list[j].exists("topjet_source")){
+	  cerr << "Exception: it is necessary to specify the source of the topjet collection" << endl;
+	  throw;
+	}
+	std::string topjet_source = topjets_list[j].getParameter<std::string>("topjet_source");
+	if(!topjets_list[j].exists("subjet_source")){
+	  cerr << "Exception: it is necessary to specify the subjets for each topjet collection" << endl;
+	  throw;
+	}
+	std::string subjet_source = topjets_list[j].getParameter<std::string>("subjet_source");
+
+        NtupleWriterTopJets::Config cfg(*context, consumesCollector(), topjet_source, topjet_source);
         cfg.ptmin = topjet_ptmin;
         cfg.etamax = topjet_etamax;
-	cfg.higgs_src = higgstag_sources[j];
-	cfg.higgs_name = higgstag_names[j];
-	cfg.pruned_src = topjet_prunedmass_sources[j];
-        cfg.softdrop_src = topjet_softdropmass_sources[j];
-	if(higgstag_sources[j]!=""&&higgstag_names[j]==""){
+	cfg.subjet_src = subjet_source;
+	if(topjets_list[j].exists("do_subjet_taginfo")){
+ 	  cfg.do_taginfo_subjets = topjets_list[j].getParameter<bool>("do_subjet_taginfo");
+ 	}
+	else{
+ 	  cfg.do_taginfo_subjets = false;
+	}
+
+	if(topjets_list[j].exists("prunedmass_source")){
+	  cfg.pruned_src = topjets_list[j].getParameter<std::string>("prunedmass_source");
+	}
+	if(topjets_list[j].exists("softdropmass_source")){
+	  cfg.softdrop_src = topjets_list[j].getParameter<std::string>("softdropmass_source");
+	}
+	if(topjets_list[j].exists("higgstag_source")){
+	  cfg.higgs_src = topjets_list[j].getParameter<std::string>("higgstag_source");
+	}
+	if(topjets_list[j].exists("higgstag_name")){
+	  cfg.higgs_name = topjets_list[j].getParameter<std::string>("higgstag_name");
+	}
+	if(cfg.higgs_src!="" && cfg.higgs_name==""){
 	  cerr << "Exception: higgstag source specified, but no higgstag discriminator name" << endl;
 	  throw;
 	}
-	cfg.subjet_src = subjet_sources[j];
-	if(subjet_taginfos[j]=="store"){
- 	  cfg.do_taginfo_subjets = true;
- 	}
- 	else{
- 	  cfg.do_taginfo_subjets = false;
- 	}
-        if(j < topjet_substructure_variables_sources.size()){
-            cfg.substructure_variables_src = topjet_substructure_variables_sources[j];
-        }
-        if(j < njettiness_sources.size()){
-            cfg.njettiness_src = njettiness_sources[j];
-        }
-	if(j < topjet_substructure_groomed_variables_sources.size()){
-            cfg.substructure_groomed_variables_src = topjet_substructure_groomed_variables_sources[j];
-        }
-        if(j < njettiness_groomed_sources.size()){
-            cfg.njettiness_groomed_src = njettiness_groomed_sources[j];
-        }
-        if(j < qjets_sources.size()){
-            cfg.qjets_src = qjets_sources[j];
-        }
-	std::string topbranch=topjet_sources[j]+"_"+subjet_sources[j];
+
+
+	bool substructure_variables = false;
+	bool substructure_groomed_variables = false;
+	if(topjets_list[j].exists("njettiness_source")){
+	  cfg.njettiness_src = topjets_list[j].getParameter<std::string>("njettiness_source");
+	  substructure_variables = true;
+	}
+	if(topjets_list[j].exists("qjets_source")){
+	  cfg.qjets_src = topjets_list[j].getParameter<std::string>("qjets_source");
+	  substructure_variables = true; 
+	}
+	if(substructure_variables){
+	  if(!topjets_list[j].exists("substructure_variables_source")){
+	    cerr << "Exception: njettiness or qjets sources defined without definition of substructure_variables_source" << endl;
+	    throw;
+	  }
+	  cfg.substructure_variables_src = topjets_list[j].getParameter<std::string>("substructure_variables_source");
+	}
+
+	if(topjets_list[j].exists("njettiness_groomed_source")){
+	  cfg.njettiness_groomed_src = topjets_list[j].getParameter<std::string>("njettiness_groomed_source");
+	  substructure_groomed_variables = true;
+	}
+	if(substructure_groomed_variables){
+	  if(!topjets_list[j].exists("substructure_groomed_variables_source")){
+	    cerr << "Exception: groomed njettiness source defined without definition of substructure_groomed_variables_source" << endl;
+	    throw;
+	  }
+	  cfg.substructure_groomed_variables_src = topjets_list[j].getParameter<std::string>("substructure_groomed_variables_source");
+	}
+
+	std::string topbranch=topjet_source+"_"+subjet_source;
 	cfg.dest_branchname = topbranch;
 	cfg.dest = topbranch;
         writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0, muon_sources, elec_sources));
-/*
-        // switch on lepton-keys storage for TopJet collections
-        writer_modules.emplace_back(new NtupleWriterTopJets(cfg, i==0, muon_sources, elec_sources));
-*/
+	
+      }
     }
   }
 
