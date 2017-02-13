@@ -114,7 +114,7 @@ class TopJetHists: public JetHistsBase{
 
 
 static const std::vector<float> BTagMCEffBinsEta = {-2.4, 2.4};
-static const std::vector<float> BTagMCEffBinsPt = {30., 50., 70., 100., 140., 200., 300., 670.};
+static const std::vector<float> BTagMCEffBinsPt = {20., 30., 50., 70., 100., 140., 200., 300., 600., 1000.};
 /** \brief measure btag efficiency in MC
  *
  * jets_handle_name should point to a handle of type vector<Jet> _or_
