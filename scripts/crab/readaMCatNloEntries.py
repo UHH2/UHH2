@@ -16,6 +16,9 @@ def read_xml(xmlFileDir):
     #    return 
 
 def read_tree(rootDir):
+    if not '.root' in str(rootDir):
+	print 'no root file',str(rootDir)
+	return 0
     ntuple = TFile(str(rootDir))
     AnalysisTree = ntuple.Get("AnalysisTree")
     numberOfweightedEntries = 0 
@@ -26,9 +29,13 @@ def read_tree(rootDir):
     return numberOfweightedEntries
 
 def read_treeFast(rootDir):
+    if not '.root' in str(rootDir):
+	print 'no root file',str(rootDir)
+	return 0
     ntuple = TFile(str(rootDir))
     AnalysisTree = ntuple.Get("AnalysisTree")
-    return AnalysisTree.GetEntriesFast()
+    fastentries =  AnalysisTree.GetEntriesFast()
+    return fastentries
 
 def readEntries(worker, xmlfiles, fast=False):
     if fast: print 'Going to use the Fast Method, no weights used'
