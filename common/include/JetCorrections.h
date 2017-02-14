@@ -85,7 +85,8 @@ public:
   explicit JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::vector<std::string> & filenames_L1RC = {});
     
     virtual bool process(uhh2::Event & event) override;
-    
+    virtual bool correct_met(uhh2::Event & event);
+
     virtual ~JetCorrector();
     
 private:
