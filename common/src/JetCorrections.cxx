@@ -941,8 +941,9 @@ bool JetResolutionSmearer::process(uhh2::Event & event) {
 
       jet.set_JEC_factor_raw(factor_raw);
       jet.set_v4(jet_v4);
+    }
 
-      return true;
+    return true;
 }
 
 JetResolutionSmearer::~JetResolutionSmearer(){}
