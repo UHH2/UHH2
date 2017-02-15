@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """
 *
@@ -130,10 +131,10 @@ if __name__ == '__main__':
                         exit(120)
                 fast = False
                 cores = args.readEntries
-                method='"weights"'
+                #method='"weights"'
                 if args.readEntriesFast > 0:
                         fast=True
-                        method='"fast"'
+                        #method='"fast"'
                         cores = args.readEntriesFast
                 fileList =[]
                 for name in ConfigFile.requestNames:
@@ -149,6 +150,6 @@ if __name__ == '__main__':
                 for i, name in enumerate(fileList):
                         entriesFile.write(name+' '+str(result_list[i])+'\n')
                         xmlFile = open(name,'a')
-                        xmlFile.write('<!-- < NumberEntries="'+str(result_list[i])+'" Method='+method+' /> -->')
+                        #xmlFile.write('<!-- < NumberEntries="'+str(result_list[i])+'" Method='+method+' /> -->')
                 entriesFile.close()
                 
