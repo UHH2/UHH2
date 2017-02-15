@@ -63,6 +63,7 @@ public:
 	std::string subjet_src;
 	std::string higgs_src;
 	std::string higgs_name;
+        std::string higgstaginfo_src;
 	std::string pruned_src;
         std::string softdrop_src;
     };
@@ -75,36 +76,6 @@ public:
     virtual ~NtupleWriterTopJets();
 
 private:
-    //Higgs tagger commissioning
-    bool trackPairV0Filter(const reco::Track *const *tracks, unsigned int n);
-    void recalcNsubjettiness(const reco::JetBaseRef & jet, float & tau1, float & tau2, std::vector<fastjet::PseudoJet> & currentAxes);
-    void setTracksPVBase(const reco::TrackRef & trackRef, const reco::VertexRef & vertexRef, float & PVweight);
-    void setTracksPV(const reco::CandidatePtr & trackRef, const reco::VertexRef & vertexRef, float & PVweight);
-    void etaRelToTauAxis(const reco::VertexCompositePtrCandidate & vertex, fastjet::PseudoJet & tauAxis, std::vector<float> & tau_trackEtaRel); 
-    void vertexKinematics(const reco::VertexCompositePtrCandidate & vertex, reco::TrackKinematics & vertexKinematics);
-    const double beta_=1.0;
-    const double R0_=0.8;
-
-    const double maxSVDeltaRToJet_=0.7;
-    const double maxDistToAxis_=0.07;
-    const double maxDecayLen_=5;
-
-    edm::ESHandle<TransientTrackBuilder> trackBuilder;
-
-    // static variables
-    static constexpr float dummyZ_ratio             = -3.0f;
-    static constexpr float dummyTrackSip3dSig       = -50.0f;
-    static constexpr float dummyTrackSip2dSigAbove  = -19.0f;
-    static constexpr float dummyTrackEtaRel         = -1.0f;
-    static constexpr float dummyVertexMass          = -1.0f;
-    static constexpr float dummyVertexEnergyRatio   = -1.0f;
-    static constexpr float dummyVertexDeltaR        = -1.0f;
-    static constexpr float dummyFlightDistance2dSig = -1.0f;
-
-    static constexpr float charmThreshold  = 1.5f;
-    static constexpr float bottomThreshold = 5.2f;
-
-    //end Higgs tagger commissioning
     edm::InputTag src;
     float ptmin, etamax;
     bool do_btagging, do_btagging_subjets, do_taginfo_subjets;
@@ -112,7 +83,8 @@ private:
     edm::EDGetToken src_njettiness1_token, src_njettiness2_token, src_njettiness3_token, src_qjets_token;
     edm::EDGetToken src_njettiness1_groomed_token, src_njettiness2_groomed_token, src_njettiness3_groomed_token;
     edm::EDGetToken src_hepTopTagCHS_token, src_hepTopTagPuppi_token;
-    std::string njettiness_src, njettiness_groomed_src, qjets_src, subjet_src, higgs_src, higgs_name, pruned_src, softdrop_src, topjet_collection;
+    edm::EDGetToken src_higgstaginfo_token;
+    std::string njettiness_src, njettiness_groomed_src, qjets_src, subjet_src, higgs_src, higgs_name, higgstaginfo_src, pruned_src, softdrop_src, topjet_collection;
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;
     std::vector<TopJet::tag> id_tags;

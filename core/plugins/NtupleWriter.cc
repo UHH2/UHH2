@@ -336,7 +336,9 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 	  cerr << "Exception: higgstag source specified, but no higgstag discriminator name" << endl;
 	  throw;
 	}
-
+	if(topjets_list[j].exists("higgstaginfo_source")){
+	  cfg.higgstaginfo_src = topjets_list[j].getParameter<std::string>("higgstaginfo_source");
+	}
 
 	bool substructure_variables = false;
 	bool substructure_groomed_variables = false;
