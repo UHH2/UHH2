@@ -523,6 +523,21 @@ addJetCollection(process,labelName = 'AK8PFCHS', jetSource = cms.InputTag('ak8CH
 # #getattr(process,'patJetsAK8PFPuppi').addTagInfos = cms.bool(True)
 
 
+### Higgs tagging commissioning
+
+from RecoBTag.SecondaryVertex.trackSelection_cff import *
+
+process.pfBoostedDoubleSVTagInfos = cms.EDProducer("BoostedDoubleSVProducer",
+                                           trackSelectionBlock,
+                                           beta = cms.double(1.0),
+                                           R0 = cms.double(0.8),
+                                           maxSVDeltaRToJet = cms.double(0.7),
+                                           trackPairV0Filter = cms.PSet(k0sMassWindow = cms.double(0.03)),
+                                           svTagInfos = cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8CHSJets")
+)
+
+process.pfBoostedDoubleSVTagInfos.trackSelection.jetDeltaRMax = cms.double(0.8)
+
 ### MET
 
 ## MET CHS (not available as slimmedMET collection)
@@ -791,6 +806,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                  do_subjet_taginfo = cms.bool(True),
                  higgstag_source = cms.string("patJetsAk8CHSJets"),
                  higgstag_name = cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                 higgstaginfo_source = cms.string("pfBoostedDoubleSVTagInfos"),
                  njettiness_source = cms.string("NjettinessAk8CHS"),
                  substructure_variables_source = cms.string("ak8CHSJets"),
                  njettiness_groomed_source = cms.string("NjettinessAk8SoftDropCHS"),
