@@ -111,6 +111,7 @@ private:
     Event::Handle<std::vector<Particle>> h_genjets;
     
     Event::Handle<std::vector<bool>> h_triggerResults;
+    Event::Handle<std::vector<int>> h_triggerPrescales;
     Event::Handle<std::vector<std::string>> h_triggerNames;
 };
 

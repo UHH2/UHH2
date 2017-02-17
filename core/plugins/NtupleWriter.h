@@ -11,6 +11,7 @@
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
+#include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
 
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
@@ -120,6 +121,7 @@ class NtupleWriter : public edm::EDFilter {
 
       edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
       edm::EDGetTokenT<edm::TriggerResults>  metfilterBits_;
+      edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescales_;
       edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
 
       std::vector<std::vector<FlavorParticle> > triggerObjects_out;

@@ -96,6 +96,13 @@ public:
    * if \c lookup_trigger_index returns false.
    */
   bool passes_trigger(TriggerIndex & ti) const;
+
+  /** \brief Returns the pre-scale factor of the trigger represented by the TriggerIndex
+   * 
+   * Throws the same exceptions as \c lookup_trigger_index. In addition, throws a runtime_error
+   * if \c lookup_trigger_index returns false.
+   */
+  bool trigger_prescale(TriggerIndex & ti) const;
   
   /** \brief Test whether a given trigger is available for the current event
    * 
@@ -122,6 +129,10 @@ public:
   std::vector<bool>* & get_triggerResults(){
       return triggerResults;
   }
+
+  std::vector<int>* & get_triggerPrescales(){
+      return triggerPrescales;
+  }
   
   void set_triggernames(std::vector<std::string> names){ // for the current run(!)
       triggerNames_currentrun = move(names);
@@ -139,7 +150,8 @@ public:
   
 private:
     std::vector<bool>* triggerResults;
-  
+    std::vector<int>* triggerPrescales;
+
     std::vector<std::string> triggerNames_currentrun;
     int triggerNames_currentrun_runid;
 };
