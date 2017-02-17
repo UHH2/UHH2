@@ -22,6 +22,7 @@ void Event::clear(){
     met = 0;
     genInfo = 0;
     triggerResults = 0;
+    triggerPrescales = 0;
     triggerNames_currentrun.clear();
     triggerNames_currentrun_runid = -1; // this is an invalid runid
 }
@@ -112,4 +113,23 @@ bool Event::passes_trigger(TriggerIndex & ti) const{
      assert(triggerNames_currentrun.size() == triggerResults->size());
     return triggerResults->at(ti.index);
 }
+
+
+bool Event::trigger_prescale(TriggerIndex & ti) const{
+    if(!lookup_trigger_index(ti)){
+        throw runtime_error("Event does not have trigger '" + ti.triggername + "'. Available triggers:\n" + format_list(triggerNames_currentrun));
+    }
+    if(!triggerPrescales){
+        throw runtime_error("Event::trigger_prescale: trigger prescales have not beed read in; perhaps you are running on MC, prescales are only filled for data.");
+    }
+    if(triggerNames_currentrun.size() != triggerPrescales->size()){
+        stringstream ss;
+	ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger prescales for current event have size " << triggerPrescales->size()
+	   << "; perhaps you are running on MC, prescales are only filled for data." << endl;
+	throw runtime_error(ss.str());
+    }
+    assert(triggerNames_currentrun.size() == triggerPrescales->size());
+    return triggerPrescales->at(ti.index);
+}
+
 

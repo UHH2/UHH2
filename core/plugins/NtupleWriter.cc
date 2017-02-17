@@ -492,9 +492,13 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   if(doTrigger){
     trigger_prefixes = iConfig.getParameter<std::vector<std::string> >("trigger_prefixes");
     event->get_triggerResults() = new vector<bool>();
+    event->get_triggerPrescales() = new vector<int>();  
     branch(tr, "triggerNames", "std::vector<std::string>", &triggerNames_outbranch);
     branch(tr, "triggerResults", "std::vector<bool>", event->get_triggerResults());
+    branch(tr, "triggerPrescales", "std::vector<int>", event->get_triggerPrescales());
     triggerBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("trigger_bits"));
+    edm::InputTag triggerPrescalesTag("patTrigger");
+    triggerPrescales_ = consumes<pat::PackedTriggerPrescales>(triggerPrescalesTag);
     metfilterBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("metfilter_bits"));
     triggerObjects_ = consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("trigger_objects"));
     triggerObjects_sources = iConfig.getParameter<std::vector<std::string> >("triggerObjects_sources");
@@ -1021,18 +1025,25 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
    if(doTrigger){
      auto & triggerResults = *event->get_triggerResults();
+     auto & triggerPrescales = *event->get_triggerPrescales();
      triggerResults.clear();
+     triggerPrescales.clear();
      triggerNames_outbranch.clear();
 
      //read trigger info from triggerBits (k=0) and from metfilterBits (k=1)
      for(int k=0;k<2; k++){
        edm::Handle<edm::TriggerResults> triggerBits;
+       edm::Handle<pat::PackedTriggerPrescales> packedTriggerPrescales; 
        if(k==0) 
          iEvent.getByToken(triggerBits_, triggerBits);
        else
          iEvent.getByToken(metfilterBits_, triggerBits);
 
+       if(iEvent.isRealData())
+	 iEvent.getByToken(triggerPrescales_, packedTriggerPrescales);
+
        const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
+
        for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) {
 	 std::vector<std::string>::const_iterator it = trigger_prefixes.begin();
 	 for(; it!=trigger_prefixes.end(); ++it){
@@ -1040,6 +1051,10 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 }
 	 if(it==trigger_prefixes.end()) continue;
 	 triggerResults.push_back(triggerBits->accept(i));
+	 
+	 if(iEvent.isRealData())
+	   triggerPrescales.push_back(packedTriggerPrescales->getPrescaleForIndex(i));
+
 	 if(newrun){
            triggerNames_outbranch.push_back(names.triggerName(i));
 	 }
