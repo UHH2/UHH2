@@ -801,6 +801,14 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                  #qjets_source = cms.string("QJetsCa8CHS")
              ) ,
              cms.PSet(
+                 topjet_source = cms.string("slimmedJetsAK8"),
+                 subjet_source = cms.string("SoftDropPuppi"),
+                 do_subjet_taginfo = cms.bool(False),
+                 higgstag_source = cms.string("patJetsAk8PuppiJetsFat"),
+                 higgstag_name = cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                 prunedmass_source = cms.string("ak8PFJetsCHSPrunedMass"),
+             ) ,
+             cms.PSet(
                  topjet_source = cms.string("patJetsAk8CHSJetsSoftDropPacked"),
                  subjet_source = cms.string("daughters"),
                  do_subjet_taginfo = cms.bool(True),
