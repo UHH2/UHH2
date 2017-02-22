@@ -21,7 +21,7 @@ if len(sys.argv) < 2:
 
 
 # definitions
-folder='AK8'
+folder=''
 btag_histo_names = (
     "BTagMCEffFlavBPassing",
     "BTagMCEffFlavBTotal",
