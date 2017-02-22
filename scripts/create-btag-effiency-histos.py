@@ -21,6 +21,7 @@ if len(sys.argv) < 2:
 
 
 # definitions
+folder=''
 btag_histo_names = (
     "BTagMCEffFlavBPassing",
     "BTagMCEffFlavBTotal",
@@ -29,7 +30,10 @@ btag_histo_names = (
     "BTagMCEffFlavUDSGPassing",
     "BTagMCEffFlavUDSGTotal",
 )
-filter_func = lambda w: w.name in btag_histo_names
+if folder=='':
+	filter_func = lambda w: w.name in btag_histo_names 
+else:
+	filter_func = lambda w: w.name in btag_histo_names and folder in w.in_file_path
 input_pattern = sys.argv[1:]
 
 
@@ -63,7 +67,7 @@ pipe = varial.gen.gen_make_eff_graphs(
 
 
 # write out
-outfile= 'BTagMCEfficiencyHists.root'
+outfile= 'BTagMCEfficiencyHists'+folder+'.root'
 print 'Saving histograms to file:', outfile
 f = varial.ROOT.TFile(outfile, 'RECREATE')
 for w in pipe:
