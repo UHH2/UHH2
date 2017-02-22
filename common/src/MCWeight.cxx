@@ -223,13 +223,13 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
   h_muon_weight_down_ (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_down")),
   sys_error_factor_(sys_error_percantage/100.), etaYaxis_(etaYaxis)
 {
-  // auto dataset_type = ctx.get("dataset_type");
-  // bool is_mc = dataset_type == "MC";
-  // if (!is_mc) {
-  //   cout << "Warning: MCMuonScaleFactor will not have an effect on "
-  //        <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
-  //   return;
-  // }
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if (!is_mc) {
+    cout << "Warning: MCMuonScaleFactor will not have an effect on "
+         <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
 
 
   TFile sf_file(sf_file_path.c_str());
