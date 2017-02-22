@@ -100,6 +100,12 @@ void UniversalGenJetCluster::ClusterXCone23()
   }
   ////
 
+  // check if both list contain at least 3 particles, 
+  // code is likely to crash if lists contain less particles than required jets
+  if(particle_in_fat1.size() < 3 || particle_in_fat2.size() <3) return;  
+  ////
+
+
   // Run second clustering step (N=3, R=0.4) for each fat jet
   // (this clustering depends on which jet is the leptonic and which one is the hadronic jet)
   std::vector<fastjet::PseudoJet> subjets_1, subjets_2;
@@ -161,8 +167,6 @@ void UniversalGenJetCluster::ClusterXCone33()
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
   ////
 
- 
-
   // get and wirte list: if particle i ist clustered in jet j, the i-th entry of the list == j
   vector<int> list_fat;
   list_fat.clear();
@@ -180,6 +184,11 @@ void UniversalGenJetCluster::ClusterXCone33()
   }
   ////
 
+  // check if both list contain at least 3 particles, 
+  // code is likely to crash if lists contain less particles than required jets
+  if(particle_in_fat1.size() < 3 || particle_in_fat2.size() <3) return;  
+  ////
+
   // Run second clustering step (N=3, R=0.4) for each fat jet
   vector<PseudoJet> subjets_1, subjets_2;
 
@@ -194,6 +203,7 @@ void UniversalGenJetCluster::ClusterXCone33()
   JetDefinition jet_def_sub2(&plugin_xcone_sub2);
   ClusterSequence clust_seq_sub2(particle_in_fat2, jet_def_sub2);
   subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
+  
   ////
 
   // set GenTopJets with subjets
@@ -201,13 +211,12 @@ void UniversalGenJetCluster::ClusterXCone33()
   _xcone33TopJets.push_back(ConvertPsjToGenTopJet(fatjets[1], subjets_2));
   ////
 
-  // Also write Jets with SoftDrop
+  // Also write Jets with SoftDrop 
   SoftDrop sd(0.0, 0.1, 1.2);
   PseudoJet sdjet1 = sd(fatjets[0]);
   PseudoJet sdjet2 = sd(fatjets[1]);
   _xcone33TopJets_softdrop.push_back(ConvertPsjToGenTopJet(sdjet1, subjets_1));
   _xcone33TopJets_softdrop.push_back(ConvertPsjToGenTopJet(sdjet2, subjets_2));
-
   ////
 
   // delete pseudojets and lists
