@@ -226,7 +226,9 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
                              const std::string & measType_bc="mujets",
                              const std::string & measType_udsg="incl",
                              const std::string & xml_param_name="MCBtagEfficiencies",
-                             const std::string & weights_name_postfix="");
+			     const std::string & weights_name_postfix="",
+                             const std::string & xml_calib_name="BTagCalibration");
+
 
   virtual bool process(uhh2::Event & event) override;
 
