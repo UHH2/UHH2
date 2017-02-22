@@ -93,5 +93,7 @@ def readEntries(worker, xmlfiles, fast=False):
         
 
 if __name__ == "__main__":
-        readEntries(sys.argv[1],sys.argv[2:-1], bool(sys.argv[-1]))
+    xmllist = sys.argv[2:-1]
+    meth = eval(sys.argv[-1])
+    readEntries(sys.argv[1],xmllist,meth)
     
