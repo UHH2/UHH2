@@ -231,6 +231,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
     return;
   }
 
+
   TFile sf_file(sf_file_path.c_str());
   if (sf_file.IsZombie()) {
     throw runtime_error("Scale factor file for muons not found: " + sf_file_path);
@@ -276,7 +277,7 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
     event.set(h_muon_weight_down_,  1.);
     return true;
   }
-
+ 
   const auto & muons = event.get(h_muons_);
   float weight = 1., weight_up = 1., weight_down = 1.;
   for (const auto & mu : muons) {
@@ -596,7 +597,8 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
                                      const std::string & measType_bc,
                                      const std::string & measType_udsg,
                                      const std::string & xml_param_name,
-                                     const std::string & weights_name_postfix):
+				     const std::string & weights_name_postfix,
+				     const std::string & xml_calib_name):
   btag_(CSVBTag(working_point)),
   h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
   h_topjets_(ctx.get_handle<std::vector<TopJet>>(jets_handle_name)),
@@ -633,7 +635,7 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
   eff_file.Close();
 
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagCalibration
-  BTagCalibration calib_data("CSVv2", ctx.get("BTagCalibration"));
+  BTagCalibration calib_data("CSVv2", ctx.get(xml_calib_name));
   auto op = working_point == CSVBTag::WP_LOOSE ? BTagEntry::OP_LOOSE : (
                 working_point == CSVBTag::WP_MEDIUM ? BTagEntry::OP_MEDIUM :
                     BTagEntry::OP_TIGHT);
