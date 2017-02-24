@@ -455,7 +455,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 				pat_topjet.userFloat("ak8PFJetsPuppiValueMap:eta"),
 				pat_topjet.userFloat("ak8PFJetsPuppiValueMap:phi"),
 				pat_topjet.userFloat("ak8PFJetsPuppiValueMap:mass"));
-	  //skip jets with incredible high pT (99999 seems to be a default value in MINIAOD if the puppi jet is not defined)
+	  //skip jets with incredibly high pT (99999 seems to be a default value in MINIAOD if the puppi jet is not defined)
 	  if(puppi_v4.Pt()>=99999) continue;
 	  if(puppi_v4.Pt() < ptmin) continue;
 	  if(fabs(puppi_v4.Eta()) > etamax) continue;
