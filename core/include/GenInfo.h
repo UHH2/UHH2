@@ -20,6 +20,7 @@ class GenInfo{
     m_pileup_NumInteractions_ootafter = 0;
     m_pileup_TrueNumInteractions = 0;  //poisson mean
     m_originalXWGTUP = 0;
+    m_PU_pT_hat_max = 0;
   }
 
   const std::vector<float> & binningValues() const{return m_binningValues;}
@@ -27,6 +28,9 @@ class GenInfo{
   const std::vector<float> & weights() const{return m_weights;}
   //list of weights for systematic variations like PDF and Q^2
   const std::vector<float> & systweights() const{return m_systweights;}
+  //max pt-hat of the PU
+  float PU_pT_hat_max() const{return m_PU_pT_hat_max;}
+
   float alphaQCD() const{return m_alphaQCD;}
   float alphaQED() const{return m_alphaQED;}
   float qScale() const{return m_qScale;}
@@ -64,11 +68,13 @@ class GenInfo{
   void set_pileup_NumInteractions_ootafter(int x){m_pileup_NumInteractions_ootafter=x;}
   void set_pileup_TrueNumInteractions(float x){m_pileup_TrueNumInteractions=x;}
   void set_originalXWGTUP(float x){m_originalXWGTUP=x;}
+  void set_PU_pT_hat_max(float x){m_PU_pT_hat_max=x;}
 
  private:
   std::vector<float> m_binningValues;
   std::vector<float> m_weights;
   std::vector<float> m_systweights; 
+
   float m_originalXWGTUP;
   float m_alphaQCD;
   float m_alphaQED;
@@ -84,7 +90,7 @@ class GenInfo{
   int m_pileup_NumInteractions_ootbefore; 
   int m_pileup_NumInteractions_ootafter;
   float m_pileup_TrueNumInteractions;  //poisson mean
-
+  float m_PU_pT_hat_max;
 };
 
 #endif
