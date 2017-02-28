@@ -681,6 +681,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      event->genInfo->set_pileup_NumInteractions_intime(0);
      event->genInfo->set_pileup_NumInteractions_ootbefore(0);
      event->genInfo->set_pileup_NumInteractions_ootafter(0);
+     event->genInfo->set_PU_pT_hat_max(0);
      if(pus.isValid()){
        event->genInfo->set_pileup_TrueNumInteractions ( (float) pus->at(0).getTrueNumInteractions());
        for(size_t i=0; i<pus->size(); ++i){
@@ -692,8 +693,14 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 else if(pus->at(i).getBunchCrossing() == +1){ // oot pileup before
 	   event->genInfo->set_pileup_NumInteractions_ootafter( event->genInfo->pileup_NumInteractions_ootafter() + pus->at(i).getPU_NumInteractions());
 	 }
+	 const std::vector<float> PU_pT_hats = pus->at(i).getPU_pT_hats();
+	 for(size_t j=0; j<PU_pT_hats.size(); ++j){
+	   if(event->genInfo->PU_pT_hat_max()<PU_pT_hats[j]) 
+	     event->genInfo->set_PU_pT_hat_max(PU_pT_hats[j]);
+	 }
        }
      }
+     //     std::cout<<"event->genInfo->PU_pT_hat_max() = "<<event->genInfo->PU_pT_hat_max()<<std::endl;
 
      edm::Handle<reco::GenParticleCollection> genPartColl;
      // use genPartColl for the Matrix-Element particles. Also use it for stable leptons
