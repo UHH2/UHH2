@@ -20,6 +20,8 @@
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
+#include "DataFormats/Common/interface/EDCollection.h"
+
 
 #include "RecoBTau/JetTagComputer/interface/GenericMVAJetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/GenericMVAJetTagComputerWrapper.h"
@@ -183,6 +185,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   const bool save_lepton_keys = iConfig.exists("save_lepton_keys") ? iConfig.getParameter<bool>("save_lepton_keys") : false;
 
   bool doElectrons = iConfig.getParameter<bool>("doElectrons");
+  
   bool doMuons = iConfig.getParameter<bool>("doMuons");
   bool doTaus = iConfig.getParameter<bool>("doTaus");
   bool doJets = iConfig.getParameter<bool>("doJets");
@@ -207,6 +210,9 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenHOTVR = iConfig.getParameter<bool>("doGenHOTVR");
   doGenXCone = iConfig.getParameter<bool>("doGenXCone");
 
+  doEleAddVars = iConfig.getParameter<bool>("doEleAddVars");//Add variables to trace possible issues with the ECAL slew rate mitigation
+
+
   auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 
   // important: initialize first all module_writers, so that they can
@@ -214,7 +220,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   if(doElectrons){
       using uhh2::NtupleWriterElectrons;
       auto electron_source = iConfig.getParameter<edm::InputTag>("electron_source");
-
+      
       NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
       cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("electron_IDtags");
       assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
@@ -414,6 +420,19 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     event->rho = -1;
   }
 
+  branch(tr, "dupECALClusters",&event->dupECALClusters);
+  branch(tr, "ishitsNotReplaced",&event->ishitsNotReplaced);
+  if(doEleAddVars){
+    auto dupECALClusters_source = iConfig.getParameter<edm::InputTag>("dupECALClusters_source");
+    dupECALClusters_token = consumes<bool>(dupECALClusters_source);
+    auto hitsNotReplaced_source = iConfig.getParameter<edm::InputTag>("hitsNotReplaced_source");
+    hitsNotReplaced_token = consumes<edm::EDCollection<DetId>>(hitsNotReplaced_source);
+  }
+  else{
+    event->dupECALClusters = false;
+    event->ishitsNotReplaced = false;
+  }
+
   //input tokens for objects with fixed names, not defined in the ntuplewriter.py script
   bs_token = consumes<reco::BeamSpot>( edm::InputTag("offlineBeamSpot"));
   generator_token = consumes<GenEventInfoProduct>( edm::InputTag("generator"));
@@ -597,7 +616,22 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       iEvent.getByToken(rho_token, m_rho);
       event->rho=*m_rho;
    }
-   
+
+   if(doEleAddVars){
+    edm::Handle<bool> m_dupECALClusters;
+    iEvent.getByToken(dupECALClusters_token, m_dupECALClusters);
+    event->dupECALClusters=*m_dupECALClusters;
+
+    edm::Handle<edm::EDCollection<DetId>> m_hitsNotReplaced;
+    iEvent.getByToken(hitsNotReplaced_token, m_hitsNotReplaced);
+    const edm::EDCollection<DetId> & hitsNotReplaced = *m_hitsNotReplaced;
+    //    std::cout<<"hitsNotReplaced.size() = "<<hitsNotReplaced.size()<<std::endl;
+    if(hitsNotReplaced.size()>0)
+      event->ishitsNotReplaced=true;
+    else
+      event->ishitsNotReplaced=false;
+  }
+
    print_times(timer, "rho");
 
    // ------------- primary vertices and beamspot  -------------
