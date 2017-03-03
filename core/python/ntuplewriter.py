@@ -4,6 +4,10 @@ import FWCore.ParameterSet.Config as cms
 isDebug = False
 #useData = False
 useData = True
+if useData:
+    met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean","slimmedMETsEGClean","slimmedMETsUncorrected")
+else:
+    met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean")
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
@@ -57,8 +61,8 @@ process.source = cms.Source("PoolSource",
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300))
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000))
 
@@ -729,7 +733,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         ),
         #Add variables to trace possible issues with the ECAL slew rate mitigation 
         #https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#EGM
-        doEleAddVars = cms.bool(True),
+        doEleAddVars = cms.bool(useData),
         dupECALClusters_source = cms.InputTag('particleFlowEGammaGSFixed:dupECALClusters'),
         hitsNotReplaced_source = cms.InputTag('ecalMultiAndGSGlobalRecHitEB:hitsNotReplaced'),
 
@@ -750,9 +754,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         jet_etamax = cms.double(999.0),
         
         doMET = cms.bool(True),
-#        met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi"),
-        met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS"),
-       
+        #met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean"),
+        met_sources =  met_sources_GL,
         #doTopJets = cms.bool(False),
         doTopJets = cms.bool(True),
         topjet_ptmin = cms.double(150.0),
