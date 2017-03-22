@@ -68,7 +68,10 @@ if not os.path.isfile(options.configxml) and not os.path.isdir(options.jobname):
     if options.configxml!="": print "ERROR: "+options.configxml+" is not a valid file!"
     else: print "ERROR: "+options.jobname+" is not a valid directory!"
     exit(1)
-
+while os.popen("voms-proxy-info").readlines() == []:
+    print "Get a CMS proxy certificate"
+    os.system("voms-proxy-init -voms cms")
+    
 def makejoblist(joblist):
     newjoblist=[]
     joblistarray=joblist.split(",")
@@ -168,44 +171,32 @@ def getoutputfilenames(configfile):
     for name in namelist:
         # if name.find("Cycle") != -1: cyclename=name
         if name.find("uhh2::AnalysisModuleRunner") != -1: cyclename=name.replace("::",".")
-    for type,version in zip(typelist,versionlist):
-        rootfilenamelist += cyclename+"."+type+"."+version+postfix[0]+".root, "
-    return rootfilenamelist[:-2]
-
-def getinputfilenames(configfile):
-    rawxmlfile = open(configfile).read()
-    filename = xmlparser.parse(rawxmlfile,"FileName")
-    rootfilenamelist = ", "
-    for file in filename:
-        if not file[:5]=="/eos/": rootfilenamelist += file+", "
+    for itype,version in zip(typelist,versionlist): rootfilenamelist += cyclename+"."+itype+"."+version+postfix[0]+".root, "
     return rootfilenamelist[:-2]
 
 def createcondortxt(options, jobnumber, jobdir):
-    rootfiles = getoutputfilenames(options.jobname+"/xml/"+options.jobname+"_"+str(jobnumber)+".xml").replace(".root","."+str(jobnumber)+".root")
-    md5file = 'md5sums.'+str(jobnumber)+'.txt'
-    outputfiles = rootfiles+", "+md5file
-    additionalfiles = getinputfilenames(options.jobname+"/xml/"+options.jobname+"_"+str(jobnumber)+".xml")
+    rootfiles = getoutputfilenames(options.jobname+"/xml/"+options.jobname+"_"+str(jobnumber)+".xml").replace(".root","."+str(jobnumber)+".root").split(",")
+    outputfiles = ""
     os.chdir(options.jobname+"/configs")
     condorfile = open(options.jobname+"_"+str(jobnumber)+".txt", 'w')
     if options.output == "" : options.output = jobdir+"/results"
-    if len(options.output)>5 and options.output[:5] == "/eos/": outputfiles=""
+    for rootfile in rootfiles: outputfiles += options.output+"/"+rootfile.strip()+", "
+    outputfiles = outputfiles[:-2]
+    if options.output.find("/store/") != -1: outputfiles=""
+    userproxy = os.popen("echo $X509_USER_PROXY").readline().strip()
     print >> condorfile, """universe = vanilla
 Executable = %s/configs/%s_%d.sh
-Requirements = OpSys == "LINUX"&& (Arch != "DUMMY" )
-+BigMemoryJob = TRUE
-request_memory = 200
-request_disk = 1000000
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-InitialDir = %s
-Transfer_Input_Files = %s/configs/%s.tgz%s
+Transfer_Input_Files = %s/configs/%s.tgz
 Transfer_Output_Files = %s
 Output = %s/logs/%s_%d.stdout
 Error = %s/logs/%s_%d.stderr
 Log = %s/logs/%s_%d.log
 notify_user = ${LOGNAME}@FNAL.GOV
+x509userproxy = %s
 Arguments = %s
-Queue 1""" %(options.jobname, options.jobname, jobnumber, options.output, jobdir, options.jobname, additionalfiles, outputfiles, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, os.getcwd())
+Queue 1""" %(options.jobname, options.jobname, jobnumber, jobdir, options.jobname, outputfiles, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, userproxy, os.getcwd())
     condorfile.close()
     os.chdir("../..")
 
@@ -214,11 +205,16 @@ def createcondorscript(options, jobnumber):
     scriptname = options.jobname+"_"+str(jobnumber)+".sh"
     scriptfile = open(scriptname, 'w')
     print >> scriptfile, """#!/bin/bash
+echo "Starting job on " `date`
+echo "Running on: `uname -a`"
+echo "System software: `cat /etc/redhat-release`"
+source /cvmfs/cms.cern.ch/cmsset_default.sh
 WORKINGDIR=$PWD
 TARNAME=`/bin/ls *.tgz`
 tar -xzf $TARNAME
 SFRAMEDIR=`find . -type f -name setup.sh | xargs dirname`
 cd $SFRAMEDIR
+scramv1 b ProjectRename
 eval `scramv1 runtime -sh`
 source setup.sh
 cd $WORKINGDIR
@@ -226,32 +222,31 @@ ANALYSISDIR=CMSSW`echo ${1##*CMSSW}`/../../
 cd $ANALYSISDIR
 FILENAME=%s_%d.xml
 cp %s/xml/${FILENAME} .
-sed -i 's|FileName="/[^e][^o][^s].*/\(.*.root\)"|FileName="./\1"|' $FILENAME
-mv ${WORKINGDIR}/*.root .
+if [ `/bin/ls ${WORKINGDIR} | grep .root | wc -l` -gt 0 ]; then mv ${WORKINGDIR}/*.root .; fi
 sframe_main %s_%d.xml
 CYCLENAME=`grep "Cycle Name" %s_%d.xml | sed 's|.*<Cycle Name="\([^ \\t\\r\\n\\v\\f]*\)".*|\\1|'` | sed 's|::|.|'
 for filename in `/bin/ls ${CYCLENAME}*.root`; do
     newfilename=`echo $filename | sed 's|.root|.%d.root|'`
     mv $filename $newfilename
-    md5sum $newfilename >> md5sums.%d.txt
+    echo "MD5Sum $newfilename"
+    md5sum $newfilename
 done
-mv ${CYCLENAME}*.root $WORKINGDIR
-mv md5sums.%d.txt $WORKINGDIR""" %(options.jobname, jobnumber, options.jobname, options.jobname, jobnumber, options.jobname, jobnumber, jobnumber, jobnumber, jobnumber)
-    if len(options.output)>5 and options.output[:5] == "/eos/": print >> scriptfile, """
+mv ${CYCLENAME}*.root $WORKINGDIR""" %(options.jobname, jobnumber, options.jobname, options.jobname, jobnumber, options.jobname, jobnumber, jobnumber)
+    if options.output.find("/store/") != -1: print >> scriptfile, """
 cd $WORKINGDIR
 OUTPUTDIR=%s/
-for FILE in ${CYCLENAME}*.root *.txt; do
-    /bin/cp $FILE $OUTPUTDIR
-    LOCALMD5=`md5sum $FILE | awk '{print $1}'`
-    REMOTEMD5=`md5sum ${OUTPUTDIR}/${FILE} | awk '{print $1}'`
-    COUNTER=0
-    while [ "$LOCALMD5" != "$REMOTEMD5" -a "$COUNTER" -lt 5 ]; do
-        sleep 30
-        /bin/cp $FILE $OUTPUTDIR
-        LOCALMD5=`md5sum $FILE | awk '{print $1}'`
-        REMOTEMD5=`md5sum ${OUTPUTDIR}/${FILE} | awk '{print $1}'`
-        let COUNTER+=1
-    done
+EOSDIR=`echo $OUTPUTDIR | sed 's|/eos/uscms/store/|root://cmseos.fnal.gov//store/|'`
+for FILE in `/bin/ls ${CYCLENAME}*.root`; do
+    xrdcp -f $FILE $EOSDIR
+    XRDCPEXITCODE=$?
+    echo "xrdcp status: $XRDCPEXITCODE"
+#    COUNTER=0
+#    while [ "$XRDCPEXITCODE" != 0 -a "$COUNTER" -lt 5]; do
+#        xrdcp -f $FILE $EOSDIR
+#        XRDCPEXITCODE=$?
+#        let COUNTER+=1
+#    done
+    if [ $XRDCPEXITCODE -eq 0 ]; then rm $FILE; fi
 done""" %(options.output)
     os.chmod(scriptname, 493) #493==755 in python chmod
     os.chdir("../..")
@@ -266,10 +261,10 @@ def enddatablock(mydatablock,indent):
     return returnstring
 
 def makedatablocks(xmlfile,options):
-    input=xmlfile
+    text=xmlfile
     datablocklist=[]
-    while input.find("<InputData ") != -1:
-        datablock = input[input.find("<InputData "):input.find("</InputData>")+12]
+    while text.find("<InputData ") != -1:
+        datablock = text[text.find("<InputData "):text.find("</InputData>")+12]
         version = xmlparser.parse(datablock,"Version")[0]
         vetoflag=0
         if options.veto.find(",") != -1: vetolist=options.veto.split(",")
@@ -282,33 +277,36 @@ def makedatablocks(xmlfile,options):
         if options.filter.find(",") != -1: filterlist=options.filter.split(",")
         else: filterlist = [options.filter]
         if options.filter != "":
-            for filter in filterlist:
-                filterflag = re.search(filter,version)
+            for ifilter in filterlist:
+                filterflag = re.search(ifilter,version)
                 if filterflag: break
         if filterflag and not vetoflag: datablocklist.append(datablock)
-        input = input[input.find("</InputData>")+12:]
+        text = text[text.find("</InputData>")+12:]
     return datablocklist
 
-def resolveentities(input):
-    begincomment = input.find("<!--")
-    endcomment = input.find("-->")
+def resolveentities(text):
+    begincomment = text.find("<!--")
+    endcomment = text.find("-->")
     while begincomment!=-1 and endcomment!=-1:
-        input = input[:begincomment]+input[endcomment+3:]
-        begincomment = input.find("<!--")
-        endcomment = input.find("-->")
-    inputlist = input.split("\n")
+        text = text[:begincomment]+text[endcomment+3:]
+        begincomment = text.find("<!--")
+        endcomment = text.find("-->")
+    textlist = text.split("\n")
     entitydict = {}
-    for line in inputlist:
-        if line.count("ENTITY")>0:
+    for line in textlist:
+        if line.count("ENTITY")>0 and line.count("SYSTEM")>0:
             entityname = line[line.find("ENTITY ")+7:line.find(" SYSTEM")]
             entityfile = line[line.find('"')+1:line.rfind('"')]
             if not os.path.isfile(entityfile): continue
             entityfiles = open(entityfile).read()
-            entitytemp = {entityname: entityfiles}
-            entitydict.update(entitytemp)
-    for entity in entitydict: input=input.replace("&"+entity+";", entitydict[entity])
-    #xmldump=open("BSFrame_config_dump.xml",'w');xmldump.write(input);xmldump.close()
-    return input
+            entitydict[entityname] = entityfiles
+        if line.count("ENTITY")>0 and line.count("SYSTEM")==0:
+            entityname = line.split()[1]
+            entityvalue = line.split()[2].strip('">')
+            entitydict[entityname] = entityvalue
+    for entity in entitydict: text=text.replace("&"+entity+";", entitydict[entity])
+    #xmldump=open("BSFrame_config_dump.xml",'w');xmldump.write(text);xmldump.close()
+    return text
 
 def createxmlfiles(options):
     pdfmax = 1
@@ -320,7 +318,7 @@ def createxmlfiles(options):
     totalfilelist = []
     datablocklist = []
     for xmldatablock in xmldatablocks:
-        type = xmlparser.parse(xmldatablock,"Type")[0]
+        filetype = xmlparser.parse(xmldatablock,"Type")[0]
         version = xmlparser.parse(xmldatablock,"Version")[0]
         maxevents = xmlparser.parse(xmldatablock,"NEventsMax")[0]
         cacheable = xmlparser.parse(xmldatablock,"Cacheable")[0]
@@ -329,7 +327,7 @@ def createxmlfiles(options):
         lumi = xmlparser.parse(xmldatablock,"Lumi")
         blocklumi = lumi.pop(0)
         namelist = xmlparser.parse(xmldatablock,"Name")
-        mydatablock=datablock.datablock(blocklumi, filelist, lumi, namelist, type, version, maxevents, cacheable)
+        mydatablock=datablock.datablock(blocklumi, filelist, lumi, namelist, filetype, version, maxevents, cacheable)
         datablocklist.append(mydatablock)
     if options.numjobs==0 and options.pdf=="": options.numjobs=len(totalfilelist)
     if options.numjobs==0 and options.pdf!="": options.numjobs=1
@@ -429,7 +427,7 @@ def checkstdout(jobname, jobnumber, offset):
         for error in errors: returnerror += offset+error
 #             if error.find(":") != -1: returnerror += offset+error.split(":")[-1:][0]
 #             else: returnerror += effset+error
-    return returnerror
+    return returnerror.strip('\n')
 
 def getjobstatus(statusdict, jobid, jobstatus):
     if jobid not in statusdict and jobstatus != "Killed" and jobstatus != "Cleaned": return "Missing"
@@ -444,20 +442,30 @@ def getjobstatus(statusdict, jobid, jobstatus):
     if jobstatuscode==">": return "Transfering Ouput"
     return "Unknown"
 
-def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus):
+def getoutputdir(jobname, jobnumber):
+    filelist = os.popen("grep Transfer_Output_Files "+jobname+"/configs/"+jobname+"_"+str(jobnumber)+".txt").readline().strip().split()
+    outputdir = set()
+    for ifile in filelist:
+        if ifile.find(".root") == -1: continue
+        outputdir.add(ifile[:ifile.rfind("/")+1])
+    if len(outputdir) == 0: outputdir.add(os.popen("grep OUTPUTDIR "+jobname+"/configs/"+jobname+"_"+str(jobnumber)+".sh").readline().strip().split("=")[1])
+    if len(outputdir) > 1: print "Warning! Output directory set length greater than 1!"
+    return outputdir.pop()
+
+def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus,jobid):
     rootfiles = getoutputfilenames(jobname+"/xml/"+jobname+"_"+str(jobnumber)+".xml").replace(".root","."+str(jobnumber)+".root").split(",")
-    outputdirectory = os.popen("grep InitialDir "+jobname+"/configs/"+jobname+"_"+str(jobnumber)+".txt | awk '{print $3}'").readline().strip("\n")
+    outputdirectory = getoutputdir(jobname, jobnumber)
     jobinfo=""
     offset="                                     "
-    for file in rootfiles:
-        file=file.strip(", ")
+    for filename in rootfiles:
+        filename=filename.strip(", ")
         if jobinfo != "": jobinfo += "\n"+offset
-        filepath = outputdirectory+"/"+file
+        filepath = outputdirectory+"/"+filename
         jobstatus = open(options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status").read().strip("\n")
         if os.path.isfile(filepath):
             if os.path.getsize(filepath)==0:
                 if jobstatus=="Done" or jobstatus=="Missing":
-                    jobinfo += " Root File "+file+" Empty!"
+                    jobinfo += " Root File "+filename+" Empty!"
                     if resubmitjobs.count(jobnumber)<1: resubmitjobs.append(jobnumber)
                     jobstatus="Error"
             else:
@@ -465,26 +473,42 @@ def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus):
                 try: iszombie=rootfile.IsZombie()
                 except: iszombie=True
                 if iszombie:
-                    jobinfo += " Root File "+file+" is Zombie!"
+                    jobinfo += " Root File "+filename+" is Zombie!"
                     if resubmitjobs.count(jobnumber)<1: resubmitjobs.append(jobnumber)
                     jobstatus="Error"
                 elif rootfile.Get("AnalysisTree"):
                     analysistree = rootfile.Get("AnalysisTree")
-                    jobinfo += " Root File "+file+" is Valid: "+str(int(analysistree.GetEntries()))+" Events."
+                    jobinfo += " Root File "+filename+" is Valid: "+str(int(analysistree.GetEntries()))+" Events."
                     os.system("echo 'Done' >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
                     jobstatus="Done"
                 else:
                     hist = rootfile.Get("input/pvN")
-                    jobinfo += " Root File "+file+" is Valid: "+str(int(hist.GetEntries()))+" Events."
-                    os.system("echo 'Done' >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
-                    jobstatus="Done"
+                    if not hist:
+                        jobstatus="Error"
+                        jobinfo += " No output histogram found in root file!"
+                    else:
+                        jobinfo += " Root File "+filename+" is Valid: "+str(int(hist.GetEntries()))+" Events."
+                        os.system("echo 'Done' >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
+                        jobstatus="Done"
                 if not iszombie: rootfile.Close()
         elif jobstatus=="Done" or jobstatus=="Missing":
-            jobinfo += " Output file "+file+" is not found!"
+            jobinfo += " Output file "+filename+" is not found!"
             if resubmitjobs.count(jobnumber)<1: resubmitjobs.append(jobnumber)
             jobstatus="Error"
     if jobstatus=="Held":
         if resubmitjobs.count(jobnumber)<1: resubmitjobs.append(jobnumber)
+    if jobstatus=="Running":
+        condorstatus=os.popen("condor_q -submitter $USER").read()
+        if condorstatus.find(jobid) != -1:
+            subnode = getcondornode(jobid)
+            if subnode != -1:
+                if subnode==currentnode: jobinfo = os.popen("condor_tail "+jobid+".0 | grep Processing | tail -1").readline().strip("\n")
+                else: jobinfo = os.popen("ssh "+subnode+" 'condor_tail "+jobid+".0' | grep Processing | tail -1").readline().strip("\n")
+                if jobinfo.find("Processing entry")!=-1:
+                    numberator = float(jobinfo.split("(")[2].split(" ")[0])
+                    denominator = float(jobinfo.split("(")[2].split(" ")[2])
+                    jobinfo = " %.2f" %(numberator/denominator*100)+"% Complete"
+                else: jobinfo = " "+jobinfo[jobinfo.find(":")+1:].strip()
     if jobstatus=="Done" or jobstatus=="Error":
         stdouterror = checkstdout(jobname, jobnumber, offset)
         logerror = ""
@@ -537,7 +561,7 @@ if options.create:
         target = os.popen("echo ${CMSSW_BASE##*/}").readline().strip("\n")+"/"
         if (options.usetarball != "" and not os.path.isfile(options.usetarball)) or options.usetarball == "":
             print "Creating tarball of "+target+" area."
-            os.system("tar -czf "+tarball+" "+target+" --exclude-caches --exclude='*.tgz'")
+            os.system("tar -czf "+tarball+" "+target+" --exclude-caches --exclude=.git --exclude='*.tgz'")
             if options.usetarball != "": os.system("mv "+tarball+" "+options.usetarball)
         if options.usetarball == "": os.system("mv "+tarball+" "+workingdir+"/"+options.jobname+"/configs")
         else: os.system("cp "+options.usetarball+" "+workingdir+"/"+options.jobname+"/configs/"+options.jobname+".tgz")
@@ -601,7 +625,7 @@ if options.clean!="":
         if os.path.isfile(options.jobname+"/log/"+options.jobname+"_"+str(jobnumber)+".stderr"): os.system("/bin/rm "+options.jobname+"/log/"+options.jobname+"_"+str(jobnumber)+".stderr")
         if os.path.isfile(options.jobname+"/log/"+options.jobname+"_"+str(jobnumber)+".stdout"): os.system("/bin/rm "+options.jobname+"/log/"+options.jobname+"_"+str(jobnumber)+".stdout")
         os.system("echo 'Cleaned' >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
-        resultsdir = os.popen("grep InitialDir "+options.jobname+"/configs/"+options.jobname+"_"+str(jobnumber)+".txt | awk '{print $3}'").readline().strip('\n')
+        resultsdir = getoutputdir(options.jobname, jobnumber)
         rootfiles = getoutputfilenames(options.jobname+"/xml/"+options.jobname+"_"+str(jobnumber)+".xml").split(",")
         for rootfile in rootfiles:
             rootfile = resultsdir+"/"+rootfile.replace(".root","."+str(jobnumber)+".root")
@@ -643,12 +667,13 @@ if (options.status):
         jobinfo=""
         jobstatus=open(options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status").read().strip("\n")
         if jobstatus != "Created":
+            jobid = ""
             if jobstatus!="Done":
                 logfile = os.popen("/bin/ls -rt "+options.jobname+"/logs/"+options.jobname+"_"+str(jobnumber)+".log | tail -1").readline().strip('\n')
                 jobid = os.popen("grep submitted "+logfile+" | tail -1 | awk '{print $2}'").readline().strip("\n()").split(".")[0]
                 jobstatus = getjobstatus(statusdict, jobid, jobstatus)
                 os.system("echo '"+jobstatus+"' >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
-            jobinfo,jobstatus=getjobinfo(options.jobname,jobnumber,resubmitjobs,jobstatus)
+            jobinfo,jobstatus=getjobinfo(options.jobname,jobnumber,resubmitjobs,jobstatus,jobid)
             jobstatuslist.append(jobstatus)
             os.system("echo "+jobstatus+" >& "+options.jobname+"/status/"+options.jobname+"_"+str(jobnumber)+".status")
         print whitespace[:4]+str(jobnumber)+whitespace[:15-len(str(jobnumber))]+jobstatus+whitespace[:18-len(jobstatus)]+jobinfo
