@@ -487,6 +487,8 @@ process.NjettinessAk8SoftDropPuppi = process.NjettinessAk8SoftDropCHS.clone(src 
 #process.NjettinessCa8Puppi = Njettiness.clone(src = cms.InputTag("patJetsCa8PuppiJets"), cone = cms.double(0.8))
 process.NjettinessCa15Puppi = Njettiness.clone(src = cms.InputTag("ca15PuppiJets"), cone = cms.double(1.5),R0 = cms.double(1.5))
 process.NjettinessAk8Puppi = Njettiness.clone(src = cms.InputTag("ak8PuppiJetsFat"), cone = cms.double(0.8))
+process.NjettinessAk8Gen = Njettiness.clone(src = cms.InputTag("ak8GenJets"), cone = cms.double(0.8))
+process.NjettinessAk8SoftDropGen = Njettiness.clone(src = cms.InputTag("ak8GenJetsSoftDrop"), cone = cms.double(0.8))
 """
 process.QJetsCa8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa8CHSJets"), jetRad = cms.double(0.8))
 process.QJetsCa15CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa15CHSJets"), jetRad = cms.double(1.5))
@@ -901,9 +903,16 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         genjet_etamax = cms.double(5.0),
                             
         doGenTopJets = cms.bool(not useData),
-        gentopjet_sources = cms.vstring("ak8GenJetsSoftDrop"),
+        gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJetsSoftDrop")),
+        #gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")), #this can be used to save N-subjettiness for ungroomed GenJets
         gentopjet_ptmin = cms.double(150.0), 
         gentopjet_etamax = cms.double(5.0),
+        gentopjet_tau1 = cms.VInputTag(),
+        gentopjet_tau2 = cms.VInputTag(),
+        gentopjet_tau3 = cms.VInputTag(),
+        #gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
+        #gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
+        #gentopjet_tau3 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")), #this can be used to save N-subjettiness for GenJets
         
         doGenJetsWithParts = cms.bool(False),
         doAllPFParticles = cms.bool(False),
