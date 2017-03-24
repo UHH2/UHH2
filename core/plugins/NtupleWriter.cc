@@ -458,16 +458,28 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
   }
   if(doGenTopJets){
-    auto gentopjet_sources = iConfig.getParameter<std::vector<std::string> >("gentopjet_sources");
+    auto gentopjet_sources = iConfig.getParameter<std::vector<edm::InputTag> >("gentopjet_sources");
     gentopjet_ptmin = iConfig.getParameter<double> ("gentopjet_ptmin");
     gentopjet_etamax = iConfig.getParameter<double> ("gentopjet_etamax");
     gentopjets.resize(gentopjet_sources.size());
     for(size_t j=0; j< gentopjet_sources.size(); ++j){
-      gentopjet_tokens.push_back(consumes<reco::BasicJetCollection>(gentopjet_sources[j]));
-      branch(tr, gentopjet_sources[j].c_str(), "std::vector<GenTopJet>", &gentopjets[j]);
+      gentopjet_tokens.push_back(consumes<edm::View<reco::Jet> >(gentopjet_sources[j]));
+      branch(tr, gentopjet_sources[j].encode().c_str(), "std::vector<GenTopJet>", &gentopjets[j]);
     }
     if(!gentopjet_sources.empty()){
         event->gentopjets = &gentopjets[0];
+    }
+    auto gentopjet_tau1 = iConfig.getParameter<std::vector<edm::InputTag> >("gentopjet_tau1");
+    for(size_t j=0; j< gentopjet_tau1.size(); ++j){
+      gentopjet_tau1_tokens.push_back(consumes<edm::ValueMap<float> >(gentopjet_tau1[j]));
+    }
+    auto gentopjet_tau2 = iConfig.getParameter<std::vector<edm::InputTag> >("gentopjet_tau2");
+    for(size_t j=0; j< gentopjet_tau2.size(); ++j){
+      gentopjet_tau2_tokens.push_back(consumes<edm::ValueMap<float> >(gentopjet_tau2[j]));
+    }
+    auto gentopjet_tau3 = iConfig.getParameter<std::vector<edm::InputTag> >("gentopjet_tau3");
+    for(size_t j=0; j< gentopjet_tau3.size(); ++j){
+      gentopjet_tau3_tokens.push_back(consumes<edm::ValueMap<float> >(gentopjet_tau3[j]));
     }
   }
 
@@ -927,10 +939,19 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
      for(size_t j=0; j< gentopjet_tokens.size(); ++j){
        gentopjets[j].clear();
-       edm::Handle<reco::BasicJetCollection> reco_gentopjets;
+       edm::Handle<edm::View<reco::Jet> > reco_gentopjets;
        iEvent.getByToken(gentopjet_tokens[j], reco_gentopjets);
+       edm::Handle<edm::ValueMap<float> > reco_gentopjets_tau1;
+       if (j<gentopjet_tau1_tokens.size())
+         iEvent.getByToken(gentopjet_tau1_tokens[j], reco_gentopjets_tau1);
+       edm::Handle<edm::ValueMap<float> > reco_gentopjets_tau2;
+       if (j<gentopjet_tau2_tokens.size())
+         iEvent.getByToken(gentopjet_tau2_tokens[j], reco_gentopjets_tau2);
+       edm::Handle<edm::ValueMap<float> > reco_gentopjets_tau3;
+       if (j<gentopjet_tau3_tokens.size())
+         iEvent.getByToken(gentopjet_tau3_tokens[j], reco_gentopjets_tau3);
        for (unsigned int i = 0; i < reco_gentopjets->size(); i++) {
-         const reco::BasicJet & reco_gentopjet =  reco_gentopjets->at(i);
+         const reco::Jet & reco_gentopjet =  reco_gentopjets->at(i);
          if(reco_gentopjet.pt() < gentopjet_ptmin) continue;
          if(fabs(reco_gentopjet.eta()) > gentopjet_etamax) continue;
 
@@ -940,15 +961,71 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          gentopjet.set_eta(reco_gentopjet.eta());
          gentopjet.set_phi(reco_gentopjet.phi());
          gentopjet.set_energy(reco_gentopjet.energy());
+	 const auto ptr = reco_gentopjets->ptrAt(i);
+	 if(reco_gentopjets_tau1.isValid())
+	   gentopjet.set_tau1((*reco_gentopjets_tau1)[ptr]);
+	 if(reco_gentopjets_tau2.isValid())
+	   gentopjet.set_tau2((*reco_gentopjets_tau2)[ptr]);
+	 if(reco_gentopjets_tau3.isValid())
+	   gentopjet.set_tau3((*reco_gentopjets_tau3)[ptr]);
 
-         for (unsigned int k = 0; k < reco_gentopjet.numberOfDaughters(); k++) {
+	 std::vector<const reco::Candidate *> daughters;
+	 if(dynamic_cast<const reco::GenJet *>(&reco_gentopjet)) { // This is a GenJet without subjets
+            for (unsigned int l = 0; l < reco_gentopjet.numberOfDaughters(); l++) {
+	      daughters.push_back(reco_gentopjet.daughter(l));
+	    }
+         } else { // This is a BasicJet with subjets
+          for (unsigned int k = 0; k < reco_gentopjet.numberOfDaughters(); k++) {
             Particle subjet_v4;
             subjet_v4.set_pt(reco_gentopjet.daughter(k)->p4().pt());
             subjet_v4.set_eta(reco_gentopjet.daughter(k)->p4().eta());
             subjet_v4.set_phi(reco_gentopjet.daughter(k)->p4().phi()); 
             subjet_v4.set_energy(reco_gentopjet.daughter(k)->p4().E()); 
             gentopjet.add_subjet(subjet_v4);
+            for (unsigned int l = 0; l < reco_gentopjet.daughter(k)->numberOfDaughters(); l++) {
+	      daughters.push_back(reco_gentopjet.daughter(k)->daughter(l));
+	    }
+          }
+	 }
+         double chf = 0;
+         double cef = 0;
+         double nhf = 0;
+         double nef = 0;
+         for (unsigned int k = 0; k < daughters.size(); k++) {
+           switch(abs(daughters[k]->pdgId())){
+             case 11: //electron
+               cef += daughters[k]->energy();
+               break;
+             case 211: //pi+-
+             case 321: //K
+             case 2212: //p
+             case 3222: //Sigma+
+             case 3112: //Sigma-
+             case 3312: //Xi-
+             case 3334: //Omega-
+               chf += daughters[k]->energy();
+               break;
+             case 310: //KS0
+             case 130: //KL0
+             case 3122: //Lambda0
+             case 3212: //Sigma0
+             case 3322: //Xi0
+             case 2112: //n0
+               nhf += daughters[k]->energy();
+               break;
+             case 22: //photon
+               nef += daughters[k]->energy();
+               break;
+           }
          }
+         chf /= gentopjet.energy();
+         cef /= gentopjet.energy();
+         nhf /= gentopjet.energy();
+         nef /= gentopjet.energy();
+         gentopjet.set_chf(chf);
+         gentopjet.set_cef(cef);
+         gentopjet.set_nhf(nhf);
+         gentopjet.set_nef(nef);
          gentopjets[j].push_back(gentopjet);
        }
      }
