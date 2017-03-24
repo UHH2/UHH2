@@ -98,6 +98,9 @@ class NtupleWriter : public edm::EDFilter {
       std::vector<std::vector<GenTopJet>> gentopjets;
       double gentopjet_ptmin;
       double gentopjet_etamax;
+      std::vector<edm::EDGetToken> gentopjet_tau1_tokens;
+      std::vector<edm::EDGetToken> gentopjet_tau2_tokens;
+      std::vector<edm::EDGetToken> gentopjet_tau3_tokens;
 
       std::vector<edm::EDGetToken> genjetwithparts_tokens;
       std::vector<std::vector<GenJetWithParts>> genjetwithparts;
