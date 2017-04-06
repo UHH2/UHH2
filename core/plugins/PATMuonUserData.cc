@@ -51,7 +51,7 @@ void PATMuonUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     vmapDs.push_back(vmapD);
   }
 
-  std::auto_ptr< pat::MuonCollection > newMuons(new pat::MuonCollection);
+  std::unique_ptr< pat::MuonCollection > newMuons(new pat::MuonCollection);
   newMuons->reserve(patMuons->size());
 
   for(unsigned int i=0; i<patMuons->size(); ++i){
@@ -69,7 +69,7 @@ void PATMuonUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
   }
 
-  iEvent.put(newMuons);
+  iEvent.put(std::move(newMuons));
 
   return;
 }

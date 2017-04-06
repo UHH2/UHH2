@@ -2,12 +2,12 @@ import FWCore.ParameterSet.Config as cms
 
 #isDebug = True
 isDebug = False
-#useData = False
-useData = True
+useData = False
+#useData = True
 if useData:
     met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean","slimmedMETsEGClean","slimmedMETsUncorrected")
 else:
-    met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean")
+    met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS") #,"slimmedMETsMuEGClean"
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
@@ -57,7 +57,7 @@ if isDebug:
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-            '/store/data/Run2016B/SingleElectron/MINIAOD/03Feb2017_ver2-v2/110000/028CD245-EFEA-E611-8A2B-90B11C2801E1.root'
+            'file:////nfs/dust/cms/user/zoiirene/UpgradeStudiesGtoWW/Phase1PU/step3_inMINIAODSIM.root'
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
@@ -99,8 +99,8 @@ process.out.outputCommands.extend([
     'keep *_NjettinessCa15SoftDropCHS_*_*',
     "keep *_patJetsCmsTopTagCHSPacked_*_*",
     "keep *_patJetsCmsTopTagCHSSubjets_*_*",
-    "keep *_patJetsHepTopTagCHSPacked_*_*",
-    "keep *_patJetsHepTopTagCHSSubjets_*_*",
+    #"keep *_patJetsHepTopTagCHSPacked_*_*",
+    #"keep *_patJetsHepTopTagCHSSubjets_*_*",
     "keep *_patJetsAk8CHSJetsSoftDropPacked_*_*",
     "keep *_patJetsAk8CHSJetsSoftDropSubjets_*_*",
     "keep *_patJetsAk8PuppiJetsSoftDropPacked_*_*",
@@ -373,7 +373,8 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         if verbose: print "Adding ungroomed patJets" + cap(fatjets_name)
         addJetCollection(process, labelName = fatjets_name, jetSource = cms.InputTag(fatjets_name), algo = algo, rParam = rParam,
             jetCorrections = (jetcorr_label, cms.vstring(jetcorr_list), 'None'),
-            genJetCollection = cms.InputTag(ungroomed_genjets_name),
+            #genJetCollection = cms.InputTag(ungroomed_genjets_name),
+	    genJetCollection = cms.InputTag("slimmedGenJets"),
             **common_btag_parameters
         )
         getattr(process,"patJets" + cap(fatjets_name)).addTagInfos = True
@@ -383,6 +384,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
     addJetCollection(process, labelName = groomed_jets_name, jetSource = cms.InputTag(groomed_jets_name), algo = algo, rParam = rParam,
        jetCorrections = (jetcorr_label, cms.vstring(jetcorr_list), 'None'),
        #genJetCollection = cms.InputTag(groomed_genjets_name), # nice try, but PAT looks for GenJets, whereas jets with subjets are BasicJets, so PAT cannot be used for this matching ...
+       genJetCollection = cms.InputTag("slimmedGenJets"),
        **common_btag_parameters)
     getattr(process,"patJets" + cap(groomed_jets_name)).addTagInfos = True
     if groomed_jets_name == "hepTopTagCHS":
@@ -397,7 +399,8 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         explicitJTA = True,
         svClustering = True,
         fatJets = cms.InputTag(fatjets_name), groomedFatJets = cms.InputTag(groomed_jets_name),
-        genJetCollection = cms.InputTag(groomed_genjets_name, 'SubJets'),
+        #genJetCollection = cms.InputTag(groomed_genjets_name, 'SubJets'),
+        genJetCollection = cms.InputTag("slimmedGenJets"),
         **common_btag_parameters)
         #Always add taginfos to subjets, but possible not to store them, configurable with ntuple writer parameter: subjet_taginfos
     getattr(process,"patJets" + cap(subjets_name)).addTagInfos = True
@@ -427,7 +430,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
 
 #add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered',genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
+#add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
 #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop', genjets_name = lambda s: s.replace('CHS', 'Gen'))
@@ -440,7 +443,7 @@ add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsPruned', genjets_name = 
 #add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsPruned', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 #add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsFiltered', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 #add_fatjets_subjets(process, 'ca8PuppiJets', 'cmsTopTagPuppi', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
-add_fatjets_subjets(process, 'ca15PuppiJets', 'hepTopTagPuppi')
+#add_fatjets_subjets(process, 'ca15PuppiJets', 'hepTopTagPuppi')
 #add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsSoftDrop')
 
 # configure PAT for miniAOD:
@@ -677,13 +680,13 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 
 ### additional MET filters not given in MiniAOD
 
-process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
-process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
-process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+#process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
+#process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
+#process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
 
-process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
-process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
-process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+#process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
+#process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
+#process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
 
 
 ### NtupleWriter
@@ -701,7 +704,7 @@ if isreHLT:
 if useData:
     metfilterpath="RECO"
 else:
-    metfilterpath="PAT"
+    metfilterpath="HLT"
 
 process.MyNtuple = cms.EDFilter('NtupleWriter',
         #AnalysisModule = cms.PSet(
@@ -762,30 +765,40 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doTopJets = cms.bool(True),
         topjet_ptmin = cms.double(150.0),
         topjet_etamax = cms.double(5.0),                                                                               
-        topjet_sources = cms.vstring("slimmedJetsAK8","patJetsAk8CHSJetsSoftDropPacked","patJetsHepTopTagCHSPacked","patJetsHepTopTagPuppiPacked","patJetsAk8PuppiJetsSoftDropPacked"),
-      #  topjet_sources = cms.vstring("slimmedJetsAK8","patJetsAk8CHSJetsSoftDropPacked","patJetsAk8PuppiJetsSoftDropPacked"),
+        #topjet_sources = cms.vstring("slimmedJetsAK8","patJetsAk8CHSJetsSoftDropPacked","patJetsHepTopTagCHSPacked","patJetsHepTopTagPuppiPacked","patJetsAk8PuppiJetsSoftDropPacked"),
+        topjet_sources = cms.vstring("slimmedJetsAK8","patJetsAk8CHSJetsSoftDropPacked","patJetsAk8PuppiJetsSoftDropPacked"),
         #Note: use label "daughters" for  subjet_sources if you want to store as subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!)
         #to store a subjet collection present in miniAOD indicate the proper label of the subjets method in pat::Jet: SoftDrop or CMSTopTag
-        subjet_sources = cms.vstring("SoftDrop","daughters","daughters","daughters","daughters"),
+        subjet_sources = cms.vstring("SoftDrop","daughters","daughters"),
+        #subjet_sources = cms.vstring("SoftDrop","daughters","daughters","daughters","daughters"),
         #Specify "store" if you want to store b-tagging taginfos for subjet collection, make sure to have included them with .addTagInfos = True
         #addTagInfos = True is currently true by default, however, only for collections produced and not read directly from miniAOD
         #If you don't want to store stubjet taginfos leave string empy ""
-        subjet_taginfos = cms.vstring("","store","store","store","store"),
+        #subjet_taginfos = cms.vstring("","store","store","store","store"),
+        subjet_taginfos = cms.vstring("","store","store"),
         #Note: if you want to store the MVA Higgs tagger discriminator, specify the jet collection from which to pick it up and the tagger name
         #currently the discriminator is trained on ungroomed jets, so the discriminaotr has to be taken from ungroomed jets
-        higgstag_sources = cms.vstring("patJetsAk8CHSJets","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets","patJetsAk8PuppiJetsFat"),
-#        higgstag_sources = cms.vstring("patJetsAK8PFCHS","patJetsAK8PFCHS","patJetsCa15CHSJets","patJetsCa15PuppiJets","patJetsAk8PuppiJetsFat"), #TEST
-        higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+        #higgstag_sources = cms.vstring("patJetsAk8CHSJets","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets","patJetsAk8PuppiJetsFat"),
+        #higgstag_sources = cms.vstring("patJetsAK8CHSJets","patJetsAK8CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets","patJetsAk8PuppiJetsFat"), #TEST
+        #higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+        higgstag_sources = cms.vstring("patJetsAK8CHSJets","patJetsAK8CHSJets","patJetsAk8PuppiJetsFat"), #TEST
+        higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags"),
         #Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
-        topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessCa15CHS","NjettinessCa15Puppi","NjettinessAk8Puppi"),
-        topjet_substructure_variables_sources = cms.vstring("","ak8CHSJets","ca15CHSJets", "ca15PuppiJets", "ak8PuppiJetsFat"),
-        topjet_njettiness_groomed_sources = cms.vstring("","NjettinessAk8SoftDropCHS","NjettinessCa15SoftDropCHS","NjettinessCa15SoftDropPuppi","NjettinessAk8SoftDropPuppi"),
+        #topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessCa15CHS","NjettinessCa15Puppi","NjettinessAk8Puppi"),
+        #topjet_substructure_variables_sources = cms.vstring("","ak8CHSJets","ca15CHSJets", "ca15PuppiJets", "ak8PuppiJetsFat"),
+        #topjet_njettiness_groomed_sources = cms.vstring("","NjettinessAk8SoftDropCHS","NjettinessCa15SoftDropCHS","NjettinessCa15SoftDropPuppi","NjettinessAk8SoftDropPuppi"),
+        #topjet_substructure_groomed_variables_sources = cms.vstring("","ak8CHSJetsSoftDropforsub","ca15CHSJetsSoftDropforsub", "ca15PuppiJetsSoftDropforsub", "ak8PuppiJetsSoftDropforsub"),
+        topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessAk8Puppi"),
+        topjet_substructure_variables_sources = cms.vstring("","ak8CHSJets", "ak8PuppiJetsFat"),
+        topjet_njettiness_groomed_sources = cms.vstring("","NjettinessAk8SoftDropCHS","NjettinessAk8SoftDropPuppi"),
         topjet_substructure_groomed_variables_sources = cms.vstring("","ak8CHSJetsSoftDropforsub","ca15CHSJetsSoftDropforsub", "ca15PuppiJetsSoftDropforsub", "ak8PuppiJetsSoftDropforsub"),
         #Note: for slimmedJetsAK8 on miniAOD, the pruned mass is available as user flot, with label ak8PFJetsCHSPrunedMass.
         #Alternatively it is possible to specify another pruned jet collection (to be produced here), from which to get it by jet-matching.
         #Finally, it is also possible to leave the pruned mass empty with ""
-        topjet_prunedmass_sources = cms.vstring("ak8PFJetsCHSPrunedMass","patJetsAk8CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked","patJetsAk8CHSJetsPrunedPacked"),
-        topjet_softdropmass_sources = cms.vstring("ak8PFJetsCHSSoftDropMass", "", "", "", ""),
+        #topjet_prunedmass_sources = cms.vstring("ak8PFJetsCHSPrunedMass","patJetsAk8CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked","patJetsAk8CHSJetsPrunedPacked"),
+        #topjet_softdropmass_sources = cms.vstring("ak8PFJetsCHSSoftDropMass", "", "", "", ""),
+        topjet_prunedmass_sources = cms.vstring("ak8PFJetsCHSPrunedMass","patJetsAk8CHSJetsPrunedPacked","patJetsAk8CHSJetsPrunedPacked"),
+        topjet_softdropmass_sources = cms.vstring("ak8PFJetsCHSSoftDropMass", "", ""),
         #topjet_sources = cms.vstring("patJetsHepTopTagCHSPacked", "patJetsCmsTopTagCHSPacked", "patJetsCa8CHSJetsPrunedPacked", "patJetsCa15CHSJetsFilteredPacked",
         #        "patJetsHepTopTagPuppiPacked", "patJetsCmsTopTagPuppiPacked", "patJetsCa8PuppiJetsPrunedPacked", "patJetsCa15PuppiJetsFilteredPacked",
         #        'patJetsCa8CHSJetsSoftDropPacked', 'patJetsCa8PuppiJetsSoftDropPacked'
@@ -839,16 +852,16 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         genjet_etamax = cms.double(5.0),
                             
         doGenTopJets = cms.bool(not useData),
-        gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJetsSoftDrop")),
-        #gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")), #this can be used to save N-subjettiness for ungroomed GenJets
+        #gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJetsSoftDrop")),
+        gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")), #this can be used to save N-subjettiness for ungroomed GenJets
         gentopjet_ptmin = cms.double(150.0), 
         gentopjet_etamax = cms.double(5.0),
-        gentopjet_tau1 = cms.VInputTag(),
-        gentopjet_tau2 = cms.VInputTag(),
-        gentopjet_tau3 = cms.VInputTag(),
-        #gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
-        #gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
-        #gentopjet_tau3 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")), #this can be used to save N-subjettiness for GenJets
+        #gentopjet_tau1 = cms.VInputTag(),
+        #gentopjet_tau2 = cms.VInputTag(),
+        #gentopjet_tau3 = cms.VInputTag(),
+        gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
+        gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
+        gentopjet_tau3 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")), #this can be used to save N-subjettiness for GenJets
         
         doGenJetsWithParts = cms.bool(False),
         doAllPFParticles = cms.bool(False),
@@ -877,8 +890,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
 
 process.p = cms.Path(
-    process.BadPFMuonFilter *
-    process.BadChargedCandidateFilter *
+    #process.BadPFMuonFilter *
+    #process.BadChargedCandidateFilter *
     process.MyNtuple)
 
 open('pydump.py','w').write(process.dumpPython())
