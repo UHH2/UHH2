@@ -67,12 +67,12 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
       modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
     }
     if(jetlepcleaner) {
-      if(is_mc)	JLC_MC.reset(new JetLeptonCleaner(ctx, JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC));
+      if(is_mc)	JLC_MC.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC));
       else{
-	JLC_BCD.reset(new JetLeptonCleaner(ctx, JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA));
-	JLC_EFearly.reset(new JetLeptonCleaner(ctx, JERFiles::Summer16_23Sep2016_V4_EF_L123_AK4PFchs_DATA));
-	JLC_FlateG.reset(new JetLeptonCleaner(ctx, JERFiles::Summer16_23Sep2016_V4_G_L123_AK4PFchs_DATA));
-	JLC_H.reset(new JetLeptonCleaner(ctx, JERFiles::Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA));
+	JLC_BCD.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA));
+	JLC_EFearly.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_EF_L123_AK4PFchs_DATA));
+	JLC_FlateG.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_G_L123_AK4PFchs_DATA));
+	JLC_H.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA));
       }
     }
     if(jetid) modules.emplace_back(new JetCleaner(ctx, jetid));
@@ -179,7 +179,7 @@ public:
         // in a non-trivial usage, would call
         // common->set_*_id   and
         // common->disable_*  here.
-        common->init(ctx);
+	common->init(ctx);
     }
     
     virtual bool process(Event & event) override {
