@@ -38,8 +38,8 @@ process = cms.Process("USER")
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
 #process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
-process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
-#process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) , allowUnscheduled = cms.untracked.bool(True) )
+#process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) , allowUnscheduled = cms.untracked.bool(True) )
+process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) , allowUnscheduled = cms.untracked.bool(True) )
 
 # DEBUG ----------------
 if isDebug:
@@ -933,10 +933,17 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         genjet_etamax = cms.double(5.0),
                             
         doGenTopJets = cms.bool(not useData),
-        gentopjet_sources = cms.vstring("ak8GenJetsSoftDrop"),
-        gentopjet_ptmin = cms.double(150.0), 
+        gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJetsSoftDrop")),
+        #gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")), #this can be used to save N-subjettiness for ungroomed GenJets
+        gentopjet_ptmin = cms.double(150.0),
         gentopjet_etamax = cms.double(5.0),
-        
+        gentopjet_tau1 = cms.VInputTag(),
+        gentopjet_tau2 = cms.VInputTag(),
+        gentopjet_tau3 = cms.VInputTag(),
+        #gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
+        #gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
+        #gentopjet_tau3 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")), #this can be used to save N-subjettiness for GenJets
+
         doGenJetsWithParts = cms.bool(False),
         doAllPFParticles = cms.bool(False),
         pf_collection_source = cms.InputTag("packedPFCandidates"),
@@ -974,4 +981,4 @@ process.p = cms.Path(
     process.BadChargedCandidateFilter * 
     process.MyNtuple)
 process.schedule = cms.Schedule(process.EGMRegression,process.EGMSmearerElectrons,process.EGMSmearerPhotons,process.p)
-#open('pydump.py','w').write(process.dumpPython())
+open('pydump.py','w').write(process.dumpPython())
