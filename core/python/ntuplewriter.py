@@ -57,8 +57,10 @@ if isDebug:
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-            '/store/data/Run2016B/SingleElectron/MINIAOD/03Feb2017_ver2-v2/110000/028CD245-EFEA-E611-8A2B-90B11C2801E1.root'
-  ]),
+#            '/store/data/Run2016B/SingleElectron/MINIAOD/03Feb2017_ver2-v2/110000/028CD245-EFEA-E611-8A2B-90B11C2801E1.root'
+#            '/store/data/Run2016H/JetHT/MINIAOD/03Feb2017_ver3-v1/100000/0002DAEF-97EA-E611-8DEC-001E67E69DEC.root' 
+            'file:/afs/cern.ch/user/k/kirschen/public/forJERC/PickedEvents_Met_Xcheck.root'
+ ]),
   skipEvents = cms.untracked.uint32(0)
 )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300))
@@ -166,8 +168,7 @@ process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
 # CHS JETS
 #
 # configure additional jet collections, based on chs.
-process.chs = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string("fromPV"))
-
+process.chs = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string("fromPV(0) > 0"))
 process.ca8CHSJets  = ca8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = fatjet_ptmin)
 process.ak8CHSJets  = ak8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = 10.)
 process.ak8CHSJetsFat  = ak8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = fatjet_ptmin)
@@ -537,41 +538,23 @@ def clean_met_(met):
 
 from PhysicsTools.PatAlgos.tools.metTools import addMETCollection
 
-## Raw PF METs
+## Raw PAT METs
 process.load('RecoMET.METProducers.PFMET_cfi')
-
-process.pfMet.src = cms.InputTag('packedPFCandidates')
+process.pfMet.src = cms.InputTag('chs')
+addMETCollection(process, labelName='patPFMetCHS', metSource='pfMet') # RAW MET
 addMETCollection(process, labelName='patPFMet', metSource='pfMet') # RAW MET
 process.patPFMet.addGenMET = False
-
-process.pfMetCHS = process.pfMet.clone()
-process.pfMetCHS.src = cms.InputTag("chs")
-process.pfMetCHS.alias = cms.string('pfMetCHS')
-addMETCollection(process, labelName='patPFMetCHS', metSource='pfMetCHS') # RAW CHS MET
 process.patPFMetCHS.addGenMET = False
-
-
 ## Slimmed METs
 from PhysicsTools.PatAlgos.slimming.slimmedMETs_cfi import slimmedMETs
 #### CaloMET is not available in MiniAOD
 del slimmedMETs.caloMET
+# ### CHS
+process.slMETsCHS = slimmedMETs.clone()
+process.slMETsCHS.src = cms.InputTag("patPFMetCHS")
+process.slMETsCHS.rawUncertainties = cms.InputTag("patPFMetCHS") # only central value
+clean_met_(process.slMETsCHS)
 
-### CHS
-process.slimmedMETsCHS = slimmedMETs.clone()
-if hasattr(process, "patPFMetCHS"):
-    # Create MET from Type 1 PF collection
-    process.patPFMetCHS.addGenMET = False
-    process.slimmedMETsCHS.src = cms.InputTag("patPFMetCHS")
-    process.slimmedMETsCHS.rawUncertainties = cms.InputTag("patPFMetCHS") # only central value
-else:
-    # Create MET from RAW PF collection
-    process.patPFMetCHS.addGenMET = False
-    process.slimmedMETsCHS.src = cms.InputTag("patPFMetCHS")
-    del process.slimmedMETsCHS.rawUncertainties # not available
-    
-clean_met_(process.slimmedMETsCHS)
-addMETCollection(process, labelName="slMETsCHS", metSource="slimmedMETsCHS")
-process.slMETsCHS.addGenMET = False
 
 ### LEPTON cfg
 
