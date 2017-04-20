@@ -57,7 +57,7 @@ if isDebug:
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-            'file:////nfs/dust/cms/user/zoiirene/UpgradeStudiesGtoWW/Phase1PU/step3_inMINIAODSIM.root'
+            'file:////nfs/dust/cms/user/zoiirene/UpgradeStudiesGtoWW/Phase1/EXO-RunIISummer16MiniAODv2-01758_Phase1.root'
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
@@ -769,7 +769,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         topjet_sources = cms.vstring("slimmedJetsAK8","patJetsAk8CHSJetsSoftDropPacked","patJetsAk8PuppiJetsSoftDropPacked"),
         #Note: use label "daughters" for  subjet_sources if you want to store as subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!)
         #to store a subjet collection present in miniAOD indicate the proper label of the subjets method in pat::Jet: SoftDrop or CMSTopTag
-        subjet_sources = cms.vstring("SoftDrop","daughters","daughters"),
+        subjet_sources = cms.vstring("SoftDropPuppi","daughters","daughters"),
         #subjet_sources = cms.vstring("SoftDrop","daughters","daughters","daughters","daughters"),
         #Specify "store" if you want to store b-tagging taginfos for subjet collection, make sure to have included them with .addTagInfos = True
         #addTagInfos = True is currently true by default, however, only for collections produced and not read directly from miniAOD
@@ -781,7 +781,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #higgstag_sources = cms.vstring("patJetsAk8CHSJets","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets","patJetsAk8PuppiJetsFat"),
         #higgstag_sources = cms.vstring("patJetsAK8CHSJets","patJetsAK8CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets","patJetsAk8PuppiJetsFat"), #TEST
         #higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-        higgstag_sources = cms.vstring("patJetsAK8CHSJets","patJetsAK8CHSJets","patJetsAk8PuppiJetsFat"), #TEST
+        higgstag_sources = cms.vstring("patJetsAk8PuppiJetsFat","patJetsAK8CHSJets","patJetsAk8PuppiJetsFat"), #TEST
         higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags"),
         #Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
         #topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessCa15CHS","NjettinessCa15Puppi","NjettinessAk8Puppi"),
@@ -797,8 +797,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #Finally, it is also possible to leave the pruned mass empty with ""
         #topjet_prunedmass_sources = cms.vstring("ak8PFJetsCHSPrunedMass","patJetsAk8CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked","patJetsCa15CHSJetsPrunedPacked","patJetsAk8CHSJetsPrunedPacked"),
         #topjet_softdropmass_sources = cms.vstring("ak8PFJetsCHSSoftDropMass", "", "", "", ""),
-        topjet_prunedmass_sources = cms.vstring("ak8PFJetsCHSPrunedMass","patJetsAk8CHSJetsPrunedPacked","patJetsAk8CHSJetsPrunedPacked"),
-        topjet_softdropmass_sources = cms.vstring("ak8PFJetsCHSSoftDropMass", "", ""),
+        topjet_prunedmass_sources = cms.vstring("ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass","patJetsAk8CHSJetsPrunedPacked","patJetsAk8CHSJetsPrunedPacked"),
+        topjet_softdropmass_sources = cms.vstring("ak8PFJetsPuppiSoftDropMass", "", ""),
         #topjet_sources = cms.vstring("patJetsHepTopTagCHSPacked", "patJetsCmsTopTagCHSPacked", "patJetsCa8CHSJetsPrunedPacked", "patJetsCa15CHSJetsFilteredPacked",
         #        "patJetsHepTopTagPuppiPacked", "patJetsCmsTopTagPuppiPacked", "patJetsCa8PuppiJetsPrunedPacked", "patJetsCa15PuppiJetsFilteredPacked",
         #        'patJetsCa8CHSJetsSoftDropPacked', 'patJetsCa8PuppiJetsSoftDropPacked'

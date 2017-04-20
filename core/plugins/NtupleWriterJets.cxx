@@ -587,9 +587,9 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         /*--- Njettiness ------*/
         if(njettiness_src.empty()){
 
-          topjet.set_tau1(pat_topjet.userFloat("NjettinessAK8:tau1"));
-          topjet.set_tau2(pat_topjet.userFloat("NjettinessAK8:tau2"));
-          topjet.set_tau3(pat_topjet.userFloat("NjettinessAK8:tau3"));
+          topjet.set_tau1(pat_topjet.userFloat("NjettinessAK8Puppi:tau1"));
+          topjet.set_tau2(pat_topjet.userFloat("NjettinessAK8Puppi:tau2"));
+          topjet.set_tau3(pat_topjet.userFloat("NjettinessAK8Puppi:tau3"));
         }
 	if(njettiness_groomed_src.empty()){
 
