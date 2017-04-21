@@ -17,7 +17,7 @@ bTagDiscriminators = [
     'pfJetProbabilityBJetTags',
     'pfJetBProbabilityBJetTags',
     'pfSimpleSecondaryVertexHighEffBJetTags',
-    'pfSimpleSecondaryVertexHighPurBJetTags',
+    #'pfSimpleSecondaryVertexHighPurBJetTags',
     'pfCombinedInclusiveSecondaryVertexV2BJetTags',
     'pfCombinedMVAV2BJetTags',
     'pfBoostedDoubleSecondaryVertexAK8BJetTags',
@@ -781,7 +781,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #higgstag_sources = cms.vstring("patJetsAk8CHSJets","patJetsAk8CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets","patJetsAk8PuppiJetsFat"),
         #higgstag_sources = cms.vstring("patJetsAK8CHSJets","patJetsAK8CHSJets","patJetsCa15CHSJets","patJetsCa15PuppiJets","patJetsAk8PuppiJetsFat"), #TEST
         #higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexCA15BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-        higgstag_sources = cms.vstring("patJetsAk8PuppiJetsFat","patJetsAK8CHSJets","patJetsAk8PuppiJetsFat"), #TEST
+        higgstag_sources = cms.vstring("patJetsAk8PuppiJetsFat","patJetsAk8CHSJets","patJetsAk8PuppiJetsFat"), #TEST
         higgstag_names = cms.vstring("pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags","pfBoostedDoubleSecondaryVertexAK8BJetTags"),
         #Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
         #topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessCa15CHS","NjettinessCa15Puppi","NjettinessAk8Puppi"),
@@ -791,7 +791,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         topjet_njettiness_sources = cms.vstring("","NjettinessAk8CHS","NjettinessAk8Puppi"),
         topjet_substructure_variables_sources = cms.vstring("","ak8CHSJets", "ak8PuppiJetsFat"),
         topjet_njettiness_groomed_sources = cms.vstring("","NjettinessAk8SoftDropCHS","NjettinessAk8SoftDropPuppi"),
-        topjet_substructure_groomed_variables_sources = cms.vstring("","ak8CHSJetsSoftDropforsub","ca15CHSJetsSoftDropforsub", "ca15PuppiJetsSoftDropforsub", "ak8PuppiJetsSoftDropforsub"),
+        topjet_substructure_groomed_variables_sources = cms.vstring("","ak8CHSJetsSoftDropforsub","ak8PuppiJetsSoftDropforsub"),
         #Note: for slimmedJetsAK8 on miniAOD, the pruned mass is available as user flot, with label ak8PFJetsCHSPrunedMass.
         #Alternatively it is possible to specify another pruned jet collection (to be produced here), from which to get it by jet-matching.
         #Finally, it is also possible to leave the pruned mass empty with ""
