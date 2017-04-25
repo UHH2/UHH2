@@ -75,8 +75,8 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
 	JLC_H.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA));
       }
     }
-    if(jetid) modules.emplace_back(new JetCleaner(ctx, jetid));
     modules.emplace_back(new HTCalculator(ctx,HT_jetid));
+    if(jetid) jet_cleaner.reset(new JetCleaner(ctx, jetid));
 }
 
 bool CommonModules::process(uhh2::Event & event){
@@ -129,6 +129,8 @@ bool CommonModules::process(uhh2::Event & event){
       }
     }
     else if(jec || jetlepcleaner) cout <<"WARNING: You used CommonModules for either JEC or jet-lepton-cleaning but MET is not corrected. Please be aware of this." << endl;
+
+    if(jetid) jet_cleaner->process(event);
 
     if(jetptsort){
       sort_by_pt(*event.jets);
