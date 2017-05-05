@@ -448,13 +448,13 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
     for (unsigned int i = 0; i < pat_topjets.size(); i++) {
         const pat::Jet & pat_topjet =  pat_topjets[i];
-	//use Puppi jet momentum in case of Puppi subjet collection (see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Jets)
-	if(subjet_src.find("Puppi")!=string::npos){
+	//use CHS jet momentum in case of CHS subjet collection (see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Jets)
+	if(subjet_src.find("CHS")!=string::npos){
 	  TLorentzVector puppi_v4;
-	  puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsPuppiValueMap:pt"),
-				pat_topjet.userFloat("ak8PFJetsPuppiValueMap:eta"),
-				pat_topjet.userFloat("ak8PFJetsPuppiValueMap:phi"),
-				pat_topjet.userFloat("ak8PFJetsPuppiValueMap:mass"));
+	  puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
+				pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
+				pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
+				pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
 	  //skip jets with incredibly high pT (99999 seems to be a default value in MINIAOD if the puppi jet is not defined)
 	  if(puppi_v4.Pt()>=99999) continue;
 	  if(puppi_v4.Pt() < ptmin) continue;
@@ -469,12 +469,12 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         TopJet & topjet = topjets.back();
         try{
            uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet, do_btagging, false);
-	   if(subjet_src.find("Puppi")!=string::npos){
+	   if(subjet_src.find("CHS")!=string::npos){
 	     TLorentzVector puppi_v4;
-	     puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsPuppiValueMap:pt"),
-				   pat_topjet.userFloat("ak8PFJetsPuppiValueMap:eta"),
-				   pat_topjet.userFloat("ak8PFJetsPuppiValueMap:phi"),
-				   pat_topjet.userFloat("ak8PFJetsPuppiValueMap:mass"));
+	     puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
+				   pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
+				   pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
+				   pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
 	     topjet.set_pt(puppi_v4.Pt());
 	     topjet.set_eta(puppi_v4.Eta());
 	     topjet.set_phi(puppi_v4.Phi());
@@ -596,7 +596,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         }
 
         /*--- HEP Top Tagger variables -----*/
-
+/*
         if (topjet_collection.find("Hep")!=string::npos)
            {
               const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(i);
@@ -607,7 +607,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
               topjet.set_tag(TopJet::tagname2tag("RoptCalc"), jet_info.properties().RoptCalc);
               topjet.set_tag(TopJet::tagname2tag("ptForRoptCalc"), jet_info.properties().ptForRoptCalc);
            }
-
+*/
         /*--- Njettiness ------*/
         if(njettiness_src.empty()){
 
@@ -660,8 +660,30 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
           topjet.set_softdropmass(pat_topjet.userFloat(softdrop_src));
         }
-        else {//softdrop mass set through matching with softdrop-jet collection
-          /* not implemented */
+        else if(softdrop_src!=""){//softdrop mass set through matching with softdrop-jet collection
+
+          edm::Handle<pat::JetCollection> softdrop_pat_topjets;
+          event.getByToken(src_softdrop_token, softdrop_pat_topjets);
+          const vector<pat::Jet> & pat_softdropjets = *softdrop_pat_topjets;
+
+          //match a jet from softdrop collection
+          int i_pat_softdropjet = -1;
+          double drmin = numeric_limits<double>::infinity();
+          for (unsigned int ih = 0; ih < pat_softdropjets.size(); ih++) {
+
+            const pat::Jet & softdrop_jet = pat_softdropjets[ih];
+            auto dr = reco::deltaR(softdrop_jet, pat_topjet);
+            if(dr < drmin){
+              i_pat_softdropjet = ih;
+              drmin = dr;
+            }
+          }
+
+          if(i_pat_softdropjet >= 0 && drmin < 1.0){
+
+            const pat::Jet & softdrop_jet = pat_softdropjets[i_pat_softdropjet];
+            topjet.set_softdropmass(softdrop_jet.mass());
+          }
         }
         /*---------------------*/
 

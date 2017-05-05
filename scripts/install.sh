@@ -16,17 +16,15 @@ git cms-init
 #git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
 #git cms-merge-topic gkasieczka:test-httv2-8014
 #git cms-merge-topic ikrav:egm_id_80X_v2
-#git-cms-addpkg RecoBTag
-#git-cms-addpkg PhysicsTools
 git cms-addpkg RecoJets/JetProducers
 git cms-addpkg RecoJets/JetAlgorithms
 git cms-addpkg DataFormats/JetReco
 git cms-addpkg PhysicsTools/JetMCAlgos
 git cms-addpkg RecoBTag
 
-sed -i "s|use_common_bge_for_rho_and_rhom|set_common_bge_for_rho_and_rhom|g" RecoJets/JetProducers/plugins/FastjetJetProducer.cc
-sed -i "s|1.020|1.025|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml
-sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet-contrib/1.025|/afs/desy.de/user/p/peiffer/www/FastJet|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml
+#sed -i "s|use_common_bge_for_rho_and_rhom|set_common_bge_for_rho_and_rhom|g" RecoJets/JetProducers/plugins/FastjetJetProducer.cc
+#sed -i "s|1.020|1.025|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml ## FASTJET-CONTRIB IS PART OF CMSSW 91X
+#sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet-contrib/1.025|/afs/desy.de/user/p/peiffer/www/FastJet|g" ## FASTJET-CONTRIB IS PART OF CMSSW 91X $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml
 sed -i "s|3.1.0|3.2.1|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet.xml
 sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet/3.2.1|/afs/desy.de/user/p/peiffer/www/FastJet|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet.xml
 scram b clean
