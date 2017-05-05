@@ -111,7 +111,7 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     vmapDs.push_back(vmapD);
   }
 
-  std::auto_ptr< pat::ElectronCollection > newElecs(new pat::ElectronCollection);
+  std::unique_ptr< pat::ElectronCollection > newElecs(new pat::ElectronCollection);
   newElecs->reserve(patElecs->size());
 
   for(unsigned int i=0; i<patElecs->size(); ++i){
@@ -159,7 +159,7 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
   }
 
-  iEvent.put(newElecs);
+  iEvent.put(std::move(newElecs));
 
   return;
 }
