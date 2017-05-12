@@ -474,11 +474,11 @@ void SFrameContext::do_undeclare_all_event_output() {
 
 
 void SFrameContext::do_declare_event_input_handle(const type_info & ti, const string & bname, const GenericEvent::RawHandle & handle) {
-    event_input_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));
+  event_input_bname2bi.insert(make_pair(bname, uhh2::make_unique<branchinfo>(ti, handle)));
 }
 
 void SFrameContext::do_declare_event_output_handle(const type_info & ti, const string & bname, const GenericEvent::RawHandle & handle) {
-    event_output_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));
+  event_output_bname2bi.insert(make_pair(bname, uhh2::make_unique<branchinfo>(ti, handle)));
 }
 
 SFrameContext::~SFrameContext() {
