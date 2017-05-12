@@ -143,10 +143,10 @@ void CandIsolatorFromDepositsMINIISO::produce(Event& event, const EventSetup& ev
   const IsoDepositMap & map = begin->map();
 
   if (map.size()==0) { // !!???
-        event.put(std::auto_ptr<CandDoubleMap>(new CandDoubleMap()));
+        event.put(std::unique_ptr<CandDoubleMap>(new CandDoubleMap()));
         return;
   }
-  std::auto_ptr<CandDoubleMap> ret(new CandDoubleMap());
+  std::unique_ptr<CandDoubleMap> ret(new CandDoubleMap());
   CandDoubleMap::Filler filler(*ret);
 
   typedef reco::IsoDepositMap::const_iterator iterator_i;
@@ -170,7 +170,7 @@ void CandIsolatorFromDepositsMINIISO::produce(Event& event, const EventSetup& ev
     filler.insert(candH, retV.begin(), retV.end());
   }
   filler.fill();
-  event.put(ret);
+  event.put(std::move(ret));
 }
 
 DEFINE_FWK_MODULE( CandIsolatorFromDepositsMINIISO );
