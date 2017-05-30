@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"[
+<!ENTITY MC_TTbar SYSTEM "../../common/datasets/RunII_80X_v3_EGReg/MC_TT_TuneCUETP8M2T4_EGReg.xml">
+<!ENTITY MC_Zprime SYSTEM "../../common/datasets/RunII_80X_v3/Zprime/MC_ZprimeToTTJet_M2000_EGReg.xml">
+<!ENTITY MC_RSG SYSTEM "../../common/datasets/RunII_80X_v3/Zprime/MC_RSGluonToTT_M2000_EGReg.xml">
+]>
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
     <Library Name="libSUHH2examples"/>
     <Package Name="SUHH2examples.par" />
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
-        <InputData Lumi="1" NEventsMax="10" Type="MC" Version="BpJ_TW_800" Cacheable="False">
-            <In FileName="/afs/desy.de/user/o/ottjoc/xxl-af-cms/CMSSW_7_2_1_patch4/src/UHH2/Ntuple.root" Lumi="0.0"/> 
+
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="TTbar" Cacheable="True">
+              &MC_TTbar;
             <InputTree Name="AnalysisTree" /> 
         </InputData>
-            
+
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="Zprime" Cacheable="True">
+              &MC_Zprime;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>
+
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="RSG" Cacheable="True">
+              &MC_RSG;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>
         <UserConfig>
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
             <Item Name="GenParticleCollection" Value="GenParticles" /> 
+	    <Item Name="readTrigger" Value="False" />
             <Item Name="AnalysisModule" Value="ExampleModuleTTbarGen" /> 
         </UserConfig>
     </Cycle>
