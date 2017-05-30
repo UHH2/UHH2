@@ -5,43 +5,68 @@ using namespace uhh2;
 
 TTbarGen::TTbarGen(const vector<GenParticle> & genparticles, bool throw_on_failure): m_type(e_notfound) {    
     int n_top = 0, n_antitop = 0;
+    GenParticle top;
+    GenParticle antitop;
     for(unsigned int i=0; i<genparticles.size(); ++i) {
         const GenParticle & genp = genparticles[i];
         if (abs(genp.pdgId()) == 6){
+	    if(top.pdgId() !=6 && genp.pdgId()==6) top = genp;
+	    if(antitop.pdgId() !=-6 && genp.pdgId()==-6) antitop = genp;
             auto w = genp.daughter(&genparticles, 1);
             auto b = genp.daughter(&genparticles, 2);
             if(!w || !b){
-                if(throw_on_failure) throw runtime_error("TTbarGen: top has not ==2 daughters");
-                return;
+	      //if(throw_on_failure) throw runtime_error("TTbarGen: top has not ==2 daughters");
+                continue;
             }
             if(abs(w->pdgId()) != 24){
                 std::swap(w, b);
             }
             if(abs(w->pdgId()) != 24){
-                if(throw_on_failure) throw runtime_error("TTbarGen: top has no W daughter");
-                return;
+	      //if(throw_on_failure) throw runtime_error("TTbarGen: top has no W daughter");
+                continue;
             }
             
             // NOTE: here, we could skip over intermediate W bosons. However,
             // this Pythia8-related problem is now fixed when creating ntuples already,
             // so this should not be necessary.
             
-            if(abs(b->pdgId()) != 5){
+            if(abs(b->pdgId()) != 5 && abs(b->pdgId()) != 3   && abs(b->pdgId()) != 1){
                 if(throw_on_failure) throw runtime_error("TTbarGen: top has no b daughter");
                 return;
             }
             // now get W daughters:
-            auto wd1 = w->daughter(&genparticles, 1);
-            auto wd2 = w->daughter(&genparticles, 2);
-            if(!wd1 || !wd2){
-                if(throw_on_failure) throw runtime_error("TTbarGen: W has not ==2 daughters");
-                return;
+
+	    int n_wdau=0;
+
+	    auto wd1 = w->daughter(&genparticles, 1);
+	    auto wd2 = w->daughter(&genparticles, 2);
+
+	    while (n_wdau!=2){
+
+	      if(wd1 && !wd2){
+		w = wd1;
+		wd1 = w->daughter(&genparticles, 1);
+		wd2 = w->daughter(&genparticles, 2);
+	      }
+	      else if(wd1 && wd2){
+		n_wdau=2;
+	      }
+
+	      else{
+		if(throw_on_failure) throw runtime_error("TTbarGen: W has no daughters");
+		return;
+	      }
+
+	    }
+	    if(!wd1 || !wd2){
+	      if(throw_on_failure) throw runtime_error("TTbarGen: W has not ==2 daughters");
+	      return;
             }
             
             // now that we collected everything, fill the member variables. 
             // Use different member variables according to top quark charge.
             if(genp.pdgId() == 6){
-                m_Top = genp;
+                m_Top = top;
                 m_WTop = *w;
                 m_bTop = *b;
                 m_Wdecay1 = *wd1;
@@ -49,7 +74,7 @@ TTbarGen::TTbarGen(const vector<GenParticle> & genparticles, bool throw_on_failu
                 ++n_top;
             }
             else{
-                m_Antitop = genp;
+                m_Antitop = antitop;
                 m_WAntitop = *w;
                 m_bAntitop = *b;
                 m_WMinusdecay1 = *wd1;
@@ -58,6 +83,7 @@ TTbarGen::TTbarGen(const vector<GenParticle> & genparticles, bool throw_on_failu
             }
         }
     }
+
     if(n_top != 1 || n_antitop != 1){
         if(throw_on_failure)  throw runtime_error("TTbarGen: did not find exactly one top and one antitop in the event");
         return;
