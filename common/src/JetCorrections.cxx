@@ -714,7 +714,6 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   m_resfile >>dummy;
   m_resfile >>formula;
 
-  std::cout << formula << std::endl;
   res_formula =  new TFormula("res_formula",formula);
 
 }
@@ -814,7 +813,6 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 	TRandom rand((int)(1000*abseta));
 	float random_gauss = rand.Gaus(0,resolution);
 	new_pt = recopt * (1 + random_gauss*sqrt(std::max( c*c-1,0.0f)));
-	//std::cout << "SMEAR RANDOM JET: " << recopt << "   " << random_gauss << "   "  << new_pt << std::endl;
       }
       jet_v4 *= new_pt / recopt;
 
