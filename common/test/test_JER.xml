@@ -5,7 +5,7 @@
 
   <!ENTITY OUTdir  ".">
 
-  <!ENTITY  Zp01w1000  SYSTEM  "../../common/datasets/RunII_76X_v1/MC_ZprimeToTT_01w_M1000.xml">
+  <!ENTITY  Zp01w1000  SYSTEM  "../../common/datasets/RunII_80X_v3/Zprime/MC_ZprimeToTT_01w_M1000_EGReg.xml">
 
 ]>
 

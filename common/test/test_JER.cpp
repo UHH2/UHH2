@@ -64,14 +64,14 @@ test_JER::test_JER(uhh2::Context& ctx){
   jet_IDcleaner.reset(new JetCleaner(ctx, jetID));
   jet_corrector.reset(new JetCorrector(ctx, JEC_AK4));
   if(isMC) jetER_smearer1.reset(new        JetResolutionSmearer(ctx));
-  if(isMC) jetER_smearer2.reset(new GenericJetResolutionSmearer(ctx, "jets", "genjets", false));
+  //if(isMC) jetER_smearer2.reset(new GenericJetResolutionSmearer(ctx, "jets", "genjets", false));
 
   ctx.declare_event_input<std::vector<Particle> >(ctx.get("TopJetCollectionGEN"), "topjetsGEN");
 
   topjet_IDcleaner.reset(new JetCleaner(ctx, jetID));
   topjet_corrector.reset(new TopJetCorrector(ctx, JEC_AK8));
   topjet_subjet_corrector.reset(new SubJetCorrector(ctx, JEC_AK4));
-  if(isMC) topjetER_smearer.reset(new GenericJetResolutionSmearer(ctx, "topjets", "topjetsGEN", false));
+  if(isMC) topjetER_smearer.reset(new GenericJetResolutionSmearer(ctx, "topjets", "topjetsGEN", false, JERSmearing::SF_13TeV_2016, "Spring16_25nsV10_MC_PtResolution_AK8PFchs.txt"));
   ////
 }
 
@@ -107,6 +107,7 @@ bool test_JER::process(uhh2::Event& event){
     for(const auto& j : *event.jets)    std::cout << "     jet :" << " pt=" << j.pt() << " eta=" << j.eta() << " phi=" << j.phi() << std::endl;
     std::cout << "     MET :" << " pt=" << event.met->pt() << " phi=" << event.met->phi() << std::endl;
   }
+
 
   event.jets->clear();
   event.jets->reserve(jetsINI.size());
