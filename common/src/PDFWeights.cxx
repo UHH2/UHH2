@@ -56,7 +56,7 @@ PDFWeights::PDFWeights(TString pdfname, TString pdfweightdir)
     }
 }
 
-std::vector<double> PDFWeights::GetWeightList(uhh2::Event & event){
+std::vector<double> PDFWeights::GetWeightList(const uhh2::Event & event){
   std::vector<double> pdf_weights;
 
   if(!m_libvalid) return pdf_weights;
@@ -94,7 +94,7 @@ std::vector<double> PDFWeights::GetWeightList(uhh2::Event & event){
 }
 
 
-double PDFWeights::GetWeight(unsigned int index, uhh2::Event & event){
+double PDFWeights::GetWeight(unsigned int index, const uhh2::Event & event){
 
   if(!m_libvalid) return 1.;
 
