@@ -36,6 +36,7 @@ private:
   std::vector<double> m_sumofweights;
   int m_N_tot;
   
+  std::vector<LHAPDF::PDF*> m_pdfs;
 
 };
 
