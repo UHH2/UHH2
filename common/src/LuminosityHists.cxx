@@ -91,8 +91,8 @@ LuminosityHists::LuminosityHists(uhh2::Context & ctx,
     //hlumi = book<TH1D>("luminosity", "Events over time divided in equal lumi-size bins", nbins, 0, nbins);
 
     if(do_inst_lumi_hist_){
-      hinstlumi = book<TH1D>("luminosity_per_lumi_section", "#Events/LS", nbins, 0, maxinstlumi);
-      hinstlumi_ref = book<TH1D>("luminosity_per_lumi_section_ref", "Number of lumi sections", nbins, 0, maxinstlumi);
+      hinstlumi = book<TH1D>("luminosity_per_lumi_section", "#Events/LS/pb", nbins, 0, maxinstlumi);
+      hinstlumi_ref = new TH1D("luminosity_per_lumi_section_ref", "Number of lumi sections", nbins, 0, maxinstlumi);
       
       //fill the reference histogram with number of lumisections for each inst. lumi bin
       for(auto ientry = 0l; ientry < ientries; ientry++){
@@ -135,8 +135,8 @@ void LuminosityHists::fill(const uhh2::Event & ev){
 	  
 	  int i = hinstlumi->FindBin(ilumi);
 	  if(hinstlumi_ref->GetBinContent(i)!=0){
-	    hinstlumi->SetBinContent(i, hinstlumi->GetBinContent(i)+ev.weight/hinstlumi_ref->GetBinContent(i));
-	    hinstlumi->SetBinError(i,  sqrt( hinstlumi->GetBinError(i)*hinstlumi->GetBinError(i) + (ev.weight/hinstlumi_ref->GetBinContent(i)) * (ev.weight/hinstlumi_ref->GetBinContent(i)) ));
+	    hinstlumi->SetBinContent(i, hinstlumi->GetBinContent(i)+ev.weight/hinstlumi_ref->GetBinContent(i)/hinstlumi_ref->GetBinCenter(i));
+	    hinstlumi->SetBinError(i,  sqrt( hinstlumi->GetBinError(i)*hinstlumi->GetBinError(i) + (ev.weight/hinstlumi_ref->GetBinContent(i)/hinstlumi_ref->GetBinCenter(i)) * (ev.weight/hinstlumi_ref->GetBinContent(i)/hinstlumi_ref->GetBinCenter(i)) ));
 	  }
 	}
     }
