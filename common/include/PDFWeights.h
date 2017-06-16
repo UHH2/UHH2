@@ -19,10 +19,10 @@ public:
   ~PDFWeights() {};
 
   ///returns quadratically summed pdf uncertainties
-  double GetWeight(unsigned int index, uhh2::Event & event);
+  double GetWeight(unsigned int index, const uhh2::Event & event);
 
   ///returns list of pdf uncertainties from eigenvectors
-  std::vector<double> GetWeightList(uhh2::Event & event);
+  std::vector<double> GetWeightList(const uhh2::Event & event);
 
   unsigned int GetNWeights(){return m_N_unc;}
   
