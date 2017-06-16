@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
+<!ENTITY MC_LQtoTTau_M200 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M200.xml">
+<!ENTITY MC_LQtoTTau_M300 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M300.xml">
+<!ENTITY MC_LQtoTTau_M400 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M400.xml">
+<!ENTITY MC_LQtoTTau_M500 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M500.xml">
+<!ENTITY MC_LQtoTTau_M600 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M600.xml">
+<!ENTITY MC_LQtoTTau_M700 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M700.xml">
+<!ENTITY MC_LQtoTTau_M800 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M800.xml">
+<!ENTITY MC_LQtoTTau_M900 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M900.xml">
+<!ENTITY MC_LQtoTTau_M1000 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M1000.xml">
+<!ENTITY MC_LQtoTTau_M1200 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M1200.xml">
+<!ENTITY MC_LQtoTTau_M1400 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M1400.xml">
+<!ENTITY MC_LQtoTTau_M1700 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M1700.xml">
+<!ENTITY MC_LQtoTTau_M2000 SYSTEM "../../common/datasets/RunII_80X_v3/LQ/MC_LQtoTTau_M2000.xml">
+]>
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+   <Library Name="libTestSUHH2common"/>
+
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M200" Cacheable="True">
+	    &MC_LQtoTTau_M200;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M300" Cacheable="True">
+	    &MC_LQtoTTau_M300;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M400" Cacheable="True">
+	    &MC_LQtoTTau_M400;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M500" Cacheable="True">
+	    &MC_LQtoTTau_M500;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>  
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M600" Cacheable="True">
+	    &MC_LQtoTTau_M600;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M700" Cacheable="True">
+	    &MC_LQtoTTau_M700;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M800" Cacheable="True">
+	    &MC_LQtoTTau_M800;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M900" Cacheable="True">
+	    &MC_LQtoTTau_M900;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M1000" Cacheable="True">
+	    &MC_LQtoTTau_M1000;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M1200" Cacheable="True">
+	    &MC_LQtoTTau_M1200;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M1400" Cacheable="True">
+	    &MC_LQtoTTau_M1400;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M1700" Cacheable="True">
+	    &MC_LQtoTTau_M1700;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+	<InputData Lumi="1" NEventsMax="-1" Type="MC" Version="LQtoTMu_M2000" Cacheable="True">
+	    &MC_LQtoTTau_M2000;
+            <InputTree Name="AnalysisTree" /> 
+        </InputData> 
+
+        <UserConfig>
+
+            <Item Name="AnalysisModule" Value="PDFWeightsModule" /> 
+	</UserConfig>
+    </Cycle>
+</JobConfiguration>
