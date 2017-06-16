@@ -14,6 +14,12 @@ PDFWeights::PDFWeights(TString pdfname, TString pdfweightdir)
     LHAPDF::initPDFSet(1, (std::string)(pdfname+".LHgrid"));
     m_N_unc = LHAPDF::numberPDF();
     std::cout << "got pdfset number " << m_N_unc << std::endl;
+
+    for(unsigned int i=0; i<=m_N_unc; i++){
+      LHAPDF::PDF* pdf = LHAPDF::mkPDF( (std::string) pdfname, i);
+      m_pdfs.push_back(pdf);
+    }
+
     m_normalize_to_total_sum=false;
     if(pdfweightdir!=""){
       m_normalize_to_total_sum=true;
@@ -66,17 +72,14 @@ std::vector<double> PDFWeights::GetWeightList(uhh2::Event & event){
  
   double q = event.genInfo->pdf_scalePDF();
 
-  LHAPDF::usePDFMember(1,0);
-  double xpdf1 = LHAPDF::xfx(1, x1, q, id1);
-  double xpdf2 = LHAPDF::xfx(1, x2, q, id2);
- 
+  double xpdf1 = m_pdfs[0]->xfxQ(id1, x1, q);
+  double xpdf2 = m_pdfs[0]->xfxQ(id2, x2, q);
+
   double w0 = xpdf1 * xpdf2;
   for(unsigned int i=1; i <=m_N_unc; ++i){
-    LHAPDF::usePDFMember(1,i);
-    double xpdf1_new = LHAPDF::xfx(1, x1, q, id1);
-    double xpdf2_new = LHAPDF::xfx(1, x2, q, id2);
+    double xpdf1_new = m_pdfs[i]->xfxQ(id1, x1, q);
+    double xpdf2_new = m_pdfs[i]->xfxQ(id2, x2, q);
     double weight = xpdf1_new * xpdf2_new / w0;
-
     if(m_normalize_to_total_sum){
       pdf_weights.push_back(weight/m_sumofweights[i-1]*m_N_tot);
       
