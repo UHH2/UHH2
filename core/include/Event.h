@@ -17,7 +17,7 @@ public:
     
   int run;
   int luminosityBlock;
-  int event;
+  long long event;
 
   float rho;
 
