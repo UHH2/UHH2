@@ -220,13 +220,18 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   if(doElectrons){
       using uhh2::NtupleWriterElectrons;
       auto electron_source = iConfig.getParameter<edm::InputTag>("electron_source");
-      
-      NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
-      cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("electron_IDtags");
-      assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
-      cfg.pv_src = pv_sources[0];
-      writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true, save_lepton_keys));
-  }
+      //      auto electron_sources = iConfig.getParameter<std::vector<std::string> >("electron_sources");
+      //      foar(size_t i=0; i< electron_sources.size(); ++i){
+	
+	NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
+	//	NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_sources[i], electron_source[i].label());
+	cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("electron_IDtags");
+	assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
+	cfg.pv_src = pv_sources[0];
+	writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true, save_lepton_keys));
+	//}  
+
+}
   if(doMuons){
       using uhh2::NtupleWriterMuons;
       auto muon_sources = iConfig.getParameter<std::vector<std::string> >("muon_sources");
@@ -496,9 +501,14 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 
   if(doPhotons){
     auto photon_sources = iConfig.getParameter<std::vector<std::string> >("photon_sources");
+    /*    auto ph_source = iConfig.getParameter<std::vector<std::string> >("photon_sources");
+    std::vector<std::string> photon_sources;    
+    photon_sources.push_back(ph_source); */
+
     phs.resize(photon_sources.size());
     for(size_t j=0; j< photon_sources.size(); ++j){
-      photon_tokens.push_back(consumes<vector<pat::PhotonCollection>>(photon_sources[j]));
+      //      photon_tokens.push_back(consumes<vector<pat::PhotonCollection>>(photon_sources[j]));
+      photon_tokens.push_back(consumes<vector<pat::Photon>>(photon_sources[j]));
       branch(tr, photon_sources[j].c_str(), "std::vector<Photon>", &phs[j]);
     }
     if(!photon_sources.empty()){
