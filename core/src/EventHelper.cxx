@@ -19,7 +19,7 @@ Event::Handle<T> declare_in_out(const std::string & branch_name, const std::stri
 }
 
 EventHelper::EventHelper(uhh2::Context & ctx_): ctx(ctx_), event(0), pvs(false), electrons(false), muons(false), taus(false), photons(false), jets(false),
-    topjets(false), met(false), genInfo(false), gentopjets(false), genparticles(false), genjets(false), trigger(false), first_event_read(true){
+    topjets(false), toppuppijets(false), met(false), genInfo(false), gentopjets(false), genparticles(false), genjets(false), trigger(false), first_event_read(true){
     h_run = declare_in_out<int>("run", "run", ctx);
     h_lumi = declare_in_out<int>("luminosityBlock", "luminosityBlock", ctx);
     h_event = declare_in_out<int>("event", "event", ctx);
@@ -47,6 +47,7 @@ IMPL_SETUP(taus, vector<Tau>)
 IMPL_SETUP(photons, vector<Photon>)
 IMPL_SETUP(jets, vector<Jet>)
 IMPL_SETUP(topjets, vector<TopJet>)
+IMPL_SETUP(toppuppijets, vector<TopJet>)
 IMPL_SETUP(met, MET)
 IMPL_SETUP(genInfo, GenInfo)
 IMPL_SETUP(gentopjets, vector<GenTopJet>)
@@ -104,6 +105,7 @@ void EventHelper::event_read(){
         if(photons)  event->photons = &event->get(h_photons);
         if(jets) event->jets = &event->get(h_jets);
         if(topjets)  event->topjets = &event->get(h_topjets);
+        if(toppuppijets)  event->toppuppijets = &event->get(h_toppuppijets);
         if(met) event->met = &event->get(h_met);
         if(genInfo) event->genInfo = &event->get(h_genInfo);
         if(gentopjets) event->gentopjets = &event->get(h_gentopjets);

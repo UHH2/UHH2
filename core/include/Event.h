@@ -34,6 +34,7 @@ public:
   std::vector< Photon >* photons;
   std::vector< Jet >* jets;
   std::vector< TopJet >* topjets;
+  std::vector< TopJet >* toppuppijets;
   MET* met;
     
   GenInfo* genInfo;

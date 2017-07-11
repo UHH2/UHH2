@@ -34,6 +34,8 @@ namespace {
     std::vector<JetBTagInfo> jetbtaginfos;
     TopJet topjet;
     std::vector<TopJet> topjets;
+    TopJet toppuppijet;
+    std::vector<TopJet> toppuppijets;
     GenJetWithParts genjetwithparts;
     std::vector<GenJetWithParts> genjetswithparts;
     GenTopJet gentopjet;
