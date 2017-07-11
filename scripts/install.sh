@@ -9,8 +9,8 @@
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc6_amd64_gcc530
-eval `cmsrel CMSSW_9_1_0_pre3`
-cd CMSSW_9_1_0_pre3/src
+eval `cmsrel CMSSW_9_2_4`
+cd CMSSW_9_2_4/src
 eval `scramv1 runtime -sh`
 git cms-init
 #git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
@@ -35,6 +35,6 @@ scram b -j 20
 #cd data/RecoEgamma/ElectronIdentification/data
 #git checkout egm_id_80X_v1
 cd $CMSSW_BASE/src
-git clone -b master https://github.com/UHH2/UHH2.git
+git clone -b RunII_92X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 git clone https://github.com/cms-jet/JECDatabase.git
