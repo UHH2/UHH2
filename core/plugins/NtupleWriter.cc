@@ -1185,6 +1185,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 for(size_t j=0; j< triggerObjects_sources.size(); j++){
 	   triggerObjects_out[j].clear();
 	   for (pat::TriggerObjectStandAlone obj : *triggerObjects) { 
+	     obj.unpackFilterLabels(iEvent, *triggerBits);
 	     obj.unpackPathNames(names);
 	     
 	     for (unsigned h = 0; h < obj.filterIds().size(); ++h) {
