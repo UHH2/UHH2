@@ -41,6 +41,8 @@ namespace JERFiles {
 
 }
 
+void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const uhh2::Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0);
+
 /** \brief (Re-)Correct jets according to the corrections in the passed txt files
  * 
  * txt files are available in JetMETObjects/data/; see README there for instructions how to produce
@@ -63,7 +65,7 @@ public:
     
     virtual ~JetCorrector();
     
-private:
+protected:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     std::unique_ptr<FactorizedJetCorrector> corrector_L1RC;
     

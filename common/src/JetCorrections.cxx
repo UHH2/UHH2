@@ -134,19 +134,9 @@ const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_L1RC_AK4PFchs_MC 
 
 
 
-namespace {
-    
-// to share some code between JetCorrector and JetLeptonCleaner, provide some methods
-// dealing with jet energy corrections here:
-std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::string> & filenames){
-    std::vector<JetCorrectorParameters> pars;
-    for(const auto & filename : filenames){
-        pars.emplace_back(locate_file(filename));
-    }
-    return uhh2::make_unique<FactorizedJetCorrector>(pars);
-}
 
-  void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0){
+
+ void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc, int jec_unc_direction){
     auto factor_raw = jet.JEC_factor_raw();
     corrector.setJetPt(jet.pt() * factor_raw);
     corrector.setJetEta(jet.eta());
@@ -190,6 +180,21 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     jet.set_JEC_L1factor_raw(correctionfactor_L1);
 
   }
+
+
+namespace {
+    
+// to share some code between JetCorrector and JetLeptonCleaner, provide some methods
+// dealing with jet energy corrections here:
+std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::string> & filenames){
+    std::vector<JetCorrectorParameters> pars;
+    for(const auto & filename : filenames){
+        pars.emplace_back(locate_file(filename));
+    }
+    return uhh2::make_unique<FactorizedJetCorrector>(pars);
+}
+
+ 
 
   
   //propagate to MET
