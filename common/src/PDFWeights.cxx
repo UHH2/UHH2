@@ -40,8 +40,6 @@ PDFWeights::PDFWeights(TString pdfname, TString pdfweightdir)
 	infile>>number;
 	m_sumofweights.push_back(number);
       }while ( !infile.eof() );
-      //erase last entry which is loaded twice
-      m_sumofweights.erase(m_sumofweights.end()-1);
 
       //std::cout << "total number of events before selection: " << m_N_tot <<  std::endl;
       //for(unsigned int i=0; i< m_sumofweights.size(); ++i){
