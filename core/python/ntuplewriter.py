@@ -2,12 +2,12 @@ import FWCore.ParameterSet.Config as cms
 
 #isDebug = True
 isDebug = False
-useData = False
-#useData = True
-if useData:
-    met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean","slimmedMETsEGClean","slimmedMETsUncorrected")
-else:
-    met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS") #,"slimmedMETsMuEGClean"
+#useData = False
+useData = True
+#if useData:
+#    met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean","slimmedMETsEGClean","slimmedMETsUncorrected")
+#else:
+met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS") #,"slimmedMETsMuEGClean"
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15, cmstoptag, heptoptag). Also applied for the corresponding genjets.
 fatjet_ptmin = 150.0
@@ -59,12 +59,13 @@ if isDebug:
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-            'file:////nfs/dust/cms/user/hinzmann/6214AEE4-751A-E711-8645-0025905A6056.root'
+#            'file:////nfs/dust/cms/user/hinzmann/6214AEE4-751A-E711-8645-0025905A6056.root'
+            '/store/data/Run2017B/SingleMuon/MINIAOD/PromptReco-v1/000/297/046/00000/32AC3177-7A56-E711-BE34-02163E019D73.root'
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -363,7 +364,8 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
     # add genjet producers, if requested:
     groomed_genjets_name = 'INVALID'
     ungroomed_genjets_name = 'INVALID'
-    
+    if useData: 
+        genjets_name = None
     if genjets_name is not None:
         groomed_jetproducer = getattr(process, groomed_jets_name)
         assert groomed_jetproducer.type_() in ('FastjetJetProducer', 'CATopJetProducer'), "do not know how to construct genjet collection for %s" % repr(groomed_jetproducer)
@@ -394,15 +396,34 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
             genJetCollection = cms.InputTag(ungroomed_genjets_name),
             **common_btag_parameters
         )
+        # switch off some generator info for data:
+        if useData:
+            producer = getattr(process,'patJets' + cap(fatjets_name) )
+            producer.addGenPartonMatch = cms.bool(False)
+            producer.embedGenJetMatch = cms.bool(False)
+            producer.embedGenPartonMatch = cms.bool(False)
+            producer.genJetMatch = cms.InputTag("")
+            producer.genPartonMatch = cms.InputTag("")
+            producer.getJetMCFlavour = cms.bool(False)
+            producer.JetFlavourInfoSource = cms.InputTag("")
         getattr(process,"patJets" + cap(fatjets_name)).addTagInfos = True
     
     # patify groomed fat jets, with b-tagging:
-    if verbose: print "adding grommed jets patJets" + cap(groomed_jets_name)
+    if verbose: print "adding groomed jets patJets" + cap(groomed_jets_name)
     addJetCollection(process, labelName = groomed_jets_name, jetSource = cms.InputTag(groomed_jets_name), algo = algo, rParam = rParam,
        jetCorrections = (jetcorr_label, cms.vstring(jetcorr_list), 'None'),
        #genJetCollection = cms.InputTag(groomed_genjets_name), # nice try, but PAT looks for GenJets, whereas jets with subjets are BasicJets, so PAT cannot be used for this matching ...
        genJetCollection = cms.InputTag("slimmedGenJets"),
        **common_btag_parameters)
+    if useData:
+        producer = getattr(process,'patJets' + cap(groomed_jets_name) )
+        producer.addGenPartonMatch = cms.bool(False)
+        producer.embedGenJetMatch = cms.bool(False)
+        producer.embedGenPartonMatch = cms.bool(False)
+        producer.genJetMatch = cms.InputTag("")
+        producer.genPartonMatch = cms.InputTag("")
+        producer.getJetMCFlavour = cms.bool(False)
+        producer.JetFlavourInfoSource = cms.InputTag("")
     getattr(process,"patJets" + cap(groomed_jets_name)).addTagInfos = True
     if groomed_jets_name == "hepTopTagCHS":
        getattr(process, "patJets" + cap(groomed_jets_name)).tagInfoSources = cms.VInputTag(
@@ -418,6 +439,15 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         fatJets = cms.InputTag(fatjets_name), groomedFatJets = cms.InputTag(groomed_jets_name),
         genJetCollection = cms.InputTag(groomed_genjets_name, 'SubJets'),
         **common_btag_parameters)
+    if useData:
+        producer = getattr(process,'patJets' + cap(subjets_name) )
+        producer.addGenPartonMatch = cms.bool(False)
+        producer.embedGenJetMatch = cms.bool(False)
+        producer.embedGenPartonMatch = cms.bool(False)
+        producer.genJetMatch = cms.InputTag("")
+        producer.genPartonMatch = cms.InputTag("")
+        producer.getJetMCFlavour = cms.bool(False)
+        producer.JetFlavourInfoSource = cms.InputTag("")
         #Always add taginfos to subjets, but possible not to store them, configurable with ntuple writer parameter: subjet_taginfos
     getattr(process,"patJets" + cap(subjets_name)).addTagInfos = True
 
@@ -426,6 +456,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         jetSrc=cms.InputTag("patJets" + cap(groomed_jets_name)),
         subjetSrc=cms.InputTag("patJets" + cap(subjets_name))))
     task.add(getattr(process,'patJets' + cap(groomed_jets_name) + 'Packed'))
+
         
     # adapt all for b-tagging, and switch off some PAT features not supported in miniAOD:
     module_names = [subjets_name, groomed_jets_name]
@@ -444,7 +475,10 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         if name == groomed_jets_name:
             producer.addGenJetMatch = False
             producer.getJetMCFlavour = False
+  
 
+
+        
 #add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered',genjets_name = lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
@@ -537,14 +571,30 @@ addJetCollection(process,labelName = 'AK8PFPUPPI', jetSource = cms.InputTag('ak8
     muSource =cms.InputTag( 'slimmedMuons'),
     elSource = cms.InputTag('slimmedElectrons')
 )
+if useData:
+    producer = getattr(process,'patJetsAK8PFPUPPI')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
 addJetCollection(process,labelName = 'AK8PFCHS', jetSource = cms.InputTag('ak8CHSJets'), algo = 'AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),pfCandidates = cms.InputTag('packedPFCandidates'),
     pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
     svSource = cms.InputTag('slimmedSecondaryVertices'),
     muSource =cms.InputTag( 'slimmedMuons'),
     elSource = cms.InputTag('slimmedElectrons')
 )
-
-
+if useData:
+    producer = getattr(process,'patJetsAK8PFCHS')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
 ### Higgs tagging commissioning
 
 from RecoBTag.SecondaryVertex.trackSelection_cff import *
@@ -737,6 +787,8 @@ if useData:
 else:
     metfilterpath="HLT"
 
+
+
 process.MyNtuple = cms.EDFilter('NtupleWriter',
         #AnalysisModule = cms.PSet(
         #    name = cms.string("NoopAnalysisModule"),
@@ -767,11 +819,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
           #'cutBasedElectronHLTPreselection_Summer16_V1',
           #'heepElectronID_HEEPV60',
         ),
-        #Add variables to trace possible issues with the ECAL slew rate mitigation 
-        #https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#EGM
-        doEleAddVars = cms.bool(useData),
-        dupECALClusters_source = cms.InputTag('particleFlowEGammaGSFixed:dupECALClusters'),
-        hitsNotReplaced_source = cms.InputTag('ecalMultiAndGSGlobalRecHitEB:hitsNotReplaced'),
+        
 
         doMuons = cms.bool(True),
         muon_sources = cms.vstring("slimmedMuons"),
@@ -902,7 +950,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #  'hltL3crIsoL1sMu25L1f0L2f10QL3f27QL3trkIsoFiltered0p09', # HLT_IsoMu27_v*
         #  'hltEle27WPLooseGsfTrackIsoFilter',                      # HLT_Ele27_eta2p1_WPLoose_Gsf_v*
         #),
-        trigger_objects = cms.InputTag("selectedPatTrigger"),
+        trigger_objects = cms.InputTag("slimmedPatTrigger"),
 
 
         

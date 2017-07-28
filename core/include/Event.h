@@ -42,11 +42,6 @@ public:
   std::vector< Particle>* genjets;
   std::vector< PFParticle>* pfparticles;
 
-  //Add variables to trace possible issues with the ECAL slew rate mitigation
-  //https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#EGM
-  bool dupECALClusters;
-  bool ishitsNotReplaced;
-
   /** \brief Access to trigger results.
    * 
    * Access to trigger results is treated differently from the other
