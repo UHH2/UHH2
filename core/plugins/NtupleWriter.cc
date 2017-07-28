@@ -211,8 +211,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenHOTVR = iConfig.getParameter<bool>("doGenHOTVR");
   doGenXCone = iConfig.getParameter<bool>("doGenXCone");
 
-  doEleAddVars = iConfig.getParameter<bool>("doEleAddVars");//Add variables to trace possible issues with the ECAL slew rate mitigation
-
 
   auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 
@@ -403,18 +401,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     event->rho = -1;
   }
 
-  branch(tr, "dupECALClusters",&event->dupECALClusters);
-  branch(tr, "ishitsNotReplaced",&event->ishitsNotReplaced);
-  if(doEleAddVars){
-    auto dupECALClusters_source = iConfig.getParameter<edm::InputTag>("dupECALClusters_source");
-    dupECALClusters_token = consumes<bool>(dupECALClusters_source);
-    auto hitsNotReplaced_source = iConfig.getParameter<edm::InputTag>("hitsNotReplaced_source");
-    hitsNotReplaced_token = consumes<edm::EDCollection<DetId>>(hitsNotReplaced_source);
-  }
-  else{
-    event->dupECALClusters = false;
-    event->ishitsNotReplaced = false;
-  }
 
   //input tokens for objects with fixed names, not defined in the ntuplewriter.py script
   bs_token = consumes<reco::BeamSpot>( edm::InputTag("offlineBeamSpot"));
@@ -616,20 +602,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       event->rho=*m_rho;
    }
 
-   if(doEleAddVars){
-    edm::Handle<bool> m_dupECALClusters;
-    iEvent.getByToken(dupECALClusters_token, m_dupECALClusters);
-    event->dupECALClusters=*m_dupECALClusters;
-
-    edm::Handle<edm::EDCollection<DetId>> m_hitsNotReplaced;
-    iEvent.getByToken(hitsNotReplaced_token, m_hitsNotReplaced);
-    const edm::EDCollection<DetId> & hitsNotReplaced = *m_hitsNotReplaced;
-    //    std::cout<<"hitsNotReplaced.size() = "<<hitsNotReplaced.size()<<std::endl;
-    if(hitsNotReplaced.size()>0)
-      event->ishitsNotReplaced=true;
-    else
-      event->ishitsNotReplaced=false;
-  }
 
    print_times(timer, "rho");
 
