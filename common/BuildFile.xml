@@ -1,6 +1,7 @@
 <use name="root" />
 <use name="rootmath" />
 <use name="boost" />
+<use name="LHAPDF" />
 <use name="UHH2/core" />
 <use name="UHH2/JetMETObjects" />
 <export>

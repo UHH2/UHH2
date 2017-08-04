@@ -21,8 +21,9 @@ class LuminosityHists: public uhh2::Hists {
 public:
     LuminosityHists(uhh2::Context & ctx,
                     const std::string & dirname,
-                    const std::string & triggername = "");
-    
+                    const std::string & triggername = "",
+                    bool do_inst_lumi_hist = false);
+
     virtual void fill(const uhh2::Event & ev) override;
     
 private:
@@ -31,8 +32,15 @@ private:
     // still include in the bin. Has size = nbins - 1, where
     // nbins is the number of bins in the lumi histogram
     std::vector<run_lumi> upper_binborders;
+
+    std::map<run_lumi, double> rl2lumi;
+      
     TH1D * hlumi;
+    TH1D * hinstlumi;
+    TH1D * hinstlumi_ref;
    double lumi_per_bin;
    const std::string triggername_;
+
+   bool do_inst_lumi_hist_;
 };
 

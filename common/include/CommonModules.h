@@ -7,6 +7,7 @@
 #include "UHH2/common/include/NSelections.h"
 #include "UHH2/common/include/JetIds.h"
 #include "UHH2/common/include/JetCorrections.h"
+#include "UHH2/common/include/CleaningModules.h"
 
 /** \brief Run a configurable list commonly used modules
  *
@@ -106,6 +107,7 @@ private:
     std::unique_ptr<JetCorrector> jet_corrector_MC, jet_corrector_BCD, jet_corrector_EFearly, jet_corrector_FlateG, jet_corrector_H;
     std::unique_ptr<JetLeptonCleaner> JLC_MC, JLC_BCD, JLC_EFearly, JLC_FlateG, JLC_H;
     std::unique_ptr<JetResolutionSmearer> jet_resolution_smearer;
+    std::unique_ptr<JetCleaner> jet_cleaner;
     const int runnr_BCD = 276811;
     const int runnr_EFearly = 278802;
     const int runnr_FlateG = 280385;
