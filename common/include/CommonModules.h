@@ -105,7 +105,7 @@ private:
     TauId tauid;
     JetPFID::wp working_point;
     std::unique_ptr<JetCorrector> jet_corrector_MC, jet_corrector_BCD, jet_corrector_EFearly, jet_corrector_FlateG, jet_corrector_H;
-    std::unique_ptr<JetLeptonCleaner> JLC_MC, JLC_BCD, JLC_EFearly, JLC_FlateG, JLC_H;
+    std::unique_ptr<JetLeptonCleaner_by_KEYmatching> JLC_MC, JLC_BCD, JLC_EFearly, JLC_FlateG, JLC_H;
     std::unique_ptr<JetResolutionSmearer> jet_resolution_smearer;
     std::unique_ptr<JetCleaner> jet_cleaner;
     const int runnr_BCD = 276811;

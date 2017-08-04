@@ -10,7 +10,7 @@
 #include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputerRecord.h"
 #include "FWCore/Framework/interface/ESHandle.h"
-#include "DataFormats/JetReco/interface/HTTTopJetTagInfo.h"
+//#include "DataFormats/JetReco/interface/HTTTopJetTagInfo.h"
 #include "RecoBTag/SecondaryVertex/interface/CandidateBoostedDoubleSecondaryVertexComputer.h"
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputerRecord.h"
@@ -28,6 +28,7 @@
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
 #include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
+#include "DataFormats/BTauReco/interface/BoostedDoubleSVTagInfo.h"
 using namespace uhh2;
 using namespace std;
 
@@ -248,15 +249,11 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
   }//do taginfos
   if(do_btagging){
     const auto & bdisc = pat_jet.getPairDiscri();
-    bool sv_he = false, csv = false, csvmva = false, jetp = false, jetbp = false, doubleak8 = false, doubleca15 = false;
+    bool csv = false, csvmva = false, doubleak8 = false, doubleca15 = false;
     for(const auto & name_value : bdisc){
       const auto & name = name_value.first;
       const auto & value = name_value.second;
-      if(name == "pfSimpleSecondaryVertexHighEffBJetTags"){
-	jet.set_btag_simpleSecondaryVertexHighEff(value);
-	sv_he = true;
-      }
-      else if(name == "pfCombinedInclusiveSecondaryVertexV2BJetTags"){
+      if(name == "pfCombinedInclusiveSecondaryVertexV2BJetTags"){
 	jet.set_btag_combinedSecondaryVertex(value);
 	csv = true;
       }
@@ -264,14 +261,6 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
         jet.set_btag_combinedSecondaryVertexMVA(value);                                                                                                                              
         csvmva = true;                                                                                                                                                               
       }   
-      else if(name == "pfJetBProbabilityBJetTags"){
-	jet.set_btag_jetBProbability(value);
-	jetp = true;
-      }
-      else if(name == "pfJetProbabilityBJetTags"){
-	jet.set_btag_jetProbability(value);
-	jetbp = true;
-      }
       else if(name == "pfBoostedDoubleSecondaryVertexAK8BJetTags"){
 	jet.set_btag_BoostedDoubleSecondaryVertexAK8(value);
 	doubleak8 = true;
@@ -282,8 +271,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
       }
     }
 
-    // NOTE: csvmva is NOT set.
-    if(!sv_he || !csv || !csvmva || !jetp || !jetbp || !doubleak8 ||!doubleca15){
+    if(!csv || !csvmva || !doubleak8 ||!doubleca15){
       if(btag_warning){
 	cout << "Warning in NtupleWriterJets: did not find all b-taggers! Available btaggers: ";
 	for(const auto & name_value : bdisc){
@@ -320,8 +308,8 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     subjet_src = cfg.subjet_src;
     higgs_src= cfg.higgs_src;
 
-    src_hepTopTagCHS_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagCHS"));
-    src_hepTopTagPuppi_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagPuppi"));
+//    src_hepTopTagCHS_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagCHS"));
+//    src_hepTopTagPuppi_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagPuppi"));
 
     pruned_src = cfg.pruned_src;
     if(pruned_src.find("Mass")==string::npos){
@@ -354,6 +342,9 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
 
     h_muons.clear();
     h_elecs.clear();
+
+    higgstaginfo_src = cfg.higgstaginfo_src;
+    src_higgstaginfo_token =  cfg.cc.consumes<std::vector<reco::BoostedDoubleSVTagInfo> >(cfg.higgstaginfo_src);
 }
 
 NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources):
@@ -420,11 +411,11 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
       }
     }
     vector<TopJet> topjets;
-    edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
+/*    edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
     if (topjet_collection.find("CHS")!=string::npos) event.getByToken(src_hepTopTagCHS_token, top_jet_infos);
     if (topjet_collection.find("Puppi")!=string::npos) event.getByToken(src_hepTopTagPuppi_token, top_jet_infos); // Make sure both collections have the same size
     if (topjet_collection.find("Hep")!=string::npos) assert(pat_topjets.size()==top_jet_infos->size());
-
+*/
     /*--- lepton keys ---*/
     std::vector<long int> lepton_keys;
     if(save_lepton_keys_){
@@ -457,13 +448,39 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
     for (unsigned int i = 0; i < pat_topjets.size(); i++) {
         const pat::Jet & pat_topjet =  pat_topjets[i];
-        if(pat_topjet.pt() < ptmin) continue;
-        if(fabs(pat_topjet.eta()) > etamax) continue;
+	//use CHS jet momentum in case of CHS subjet collection (see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Jets)
+	if(subjet_src.find("CHS")!=string::npos){
+	  TLorentzVector puppi_v4;
+	  puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
+				pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
+				pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
+				pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
+	  //skip jets with incredibly high pT (99999 seems to be a default value in MINIAOD if the puppi jet is not defined)
+	  if(puppi_v4.Pt()>=99999) continue;
+	  if(puppi_v4.Pt() < ptmin) continue;
+	  if(fabs(puppi_v4.Eta()) > etamax) continue;
+	}
+	else{
+	  if(pat_topjet.pt() < ptmin) continue;
+	  if(fabs(pat_topjet.eta()) > etamax) continue;
+	}
         
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
         try{
            uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet, do_btagging, false);
+	   if(subjet_src.find("CHS")!=string::npos){
+	     TLorentzVector puppi_v4;
+	     puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
+				   pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
+				   pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
+				   pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
+	     topjet.set_pt(puppi_v4.Pt());
+	     topjet.set_eta(puppi_v4.Eta());
+	     topjet.set_phi(puppi_v4.Phi());
+	     topjet.set_energy(puppi_v4.E());
+	}
+
         }catch(runtime_error &){
            cerr << "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " << src << "." << endl;
            throw;
@@ -485,6 +502,10 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
           }
         }
         /*-------------------*/
+
+        /*--- Njettiness/Qjets ------*/
+
+	//1. Take Njettiness/Qjets from matched jet collection if respective source is specified
 
         // match a unpruned jet according to topjets_with_cands:
         int i_pat_topjet_wc = -1;
@@ -573,6 +594,9 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
             }
           }
         }
+
+        /*--- HEP Top Tagger variables -----*/
+/*
         if (topjet_collection.find("Hep")!=string::npos)
            {
               const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(i);
@@ -583,13 +607,13 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
               topjet.set_tag(TopJet::tagname2tag("RoptCalc"), jet_info.properties().RoptCalc);
               topjet.set_tag(TopJet::tagname2tag("ptForRoptCalc"), jet_info.properties().ptForRoptCalc);
            }
-
+*/
         /*--- Njettiness ------*/
         if(njettiness_src.empty()){
 
-          topjet.set_tau1(pat_topjet.userFloat("NjettinessAK8:tau1"));
-          topjet.set_tau2(pat_topjet.userFloat("NjettinessAK8:tau2"));
-          topjet.set_tau3(pat_topjet.userFloat("NjettinessAK8:tau3"));
+          topjet.set_tau1(pat_topjet.userFloat("NjettinessAK8Puppi:tau1"));
+          topjet.set_tau2(pat_topjet.userFloat("NjettinessAK8Puppi:tau2"));
+          topjet.set_tau3(pat_topjet.userFloat("NjettinessAK8Puppi:tau3"));
         }
 	if(njettiness_groomed_src.empty()){
 
@@ -604,7 +628,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
           topjet.set_prunedmass(pat_topjet.userFloat(pruned_src));
         }
-        else{//pruned mass set through matching with pruned-jet collection
+        else if(pruned_src!=""){//pruned mass set through matching with pruned-jet collection
 
           edm::Handle<pat::JetCollection> pruned_pat_topjets;
           event.getByToken(src_pruned_token, pruned_pat_topjets);
@@ -636,10 +660,34 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
           topjet.set_softdropmass(pat_topjet.userFloat(softdrop_src));
         }
-        else {//softdrop mass set through matching with softdrop-jet collection
-          /* not implemented */
+        else if(softdrop_src!=""){//softdrop mass set through matching with softdrop-jet collection
+
+          edm::Handle<pat::JetCollection> softdrop_pat_topjets;
+          event.getByToken(src_softdrop_token, softdrop_pat_topjets);
+          const vector<pat::Jet> & pat_softdropjets = *softdrop_pat_topjets;
+
+          //match a jet from softdrop collection
+          int i_pat_softdropjet = -1;
+          double drmin = numeric_limits<double>::infinity();
+          for (unsigned int ih = 0; ih < pat_softdropjets.size(); ih++) {
+
+            const pat::Jet & softdrop_jet = pat_softdropjets[ih];
+            auto dr = reco::deltaR(softdrop_jet, pat_topjet);
+            if(dr < drmin){
+              i_pat_softdropjet = ih;
+              drmin = dr;
+            }
+          }
+
+          if(i_pat_softdropjet >= 0 && drmin < 1.0){
+
+            const pat::Jet & softdrop_jet = pat_softdropjets[i_pat_softdropjet];
+            topjet.set_softdropmass(softdrop_jet.mass());
+          }
         }
         /*---------------------*/
+
+        /*--- Higgs tagging ---*/
 
 	if(higgs_src!=""){
 	  
@@ -658,492 +706,76 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	      drmin = dr;
 	    }
 	  }
+
 	  
 	  if (i_pat_higgsjet >= 0 && drmin < 1.0){
 	    const pat::Jet & higgs_jet = pat_higgsjets[i_pat_higgsjet];
 	    topjet.set_mvahiggsdiscr(higgs_jet.bDiscriminator(higgs_name.c_str()));
-	    //For matching higgs jet fill relevant variables for commissioning studies
-	    
-	    float z_ratio = dummyZ_ratio;
-	    float trackSip3dSig_3 = dummyTrackSip3dSig, trackSip3dSig_2 = dummyTrackSip3dSig, trackSip3dSig_1 = dummyTrackSip3dSig, trackSip3dSig_0 = dummyTrackSip3dSig;
-	    float tau2_trackSip3dSig_0 = dummyTrackSip3dSig, tau1_trackSip3dSig_0 = dummyTrackSip3dSig, tau2_trackSip3dSig_1 = dummyTrackSip3dSig, tau1_trackSip3dSig_1 = dummyTrackSip3dSig;
-	    float trackSip2dSigAboveCharm_0 = dummyTrackSip2dSigAbove, trackSip2dSigAboveBottom_0 = dummyTrackSip2dSigAbove, trackSip2dSigAboveBottom_1 = dummyTrackSip2dSigAbove;
-	    float tau1_trackEtaRel_0 = dummyTrackEtaRel, tau1_trackEtaRel_1 = dummyTrackEtaRel, tau1_trackEtaRel_2 = dummyTrackEtaRel;
-	    float tau2_trackEtaRel_0 = dummyTrackEtaRel, tau2_trackEtaRel_1 = dummyTrackEtaRel, tau2_trackEtaRel_2 = dummyTrackEtaRel;
-	    float tau1_vertexMass = dummyVertexMass, tau1_vertexEnergyRatio = dummyVertexEnergyRatio, tau1_vertexDeltaR = dummyVertexDeltaR, tau1_flightDistance2dSig = dummyFlightDistance2dSig;
-	    float tau2_vertexMass = dummyVertexMass, tau2_vertexEnergyRatio = dummyVertexEnergyRatio, tau2_vertexDeltaR = dummyVertexDeltaR, tau2_flightDistance2dSig = dummyFlightDistance2dSig;
-	    float jetNTracks = 0, nSV = 0, tau1_nSecondaryVertices = 0, tau2_nSecondaryVertices = 0;
-
-	    const reco::CandIPTagInfo              & ipTagInfo = *higgs_jet.tagInfoCandIP("pfImpactParameter");
-	    const reco::CandSecondaryVertexTagInfo & svTagInfo = *higgs_jet.tagInfoCandSecondaryVertex("pfInclusiveSecondaryVertexFinder");
-	    
-	    // get the jet reference
-	    const reco::JetBaseRef jet = svTagInfo.jet();
-
-	    std::vector<fastjet::PseudoJet> currentAxes;
-	    float tau2, tau1;
-	    // calculate N-subjettiness
-	    recalcNsubjettiness(jet, tau1, tau2, currentAxes);
-	 
-	    const reco::VertexRef & vertexRef = ipTagInfo.primaryVertex();
-	    GlobalPoint pv(0.,0.,0.);
-	    if ( ipTagInfo.primaryVertex().isNonnull() )
-	      pv = GlobalPoint(vertexRef->x(),vertexRef->y(),vertexRef->z());
-
-	    const std::vector<reco::CandidatePtr> & selectedTracks = ipTagInfo.selectedTracks();
-	    const std::vector<reco::btag::TrackIPData> & ipData = ipTagInfo.impactParameterData();
-	    size_t trackSize = selectedTracks.size();
-
-
-	    reco::TrackKinematics allKinematics;
-	    std::vector<float> IP3Ds, IP3Ds_1, IP3Ds_2;
-	    int contTrk=0;
-
-	    // loop over tracks associated to the jet
-	    for (size_t itt=0; itt < trackSize; ++itt)
-	      {
-		const reco::CandidatePtr ptrackRef = selectedTracks[itt];
-		const reco::Track * ptrackPtr = reco::btag::toTrack(ptrackRef);
-		const reco::Track & ptrack = *ptrackPtr;
-
-		float track_PVweight = 0.;
-		setTracksPV(ptrackRef, vertexRef, track_PVweight);
-		if (track_PVweight>0.5) allKinematics.add(ptrack, track_PVweight);
-
-		// check if the track is from V0
-		bool isfromV0 = false;
-		const reco::Track * trackPairV0Test[2];
-
-		trackPairV0Test[0] = ptrackPtr;
-
-		for (size_t jtt=0; jtt < trackSize; ++jtt)
-		  {
-		    if (itt == jtt) continue;
-
-		    const reco::CandidatePtr pairTrackRef = selectedTracks[jtt];
-		    const reco::Track * pairTrackPtr = reco::btag::toTrack(pairTrackRef);
-
-		    trackPairV0Test[1] = pairTrackPtr;
-		    if (!trackPairV0Filter(trackPairV0Test, 2))
-		      {
-			isfromV0 = true;
-		      }
-		    if (isfromV0)
-		      break;
-		  }
-
-		if(!isfromV0 ) jetNTracks += 1.;
-
-		
-		iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", trackBuilder);
-		reco::TransientTrack transientTrack = trackBuilder->build(ptrack);
-		GlobalVector direction(jet->px(), jet->py(), jet->pz());
-
-		int index = 0;
-		if (currentAxes.size() > 1 && reco::deltaR2(ptrack,currentAxes[1]) < reco::deltaR2(ptrack,currentAxes[0]))
-		  index = 1;
-		direction = GlobalVector(currentAxes[index].px(), currentAxes[index].py(), currentAxes[index].pz());
-
-		// decay distance and track distance wrt to the closest tau axis
-		float decayLengthTau=-1;
-		float distTauAxis=-1;
-
-		TrajectoryStateOnSurface closest = IPTools::closestApproachToJet(transientTrack.impactPointState(), *vertexRef , direction, transientTrack.field());
-		if (closest.isValid())
-		  decayLengthTau =  (closest.globalPosition() - RecoVertex::convertPos(vertexRef->position())).mag();
-
-		distTauAxis = std::abs(IPTools::jetTrackDistance(transientTrack, direction, *vertexRef ).second.value());
-
-		float IP3Dsig = ipTagInfo.impactParameterData()[itt].ip3d.significance();
-
-		if( !isfromV0 && decayLengthTau<maxDecayLen_ && distTauAxis<maxDistToAxis_ )
-		  {
-		    IP3Ds.push_back( IP3Dsig<-50. ? -50. : IP3Dsig );
-		    ++contTrk;
-		    if (currentAxes.size() > 1)
-		      {
-			if (reco::deltaR2(ptrack,currentAxes[0]) < reco::deltaR2(ptrack,currentAxes[1]))
-			  IP3Ds_1.push_back( IP3Dsig<-50. ? -50. : IP3Dsig );
-			else
-			  IP3Ds_2.push_back( IP3Dsig<-50. ? -50. : IP3Dsig );
-		      }
-		    else
-		      IP3Ds_1.push_back( IP3Dsig<-50. ? -50. : IP3Dsig );
-		  }
-	      }
-
-	    std::vector<size_t> indices = ipTagInfo.sortedIndexes(reco::btag::IP2DSig);
-	    bool charmThreshSet = false;
-
-	    reco::TrackKinematics kin;
-	    for (size_t i=0; i<indices.size(); ++i)
-	      {
-		size_t idx = indices[i];
-		const reco::btag::TrackIPData & data = ipData[idx];
-		const reco::CandidatePtr ptrackRef = selectedTracks[idx];
-		const reco::Track * ptrackPtr = reco::btag::toTrack(ptrackRef);
-		const reco::Track & track = (*ptrackPtr);
-
-		kin.add(track);
-
-		if ( kin.vectorSum().M() > charmThreshold // charm cut
-		     && !charmThreshSet )
-		  {
-		    trackSip2dSigAboveCharm_0 = data.ip2d.significance();
-
-		    charmThreshSet = true;
-		  }
-
-		if ( kin.vectorSum().M() > bottomThreshold ) // bottom cut
-		  {
-		    trackSip2dSigAboveBottom_0 = data.ip2d.significance();
-		    if ( (i+1)<indices.size() ) trackSip2dSigAboveBottom_1 = (ipData[indices[i+1]]).ip2d.significance();
-
-		    break;
-		  }
-	      }
-
-	    float dummyTrack = -50.;
-
-	    std::sort( IP3Ds.begin(),IP3Ds.end(),std::greater<float>() );
-	    std::sort( IP3Ds_1.begin(),IP3Ds_1.end(),std::greater<float>() );
-	    std::sort( IP3Ds_2.begin(),IP3Ds_2.end(),std::greater<float>() );
-	    int num_1 = IP3Ds_1.size();
-	    int num_2 = IP3Ds_2.size();
-
-	    switch(contTrk){
-	    case 0:
-
-	      trackSip3dSig_0 = dummyTrack;
-	      trackSip3dSig_1 = dummyTrack;
-	      trackSip3dSig_2 = dummyTrack;
-	      trackSip3dSig_3 = dummyTrack;
-
-	      break;
-
-	    case 1:
-
-	      trackSip3dSig_0 = IP3Ds.at(0);
-	      trackSip3dSig_1 = dummyTrack;
-	      trackSip3dSig_2 = dummyTrack;
-	      trackSip3dSig_3 = dummyTrack;
-
-	      break;
-
-	    case 2:
-
-	      trackSip3dSig_0 = IP3Ds.at(0);
-	      trackSip3dSig_1 = IP3Ds.at(1);
-	      trackSip3dSig_2 = dummyTrack;
-	      trackSip3dSig_3 = dummyTrack;
-
-	      break;
-
-	    case 3:
-
-	      trackSip3dSig_0 = IP3Ds.at(0);
-	      trackSip3dSig_1 = IP3Ds.at(1);
-	      trackSip3dSig_2 = IP3Ds.at(2);
-	      trackSip3dSig_3 = dummyTrack;
-
-	      break;
-
-	    default:
-
-	      trackSip3dSig_0 = IP3Ds.at(0);
-	      trackSip3dSig_1 = IP3Ds.at(1);
-	      trackSip3dSig_2 = IP3Ds.at(2);
-	      trackSip3dSig_3 = IP3Ds.at(3);
-
-	    }
-
-	    switch(num_1){
-	    case 0:
-
-	      tau1_trackSip3dSig_0 = dummyTrack;
-	      tau1_trackSip3dSig_1 = dummyTrack;
-
-	      break;
-
-	    case 1:
-
-	      tau1_trackSip3dSig_0 = IP3Ds_1.at(0);
-	      tau1_trackSip3dSig_1 = dummyTrack;
-
-	      break;
-
-	    default:
-
-	      tau1_trackSip3dSig_0 = IP3Ds_1.at(0);
-	      tau1_trackSip3dSig_1 = IP3Ds_1.at(1);
-
-	    }
-
-	    switch(num_2){
-	    case 0:
-
-	      tau2_trackSip3dSig_0 = dummyTrack;
-	      tau2_trackSip3dSig_1 = dummyTrack;
-
-	      break;
-
-	    case 1:
-	      tau2_trackSip3dSig_0 = IP3Ds_2.at(0);
-	      tau2_trackSip3dSig_1 = dummyTrack;
-
-	      break;
-
-	    default:
-
-	      tau2_trackSip3dSig_0 = IP3Ds_2.at(0);
-	      tau2_trackSip3dSig_1 = IP3Ds_2.at(1);
-
-	    }
-
-	    math::XYZVector jetDir = jet->momentum().Unit();
-	    reco::TrackKinematics tau1Kinematics;
-	    reco::TrackKinematics tau2Kinematics;
-	    std::vector<float> tau1_trackEtaRels, tau2_trackEtaRels;
-
-	    std::map<double, size_t> VTXmap;
-	    for (size_t vtx = 0; vtx < svTagInfo.nVertices(); ++vtx)
-	      {
-		reco::TrackKinematics vertexKinematic;
-
-		// get the vertex kinematics
-		const reco::VertexCompositePtrCandidate vertex = svTagInfo.secondaryVertex(vtx);
-		vertexKinematics(vertex, vertexKinematic);
-
-		if (currentAxes.size() > 1)
-		  {
-		    if (reco::deltaR2(svTagInfo.flightDirection(vtx),currentAxes[1]) < reco::deltaR2(svTagInfo.flightDirection(vtx),currentAxes[0]))
-		      {
-			tau2Kinematics = tau2Kinematics + vertexKinematic;
-			if( tau2_flightDistance2dSig < 0 )
-			  {
-			    tau2_flightDistance2dSig = svTagInfo.flightDistance(vtx,true).significance();
-			    tau2_vertexDeltaR = reco::deltaR(svTagInfo.flightDirection(vtx),currentAxes[1]);
-			  }
-			etaRelToTauAxis(vertex, currentAxes[1], tau2_trackEtaRels);
-			tau2_nSecondaryVertices += 1.;
-		      }
-		    else
-		      {
-			tau1Kinematics = tau1Kinematics + vertexKinematic;
-			if( tau1_flightDistance2dSig < 0 )
-			  {
-			    tau1_flightDistance2dSig =svTagInfo.flightDistance(vtx,true).significance();
-			    tau1_vertexDeltaR = reco::deltaR(svTagInfo.flightDirection(vtx),currentAxes[0]);
-			  }
-			etaRelToTauAxis(vertex, currentAxes[0], tau1_trackEtaRels);
-			tau1_nSecondaryVertices += 1.;
-		      }
-
-		  }
-		else if (currentAxes.size() > 0)
-		  {
-		    tau1Kinematics = tau1Kinematics + vertexKinematic;
-		    if( tau1_flightDistance2dSig < 0 )
-		      {
-			tau1_flightDistance2dSig =svTagInfo.flightDistance(vtx,true).significance();
-			tau1_vertexDeltaR = reco::deltaR(svTagInfo.flightDirection(vtx),currentAxes[0]);
-		      }
-		    etaRelToTauAxis(vertex, currentAxes[1], tau1_trackEtaRels);
-		    tau1_nSecondaryVertices += 1.;
-		  }
-		GlobalVector flightDir = svTagInfo.flightDirection(vtx);
-		if (reco::deltaR2(flightDir, jetDir)<(maxSVDeltaRToJet_*maxSVDeltaRToJet_))
-		  VTXmap[svTagInfo.flightDistance(vtx).error()]=vtx;
-	      }
-	    nSV = VTXmap.size();
-
-
-	    math::XYZTLorentzVector allSum = allKinematics.weightedVectorSum() ;
-	    if ( tau1_nSecondaryVertices > 0. )
-	      {
-		math::XYZTLorentzVector tau1_vertexSum = tau1Kinematics.weightedVectorSum();
-		tau1_vertexEnergyRatio = tau1_vertexSum.E() / allSum.E();
-		if ( tau1_vertexEnergyRatio > 50. ) tau1_vertexEnergyRatio = 50.;
-
-		tau1_vertexMass = tau1_vertexSum.M();
-	      }
-
-	    if ( tau2_nSecondaryVertices > 0. )
-	      {
-		math::XYZTLorentzVector tau2_vertexSum = tau2Kinematics.weightedVectorSum();
-		tau2_vertexEnergyRatio = tau2_vertexSum.E() / allSum.E();
-		if ( tau2_vertexEnergyRatio > 50. ) tau2_vertexEnergyRatio = 50.;
-
-		tau2_vertexMass= tau2_vertexSum.M();
-	      }
-	    
-	    float dummyEtaRel = -1.;
-
-	    std::sort( tau1_trackEtaRels.begin(),tau1_trackEtaRels.end() );
-	    std::sort( tau2_trackEtaRels.begin(),tau2_trackEtaRels.end() );
-
-	    switch(tau2_trackEtaRels.size()){
-	    case 0:
-
-	      tau2_trackEtaRel_0 = dummyEtaRel;
-	      tau2_trackEtaRel_1 = dummyEtaRel;
-	      tau2_trackEtaRel_2 = dummyEtaRel;
-
-	      break;
-
-	    case 1:
-
-	      tau2_trackEtaRel_0 = tau2_trackEtaRels.at(0);
-	      tau2_trackEtaRel_1 = dummyEtaRel;
-	      tau2_trackEtaRel_2 = dummyEtaRel;
-
-	      break;
-
-	    case 2:
-
-	      tau2_trackEtaRel_0 = tau2_trackEtaRels.at(0);
-	      tau2_trackEtaRel_1 = tau2_trackEtaRels.at(1);
-	      tau2_trackEtaRel_2 = dummyEtaRel;
-
-	      break;
-
-	    default:
-
-	      tau2_trackEtaRel_0 = tau2_trackEtaRels.at(0);
-	      tau2_trackEtaRel_1 = tau2_trackEtaRels.at(1);
-	      tau2_trackEtaRel_2 = tau2_trackEtaRels.at(2);
-
-	    }
-	    
-	    switch(tau1_trackEtaRels.size()){
-	    case 0:
-
-	      tau1_trackEtaRel_0 = dummyEtaRel;
-	      tau1_trackEtaRel_1 = dummyEtaRel;
-	      tau1_trackEtaRel_2 = dummyEtaRel;
-
-	      break;
-
-	    case 1:
-
-	      tau1_trackEtaRel_0 = tau1_trackEtaRels.at(0);
-	      tau1_trackEtaRel_1 = dummyEtaRel;
-	      tau1_trackEtaRel_2 = dummyEtaRel;
-
-	      break;
-
-	    case 2:
-
-	      tau1_trackEtaRel_0 = tau1_trackEtaRels.at(0);
-	      tau1_trackEtaRel_1 = tau1_trackEtaRels.at(1);
-	      tau1_trackEtaRel_2 = dummyEtaRel;
-
-	      break;
-	      
-	    default:
-
-	      tau1_trackEtaRel_0 = tau1_trackEtaRels.at(0);
-	      tau1_trackEtaRel_1 = tau1_trackEtaRels.at(1);
-	      tau1_trackEtaRel_2 = tau1_trackEtaRels.at(2);
-
-	    }
-
-	    int cont=0;
-	    GlobalVector flightDir_0, flightDir_1;
-	    reco::Candidate::LorentzVector SV_p4_0 , SV_p4_1;
-	    double vtxMass = 0.;
-
-	    for ( std::map<double, size_t>::iterator iVtx=VTXmap.begin(); iVtx!=VTXmap.end(); ++iVtx)
-	      {
-		++cont;
-		const reco::VertexCompositePtrCandidate &vertex = svTagInfo.secondaryVertex(iVtx->second);
-		if (cont==1)
-		  {
-		    flightDir_0 = svTagInfo.flightDirection(iVtx->second);
-		    SV_p4_0 = vertex.p4();
-		    vtxMass = SV_p4_0.mass();
-
-		    if(vtxMass > 0.)
-		      z_ratio = reco::deltaR(currentAxes[1],currentAxes[0])*SV_p4_0.pt()/vtxMass;
-		  }
-		if (cont==2)
-		  {
-		    flightDir_1 = svTagInfo.flightDirection(iVtx->second);
-		    SV_p4_1 = vertex.p4();
-		    vtxMass = (SV_p4_1+SV_p4_0).mass();
-
-		    if(vtxMass > 0.)
-		      z_ratio = reco::deltaR(flightDir_0,flightDir_1)*SV_p4_1.pt()/vtxMass;
-
-		    break;
-		  }
-	      }
-
-	    // when only one tau axis has SVs assigned, they are all assigned to the 1st tau axis
-	    // in the special case below need to swap values
-	    if( (tau1_vertexMass<0 && tau2_vertexMass>0) )
-	      {
-		float temp = tau1_trackEtaRel_0;
-		tau1_trackEtaRel_0= tau2_trackEtaRel_0;
-		tau2_trackEtaRel_0= temp;
-
-		temp = tau1_trackEtaRel_1;
-		tau1_trackEtaRel_1= tau2_trackEtaRel_1;
-		tau2_trackEtaRel_1= temp;
-
-		temp = tau1_trackEtaRel_2;
-		tau1_trackEtaRel_2= tau2_trackEtaRel_2;
-		tau2_trackEtaRel_2= temp;
-
-		temp = tau1_flightDistance2dSig;
-		tau1_flightDistance2dSig= tau2_flightDistance2dSig;
-		tau2_flightDistance2dSig= temp;
-
-		tau1_vertexDeltaR= tau2_vertexDeltaR;
-
-		temp = tau1_vertexEnergyRatio;
-		tau1_vertexEnergyRatio= tau2_vertexEnergyRatio;
-		tau2_vertexEnergyRatio= temp;
-
-		temp = tau1_vertexMass;
-		tau1_vertexMass= tau2_vertexMass;
-		tau2_vertexMass= temp;
-	      }
-
-	    topjet.set_tag(TopJet::tagname2tag("z_ratio"), z_ratio);
-	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_3"), trackSip3dSig_3);
-	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_2"), trackSip3dSig_2);
-	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_1"), trackSip3dSig_1);
-	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_0"), trackSip3dSig_0);
-	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_1_0"), tau2_trackSip3dSig_0);
-	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_0_0"), tau1_trackSip3dSig_0);
-	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_1_1"), tau2_trackSip3dSig_1);
-	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_0_1"), tau1_trackSip3dSig_1);
-	    topjet.set_tag(TopJet::tagname2tag("trackSip2dSigAboveCharm_0"), trackSip2dSigAboveCharm_0);
-	    topjet.set_tag(TopJet::tagname2tag("trackSip2dSigAboveBottom_0"), trackSip2dSigAboveBottom_0);
-	    topjet.set_tag(TopJet::tagname2tag("trackSip2dSigAboveBottom_1"), trackSip2dSigAboveBottom_1);
-	    topjet.set_tag(TopJet::tagname2tag("tau1_trackEtaRel_0"), tau2_trackEtaRel_0);
-	    topjet.set_tag(TopJet::tagname2tag("tau1_trackEtaRel_1"), tau2_trackEtaRel_1);
-	    topjet.set_tag(TopJet::tagname2tag("tau1_trackEtaRel_2"), tau2_trackEtaRel_2);
-	    topjet.set_tag(TopJet::tagname2tag("tau0_trackEtaRel_0"), tau1_trackEtaRel_0);
-	    topjet.set_tag(TopJet::tagname2tag("tau0_trackEtaRel_1"), tau1_trackEtaRel_1);
-	    topjet.set_tag(TopJet::tagname2tag("tau0_trackEtaRel_2"), tau1_trackEtaRel_2);
-	    topjet.set_tag(TopJet::tagname2tag("tau_vertexMass_0"), tau1_vertexMass);
-	    topjet.set_tag(TopJet::tagname2tag("tau_vertexEnergyRatio_0"), tau1_vertexEnergyRatio);
-	    topjet.set_tag(TopJet::tagname2tag("tau_vertexDeltaR_0"), tau1_vertexDeltaR);
-	    topjet.set_tag(TopJet::tagname2tag("tau_flightDistance2dSig_0"), tau1_flightDistance2dSig);
-	    topjet.set_tag(TopJet::tagname2tag("tau_vertexMass_1"), tau2_vertexMass);
-	    topjet.set_tag(TopJet::tagname2tag("tau_vertexEnergyRatio_1"), tau2_vertexEnergyRatio);
-	    topjet.set_tag(TopJet::tagname2tag("tau_flightDistance2dSig_1"), tau2_flightDistance2dSig);
-	    topjet.set_tag(TopJet::tagname2tag("jetNTracks"), jetNTracks);
-	    topjet.set_tag(TopJet::tagname2tag("nSV"), nSV);
-
-
-	    //End Higgs jet commissioning
 
 	  }
-	  
+
+
 	}//higgs tag loop
+
+        /*---------------------*/
+
+        /*--- Higgs tagging commissioning ---*/
+
+	//fill Higgs tagging info for commissioning
+	if(higgstaginfo_src!=""){
+	  edm::Handle<std::vector<reco::BoostedDoubleSVTagInfo> > svTagInfos;
+	  event.getByToken(src_higgstaginfo_token, svTagInfos);
+	  
+	  //find taginfo belonging to a jet closest to the studied jet
+	  int i_svjet = -1;
+	  double drmin = numeric_limits<double>::infinity();
+	  for (unsigned int ih = 0; ih < svTagInfos->size(); ih++) {
+	    const reco::BoostedDoubleSVTagInfo & svTagInfo = svTagInfos->at(ih);
+	    const reco::JetBaseRef jet = svTagInfo.jet();
+	    auto dr = reco::deltaR(jet->p4(), pat_topjet);
+	    if(dr < drmin){
+	      i_svjet = ih;
+	      drmin = dr;
+	    }
+	  }
+	  
+	  if(i_svjet>=0 && drmin<1.0){
+	    const reco::BoostedDoubleSVTagInfo & svTagInfo = svTagInfos->at(i_svjet);
+	    const reco::JetBaseRef jet = svTagInfo.jet(); 
+
+	    topjet.set_tag(TopJet::tagname2tag("z_ratio"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::z_ratio));
+	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_3"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::trackSip3dSig_3));
+	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_2"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::trackSip3dSig_2));
+	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_1"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::trackSip3dSig_1));
+	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::trackSip3dSig_0));
+	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_1_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau2_trackSip3dSig_0));
+	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_0_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau1_trackSip3dSig_0));
+	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_1_1"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau2_trackSip3dSig_1));
+	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_0_1"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau1_trackSip3dSig_1));
+	    topjet.set_tag(TopJet::tagname2tag("trackSip2dSigAboveCharm_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::trackSip2dSigAboveCharm));
+	    topjet.set_tag(TopJet::tagname2tag("trackSip2dSigAboveBottom_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::trackSip2dSigAboveBottom_0));
+	    topjet.set_tag(TopJet::tagname2tag("trackSip2dSigAboveBottom_1"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::trackSip2dSigAboveBottom_1));
+	    topjet.set_tag(TopJet::tagname2tag("tau1_trackEtaRel_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau2_trackEtaRel_0));
+	    topjet.set_tag(TopJet::tagname2tag("tau1_trackEtaRel_1"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau2_trackEtaRel_1));
+	    topjet.set_tag(TopJet::tagname2tag("tau1_trackEtaRel_2"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau2_trackEtaRel_2));
+	    topjet.set_tag(TopJet::tagname2tag("tau0_trackEtaRel_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau1_trackEtaRel_0));
+	    topjet.set_tag(TopJet::tagname2tag("tau0_trackEtaRel_1"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau1_trackEtaRel_1));
+	    topjet.set_tag(TopJet::tagname2tag("tau0_trackEtaRel_2"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau1_trackEtaRel_2));
+	    topjet.set_tag(TopJet::tagname2tag("tau_vertexMass_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau1_vertexMass));
+	    topjet.set_tag(TopJet::tagname2tag("tau_vertexEnergyRatio_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau1_vertexEnergyRatio));
+	    topjet.set_tag(TopJet::tagname2tag("tau_vertexDeltaR_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau1_vertexDeltaR));
+	    topjet.set_tag(TopJet::tagname2tag("tau_flightDistance2dSig_0"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau1_flightDistance2dSig));
+	    topjet.set_tag(TopJet::tagname2tag("tau_vertexMass_1"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau2_vertexMass));
+	    topjet.set_tag(TopJet::tagname2tag("tau_vertexEnergyRatio_1"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau2_vertexEnergyRatio));
+	    topjet.set_tag(TopJet::tagname2tag("tau_flightDistance2dSig_1"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau2_flightDistance2dSig));
+	    topjet.set_tag(TopJet::tagname2tag("jetNTracks"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::jetNTracks));
+	    topjet.set_tag(TopJet::tagname2tag("nSV"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::jetNSecondaryVertices));
+	    
+	  }
+
+	}
+	  
+        /*---------------------*/
 
         // loop over subjets to fill some more subjet info:
 	if(subjet_src=="daughters"){
@@ -1219,121 +851,3 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     }
 }
 
-void NtupleWriterTopJets::recalcNsubjettiness(const reco::JetBaseRef & jet, float & tau1, float & tau2, std::vector<fastjet::PseudoJet> & currentAxes)
-{
-  std::vector<fastjet::PseudoJet> fjParticles;
-
-  // loop over jet constituents and push them in the vector of FastJet constituents
-  for(const reco::CandidatePtr & daughter : jet->daughterPtrVector())
-    {
-      if ( daughter.isNonnull() && daughter.isAvailable() )
-	fjParticles.push_back( fastjet::PseudoJet( daughter->px(), daughter->py(), daughter->pz(), daughter->energy() ) );
-      else
-	edm::LogWarning("MissingJetConstituent") << "Jet constituent required for N-subjettiness computation is missing!";
-    }
-
-  // N-subjettiness calculator
-  fastjet::contrib::Njettiness njettiness(fastjet::contrib::OnePass_KT_Axes(), fastjet::contrib::NormalizedMeasure(beta_,R0_));
-
-  // calculate N-subjettiness
-  tau1 = njettiness.getTau(1, fjParticles);
-  tau2 = njettiness.getTau(2, fjParticles);
-  currentAxes = njettiness.currentAxes();
-}
-
-
-void NtupleWriterTopJets::setTracksPVBase(const reco::TrackRef & trackRef, const reco::VertexRef & vertexRef, float & PVweight)
-{
-  PVweight = 0.;
-
-  const reco::TrackBaseRef trackBaseRef( trackRef );
-
-  typedef reco::Vertex::trackRef_iterator IT;
-
-  const reco::Vertex & vtx = *(vertexRef);
-  // loop over tracks in vertices
-  for(IT it=vtx.tracks_begin(); it!=vtx.tracks_end(); ++it)
-    {
-      const reco::TrackBaseRef & baseRef = *it;
-      // one of the tracks in the vertex is the same as the track considered in the function
-      if( baseRef == trackBaseRef )
-	{
-	  PVweight = vtx.trackWeight(baseRef);
-	  break;
-	}
-    }
-}
-
-
-void NtupleWriterTopJets::setTracksPV(const reco::CandidatePtr & trackRef, const reco::VertexRef & vertexRef, float & PVweight)
-{
-  PVweight = 0.;
-
-  const pat::PackedCandidate * pcand = dynamic_cast<const pat::PackedCandidate *>(trackRef.get());
-
-  if(pcand) // MiniAOD case
-    {
-      if( pcand->fromPV() == pat::PackedCandidate::PVUsedInFit )
-	{
-	  PVweight = 1.;
-	}
-    }
-  else
-    {
-      const reco::PFCandidate * pfcand = dynamic_cast<const reco::PFCandidate *>(trackRef.get());
-
-      setTracksPVBase(pfcand->trackRef(), vertexRef, PVweight);
-    }
-}
-
-
-void NtupleWriterTopJets::vertexKinematics(const reco::VertexCompositePtrCandidate & vertex, reco::TrackKinematics & vtxKinematics)
-{
-  const std::vector<reco::CandidatePtr> & tracks = vertex.daughterPtrVector();
-
-  for(std::vector<reco::CandidatePtr>::const_iterator track = tracks.begin(); track != tracks.end(); ++track) {
-    const reco::Track& mytrack = *(*track)->bestTrack();
-    vtxKinematics.add(mytrack, 1.0);
-  }
-}
-
-
-void NtupleWriterTopJets::etaRelToTauAxis(const reco::VertexCompositePtrCandidate & vertex,
-                                                                    fastjet::PseudoJet & tauAxis, std::vector<float> & tau_trackEtaRel)
-{
-  math::XYZVector direction(tauAxis.px(), tauAxis.py(), tauAxis.pz());
-  const std::vector<reco::CandidatePtr> & tracks = vertex.daughterPtrVector();
-
-  for(std::vector<reco::CandidatePtr>::const_iterator track = tracks.begin(); track != tracks.end(); ++track)
-    tau_trackEtaRel.push_back(std::abs(reco::btau::etaRel(direction.Unit(), (*track)->momentum())));
-}
-
-bool NtupleWriterTopJets::trackPairV0Filter(const reco::Track *const *tracks, unsigned int n)
- {
-   // only check for K0s for now
-
-   if (n != 2)
-     return true;
-
-   if (tracks[0]->charge() * tracks[1]->charge() > 0)
-     return true;
-
-   ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double> > vec1;
-   ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double> > vec2;
-
-   vec1.SetPx(tracks[0]->px());
-   vec1.SetPy(tracks[0]->py());
-   vec1.SetPz(tracks[0]->pz());
-   vec1.SetM(reco::ParticleMasses::piPlus);
-
-   vec2.SetPx(tracks[1]->px());
-   vec2.SetPy(tracks[1]->py());
-   vec2.SetPz(tracks[1]->pz());
-   vec2.SetM(reco::ParticleMasses::piPlus);
-
-   double invariantMass = (vec1 + vec2).M();
-   if (std::abs(invariantMass - reco::ParticleMasses::k0) < 0.03)
-     return false;
-
-   return true;
-}

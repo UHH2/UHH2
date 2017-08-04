@@ -57,6 +57,7 @@ IMPL_SETUP(genjets, vector<Particle>)
 void EventHelper::setup_trigger(){
     trigger = true;
     h_triggerResults = declare_in_out<std::vector<bool>>("triggerResults", "triggerResults", ctx);
+    h_triggerPrescales = declare_in_out<std::vector<int>>("triggerPrescales", "triggerPrescales", ctx);
     h_triggerNames = declare_in_out<std::vector<std::string>>("triggerNames", "triggerNames", ctx);
 }
 
@@ -113,6 +114,7 @@ void EventHelper::event_read(){
         if(genjets) event->genjets = &event->get(h_genjets);
         if(trigger){
             event->get_triggerResults() = &event->get(h_triggerResults);
+	    event->get_triggerPrescales() = &event->get(h_triggerPrescales);
         }
     }
 }

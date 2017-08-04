@@ -9,7 +9,7 @@ using namespace std;
 class TestGenParticles: public uhh2::AnalysisModule {
 public:
     explicit TestGenParticles(Context & ctx) {
-        printer = make_unique<GenParticlesPrinter>(ctx);
+      printer = std::make_unique<GenParticlesPrinter>(ctx);
     }
     
     virtual bool process(Event & e) override;
@@ -44,7 +44,7 @@ UHH2_REGISTER_ANALYSIS_MODULE(TestGenParticles)
 class TestGenParticleLinks: public uhh2::AnalysisModule {
 public:
     explicit TestGenParticleLinks(Context & ctx){
-        printer = make_unique<GenParticlesPrinter>(ctx);
+      printer = std::make_unique<GenParticlesPrinter>(ctx);
     }
    
     virtual bool process(Event & e) override;

@@ -60,7 +60,7 @@ public:
         
     ClassDef(AnalysisModuleRunner, 0);
   
-private:    
+
     class AnalysisModuleRunnerImpl;
     std::unique_ptr<AnalysisModuleRunnerImpl> pimpl;
 };

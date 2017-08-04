@@ -17,6 +17,7 @@
 
 #include <stdexcept>
 #include <memory>
+#include <iostream>
 
 using namespace std;
 using namespace uhh2;
@@ -54,7 +55,7 @@ EDataType normalize(EDataType dt){
     else{
         assert(sizeof(Long_t) == sizeof(Int_t));
         switch(dt){
-            case kLong_t: return kInt_t;
+	    case kLong_t: return kInt_t;
             case kULong_t: return kUInt_t;
             default: return dt;
         }
@@ -85,9 +86,11 @@ void connect_input_branch(TBranch * branch, const std::type_info & ti, void ** a
     EDataType address_dtype = kNoType_t;
     TDataType * address_tdatatype = TDataType::GetDataType(TDataType::GetType(ti));
     if (address_tdatatype) {
-        address_dtype = normalize(EDataType(address_tdatatype->GetType()));
+      address_dtype = normalize(EDataType(address_tdatatype->GetType()));
     }
-
+    if(branch_dtype == kLong64_t && address_dtype==kInt_t)
+      address_dtype=kLong64_t;
+    
     // compare if they match; note that it's an error if the class or data type has not been found:
     if ((branch_class && address_class) && ((branch_class == address_class) || (branch_class->GetTypeInfo() == address_class->GetTypeInfo()))) {
         if (addr == 0) {
@@ -114,6 +117,7 @@ void connect_input_branch(TBranch * branch, const std::type_info & ti, void ** a
         }
         branch->SetAddress(addr);
     }
+
     else { // this is an error:
         stringstream ss;
         ss << "Type error for branch '" << branch->GetName() << "': branch holds type ";
@@ -474,11 +478,11 @@ void SFrameContext::do_undeclare_all_event_output() {
 
 
 void SFrameContext::do_declare_event_input_handle(const type_info & ti, const string & bname, const GenericEvent::RawHandle & handle) {
-    event_input_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));
+  event_input_bname2bi.insert(make_pair(bname, uhh2::make_unique<branchinfo>(ti, handle)));
 }
 
 void SFrameContext::do_declare_event_output_handle(const type_info & ti, const string & bname, const GenericEvent::RawHandle & handle) {
-    event_output_bname2bi.insert(make_pair(bname, make_unique<branchinfo>(ti, handle)));
+  event_output_bname2bi.insert(make_pair(bname, uhh2::make_unique<branchinfo>(ti, handle)));
 }
 
 SFrameContext::~SFrameContext() {
