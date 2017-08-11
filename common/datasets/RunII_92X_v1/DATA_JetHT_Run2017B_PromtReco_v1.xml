@@ -12,6 +12,7 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_100_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1010_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1011_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1012_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1013_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1014_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1015_Ntuple.root" Lumi="0.0"/>
@@ -213,6 +214,8 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1192_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1193_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1194_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1195_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1196_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1197_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1198_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1199_Ntuple.root" Lumi="0.0"/>
@@ -224,6 +227,8 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1203_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1204_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1205_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1206_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1207_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1208_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1209_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_120_Ntuple.root" Lumi="0.0"/>
@@ -826,6 +831,7 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1748_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1749_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_174_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1750_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1751_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1752_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_1753_Ntuple.root" Lumi="0.0"/>
@@ -2380,6 +2386,7 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3147_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3148_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3149_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_314_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3150_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3151_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3152_Ntuple.root" Lumi="0.0"/>
@@ -2734,6 +2741,7 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3467_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3468_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3469_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_346_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3470_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3471_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_3472_Ntuple.root" Lumi="0.0"/>
@@ -3706,6 +3714,7 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4342_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4343_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4344_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4345_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4346_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4347_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4348_Ntuple.root" Lumi="0.0"/>
@@ -4283,6 +4292,7 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4863_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4864_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4865_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4866_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4867_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4868_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_4869_Ntuple.root" Lumi="0.0"/>
@@ -4703,6 +4713,7 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5241_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5242_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5243_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5244_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5245_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5246_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5247_Ntuple.root" Lumi="0.0"/>
@@ -4818,6 +4829,7 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5346_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5347_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5348_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5349_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_534_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5350_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_5351_Ntuple.root" Lumi="0.0"/>
@@ -5513,6 +5525,7 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_622_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_623_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_624_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_625_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_626_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_627_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_628_Ntuple.root" Lumi="0.0"/>
@@ -5520,6 +5533,7 @@
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_62_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_630_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_631_Ntuple.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_632_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_633_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_634_Ntuple.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/user/karavdia/Run2017/Run2017_RunB_PromtReco_v1/JetHT_RunB_PromptReco_v1_635_Ntuple.root" Lumi="0.0"/>
