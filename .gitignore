@@ -10,3 +10,5 @@ core/python/__init__.py
 *.local
 VLQToHiggsPairProd/*
 ZprimeSemiLeptonic/*
+Bacon_Jets/*
+JECDatabase/*
