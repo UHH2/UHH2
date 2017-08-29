@@ -382,7 +382,7 @@ void SFrameContext::begin_input_file(Event & event) {
 
 	      //DEBUG
 	// std::cout<<"    "<<bname<<std::endl;
-	if(bname=="triggerPrescales") continue;
+	// if(bname=="triggerPrescales") continue;
         branchinfo & bi = *name_bi.second;
         TBranch * branch = input_tree->GetBranch(bname.c_str());
         if (branch == nullptr) {
@@ -414,7 +414,7 @@ void SFrameContext::begin_event(Event & event) {
     for (const auto & name_bi : event_input_bname2bi) {
       //DEBUG
       const string & bname = name_bi.first;
-	if(bname=="triggerPrescales") continue;
+	// if(bname=="triggerPrescales") continue;
         name_bi.second->branch->GetEntry(ientry);
         EventAccess_::set_validity(event, name_bi.second->ti, name_bi.second->handle, true);
     }
@@ -704,9 +704,9 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
         for(const auto & bname : pimpl->additional_branches){
 	  //DEBUG
 	  // std::cout<<"input declaration "<<bname<<std::endl;
-	  if(bname=="triggerPrescales"){
-	    // std::cout<<"skipped triggerPrescales for input declaration"<<std::endl;
-	    continue;}
+	  // if(bname=="triggerPrescales"){
+	  //   // std::cout<<"skipped triggerPrescales for input declaration"<<std::endl;
+	  //   continue;}
             auto branch = intree->GetBranch(bname.c_str());
             if(!branch){
   	        m_logger  << WARNING << "While setting up additional branches: did not find branch '" << bname << "' in input tree" << SLogger::endmsg;
