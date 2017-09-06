@@ -196,6 +196,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenJetsWithParts = iConfig.getParameter<bool>("doGenJetsWithParts");
   doPhotons = iConfig.getParameter<bool>("doPhotons");
   doMET = iConfig.getParameter<bool>("doMET");
+  doGenMET = iConfig.getParameter<bool>("doGenMET");
   doGenInfo = iConfig.getParameter<bool>("doGenInfo");
   doAllGenParticles = iConfig.getParameter<bool>("doAllGenParticles");
   doAllPFParticles = iConfig.getParameter<bool>("doAllPFParticles");
