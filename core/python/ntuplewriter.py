@@ -841,8 +841,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean"),
         met_sources =  met_sources_GL,
 
-        doGenMET =    cms.bool( not useData),
-        genmet_sources = cms.vstring("slimmedMETs"),
+        doGenMET =    cms.bool(False),
+        #genmet_sources = cms.vstring("slimmedMETs"),
 
         #doTopJets = cms.bool(False),
         doTopJets = cms.bool(True),
