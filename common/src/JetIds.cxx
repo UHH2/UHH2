@@ -73,12 +73,12 @@ bool JetPFID::tightID(const Jet & jet) const{
   if(!looseID(jet)) return false;
   if(fabs(jet.eta())<=2.7 
      && jet.neutralEmEnergyFraction()<0.90
-     && jet.neutralHadronEnergyFraction()<0.90){ //2016 jetID: "tight" differ from "loose" only at |eta|<2.7
+     && jet.neutralHadronEnergyFraction()<0.90){
     return true;
   }
-  else  
-    if(fabs(jet.eta())>2.7)
-      return true;
+  else if(fabs(jet.eta())>2.7){
+    return true;
+  }
   return false;
 }
 
