@@ -195,6 +195,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenJetsWithParts = iConfig.getParameter<bool>("doGenJetsWithParts");
   doPhotons = iConfig.getParameter<bool>("doPhotons");
   doMET = iConfig.getParameter<bool>("doMET");
+  doGenMET = iConfig.getParameter<bool>("doGenMET");
   doGenInfo = iConfig.getParameter<bool>("doGenInfo");
   doAllGenParticles = iConfig.getParameter<bool>("doAllGenParticles");
   doAllPFParticles = iConfig.getParameter<bool>("doAllPFParticles");
@@ -527,6 +528,14 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
     if(!met_sources.empty()){
         event->met = &met[0];
+    }
+  }
+  if(doGenMET){
+    auto genmet_sources = iConfig.getParameter<std::vector<std::string> >("genmet_sources");
+    genmet.resize(genmet_sources.size());
+    for(size_t j=0; j< genmet_sources.size(); ++j){  
+      genmet_tokens.push_back(consumes<vector<pat::MET>>(genmet_sources[j]));
+      branch(tr, (genmet_sources[j]+"_GenMET").c_str(), "MET", &genmet[j]);
     }
   }
   if(doPV){
@@ -1118,6 +1127,26 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
             }
        }
       }
+   }
+   
+   if(doGenMET){
+     for(size_t j=0; j< genmet_tokens.size(); ++j){
+       edm::Handle< std::vector<pat::MET> > genmet_handle;
+       iEvent.getByToken(genmet_tokens[j], genmet_handle);
+       const std::vector<pat::MET>& pat_genmets = *genmet_handle;
+       if(pat_genmets.size()!=1){
+         std::cout<< "WARNING: number of GenMETs = " << pat_genmets.size() <<", should be 1" << std::endl;
+       }
+       else{
+	 pat::MET pat_genmet = pat_genmets[0];
+         genmet[j].set_pt(pat_genmet.genMET()->pt());
+         genmet[j].set_phi(pat_genmet.genMET()->phi());
+         genmet[j].set_mEtSig(pat_genmet.genMET()->mEtSig());
+	 //uncorrected MET is equal to normal MET for GenMET
+	 genmet[j].set_uncorr_pt(pat_genmet.genMET()->pt());
+         genmet[j].set_uncorr_phi(pat_genmet.genMET()->phi());
+       }
+     }
    }
    
    print_times(timer, "met");
