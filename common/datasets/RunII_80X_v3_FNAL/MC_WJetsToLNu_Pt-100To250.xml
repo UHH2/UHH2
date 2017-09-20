@@ -7276,8 +7276,8 @@
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6471.root" Lumi="0.0"/>
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6472.root" Lumi="0.0"/>
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6473.root" Lumi="0.0"/>
-<In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6475.root" Lumi="0.0"/>
-<In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6476.root" Lumi="0.0"/>
+<!-- <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6475.root" Lumi="0.0"/> -->
+<!-- <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6476.root" Lumi="0.0"/> -->
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6477.root" Lumi="0.0"/>
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6478.root" Lumi="0.0"/>
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_647_0.root" Lumi="0.0"/>
@@ -7296,10 +7296,10 @@
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_648_0.root" Lumi="0.0"/>
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_648_2.root" Lumi="0.0"/>
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_648ext4.root" Lumi="0.0"/>
-<In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6491.root" Lumi="0.0"/>
+<!-- <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6491.root" Lumi="0.0"/> -->
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6492.root" Lumi="0.0"/>
-<In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6493.root" Lumi="0.0"/>
-<In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6494.root" Lumi="0.0"/>
+<!-- <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6493.root" Lumi="0.0"/> -->
+<!-- <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6494.root" Lumi="0.0"/> -->
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6495.root" Lumi="0.0"/>
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6496.root" Lumi="0.0"/>
 <In FileName="root://cmsxrootd.fnal.gov//store/user/lpczprimeljj/SFrameNtuples/13TeV/RunII_80X_Moriond17/MC_WJetsToLNu_Pt-100To250/Ntuple_6497.root" Lumi="0.0"/>
