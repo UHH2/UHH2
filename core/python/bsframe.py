@@ -28,6 +28,7 @@ parser.add_option("--status", action="store_true", dest="status", default=False,
 parser.add_option("--retar", action="store_true", dest="retar", default=False, help="Recreate the job tarball.")
 parser.add_option("--ttbargencut", action="store_true", dest="ttbargencut", default=False, help="Apply ttbar generator cut")
 parser.add_option("--notar", action="store_true", dest="notar", default=False, help="Do not create tarball. For debugging configs.")
+parser.add_option("--memory", dest="memory", default="2048", help="Required memory for condor job in MiB")
 
 parser.add_option("--append", dest="append", default="", help="Append string to job name")
 parser.add_option("--flavor", dest="flavor", default="", help="Apply flavor selection: bflavor, cflavor, lflavor")
@@ -188,7 +189,7 @@ def createcondortxt(options, jobnumber, jobdir):
 Executable = %s/configs/%s_%d.sh
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-Transfer_Input_Files = %s/configs/%s.tgz
+#Transfer_Input_Files = 
 Transfer_Output_Files = %s
 Output = %s/logs/%s_%d.stdout
 Error = %s/logs/%s_%d.stderr
@@ -196,7 +197,8 @@ Log = %s/logs/%s_%d.log
 notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = %s
 Arguments = %s
-Queue 1""" %(options.jobname, options.jobname, jobnumber, jobdir, options.jobname, outputfiles, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, userproxy, os.getcwd())
+RequestMemory = %s
+Queue 1""" %(options.jobname, options.jobname, jobnumber, outputfiles, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, userproxy, os.getcwd(), options.memory)
     condorfile.close()
     os.chdir("../..")
 
@@ -210,8 +212,10 @@ echo "Running on: `uname -a`"
 echo "System software: `cat /etc/redhat-release`"
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 WORKINGDIR=$PWD
+xrdcp root://cmseos:1094//store/user/%s/%s.tgz .
 TARNAME=`/bin/ls *.tgz`
 tar -xzf $TARNAME
+rm $TARNAME
 SFRAMEDIR=`find . -type f -name setup.sh | xargs dirname`
 cd $SFRAMEDIR
 scramv1 b ProjectRename
@@ -228,10 +232,8 @@ CYCLENAME=`grep "Cycle Name" %s_%d.xml | sed 's|.*<Cycle Name="\([^ \\t\\r\\n\\v
 for filename in `/bin/ls ${CYCLENAME}*.root`; do
     newfilename=`echo $filename | sed 's|.root|.%d.root|'`
     mv $filename $newfilename
-    echo "MD5Sum $newfilename"
-    md5sum $newfilename
 done
-mv ${CYCLENAME}*.root $WORKINGDIR""" %(options.jobname, jobnumber, options.jobname, options.jobname, jobnumber, options.jobname, jobnumber, jobnumber)
+mv ${CYCLENAME}*.root $WORKINGDIR""" %(os.getenv("USER"),options.jobname,options.jobname, jobnumber, options.jobname, options.jobname, jobnumber, options.jobname, jobnumber, jobnumber)
     if options.output.find("/store/") != -1: print >> scriptfile, """
 cd $WORKINGDIR
 OUTPUTDIR=%s/
@@ -469,6 +471,7 @@ def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus,jobid):
                     if resubmitjobs.count(jobnumber)<1: resubmitjobs.append(jobnumber)
                     jobstatus="Error"
             else:
+                if "eos" in filepath: filepath = filepath.replace("/eos/uscms/store/","root://cmseos:1094//store/")
                 rootfile = ROOT.TFile.Open(filepath)
                 try: iszombie=rootfile.IsZombie()
                 except: iszombie=True
@@ -561,10 +564,11 @@ if options.create:
         target = os.popen("echo ${CMSSW_BASE##*/}").readline().strip("\n")+"/"
         if (options.usetarball != "" and not os.path.isfile(options.usetarball)) or options.usetarball == "":
             print "Creating tarball of "+target+" area."
-            os.system("tar -czf "+tarball+" "+target+" --exclude-caches --exclude=.git --exclude='*.tgz'")
+            os.system("tar -czf "+tarball+" "+target+" --exclude-caches --exclude={.git,tmp} --exclude='*.tgz'")
             if options.usetarball != "": os.system("mv "+tarball+" "+options.usetarball)
         if options.usetarball == "": os.system("mv "+tarball+" "+workingdir+"/"+options.jobname+"/configs")
         else: os.system("cp "+options.usetarball+" "+workingdir+"/"+options.jobname+"/configs/"+options.jobname+".tgz")
+        os.system("xrdcp -f "+workingdir+"/"+options.jobname+"/configs/"+options.jobname+".tgz  root://cmseos:1094//store/user/$USER/"+options.jobname+".tgz")
         os.chdir(workingdir+"/"+options.jobname)
         os.system('echo "Signature: 8a477f597d28d172789f06886806bc55" >& CACHEDIR.TAG')
     os.chdir(workingdir)
@@ -583,10 +587,11 @@ if options.retar:
     target = os.popen("echo ${CMSSW_BASE##*/}").readline().strip("\n")+"/"
     if (options.usetarball != "" and not os.path.isfile(options.usetarball)) or options.usetarball == "":
         print "Creating tarball of "+target+" area."
-        os.system("tar -czf "+tarball+" "+target+" --exclude-caches --exclude='*.tgz'")
+        os.system("tar -czf "+tarball+" "+target+" --exclude-caches --exclude={.git,tmp} --exclude='*.tgz'")
         if options.usetarball != "": os.system("mv "+tarball+" "+options.usetarball)
     if options.usetarball == "": os.system("mv "+tarball+" "+workingdir+"/"+options.jobname+"/configs")
     else: os.system("cp "+options.usetarball+" "+workingdir+"/"+options.jobname+"/configs/"+options.jobname+".tgz")
+    os.system("xrdcp -f "+workingdir+"/"+options.jobname+"/configs/"+options.jobname+".tgz  root://cmseos:1094//store/user/$USER/"+options.jobname+".tgz")
     os.chdir(workingdir+"/"+options.jobname)
     os.system('echo "Signature: 8a477f597d28d172789f06886806bc55" >& CACHEDIR.TAG')
     os.chdir(workingdir)
