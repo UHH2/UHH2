@@ -1014,22 +1014,28 @@ bool MCCSVv2ShapeSystematic::process(Event & event) {
       weight *= reader->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
       weight_jesup *= reader_JESUp->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
       weight_jesdown *= reader_JESDown->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_lfup *= reader_LFUp->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_lfdown *= reader_LFDown->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_hfup *= reader_HFUp->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_hfdown *= reader_HFDown->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_hfstats1up *= reader_HFStats1Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_hfstats1down *= reader_HFStats1Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_hfstats2up *= reader_HFStats2Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_hfstats2down *= reader_HFStats2Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_lfstats1up *= reader_LFStats1Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_lfstats1down *= reader_LFStats1Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_lfstats2up *= reader_LFStats2Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_lfstats2down *= reader_LFStats2Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_cferr1up *= reader_CFErr1Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_cferr1down *= reader_CFErr1Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_cferr2up *= reader_CFErr2Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
-      weight_cferr2down *= reader_CFErr2Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+      if (jet_flavor == BTagEntry::FLAV_B) {
+        weight_lfup *= reader_LFUp->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfdown *= reader_LFDown->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfstats1up *= reader_HFStats1Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfstats1down *= reader_HFStats1Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfstats2up *= reader_HFStats2Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfstats2down *= reader_HFStats2Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+      }
+      if (jet_flavor == BTagEntry::FLAV_C) {
+        weight_cferr1up *= reader_CFErr1Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_cferr1down *= reader_CFErr1Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_cferr2up *= reader_CFErr2Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_cferr2down *= reader_CFErr2Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+      }
+      if (jet_flavor == BTagEntry::FLAV_UDSG) {
+        weight_hfup *= reader_HFUp->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfdown *= reader_HFDown->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfstats1up *= reader_LFStats1Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfstats1down *= reader_LFStats1Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfstats2up *= reader_LFStats2Up->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfstats2down *= reader_LFStats2Down->eval(jet_flavor, jet_eta, jet_pt, jet_csv);
+      }
     }
   }
 
@@ -1072,6 +1078,7 @@ bool MCCSVv2ShapeSystematic::process(Event & event) {
   else if (sysType_ == "cferr2up") {event.weight *= weight_cferr2up;}
   else if (sysType_ == "cferr2down") {event.weight *= weight_cferr2down;}
   else {event.weight *= weight;}
+  assert(event.weight > 0.0);
 
   return true;
 }
