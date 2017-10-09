@@ -565,7 +565,7 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 
 
 # for JEC cluster AK8 jets with lower pt (compare to miniAOD)
-addJetCollection(process,labelName = 'AK8PFPUPPI', jetSource = cms.InputTag('ak8PuppiJets'), algo = 'AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),pfCandidates = cms.InputTag('packedPFCandidates'),
+addJetCollection(process,labelName = 'AK8PFPUPPI', jetSource = cms.InputTag('ak8PuppiJets'), algo = 'AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections = ('AK8PFPuppi', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),pfCandidates = cms.InputTag('packedPFCandidates'),
     pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
     svSource = cms.InputTag('slimmedSecondaryVertices'),
     muSource =cms.InputTag( 'slimmedMuons'),
