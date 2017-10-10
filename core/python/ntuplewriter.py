@@ -729,8 +729,8 @@ process.load('CommonTools.ParticleFlow.deltaBetaWeights_cff')
 #for mod in elecID_mod_ls: setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
 
 # slimmedElectronsUSER ( = slimmedElectrons + USER variables)
-#process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
-#  src = cms.InputTag('slimmedElectrons'),
+process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
+  src = cms.InputTag('slimmedElectrons'),
 #
 #  vmaps_bool = cms.PSet(
 #
@@ -752,11 +752,12 @@ process.load('CommonTools.ParticleFlow.deltaBetaWeights_cff')
 #
 #  vmaps_double = cms.vstring(el_isovals),
 #
-#  effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt'),
+  effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt'),
 #
 #  mva_GeneralPurpose = cms.string('ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values__user01'),
 #  mva_HZZ = cms.string('ElectronMVAEstimatorRun2Spring16HZZV1Values__user01'),
-#)
+)
+task.add(process.slimmedElectronsUSER)
 
 
 ### additional MET filters not given in MiniAOD
@@ -806,7 +807,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
         doElectrons = cms.bool(True),
         #doElectrons = cms.bool(False),
-        electron_source = cms.InputTag("slimmedElectrons"),
+        electron_source = cms.InputTag("slimmedElectronsUSER"),
         electron_IDtags = cms.vstring(
           # keys to be stored in UHH2 Electron class via the tag mechanism:
           # each string should correspond to a variable saved

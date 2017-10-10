@@ -21,6 +21,7 @@ git cms-addpkg RecoJets/JetAlgorithms
 git cms-addpkg DataFormats/JetReco
 git cms-addpkg PhysicsTools/JetMCAlgos
 git cms-addpkg RecoBTag
+git cms-addpkg RecoEgamma
 
 #sed -i "s|use_common_bge_for_rho_and_rhom|set_common_bge_for_rho_and_rhom|g" RecoJets/JetProducers/plugins/FastjetJetProducer.cc
 #sed -i "s|1.020|1.025|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml ## FASTJET-CONTRIB IS PART OF CMSSW 91X
