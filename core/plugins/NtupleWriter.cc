@@ -829,7 +829,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        for(size_t j=0; j<packed->size();j++){
 	 bool skip_particle = false;
 	 const pat::PackedGenParticle* iter = &(*packed)[j];
-	 if(iter->status()!=1) cout<<"iter->status() = "<<iter->status()<<endl;
+	 //	 if(iter->status()!=1) cout<<"iter->status() = "<<iter->status()<<endl;
 	 if(doAllGenParticlesPythia8){//for pythia8: store particles with status code, see http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
 	   if(iter->status()<2)
 	     skip_particle = true;
@@ -846,7 +846,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 	 if(skip_particle) continue;
 	 
-	 cout<<doAllGenParticlesPythia8<<" "<<doAllGenParticles<<" Particle stored!, iter->status() = "<<iter->status()<<endl;
+	 //	 cout<<doAllGenParticlesPythia8<<" "<<doAllGenParticles<<" Particle stored!, iter->status() = "<<iter->status()<<endl;
 	 index++;
 
 	 GenParticle genp;
