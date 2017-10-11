@@ -63,8 +63,8 @@ process.source = cms.Source("PoolSource",
   skipEvents = cms.untracked.uint32(0)
 )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300))
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10))
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000))
 
 # Grid-control changes:
@@ -840,6 +840,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         stablegenparticle_source = cms.InputTag("packedGenParticles"),
 #        doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
         doAllGenParticles = cms.bool(True), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
+        doAllGenParticlesPythia8 =  cms.bool(True), #set to true if you want to store all gen particles with pythia8 (see status codes in http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html)
         doGenJets = cms.bool(not useData),
         genjet_sources = cms.vstring("slimmedGenJets","slimmedGenJetsAK8","ca15GenJets"),
         genjet_ptmin = cms.double(10.0),

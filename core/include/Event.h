@@ -36,6 +36,7 @@ public:
   std::vector< TopJet >* topjets;
   std::vector< TopJet >* toppuppijets;
   MET* met;
+  MET* genmet;
     
   GenInfo* genInfo;
   std::vector< GenTopJet >* gentopjets;
