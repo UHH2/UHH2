@@ -59,6 +59,7 @@ class NtupleWriter : public edm::EDFilter {
       bool doPhotons;
       bool doGenInfo;
       bool doAllGenParticles;
+      bool doAllGenParticlesPythia8;
       bool doPV;
       bool doTrigger;
       bool runOnMiniAOD;
