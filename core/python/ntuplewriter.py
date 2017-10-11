@@ -712,9 +712,6 @@ load_elecPFMiniIso(process, 'elecPFMiniIsoSequencePFWGT', algo = 'PFWGT',
   isoval_list = el_isovals
 )
 
-#task.add(process.pfWeightedNeutralHadrons)
-#task.add(process.pfWeightedPhotons)
-#task.add(process.pfAllChargedParticles)
 for m in el_isovals:
   task.add(getattr(process,m))
   task.add(getattr(process,m.replace("Value","Deposit")))
