@@ -148,7 +148,7 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     const float eA  = effAreas_.getEffectiveArea(fabs(ele.superCluster()->eta()));
     ele.addUserFloat("EffArea", eA);
-    /*
+    
     if(!ele.hasUserFloat(mva_GeneralPurpose_)) throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaGeneralPurpose' not found";
     if(!ele.hasUserFloat(mva_HZZ_))   throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaHZZ' not found"; 
 
@@ -156,7 +156,7 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     const float HZZMVA   = ele.userFloat(mva_HZZ_);                                                                                                                                                                                                              
     ele.addUserFloat("mvaGeneralPurpose", GeneralPurposeMVA); 
     ele.addUserFloat("mvaHZZ"  ,   HZZMVA); 
-    */
+    
   }
 
   iEvent.put(std::move(newElecs));
