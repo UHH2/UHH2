@@ -199,6 +199,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenMET = iConfig.getParameter<bool>("doGenMET");
   doGenInfo = iConfig.getParameter<bool>("doGenInfo");
   doAllGenParticles = iConfig.getParameter<bool>("doAllGenParticles");
+  doAllGenParticlesPythia8  = iConfig.getParameter<bool>("doAllGenParticlesPythia8");
   doAllPFParticles = iConfig.getParameter<bool>("doAllPFParticles");
 
   // topjet configuration:
@@ -785,10 +786,26 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        iEvent.getByToken(stablegenparticle_token,packed);
 
        for(size_t j=0; j<packed->size();j++){
-
+	 bool skip_particle = false;
 	 const pat::PackedGenParticle* iter = &(*packed)[j];
-	 if(iter->status()!=1) continue;
+	 if(iter->status()!=1) cout<<"iter->status() = "<<iter->status()<<endl;
+	 if(doAllGenParticlesPythia8){//for pythia8: store particles with status code, see http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
+	   if(iter->status()<2)
+	     skip_particle = true;
+	 }
+	 else{
+	   if(iter->status()!=1)
+	     skip_particle = true;
+	 }
+	 // if(!doAllGenParticlesPythia8 && iter->status()!=1) //not pythia8: store all stable particles
+	 //   skip_particle = true;
+	 // else
+	 //   if(doAllGenParticlesPythia8 && iter->status()<2)  //
+	 //     skip_particle = true;
 
+	 if(skip_particle) continue;
+	 
+	 cout<<doAllGenParticlesPythia8<<" "<<doAllGenParticles<<" Particle stored!, iter->status() = "<<iter->status()<<endl;
 	 index++;
 
 	 GenParticle genp;
@@ -805,6 +822,15 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 genp.set_mother2(-1);
 	 genp.set_daughter1(-1);
 	 genp.set_daughter2(-1);
+
+	 int nm=iter->numberOfMothers();
+	 int nd=iter->numberOfDaughters();
+
+	 // if (nm>0) genp.set_mother1( iter->motherRef(0).key());
+	 // if (nm>1) genp.set_mother2( iter->motherRef(1).key());
+	 // if (nd>0) genp.set_daughter1( iter->daughterRef(0).key());
+	 // if (nd>1) genp.set_daughter2( iter->daughterRef(1).key());
+
 
 	 bool islepton = abs(iter->pdgId())>=11 && abs(iter->pdgId())<=16 ;
 	  //check, if particle has already been filled in previous routine from reco::GenParticleCollection 
