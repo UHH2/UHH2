@@ -21,6 +21,7 @@ void Event::clear(){
     genjets = 0;
     pfparticles = 0;
     met = 0;
+    genmet = 0;
     genInfo = 0;
     triggerResults = 0;
     triggerPrescales = 0;
