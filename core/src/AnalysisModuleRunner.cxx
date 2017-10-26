@@ -705,7 +705,7 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
 	  //DEBUG
 	  // std::cout<<"input declaration "<<bname<<std::endl;
 	  // if(bname=="triggerPrescales"){
-	  //   // std::cout<<"skipped triggerPrescales for input declaration"<<std::endl;
+	  //   std::cout<<"skipped triggerPrescales for input declaration"<<std::endl;
 	  //   continue;}
             auto branch = intree->GetBranch(bname.c_str());
             if(!branch){

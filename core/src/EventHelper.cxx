@@ -113,7 +113,7 @@ void EventHelper::event_read(){
         if(trigger){
             event->get_triggerResults() = &event->get(h_triggerResults);
 	    //DEBUG
-	    // if(!genjets) event->get_triggerPrescales() = &event->get(h_triggerPrescales);
+	    if(!genjets) event->get_triggerPrescales() = &event->get(h_triggerPrescales);
         }
     }
 }
