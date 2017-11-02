@@ -12,3 +12,5 @@ VLQToHiggsPairProd/*
 ZprimeSemiLeptonic/*
 Bacon_Jets/*
 JECDatabase/*
+JobConfig.dtd
+pydumb.py
