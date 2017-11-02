@@ -28,7 +28,9 @@ parser.add_option("--status", action="store_true", dest="status", default=False,
 parser.add_option("--retar", action="store_true", dest="retar", default=False, help="Recreate the job tarball.")
 parser.add_option("--ttbargencut", action="store_true", dest="ttbargencut", default=False, help="Apply ttbar generator cut")
 parser.add_option("--notar", action="store_true", dest="notar", default=False, help="Do not create tarball. For debugging configs.")
+parser.add_option("--quick", action="store_true", dest="quick", default=False, help="Enable quick status")
 parser.add_option("--memory", dest="memory", default="2048", help="Required memory for condor job in MiB")
+parser.add_option("--cpus", dest="cpus", default="1", help="Required number of cpus")
 
 parser.add_option("--append", dest="append", default="", help="Append string to job name")
 parser.add_option("--flavor", dest="flavor", default="", help="Apply flavor selection: bflavor, cflavor, lflavor")
@@ -72,7 +74,7 @@ if not os.path.isfile(options.configxml) and not os.path.isdir(options.jobname):
 while os.popen("voms-proxy-info").readlines() == []:
     print "Get a CMS proxy certificate"
     os.system("voms-proxy-init -voms cms")
-    
+
 def makejoblist(joblist):
     newjoblist=[]
     joblistarray=joblist.split(",")
@@ -123,8 +125,7 @@ def applyflavorselection(infile,flavor):
 
 def applyjesystematic(infile,jectype,jecdirection):
     infile=applypostfix(infile,jectype+jecdirection)
-    infile=additem(infile,"SystematicUncertainty",jectype)
-    infile=additem(infile,"SystematicVariation",jecdirection)
+    infile=additem(infile,jectype.lower()+"smear_direction",jectype)
     return infile
 
 def applyelesfsystematic(infile,direction):
@@ -189,7 +190,7 @@ def createcondortxt(options, jobnumber, jobdir):
 Executable = %s/configs/%s_%d.sh
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
-#Transfer_Input_Files = 
+#Transfer_Input_Files =
 Transfer_Output_Files = %s
 Output = %s/logs/%s_%d.stdout
 Error = %s/logs/%s_%d.stderr
@@ -198,7 +199,8 @@ notify_user = ${LOGNAME}@FNAL.GOV
 x509userproxy = %s
 Arguments = %s
 RequestMemory = %s
-Queue 1""" %(options.jobname, options.jobname, jobnumber, outputfiles, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, userproxy, os.getcwd(), options.memory)
+request_cpus = %s
+Queue 1""" %(options.jobname, options.jobname, jobnumber, outputfiles, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, jobdir, options.jobname, jobnumber, userproxy, os.getcwd(), options.memory, options.cpus)
     condorfile.close()
     os.chdir("../..")
 
@@ -216,13 +218,32 @@ xrdcp root://cmseos:1094//store/user/%s/%s.tgz .
 TARNAME=`/bin/ls *.tgz`
 tar -xzf $TARNAME
 rm $TARNAME
-SFRAMEDIR=`find . -type f -name setup.sh | xargs dirname`
+FASTJETDIR=`find $PWD -name fastjet-install -type d`
+SFRAMEDIR=`find $PWD -type f -name setup.sh | xargs dirname`
 cd $SFRAMEDIR
 scramv1 b ProjectRename
-eval `scramv1 runtime -sh`
+sed -i -e "s|/uscms_data/d2/drberry/ZPrimeSemiLeptonic_2016/CMSSW_8_0_24_patch1/test/fastjet-install|$FASTJETDIR|g"  ../../config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet.xml
+sed -i -e "s|/uscms_data/d2/drberry/ZPrimeSemiLeptonic_2016/CMSSW_8_0_24_patch1/test/fastjet-install|$FASTJETDIR|g"  ../../config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml
+scram setup fastjet
+scram setup fastjet-contrib
+eval `scram runtime -sh`
 source setup.sh
+make clean
+make
+echo "SFrame make: $?"
+cd $CMSSW_BASE/src/UHH2
+make clean
+cd ZprimeSemiLeptonic
+make clean
+cd ..
+make scram
+make sframe
+echo "UHH2 make: $?"
+cd ZprimeSemiLeptonic
+make
+echo "ZprimeSemiLeptonic make: $?"
 cd $WORKINGDIR
-ANALYSISDIR=CMSSW`echo ${1##*CMSSW}`/../../
+ANALYSISDIR=CMSSW`echo ${1##*CMSSW}`/../..
 cd $ANALYSISDIR
 FILENAME=%s_%d.xml
 cp %s/xml/${FILENAME} .
@@ -242,12 +263,13 @@ for FILE in `/bin/ls ${CYCLENAME}*.root`; do
     xrdcp -f $FILE $EOSDIR
     XRDCPEXITCODE=$?
     echo "xrdcp status: $XRDCPEXITCODE"
-#    COUNTER=0
-#    while [ "$XRDCPEXITCODE" != 0 -a "$COUNTER" -lt 5]; do
-#        xrdcp -f $FILE $EOSDIR
-#        XRDCPEXITCODE=$?
-#        let COUNTER+=1
-#    done
+    COUNTER=0
+    while [ "$XRDCPEXITCODE" != 0 -a "$COUNTER" -lt 5]; do
+        xrdcp -f $FILE $EOSDIR
+        XRDCPEXITCODE=$?
+        echo "xrdcp status: $XRDCPEXITCODE Attempt: $COUNTER"
+        let COUNTER+=1
+    done
     if [ $XRDCPEXITCODE -eq 0 ]; then rm $FILE; fi
 done""" %(options.output)
     os.chmod(scriptname, 493) #493==755 in python chmod
@@ -418,12 +440,12 @@ def getcondornode(jobid):
     return -1
 
 def checklog(jobname, jobnumber):
-    errorinfo = os.popen("egrep -i 'exit|break|exceed|error|traceback|aborted' "+jobname+"/logs/"+jobname+"_"+str(jobnumber)+".log").readline().strip("\n")
+    errorinfo = os.popen("egrep -i 'exit|break|exceed|error|traceback|aborted|SYSTEM_PERIODIC_REMOVE' "+jobname+"/logs/"+jobname+"_"+str(jobnumber)+".log").readline().strip("\n")
     errorline = errorinfo[errorinfo.find(")")+2:]
     return errorline
 
 def checkstdout(jobname, jobnumber, offset):
-    errors = os.popen('egrep -i "exit|break|exceed|error|traceback|aborted|E R R O R|find tree AnalysisTree|fatal" '+jobname+"/logs/"+jobname+"_"+str(jobnumber)+".stdout | sort -u").readlines()
+    errors = os.popen('egrep -i "exit|break|exceed|error|traceback|aborted|E R R O R|find tree AnalysisTree|fatal" '+jobname+"/logs/"+jobname+"_"+str(jobnumber)+".stdout | grep -v SError | sort -u").readlines()
     returnerror = ""
     if len(errors)>0:
         for error in errors: returnerror += offset+error
@@ -504,14 +526,16 @@ def getjobinfo(jobname,jobnumber,resubmitjobs,jobstatus,jobid):
         condorstatus=os.popen("condor_q -submitter $USER").read()
         if condorstatus.find(jobid) != -1:
             subnode = getcondornode(jobid)
-            if subnode != -1:
-                if subnode==currentnode: jobinfo = os.popen("condor_tail "+jobid+".0 | grep Processing | tail -1").readline().strip("\n")
-                else: jobinfo = os.popen("ssh "+subnode+" 'condor_tail "+jobid+".0' | grep Processing | tail -1").readline().strip("\n")
+            if subnode != -1 and not options.quick:
+                if subnode==currentnode: jobinfo = os.popen("condor_tail "+jobid+".0 | egrep 'Processing|Compiling' | tail -1").readline().strip("\n")
+                else: jobinfo = os.popen("ssh "+subnode+" 'condor_tail "+jobid+".0' | egrep 'Processing|Compiling' | tail -1").readline().strip("\n")
                 if jobinfo.find("Processing entry")!=-1:
                     numberator = float(jobinfo.split("(")[2].split(" ")[0])
                     denominator = float(jobinfo.split("(")[2].split(" ")[2])
                     jobinfo = " %.2f" %(numberator/denominator*100)+"% Complete"
+                elif jobinfo.find("Compiling")!=-1: jobinfo = " Compiling"
                 else: jobinfo = " "+jobinfo[jobinfo.find(":")+1:].strip()
+                                                
     if jobstatus=="Done" or jobstatus=="Error":
         stdouterror = checkstdout(jobname, jobnumber, offset)
         logerror = ""
