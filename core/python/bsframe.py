@@ -263,12 +263,13 @@ for FILE in `/bin/ls ${CYCLENAME}*.root`; do
     xrdcp -f $FILE $EOSDIR
     XRDCPEXITCODE=$?
     echo "xrdcp status: $XRDCPEXITCODE"
-#    COUNTER=0
-#    while [ "$XRDCPEXITCODE" != 0 -a "$COUNTER" -lt 5]; do
-#        xrdcp -f $FILE $EOSDIR
-#        XRDCPEXITCODE=$?
-#        let COUNTER+=1
-#    done
+    COUNTER=0
+    while [ "$XRDCPEXITCODE" != 0 -a "$COUNTER" -lt 5]; do
+        xrdcp -f $FILE $EOSDIR
+        XRDCPEXITCODE=$?
+        echo "xrdcp status: $XRDCPEXITCODE Attempt: $COUNTER"
+        let COUNTER+=1
+    done
     if [ $XRDCPEXITCODE -eq 0 ]; then rm $FILE; fi
 done""" %(options.output)
     os.chmod(scriptname, 493) #493==755 in python chmod
