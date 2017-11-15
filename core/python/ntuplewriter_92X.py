@@ -63,12 +63,13 @@ process.source = cms.Source("PoolSource",
                             fileNames=cms.untracked.vstring([
                                 #'file:////nfs/dust/cms/user/hinzmann/6214AEE4-751A-E711-8645-0025905A6056.root'
                                 #            '/store/data/Run2017B/JetHT/MINIAOD/23Jun2017-v1/00000/004DBDB2-C859-E711-8DD0-002590D0B042.root'
-                                '/store/data/Run2017B/JetHT/MINIAOD/22Jun2017-v1/00000/00063668-8858-E711-9C49-001E67792486.root'
+                                # '/store/data/Run2017B/JetHT/MINIAOD/22Jun2017-v1/00000/00063668-8858-E711-9C49-001E67792486.root'
+                                '/store/data/Run2017D/JetHT/MINIAOD/PromptReco-v1/000/302/031/00000/24C14AB9-488F-E711-A2D5-02163E019D41.root'
                             ]),
                             skipEvents=cms.untracked.uint32(0)
                             )
 
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(5000))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -759,7 +760,7 @@ process.load('CommonTools.ParticleFlow.deltaBetaWeights_cff')
 # elecID_mod_ls = [
 #  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff',
 #  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronHLTPreselecition_Summer16_V1_cff',
-#  'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff',
+#  'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV6_0cff',
 #  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
 #  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_HZZ_V1_cff',
 #]
@@ -1039,6 +1040,18 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     'hltSinglePFJet400',
                                     'hltSinglePFJet450',
                                     'hltSinglePFJet500',
+
+                                    'hltDiPFJetAve40',
+                                    'hltDiPFJetAve60',
+                                    'hltDiPFJetAve80',
+                                    'hltDiPFJetAve140',
+                                    'hltDiPFJetAve200',
+                                    'hltDiPFJetAve260',
+                                    'hltDiPFJetAve320',
+                                    'hltDiPFJetAve400',
+                                    'hltDiPFJetAve450',
+                                    'hltDiPFJetAve500',
+
                                 ),
 
                                 #  'hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q',        # HLT_Mu45_eta2p1_v*

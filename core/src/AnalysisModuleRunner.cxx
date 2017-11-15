@@ -751,7 +751,7 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
 
 void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SError) {
     //DEBUG
-  std::cout<<"AnalysisModuleRunner::ExecuteEvent"<<std::endl;
+  // std::cout<<"AnalysisModuleRunner::ExecuteEvent"<<std::endl;
   
   
     // read in the event from the input tree:
