@@ -71,7 +71,7 @@ test_JER::test_JER(uhh2::Context& ctx){
   topjet_IDcleaner.reset(new JetCleaner(ctx, jetID));
   topjet_corrector.reset(new TopJetCorrector(ctx, JEC_AK8));
   topjet_subjet_corrector.reset(new SubJetCorrector(ctx, JEC_AK4));
-  if(isMC) topjetER_smearer.reset(new GenericJetResolutionSmearer(ctx, "topjets", "topjetsGEN", false, JERSmearing::SF_13TeV_2016, "Spring16_25nsV10_MC_PtResolution_AK8PFchs.txt"));
+  if(isMC) topjetER_smearer.reset(new GenericJetResolutionSmearer(ctx, "topjets", "topjetsGEN", false, JERSmearing::SF_13TeV_2016));//, "Spring16_25nsV10_MC_PtResolution_AK8PFchs.txt"));
   ////
 }
 

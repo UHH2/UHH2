@@ -10,3 +10,7 @@ core/python/__init__.py
 *.local
 VLQToHiggsPairProd/*
 ZprimeSemiLeptonic/*
+Bacon_Jets/*
+JECDatabase/*
+JobConfig.dtd
+pydumb.py
