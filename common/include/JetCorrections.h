@@ -4,11 +4,6 @@
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/JetMETObjects/interface/JetCorrectionUncertainty.h"
-#include "TRandom.h"
-#include "TFormula.h"
-
-#include <iostream> 
-#include <fstream> 
 
 class FactorizedJetCorrector;
 
@@ -36,12 +31,105 @@ namespace JERFiles {
     extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Summer16_23Sep2016_V4_L1RC_AK4PFchs_MC; 
-
-
-
 }
 
-void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const uhh2::Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0);
+/// namespace to define some useful filename constants to be used for jet energy corrections
+namespace JERFiles {
+    //Summer16_03Feb2017_V3_noRes needed for L2Res people
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_BCD_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_EF_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_G_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_H_L123_noRes_AK4PFchs_DATA;
+
+    //Summer16_03Feb2017_V3 --> Official JEC recommendation for Moriond17
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_BCD_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_EF_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_G_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_H_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_BCD_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_EF_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_G_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_H_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V1_L123_AK4PFchs_MC;
+    extern const std::vector<std::string> Summer16_03Feb2017_V1_L123_AK8PFchs_MC;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_BCD_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_EF_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_G_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V3_H_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V1_L1RC_AK4PFchs_MC; 
+}
+
+/// namespace to define some useful filename constants to be used for jet energy corrections
+namespace JERFiles {
+    //Summer16_03Feb2017_V4_noRes needed for L2Res people
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_BCD_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_EF_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_G_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_H_L123_noRes_AK4PFchs_DATA;
+
+    //Summer16_03Feb2017_V4 --> Official JEC recommendation for Moriond17
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_BCD_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_EF_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_G_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_H_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_BCD_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_EF_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_G_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_H_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_BCD_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_EF_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_G_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V4_H_L1RC_AK4PFchs_DATA;
+ }
+
+/// namespace to define some useful filename constants to be used for jet energy corrections
+namespace JERFiles {
+    //Summer16_03Feb2017_V5_noRes needed for L2Res people
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_BCD_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_EF_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_G_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_H_L123_noRes_AK4PFchs_DATA;
+
+    //Summer16_03Feb2017_V5 --> Official JEC recommendation for Moriond17
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_BCD_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_EF_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_G_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_H_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_BCD_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_EF_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_G_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_H_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_BCD_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_EF_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_G_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V5_H_L1RC_AK4PFchs_DATA;
+ }
+
+/// namespace to define some useful filename constants to be used for jet energy corrections
+namespace JERFiles {
+    //Summer16_03Feb2017_V6_noRes needed for L2Res people
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_BCD_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_EF_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_G_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_H_L123_noRes_AK4PFchs_DATA;
+
+    //Summer16_03Feb2017_V6 --> Official JEC recommendation for Moriond17
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_BCD_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_EF_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_G_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_H_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_BCD_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_EF_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_G_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_H_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_L123_AK4PFchs_MC;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_L123_AK8PFchs_MC;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_BCD_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_EF_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_G_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_H_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_03Feb2017_V6_L1RC_AK4PFchs_MC;
+ }
 
 /** \brief (Re-)Correct jets according to the corrections in the passed txt files
  * 
@@ -65,7 +153,7 @@ public:
     
     virtual ~JetCorrector();
     
-protected:
+private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     std::unique_ptr<FactorizedJetCorrector> corrector_L1RC;
     
@@ -252,48 +340,10 @@ namespace JERSmearing {
   typedef std::vector<std::array<float, 4> > SFtype1;
 
   extern const SFtype1 SF_13TeV_2016;
+  extern const SFtype1 SF_13TeV_2016_default;
+  extern const SFtype1 SF_13TeV_2016_03Feb2017;
 
 }
-
-
-
-////
-
-/** \brief generalization of JetResolutionSmearer (see the latter for additional info)
- *         to apply jet-energy-resolution smearing on non-default jet collections
- *
- *  options parsed from Context:
- *   - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing correction
- *
- */
-class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
-
- public:
-  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const bool allow_met_smear=true,
-                                       const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016, const TString ResolutionFileName="Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt");
-  virtual ~GenericJetResolutionSmearer() {m_resfile.close();}
-
-  virtual bool process(uhh2::Event&) override;
-
-  template<typename RJ, typename GJ> void apply_JER_smearing(std::vector<RJ>&, const std::vector<GJ>&, LorentzVector&, float radius, float rho);
-
- private:
-  uhh2::Event::Handle<std::vector<Jet> >       h_recjets_;
-  uhh2::Event::Handle<std::vector<Particle> >  h_genjets_;
-  uhh2::Event::Handle<std::vector<TopJet> >    h_rectopjets_;
-  uhh2::Event::Handle<std::vector<GenTopJet> > h_gentopjets_;
-
-  int direction = 0; // -1 = down, +1 = up, 0 = nominal
-  JERSmearing::SFtype1 JER_SFs_;
-  TString m_ResolutionFileName;
-
-  std::ifstream m_resfile;
-
-  float getResolution(float eta, float rho, float pt);
-  TFormula* res_formula;
-};
-
-
 
 /** \brief Smear the jet four-momenta in MC to match the resolution in data
  *
@@ -313,16 +363,99 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
  * Please note that the JetResolutionSmearer does not sort the (re-)corrected jets by pt;
  * you might want to do that before running algorithms / plotting which assume that.
  */
-class JetResolutionSmearer: public uhh2::AnalysisModule{
+class JetResolutionSmearer: public uhh2::AnalysisModule {
 public:
-    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016);
+    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016_03Feb2017);
 
     virtual bool process(uhh2::Event & event) override;
 
     virtual ~JetResolutionSmearer();
 private:
 
-    GenericJetResolutionSmearer* m_gjrs;
+    int direction = 0; // -1 = down, +1 = up, 0 = nominal
+    JERSmearing::SFtype1 JER_SFs_;
 };
+
+////
+
+/** \brief generalization of JetResolutionSmearer (see the latter for additional info)
+ *         to apply jet-energy-resolution smearing on non-default jet collections
+ *
+ *  options parsed from Context:
+ *   - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing correction
+ *
+ */
+class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
+
+ public:
+  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const bool allow_met_smear=true,
+                                       const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016);
+  virtual ~GenericJetResolutionSmearer() {}
+
+  virtual bool process(uhh2::Event&) override;
+
+  template<typename RJ, typename GJ> void apply_JER_smearing(std::vector<RJ>&, const std::vector<GJ>&, LorentzVector&);
+
+ private:
+  uhh2::Event::Handle<std::vector<Jet> >       h_recjets_;
+  uhh2::Event::Handle<std::vector<Particle> >  h_genjets_;
+  uhh2::Event::Handle<std::vector<TopJet> >    h_rectopjets_;
+  uhh2::Event::Handle<std::vector<GenTopJet> > h_gentopjets_;
+
+  int direction = 0; // -1 = down, +1 = up, 0 = nominal
+  JERSmearing::SFtype1 JER_SFs_;
+};
+
+template<typename RJ, typename GJ>
+void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, const std::vector<GJ>& gen_jets, LorentzVector& met){
+
+  for(unsigned int i=0; i<rec_jets.size(); ++i){
+
+    auto& jet = rec_jets.at(i);
+
+    // find next genjet:
+    auto closest_genjet = closestParticle(jet, gen_jets);
+    // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt:
+    if(closest_genjet == nullptr || uhh2::deltaR(*closest_genjet, jet) > 0.3) continue;
+    const float genpt = closest_genjet->pt();
+    if(genpt < 15.) continue;
+
+    LorentzVector jet_v4 = jet.v4();
+
+    const float recopt = jet_v4.pt();
+    const float abseta = fabs(jet_v4.eta());
+
+    int ieta(-1);
+    for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
+
+      const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
+      const float max_eta =       JER_SFs_.at(idx)  .at(0);
+
+      if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break;}
+    }
+    if(ieta < 0) {
+      std::cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << std::endl;
+      std::cout << "         no JER smearing is applied." << std::endl;
+      continue;
+    }
+
+    float c;
+    if     (direction ==  0) c = JER_SFs_.at(ieta).at(1);
+    else if(direction ==  1) c = JER_SFs_.at(ieta).at(2);
+    else if(direction == -1) c = JER_SFs_.at(ieta).at(3);
+    else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid value for JER 'direction' (must be 0, +1 or -1): "+std::to_string(direction));
+
+    const float new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
+    jet_v4 *= new_pt / recopt;
+
+    float factor_raw = jet.JEC_factor_raw();
+    factor_raw *= recopt/new_pt;
+
+    jet.set_JEC_factor_raw(factor_raw);
+    jet.set_v4(jet_v4);
+  }
+
+  return;
+}
 
 //// -----------------------------------------------------------------

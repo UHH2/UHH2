@@ -112,7 +112,7 @@ void EventHelper::event_read(){
         if(genjets) event->genjets = &event->get(h_genjets);
         if(trigger){
             event->get_triggerResults() = &event->get(h_triggerResults);
-	    event->get_triggerPrescales() = &event->get(h_triggerPrescales);
+	    if(!genjets) event->get_triggerPrescales() = &event->get(h_triggerPrescales); //FIXME: the if(!genjets) is needed to run 2016 MC with 2017 AnalysisModules
         }
     }
 }
