@@ -744,12 +744,7 @@ JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> &
 }
     
 bool JetCorrector::process(uhh2::Event & event){
-  // cout<<"in JetCorrector::process\n";
-  cout<<event.jets<<endl;
     assert(event.jets);
-    //DEBUG
-    // cout<<"after assert\n";
-    //apply jet corrections
     for(auto & jet : *event.jets){
       correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
@@ -888,18 +883,12 @@ JetLeptonCleaner::JetLeptonCleaner(uhh2::Context & ctx, const std::vector<std::s
 }
 
 bool JetLeptonCleaner::process(uhh2::Event & event){
-  cout<<"JetLeptonCleaner::process: before assert\n";
     assert(event.jets);
-    //DEBUG
-    cout<<"after assert\n";
     if(event.muons){
-      cout<<"mu case\n";
         for(const auto & mu : *event.muons){
             if(mu_id && !(mu_id(mu, event))) continue;
             for(auto & jet : *event.jets){
-	      cout<<"loop over jets\n";
                 if(deltaR(jet, mu) < drmax && jet.muonMultiplicity() > 0){
-	      cout<<"mu and jet overlap\n";		  
                     auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
                     // note that muon energy fraction as stored in the jet refers to the raw jet energy.
                     double muon_energy_in_jet = jet_p4_raw.E() * jet.muonEnergyFraction();
@@ -935,13 +924,11 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
         }
     }
     if(event.electrons){
-      cout<<"el case\n";
-        for(const auto & ele : *event.electrons){
+      for(const auto & ele : *event.electrons){
             if(ele_id && !(ele_id(ele, event))) continue;
             for(auto & jet : *event.jets){
                 if(deltaR(jet, ele) < drmax && jet.electronMultiplicity() > 0){
-		  cout<<"el and jet overlap\n";
-                    auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
+		  auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
                     double electron_energy_in_jet = jet_p4_raw.E() * jet.chargedEmEnergyFraction();
                     double new_electron_energy_in_jet = electron_energy_in_jet - ele.energy();
                     
