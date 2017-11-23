@@ -1,8 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-# isDebug = True
 isDebug = False
-#useData = False
 useData = True
 if useData:
     #    met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean","slimmedMETsEGClean","slimmedMETsUncorrected")
@@ -610,7 +608,6 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 )
 """
 
-
 # for JEC cluster AK8 jets with lower pt (compare to miniAOD)
 addJetCollection(process, labelName='AK8PFPUPPI', jetSource=cms.InputTag('ak8PuppiJets'), algo='AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'), pfCandidates=cms.InputTag('packedPFCandidates'),
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
@@ -624,7 +621,6 @@ addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJe
                  muSource=cms.InputTag('slimmedMuons'),
                  elSource=cms.InputTag('slimmedElectrons')
                  )
-
 
 # Higgs tagging commissioning
 
