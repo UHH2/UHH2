@@ -401,8 +401,10 @@ void SFrameContext::begin_event(Event & event) {
     auto ientry = input_tree->GetReadEntry();
     assert(ientry >= 0);
     for (const auto & name_bi : event_input_bname2bi) {
-        name_bi.second->branch->GetEntry(ientry);
-        EventAccess_::set_validity(event, name_bi.second->ti, name_bi.second->handle, true);
+      const string & bname = name_bi.first;
+      // if(bname=="triggerPrescales") continue; //FIXME: uncomment to run 2016 MC with 2017 AnalysisModules
+      name_bi.second->branch->GetEntry(ientry);
+      EventAccess_::set_validity(event, name_bi.second->ti, name_bi.second->handle, true);
     }
 }
 
@@ -429,7 +431,7 @@ void SFrameContext::setup_output(Event & event) {
     assert(outtree);
     for (auto & name_bi : event_output_bname2bi) {
         auto & bi = *name_bi.second;
-        bi.addr = EventAccess_::get(event, bi.ti, bi.handle, false, false);
+	bi.addr = EventAccess_::get(event, bi.ti, bi.handle, false, false);
         tree_branch(outtree, name_bi.first, bi.addr, &bi.addr, bi.ti);
     }
     // write metadata as string to the output.
@@ -627,6 +629,7 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
     
     // 2. prepare reading additional branches from input:
     additional_branches = split(context->get("additionalBranches", ""));
+
     first_file = true;
     setup_output_done = false;
 }
@@ -636,7 +639,7 @@ void AnalysisModuleRunner::BeginInputData(const SInputData& in) throw (SError) {
 }
 
 void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
-    // fill trigger names map:
+  // fill trigger names map:
     if (pimpl->m_readTrigger) {
         std::map<int, std::vector<std::string>> run2triggernames;
         // find triggernames for all runs in this file:
@@ -673,7 +676,6 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
         tnb->SetAddress(oldaddr_tnb);
         pimpl->eh->set_infile_triggernames(move(run2triggernames));
     }
-    
     // setup additional branches, if not done yet:
     if(pimpl->first_file && !pimpl->additional_branches.empty()){
         TTree* intree = GetInputTree(pimpl->context->event_treename.c_str());
@@ -681,6 +683,11 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
             throw runtime_error("Did not find input tree '" + pimpl->context->event_treename + "' in input file");
         }
         for(const auto & bname : pimpl->additional_branches){
+	  //FIXME: uncomment to run 2016 MC with 2017 AnalysisModules
+	  // std::cout<<"input declaration "<<bname<<std::endl;
+	  // if(bname=="triggerPrescales"){
+	  //   std::cout<<"skipped triggerPrescales for input declaration"<<std::endl;
+	  //   continue;}
             auto branch = intree->GetBranch(bname.c_str());
             if(!branch){
   	        m_logger  << WARNING << "While setting up additional branches: did not find branch '" << bname << "' in input tree" << SLogger::endmsg;
@@ -695,7 +702,7 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
             pimpl->context->do_declare_event_output_handle(ti, bname, handle);
         }
     }
-    
+
     // In case this is the first file in the dataset: construct AnalysisModule now.
     // This is done now (and not earlier, e.g. in BeginInputData) because only now we know
     // the metadata and the additional branches (the latter is needed to fix the event structure).
@@ -709,18 +716,17 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
         }
         pimpl->first_file = false;
     }
-    
     pimpl->context->begin_input_file(*pimpl->event);
 }
 
 void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SError) {
     // read in the event from the input tree:
     pimpl->context->begin_event(*pimpl->event);
+    
     // copy to Event members and setup trigger:
     if(!pimpl->m_userEventFormat){
         pimpl->eh->event_read();
     }
-
     uhh2::Event & event = *pimpl->event;
     
     // setup weight depending on the "use_sframe_weight" configuration option:
@@ -736,9 +742,7 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
 	      event.weight *= event.genInfo->weights().at(i);
 	  }
     }
-
     bool keep = pimpl->analysis->process(event);
-
     if (!keep) {
         throw SError(SError::SkipEvent);
     }
