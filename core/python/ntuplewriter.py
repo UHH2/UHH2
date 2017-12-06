@@ -59,8 +59,7 @@ if isDebug:
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-#            'file:////nfs/dust/cms/user/hinzmann/6214AEE4-751A-E711-8645-0025905A6056.root'
-            '/store/data/Run2017B/SingleMuon/MINIAOD/PromptReco-v1/000/297/046/00000/32AC3177-7A56-E711-BE34-02163E019D73.root'
+        '/store/data/Run2017C/JetHT/MINIAOD/17Nov2017-v1/20000/00791B22-DCD3-E711-9BF9-001E67396E64.root'
   ]),
   skipEvents = cms.untracked.uint32(0)
 )
