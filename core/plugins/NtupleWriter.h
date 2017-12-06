@@ -20,8 +20,8 @@
 #include <memory>
 
 // Jet Cluster for HOTVR & XCone by Alex and Dennis
-#include "UHH2/core/include/UniversalJetCluster.h"
-#include "UHH2/core/include/UniversalGenJetCluster.h"
+//#include "UHH2/core/include/UniversalJetCluster.h"
+//#include "UHH2/core/include/UniversalGenJetCluster.h"
 
 namespace uhh2 {
     class CMSSWContext;

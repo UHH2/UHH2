@@ -14,16 +14,18 @@ cd CMSSW_9_4_1/src
 eval `scramv1 runtime -sh`
 git cms-init
 
-# Update FastJet and contribs for HOTVR and UniversalJetCluster
-sed -i "s|3.1.0|3.2.1|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet.xml
-sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/fastjet/3.2.1|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc630/fastjet-install|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet.xml
-sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/fastjet-contrib/1.026|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc630/fastjet-install|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib.xml
-sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/fastjet-contrib/1.026|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc630/fastjet-install|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib-archive.xml
-scram setup fastjet
-scram setup fastjet-contrib
-scram setup fastjet-contrib-archive
+#git cms-addpkg RecoJets/JetProducers
 
-scram b clean
+# Update FastJet and contribs for HOTVR and UniversalJetCluster
+#sed -i "s|3.1.0|3.2.1|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet.xml
+#sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/fastjet/3.2.1|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc630/fastjet-install|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet.xml
+#sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/fastjet-contrib/1.026|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc630/fastjet-install|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib.xml
+#sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/fastjet-contrib/1.026|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc630/fastjet-install|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib-archive.xml
+#scram setup fastjet
+#scram setup fastjet-contrib
+#scram setup fastjet-contrib-archive
+
+#scram b clean
 scram b -j 20
 cd $CMSSW_BASE/src
 git clone -b Run2_94X_v1 https://github.com/UHH2/UHH2.git

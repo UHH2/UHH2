@@ -1282,6 +1282,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    print_times(timer, "trigger");
 
    // ------------- HOTVR and XCone Jets  -------------
+   /* Disable HOTVR/XCone until FastJet mismatch can be solved
    if(doHOTVR || doXCone)
      {
        // get PFParticles
@@ -1351,7 +1352,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 }
        print_times(timer, "genHOTVR"); 
      }
-   
+   */ 
 
    // * done filling the event; call the AnalysisModule if configured:
    bool keep = true;
