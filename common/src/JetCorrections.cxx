@@ -739,6 +739,122 @@ const std::vector<std::string> JERFiles::Summer16_03Feb2017_V7_L1RC_AK8PFchs_MC 
   "JECDatabase/textFiles/Summer16_03Feb2017_V7_MC/Summer16_03Feb2017_V7_MC_L1RC_AK8PFchs.txt"
 };
 
+/* ++++++++++++++ Summer16_07Aug2017_V1_noRes needed for L2Res people +++++++++++++++ */
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_BCD_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L3Absolute_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_EF_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L3Absolute_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_G_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L3Absolute_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_H_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L3Absolute_AK4PFchs.txt",
+};
+
+
+/*****************Summer16_07Aug2017_V1 --> Official JEC recommendation forLegacy2016 **********************************/
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_BCD_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L2L3Residual_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_EF_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L2L3Residual_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_G_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L2L3Residual_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_H_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L2L3Residual_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_BCD_L123_AK8PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L3Absolute_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L2L3Residual_AK8PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_L123_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Summer16_07Aug2017_V1_MC/Summer16_07Aug2017_V1_MC_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017_V1_MC/Summer16_07Aug2017_V1_MC_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017_V1_MC/Summer16_07Aug2017_V1_MC_L3Absolute_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_L123_AK8PFchs_MC = {
+  "JECDatabase/textFiles/Summer16_07Aug2017_V1_MC/Summer16_07Aug2017_V1_MC_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017_V1_MC/Summer16_07Aug2017_V1_MC_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017_V1_MC/Summer16_07Aug2017_V1_MC_L3Absolute_AK8PFchs.txt",
+};
+
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_EF_L123_AK8PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L3Absolute_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L2L3Residual_AK8PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_G_L123_AK8PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L3Absolute_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L2L3Residual_AK8PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_H_L123_AK8PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L3Absolute_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L2L3Residual_AK8PFchs.txt",
+};
+
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_BCD_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V1_DATA/Summer16_07Aug2017BCD_V1_DATA_L1RC_AK4PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_EF_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V1_DATA/Summer16_07Aug2017EF_V1_DATA_L1RC_AK4PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_G_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017G_V1_DATA/Summer16_07Aug2017G_V1_DATA_L1RC_AK4PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_H_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017H_V1_DATA/Summer16_07Aug2017H_V1_DATA_L1RC_AK4PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V1_L1RC_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Summer16_07Aug2017_V1_MC/Summer16_07Aug2017_V1_MC_L1RC_AK4PFchs.txt"
+};
 
 
 
