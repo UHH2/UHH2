@@ -971,6 +971,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         genparticle_source = cms.InputTag("prunedPrunedGenParticles"),
         stablegenparticle_source = cms.InputTag("packedGenParticles"),
         doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
+        doAllGenParticlesPythia8 = cms.bool(False),
         doGenJets = cms.bool(not useData),
         genjet_sources = cms.vstring("slimmedGenJets","slimmedGenJetsAK8"), #"ca15GenJets"),
         genjet_ptmin = cms.double(10.0),
