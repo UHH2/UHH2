@@ -172,25 +172,32 @@ task.add(process.prunedPrunedGenParticles)
 process.chs = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedPFCandidates"), cut = cms.string("fromPV(0) > 0"))
 task.add(process.chs)
 
-process.ca8CHSJets  = ca8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = fatjet_ptmin)
+# process.ca8CHSJets  = ca8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = fatjet_ptmin)
 process.ak8CHSJets  = ak8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = 10.)
 task.add(process.ak8CHSJets)
 process.ak8CHSJetsFat  = ak8PFJets.clone (src = 'chs', doAreaFastjet = True, jetPtMin = fatjet_ptmin)
 task.add(process.ak8CHSJetsFat)
-process.ca15CHSJets = process.ca8CHSJets.clone (rParam = 1.5)
+# process.ca15CHSJets = process.ca8CHSJets.clone (rParam = 1.5)
 
-from RecoJets.JetProducers.ak4PFJetsPruned_cfi import ak4PFJetsPruned
+# from RecoJets.JetProducers.ak4PFJetsPruned_cfi import ak4PFJetsPruned
+ak4PFJetsPruned = ak4PFJets.clone(
+    SubJetParameters,
+    usePruning = cms.bool(True),
+    useExplicitGhosts = cms.bool(True),
+    writeCompound = cms.bool(True),
+    jetCollInstanceName=cms.string("SubJets")
+)
 process.ca8CHSJetsPruned = ak4PFJetsPruned.clone(rParam = 0.8, jetAlgorithm = "CambridgeAachen", doAreaFastjet = True, src = 'chs', jetPtMin = fatjet_ptmin)
 
-from RecoJets.JetProducers.ak5PFJetsFiltered_cfi import ak5PFJetsFiltered
-process.ca15CHSJetsFiltered = ak5PFJetsFiltered.clone(
-        src = 'chs',
-        jetAlgorithm = cms.string("CambridgeAachen"),
-        rParam       = cms.double(1.5),
-        writeCompound = cms.bool(True),
-        doAreaFastjet = cms.bool(True),
-        jetPtMin = cms.double(fatjet_ptmin)
-)
+# from RecoJets.JetProducers.ak5PFJetsFiltered_cfi import ak5PFJetsFiltered
+# process.ca15CHSJetsFiltered = ak5PFJetsFiltered.clone(
+#         src = 'chs',
+#         jetAlgorithm = cms.string("CambridgeAachen"),
+#         rParam       = cms.double(1.5),
+#         writeCompound = cms.bool(True),
+#         doAreaFastjet = cms.bool(True),
+#         jetPtMin = cms.double(fatjet_ptmin)
+# )
 
 from RecoJets.JetProducers.AnomalousCellParameters_cfi import *  
 from RecoJets.JetProducers.PFJetParameters_cfi import *          
@@ -258,11 +265,11 @@ from RecoJets.Configuration.RecoPFJets_cff import ak8PFJetsCHS
 process.ak8CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('chs'), jetPtMin = fatjet_ptmin)
 task.add(process.ak8CHSJetsSoftDrop)
 process.ca15CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('chs'), jetPtMin = fatjet_ptmin, jetAlgorithm = cms.string("CambridgeAachen"), rParam = 1.5, R0 = 1.5, zcut = cms.double(0.2), beta = cms.double(1.0))
-process.ca15CHSJetsSoftDropforsub = process.ca8CHSJets.clone (rParam = 1.5, jetPtMin = fatjet_ptmin, zcut = cms.double(0.2), beta = cms.double(1.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(1.5))
+# process.ca15CHSJetsSoftDropforsub = process.ca8CHSJets.clone (rParam = 1.5, jetPtMin = fatjet_ptmin, zcut = cms.double(0.2), beta = cms.double(1.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(1.5))
 process.ak8CHSJetsSoftDropforsub = process.ak8CHSJetsFat.clone (rParam = 0.8, jetPtMin = fatjet_ptmin, zcut = cms.double(0.1), beta = cms.double(0.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(0.8))
 task.add(process.ak8CHSJetsSoftDropforsub)
 
-from RecoJets.JetProducers.ak4PFJetsPruned_cfi import ak4PFJetsPruned
+# from RecoJets.JetProducers.ak4PFJetsPruned_cfi import ak4PFJetsPruned
 #Note low pt threshold as jets currently not stored but used just to derived pruned mass
 process.ak8CHSJetsPruned = ak4PFJetsPruned.clone(rParam = 0.8, doAreaFastjet = True, src = 'chs', jetPtMin = 70)
 task.add(process.ak8CHSJetsPruned)
@@ -282,11 +289,11 @@ process.ca15PuppiJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('p
 process.ak8PuppiJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('puppi'), jetPtMin = fatjet_ptmin)
 task.add(process.ak8PuppiJetsSoftDrop)
 
-process.ca15PuppiJetsSoftDropforsub = process.ca8CHSJets.clone (rParam = 1.5, jetPtMin = fatjet_ptmin, zcut = cms.double(0.2), beta = cms.double(1.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(1.5), src = cms.InputTag('puppi'))
+# process.ca15PuppiJetsSoftDropforsub = process.ca8CHSJets.clone (rParam = 1.5, jetPtMin = fatjet_ptmin, zcut = cms.double(0.2), beta = cms.double(1.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(1.5), src = cms.InputTag('puppi'))
 process.ak8PuppiJetsSoftDropforsub = process.ak8CHSJetsFat.clone (rParam = 0.8, jetPtMin = fatjet_ptmin, zcut = cms.double(0.1), beta = cms.double(0.0), useSoftDrop = cms.bool(True), useExplicitGhosts = cms.bool(True), R0 = cms.double(0.8), src = cms.InputTag('puppi'))
 task.add(process.ak8PuppiJetsSoftDropforsub)
 
-process.ca15PuppiJets = process.ca8CHSJets.clone (rParam = 1.5, src='puppi')
+# process.ca15PuppiJets = process.ca8CHSJets.clone (rParam = 1.5, src='puppi')
 
 process.ak8PuppiJets  = ak8PFJets.clone (src = 'puppi', doAreaFastjet = True, jetPtMin = 10.)
 task.add(process.ak8PuppiJets)
@@ -295,7 +302,8 @@ process.ak8PuppiJetsFat = process.ak8CHSJets.clone (src='puppi')
 task.add(process.ak8PuppiJetsFat)
 
 # copy all the jet collections above; just use 'puppi' instead of 'chs' as input:
-for name in ['ca8CHSJets', 'ca15CHSJets', 'ca8CHSJetsPruned', 'ca15CHSJetsFiltered']:#, 'cmsTopTagCHS', 'hepTopTagCHS']:
+# for name in ['ca8CHSJets', 'ca15CHSJets', 'ca8CHSJetsPruned', 'ca15CHSJetsFiltered']:#, 'cmsTopTagCHS', 'hepTopTagCHS']:
+for name in ['ca8CHSJetsPruned']:
     setattr(process, name.replace('CHS', 'Puppi'), getattr(process, name).clone(src = cms.InputTag('puppi')))
 
 ###############################################
@@ -480,17 +488,17 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
 
         
 #add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered',genjets_name = lambda s: s.replace('CHS', 'Gen'))
+#add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered',genjets_name = lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
 #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsSoftDrop', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsSoftDrop', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
+#add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsSoftDrop', genjets_name = lambda s: s.replace('CHS', 'Gen'))
+#add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsSoftDrop', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 add_fatjets_subjets(process, 'ak8PuppiJetsFat', 'ak8PuppiJetsSoftDrop', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 #B-tagging not needed for pruned jets, they are just used to get the mass
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'), btagging = False)
-add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'), btagging = False)
+#add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'), btagging = False)
 #add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsPruned', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 #add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsFiltered', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 #add_fatjets_subjets(process, 'ca8PuppiJets', 'cmsTopTagPuppi', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
@@ -966,7 +974,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
         doAllGenParticlesPythia8 =  cms.bool(False), #set to true if you want to store all gen particles with pythia8 (see status codes in http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
         doGenJets = cms.bool(not useData),
-        genjet_sources = cms.vstring("slimmedGenJets","slimmedGenJetsAK8","ca15GenJets"),
+        genjet_sources = cms.vstring("slimmedGenJets","slimmedGenJetsAK8"), #"ca15GenJets"),
         genjet_ptmin = cms.double(10.0),
         genjet_etamax = cms.double(5.0),
                             
