@@ -55,9 +55,11 @@ class NtupleWriter : public edm::EDFilter {
       bool doGenJetsWithParts;
       bool doGenTopJets;
       bool doMET;
+      bool doGenMET;
       bool doPhotons;
       bool doGenInfo;
       bool doAllGenParticles;
+      bool doAllGenParticlesPythia8;
       bool doPV;
       bool doTrigger;
       bool runOnMiniAOD;
@@ -112,6 +114,9 @@ class NtupleWriter : public edm::EDFilter {
 
       std::vector<edm::EDGetToken> met_tokens;
       std::vector<MET> met;
+
+      std::vector<edm::EDGetToken> genmet_tokens;
+      std::vector<MET> genmet; 
 
       std::vector<edm::EDGetToken> pv_tokens;
       std::vector<std::vector<PrimaryVertex>> pvs;

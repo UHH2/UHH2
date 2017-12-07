@@ -599,14 +599,16 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
         eh->setup_photons(context->get("PhotonCollection", ""));
         eh->setup_jets(context->get("JetCollection", ""));
         eh->setup_topjets(context->get("TopJetCollection", ""));
+        eh->setup_toppuppijets(context->get("TopPuppiJetCollection", ""));
         eh->setup_met(context->get("METName", ""));
-
+       
         bool is_mc = context->get("dataset_type") == "MC";
         if (is_mc) {
             eh->setup_genInfo(context->get("GenInfoName", "genInfo"));
             eh->setup_genjets(context->get("GenJetCollection", ""));
             eh->setup_gentopjets(context->get("GenTopJetCollection", ""));
             eh->setup_genparticles(context->get("GenParticleCollection", ""));
+	    eh->setup_genmet(context->get("genMETName", ""));
         }
 
         m_readTrigger = string2bool(context->get("readTrigger", "true"));

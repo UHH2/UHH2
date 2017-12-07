@@ -192,11 +192,11 @@ bool MCScaleVariation::process(Event & event){
   if(i_mu_r == 0 && i_mu_f == 0) return true;
   else if(i_mu_r == 0 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(1);
   else if(i_mu_r == 0 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(2);
-                                      
+
   else if(i_mu_r == 1 && i_mu_f == 0) syst_weight = event.genInfo->systweights().at(3);
   else if(i_mu_r == 1 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(4);
   else if(i_mu_r == 1 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(5);
-                                      
+
   else if(i_mu_r == 2 && i_mu_f == 0) syst_weight = event.genInfo->systweights().at(6);
   else if(i_mu_r == 2 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(7);
   else if(i_mu_r == 2 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(8);
@@ -216,7 +216,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
                                      const std::string & weight_postfix,
 				     bool etaYaxis,
                                      const std::string & sys_uncert,
-                                     const std::string & muons_handle_name): 
+                                     const std::string & muons_handle_name):
   h_muons_            (ctx.get_handle<std::vector<Muon>>(muons_handle_name)),
   h_muon_weight_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix)),
   h_muon_weight_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_up")),
@@ -236,7 +236,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
   if (sf_file.IsZombie()) {
     throw runtime_error("Scale factor file for muons not found: " + sf_file_path);
   }
-  
+
   sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/pt_abseta_ratio").c_str()));
   if (!sf_hist_.get()) {
     sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/ptetadata").c_str()));
@@ -271,13 +271,13 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
 
 bool MCMuonScaleFactor::process(uhh2::Event & event) {
 
-  if (!sf_hist_) {  
+  if (!sf_hist_) {
     event.set(h_muon_weight_,       1.);
     event.set(h_muon_weight_up_,    1.);
     event.set(h_muon_weight_down_,  1.);
     return true;
   }
- 
+
   const auto & muons = event.get(h_muons_);
   float weight = 1., weight_up = 1., weight_down = 1.;
   for (const auto & mu : muons) {
@@ -313,7 +313,7 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
     }
 
   }
-  
+
 
   event.set(h_muon_weight_,       weight);
   event.set(h_muon_weight_up_,    weight_up);
@@ -333,7 +333,7 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
 
 bool MCMuonScaleFactor::process_onemuon(uhh2::Event & event, int i) {
 
-  if (!sf_hist_) {  
+  if (!sf_hist_) {
     event.set(h_muon_weight_,       1.);
     event.set(h_muon_weight_up_,    1.);
     event.set(h_muon_weight_down_,  1.);
@@ -356,30 +356,30 @@ bool MCMuonScaleFactor::process_onemuon(uhh2::Event & event, int i) {
         pt=pt_max_-0.0001;
         out_of_range = true;
      }
-     
+
      int bin;
      if(etaYaxis_)
         bin       = sf_hist_->FindFixBin(pt, eta);
      else
         bin       = sf_hist_->FindFixBin(eta, pt);
-     
+
      float w       = sf_hist_->GetBinContent(bin);
      float err     = sf_hist_->GetBinError(bin);
      float err_tot = sqrt(err*err + pow(w*sys_error_factor_, 2));
      //take twice the uncertainty if the pT is outside the measured pT range
      if(out_of_range) err_tot*=2;
-     
+
      weight      *= w;
      weight_up   *= w + err_tot;
      weight_down *= w - err_tot;
-     
+
   }
-  
+
 
   event.set(h_muon_weight_,       weight);
   event.set(h_muon_weight_up_,    weight_up);
   event.set(h_muon_weight_down_,  weight_down);
-  
+
   if (sys_direction_ == 1) {
      event.weight *= weight_up;
   } else if (sys_direction_ == -1) {
@@ -397,7 +397,7 @@ MCMuonTrkScaleFactor::MCMuonTrkScaleFactor(uhh2::Context & ctx,
                                      float sys_error_percantage,
                                      const std::string & weight_postfix,
                                      const std::string & sys_uncert,
-                                     const std::string & muons_handle_name): 
+                                     const std::string & muons_handle_name):
   h_muons_            (ctx.get_handle<std::vector<Muon>>(muons_handle_name)),
   h_muontrk_weight_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix)),
   h_muontrk_weight_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_up")),
@@ -444,7 +444,7 @@ MCMuonTrkScaleFactor::MCMuonTrkScaleFactor(uhh2::Context & ctx,
 
 bool MCMuonTrkScaleFactor::process(uhh2::Event & event) {
 
-  // if (!sf_hist_) {  
+  // if (!sf_hist_) {
     event.set(h_muontrk_weight_,       1.);
     event.set(h_muontrk_weight_up_,    1.);
     event.set(h_muontrk_weight_down_,  1.);
@@ -478,7 +478,7 @@ bool MCMuonTrkScaleFactor::process(uhh2::Event & event) {
   event.set(h_muontrk_weight_,       weight);
   event.set(h_muontrk_weight_up_,    weight_up);
   event.set(h_muontrk_weight_down_,  weight_down);
-  
+
   if (sys_direction_ == 1) {
     event.weight *= weight_up;
   } else if (sys_direction_ == -1) {
@@ -486,7 +486,7 @@ bool MCMuonTrkScaleFactor::process(uhh2::Event & event) {
   } else {
     event.weight *= weight;
   }
-  
+
   return true;
 }
 
@@ -497,7 +497,7 @@ MCElecScaleFactor::MCElecScaleFactor(uhh2::Context & ctx,
                                      float sys_error_percantage,
                                      const std::string & weight_postfix,
                                      const std::string & sys_uncert,
-                                     const std::string & elecs_handle_name): 
+                                     const std::string & elecs_handle_name):
   h_elecs_            (ctx.get_handle<std::vector<Electron>>(elecs_handle_name)),
   h_elec_weight_      (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix)),
   h_elec_weight_up_   (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_up")),
@@ -516,7 +516,7 @@ MCElecScaleFactor::MCElecScaleFactor(uhh2::Context & ctx,
   if (sf_file.IsZombie()) {
     throw runtime_error("Scale factor file for electrons not found: " + sf_file_path);
   }
-  
+
   sf_hist_.reset((TH2*) sf_file.Get("EGamma_SF2D"));
   if (!sf_hist_.get()) {
     throw runtime_error("Electron scale factor histogram not found in file");
@@ -537,7 +537,7 @@ MCElecScaleFactor::MCElecScaleFactor(uhh2::Context & ctx,
 
 bool MCElecScaleFactor::process(uhh2::Event & event) {
 
-  if (!sf_hist_) {  
+  if (!sf_hist_) {
     event.set(h_elec_weight_,       1.);
     event.set(h_elec_weight_up_,    1.);
     event.set(h_elec_weight_down_,  1.);
@@ -694,12 +694,12 @@ bool MCBTagScaleFactor::process(Event & event) {
   event.set(h_btag_weight_udsg_up_,   weight_udsg_up);
   event.set(h_btag_weight_udsg_down_, weight_udsg_down);
 
-       if (sysType_ == "up")        {event.weight *= weight_up;} 
-  else if (sysType_ == "down")      {event.weight *= weight_down;} 
-  else if (sysType_ == "up_bc")     {event.weight *= weight_bc_up;} 
-  else if (sysType_ == "down_bc")   {event.weight *= weight_bc_down;} 
-  else if (sysType_ == "up_udsg")   {event.weight *= weight_udsg_up;} 
-  else if (sysType_ == "down_udsg") {event.weight *= weight_udsg_down;} 
+       if (sysType_ == "up")        {event.weight *= weight_up;}
+  else if (sysType_ == "down")      {event.weight *= weight_down;}
+  else if (sysType_ == "up_bc")     {event.weight *= weight_bc_up;}
+  else if (sysType_ == "down_bc")   {event.weight *= weight_bc_down;}
+  else if (sysType_ == "up_udsg")   {event.weight *= weight_udsg_up;}
+  else if (sysType_ == "down_udsg") {event.weight *= weight_udsg_down;}
   else                              {event.weight *= weight;}
 
   return true;
@@ -769,7 +769,7 @@ std::tuple<float, float, float> MCBTagScaleFactor::get_weight_btag(const vector<
 
   }}
 
-  float wtbtag = (dataNoTag * dataTag ) / ( mcNoTag * mcTag ); 
+  float wtbtag = (dataNoTag * dataTag ) / ( mcNoTag * mcTag );
   float wtbtagErrBC = fabs(err1+err2) * wtbtag;
   float wtbtagErrUDSG = fabs(err3+err4) * wtbtag;
 
@@ -793,7 +793,7 @@ std::tuple<float, float, float> MCBTagScaleFactor::get_weight_btag(const vector<
 std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, int flav) {
 
   auto btagentry_flav = flav == 5 ? BTagEntry::FLAV_B : (
-                            flav == 4 ? BTagEntry::FLAV_C : 
+                            flav == 4 ? BTagEntry::FLAV_C :
                                 BTagEntry::FLAV_UDSG);
 
   auto sf_bounds = calib_->min_max_pt(btagentry_flav, abs_eta);
@@ -833,6 +833,190 @@ std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, 
   return std::make_pair(SF, SFerr);
 }
 
+MCCSVv2ShapeSystematic::MCCSVv2ShapeSystematic(uhh2::Context & ctx,
+                                               const std::string & jets_handle_name,
+                                               const std::string & sysType,
+                                               const std::string & measType,
+                                               const std::string & weights_name_postfix,
+                                               const std::string & xml_calib_name):
+  h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
+  sysType_(sysType),
+  h_weight_csv_central (ctx.declare_event_output<float>("weight_csv_central"+weights_name_postfix)),
+  h_weight_csv_jesup (ctx.declare_event_output<float>("weight_csv_jesup"+weights_name_postfix)),
+  h_weight_csv_jesdown (ctx.declare_event_output<float>("weight_csv_jesdown"+weights_name_postfix)),
+  h_weight_csv_lfup (ctx.declare_event_output<float>("weight_csv_lfup"+weights_name_postfix)),
+  h_weight_csv_lfdown (ctx.declare_event_output<float>("weight_csv_lfdown"+weights_name_postfix)),
+  h_weight_csv_hfup (ctx.declare_event_output<float>("weight_csv_hfup"+weights_name_postfix)),
+  h_weight_csv_hfdown (ctx.declare_event_output<float>("weight_csv_hfdown"+weights_name_postfix)),
+  h_weight_csv_hfstats1up (ctx.declare_event_output<float>("weight_csv_hfstats1up"+weights_name_postfix)),
+  h_weight_csv_hfstats1down (ctx.declare_event_output<float>("weight_csv_hfstats1down"+weights_name_postfix)),
+  h_weight_csv_hfstats2up (ctx.declare_event_output<float>("weight_csv_hfstats2up"+weights_name_postfix)),
+  h_weight_csv_hfstats2down (ctx.declare_event_output<float>("weight_csv_hfstats2down"+weights_name_postfix)),
+  h_weight_csv_lfstats1up (ctx.declare_event_output<float>("weight_csv_lfstats1up"+weights_name_postfix)),
+  h_weight_csv_lfstats1down (ctx.declare_event_output<float>("weight_csv_lfstats1down"+weights_name_postfix)),
+  h_weight_csv_lfstats2up (ctx.declare_event_output<float>("weight_csv_lfstats2up"+weights_name_postfix)),
+  h_weight_csv_lfstats2down (ctx.declare_event_output<float>("weight_csv_lfstats2down"+weights_name_postfix)),
+  h_weight_csv_cferr1up (ctx.declare_event_output<float>("weight_csv_cferr1up"+weights_name_postfix)),
+  h_weight_csv_cferr1down (ctx.declare_event_output<float>("weight_csv_cferr1down"+weights_name_postfix)),
+  h_weight_csv_cferr2up (ctx.declare_event_output<float>("weight_csv_cferr2up"+weights_name_postfix)),
+  h_weight_csv_cferr2down (ctx.declare_event_output<float>("weight_csv_cferr2down"+weights_name_postfix))
+{
+  auto dataset_type = ctx.get("dataset_type");
+  bool is_mc = dataset_type == "MC";
+  if (!is_mc) {
+    cout << "Warning: MCCSVv2ShapeSystematic will not have an effect on "
+         <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    return;
+  }
+
+  BTagCalibration calib_csvv2("csvv2", ctx.get(xml_calib_name));
+  reader.reset(new BTagCalibrationReader(BTagEntry::OP_RESHAPING,"central",
+                                         {"up_jes","down_jes",
+                                             "up_lf","down_lf",
+                                             "up_hf","down_hf",
+                                             "up_hfstats1","down_hfstats1",
+                                             "up_hfstats2","down_hfstats2",
+                                             "up_lfstats1","down_lfstats1",
+                                             "up_lfstats2","down_lfstats2",
+                                             "up_cferr1","down_cferr1",
+                                             "up_cferr2","down_cferr2"}));
+  reader->load(calib_csvv2,BTagEntry::FLAV_B,measType);
+  reader->load(calib_csvv2,BTagEntry::FLAV_C,measType);
+  reader->load(calib_csvv2,BTagEntry::FLAV_UDSG,measType);
+
+}
+
+bool MCCSVv2ShapeSystematic::process(Event & event) {
+
+  if (event.isRealData) {
+    event.set(h_weight_csv_central,1.);
+    event.set(h_weight_csv_jesup,1.);
+    event.set(h_weight_csv_jesdown,1.);
+    event.set(h_weight_csv_lfup,1.);
+    event.set(h_weight_csv_lfdown,1.);
+    event.set(h_weight_csv_hfup,1.);
+    event.set(h_weight_csv_hfdown,1.);
+    event.set(h_weight_csv_hfstats1up,1.);
+    event.set(h_weight_csv_hfstats1down,1.);
+    event.set(h_weight_csv_hfstats2up,1.);
+    event.set(h_weight_csv_hfstats2down,1.);
+    event.set(h_weight_csv_lfstats1up,1.);
+    event.set(h_weight_csv_lfstats1down,1.);
+    event.set(h_weight_csv_lfstats2up,1.);
+    event.set(h_weight_csv_lfstats2down,1.);
+    event.set(h_weight_csv_cferr1up,1.);
+    event.set(h_weight_csv_cferr1down,1.);
+    event.set(h_weight_csv_cferr2up,1.);
+    event.set(h_weight_csv_cferr2down,1.);
+    return true;
+  }
+
+  float weight_central = 1.0;
+  float weight_jesup = 1.0;
+  float weight_jesdown = 1.0;
+  float weight_lfup = 1.0;
+  float weight_lfdown = 1.0;
+  float weight_hfup = 1.0;
+  float weight_hfdown = 1.0;
+  float weight_hfstats1up = 1.0;
+  float weight_hfstats1down = 1.0;
+  float weight_hfstats2up = 1.0;
+  float weight_hfstats2down = 1.0;
+  float weight_lfstats1up = 1.0;
+  float weight_lfstats1down = 1.0;
+  float weight_lfstats2up = 1.0;
+  float weight_lfstats2down = 1.0;
+  float weight_cferr1up = 1.0;
+  float weight_cferr1down = 1.0;
+  float weight_cferr2up = 1.0;
+  float weight_cferr2down = 1.0;
+
+  const auto & jets = event.get(h_jets_);
+  for (size_t ijet=0; ijet < 2; ijet++) {
+    Jet jet = jets.at(ijet);
+    float jet_pt = jet.pt();
+    float jet_eta = jet.eta();
+    float jet_csv = jet.btag_combinedSecondaryVertex();
+    if (jet_csv < 0.0) jet_csv = -0.05;
+    if (jet_csv > 1.0) jet_csv = 1.0;
+
+    BTagEntry::JetFlavor jet_flavor = BTagEntry::FLAV_UDSG;
+    if (abs(jet.flavor()) == 5) jet_flavor = BTagEntry::FLAV_B;
+    else if (abs(jet.flavor()) == 4) jet_flavor = BTagEntry::FLAV_C;
+
+    if( jet_pt > 20.0 && fabs(jet_eta) < 2.4) {
+      weight_central *= reader->eval_auto_bounds("central",jet_flavor, jet_eta, jet_pt, jet_csv);
+      if (jet_flavor == BTagEntry::FLAV_B) {
+        weight_jesup *= reader->eval_auto_bounds("up_jes",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_jesdown *= reader->eval_auto_bounds("down_jes",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfup *= reader->eval_auto_bounds("up_lf",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfdown *= reader->eval_auto_bounds("down_lf",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfstats1up *= reader->eval_auto_bounds("up_hfstats1",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfstats1down *= reader->eval_auto_bounds("down_hfstats1",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfstats2up *= reader->eval_auto_bounds("up_hfstats2",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfstats2down *= reader->eval_auto_bounds("down_hfstats2",jet_flavor, jet_eta, jet_pt, jet_csv);
+      }
+      if (jet_flavor == BTagEntry::FLAV_C) {
+        weight_cferr1up *= reader->eval_auto_bounds("up_cferr1",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_cferr1down *= reader->eval_auto_bounds("down_cferr1",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_cferr2up *= reader->eval_auto_bounds("up_cferr2",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_cferr2down *= reader->eval_auto_bounds("down_cferr2",jet_flavor, jet_eta, jet_pt, jet_csv);
+      }
+      if (jet_flavor == BTagEntry::FLAV_UDSG) {
+        weight_jesup *= reader->eval_auto_bounds("up_jes",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_jesdown *= reader->eval_auto_bounds("down_jes",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfup *= reader->eval_auto_bounds("up_hf",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_hfdown *= reader->eval_auto_bounds("down_hf",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfstats1up *= reader->eval_auto_bounds("up_lfstats1",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfstats1down *= reader->eval_auto_bounds("down_lfstats1",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfstats2up *= reader->eval_auto_bounds("up_lfstats2",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_lfstats2down *= reader->eval_auto_bounds("down_lfstats2",jet_flavor, jet_eta, jet_pt, jet_csv);
+      }
+    }
+  }
+
+  event.set(h_weight_csv_central, weight_central);
+  event.set(h_weight_csv_jesup, weight_jesup);
+  event.set(h_weight_csv_jesdown, weight_jesdown);
+  event.set(h_weight_csv_lfup, weight_lfup);
+  event.set(h_weight_csv_lfdown, weight_lfdown);
+  event.set(h_weight_csv_hfup, weight_hfup);
+  event.set(h_weight_csv_hfdown, weight_hfdown);
+  event.set(h_weight_csv_hfstats1up, weight_hfstats1up);
+  event.set(h_weight_csv_hfstats1down, weight_hfstats1down);
+  event.set(h_weight_csv_hfstats2up, weight_hfstats2up);
+  event.set(h_weight_csv_hfstats2down, weight_hfstats2down);
+  event.set(h_weight_csv_lfstats1up, weight_lfstats1up);
+  event.set(h_weight_csv_lfstats1down, weight_lfstats1down);
+  event.set(h_weight_csv_lfstats2up, weight_lfstats2up);
+  event.set(h_weight_csv_lfstats2down, weight_lfstats2down);
+  event.set(h_weight_csv_cferr1up, weight_cferr1up);
+  event.set(h_weight_csv_cferr1down, weight_cferr1down);
+  event.set(h_weight_csv_cferr2up, weight_cferr2up);
+  event.set(h_weight_csv_cferr2down, weight_cferr2down);
+
+  if (sysType_ == "jesup") {event.weight *= weight_jesup;}
+  else if (sysType_ == "jesdown") {event.weight *= weight_jesdown;}
+  else if (sysType_ == "lfup") {event.weight *= weight_lfup;}
+  else if (sysType_ == "lfdown") {event.weight *= weight_lfdown;}
+  else if (sysType_ == "hfup") {event.weight *= weight_hfup;}
+  else if (sysType_ == "hfdown") {event.weight *= weight_hfdown;}
+  else if (sysType_ == "hfstats1up") {event.weight *= weight_hfstats1up;}
+  else if (sysType_ == "hfstats1down") {event.weight *= weight_hfstats1down;}
+  else if (sysType_ == "hfstats2up") {event.weight *= weight_hfstats2up;}
+  else if (sysType_ == "hfstats2down") {event.weight *= weight_hfstats2down;}
+  else if (sysType_ == "lfstats1up") {event.weight *= weight_lfstats1up;}
+  else if (sysType_ == "lfstats1down") {event.weight *= weight_lfstats1down;}
+  else if (sysType_ == "lfstats2up") {event.weight *= weight_lfstats2up;}
+  else if (sysType_ == "lfstats2down") {event.weight *= weight_lfstats2down;}
+  else if (sysType_ == "cferr1up") {event.weight *= weight_cferr1up;}
+  else if (sysType_ == "cferr1down") {event.weight *= weight_cferr1down;}
+  else if (sysType_ == "cferr2up") {event.weight *= weight_cferr2up;}
+  else if (sysType_ == "cferr2down") {event.weight *= weight_cferr2down;}
+  else {event.weight *= weight_central;}
+
+  return true;
+}
 
 TauEffVariation::TauEffVariation(Context & ctx){
 
@@ -850,7 +1034,7 @@ TauEffVariation::TauEffVariation(Context & ctx){
 }
 bool TauEffVariation::process(Event & event){
   if (event.isRealData) return true;
-  
+
   std::vector<Tau> real_taus;
   for(unsigned int j=0; j<event.taus->size(); ++j)
     {
@@ -898,7 +1082,7 @@ TauChargeVariation::TauChargeVariation(Context & ctx){
 }
 bool TauChargeVariation::process(Event & event){
   if (event.isRealData) return true;
-  
+
   for(unsigned int j=0; j<event.taus->size(); ++j)
     {
       Tau tau = event.taus->at(j);
@@ -916,7 +1100,7 @@ bool TauChargeVariation::process(Event & event){
 		event.weight *= 0.98;
 	      }
 	    }
-	  } 
+	  }
 	}
     }
   return true;

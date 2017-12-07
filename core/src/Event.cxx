@@ -15,11 +15,13 @@ void Event::clear(){
     pvs = 0;
     jets = 0;
     topjets = 0;
+    toppuppijets = 0;
     gentopjets = 0;
     genparticles = 0;
     genjets = 0;
     pfparticles = 0;
     met = 0;
+    genmet = 0;
     genInfo = 0;
     triggerResults = 0;
     triggerNames_currentrun.clear();

@@ -54,7 +54,9 @@ public:
     void setup_photons(const std::string & bname);
     void setup_jets(const std::string & bname);
     void setup_topjets(const std::string & bname);
+    void setup_toppuppijets(const std::string & bname);
     void setup_met(const std::string & bname);
+    void setup_genmet(const std::string & bname);
     
     void setup_genInfo(const std::string & bname);
     void setup_gentopjets(const std::string & bname);
@@ -81,7 +83,7 @@ private:
     
     Event * event;
     
-    bool pvs, electrons, muons, taus, photons, jets, topjets, met;
+    bool pvs, electrons, muons, taus, photons, jets, topjets, toppuppijets, met, genmet;
     bool genInfo, gentopjets, genparticles, genjets;
     bool trigger;
     bool first_event_read;
@@ -103,7 +105,9 @@ private:
     Event::Handle<std::vector<Photon>> h_photons;
     Event::Handle<std::vector<Jet>> h_jets;
     Event::Handle<std::vector<TopJet>> h_topjets;
+    Event::Handle<std::vector<TopJet>> h_toppuppijets;
     Event::Handle<MET> h_met;
+    Event::Handle<MET> h_genmet;
     
     Event::Handle<GenInfo> h_genInfo;
     Event::Handle<std::vector<GenTopJet>> h_gentopjets;

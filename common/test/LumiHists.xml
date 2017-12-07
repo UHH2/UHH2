@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
-<!ENTITY DATA_SingleMu SYSTEM "../../common/datasets/RunII_50ns_v2/DATA_SingleMu.xml">
-<!ENTITY DATA_SingleEle SYSTEM "../../common/datasets/RunII_50ns_v2/DATA_SingleEle.xml">
-<!ENTITY DATA_JetHT SYSTEM "../../common/datasets/RunII_50ns_v2/DATA_JetHT.xml">
+<!ENTITY DATA_SingleEle SYSTEM "../../common/datasets/RunII_80X_v3_EGReg/DATA_SingleElectron_Run2016F_03Feb_EGReg.xml">
 ]>
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
    <Library Name="libTestSUHH2common"/>
@@ -14,7 +12,7 @@
             <InputTree Name="AnalysisTree" /> 
         </InputData>
 -->
-	<InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="SingleEle" Cacheable="False">
+	<InputData Lumi="1" NEventsMax="100000" Type="DATA" Version="SingleEle" Cacheable="True">
 	    &DATA_SingleEle;
             <InputTree Name="AnalysisTree" /> 
         </InputData>  
@@ -28,8 +26,8 @@
         <UserConfig>
             <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
 	    <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
-            <Item Name="lumi_file" Value="/nfs/dust/cms/user/peiffer/NtupleWriter/Ntuples/RunII_v2/Lumifile.root" />
-            <Item Name="lumihists_lumi_per_bin" Value="1"/>
+            <Item Name="lumi_file" Value="/afs/desy.de/user/p/peiffer/xxl-af-cms/CMSSW_8_0_24_patch1/src/UHH2/common/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.root" />
+            <Item Name="lumihists_lumi_per_bin" Value="1000"/>
 
             <Item Name="AnalysisModule" Value="TestLumiHists" /> 
 	</UserConfig>

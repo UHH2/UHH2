@@ -195,8 +195,10 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenJetsWithParts = iConfig.getParameter<bool>("doGenJetsWithParts");
   doPhotons = iConfig.getParameter<bool>("doPhotons");
   doMET = iConfig.getParameter<bool>("doMET");
+  doGenMET = iConfig.getParameter<bool>("doGenMET");
   doGenInfo = iConfig.getParameter<bool>("doGenInfo");
   doAllGenParticles = iConfig.getParameter<bool>("doAllGenParticles");
+  doAllGenParticlesPythia8  = iConfig.getParameter<bool>("doAllGenParticlesPythia8");
   doAllPFParticles = iConfig.getParameter<bool>("doAllPFParticles");
 
   // topjet configuration:
@@ -220,13 +222,18 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   if(doElectrons){
       using uhh2::NtupleWriterElectrons;
       auto electron_source = iConfig.getParameter<edm::InputTag>("electron_source");
-      
-      NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
-      cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("electron_IDtags");
-      assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
-      cfg.pv_src = pv_sources[0];
-      writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true, save_lepton_keys));
-  }
+      //      auto electron_sources = iConfig.getParameter<std::vector<std::string> >("electron_sources");
+      //      foar(size_t i=0; i< electron_sources.size(); ++i){
+	
+	NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_source, electron_source.label());
+	//	NtupleWriterElectrons::Config cfg(*context, consumesCollector(), electron_sources[i], electron_source[i].label());
+	cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("electron_IDtags");
+	assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
+	cfg.pv_src = pv_sources[0];
+	writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true, save_lepton_keys));
+	//}  
+
+}
   if(doMuons){
       using uhh2::NtupleWriterMuons;
       auto muon_sources = iConfig.getParameter<std::vector<std::string> >("muon_sources");
@@ -496,9 +503,14 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 
   if(doPhotons){
     auto photon_sources = iConfig.getParameter<std::vector<std::string> >("photon_sources");
+    /*    auto ph_source = iConfig.getParameter<std::vector<std::string> >("photon_sources");
+    std::vector<std::string> photon_sources;    
+    photon_sources.push_back(ph_source); */
+
     phs.resize(photon_sources.size());
     for(size_t j=0; j< photon_sources.size(); ++j){
-      photon_tokens.push_back(consumes<vector<pat::PhotonCollection>>(photon_sources[j]));
+      //      photon_tokens.push_back(consumes<vector<pat::PhotonCollection>>(photon_sources[j]));
+      photon_tokens.push_back(consumes<vector<pat::Photon>>(photon_sources[j]));
       branch(tr, photon_sources[j].c_str(), "std::vector<Photon>", &phs[j]);
     }
     if(!photon_sources.empty()){
@@ -517,6 +529,14 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
     if(!met_sources.empty()){
         event->met = &met[0];
+    }
+  }
+  if(doGenMET){
+    auto genmet_sources = iConfig.getParameter<std::vector<std::string> >("genmet_sources");
+    genmet.resize(genmet_sources.size());
+    for(size_t j=0; j< genmet_sources.size(); ++j){  
+      genmet_tokens.push_back(consumes<vector<pat::MET>>(genmet_sources[j]));
+      branch(tr, (genmet_sources[j]+"_GenMET").c_str(), "MET", &genmet[j]);
     }
   }
   if(doPV){
@@ -807,10 +827,26 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        iEvent.getByToken(stablegenparticle_token,packed);
 
        for(size_t j=0; j<packed->size();j++){
-
+	 bool skip_particle = false;
 	 const pat::PackedGenParticle* iter = &(*packed)[j];
-	 if(iter->status()!=1) continue;
+	 //	 if(iter->status()!=1) cout<<"iter->status() = "<<iter->status()<<endl;
+	 if(doAllGenParticlesPythia8){//for pythia8: store particles with status code, see http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
+	   if(iter->status()<2)
+	     skip_particle = true;
+	 }
+	 else{
+	   if(iter->status()!=1)
+	     skip_particle = true;
+	 }
+	 // if(!doAllGenParticlesPythia8 && iter->status()!=1) //not pythia8: store all stable particles
+	 //   skip_particle = true;
+	 // else
+	 //   if(doAllGenParticlesPythia8 && iter->status()<2)  //
+	 //     skip_particle = true;
 
+	 if(skip_particle) continue;
+	 
+	 //	 cout<<doAllGenParticlesPythia8<<" "<<doAllGenParticles<<" Particle stored!, iter->status() = "<<iter->status()<<endl;
 	 index++;
 
 	 GenParticle genp;
@@ -827,6 +863,15 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 genp.set_mother2(-1);
 	 genp.set_daughter1(-1);
 	 genp.set_daughter2(-1);
+
+	 int nm=iter->numberOfMothers();
+	 int nd=iter->numberOfDaughters();
+
+	 // if (nm>0) genp.set_mother1( iter->motherRef(0).key());
+	 // if (nm>1) genp.set_mother2( iter->motherRef(1).key());
+	 // if (nd>0) genp.set_daughter1( iter->daughterRef(0).key());
+	 // if (nd>1) genp.set_daughter2( iter->daughterRef(1).key());
+
 
 	 bool islepton = abs(iter->pdgId())>=11 && abs(iter->pdgId())<=16 ;
 	  //check, if particle has already been filled in previous routine from reco::GenParticleCollection 
@@ -1108,6 +1153,26 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
             }
        }
       }
+   }
+   
+   if(doGenMET){
+     for(size_t j=0; j< genmet_tokens.size(); ++j){
+       edm::Handle< std::vector<pat::MET> > genmet_handle;
+       iEvent.getByToken(genmet_tokens[j], genmet_handle);
+       const std::vector<pat::MET>& pat_genmets = *genmet_handle;
+       if(pat_genmets.size()!=1){
+         std::cout<< "WARNING: number of GenMETs = " << pat_genmets.size() <<", should be 1" << std::endl;
+       }
+       else{
+	 pat::MET pat_genmet = pat_genmets[0];
+         genmet[j].set_pt(pat_genmet.genMET()->pt());
+         genmet[j].set_phi(pat_genmet.genMET()->phi());
+         genmet[j].set_mEtSig(pat_genmet.genMET()->mEtSig());
+	 //uncorrected MET is equal to normal MET for GenMET
+	 genmet[j].set_uncorr_pt(pat_genmet.genMET()->pt());
+         genmet[j].set_uncorr_phi(pat_genmet.genMET()->phi());
+       }
+     }
    }
    
    print_times(timer, "met");
