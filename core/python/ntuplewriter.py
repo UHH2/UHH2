@@ -132,7 +132,7 @@ process.load(
 if useData:
     process.GlobalTag.globaltag = '94X_dataRun2_ReReco_EOY17_v2'
 else:
-    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
+    process.GlobalTag.globaltag = '94X_mc2017_realistic_v10'
 
 
 from RecoJets.Configuration.RecoPFJets_cff import *
