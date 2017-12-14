@@ -1,0 +1,7 @@
+<!ENTITY JetHT_RunB_17Nov2017_v1 SYSTEM  "../../common/datasets/JetHT_RunB_17Nov2017_v1.xml">
+
+<InputData Lumi="62988012" NEventsMax="-1" Type="Data" Version="JetHT_RunB_17Nov2017_v1" Cacheable="True">
+    &JetHT_RunB_17Nov2017_v1;
+    <InputTree Name="AnalysisTree" />
+    <OutputTree Name="AnalysisTree" />
+</InputData>
