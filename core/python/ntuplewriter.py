@@ -130,7 +130,7 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load(
     'Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 if useData:
-    process.GlobalTag.globaltag = '92X_dataRun2_Jun23ReReco_PixelCommissioning'
+    process.GlobalTag.globaltag = '94X_dataRun2_ReReco_EOY17_v2'
 else:
     process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
 
