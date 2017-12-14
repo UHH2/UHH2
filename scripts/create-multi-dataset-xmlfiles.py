@@ -85,7 +85,6 @@ for basename in basenames:
         config_lines.append(conf_template % (n_events, basename, basename))
         print '%s: %d events' % (basename, n_events)
 
-
-with open('TEMPLATE_CONFIG%s.xml' % postfix, 'w') as out:
+with open('TEMPLATE_CONFIG_%s.xml' % basename + postfix, 'w') as out:
     out.writelines(entity_lines)
     out.writelines(config_lines)
