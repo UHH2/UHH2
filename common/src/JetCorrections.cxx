@@ -734,6 +734,29 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_2016 = {
   {{5.0, 1.160, 1.189, 1.131}},
 };
 
+
+// https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution [13TeV JER measurement]
+//New JER files from Marek (8 Aug 2017)
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_2016_03Feb2017 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.5, 1.093, 1.201, 0.983}},
+  {{0.8, 1.144, 1.259, 1.029}},
+  {{1.1, 1.087, 1.202, 0.972}},
+  {{1.3, 1.119, 1.234, 1.006}},
+  {{1.7, 1.093, 1.218, 0.996}},
+  {{1.9, 1.072, 1.199, 0.977}},
+  {{2.1, 1.122, 1.266, 1.030}},
+  {{2.3, 1.127, 1.305, 0.997}},
+  {{2.5, 1.206, 1.370, 1.102}},
+  {{2.8, 1.340, 1.485, 1.197}},
+  {{3.0, 1.761, 1.957, 1.551}},
+  {{3.2, 1.317, 1.452, 1.182}},
+  {{5.0, 1.140, 1.270, 1.018}},
+};
+
 ////
 
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf){
