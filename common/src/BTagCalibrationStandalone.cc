@@ -533,7 +533,9 @@ std::pair<float, float> BTagCalibrationReader::BTagCalibrationReaderImpl::min_ma
 
 BTagCalibrationReader::BTagCalibrationReader(BTagEntry::OperatingPoint op,
                                              std::string sysType):
-  pimpl(new BTagCalibrationReaderImpl(op, sysType)) {}
+  pimpl(std::make_unique<BTagCalibrationReaderImpl>(op, sysType)) {}
+
+BTagCalibrationReader::~BTagCalibrationReader() = default;
 
 void BTagCalibrationReader::load(const BTagCalibration & c,
                                  BTagEntry::JetFlavor jf,
