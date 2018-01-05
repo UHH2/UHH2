@@ -637,13 +637,15 @@ addJetCollection(process, labelName='AK8PFPUPPI', jetSource=cms.InputTag('ak8Pup
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons')
+                 elSource=cms.InputTag('slimmedElectrons'),
+                 getJetMCFlavour=(not useData)
                  )
 addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJets'), algo='AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'), pfCandidates=cms.InputTag('packedPFCandidates'),
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons')
+                 elSource=cms.InputTag('slimmedElectrons'),
+                 getJetMCFlavour=(not useData)
                  )
 
 # Higgs tagging commissioning
