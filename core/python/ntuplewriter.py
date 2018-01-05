@@ -9,7 +9,7 @@ useData = True
 # else:
 #     met_sources_GL = cms.vstring(
 #         "slimmedMETs", "slimmedMETsPuppi", "slMETsCHS")  # ,"slimmedMETsMuEGClean"
-met_sources_GL = cms.vstring("slimmedMETs")
+met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi", "slMETsCHS")
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15,
 # cmstoptag, heptoptag). Also applied for the corresponding genjets.
