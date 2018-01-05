@@ -681,6 +681,8 @@ def clean_met_(met):
     del met.tXYUncForT01
     del met.tXYUncForT1Smear
     del met.tXYUncForT01Smear
+    del met.chsMET  # FIXME: utilise the chsMET part instead of having multiple METs?
+    del met.trkMET
 
 
 from PhysicsTools.PatAlgos.tools.metTools import addMETCollection
