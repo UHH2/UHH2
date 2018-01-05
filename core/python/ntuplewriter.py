@@ -9,7 +9,7 @@ useData = True
 # else:
 #     met_sources_GL = cms.vstring(
 #         "slimmedMETs", "slimmedMETsPuppi", "slMETsCHS")  # ,"slimmedMETsMuEGClean"
-met_sources_GL = cms.vstring("slimmedMETs")
+met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi", "slMETsCHS")
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15,
 # cmstoptag, heptoptag). Also applied for the corresponding genjets.
@@ -637,7 +637,7 @@ addJetCollection(process, labelName='AK8PFPUPPI', jetSource=cms.InputTag('ak8Pup
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons')
+                 elSource=cms.InputTag('slimmedElectrons'),
                  getJetMCFlavour=(not useData)
                  )
 # manually override parton & genjet matching even though we set getJetMCFlavour false...
@@ -655,7 +655,7 @@ addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJe
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons')
+                 elSource=cms.InputTag('slimmedElectrons'),
                  getJetMCFlavour=(not useData)
                  )
 if useData:
@@ -704,6 +704,8 @@ def clean_met_(met):
     del met.tXYUncForT01
     del met.tXYUncForT1Smear
     del met.tXYUncForT01Smear
+    del met.chsMET  # FIXME: utilise the chsMET part instead of having multiple METs?
+    del met.trkMET
 
 
 from PhysicsTools.PatAlgos.tools.metTools import addMETCollection
