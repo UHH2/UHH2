@@ -638,13 +638,36 @@ addJetCollection(process, labelName='AK8PFPUPPI', jetSource=cms.InputTag('ak8Pup
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
                  elSource=cms.InputTag('slimmedElectrons')
+                 getJetMCFlavour=(not useData)
                  )
+# manually override parton & genjet matching even though we set getJetMCFlavour false...
+if useData:
+    producer = getattr(process,'patJetsAK8PFPUPPI')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
 addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJets'), algo='AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'), pfCandidates=cms.InputTag('packedPFCandidates'),
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
                  elSource=cms.InputTag('slimmedElectrons')
+                 getJetMCFlavour=(not useData)
                  )
+if useData:
+    producer = getattr(process,'patJetsAK8PFCHS')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
 
 # Higgs tagging commissioning
 
