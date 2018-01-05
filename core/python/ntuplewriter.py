@@ -637,7 +637,7 @@ addJetCollection(process, labelName='AK8PFPUPPI', jetSource=cms.InputTag('ak8Pup
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons')
+                 elSource=cms.InputTag('slimmedElectrons'),
                  getJetMCFlavour=(not useData)
                  )
 # manually override parton & genjet matching even though we set getJetMCFlavour false...
@@ -655,7 +655,7 @@ addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJe
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons')
+                 elSource=cms.InputTag('slimmedElectrons'),
                  getJetMCFlavour=(not useData)
                  )
 if useData:
