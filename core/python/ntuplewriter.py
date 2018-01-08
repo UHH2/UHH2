@@ -768,82 +768,96 @@ process.load('CommonTools.ParticleFlow.deltaBetaWeights_cff')
 #)
 # task.add(process.slimmedMuonsUSER)
 
-# ELECTRON # WILL BE IN MINIAOD OF 9_1_0 RELEASE
+# ELECTRON
 
 # mini-isolation
-#from UHH2.core.electron_pfMiniIsolation_cff import *
-#
-#el_isovals = []
-#
-# load_elecPFMiniIso(process, 'elecPFMiniIsoSequenceSTAND', algo = 'STAND',
-#  src = 'slimmedElectrons',
-#  src_charged_hadron = 'pfAllChargedHadrons',
-#  src_neutral_hadron = 'pfAllNeutralHadrons',
-#  src_photon         = 'pfAllPhotons',
-#  src_charged_pileup = 'pfPileUpAllChargedParticles',
-#  isoval_list = el_isovals
-#)
-# task.add(process.pfAllChargedHadrons)
-# task.add(process.pfAllNeutralHadrons)
-# task.add(process.pfAllPhotons)
-# task.add(process.pfPileUpAllChargedParticles)
-# task.add(process.pfPileUp)
-#
-# load_elecPFMiniIso(process, 'elecPFMiniIsoSequencePFWGT', algo = 'PFWGT',
-#  src = 'slimmedElectrons',
-#  src_neutral_hadron = 'pfWeightedNeutralHadrons',
-#  src_photon         = 'pfWeightedPhotons',
-#  isoval_list = el_isovals
-#)
-# task.add(process.pfWeightedNeutralHadrons)
-# task.add(process.pfWeightedPhotons)
+from UHH2.core.electron_pfMiniIsolation_cff import *
 
-# electron ID from VID # WILL BE IN MINIAOD OF 9_1_0 RELEASE
-# process.load('RecoEgamma.ElectronIdentification.egmGsfElectronIDs_cff')
-#process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('slimmedElectrons')
-#process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('slimmedElectrons')
+el_isovals = []
 
-# elecID_mod_ls = [
-#  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff',
+load_elecPFMiniIso(process,
+    'elecPFMiniIsoSequenceSTAND',
+    algo = 'STAND',
+    src = 'slimmedElectrons',
+    src_charged_hadron = 'pfAllChargedHadrons',
+    src_neutral_hadron = 'pfAllNeutralHadrons',
+    src_photon         = 'pfAllPhotons',
+    src_charged_pileup = 'pfPileUpAllChargedParticles',
+    isoval_list = el_isovals
+)
+needed_collections = [
+    'convertedPackedPFCandidates',
+    'convertedPackedPFCandidatePtrs',
+    'pfPileUp',
+    'pfNoPileUp',
+    'pfAllChargedHadrons',
+    'pfAllNeutralHadrons',
+    'pfAllPhotons',
+    'pfPileUpAllChargedParticles',
+    'pfWeightedNeutralHadrons',
+    'pfWeightedPhotons',
+    'pfAllChargedParticles',
+    ]
+for m in needed_collections:
+    task.add(getattr(process, m))
+
+load_elecPFMiniIso(process,
+    'elecPFMiniIsoSequencePFWGT',
+    algo = 'PFWGT',
+    src = 'slimmedElectrons',
+    src_neutral_hadron = 'pfWeightedNeutralHadrons',
+    src_photon         = 'pfWeightedPhotons',
+    isoval_list = el_isovals
+)
+for m in el_isovals:
+    task.add(getattr(process, m))
+    task.add(getattr(process, m.replace('Value', 'Deposit')))
+
+
+# electron ID from VID
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+
+switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
+
+elecID_mod_ls = [
+   'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_Preliminary_cff',
 #  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronHLTPreselecition_Summer16_V1_cff',
 #  'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV6_0cff',
 #  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
 #  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_HZZ_V1_cff',
-#]
+]
 
-#from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
-#for mod in elecID_mod_ls: setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+for mod in elecID_mod_ls:
+    setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
 
 # slimmedElectronsUSER ( = slimmedElectrons + USER variables)
-# process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
-#  src = cms.InputTag('slimmedElectrons'),
-#
-#  vmaps_bool = cms.PSet(
-#
-#    cutBasedElectronID_Summer16_80X_V1_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto'),
-#    cutBasedElectronID_Summer16_80X_V1_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose'),
-#    cutBasedElectronID_Summer16_80X_V1_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-medium'),
-#    cutBasedElectronID_Summer16_80X_V1_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight'),
-#
-#    cutBasedElectronHLTPreselection_Summer16_V1 = cms.InputTag('egmGsfElectronIDs:cutBasedElectronHLTPreselection-Summer16-V1'),
-#
-#    heepElectronID_HEEPV60                                = cms.InputTag('egmGsfElectronIDs:heepElectronID-HEEPV60'),
-#
-#  ),
-#
+process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
+    src = cms.InputTag('slimmedElectrons'),
+
+    vmaps_bool = cms.PSet(
+
+        cutBasedElectronID_Fall17_94X_V1_Preliminary_veto   = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-veto'),
+        cutBasedElectronID_Fall17_94X_V1_Preliminary_loose  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-loose'),
+        cutBasedElectronID_Fall17_94X_V1_Preliminary_medium = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-medium'),
+        cutBasedElectronID_Fall17_94X_V1_Preliminary_tight  = cms.InputTag('egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-tight'),
+
+   ),
+
 #  vmaps_float = cms.PSet(
 #    ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values'),
 #    ElectronMVAEstimatorRun2Spring16HZZV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16HZZV1Values'),
 #  ),
-#
-#  vmaps_double = cms.vstring(el_isovals),
-#
-#  effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt'),
-#
+
+  vmaps_double = cms.vstring(el_isovals),
+
+  effAreas_file = cms.FileInPath('RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt'),
+
 #  mva_GeneralPurpose = cms.string('ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values__user01'),
 #  mva_HZZ = cms.string('ElectronMVAEstimatorRun2Spring16HZZV1Values__user01'),
-#)
-
+)
+task.add(process.egmGsfElectronIDs)
+task.add(process.slimmedElectronsUSER)
 
 # additional MET filters not given in MiniAOD
 
@@ -891,18 +905,16 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 save_lepton_keys=cms.bool(True),
 
                                 doElectrons=cms.bool(True),
-                                #doElectrons = cms.bool(False),
-                                electron_source=cms.InputTag(
-                                    "slimmedElectrons"),
+                                electron_source=cms.InputTag("slimmedElectronsUSER"),
                                 electron_IDtags=cms.vstring(
                                     # keys to be stored in UHH2 Electron class via the tag mechanism:
                                     # each string should correspond to a variable saved
                                     # via the "userInt" method in the pat::Electron collection used 'electron_source'
                                     # [the configuration of the pat::Electron::userInt variables should be done in PATElectronUserData]
-                                    #'cutBasedElectronID_Summer16_80X_V1_veto', # IDS NOT YET AVAILBLE IN MINIAOD, ADD BACK AFTER 9_1_0 RELEASE
-                                    #'cutBasedElectronID_Summer16_80X_V1_loose',
-                                    #'cutBasedElectronID_Summer16_80X_V1_medium',
-                                    #'cutBasedElectronID_Summer16_80X_V1_tight',
+                                    'cutBasedElectronID_Fall17_94X_V1_Preliminary_veto',
+                                    'cutBasedElectronID_Fall17_94X_V1_Preliminary_loose',
+                                    'cutBasedElectronID_Fall17_94X_V1_Preliminary_medium',
+                                    'cutBasedElectronID_Fall17_94X_V1_Preliminary_tight',
                                     #'cutBasedElectronHLTPreselection_Summer16_V1',
                                     #'heepElectronID_HEEPV60',
                                 ),

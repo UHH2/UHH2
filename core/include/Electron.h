@@ -15,20 +15,20 @@ class Electron : public RecParticle {
     twodcut_dRmin,
     twodcut_pTrel,
     heepElectronID_HEEPV60,		
-    cutBasedElectronID_Summer16_80X_V1_veto,
-    cutBasedElectronID_Summer16_80X_V1_loose,
-    cutBasedElectronID_Summer16_80X_V1_medium,
-    cutBasedElectronID_Summer16_80X_V1_tight,
+    cutBasedElectronID_Fall17_94X_V1_Preliminary_veto,
+    cutBasedElectronID_Fall17_94X_V1_Preliminary_loose,
+    cutBasedElectronID_Fall17_94X_V1_Preliminary_medium,
+    cutBasedElectronID_Fall17_94X_V1_Preliminary_tight,
     cutBasedElectronHLTPreselection_Summer16_V1
 
   };
 
   static tag tagname2tag(const std::string & tagname){
     if(tagname == "heepElectronID_HEEPV60") return heepElectronID_HEEPV60;
-    if(tagname == "cutBasedElectronID_Summer16_80X_V1_veto") return cutBasedElectronID_Summer16_80X_V1_veto;
-    if(tagname == "cutBasedElectronID_Summer16_80X_V1_loose") return cutBasedElectronID_Summer16_80X_V1_loose;
-    if(tagname == "cutBasedElectronID_Summer16_80X_V1_medium") return cutBasedElectronID_Summer16_80X_V1_medium;
-    if(tagname == "cutBasedElectronID_Summer16_80X_V1_tight") return cutBasedElectronID_Summer16_80X_V1_tight;
+    if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_veto") return cutBasedElectronID_Fall17_94X_V1_Preliminary_veto;
+    if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_loose") return cutBasedElectronID_Fall17_94X_V1_Preliminary_loose;
+    if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_medium") return cutBasedElectronID_Fall17_94X_V1_Preliminary_medium;
+    if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_tight") return cutBasedElectronID_Fall17_94X_V1_Preliminary_tight;
     if(tagname == "cutBasedElectronHLTPreselection_Summer16_V1") return cutBasedElectronHLTPreselection_Summer16_V1;
     throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
   }
