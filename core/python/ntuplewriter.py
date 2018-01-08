@@ -9,7 +9,7 @@ useData = True
 # else:
 #     met_sources_GL = cms.vstring(
 #         "slimmedMETs", "slimmedMETsPuppi", "slMETsCHS")  # ,"slimmedMETsMuEGClean"
-met_sources_GL = cms.vstring("slimmedMETs")
+met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi", "slMETsCHS")
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15,
 # cmstoptag, heptoptag). Also applied for the corresponding genjets.
@@ -637,14 +637,37 @@ addJetCollection(process, labelName='AK8PFPUPPI', jetSource=cms.InputTag('ak8Pup
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons')
+                 elSource=cms.InputTag('slimmedElectrons'),
+                 getJetMCFlavour=(not useData)
                  )
+# manually override parton & genjet matching even though we set getJetMCFlavour false...
+if useData:
+    producer = getattr(process,'patJetsAK8PFPUPPI')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
 addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJets'), algo='AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'), pfCandidates=cms.InputTag('packedPFCandidates'),
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons')
+                 elSource=cms.InputTag('slimmedElectrons'),
+                 getJetMCFlavour=(not useData)
                  )
+if useData:
+    producer = getattr(process,'patJetsAK8PFCHS')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
 
 # Higgs tagging commissioning
 
@@ -681,6 +704,8 @@ def clean_met_(met):
     del met.tXYUncForT01
     del met.tXYUncForT1Smear
     del met.tXYUncForT01Smear
+    del met.chsMET  # FIXME: utilise the chsMET part instead of having multiple METs?
+    del met.trkMET
 
 
 from PhysicsTools.PatAlgos.tools.metTools import addMETCollection
@@ -898,9 +923,9 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
                                 doJets=cms.bool(True),
                                 #jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
-                                jet_sources=cms.vstring(
-                                    "slimmedJets", "slimmedJetsPuppi"),
-                                #jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi","patJetsAK8PFPUPPI","patJetsAK8PFCHS"),
+                                #jet_sources=cms.vstring(
+                                #    "slimmedJets", "slimmedJetsPuppi"),
+                                jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi","patJetsAK8PFPUPPI","patJetsAK8PFCHS"),
                                 jet_ptmin=cms.double(10.0),
                                 jet_etamax=cms.double(999.0),
 
