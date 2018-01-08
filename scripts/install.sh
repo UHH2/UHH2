@@ -14,6 +14,9 @@ cd CMSSW_9_4_1/src
 eval `scramv1 runtime -sh`
 git cms-init
 
+# Add in preliminary EGamma VID
+git cms-merge-topic lsoffi:CMSSW_9_4_0_pre3_TnP
+
 #git cms-addpkg RecoJets/JetProducers
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
