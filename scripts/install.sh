@@ -6,8 +6,11 @@
 #
 # before running this script
 
-
 source /cvmfs/cms.cern.ch/cmsset_default.sh
+
+# Get SFrame, do not compile it until we have the right ROOT etc
+git clone https://github.com/UHH2/SFrame.git
+
 export SCRAM_ARCH=slc6_amd64_gcc530
 eval `cmsrel CMSSW_9_1_0_pre3`
 cd CMSSW_9_1_0_pre3/src
