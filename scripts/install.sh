@@ -6,8 +6,12 @@
 #
 # before running this script
 
-
 source /cvmfs/cms.cern.ch/cmsset_default.sh
+
+# Get SFrame, do not compile it until we have the right ROOT etc
+git clone https://github.com/UHH2/SFrame.git
+
+# Get CMSSW
 export SCRAM_ARCH=slc6_amd64_gcc530
 eval `cmsrel CMSSW_9_1_0_pre3`
 cd CMSSW_9_1_0_pre3/src
@@ -35,6 +39,8 @@ scram b -j 20
 #git clone https://github.com/ikrav/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
 #cd data/RecoEgamma/ElectronIdentification/data
 #git checkout egm_id_80X_v1
+
+# Get the UHH2 repo & JEC files
 cd $CMSSW_BASE/src
 git clone -b master https://github.com/UHH2/UHH2.git
 cd UHH2
