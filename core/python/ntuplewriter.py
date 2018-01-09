@@ -2,13 +2,8 @@ import FWCore.ParameterSet.Config as cms
 
 isDebug = False
 useData = True
-# if useData:
-#     #    met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean","slimmedMETsEGClean","slimmedMETsUncorrected")
-#     met_sources_GL = cms.vstring(
-#         "slimmedMETs", "slimmedMETsPuppi", "slMETsCHS")
-# else:
-#     met_sources_GL = cms.vstring(
-#         "slimmedMETs", "slimmedMETsPuppi", "slMETsCHS")  # ,"slimmedMETsMuEGClean"
+#useData = False
+
 met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi", "slMETsCHS")
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15,
@@ -65,12 +60,13 @@ process.source = cms.Source("PoolSource",
                                 # '/store/data/Run2017B/JetHT/MINIAOD/22Jun2017-v1/00000/00063668-8858-E711-9C49-001E67792486.root'
                                 # '/store/data/Run2017D/JetHT/MINIAOD/PromptReco-v1/000/302/031/00000/24C14AB9-488F-E711-A2D5-02163E019D41.root'
                                 '/store/data/Run2017B/JetHT/MINIAOD/17Nov2017-v1/20000/0016BE6B-FACC-E711-88D8-B499BAAC0068.root'
+                                #'/store/mc/RunIIFall17MiniAOD/QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/50000/00197229-2FDD-E711-9070-0025904AC2C4.root'
                                 # '/store/data/Run2017B/SingleMuon/MINIAOD/PromptReco-v1/000/297/046/00000/32AC3177-7A56-E711-BE34-02163E019D73.root'
                             ]),
                             skipEvents=cms.untracked.uint32(0)
                             )
 
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(5000))
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(2000))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -658,6 +654,9 @@ addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJe
                  elSource=cms.InputTag('slimmedElectrons'),
                  getJetMCFlavour=(not useData)
                  )
+#manually override parton & genjet matching even though we set getJetMCFlavour false...
+#ToDo: figure out more beautiful solution
+
 if useData:
     producer = getattr(process,'patJetsAK8PFCHS')
     producer.addGenPartonMatch = cms.bool(False)
@@ -668,6 +667,85 @@ if useData:
     producer.getJetMCFlavour = cms.bool(False)
     producer.JetFlavourInfoSource = cms.InputTag("")
 
+if useData:
+    producer = getattr(process,'patJetsAk8PuppiJetsFat')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
+if useData:
+    producer = getattr(process,'patJetsAk8PuppiJetsSoftDrop')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
+if useData:
+    producer = getattr(process,'patJetsAk8CHSJetsSoftDropSubjets')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
+if useData:
+    producer = getattr(process,'patJetsAk8CHSJets')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
+if useData:
+    producer = getattr(process,'patJetsAk8PuppiJetsSoftDropSubjets')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
+if useData:
+    producer = getattr(process,'patJetsAk8CHSJetsSoftDrop')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
+if useData:
+    producer = getattr(process,'patJetsAk8CHSJetsPruned')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
+if useData:
+    producer = getattr(process,'patJetsAk8CHSJetsPrunedSubjets')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
 
 # Higgs tagging commissioning
 
@@ -947,8 +1025,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
                                 doGenMET=cms.bool(False),
 
-                                doTopJets=cms.bool(False),
-                                #doTopJets = cms.bool(True),
+                                #doTopJets=cms.bool(False),
+                                doTopJets = cms.bool(True),
                                 topjet_ptmin=cms.double(150.0),
                                 topjet_etamax=cms.double(5.0),
 
@@ -1139,7 +1217,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 doAllGenParticlesPythia8=cms.bool(False),
                                 doGenJets=cms.bool(not useData),
                                 genjet_sources=cms.vstring(
-                                    "slimmedGenJets", "slimmedGenJetsAK8", "ca15GenJets"),
+                                   #"slimmedGenJets", "slimmedGenJetsAK8", "ca15GenJets"),
+                                "slimmedGenJets", "slimmedGenJetsAK8"),
                                 genjet_ptmin=cms.double(10.0),
                                 genjet_etamax=cms.double(5.0),
 
