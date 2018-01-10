@@ -14,3 +14,4 @@ ZprimeSemiLeptonic/*
 BaconJets/*
 JECDatabase/*
 pydump.py
+Makefile.local
