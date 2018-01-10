@@ -667,9 +667,12 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 )
 """
 
-# for JEC cluster AK8 jets with lower pt (compare to miniAOD)
+# for JEC purposes, cluster AK8 jets but with lower pt (compared to higher threshold in miniAOD)
+ak8_label = "AK8PFPUPPI"
+ak8puppi_patname = 'patJets' + ak8_label
+print 'Adding', ak8puppi_patname
 addJetCollection(process,
-                 labelName='AK8PFPUPPI',
+                 labelName=ak8_label,
                  jetSource=cms.InputTag('ak8PuppiJets'),
                  algo='AK',
                  rParam=0.8,
@@ -683,11 +686,14 @@ addJetCollection(process,
                  )
 # For data, turn off every gen-related part - can't do this via addJetCollection annoyingly
 if useData:
-    producer = getattr(process,'patJetsAK8PFPUPPI')
+    producer = getattr(process, ak8puppi_patname)
     modify_patjetproducer_for_data(producer)
 
+ak8_label = "AK8PFCHS"
+ak8chs_patname = 'patJets' + ak8_label
+print 'Adding', ak8chs_patname
 addJetCollection(process,
-                 labelName='AK8PFCHS',
+                 labelName=ak8_label,
                  jetSource=cms.InputTag('ak8CHSJets'),
                  algo='AK',
                  rParam=0.8,
@@ -701,7 +707,7 @@ addJetCollection(process,
                  )
 # For data, turn off every gen-related part - can't do this via addJetCollection annoyingly
 if useData:
-    producer = getattr(process,'patJetsAK8PFCHS')
+    producer = getattr(process, ak8chs_patname)
     modify_patjetproducer_for_data(producer)
 
 # Higgs tagging commissioning
