@@ -464,14 +464,15 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
             task.add(getattr(process, ungroomed_genjets_name))
 
     # patify ungroomed jets, if not already done:
-    add_ungroomed = not hasattr(process, 'patJets' + cap(fatjets_name))
+    ungroomed_patname = 'patJets' + cap(fatjets_name)
+    add_ungroomed = not hasattr(process, ungroomed_patname)
     jetcorr_list = ['L1FastJet', 'L2Relative', 'L3Absolute']
     if useData:
         jetcorr_list = ['L1FastJet', 'L2Relative',
                         'L3Absolute', 'L2L3Residual']
     if add_ungroomed:
         if verbose:
-            print "Adding ungroomed patJets" + cap(fatjets_name)
+            print "Adding ungroomed jets", ungroomed_patname
         addJetCollection(process,
                          labelName=fatjets_name,
                          jetSource=cms.InputTag(fatjets_name),
@@ -481,11 +482,12 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                          genJetCollection=cms.InputTag(ungroomed_genjets_name),
                          **common_btag_parameters
                          )
-        getattr(process, "patJets" + cap(fatjets_name)).addTagInfos = True
+        getattr(process, ungroomed_patname).addTagInfos = True
 
     # patify groomed fat jets, with b-tagging:
+    groomed_patname = "patJets" + cap(groomed_jets_name)
     if verbose:
-        print "adding grommed jets patJets" + cap(groomed_jets_name)
+        print "adding groomed jets", groomed_patname
     addJetCollection(process,
                      labelName=groomed_jets_name,
                      jetSource=cms.InputTag(groomed_jets_name),
@@ -499,15 +501,16 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                      genJetCollection=cms.InputTag("slimmedGenJets"),
                      **common_btag_parameters
                      )
-    getattr(process, "patJets" + cap(groomed_jets_name)).addTagInfos = True
+    getattr(process, groomed_patname).addTagInfos = True
     if groomed_jets_name == "hepTopTagCHS":
-        getattr(process, "patJets" + cap(groomed_jets_name)).tagInfoSources = cms.VInputTag(
+        getattr(process, groomed_patname).tagInfoSources = cms.VInputTag(
             cms.InputTag('hepTopTagCHS')
         )
 
     # patify subjets, with subjet b-tagging:
+    subjets_patname = "patJets" + cap(subjets_name)
     if verbose:
-        print "adding grommed jets' subjets patJets" + cap(subjets_name)
+        print "adding groomed jets' subjets" + subjets_patname
     addJetCollection(process,
                      labelName=subjets_name,
                      jetSource=cms.InputTag(groomed_jets_name, 'SubJets'),
@@ -523,14 +526,16 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                      )
     # Always add taginfos to subjets, but possible not to store them,
     # configurable with ntuple writer parameter: subjet_taginfos
-    getattr(process, "patJets" + cap(subjets_name)).addTagInfos = True
+    getattr(process, subjets_patname).addTagInfos = True
 
     # add the merged jet collection which contains the links from fat jets to
     # subjets:
-    setattr(process, 'patJets' + cap(groomed_jets_name) + 'Packed', cms.EDProducer("BoostedJetMerger",
-                                                                                   jetSrc=cms.InputTag("patJets" + cap(groomed_jets_name)),
-                                                                                   subjetSrc=cms.InputTag("patJets" + cap(subjets_name))))
-    task.add(getattr(process, 'patJets' + cap(groomed_jets_name) + 'Packed'))
+    groomed_packed_name = groomed_patname + 'Packed'
+    setattr(process, groomed_packed_name,
+            cms.EDProducer("BoostedJetMerger",
+                            jetSrc=cms.InputTag(groomed_patname),
+                            subjetSrc=cms.InputTag(subjets_patname)))
+    task.add(getattr(process, groomed_packed_name))
 
     # adapt all for b-tagging, and switch off some PAT features not supported
     # in miniAOD:
@@ -538,8 +543,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     if add_ungroomed:
         module_names += [fatjets_name]
     for name in module_names:
-        getattr(process, 'patJetPartonMatch' + cap(name)
-                ).matched = 'prunedGenParticles'
+        getattr(process, 'patJetPartonMatch' + cap(name)).matched = 'prunedGenParticles'
         producer = getattr(process, 'patJets' + cap(name))
         producer.addJetCharge = False
         producer.addAssociatedTracks = False
