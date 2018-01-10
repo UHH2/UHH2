@@ -424,8 +424,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     algo = None
     if 'ca' in fatjets_name.lower():
         algo = 'ca'
-        assert getattr(process, fatjets_name).jetAlgorithm.value(
-        ) == 'CambridgeAachen'
+        assert getattr(process, fatjets_name).jetAlgorithm.value() == 'CambridgeAachen'
     elif 'ak' in fatjets_name.lower():
         algo = 'ak'
         assert getattr(process, fatjets_name).jetAlgorithm.value() == 'AntiKt'
@@ -444,7 +443,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                                                'CATopJetProducer'), "do not know how to construct genjet collection for %s" % repr(groomed_jetproducer)
         groomed_genjets_name = genjets_name(groomed_jets_name)
         if verbose:
-            print "Adding groomed genjets ", groomed_genjets_name
+            print "Adding groomed genjets", groomed_genjets_name
         if not hasattr(process, groomed_genjets_name):
             setattr(process, groomed_genjets_name, groomed_jetproducer.clone(
                 src=cms.InputTag('packedGenParticlesForJetsNoNu'), jetType='GenJet'))
@@ -455,7 +454,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
         assert ungroomed_jetproducer.type_() == 'FastjetJetProducer'
         ungroomed_genjets_name = genjets_name(fatjets_name)
         if verbose:
-            print "Adding ungroomed genjets ", ungroomed_genjets_name
+            print "Adding ungroomed genjets", ungroomed_genjets_name
         if not hasattr(process, ungroomed_genjets_name):
             setattr(process, ungroomed_genjets_name, ungroomed_jetproducer.clone(
                 src=cms.InputTag('packedGenParticlesForJetsNoNu'), jetType='GenJet'))
@@ -470,9 +469,12 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     if add_ungroomed:
         if verbose:
             print "Adding ungroomed patJets" + cap(fatjets_name)
-        addJetCollection(process, labelName=fatjets_name, jetSource=cms.InputTag(fatjets_name), algo=algo, rParam=rParam,
-                         jetCorrections=(jetcorr_label, cms.vstring(
-                             jetcorr_list), 'None'),
+        addJetCollection(process,
+                         labelName=fatjets_name,
+                         jetSource=cms.InputTag(fatjets_name),
+                         algo=algo,
+                         rParam=rParam,
+                         jetCorrections=(jetcorr_label, cms.vstring(jetcorr_list), 'None'),
                          genJetCollection=cms.InputTag(ungroomed_genjets_name),
                          **common_btag_parameters
                          )
@@ -481,15 +483,19 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     # patify groomed fat jets, with b-tagging:
     if verbose:
         print "adding grommed jets patJets" + cap(groomed_jets_name)
-    addJetCollection(process, labelName=groomed_jets_name, jetSource=cms.InputTag(groomed_jets_name), algo=algo, rParam=rParam,
-                     jetCorrections=(jetcorr_label, cms.vstring(
-                         jetcorr_list), 'None'),
+    addJetCollection(process,
+                     labelName=groomed_jets_name,
+                     jetSource=cms.InputTag(groomed_jets_name),
+                     algo=algo,
+                     rParam=rParam,
+                     jetCorrections=(jetcorr_label, cms.vstring(jetcorr_list), 'None'),
                      # genJetCollection = cms.InputTag(groomed_genjets_name), #
                      # nice try, but PAT looks for GenJets, whereas jets with
                      # subjets are BasicJets, so PAT cannot be used for this
                      # matching ...
                      genJetCollection=cms.InputTag("slimmedGenJets"),
-                     **common_btag_parameters)
+                     **common_btag_parameters
+                     )
     getattr(process, "patJets" + cap(groomed_jets_name)).addTagInfos = True
     if groomed_jets_name == "hepTopTagCHS":
         getattr(process, "patJets" + cap(groomed_jets_name)).tagInfoSources = cms.VInputTag(
@@ -499,15 +505,19 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     # patify subjets, with subjet b-tagging:
     if verbose:
         print "adding grommed jets' subjets patJets" + cap(subjets_name)
-    addJetCollection(process, labelName=subjets_name, jetSource=cms.InputTag(groomed_jets_name, 'SubJets'), algo=algo, rParam=rParam,
-                     jetCorrections=(jetcorr_label_subjets,
-                                     cms.vstring(jetcorr_list), 'None'),
+    addJetCollection(process,
+                     labelName=subjets_name,
+                     jetSource=cms.InputTag(groomed_jets_name, 'SubJets'),
+                     algo=algo,
+                     rParam=rParam,
+                     jetCorrections=(jetcorr_label_subjets, cms.vstring(jetcorr_list), 'None'),
                      explicitJTA=True,
                      svClustering=True,
-                     fatJets=cms.InputTag(fatjets_name), groomedFatJets=cms.InputTag(groomed_jets_name),
-                     genJetCollection=cms.InputTag(
-                         groomed_genjets_name, 'SubJets'),
-                     **common_btag_parameters)
+                     fatJets=cms.InputTag(fatjets_name),
+                     groomedFatJets=cms.InputTag(groomed_jets_name),
+                     genJetCollection=cms.InputTag(groomed_genjets_name, 'SubJets'),
+                     **common_btag_parameters
+                     )
     # Always add taginfos to subjets, but possible not to store them,
     # configurable with ntuple writer parameter: subjet_taginfos
     getattr(process, "patJets" + cap(subjets_name)).addTagInfos = True
@@ -515,8 +525,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     # add the merged jet collection which contains the links from fat jets to
     # subjets:
     setattr(process, 'patJets' + cap(groomed_jets_name) + 'Packed', cms.EDProducer("BoostedJetMerger",
-                                                                                   jetSrc=cms.InputTag(
-                                                                                       "patJets" + cap(groomed_jets_name)),
+                                                                                   jetSrc=cms.InputTag("patJets" + cap(groomed_jets_name)),
                                                                                    subjetSrc=cms.InputTag("patJets" + cap(subjets_name))))
     task.add(getattr(process, 'patJets' + cap(groomed_jets_name) + 'Packed'))
 
@@ -652,7 +661,14 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 """
 
 # for JEC cluster AK8 jets with lower pt (compare to miniAOD)
-addJetCollection(process, labelName='AK8PFPUPPI', jetSource=cms.InputTag('ak8PuppiJets'), algo='AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'), pfCandidates=cms.InputTag('packedPFCandidates'),
+addJetCollection(process,
+                 labelName='AK8PFPUPPI',
+                 jetSource=cms.InputTag('ak8PuppiJets'),
+                 algo='AK',
+                 rParam=0.8,
+                 genJetCollection=cms.InputTag('slimmedGenJetsAK8'),
+                 jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
+                 pfCandidates=cms.InputTag('packedPFCandidates'),
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
@@ -663,7 +679,14 @@ if useData:
     producer = getattr(process,'patJetsAK8PFPUPPI')
     modify_patjetproducer_for_data(producer)
 
-addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJets'), algo='AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'), pfCandidates=cms.InputTag('packedPFCandidates'),
+addJetCollection(process,
+                 labelName='AK8PFCHS',
+                 jetSource=cms.InputTag('ak8CHSJets'),
+                 algo='AK',
+                 rParam=0.8,
+                 genJetCollection=cms.InputTag('slimmedGenJetsAK8'),
+                 jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
+                 pfCandidates=cms.InputTag('packedPFCandidates'),
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
