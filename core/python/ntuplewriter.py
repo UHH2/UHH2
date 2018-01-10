@@ -1170,8 +1170,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     "packedPFCandidates"),
 
                                 # # *** HOTVR & XCone stuff
-                                doHOTVR=cms.bool(True),
-                                doXCone=cms.bool(True),
+                                doHOTVR=cms.bool(False),
+                                doXCone=cms.bool(False),
                                 doGenHOTVR=cms.bool(not useData),
                                 doGenXCone=cms.bool(not useData),
                                 # doHOTVR = cms.bool(False),
