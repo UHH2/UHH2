@@ -376,6 +376,26 @@ process.packedGenParticlesForJetsNoNu = cms.EDFilter("CandPtrSelector", src=cms.
     "packedGenParticles"), cut=cms.string("abs(pdgId) != 12 && abs(pdgId) != 14 && abs(pdgId) != 16"))
 task.add(process.packedGenParticlesForJetsNoNu)
 
+
+def modify_patjetproducer_for_data(producer):
+    """Modify a PATJetProducer for use with data i.e. turn off all gen-related parts
+
+    See PhysicsTools/PatAlgos/python/producersLayer1/jetProducer_cfi.py
+    for all available options
+    """
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genPartonMatch = cms.InputTag("")
+    producer.addGenJetMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.JetFlavourInfoSource = cms.InputTag("")
+    producer.addPartonJetMatch = cms.bool(False)
+    producer.partonJetSource = cms.InputTag("NOT_IMPLEMENTED")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.addJetFlavourInfo  = cms.bool(False)
+
+
 # Add PAT part of fat jets and subjets, and optionally gen jets. Note that the input collections for the groomed PF jets have to be defined elsewhere
 # already.
 # This method assumes that you follow  certain naming convention. In particular:
@@ -521,6 +541,9 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
         if name == groomed_jets_name:
             producer.addGenJetMatch = False
             producer.getJetMCFlavour = False
+        # For data, turn off every gen-related part - can't do this via addJetCollection annoyingly
+        if useData:
+            modify_patjetproducer_for_data(producer)
 
 
 #add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'))
@@ -633,120 +656,23 @@ addJetCollection(process, labelName='AK8PFPUPPI', jetSource=cms.InputTag('ak8Pup
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons'),
-                 getJetMCFlavour=(not useData)
+                 elSource=cms.InputTag('slimmedElectrons')
                  )
-# manually override parton & genjet matching even though we set
-# getJetMCFlavour false...
+# For data, turn off every gen-related part - can't do this via addJetCollection annoyingly
 if useData:
-    producer = getattr(process, 'patJetsAK8PFPUPPI')
-    producer.addGenPartonMatch = cms.bool(False)
-    producer.embedGenJetMatch = cms.bool(False)
-    producer.embedGenPartonMatch = cms.bool(False)
-    producer.genJetMatch = cms.InputTag("")
-    producer.genPartonMatch = cms.InputTag("")
-    producer.getJetMCFlavour = cms.bool(False)
-    producer.JetFlavourInfoSource = cms.InputTag("")
+    producer = getattr(process,'patJetsAK8PFPUPPI')
+    modify_patjetproducer_for_data(producer)
 
 addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJets'), algo='AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'), pfCandidates=cms.InputTag('packedPFCandidates'),
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons'),
-                 getJetMCFlavour=(not useData)
+                 elSource=cms.InputTag('slimmedElectrons')
                  )
-#manually override parton & genjet matching even though we set getJetMCFlavour false...
-#ToDo: figure out more beautiful solution
-
+# For data, turn off every gen-related part - can't do this via addJetCollection annoyingly
 if useData:
-    producer = getattr(process, 'patJetsAK8PFCHS')
-    producer.addGenPartonMatch = cms.bool(False)
-    producer.embedGenJetMatch = cms.bool(False)
-    producer.embedGenPartonMatch = cms.bool(False)
-    producer.genJetMatch = cms.InputTag("")
-    producer.genPartonMatch = cms.InputTag("")
-    producer.getJetMCFlavour = cms.bool(False)
-    producer.JetFlavourInfoSource = cms.InputTag("")
-
-if useData:
-    producer = getattr(process,'patJetsAk8PuppiJetsFat')
-    producer.addGenPartonMatch = cms.bool(False)
-    producer.embedGenJetMatch = cms.bool(False)
-    producer.embedGenPartonMatch = cms.bool(False)
-    producer.genJetMatch = cms.InputTag("")
-    producer.genPartonMatch = cms.InputTag("")
-    producer.getJetMCFlavour = cms.bool(False)
-    producer.JetFlavourInfoSource = cms.InputTag("")
-
-if useData:
-    producer = getattr(process,'patJetsAk8PuppiJetsSoftDrop')
-    producer.addGenPartonMatch = cms.bool(False)
-    producer.embedGenJetMatch = cms.bool(False)
-    producer.embedGenPartonMatch = cms.bool(False)
-    producer.genJetMatch = cms.InputTag("")
-    producer.genPartonMatch = cms.InputTag("")
-    producer.getJetMCFlavour = cms.bool(False)
-    producer.JetFlavourInfoSource = cms.InputTag("")
-
-if useData:
-    producer = getattr(process,'patJetsAk8CHSJetsSoftDropSubjets')
-    producer.addGenPartonMatch = cms.bool(False)
-    producer.embedGenJetMatch = cms.bool(False)
-    producer.embedGenPartonMatch = cms.bool(False)
-    producer.genJetMatch = cms.InputTag("")
-    producer.genPartonMatch = cms.InputTag("")
-    producer.getJetMCFlavour = cms.bool(False)
-    producer.JetFlavourInfoSource = cms.InputTag("")
-
-if useData:
-    producer = getattr(process,'patJetsAk8CHSJets')
-    producer.addGenPartonMatch = cms.bool(False)
-    producer.embedGenJetMatch = cms.bool(False)
-    producer.embedGenPartonMatch = cms.bool(False)
-    producer.genJetMatch = cms.InputTag("")
-    producer.genPartonMatch = cms.InputTag("")
-    producer.getJetMCFlavour = cms.bool(False)
-    producer.JetFlavourInfoSource = cms.InputTag("")
-
-if useData:
-    producer = getattr(process,'patJetsAk8PuppiJetsSoftDropSubjets')
-    producer.addGenPartonMatch = cms.bool(False)
-    producer.embedGenJetMatch = cms.bool(False)
-    producer.embedGenPartonMatch = cms.bool(False)
-    producer.genJetMatch = cms.InputTag("")
-    producer.genPartonMatch = cms.InputTag("")
-    producer.getJetMCFlavour = cms.bool(False)
-    producer.JetFlavourInfoSource = cms.InputTag("")
-
-if useData:
-    producer = getattr(process,'patJetsAk8CHSJetsSoftDrop')
-    producer.addGenPartonMatch = cms.bool(False)
-    producer.embedGenJetMatch = cms.bool(False)
-    producer.embedGenPartonMatch = cms.bool(False)
-    producer.genJetMatch = cms.InputTag("")
-    producer.genPartonMatch = cms.InputTag("")
-    producer.getJetMCFlavour = cms.bool(False)
-    producer.JetFlavourInfoSource = cms.InputTag("")
-
-if useData:
-    producer = getattr(process,'patJetsAk8CHSJetsPruned')
-    producer.addGenPartonMatch = cms.bool(False)
-    producer.embedGenJetMatch = cms.bool(False)
-    producer.embedGenPartonMatch = cms.bool(False)
-    producer.genJetMatch = cms.InputTag("")
-    producer.genPartonMatch = cms.InputTag("")
-    producer.getJetMCFlavour = cms.bool(False)
-    producer.JetFlavourInfoSource = cms.InputTag("")
-
-if useData:
-    producer = getattr(process,'patJetsAk8CHSJetsPrunedSubjets')
-    producer.addGenPartonMatch = cms.bool(False)
-    producer.embedGenJetMatch = cms.bool(False)
-    producer.embedGenPartonMatch = cms.bool(False)
-    producer.genJetMatch = cms.InputTag("")
-    producer.genPartonMatch = cms.InputTag("")
-    producer.getJetMCFlavour = cms.bool(False)
-    producer.JetFlavourInfoSource = cms.InputTag("")
+    producer = getattr(process,'patJetsAK8PFCHS')
+    modify_patjetproducer_for_data(producer)
 
 # Higgs tagging commissioning
 
