@@ -431,6 +431,9 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     else:
         raise RuntimeError, "cannot guess jet algo (ca/ak) from fatjets name %s" % fatjets_name
 
+    if verbose:
+        print '* Adding fatjets_subjets for', fatjets_name
+
     subjets_name = groomed_jets_name + 'Subjets'  # e.g. CA8CHSPruned + Subjets
 
     # add genjet producers, if requested:
