@@ -1183,14 +1183,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
-# process.load("FWCore.MessageLogger.MessageLogger_cfi")
-#process.MessageLogger = cms.Service("MessageLogger")
-
-
 # Note: we run in unscheduled mode, i.e. all modules are run as required;
 # just make sure that MyNtuple runs:
-
-
 process.p = cms.Path(
     process.MyNtuple)
 process.p.associate(task)
