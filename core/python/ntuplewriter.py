@@ -863,19 +863,7 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 task.add(process.egmGsfElectronIDs)
 task.add(process.slimmedElectronsUSER)
 
-# additional MET filters not given in MiniAOD
-
-# process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
-#process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
-#process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
-
-# process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
-#process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
-#process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
-
-
 # NtupleWriter
-
 
 isreHLT = False
 for x in process.source.fileNames:
@@ -1204,8 +1192,6 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
 
 process.p = cms.Path(
-    # process.BadPFMuonFilter *
-    # process.BadChargedCandidateFilter *
     process.MyNtuple)
 process.p.associate(task)
 process.p.associate(process.patAlgosToolsTask)
