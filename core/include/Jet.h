@@ -28,6 +28,8 @@ class Jet : public FlavorParticle {
     m_photonMultiplicity = 0;
     m_btag_combinedSecondaryVertex = 0;
     m_btag_combinedSecondaryVertexMVA = 0;
+    m_btag_DeepCSV_probb = 0;
+    m_btag_DeepCSV_probbb = 0;
     m_btag_BoostedDoubleSecondaryVertexAK8 = 0;
     m_btag_BoostedDoubleSecondaryVertexCA15 = 0;
     m_JEC_factor_raw = 0;
@@ -53,6 +55,7 @@ class Jet : public FlavorParticle {
   int photonMultiplicity() const{return m_photonMultiplicity;}
   float btag_combinedSecondaryVertex() const{return m_btag_combinedSecondaryVertex;} // combinedInclusiveSecondaryVertexV2BJetTags
   float btag_combinedSecondaryVertexMVA() const{return m_btag_combinedSecondaryVertexMVA;}
+  float btag_DeepCSV() const{return m_btag_DeepCSV_probb + m_btag_DeepCSV_probbb;} // pfDeepCSVJetTags:probb + pfDeepCSVJetTags:probbb
   float btag_BoostedDoubleSecondaryVertexAK8() const{return m_btag_BoostedDoubleSecondaryVertexAK8;}
   float btag_BoostedDoubleSecondaryVertexCA15() const{return m_btag_BoostedDoubleSecondaryVertexCA15;}
   float JEC_factor_raw() const{return m_JEC_factor_raw;}
@@ -78,6 +81,8 @@ class Jet : public FlavorParticle {
   void set_photonMultiplicity(int x){m_photonMultiplicity=x;}
   void set_btag_combinedSecondaryVertex(float x){m_btag_combinedSecondaryVertex=x;} // for 72, this is combinedInclusiveSecondaryVertexV2BJetTags
   void set_btag_combinedSecondaryVertexMVA(float x){m_btag_combinedSecondaryVertexMVA=x;}
+  void set_btag_DeepCSV_probb(float x){m_btag_DeepCSV_probb=x;} // pfDeepCSVJetTags:probb
+  void set_btag_DeepCSV_probbb(float x){m_btag_DeepCSV_probbb=x;} // pfDeepCSVJetTags:probbb
   void set_btag_BoostedDoubleSecondaryVertexAK8(float x){m_btag_BoostedDoubleSecondaryVertexAK8=x;}
   void set_btag_BoostedDoubleSecondaryVertexCA15(float x){m_btag_BoostedDoubleSecondaryVertexCA15=x;}
   void set_JEC_factor_raw(float x){m_JEC_factor_raw=x;}
@@ -106,6 +111,8 @@ class Jet : public FlavorParticle {
   int m_photonMultiplicity;
   float m_btag_combinedSecondaryVertex;
   float m_btag_combinedSecondaryVertexMVA;
+  float m_btag_DeepCSV_probb;
+  float m_btag_DeepCSV_probbb;
   float m_btag_BoostedDoubleSecondaryVertexAK8;
   float m_btag_BoostedDoubleSecondaryVertexCA15;
   float m_JEC_factor_raw;
