@@ -640,6 +640,18 @@ addJetCollection(process, labelName='AK8PFPUPPI', jetSource=cms.InputTag('ak8Pup
                  elSource=cms.InputTag('slimmedElectrons'),
                  getJetMCFlavour=(not useData)
                  )
+# manually override parton & genjet matching even though we set
+# getJetMCFlavour false...
+if useData:
+    producer = getattr(process, 'patJetsAK8PFPUPPI')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
 addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJets'), algo='AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'), pfCandidates=cms.InputTag('packedPFCandidates'),
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
@@ -647,6 +659,16 @@ addJetCollection(process, labelName='AK8PFCHS', jetSource=cms.InputTag('ak8CHSJe
                  elSource=cms.InputTag('slimmedElectrons'),
                  getJetMCFlavour=(not useData)
                  )
+if useData:
+    producer = getattr(process, 'patJetsAK8PFCHS')
+    producer.addGenPartonMatch = cms.bool(False)
+    producer.embedGenJetMatch = cms.bool(False)
+    producer.embedGenPartonMatch = cms.bool(False)
+    producer.genJetMatch = cms.InputTag("")
+    producer.genPartonMatch = cms.InputTag("")
+    producer.getJetMCFlavour = cms.bool(False)
+    producer.JetFlavourInfoSource = cms.InputTag("")
+
 
 # Higgs tagging commissioning
 
@@ -902,9 +924,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
                                 doJets=cms.bool(True),
                                 #jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
-                                #jet_sources=cms.vstring(
+                                # jet_sources=cms.vstring(
                                 #    "slimmedJets", "slimmedJetsPuppi"),
-                                jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi","patJetsAK8PFPUPPI","patJetsAK8PFCHS"),
+                                jet_sources=cms.vstring(
+                                    "slimmedJets", "slimmedJetsPuppi", "patJetsAK8PFPUPPI", "patJetsAK8PFCHS"),
                                 jet_ptmin=cms.double(10.0),
                                 jet_etamax=cms.double(999.0),
 
@@ -1052,7 +1075,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 # for HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50: relevant filters
                                 # are hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter (last electron filter),
                                 # hltEle45CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned
-                                triggerObjects_sources=cms.vstring(
+                                triggerObjects_sources=(cms.vstring(
                                     # single jet trigger
                                     'hltSinglePFJet40',
                                     'hltSinglePFJet60',
@@ -1076,7 +1099,16 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     'hltDiPFJetAve450',
                                     'hltDiPFJetAve500',
 
-                                ),
+                                    'hltDiPFJetAve15ForHFJEC',
+                                    'hltDiPFJetAve25ForHFJEC',
+                                    'hltDiPFJetAve35ForHFJEC',
+                                    'hltDiPFJetAve60ForHFJEC',
+                                    'hltDiPFJetAve80ForHFJEC',
+                                    'hltDiPFJetAve100ForHFJEC',
+                                    'hltDiPFJetAve160ForHFJEC',
+                                    'hltDiPFJetAve220ForHFJEC',
+                                    'hltDiPFJetAve300ForHFJEC',
+                                ) if useData else ()),
 
                                 #  'hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q',        # HLT_Mu45_eta2p1_v*
                                 #  'hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter',                # HLT_Ele35_CaloIdVT_GsfTrkIdT_PFJet150_PFJet50_v* (electron)
