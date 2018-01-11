@@ -18,6 +18,8 @@ bTagDiscriminators = [
     #'pfSimpleSecondaryVertexHighPurBJetTags',
     'pfCombinedInclusiveSecondaryVertexV2BJetTags',
     'pfCombinedMVAV2BJetTags',
+    'pfDeepCSVJetTags:probb',
+    'pfDeepCSVJetTags:probbb',
     'pfBoostedDoubleSecondaryVertexAK8BJetTags',
     'pfBoostedDoubleSecondaryVertexCA15BJetTags'
 ]
@@ -66,7 +68,8 @@ process.source = cms.Source("PoolSource",
                             skipEvents=cms.untracked.uint32(0)
                             )
 
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(2000))
+# process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(10))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -1055,7 +1058,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
                                 doGenMET=cms.bool(False),
 
-                                #doTopJets=cms.bool(False),
+                                # doTopJets=cms.bool(False),
                                 doTopJets = cms.bool(True),
                                 topjet_ptmin=cms.double(150.0),
                                 topjet_etamax=cms.double(5.0),

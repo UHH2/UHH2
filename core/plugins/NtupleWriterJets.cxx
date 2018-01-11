@@ -249,7 +249,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
   }//do taginfos
   if(do_btagging){
     const auto & bdisc = pat_jet.getPairDiscri();
-    bool csv = false, csvmva = false, doubleak8 = false, doubleca15 = false;
+    bool csv = false, csvmva = false, doubleak8 = false, doubleca15 = false, deepcsv_b = false, deepcsv_bb = false;
     for(const auto & name_value : bdisc){
       const auto & name = name_value.first;
       const auto & value = name_value.second;
@@ -261,6 +261,14 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
         jet.set_btag_combinedSecondaryVertexMVA(value);                                                                                                                              
         csvmva = true;                                                                                                                                                               
       }   
+      else if(name == "pfDeepCSVJetTags:probb"){                                                                                                            
+        jet.set_btag_DeepCSV_probb(value);                                                                                                                              
+        deepcsv_b = true;                                                                                                                                                               
+      }   
+      else if(name == "pfDeepCSVJetTags:probbb"){                                                                                                            
+        jet.set_btag_DeepCSV_probbb(value);                                                                                                                              
+        deepcsv_bb = true;                                                                                                                                                               
+      }   
       else if(name == "pfBoostedDoubleSecondaryVertexAK8BJetTags"){
 	jet.set_btag_BoostedDoubleSecondaryVertexAK8(value);
 	doubleak8 = true;
@@ -271,7 +279,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
       }
     }
 
-    if(!csv || !csvmva || !doubleak8 ||!doubleca15){
+    if(!csv || !csvmva || !doubleak8 || !doubleca15 || !deepcsv_b || !deepcsv_bb){
       if(btag_warning){
 	cout << "Warning in NtupleWriterJets: did not find all b-taggers! Available btaggers: ";
 	for(const auto & name_value : bdisc){
