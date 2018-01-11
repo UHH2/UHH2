@@ -1198,7 +1198,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     'hltDiPFJetAve160ForHFJEC',
                                     'hltDiPFJetAve220ForHFJEC',
                                     'hltDiPFJetAve300ForHFJEC',
-                                ) if useData else ()),
+                                ) if useData else cms.vstring()),
 
                                 #  'hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q',        # HLT_Mu45_eta2p1_v*
                                 #  'hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter',                # HLT_Ele35_CaloIdVT_GsfTrkIdT_PFJet150_PFJet50_v* (electron)
