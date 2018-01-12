@@ -12,6 +12,12 @@ if [ -z "$MAKEFLAGS" ]
 then
 	np=$(grep -c ^processor /proc/cpuinfo)
 	let np+=2
+	# Be nice on shared machines, don't take up all the cores
+	limit="12"
+	if [[ "$np" -gt "$limit" ]]
+	then
+		np=$limit
+	fi
 	export MAKEFLAGS="-j$np"
 fi
 
@@ -26,14 +32,6 @@ setupFastjet() {
 	FJVER="$1"
 	FJCONTRIBVER="$2"
 	echo "Setting up fastjet $FJVER and fastjet-contrib $FJCONTRIBVER"
-
-	# Create default make args for parallel jobs
-	if [ -z "$MAKEFLAGS" ]
-	then
-		np=$(grep -c ^processor /proc/cpuinfo)
-		let np+=2
-		export MAKEFLAGS="-j$np"
-	fi
 
 	# Setup fastjet & fastjet-contrib
 	# NB use curl not wget as curl available by cvmfs, wget isnt
