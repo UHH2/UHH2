@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# might be usefull to call 
+# might be usefull to call
 #
 #   export CMSSW_GIT_REFERENCE=<DIRECTORYWITHENOUGHSPACE>/cmssw.git
 #
@@ -41,7 +41,7 @@ setupFastjet() {
 	curl -O http://fastjet.fr/repo/fastjet-${FJVER}.tar.gz
 	tar xzf fastjet-${FJVER}.tar.gz
 	mkdir "${FJINSTALLDIR}"
-	cd fastjet-${FJVER}    
+	cd fastjet-${FJVER}
 	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins CXXFLAGS=-fPIC
 	make $MAKEFLAGS
 	make check
@@ -56,8 +56,8 @@ setupFastjet() {
 	cd fjcontrib-${FJCONTRIBVER}
 	# add HOTVR from SVN - do it this way until it becomes a proper contrib
 	svn co http://fastjet.hepforge.org/svn/contrib/contribs/HOTVR/trunk HOTVR/
-	# although we add fastjet-config to path, due to a bug we need to 
-	# explicitly state its path to ensure the necessary fragile library gets built 
+	# although we add fastjet-config to path, due to a bug we need to
+	# explicitly state its path to ensure the necessary fragile library gets built
 	./configure --fastjet-config="${FJINSTALLDIR}/bin/fastjet-config" CXXFLAGS=-fPIC
 	make $MAKEFLAGS
 	make check
