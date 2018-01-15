@@ -26,6 +26,19 @@ private:
     float csv_threshold;
 };
 
+class DeepCSVBTag {
+public:
+    enum wp {WP_LOOSE, WP_MEDIUM, WP_TIGHT };
+    
+    explicit DeepCSVBTag(wp working_point);
+    explicit DeepCSVBTag(float float_point);
+
+    bool operator()(const Jet & jet, const uhh2::Event & event) const;
+private:
+    float deepcsv_threshold;
+};
+
+
 /**
  * Jet Id following recomandations for 13 TeV:
  * https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID

@@ -25,7 +25,30 @@ CSVBTag::CSVBTag(float float_point):csv_threshold(float_point) {}
 bool CSVBTag::operator()(const Jet & jet, const Event &) const{
     return jet.btag_combinedSecondaryVertex() > csv_threshold;
 }
+///
+DeepCSVBTag::DeepCSVBTag(wp working_point) {
+    switch(working_point){
+        case WP_LOOSE:
+            deepcsv_threshold = 0.1522f;
+            break;
+        case WP_MEDIUM:
+            deepcsv_threshold = 0.4941f;
+            break;
+        case WP_TIGHT:
+            deepcsv_threshold = 0.8001f;
+            break;
+        default:
+            throw invalid_argument("invalid working point passed to DeepCSVBTag");
+    }
+}
 
+DeepCSVBTag::DeepCSVBTag(float float_point):deepcsv_threshold(float_point) {}
+
+
+bool DeepCSVBTag::operator()(const Jet & jet, const Event &) const{
+    return jet.btag_DeepCSV() > deepcsv_threshold;
+}
+///
 JetPFID::JetPFID(wp working_point):m_working_point(working_point){}
 
 bool JetPFID::operator()(const Jet & jet, const Event &) const{
