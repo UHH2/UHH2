@@ -587,7 +587,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     # patify subjets, with subjet b-tagging:
     subjets_patname = "patJets" + cap(subjets_name)
     if verbose:
-        print "adding groomed jets' subjets" + subjets_patname
+        print "adding groomed jets' subjets", subjets_patname
     addJetCollection(process,
                      labelName=subjets_name,
                      jetSource=cms.InputTag(groomed_jets_name, 'SubJets'),
