@@ -598,7 +598,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     # patify subjets, with subjet b-tagging:
     subjets_patname = "patJets" + cap(subjets_name)
     if verbose:
-        print "adding groomed jets' subjets" + subjets_patname
+        print "adding groomed jets' subjets", subjets_patname
     addJetCollection(process,
                      labelName=subjets_name,
                      jetSource=cms.InputTag(groomed_jets_name, 'SubJets'),
@@ -666,8 +666,9 @@ add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop',
                     genjets_name=lambda s: s.replace('CHS', 'Gen'))
 # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsSoftDrop', genjets_name=lambda s: s.replace('CHS', 'Gen'))
 # add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsSoftDrop', genjets_name=lambda s: s.replace('Puppi', 'Gen'))
-add_fatjets_subjets(process, 'ak8PuppiJetsFat', 'ak8PuppiJetsSoftDrop',
-                    genjets_name=lambda s: s.replace('Puppi', 'Gen'))
+
+add_fatjets_subjets(process, 'ak8PuppiJetsFat', 'ak8PuppiJetsSoftDrop', genjets_name=lambda s: s.replace('Puppi', 'Gen'), jetcorr_label="AK8PFPuppi", jetcorr_label_subjets="AK4PFPuppi")
+
 # B-tagging not needed for pruned jets, they are just used to get the mass
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsPruned',
                     genjets_name=lambda s: s.replace('CHS', 'Gen'), btagging=False)
@@ -783,8 +784,9 @@ addJetCollection(process,
                  algo='AK',
                  rParam=0.8,
                  genJetCollection=cms.InputTag('slimmedGenJetsAK8'),
-                 jetCorrections=(
-                     'AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
+
+                 jetCorrections=('AK8PFPuppi', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
+
                  pfCandidates=cms.InputTag('packedPFCandidates'),
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
