@@ -131,15 +131,18 @@ bool Electron_MVAID(const Electron& ele_, const uhh2::Event&, const std::string&
   std::string category("");
 
   const float pt(ele_.pt()), abs_etaSC(fabs(ele_.supercluster_eta()));
+  const float ebSplit = 0.8;
+  const float ebeeSplit = 1.479;
+
   if (abs_etaSC > 2.5) return false;
   if (pt > 10.){
-    if                         (abs_etaSC < 0.8)   category = "high-pt_barrel1";
-    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) category = "high-pt_barrel2";
-    else                                           category = "high-pt_endcap";
+    if       (abs_etaSC < ebSplit)  category = "high-pt_barrel1";
+    else if (abs_etaSC < ebeeSplit) category = "high-pt_barrel2";
+    else                            category = "high-pt_endcap";
   } else if (pt > 5.) {
-    if                         (abs_etaSC < 0.8)   category = "low-pt_barrel1";
-    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) category = "low-pt_barrel2";
-    else                                           category = "low-pt_endcap";
+    if       (abs_etaSC < ebSplit)  category = "low-pt_barrel1";
+    else if (abs_etaSC < ebeeSplit) category = "low-pt_barrel2";
+    else                            category = "low-pt_endcap";
   }
   else return false;
 
