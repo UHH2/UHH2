@@ -14,7 +14,7 @@ class Electron : public RecParticle {
   enum tag {
     twodcut_dRmin,
     twodcut_pTrel,
-    heepElectronID_HEEPV60,		
+    heepElectronID_HEEPV70,
     cutBasedElectronID_Fall17_94X_V1_Preliminary_veto,
     cutBasedElectronID_Fall17_94X_V1_Preliminary_loose,
     cutBasedElectronID_Fall17_94X_V1_Preliminary_medium,
@@ -24,7 +24,7 @@ class Electron : public RecParticle {
   };
 
   static tag tagname2tag(const std::string & tagname){
-    if(tagname == "heepElectronID_HEEPV60") return heepElectronID_HEEPV60;
+    if(tagname == "heepElectronID_HEEPV70") return heepElectronID_HEEPV70;
     if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_veto") return cutBasedElectronID_Fall17_94X_V1_Preliminary_veto;
     if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_loose") return cutBasedElectronID_Fall17_94X_V1_Preliminary_loose;
     if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_medium") return cutBasedElectronID_Fall17_94X_V1_Preliminary_medium;
