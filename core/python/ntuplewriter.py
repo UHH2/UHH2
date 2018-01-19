@@ -978,8 +978,8 @@ switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 elecID_mod_ls = [
     'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_Preliminary_cff',
     'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff',
-    #  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
-    #  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_HZZ_V1_cff',
+    'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff',
+    'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff',
 ]
 
 for mod in elecID_mod_ls:
@@ -1005,19 +1005,16 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 
                                               ),
 
-                                              #  vmaps_float = cms.PSet(
-                                              #    ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values'),
-                                              #    ElectronMVAEstimatorRun2Spring16HZZV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16HZZV1Values'),
-                                              #  ),
+                                               vmaps_float = cms.PSet(
+                                                   ElectronMVAEstimatorIso = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17IsoV1Values'),
+                                                   ElectronMVAEstimatorNoIso = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values')
+                                               ),
 
                                               vmaps_double=cms.vstring(
                                                   el_isovals),
 
                                               effAreas_file=cms.FileInPath(
                                                   'RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt'),
-
-                                              #  mva_GeneralPurpose = cms.string('ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values__user01'),
-                                              #  mva_HZZ = cms.string('ElectronMVAEstimatorRun2Spring16HZZV1Values__user01'),
                                               )
 task.add(process.egmGsfElectronIDs)
 task.add(process.slimmedElectronsUSER)

@@ -144,7 +144,7 @@ bool Electron_GeneralPurposeMVAID(const Electron& ele_, const uhh2::Event&, cons
   else if(wp_ == "90p_sigeff") wp_idx = 1;
   else throw std::runtime_error("Electron_GeneralPurposeMVAID -- undefined working-point tag: "+wp_);
 
-  const float MVA(ele_.mvaGeneralPurpose());
+  const float MVA(10);
 
   return (MVA > ElectronID::GeneralPurposeMVA_LUT.at(tuning_).at(category).at(wp_idx));
 }
@@ -175,7 +175,7 @@ bool Electron_HZZMVAID(const Electron& ele_, const uhh2::Event&, const std::stri
   if     (wp_ == "98p_sigeff") wp_idx = 0;
   else throw std::runtime_error("Electron_HZZPurposeMVAID -- undefined working-point tag: "+wp_);
 
-  const float MVA(ele_.mvaHZZ());
+  const float MVA(10);
 
   return (MVA > ElectronID::HZZMVA_LUT.at(tuning_).at(category).at(wp_idx));
 
