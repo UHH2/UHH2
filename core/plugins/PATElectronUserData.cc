@@ -39,8 +39,8 @@ class PATElectronUserData : public edm::EDProducer {
 
   EffectiveAreas effAreas_;
 
-  std::string mva_GeneralPurpose_;
-  std::string mva_HZZ_;
+  std::string mva_Iso_;
+  std::string mva_NoIso_;
 };
 
 PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig):
@@ -75,8 +75,8 @@ PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig):
     }
   }
 
-  if(iConfig.exists("mva_GeneralPurpose")) mva_GeneralPurpose_ = iConfig.getParameter<std::string>("mva_GeneralPurpose"); 
-  if(iConfig.exists("mva_HZZ"))   mva_HZZ_   = iConfig.getParameter<std::string>("mva_HZZ"); 
+  if(iConfig.exists("mva_Iso")) mva_Iso_ = iConfig.getParameter<std::string>("mva_Iso"); 
+  if(iConfig.exists("mva_NoIso"))   mva_NoIso_   = iConfig.getParameter<std::string>("mva_NoIso"); 
 
   produces< pat::ElectronCollection >();
 }
@@ -148,15 +148,7 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     const float eA  = effAreas_.getEffectiveArea(fabs(ele.superCluster()->eta()));
     ele.addUserFloat("EffArea", eA);
-    /*
-    if(!ele.hasUserFloat(mva_GeneralPurpose_)) throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaGeneralPurpose' not found";
-    if(!ele.hasUserFloat(mva_HZZ_))   throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float for 'mvaHZZ' not found"; 
 
-    const float GeneralPurposeMVA = ele.userFloat(mva_GeneralPurpose_); 
-    const float HZZMVA   = ele.userFloat(mva_HZZ_);                                                                                                                                                                                                              
-    ele.addUserFloat("mvaGeneralPurpose", GeneralPurposeMVA); 
-    ele.addUserFloat("mvaHZZ"  ,   HZZMVA); 
-    */
   }
 
   iEvent.put(std::move(newElecs));

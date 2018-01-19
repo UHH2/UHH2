@@ -78,22 +78,29 @@ cd CMSSW_9_4_1/src
 eval `scramv1 runtime -sh`
 git cms-init
 
-# Add in preliminary EGamma VID
-git cms-merge-topic lsoffi:CMSSW_9_4_0_pre3_TnP
-
-#git cms-addpkg RecoJets/JetProducers
-
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
-#sed -i "s|3.1.0|3.2.1|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet.xml
-#sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/fastjet/3.2.1|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc630/fastjet-install|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet.xml
-#sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/fastjet-contrib/1.026|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc630/fastjet-install|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib.xml
-#sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/fastjet-contrib/1.026|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc630/fastjet-install|g" $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib-archive.xml
-#scram setup fastjet
-#scram setup fastjet-contrib
-#scram setup fastjet-contrib-archive
+FJINSTALL=$(fastjet-config --prefix)
+OLD_FJ_VER=$(getToolVersion fastjet)
+FJ_TOOL_FILE=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet.xml
+sed -i "s|/cvmfs/cms.cern.ch/$SCRAM_ARCH/external/fastjet/$OLD_FJ_VER|$FJINSTALL|g" "$FJ_TOOL_FILE"
+sed -i "s|$OLD_FJ_VER|$FJVER|g" "$FJ_TOOL_FILE"
 
-#scram b clean
-scram b -j 20
+OLD_FJCONTRIB_VER=$(getToolVersion fastjet-contrib)
+FJCONFIG_TOOL_FILE=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib.xml
+sed -i "s|/cvmfs/cms.cern.ch/$SCRAM_ARCH/external/fastjet-contrib/$OLD_FJCONTRIB_VER|$FJINSTALL|g" "$FJCONFIG_TOOL_FILE"
+sed -i "s|$OLD_FJCONTRIB_VER|$FJCONTRIB_VER|g" "$FJCONFIG_TOOL_FILE"
+
+FJCONFIG_ARCHIVE_TOOL_FILE=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib-archive.xml
+sed -i "s|/cvmfs/cms.cern.ch/$SCRAM_ARCH/external/fastjet-contrib/$OLD_FJCONTRIB_VER|$FJINSTALL|g" "$FJCONFIG_ARCHIVE_TOOL_FILE"
+sed -i "s|$OLD_FJCONTRIB_VER|$FJCONTRIB_VER|g" "$FJCONFIG_ARCHIVE_TOOL_FILE"
+
+scram setup fastjet
+scram setup fastjet-contrib
+scram setup fastjet-contrib-archive
+
+scram b clean
+time scram b $MAKEFLAGS
+
 # Get the UHH2 repo & JEC files
 cd $CMSSW_BASE/src
 git clone -b master https://github.com/UHH2/UHH2.git
