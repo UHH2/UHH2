@@ -973,7 +973,18 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
                                                       'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-tight'),
                                                   heepElectronID_HEEPV70=cms.InputTag(
                                                       'egmGsfElectronIDs:heepElectronID-HEEPV70'),
-
+                                                  mvaEleID_Fall17_noIso_V1_wp90=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wp90'),
+                                                  mvaEleID_Fall17_noIso_V1_wp80=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wp80'),
+                                                  mvaEleID_Fall17_noIso_V1_wpLoose=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wpLoose'),
+                                                  mvaEleID_Fall17_iso_V1_wp90=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wp90'),
+                                                  mvaEleID_Fall17_iso_V1_wp80=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wp80'),
+                                                  mvaEleID_Fall17_iso_V1_wpLoose=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wpLoose'),
                                               ),
 
                                                vmaps_float = cms.PSet(
@@ -1033,6 +1044,12 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     'cutBasedElectronID_Fall17_94X_V1_Preliminary_medium',
                                     'cutBasedElectronID_Fall17_94X_V1_Preliminary_tight',
                                     'heepElectronID_HEEPV70',
+                                    'mvaEleID_Fall17_noIso_V1_wp90',
+                                    'mvaEleID_Fall17_noIso_V1_wp80',
+                                    'mvaEleID_Fall17_noIso_V1_wpLoose',
+                                    'mvaEleID_Fall17_iso_V1_wp90',
+                                    'mvaEleID_Fall17_iso_V1_wp80',
+                                    'mvaEleID_Fall17_iso_V1_wpLoose',
                                 ),
                                 # #Add variables to trace possible issues with the ECAL slew rate mitigation
                                 # #https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#EGM
