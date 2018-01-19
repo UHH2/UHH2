@@ -945,11 +945,10 @@ from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
 elecID_mod_ls = [
-   'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_Preliminary_cff',
-#  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronHLTPreselecition_Summer16_V1_cff',
-#  'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV6_0cff',
-#  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
-#  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_HZZ_V1_cff',
+    'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_Preliminary_cff',
+    'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff',
+    #  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
+    #  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_HZZ_V1_cff',
 ]
 
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
@@ -1026,8 +1025,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     'cutBasedElectronID_Fall17_94X_V1_Preliminary_loose',
                                     'cutBasedElectronID_Fall17_94X_V1_Preliminary_medium',
                                     'cutBasedElectronID_Fall17_94X_V1_Preliminary_tight',
-                                    #'cutBasedElectronHLTPreselection_Summer16_V1',
-                                    #'heepElectronID_HEEPV60',
+                                    'heepElectronID_HEEPV70',
                                 ),
                                 # #Add variables to trace possible issues with the ECAL slew rate mitigation
                                 # #https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#EGM

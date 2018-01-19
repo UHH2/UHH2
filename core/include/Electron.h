@@ -18,9 +18,7 @@ class Electron : public RecParticle {
     cutBasedElectronID_Fall17_94X_V1_Preliminary_veto,
     cutBasedElectronID_Fall17_94X_V1_Preliminary_loose,
     cutBasedElectronID_Fall17_94X_V1_Preliminary_medium,
-    cutBasedElectronID_Fall17_94X_V1_Preliminary_tight,
-    cutBasedElectronHLTPreselection_Summer16_V1
-
+    cutBasedElectronID_Fall17_94X_V1_Preliminary_tight
   };
 
   static tag tagname2tag(const std::string & tagname){
@@ -29,7 +27,6 @@ class Electron : public RecParticle {
     if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_loose") return cutBasedElectronID_Fall17_94X_V1_Preliminary_loose;
     if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_medium") return cutBasedElectronID_Fall17_94X_V1_Preliminary_medium;
     if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_tight") return cutBasedElectronID_Fall17_94X_V1_Preliminary_tight;
-    if(tagname == "cutBasedElectronHLTPreselection_Summer16_V1") return cutBasedElectronHLTPreselection_Summer16_V1;
     throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
   }
 
