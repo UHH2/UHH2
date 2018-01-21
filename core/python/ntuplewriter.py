@@ -1120,20 +1120,29 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
                                 TopJets=cms.VPSet(
                                     cms.PSet(
-                                        # THESE ARE PUPPI JETS IN 91X
+                                        # Each PSet outputs a TopJet collection, with name {topjet_source}_{subjet_source}
+                                        # For each, we store the jets in topjet_source as TopJet objects,
+                                        # with its subjets stored depending on subjet_source.
+                                        # Tagging info can also be stored, as well as various substructure variables.
                                         topjet_source=cms.string(
-                                            "slimmedJetsAK8"),
-                                        # Note: use label "daughters" for  subjet_source if you want to store as subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!)
-                                        # to store a subjet collection present in miniAOD indicate the
-                                        # proper label of the subjets method in pat::Jet: SoftDrop or
-                                        # CMSTopTag
+                                            "slimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
+                                        # For subjet_source, use label "daughters" if you want to store as
+                                        # subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!).
+                                        # Otherwise, to store a subjet collection present in miniAOD indicate the
+                                        # proper label to be passed to pat::Jet::subjet(...)
+                                        # e.g. SoftDropPuppi or CMSTopTag
+                                        # If you include "CHS" in this string,
+                                        # it will use the matched CHS 4-vector for the *main* jet 4-vector.
                                         subjet_source=cms.string(
                                             "SoftDropPuppi"),
-                                        # Specify if you want to store b-tagging taginfos for subjet collection, make sure to have included them with .addTagInfos = True
-                                        # addTagInfos = True is currently true by default, however, only for collections produced and not read directly from miniAOD
+                                        # Specify if you want to store b-tagging taginfos for subjet collection,
+                                        # make sure to have included them with .addTagInfos = True
+                                        # addTagInfos = True is currently true by default, however,
+                                        # only for collections produced and not read directly from miniAOD
                                         # Default is do_subjet_taginfo=False
                                         do_subjet_taginfo=cms.bool(False),
-                                        # Note: if you want to store the MVA Higgs tagger discriminator, specify the jet collection from which to pick it up and the tagger name
+                                        # Note: if you want to store the MVA Higgs tagger discriminator,
+                                        # specify the jet collection from which to pick it up and the tagger name
                                         # currently the discriminator is trained on ungroomed jets, so
                                         # the discriminator has to be taken
                                         # from ungroomed jets
@@ -1141,15 +1150,17 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                             "patJetsAk8PuppiJetsFat"),
                                         higgstag_name=cms.string(
                                             "pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                        # Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
+                                        # If empty, njettiness is directly taken from MINIAOD UserFloat
+                                        # and added to jets, otherwise taken from the provided source
                                         #njettiness_source = cms.string(""),
                                         #substructure_variables_source = cms.string(""),
                                         #njettiness_groomed_source = cms.string(""),
                                         #substructure_groomed_variables_source = cms.string(""),
-                                        # Note: for slimmedJetsAK8 on miniAOD, the pruned mass is available as user float, with label ak8PFJetsCHSPrunedMass.
-                                        # Alternatively it is possible to specify another pruned jet collection (to be produced here), from which to get it by jet-matching.
-                                        # Finally, it is also possible to leave the pruned mass empty
-                                        # with ""
+                                        # Note: for slimmedJetsAK8 on miniAOD, the pruned mass is
+                                        # available as user float, with label ak8PFJetsCHSPrunedMass.
+                                        # Alternatively it is possible to specify another pruned jet collection
+                                        # (to be produced here), from which to get it by jet-matching.
+                                        # Finally, it is also possible to leave the pruned mass empty with ""
                                         prunedmass_source=cms.string(
                                             "ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass"),
                                         softdropmass_source=cms.string(
