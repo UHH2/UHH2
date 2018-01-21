@@ -63,14 +63,15 @@ process.source = cms.Source("PoolSource",
                                 # '/store/data/Run2017B/JetHT/MINIAOD/22Jun2017-v1/00000/00063668-8858-E711-9C49-001E67792486.root'
                                 # '/store/data/Run2017D/JetHT/MINIAOD/PromptReco-v1/000/302/031/00000/24C14AB9-488F-E711-A2D5-02163E019D41.root'
                                 '/store/data/Run2017B/JetHT/MINIAOD/17Nov2017-v1/20000/0016BE6B-FACC-E711-88D8-B499BAAC0068.root'
-                                #'/store/mc/RunIIFall17MiniAOD/QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/50000/00197229-2FDD-E711-9070-0025904AC2C4.root'
+                                # '/store/data/Run2017B/SingleElectron/MINIAOD/17Nov2017-v1/40000/00701B6B-E9DB-E711-B111-02163E019D6D.root'
+                                # '/store/mc/RunIIFall17MiniAOD/QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/50000/00197229-2FDD-E711-9070-0025904AC2C4.root'
                                 # '/store/data/Run2017B/SingleMuon/MINIAOD/PromptReco-v1/000/297/046/00000/32AC3177-7A56-E711-BE34-02163E019D73.root'
                             ]),
                             skipEvents=cms.untracked.uint32(0)
                             )
 
-# process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100))
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(10))
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100))
+# process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(10))
 
 # Grid-control changes:
 gc_maxevents = '__MAX_EVENTS__'
@@ -970,19 +971,17 @@ for m in el_isovals:
 
 
 # electron ID from VID
-from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import switchOnVIDElectronIdProducer, setupAllVIDIdsInModule, DataFormat, setupVIDElectronSelection
 
 switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
 elecID_mod_ls = [
     'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_Preliminary_cff',
-    #  'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronHLTPreselecition_Summer16_V1_cff',
-    #  'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV6_0cff',
-    #  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
-    #  'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_HZZ_V1_cff',
+    'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff',
+    'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff',
+    'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff',
 ]
 
-from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 for mod in elecID_mod_ls:
     setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
 
@@ -1001,22 +1000,32 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
                                                       'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-medium'),
                                                   cutBasedElectronID_Fall17_94X_V1_Preliminary_tight=cms.InputTag(
                                                       'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-tight'),
-
+                                                  heepElectronID_HEEPV70=cms.InputTag(
+                                                      'egmGsfElectronIDs:heepElectronID-HEEPV70'),
+                                                  mvaEleID_Fall17_noIso_V1_wp90=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wp90'),
+                                                  mvaEleID_Fall17_noIso_V1_wp80=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wp80'),
+                                                  mvaEleID_Fall17_noIso_V1_wpLoose=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wpLoose'),
+                                                  mvaEleID_Fall17_iso_V1_wp90=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wp90'),
+                                                  mvaEleID_Fall17_iso_V1_wp80=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wp80'),
+                                                  mvaEleID_Fall17_iso_V1_wpLoose=cms.InputTag(
+                                                    'egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wpLoose'),
                                               ),
 
-                                              #  vmaps_float = cms.PSet(
-                                              #    ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values'),
-                                              #    ElectronMVAEstimatorRun2Spring16HZZV1Values__user01 = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16HZZV1Values'),
-                                              #  ),
+                                               vmaps_float = cms.PSet(
+                                                   ElectronMVAEstimatorIso = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17IsoV1Values'),
+                                                   ElectronMVAEstimatorNoIso = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values')
+                                               ),
 
                                               vmaps_double=cms.vstring(
                                                   el_isovals),
 
                                               effAreas_file=cms.FileInPath(
                                                   'RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt'),
-
-                                              #  mva_GeneralPurpose = cms.string('ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values__user01'),
-                                              #  mva_HZZ = cms.string('ElectronMVAEstimatorRun2Spring16HZZV1Values__user01'),
                                               )
 task.add(process.egmGsfElectronIDs)
 task.add(process.slimmedElectronsUSER)
@@ -1066,8 +1075,13 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     'cutBasedElectronID_Fall17_94X_V1_Preliminary_loose',
                                     'cutBasedElectronID_Fall17_94X_V1_Preliminary_medium',
                                     'cutBasedElectronID_Fall17_94X_V1_Preliminary_tight',
-                                    #'cutBasedElectronHLTPreselection_Summer16_V1',
-                                    #'heepElectronID_HEEPV60',
+                                    'heepElectronID_HEEPV70',
+                                    'mvaEleID_Fall17_noIso_V1_wp90',
+                                    'mvaEleID_Fall17_noIso_V1_wp80',
+                                    'mvaEleID_Fall17_noIso_V1_wpLoose',
+                                    'mvaEleID_Fall17_iso_V1_wp90',
+                                    'mvaEleID_Fall17_iso_V1_wp80',
+                                    'mvaEleID_Fall17_iso_V1_wpLoose',
                                 ),
                                 # #Add variables to trace possible issues with the ECAL slew rate mitigation
                                 # #https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#EGM
@@ -1334,8 +1348,11 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
 # Note: we run in unscheduled mode, i.e. all modules are run as required;
-# just make sure that MyNtuple runs:
-process.p = cms.Path(process.MyNtuple)
+# just make sure that the electron IDs run before MyNtuple
+process.p = cms.Path(
+    process.egmGsfElectronIDSequence *
+    process.MyNtuple
+)
 process.p.associate(task)
 process.p.associate(process.patAlgosToolsTask)
 
