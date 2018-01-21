@@ -1003,15 +1003,6 @@ task.add(process.slimmedElectronsUSER)
 
 # NtupleWriter
 
-isreHLT = False
-for x in process.source.fileNames:
-    if "reHLT" in x:
-        isreHLT = True
-
-triggerpath = "HLT"
-if isreHLT:
-    triggerpath = "HLT2"
-
 if useData:
     metfilterpath = "RECO"
 else:
@@ -1175,7 +1166,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 ),
 
                                 doTrigger=cms.bool(True),
-                                trigger_bits=cms.InputTag("TriggerResults", "", triggerpath),
+                                trigger_bits=cms.InputTag(
+                                    "TriggerResults", "", "HLT"),
                                 # MET filters (HBHE noise, CSC, etc.) are stored as trigger Bits in
                                 # MINIAOD produced in path "PAT"/"RECO" with prefix "Flag_"
                                 metfilter_bits=cms.InputTag("TriggerResults", "", metfilterpath),
