@@ -232,60 +232,55 @@ process.ca8CHSJetsPruned = ak4PFJetsPruned.clone(
 
 from RecoJets.JetProducers.AnomalousCellParameters_cfi import *
 from RecoJets.JetProducers.PFJetParameters_cfi import *
-from RecoJets.JetProducers.CATopJetParameters_cfi import CATopJetParameters
-# process.cmsTopTagCHS = cms.EDProducer(
-#    "CATopJetProducer",
-#    PFJetParameters.clone( src = cms.InputTag('chs'),
-#                           doAreaFastjet = cms.bool(True),
-#                           doRhoFastjet = cms.bool(False),
-#                           jetPtMin = cms.double(fatjet_ptmin)
-#                           ),
-#    AnomalousCellParameters,
-#    CATopJetParameters.clone( jetCollInstanceName = cms.string("SubJets")),
-#    jetAlgorithm = cms.string("CambridgeAachen"),
-#    rParam = cms.double(0.8),
-#    writeCompound = cms.bool(True)
-#)
+# The HTTTopJetProducer does its own clustering producing a BasicJet of
+# (ungroomed jets), as well as producing PFJet (SubJets), and HTTTopJetTagInfo
+# Since we cannot store the BasicJet collection using addJetCollection
+# (which expects a reco::PFJet) we will have to create the CA15 jets separately
+# using the same parameters to ensure they stay in sync.
+ca15_clustering_params = dict(
+    useExplicitGhosts   = cms.bool(True),
+    jetAlgorithm        = cms.string("CambridgeAachen"),
+    rParam              = cms.double(1.5),
+    **AnomalousCellParameters.parameters_()
+)
+ca15_clustering_params.update(
+    **(PFJetParameters.clone(
+        src               = cms.InputTag("chs"),
+        doAreaFastjet     = cms.bool(True),
+        doRhoFastjet      = cms.bool(False),
+        jetPtMin          = cms.double(200.0)
+     ).parameters_())
+)
 
-# process.hepTopTagCHS = process.cmsTopTagCHS.clone(
-#    rParam = cms.double(1.5),
-#    tagAlgo = cms.int32(2), #2=fastjet heptt
-#    muCut = cms.double(0.8),
-#    maxSubjetMass = cms.double(30.0),
-#    useSubjetMass = cms.bool(False),
-#)
+process.ca15CHSJets = cms.EDProducer("FastjetJetProducer",
+    **ca15_clustering_params
+)
+task.add(process.ca15CHSJets)
 
-# process.hepTopTagCHS = cms.EDProducer(
-#        "HTTTopJetProducer",
-#         PFJetParameters.clone( src = cms.InputTag('chs'),
-#                               doAreaFastjet = cms.bool(True),
-#                               doRhoFastjet = cms.bool(False),
-#                               jetPtMin = cms.double(fatjet_ptmin)
-#                               ),
-#        AnomalousCellParameters,
-#        optimalR = cms.bool(True),
-#        algorithm = cms.int32(1),
-#        jetCollInstanceName = cms.string("SubJets"),
-#        jetAlgorithm = cms.string("CambridgeAachen"),
-#        rParam = cms.double(1.5),
-#        mode = cms.int32(4),
-#        minFatjetPt = cms.double(fatjet_ptmin),
-#        minCandPt = cms.double(0.),
-#        minSubjetPt = cms.double(0.),
-#        writeCompound = cms.bool(True),
-#        minCandMass = cms.double(0.),
-#        maxCandMass = cms.double(1000),
-#        massRatioWidth = cms.double(100.),
-#        minM23Cut = cms.double(0.),
-#        minM13Cut = cms.double(0.),
-#        maxM13Cut = cms.double(2.))
-
-# also re-do the ak4 jet clustering, as this is much simpler for b-tagging (there does not seem to be a simple way of
-# re-running b-tagging on the slimmedJets ...).
-#from RecoJets.JetProducers.ak4PFJets_cfi import ak4PFJets
-#process.ak4PFCHS = ak4PFJets.clone(src = 'chs')
-#process.ak8PFCHS =process.ak4PFCHS.clone(rParam = 0.8)
-
+process.hepTopTagCHS = cms.EDProducer("HTTTopJetProducer",
+    optimalR            = cms.bool(True),
+    qJets               = cms.bool(False),
+    minFatjetPt         = cms.double(200.),
+    minSubjetPt         = cms.double(0.),
+    minCandPt           = cms.double(0.),
+    maxFatjetAbsEta     = cms.double(99.),
+    subjetMass          = cms.double(30.),
+    muCut               = cms.double(0.8),
+    filtR               = cms.double(0.3),
+    filtN               = cms.int32(5),
+    mode                = cms.int32(4),
+    minCandMass         = cms.double(0.),
+    maxCandMass         = cms.double(999999.),
+    massRatioWidth      = cms.double(999999.),
+    minM23Cut           = cms.double(0.),
+    minM13Cut           = cms.double(0.),
+    maxM13Cut           = cms.double(999999.),
+    jetCollInstanceName = cms.string("SubJets"),
+    algorithm           = cms.int32(1),
+    writeCompound       = cms.bool(True),
+    **ca15_clustering_params
+)
+task.add(process.hepTopTagCHS)
 
 #################################################
 # Softdrop
@@ -299,17 +294,24 @@ task.add(process.ak8CHSJetsSoftDrop)
 
 process.ca15CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(
     src=cms.InputTag('chs'),
-    jetPtMin=fatjet_ptmin,
+    jetPtMin=process.ca15CHSJets.jetPtMin,
     jetAlgorithm=cms.string("CambridgeAachen"),
     rParam=1.5,
     R0=1.5,
     zcut=cms.double(0.2),
     beta=cms.double(1.0)
 )
+task.add(process.ca15CHSJetsSoftDrop)
 
-# process.ca15CHSJetsSoftDropforsub = process.ca8CHSJets.clone(rParam=1.5, jetPtMin=fatjet_ptmin, zcut=cms.double(
-# 0.2), beta=cms.double(1.0), useSoftDrop=cms.bool(True),
-# useExplicitGhosts=cms.bool(True), R0=cms.double(1.5))
+process.ca15CHSJetsSoftDropforsub = process.ca15CHSJets.clone(
+    zcut=cms.double(0.1),
+    beta=cms.double(0.0),
+    useSoftDrop=cms.bool(True),
+    useExplicitGhosts=cms.bool(True),
+    R0=cms.double(0.8)
+)
+task.add(process.ca15CHSJetsSoftDropforsub)
+
 process.ak8CHSJetsSoftDropforsub = process.ak8CHSJetsFat.clone(
     rParam=0.8,
     jetPtMin=fatjet_ptmin,
@@ -647,8 +649,9 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
 # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered', genjets_name=lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
 #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-#add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop', genjets_name=lambda s: s.replace('CHS', 'Gen'))
+add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
+add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop',
+                    genjets_name=lambda s: s.replace('CHS', 'Gen'))
 # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsSoftDrop', genjets_name=lambda s: s.replace('CHS', 'Gen'))
 # add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsSoftDrop', genjets_name=lambda s: s.replace('Puppi', 'Gen'))
 add_fatjets_subjets(process, 'ak8PuppiJetsFat', 'ak8PuppiJetsSoftDrop', genjets_name=lambda s: s.replace('Puppi', 'Gen'), jetcorr_label="AK8PFPuppi", jetcorr_label_subjets="AK4PFPuppi")
@@ -681,6 +684,8 @@ process.NjettinessCa15CHS = Njettiness.clone(
     cone=cms.double(1.5),
     R0=cms.double(1.5)
 )
+task.add(process.NjettinessCa15CHS)
+
 process.NjettinessCa15SoftDropCHS = Njettiness.clone(
     src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
     Njets=cms.vuint32(1, 2, 3),          # compute 1-, 2-, 3- subjettiness
@@ -697,6 +702,8 @@ process.NjettinessCa15SoftDropCHS = Njettiness.clone(
     # not used by default
     akAxesR0=cms.double(999.0)
 )
+task.add(process.NjettinessCa15SoftDropCHS)
+
 process.NjettinessCa15SoftDropPuppi = process.NjettinessCa15SoftDropCHS.clone(
     src=cms.InputTag("ca15PuppiJetsSoftDropforsub")
 )
@@ -721,8 +728,7 @@ process.NjettinessAk8SoftDropPuppi = process.NjettinessAk8SoftDropCHS.clone(
     src=cms.InputTag("ak8PuppiJetsSoftDropforsub")
 )
 task.add(process.NjettinessAk8SoftDropPuppi)
-#process.NjettinessCa15SoftDropCHS = Njettiness.clone(src = cms.InputTag("patJetsCa15CHSJetsSoftDrop"), cone = cms.double(1.5),R0 = cms.double(1.5))
-#process.NjettinessCa8Puppi = Njettiness.clone(src = cms.InputTag("patJetsCa8PuppiJets"), cone = cms.double(0.8))
+
 process.NjettinessCa15Puppi = Njettiness.clone(
     src=cms.InputTag("ca15PuppiJets"),
     cone=cms.double(1.5),
@@ -1123,19 +1129,26 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         prunedmass_source=cms.string("patJetsAk8CHSJetsPrunedPacked"),
                                         softdropmass_source=cms.string("patJetsAk8CHSJetsSoftDropPacked"),
                                     ),
-                                    # cms.PSet(
-                                    #    topjet_source = cms.string("patJetsHepTopTagCHSPacked"),
-                                    #    subjet_source = cms.string("daughters"),
-                                    #    do_subjet_taginfo = cms.bool(True),
-                                    #    higgstag_source = cms.string("patJetsCa15CHSJets"),
-                                    #    higgstag_name = cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                    #    njettiness_source = cms.string("NjettinessCa15CHS"),
-                                    #    substructure_variables_source = cms.string("ca15CHSJets"),
-                                    #    njettiness_groomed_source = cms.string("NjettinessCa15SoftDropCHS"),
-                                    #    substructure_groomed_variables_source = cms.string("ca15CHSJetsSoftDropforsub"),
-                                    #    prunedmass_source = cms.string("patJetsCa15CHSJetsPrunedPacked"),
-                                    #    #softdropmass_source  = cms.string(""),
-                                    #) ,
+                                    cms.PSet(
+                                        topjet_source = cms.string(
+                                            "patJetsHepTopTagCHSPacked"),
+                                        subjet_source = cms.string("daughters"),
+                                        do_subjet_taginfo = cms.bool(True),
+                                        higgstag_source = cms.string(
+                                            "patJetsCa15CHSJets"),
+                                        higgstag_name = cms.string(
+                                            "pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                                        njettiness_source = cms.string(
+                                            "NjettinessCa15CHS"),
+                                        substructure_variables_source = cms.string(
+                                            "ca15CHSJets"),
+                                        njettiness_groomed_source = cms.string(
+                                            "NjettinessCa15SoftDropCHS"),
+                                        substructure_groomed_variables_source = cms.string(
+                                            "ca15CHSJetsSoftDropforsub"),
+                                        # prunedmass_source = cms.string("patJetsCa15CHSJetsPrunedPacked"),
+                                        # softdropmass_source  = cms.string(""),
+                                    ) ,
                                     # cms.PSet(
                                     #    topjet_source = cms.string("patJetsHepTopTagPuppiPacked"),
                                     #    subjet_source = cms.string("daughters"),
