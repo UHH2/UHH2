@@ -255,59 +255,44 @@ namespace ElectronID {
 // Electron MVA IDs
 // REF https://twiki.cern.ch/twiki/bin/view/CMS/MultivariateElectronIdentificationRun2
 
-// --- General Purpose MVA ID
-bool Electron_GeneralPurposeMVAID(const Electron&, const uhh2::Event&, const std::string&, const std::string&);
+// --- MVA ID
+bool Electron_MVAID(const Electron&, const uhh2::Event&, const std::string&, const std::string&, const bool);
 
-// --- General Purpose MVA ID: Spring16
-bool ElectronID_MVAGeneralPurpose_Spring16_loose(const Electron&, const uhh2::Event&);
-bool ElectronID_MVAGeneralPurpose_Spring16_tight(const Electron&, const uhh2::Event&);
-
-// --- HZZ MVA ID
-bool Electron_HZZMVAID(const Electron&, const uhh2::Event&, const std::string&, const std::string&);
-
-// --- HZZ MVA ID: Spring16
-bool ElectronID_MVAHZZ_Spring16(const Electron&, const uhh2::Event&);
+// --- Specific MVA IDs: Fall17
+bool ElectronID_MVA_Fall17_loose_iso(const Electron&, const uhh2::Event&);
+bool ElectronID_MVA_Fall17_loose_noIso(const Electron&, const uhh2::Event&);
 
 
 namespace ElectronID {
 
-  const std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float> > > GeneralPurposeMVA_LUT = {
-
-  /************/
-
-  /** Spring16 **/
-    {"Spring16", 
+  const std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float> > > MVA_LUT_Iso = {
+    {"Fall17",
      {
-                         /* 80% SE    , 90% SE    */
-      //no GeneralPurpose ID below 10 GeV
-      {"high-pt_barrel1", {  0.941 ,  0.837 }},
-      {"high-pt_barrel2", {  0.899 ,  0.715 }},
-      {"high-pt_endcap" , {  0.758 ,  0.357 }},
-
-     },
-    },
-  /**************/
-
+      // currently only for wp loose
+      {"low-pt_barrel1",  {  -0.13  }},
+      {"low-pt_barrel2",  {  -0.32  }},
+      {"low-pt_endcap" ,  {  -0.08  }},
+      {"high-pt_barrel1", {  -0.86  }},
+      {"high-pt_barrel2", {  -0.81  }},
+      {"high-pt_endcap" , {  -0.72  }},
+     }
+    }
   };
 
-  const std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float> > > HZZMVA_LUT = {
-
-
-    /** Spring16 **/
-    {"Spring16", 
-     {   
-	/* 98% SE      */
-	{"low-pt_barrel1" , {  -0.211  }}, 
-	{"low-pt_barrel2" , {  -0.396  }}, 
-	{"low-pt_endcap"  , {  -0.215  }},
-	{"high-pt_barrel1", {  -0.870 }},
-	{"high-pt_barrel2", {  -0.838 }},
-	{"high-pt_endcap" , {  -0.763 }}, 
-      },
-    },
-    /**************/ 
-
+  const std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float> > > MVA_LUT_NoIso = {
+    {"Fall17",
+     {
+      // currently only for wp loose
+      {"low-pt_barrel1",  {  -0.10  }},
+      {"low-pt_barrel2",  {  -0.28  }},
+      {"low-pt_endcap" ,  {  -0.05  }},
+      {"high-pt_barrel1", {  -0.83  }},
+      {"high-pt_barrel2", {  -0.77  }},
+      {"high-pt_endcap" , {  -0.69  }},
+     }
+    }
   };
+
 }
 
 
