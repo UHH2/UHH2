@@ -539,6 +539,10 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     if useData:
         jetcorr_list = ['L1FastJet', 'L2Relative',
                         'L3Absolute', 'L2L3Residual']
+    if jetcorr_label:
+        jetcorr_arg = (jetcorr_label, cms.vstring(jetcorr_list), 'None')
+    else:
+        jetcorr_arg = None
 
     # patify ungroomed jets, if not already done:
     ungroomed_patname = 'patJets' + cap(fatjets_name)
@@ -551,8 +555,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                          jetSource=cms.InputTag(fatjets_name),
                          algo=algo,
                          rParam=rParam,
-                         jetCorrections=(jetcorr_label, cms.vstring(
-                             jetcorr_list), 'None'),
+                         jetCorrections=jetcorr_arg,
                          genJetCollection=cms.InputTag(ungroomed_genjets_name),
                          **common_btag_parameters
                          )
@@ -567,8 +570,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                      jetSource=cms.InputTag(groomed_jets_name),
                      algo=algo,
                      rParam=rParam,
-                     jetCorrections=(jetcorr_label, cms.vstring(
-                         jetcorr_list), 'None'),
+                     jetCorrections=jetcorr_arg,
                      # genJetCollection = cms.InputTag(groomed_genjets_name), #
                      # nice try, but PAT looks for GenJets, whereas jets with
                      # subjets are BasicJets, so PAT cannot be used for this
@@ -584,13 +586,16 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     subjets_patname = "patJets" + cap(subjets_name)
     if verbose:
         print "adding groomed jets' subjets", subjets_patname
+    if jetcorr_label_subjets:
+        jetcorr_arg = (jetcorr_label_subjets, cms.vstring(jetcorr_list), 'None')
+    else:
+        jetcorr_arg = None
     addJetCollection(process,
                      labelName=subjets_name,
                      jetSource=cms.InputTag(groomed_jets_name, 'SubJets'),
                      algo=algo,
                      rParam=rParam,
-                     jetCorrections=(jetcorr_label_subjets,
-                                     cms.vstring(jetcorr_list), 'None'),
+                     jetCorrections=jetcorr_arg,
                      explicitJTA=True,
                      svClustering=True,
                      fatJets=cms.InputTag(fatjets_name),
