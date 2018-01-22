@@ -337,8 +337,9 @@ process.ca15CHSJetsPruned = ak4PFJetsPruned.clone(
     jetAlgorithm="CambridgeAachen",
     doAreaFastjet=True,
     src='chs',
-    jetPtMin=70
+    jetPtMin=process.ca15CHSJets.jetPtMin
 )
+task.add(process.ca15CHSJetsPruned)
 
 ###############################################
 # PUPPI JETS
@@ -662,7 +663,7 @@ add_fatjets_subjets(process, 'ak8PuppiJetsFat', 'ak8PuppiJetsSoftDrop', genjets_
 # B-tagging not needed for pruned jets, they are just used to get the mass
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsPruned',
                     genjets_name=lambda s: s.replace('CHS', 'Gen'), btagging=False)
-# add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsPruned', genjets_name=lambda s: s.replace('CHS', 'Gen'), btagging=False)
+add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsPruned', jetcorr_label=None, jetcorr_label_subjets=None)  # we only use this to make packed collection for pruned mass
 #add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsPruned', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 #add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsFiltered', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
 #add_fatjets_subjets(process, 'ca8PuppiJets', 'cmsTopTagPuppi', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
@@ -1198,7 +1199,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         # Specify the module that makes reco::HTTTopJetTagInfo
                                         toptagging_source = cms.string(
                                             "hepTopTagCHS"),
-                                        # prunedmass_source = cms.string("patJetsCa15CHSJetsPrunedPacked"),
+                                        prunedmass_source = cms.string(
+                                            "patJetsCa15CHSJetsPrunedPacked"),
                                         # softdropmass_source  = cms.string(""),
                                     ) ,
                                     # cms.PSet(
