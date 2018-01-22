@@ -223,10 +223,10 @@ process.ca8CHSJetsPruned = ak4PFJetsPruned.clone(
 from RecoJets.JetProducers.AnomalousCellParameters_cfi import *
 from RecoJets.JetProducers.PFJetParameters_cfi import *
 # The HTTTopJetProducer does its own clustering producing a BasicJet of
-# (ungroomed jets), as well as producing PFJet (SubJets), and HTTTopJetTagInfo
-# Since we cannot store the BasicJet collection using addJetCollection
-# (which expects a reco::PFJet) we will have to create the CA15 jets separately
-# using the same parameters to ensure they stay in sync.
+# Top candidates (i.e. sum of subjects),
+# as well as producing PFJet (SubJets), and HTTTopJetTagInfo
+# The CA15 jets here are the "original" fatjets going into the HTT, and thus will
+# be different from the BAsicJEt collection that HTTTopJetProducer produces
 ca15_clustering_params = dict(
     useExplicitGhosts   = cms.bool(True),
     jetAlgorithm        = cms.string("CambridgeAachen"),
@@ -298,7 +298,7 @@ process.ca15CHSJetsSoftDropforsub = process.ca15CHSJets.clone(
     beta=cms.double(0.0),
     useSoftDrop=cms.bool(True),
     useExplicitGhosts=cms.bool(True),
-    R0=cms.double(0.8)
+    R0=cms.double(1.5)
 )
 task.add(process.ca15CHSJetsSoftDropforsub)
 
@@ -646,7 +646,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
 # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered', genjets_name=lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
 #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', top_tagging=True)  # really we should use CA JEC but they don't exist...it's OK though as we store the JEC factor and can uncorrect.
+add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', top_tagging=True, jetcorr_label=None, jetcorr_label_subjets=None)  # CA JEC don't exist so use nothing
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop',
                     genjets_name=lambda s: s.replace('CHS', 'Gen'))
 # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsSoftDrop', genjets_name=lambda s: s.replace('CHS', 'Gen'))
@@ -1171,6 +1171,9 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                             "patJetsAk8CHSJetsSoftDropPacked"),
                                     ),
                                     cms.PSet(
+                                        # The fat jets that HepTopTag produces are the Top jet candidates,
+                                        # i.e. the sum of its subjets. Therefore they will NOT have
+                                        # the same pt/eta/phi as normal ca15 jets.
                                         topjet_source = cms.string(
                                             "patJetsHepTopTagCHSPacked"),
                                         subjet_source = cms.string("daughters"),
