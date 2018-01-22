@@ -164,15 +164,24 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
     jet.set_photonMultiplicity (pat_jet.photonMultiplicity());
   }
 
-  jet.set_JEC_factor_raw(pat_jet.jecFactor("Uncorrected"));
-  //L1 factor needed for JEC propagation to MET
-  const std::vector< std::string > factors_jet = pat_jet.availableJECLevels();
-  bool isL1 = false;
-  for(unsigned int i=0;i<factors_jet.size();i++)
-    if(factors_jet[i]=="L1FastJet")
-      isL1 = true;
-  if(isL1) jet.set_JEC_L1factor_raw(pat_jet.jecFactor("L1FastJet"));
-  else jet.set_JEC_L1factor_raw(1.);//PUPPI jets don't have L1 factor
+  // ensures you can still store jets without any JEC applied
+  if (pat_jet.jecSetsAvailable()) {
+    jet.set_JEC_factor_raw(pat_jet.jecFactor("Uncorrected"));
+
+    //L1 factor needed for JEC propagation to MET
+    const std::vector< std::string > factors_jet = pat_jet.availableJECLevels();
+    bool isL1 = false;
+    for(unsigned int i=0;i<factors_jet.size();i++)
+      if(factors_jet[i]=="L1FastJet")
+        isL1 = true;
+    if(isL1) jet.set_JEC_L1factor_raw(pat_jet.jecFactor("L1FastJet"));
+    else jet.set_JEC_L1factor_raw(1.);//PUPPI jets don't have L1 factor
+
+  } else {
+    jet.set_JEC_factor_raw(1.);
+    jet.set_JEC_L1factor_raw(1.);
+  }
+
 
   if(do_taginfo){
     JetBTagInfo jetbtaginfo;
