@@ -482,9 +482,11 @@ def modify_patjetproducer_for_data(producer):
 # Note that gen jets are produced but genjet *matching* is currently only working for the fat, ungroomed jets,
 # and the subjets, but not for the groomed fat jets; this is a restriction
 # of PAT.
+#
+# One can also enable the storing of top tagging info. In this case, it will use info from
+# groomed_jets_name, and top_tagging must be set True. Additionally, btagging must be set True
 
-
-def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label='AK8PFchs', jetcorr_label_subjets='AK4PFchs', genjets_name=None, verbose=True, btagging=True):
+def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label='AK8PFchs', jetcorr_label_subjets='AK4PFchs', genjets_name=None, verbose=True, btagging=True, top_tagging=False):
     rParam = getattr(process, fatjets_name).rParam.value()
     algo_dict = {"CambridgeAachen": "ca", "AntiKt": "ak"}
     algo = algo_dict.get(getattr(process, fatjets_name).jetAlgorithm.value(), None)
@@ -575,9 +577,8 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                      **common_btag_parameters
                      )
     getattr(process, groomed_patname).addTagInfos = True
-    if groomed_jets_name == "hepTopTagCHS":
-        getattr(process, groomed_patname).tagInfoSources = cms.VInputTag(
-            cms.InputTag('hepTopTagCHS'))
+    if top_tagging:
+        getattr(process, groomed_patname).tagInfoSources = cms.VInputTag(groomed_jets_name)
 
     # patify subjets, with subjet b-tagging:
     subjets_patname = "patJets" + cap(subjets_name)
@@ -645,7 +646,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
 # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered', genjets_name=lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
 #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')  # really we should use CA JEC but they don't exist...it's OK though as we store the JEC factor and can uncorrect.
+add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', top_tagging=True)  # really we should use CA JEC but they don't exist...it's OK though as we store the JEC factor and can uncorrect.
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop',
                     genjets_name=lambda s: s.replace('CHS', 'Gen'))
 # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsSoftDrop', genjets_name=lambda s: s.replace('CHS', 'Gen'))
