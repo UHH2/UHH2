@@ -316,8 +316,12 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     subjet_src = cfg.subjet_src;
     higgs_src= cfg.higgs_src;
 
-    src_hepTopTagCHS_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagCHS"));
-    src_hepTopTagPuppi_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagPuppi"));
+    if (cfg.toptagging_src == "") {
+      do_toptagging = false;
+    } else {
+      do_toptagging = true;
+      src_hepTopTag_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag(cfg.toptagging_src));
+    }
 
     pruned_src = cfg.pruned_src;
     if(pruned_src.find("Mass")==string::npos){
@@ -418,11 +422,13 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         event.getByToken(substructure_groomed_variables_src_token, topjets_groomed_with_cands);
       }
     }
+
     vector<TopJet> topjets;
     edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
-    if (topjet_collection.find("CHS")!=string::npos) event.getByToken(src_hepTopTagCHS_token, top_jet_infos);
-    if (topjet_collection.find("Puppi")!=string::npos) event.getByToken(src_hepTopTagPuppi_token, top_jet_infos); // Make sure both collections have the same size
-    if (topjet_collection.find("Hep")!=string::npos) assert(pat_topjets.size()==top_jet_infos->size());
+    if (do_toptagging) {
+      event.getByToken(src_hepTopTag_token, top_jet_infos);
+      assert(pat_topjets.size()==top_jet_infos->size());
+    }
 
     /*--- lepton keys ---*/
     std::vector<long int> lepton_keys;
@@ -605,7 +611,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
         /*--- HEP Top Tagger variables -----*/
 
-        if (topjet_collection.find("Hep")!=string::npos)
+        if (do_toptagging)
         {
           const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(i);
           topjet.set_tag(TopJet::tagname2tag("fRec"), jet_info.properties().fRec);

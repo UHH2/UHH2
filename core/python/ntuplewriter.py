@@ -1132,6 +1132,9 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                             "NjettinessCa15SoftDropCHS"),
                                         substructure_groomed_variables_source = cms.string(
                                             "ca15CHSJetsSoftDropforsub"),
+                                        # Specify the module that makes reco::HTTTopJetTagInfo
+                                        toptagging_source = cms.string(
+                                            "hepTopTagCHS"),
                                         # prunedmass_source = cms.string("patJetsCa15CHSJetsPrunedPacked"),
                                         # softdropmass_source  = cms.string(""),
                                     ) ,
