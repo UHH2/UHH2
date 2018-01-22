@@ -105,11 +105,11 @@ sed -i "s|$OLD_FJ_VER|$FJVER|g" "$FJ_TOOL_FILE"
 OLD_FJCONTRIB_VER=$(getToolVersion fastjet-contrib)
 FJCONFIG_TOOL_FILE=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib.xml
 sed -i "s|/cvmfs/cms.cern.ch/$SCRAM_ARCH/external/fastjet-contrib/$OLD_FJCONTRIB_VER|$FJINSTALL|g" "$FJCONFIG_TOOL_FILE"
-sed -i "s|$OLD_FJCONTRIB_VER|$FJCONTRIB_VER|g" "$FJCONFIG_TOOL_FILE"
+sed -i "s|$OLD_FJCONTRIB_VER|$FJCONTRIBVER|g" "$FJCONFIG_TOOL_FILE"
 
 FJCONFIG_ARCHIVE_TOOL_FILE=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib-archive.xml
 sed -i "s|/cvmfs/cms.cern.ch/$SCRAM_ARCH/external/fastjet-contrib/$OLD_FJCONTRIB_VER|$FJINSTALL|g" "$FJCONFIG_ARCHIVE_TOOL_FILE"
-sed -i "s|$OLD_FJCONTRIB_VER|$FJCONTRIB_VER|g" "$FJCONFIG_ARCHIVE_TOOL_FILE"
+sed -i "s|$OLD_FJCONTRIB_VER|$FJCONTRIBVER|g" "$FJCONFIG_ARCHIVE_TOOL_FILE"
 
 scram setup fastjet
 scram setup fastjet-contrib
