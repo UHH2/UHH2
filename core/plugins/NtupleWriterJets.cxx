@@ -622,7 +622,25 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
         if (do_toptagging)
         {
-          const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(i);
+          // The HTTTopJetTagInfo vector is produced *not* sorted by jet pT.
+          // The patJetProducer that makes our main TopJets *does* sort by pT.
+          // Thus we lose which Jet matches with which HTTTopJetTagInfo object,
+          // so here we rematch based on deltaR.
+          // Note that we do not require == 0, since the fjPt/Eta/Phi is for the
+          // initial fat jet, whilst the topjet is the Top jet candidate
+          // i.e. sum of subjets 4-vectors. Thus we don't expect eta/phi to match.
+          uint closest_ind(0);
+          double minDR(999999);
+          for (uint itt=0; itt < top_jet_infos->size(); itt++) {
+            const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(itt);
+            double dr = reco::deltaR(topjet.eta(), topjet.phi(), jet_info.properties().fjEta, jet_info.properties().fjPhi);
+            if (dr < minDR) {
+              minDR = dr;
+              closest_ind = itt;
+            }
+          }
+
+          const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(closest_ind);
           topjet.set_tag(TopJet::tagname2tag("fRec"), jet_info.properties().fRec);
           topjet.set_tag(TopJet::tagname2tag("Ropt"), jet_info.properties().ropt);
           topjet.set_tag(TopJet::tagname2tag("massRatioPassed"), jet_info.properties().massRatioPassed);
