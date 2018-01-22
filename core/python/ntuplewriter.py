@@ -204,9 +204,6 @@ process.ak8CHSJetsFat = ak8PFJets.clone(
 )
 task.add(process.ak8CHSJetsFat)
 
-# process.ca8CHSJets = ca8PFJets.clone(src='chs', doAreaFastjet=True, jetPtMin=fatjet_ptmin)
-# process.ca15CHSJets = process.ca8CHSJets.clone(rParam=1.5)
-
 # from RecoJets.JetProducers.ak4PFJetsPruned_cfi import ak4PFJetsPruned
 ak4PFJetsPruned = ak4PFJets.clone(
     SubJetParameters,
@@ -222,16 +219,6 @@ process.ca8CHSJetsPruned = ak4PFJetsPruned.clone(
     src='chs',
     jetPtMin=fatjet_ptmin
 )
-
-# from RecoJets.JetProducers.ak5PFJetsFiltered_cfi import ak5PFJetsFiltered
-# process.ca15CHSJetsFiltered = ak5PFJetsFiltered.clone(
-#     src='chs',
-#     jetAlgorithm=cms.string("CambridgeAachen"),
-#     rParam=cms.double(1.5),
-#     writeCompound=cms.bool(True),
-#     doAreaFastjet=cms.bool(True),
-#     jetPtMin=cms.double(fatjet_ptmin)
-# )
 
 from RecoJets.JetProducers.AnomalousCellParameters_cfi import *
 from RecoJets.JetProducers.PFJetParameters_cfi import *
@@ -410,11 +397,11 @@ task.add(process.ak8PuppiJetsFat)
 # , 'cmsTopTagCHS', 'hepTopTagCHS']:
 # for name in ['ca8CHSJets', 'ca15CHSJets', 'ca8CHSJetsPruned',
 # 'ca15CHSJetsFiltered']:
-for name in ['ca8CHSJetsPruned']:
-    setattr(process,
-            name.replace('CHS', 'Puppi'),
-            getattr(process, name).clone(src=cms.InputTag('puppi'))
-            )
+# for name in ['ca8CHSJetsPruned']:
+#     setattr(process,
+#             name.replace('CHS', 'Puppi'),
+#             getattr(process, name).clone(src=cms.InputTag('puppi'))
+#             )
 
 
 ###############################################
@@ -499,16 +486,10 @@ def modify_patjetproducer_for_data(producer):
 
 def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label='AK8PFchs', jetcorr_label_subjets='AK4PFchs', genjets_name=None, verbose=True, btagging=True):
     rParam = getattr(process, fatjets_name).rParam.value()
-    algo = None
-    if 'ca' in fatjets_name.lower():
-        algo = 'ca'
-        assert getattr(process, fatjets_name).jetAlgorithm.value(
-        ) == 'CambridgeAachen'
-    elif 'ak' in fatjets_name.lower():
-        algo = 'ak'
-        assert getattr(process, fatjets_name).jetAlgorithm.value() == 'AntiKt'
-    else:
-        raise RuntimeError, "cannot guess jet algo (ca/ak) from fatjets name %s" % fatjets_name
+    algo_dict = {"CambridgeAachen": "ca", "AntiKt": "ak"}
+    algo = algo_dict.get(getattr(process, fatjets_name).jetAlgorithm.value(), None)
+    if algo is None:
+        raise RuntimeError, "cannot guess jet algo (ca/ak) from jet producer %s", fatjets_name
 
     if verbose:
         print '* Adding fatjets_subjets for', fatjets_name
@@ -664,7 +645,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
 # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered', genjets_name=lambda s: s.replace('CHS', 'Gen'))
 #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
 #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
+add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')  # really we should use CA JEC but they don't exist...it's OK though as we store the JEC factor and can uncorrect.
 add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop',
                     genjets_name=lambda s: s.replace('CHS', 'Gen'))
 # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsSoftDrop', genjets_name=lambda s: s.replace('CHS', 'Gen'))
@@ -1100,7 +1081,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 doJets=cms.bool(True),
                                 #jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
                                 jet_sources=cms.vstring(
-                                    "slimmedJets", "slimmedJetsPuppi", "patJetsAK8PFPUPPI", "patJetsAK8PFCHS"),
+                                    "slimmedJets", "slimmedJetsPuppi", ak8puppi_patname, ak8chs_patname),
                                 jet_ptmin=cms.double(10.0),
                                 jet_etamax=cms.double(999.0),
 
