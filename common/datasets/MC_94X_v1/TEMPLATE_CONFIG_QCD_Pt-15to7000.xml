@@ -1,7 +1,0 @@
-<!ENTITY Ntuple SYSTEM  "../../common/datasets/Ntuple.xml">
-
-<InputData Lumi="87502230" NEventsMax="-1" Type="Data" Version="Ntuple" Cacheable="True">
-    &Ntuple;
-    <InputTree Name="AnalysisTree" />
-    <OutputTree Name="AnalysisTree" />
-</InputData>

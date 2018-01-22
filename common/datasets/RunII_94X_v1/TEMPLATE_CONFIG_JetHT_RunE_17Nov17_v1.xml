@@ -1,7 +1,0 @@
-<!ENTITY JetHT_RunE_17Nov17_v1 SYSTEM  "../../common/datasets/JetHT_RunE_17Nov17_v1.xml">
-
-<InputData Lumi="76958681" NEventsMax="-1" Type="Data" Version="JetHT_RunE_17Nov17_v1" Cacheable="True">
-    &JetHT_RunE_17Nov17_v1;
-    <InputTree Name="AnalysisTree" />
-    <OutputTree Name="AnalysisTree" />
-</InputData>
