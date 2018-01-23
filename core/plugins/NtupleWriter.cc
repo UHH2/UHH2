@@ -351,6 +351,10 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
           cfg.higgstaginfo_src = topjets_list[j].getParameter<std::string>("higgstaginfo_source");
         }
 
+        if (topjets_list[j].exists("toptagging_source")){
+          cfg.toptagging_src = topjets_list[j].getParameter<std::string>("toptagging_source");
+        }
+
         bool substructure_variables = false;
         bool substructure_groomed_variables = false;
         if(topjets_list[j].exists("njettiness_source")){

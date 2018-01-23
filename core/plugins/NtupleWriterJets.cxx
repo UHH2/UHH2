@@ -10,7 +10,7 @@
 #include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputerRecord.h"
 #include "FWCore/Framework/interface/ESHandle.h"
-//#include "DataFormats/JetReco/interface/HTTTopJetTagInfo.h"
+#include "DataFormats/BTauReco/interface/HTTTopJetTagInfo.h"
 #include "RecoBTag/SecondaryVertex/interface/CandidateBoostedDoubleSecondaryVertexComputer.h"
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputerRecord.h"
@@ -164,15 +164,24 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
     jet.set_photonMultiplicity (pat_jet.photonMultiplicity());
   }
 
-  jet.set_JEC_factor_raw(pat_jet.jecFactor("Uncorrected"));
-  //L1 factor needed for JEC propagation to MET
-  const std::vector< std::string > factors_jet = pat_jet.availableJECLevels();
-  bool isL1 = false;
-  for(unsigned int i=0;i<factors_jet.size();i++)
-    if(factors_jet[i]=="L1FastJet")
-      isL1 = true;
-  if(isL1) jet.set_JEC_L1factor_raw(pat_jet.jecFactor("L1FastJet"));
-  else jet.set_JEC_L1factor_raw(1.);//PUPPI jets don't have L1 factor
+  // ensures you can still store jets without any JEC applied
+  if (pat_jet.jecSetsAvailable()) {
+    jet.set_JEC_factor_raw(pat_jet.jecFactor("Uncorrected"));
+
+    //L1 factor needed for JEC propagation to MET
+    const std::vector< std::string > factors_jet = pat_jet.availableJECLevels();
+    bool isL1 = false;
+    for(unsigned int i=0;i<factors_jet.size();i++)
+      if(factors_jet[i]=="L1FastJet")
+        isL1 = true;
+    if(isL1) jet.set_JEC_L1factor_raw(pat_jet.jecFactor("L1FastJet"));
+    else jet.set_JEC_L1factor_raw(1.);//PUPPI jets don't have L1 factor
+
+  } else {
+    jet.set_JEC_factor_raw(1.);
+    jet.set_JEC_L1factor_raw(1.);
+  }
+
 
   if(do_taginfo){
     JetBTagInfo jetbtaginfo;
@@ -316,8 +325,12 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     subjet_src = cfg.subjet_src;
     higgs_src= cfg.higgs_src;
 
-//    src_hepTopTagCHS_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagCHS"));
-//    src_hepTopTagPuppi_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagPuppi"));
+    if (cfg.toptagging_src == "") {
+      do_toptagging = false;
+    } else {
+      do_toptagging = true;
+      src_hepTopTag_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag(cfg.toptagging_src));
+    }
 
     pruned_src = cfg.pruned_src;
     if(pruned_src.find("Mass")==string::npos){
@@ -418,12 +431,14 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         event.getByToken(substructure_groomed_variables_src_token, topjets_groomed_with_cands);
       }
     }
+
     vector<TopJet> topjets;
-/*    edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
-    if (topjet_collection.find("CHS")!=string::npos) event.getByToken(src_hepTopTagCHS_token, top_jet_infos);
-    if (topjet_collection.find("Puppi")!=string::npos) event.getByToken(src_hepTopTagPuppi_token, top_jet_infos); // Make sure both collections have the same size
-    if (topjet_collection.find("Hep")!=string::npos) assert(pat_topjets.size()==top_jet_infos->size());
-*/
+    edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
+    if (do_toptagging) {
+      event.getByToken(src_hepTopTag_token, top_jet_infos);
+      assert(pat_topjets.size()==top_jet_infos->size());
+    }
+
     /*--- lepton keys ---*/
     std::vector<long int> lepton_keys;
     if(save_lepton_keys_){
@@ -604,18 +619,36 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         }
 
         /*--- HEP Top Tagger variables -----*/
-/*
-        if (topjet_collection.find("Hep")!=string::npos)
-           {
-              const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(i);
-              topjet.set_tag(TopJet::tagname2tag("fRec"), jet_info.properties().fRec);
-              topjet.set_tag(TopJet::tagname2tag("Ropt"), jet_info.properties().Ropt);
-              topjet.set_tag(TopJet::tagname2tag("massRatioPassed"), jet_info.properties().massRatioPassed);
-              topjet.set_tag(TopJet::tagname2tag("mass"),pat_topjet.mass());
-              topjet.set_tag(TopJet::tagname2tag("RoptCalc"), jet_info.properties().RoptCalc);
-              topjet.set_tag(TopJet::tagname2tag("ptForRoptCalc"), jet_info.properties().ptForRoptCalc);
-           }
-*/
+
+        if (do_toptagging)
+        {
+          // The HTTTopJetTagInfo vector is produced *not* sorted by jet pT.
+          // The patJetProducer that makes our main TopJets *does* sort by pT.
+          // Thus we lose which Jet matches with which HTTTopJetTagInfo object,
+          // so here we rematch based on deltaR.
+          // Note that we do not require == 0, since the fjPt/Eta/Phi is for the
+          // initial fat jet, whilst the topjet is the Top jet candidate
+          // i.e. sum of subjets 4-vectors. Thus we don't expect eta/phi to match.
+          uint closest_ind(0);
+          double minDR(999999);
+          for (uint itt=0; itt < top_jet_infos->size(); itt++) {
+            const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(itt);
+            double dr = reco::deltaR(topjet.eta(), topjet.phi(), jet_info.properties().fjEta, jet_info.properties().fjPhi);
+            if (dr < minDR) {
+              minDR = dr;
+              closest_ind = itt;
+            }
+          }
+
+          const reco::HTTTopJetTagInfo& jet_info = top_jet_infos->at(closest_ind);
+          topjet.set_tag(TopJet::tagname2tag("fRec"), jet_info.properties().fRec);
+          topjet.set_tag(TopJet::tagname2tag("Ropt"), jet_info.properties().ropt);
+          topjet.set_tag(TopJet::tagname2tag("massRatioPassed"), jet_info.properties().massRatioPassed);
+          topjet.set_tag(TopJet::tagname2tag("mass"),pat_topjet.mass());
+          topjet.set_tag(TopJet::tagname2tag("RoptCalc"), jet_info.properties().roptCalc);
+          topjet.set_tag(TopJet::tagname2tag("ptForRoptCalc"), jet_info.properties().ptForRoptCalc);
+        }
+
         /*--- Njettiness ------*/
         if(njettiness_src.empty()){
 
