@@ -42,7 +42,6 @@ bool MCLumiWeight::process(uhh2::Event & event){
 
 
 MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
-    h_pu_weight_(ctx.declare_event_output<float>("weight_pu")),
     h_npu_data_up(0),
     h_npu_data_down(0),
     sysType_(sysType)
@@ -53,6 +52,8 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
         cout << "Warning: MCPileupReweight will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
         return;
     }
+
+    h_pu_weight_ = ctx.declare_event_output<float>("weight_pu");
 
     // backward compatibility: (((no tag) is chosen over 25ns) is chosen over 50ns)
     TString pileup_directory           = ctx.get("pileup_directory",
