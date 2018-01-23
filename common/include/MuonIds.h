@@ -5,25 +5,15 @@
 
 // see also ElectronIds.h for general comments
 
-// https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2
-class MuonIDLoose {
+class MuonID{
  public:
-  bool operator()(const Muon&, const uhh2::Event&) const;
-};
+  explicit MuonID(Muon::Selector sel_);
 
-class MuonIDMedium {
- public:
-  bool operator()(const Muon&, const uhh2::Event&) const;
-};
+  bool operator()(const Muon & mu, const uhh2::Event & event) const;
 
-class MuonIDTight {
- public:
-  bool operator()(const Muon&, const uhh2::Event&) const;
-};
+ private:
+  Muon::Selector sel;
 
-class MuonIDHighPt {
- public:
-  bool operator()(const Muon&, const uhh2::Event&) const;
 };
 
 // only kinematic cuts, with no further id
@@ -57,9 +47,4 @@ class Muon_MINIIso {
  protected:
   float iso_cut_;
   std::string iso_key_;
-};
-
-class MuonIDMedium_ICHEP {
- public:
-  bool operator()(const Muon&, const uhh2::Event&) const;
 };

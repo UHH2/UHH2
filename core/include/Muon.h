@@ -10,28 +10,82 @@
 class Muon : public Particle {
 
  public:
-  enum bool_id {
-    soft = 0, loose, medium, tight, highpt,
-    tracker, pf, global, standalone
+  enum Selector{
+    Tracker,
+    PF,
+    Global,
+    Standalone,
+    CutBasedIdLoose,
+    CutBasedIdMedium, 
+    CutBasedIdMediumPrompt, 
+    CutBasedIdTight, 
+    CutBasedIdGlobalHighPt, 
+    CutBasedIdTrkHighPt, 
+    SoftCutBasedId, 
+    SoftMvaId, 
+    MvaLoose, 
+    MvaMedium, 
+    MvaTight,
+    PFIsoVeryLoose,
+    PFIsoLoose,
+    PFIsoMedium,
+    PFIsoTight,
+    PFIsoVeryTight,
+    TkIsoLoose,
+    TkIsoTight,
+    MiniIsoLoose,           
+    MiniIsoMedium,          
+    MiniIsoTight,           
+    MiniIsoVeryTight
   };
+
+  /*
+  CLASSIFICATION: For each RECO Muon, match to SIM particle, and then:
+  - If the SIM is not a Muon, label as Punchthrough (1) except if it is an electron or positron (11)
+  - If the SIM is a Muon, then look at it's provenance.
+     A) the SIM muon is also a GEN muon, whose parent is NOT A HADRON AND NOT A TAU
+        -> classify as "primary" (13).
+     B) the SIM muon is also a GEN muon, whose parent is HEAVY FLAVOURED HADRON OR A TAU
+        -> classify as "heavy quark" (3) or "tau" (15)
+     C) classify as "light flavour/decay" (2)
+  In any case, if the TP is not preferentially matched back to the same RECO muon,
+  label as Ghost (flip the classification)
+  */
+  enum SimType{ 
+    Unknown                     = 999, 
+    NotMatched                  = 0,
+    MatchedPunchthrough         = 1,
+    MatchedElectron             = 11,
+    MatchedTau                  = 15,
+    MatchedPrimaryMuon          = 13,
+    MatchedHeavyQuark           = 3,
+    MatchedLightQuark           = 2,
+    GhostPunchthrough           = -1,
+    GhostElectron               = -11,
+    GhostTau                    = -15,
+    GhostPrimaryMuon            = -13,
+    GhostHeavyQuark             = -3,
+    GhostLightQuark             = -2
+    
+};
 
   enum tag {
     twodcut_dRmin,
     twodcut_pTrel,
   };
 
-  bool get_bool(bool_id i) const {
-    return (id_bits & (uint64_t(1) << static_cast<uint64_t>(i)));
+  bool get_selector(Selector i) const {
+    return (sel_bits & (uint64_t(1) << static_cast<uint64_t>(i)));
   }
 
-  void set_bool(bool_id i, bool value) {
-    if(value) id_bits |=   uint64_t(1) << static_cast<uint64_t>(i);
-    else      id_bits &= ~(uint64_t(1) << static_cast<uint64_t>(i));
+  void set_selector(Selector i, bool value) {
+    if(value) sel_bits |=   uint64_t(1) << static_cast<uint64_t>(i);
+    else      sel_bits &= ~(uint64_t(1) << static_cast<uint64_t>(i));
   }
 
   Muon(){
 
-    id_bits = 0;
+    sel_bits = 0;
 
     m_dxy = 0;
     m_dxy_error = 0;
@@ -60,6 +114,12 @@ class Muon : public Particle {
     m_pfMINIIso_NH_pfwgt = 0;
     m_pfMINIIso_Ph_pfwgt = 0;
 
+    m_simType = Unknown;
+    m_simFlavor = 0;
+    m_simPdgId = 0;
+    m_simMotherPdgId = 0;
+    m_simHeaviestMotherFlavor = 0; 
+
     m_source_candidates.clear();
   }
 
@@ -83,12 +143,18 @@ class Muon : public Particle {
   float sumPhotonEt()        const{ return m_sumPhotonEt; }
   float sumPUPt()            const{ return m_sumPUPt; }
 
-  float pfMINIIso_CH()       const { return m_pfMINIIso_CH; }
+  float pfMINIIso_CH()       const { return  m_pfMINIIso_CH; }
   float pfMINIIso_NH()       const { return m_pfMINIIso_NH; }
   float pfMINIIso_Ph()       const { return m_pfMINIIso_Ph; }
   float pfMINIIso_PU()       const { return m_pfMINIIso_PU; }
   float pfMINIIso_NH_pfwgt() const { return m_pfMINIIso_NH_pfwgt; }
   float pfMINIIso_Ph_pfwgt() const { return m_pfMINIIso_Ph_pfwgt; }
+
+  SimType simType()             const {return m_simType;}
+  int simFlavor()               const {return m_simFlavor;}
+  int simPdgId()                const {return m_simPdgId;}
+  int simMotherPdgId()          const {return m_simMotherPdgId;}
+  int simHeaviestMotherFlavor() const {return m_simHeaviestMotherFlavor;} 
 
   const std::vector<source_candidate>& source_candidates() const { return m_source_candidates; }
 
@@ -109,8 +175,8 @@ class Muon : public Particle {
 
   void set_sumChargedHadronPt(float x){m_sumChargedHadronPt=x;} 
   void set_sumNeutralHadronEt(float x){m_sumNeutralHadronEt=x;} 
-  void set_sumPhotonEt(float x){m_sumPhotonEt=x;}
-  void set_sumPUPt(float x){m_sumPUPt=x;}
+  void set_sumPhotonEt       (float x){m_sumPhotonEt=x;}
+  void set_sumPUPt           (float x){m_sumPUPt=x;}
 
   void set_pfMINIIso_CH      (float x){ m_pfMINIIso_CH       = x; }
   void set_pfMINIIso_NH      (float x){ m_pfMINIIso_NH       = x; }
@@ -118,6 +184,12 @@ class Muon : public Particle {
   void set_pfMINIIso_PU      (float x){ m_pfMINIIso_PU       = x; }
   void set_pfMINIIso_NH_pfwgt(float x){ m_pfMINIIso_NH_pfwgt = x; }
   void set_pfMINIIso_Ph_pfwgt(float x){ m_pfMINIIso_Ph_pfwgt = x; }
+
+  void set_simType            (SimType x){m_simType = x;}
+  void set_simFlavor              (int x){m_simFlavor = x;}
+  void set_simPdgId               (int x){m_simPdgId = x;}
+  void set_simMotherPdgId         (int x){m_simMotherPdgId = x;}
+  void set_simHeaviestMotherFlavor(int x){m_simHeaviestMotherFlavor = x;} 
 
   void set_source_candidates(const std::vector<source_candidate>& vsc){ m_source_candidates = vsc; }
   void add_source_candidate (const source_candidate& sc){ m_source_candidates.push_back(sc); }
@@ -144,7 +216,7 @@ class Muon : public Particle {
   }
 
  private:
-  uint64_t id_bits;
+  uint64_t sel_bits;
 
   float m_dxy;
   float m_dxy_error;
@@ -172,6 +244,12 @@ class Muon : public Particle {
   float m_pfMINIIso_PU;
   float m_pfMINIIso_NH_pfwgt;
   float m_pfMINIIso_Ph_pfwgt;
+
+  SimType m_simType;
+  int m_simFlavor;
+  int m_simPdgId;
+  int m_simMotherPdgId;
+  int m_simHeaviestMotherFlavor; 
 
   std::vector<source_candidate> m_source_candidates;
 
