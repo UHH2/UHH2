@@ -866,34 +866,34 @@ process.load('UHH2.core.pfCandidatesByType_cff')
 process.load('CommonTools.ParticleFlow.deltaBetaWeights_cff')
 
 # MUON # WILL BE IN MINIAOD OF 9_1_0 RELEASE
-#from UHH2.core.muon_pfMiniIsolation_cff import *
+from UHH2.core.muon_pfMiniIsolation_cff import *
 
-#mu_isovals = []
+mu_isovals = []
 
-# load_muonPFMiniIso(process, 'muonPFMiniIsoSequenceSTAND', algo = 'STAND',
-#  src = 'slimmedMuons',
-#  src_charged_hadron = 'pfAllChargedHadrons',
-#  src_neutral_hadron = 'pfAllNeutralHadrons',
-#  src_photon         = 'pfAllPhotons',
-#  src_charged_pileup = 'pfPileUpAllChargedParticles',
-#  isoval_list = mu_isovals
-#)
-#
-# load_muonPFMiniIso(process, 'muonPFMiniIsoSequencePFWGT', algo = 'PFWGT',
-#  src = 'slimmedMuons',
-#  src_neutral_hadron = 'pfWeightedNeutralHadrons',
-#  src_photon         = 'pfWeightedPhotons',
-#  isoval_list = mu_isovals
-#)
-# for m in mu_isovals:
-#  task.add(getattr(process,m))
-#  task.add(getattr(process,m.replace("Value","Deposit")))
-#
-# process.slimmedMuonsUSER = cms.EDProducer('PATMuonUserData',
-#  src = cms.InputTag('slimmedMuons'),
-#  vmaps_double = cms.vstring(mu_isovals),
-#)
-# task.add(process.slimmedMuonsUSER)
+load_muonPFMiniIso(process, 'muonPFMiniIsoSequenceSTAND', algo = 'STAND',
+                   src = 'slimmedMuons',
+                   src_charged_hadron = 'pfAllChargedHadrons',
+                   src_neutral_hadron = 'pfAllNeutralHadrons',
+                   src_photon         = 'pfAllPhotons',
+                   src_charged_pileup = 'pfPileUpAllChargedParticles',
+                   isoval_list = mu_isovals
+                   )
+
+load_muonPFMiniIso(process, 'muonPFMiniIsoSequencePFWGT', algo = 'PFWGT',
+                   src = 'slimmedMuons',
+                   src_neutral_hadron = 'pfWeightedNeutralHadrons',
+                   src_photon         = 'pfWeightedPhotons',
+                   isoval_list = mu_isovals
+                   )
+for m in mu_isovals:
+    task.add(getattr(process,m))
+    task.add(getattr(process,m.replace("Value","Deposit")))
+
+process.slimmedMuonsUSER = cms.EDProducer('PATMuonUserData',
+                                          src = cms.InputTag('slimmedMuons'),
+                                          vmaps_double = cms.vstring(mu_isovals),
+                                          )
+task.add(process.slimmedMuonsUSER)
 
 # ELECTRON
 
@@ -1052,7 +1052,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 doEleAddVars=cms.bool(False),
 
                                 doMuons=cms.bool(True),
-                                muon_sources=cms.vstring("slimmedMuons"),
+                                muon_sources=cms.vstring("slimmedMuonsUSER"),
 
                                 doTaus=cms.bool(True),
                                 tau_sources=cms.vstring("slimmedTaus"),

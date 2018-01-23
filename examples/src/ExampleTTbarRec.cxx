@@ -43,7 +43,7 @@ private:
 ExampleTTbarRec::ExampleTTbarRec(Context & ctx): selection(ctx, "selection") {
     jet_kinematic = PtEtaCut(50.0, 2.4);
     topjet_kinematic = PtEtaCut(150.0,2.4);
-    muid = AndId<Muon>(MuonIDTight(), PtEtaCut(20.0, 2.4));
+    muid = AndId<Muon>(MuonID(Muon::CutBasedIdTight), PtEtaCut(20.0, 2.4));
     
     // clean the objects:
     cleanermodules.emplace_back(new JetCleaner(ctx, jet_kinematic));

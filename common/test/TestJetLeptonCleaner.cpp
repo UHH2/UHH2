@@ -82,7 +82,7 @@ public:
         jet_printer.reset(new JetPrinter("jets", 30.0));
         jet_cleaner.reset(new JetCleaner(ctx, 30.0, 2.4));
         muon_printer.reset(new MuonPrinter());
-        muon_cleaner.reset(new MuonCleaner(AndId<Muon>(PtEtaCut(30., 2.4), MuonIDTight(), MuonIso(0.12))));
+        muon_cleaner.reset(new MuonCleaner(AndId<Muon>(PtEtaCut(30., 2.4), MuonID(Muon::CutBasedIdTight), MuonIso(0.12))));
     }
     
     virtual bool process(Event & e) override{
