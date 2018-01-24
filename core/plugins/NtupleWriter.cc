@@ -12,6 +12,7 @@
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 #include "DataFormats/PatCandidates/interface/Photon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
@@ -579,8 +580,29 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     pf_collection_token = consumes<vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("pf_collection_source"));
     branch(tr, "PFParticles", "std::vector<PFParticle>", &event->pfparticles);
   }
+
   // HOTVR and XCone Jet Cluster - added by Alex and Dennis
-  // PF Jets
+
+  if (doHOTVR) {
+    auto hotvr_sources = iConfig.getParameter<std::vector<edm::InputTag> >("HOTVR_sources");
+    newHotvrJets.resize(hotvr_sources.size());
+    for (size_t j=0; j<hotvr_sources.size(); ++j) {
+      hotvr_tokens.push_back(consumes<pat::JetCollection>(hotvr_sources[j]));
+      hotvr_subjet_tokens.push_back(consumes<pat::JetCollection>(edm::InputTag(hotvr_sources[j].label(), "SubJets")));
+      branch(tr, hotvr_sources[j].encode().c_str(), "std::vector<TopJet>", &newHotvrJets[j]);
+    }
+  }
+
+  if (doXCone) {
+    auto xcone_sources = iConfig.getParameter<std::vector<edm::InputTag> >("XCone_sources");
+    newXConeJets.resize(xcone_sources.size());
+    for (size_t j=0; j<xcone_sources.size(); ++j) {
+      xcone_tokens.push_back(consumes<pat::JetCollection>(xcone_sources[j]));
+      xcone_subjet_tokens.push_back(consumes<pat::JetCollection>(edm::InputTag(xcone_sources[j].label(), "SubJets")));
+      branch(tr, xcone_sources[j].encode().c_str(), "std::vector<TopJet>", &newXConeJets[j]);
+    }
+  }
+
   if(doHOTVR || doXCone)
     // HOTVR and XCone need full pf_collection for clustering
     {
@@ -1312,6 +1334,73 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    print_times(timer, "trigger");
 
    // ------------- HOTVR and XCone Jets  -------------
+   if (doHOTVR) {
+    for (size_t j=0; j < hotvr_tokens.size(); ++j){
+      newHotvrJets[j].clear();
+      edm::Handle<pat::JetCollection> hotvr_patjets;
+      iEvent.getByToken(hotvr_tokens[j], hotvr_patjets);
+      edm::Handle<pat::JetCollection> hotvr_subjet_patjets;
+      iEvent.getByToken(hotvr_subjet_tokens[j], hotvr_subjet_patjets);
+
+      // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
+      for (const auto & patJet : *hotvr_patjets) {
+        TopJet thisJet;
+        thisJet.set_pt(patJet.p4().pt());
+        thisJet.set_eta(patJet.p4().eta());
+        thisJet.set_phi(patJet.p4().phi());
+        thisJet.set_energy(patJet.p4().E());
+        thisJet.set_jetArea(patJet.jetArea());
+        thisJet.set_tau1_groomed(patJet.userFloat("tau1"));
+        thisJet.set_tau2_groomed(patJet.userFloat("tau2"));
+        thisJet.set_tau3_groomed(patJet.userFloat("tau3"));
+        for (const auto & subItr : patJet.subjets()) {
+          Jet subjet;
+          subjet.set_pt(subItr->p4().pt());
+          subjet.set_eta(subItr->p4().eta());
+          subjet.set_phi(subItr->p4().phi());
+          subjet.set_energy(subItr->p4().E());
+          subjet.set_jetArea(subItr->jetArea());
+          thisJet.add_subjet(subjet);
+        }
+
+        newHotvrJets[j].push_back(thisJet);
+      }
+    }
+   }
+
+   if (doXCone) {
+    for (size_t j=0; j < xcone_tokens.size(); ++j){
+      newXConeJets[j].clear();
+      edm::Handle<pat::JetCollection> xcone_patjets;
+      iEvent.getByToken(xcone_tokens[j], xcone_patjets);
+      edm::Handle<pat::JetCollection> xcone_subjet_patjets;
+      iEvent.getByToken(xcone_subjet_tokens[j], xcone_subjet_patjets);
+
+      // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
+      for (const auto & patJet : *xcone_patjets) {
+        TopJet thisJet;
+        thisJet.set_pt(patJet.p4().pt());
+        thisJet.set_eta(patJet.p4().eta());
+        thisJet.set_phi(patJet.p4().phi());
+        thisJet.set_energy(patJet.p4().E());
+        thisJet.set_jetArea(patJet.jetArea());
+        thisJet.set_softdropmass(patJet.userFloat("softdropmass"));
+
+        for (const auto & subItr : patJet.subjets()) {
+          Jet subjet;
+          subjet.set_pt(subItr->p4().pt());
+          subjet.set_eta(subItr->p4().eta());
+          subjet.set_phi(subItr->p4().phi());
+          subjet.set_energy(subItr->p4().E());
+          subjet.set_jetArea(subItr->jetArea());
+          thisJet.add_subjet(subjet);
+        }
+
+        newXConeJets[j].push_back(thisJet);
+      }
+    }
+   }
+
    if(doHOTVR || doXCone)
      {
        // get PFParticles
