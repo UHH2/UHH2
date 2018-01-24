@@ -313,11 +313,13 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     src_njettiness1_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau1"));
     src_njettiness2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau2"));
     src_njettiness3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau3"));
+    src_njettiness4_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau4"));
 
     njettiness_groomed_src = cfg.njettiness_groomed_src;    
     src_njettiness1_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau1"));
     src_njettiness2_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau2"));
     src_njettiness3_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau3"));
+    src_njettiness4_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau4"));
 
     qjets_src = cfg.qjets_src;
     src_qjets_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(qjets_src, "QjetsVolatility"));
@@ -390,8 +392,8 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     event.getByToken(src_token, h_pat_topjets);
     const vector<pat::Jet> & pat_topjets = *h_pat_topjets;
 
-    edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3;
-    edm::Handle<edm::ValueMap<float>> h_njettiness1_groomed, h_njettiness2_groomed, h_njettiness3_groomed;
+    edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3, h_njettiness4;
+    edm::Handle<edm::ValueMap<float>> h_njettiness1_groomed, h_njettiness2_groomed, h_njettiness3_groomed, h_njettiness4_groomed;
     edm::Handle<edm::ValueMap<float>> h_qjets;
     
     edm::Handle<reco::BasicJetCollection> topjets_with_cands;
@@ -404,11 +406,13 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         event.getByToken(src_njettiness1_token, h_njettiness1);
         event.getByToken(src_njettiness2_token, h_njettiness2);
         event.getByToken(src_njettiness3_token, h_njettiness3);
+        event.getByToken(src_njettiness4_token, h_njettiness4);
     }
     if(!njettiness_groomed_src.empty()){
         event.getByToken(src_njettiness1_groomed_token, h_njettiness1_groomed);
         event.getByToken(src_njettiness2_groomed_token, h_njettiness2_groomed);
         event.getByToken(src_njettiness3_groomed_token, h_njettiness3_groomed);
+        event.getByToken(src_njettiness4_groomed_token, h_njettiness4_groomed);
     }
     if(!qjets_src.empty()){
         event.getByToken(src_qjets_token, h_qjets);
@@ -559,6 +563,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 topjet.set_tau1((*h_njettiness1)[ref]);
                 topjet.set_tau2((*h_njettiness2)[ref]);
                 topjet.set_tau3((*h_njettiness3)[ref]);
+                topjet.set_tau4((*h_njettiness4)[ref]);
               }
               if(!qjets_src.empty()){
                 topjet.set_qjets_volatility((*h_qjets)[ref]);
@@ -570,6 +575,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 topjet.set_tau1((*h_njettiness1)[ref]);
                 topjet.set_tau2((*h_njettiness2)[ref]);
                 topjet.set_tau3((*h_njettiness3)[ref]);
+                topjet.set_tau4((*h_njettiness4)[ref]);
               }
               if(!qjets_src.empty()){
                 topjet.set_qjets_volatility((*h_qjets)[ref]);
@@ -605,6 +611,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 topjet.set_tau1_groomed((*h_njettiness1_groomed)[ref]);
                 topjet.set_tau2_groomed((*h_njettiness2_groomed)[ref]);
                 topjet.set_tau3_groomed((*h_njettiness3_groomed)[ref]);
+                topjet.set_tau4_groomed((*h_njettiness4_groomed)[ref]);
               }
             }
             else{
@@ -613,6 +620,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 topjet.set_tau1_groomed((*h_njettiness1_groomed)[ref]);
                 topjet.set_tau2_groomed((*h_njettiness2_groomed)[ref]);
                 topjet.set_tau3_groomed((*h_njettiness3_groomed)[ref]);
+                topjet.set_tau4_groomed((*h_njettiness4_groomed)[ref]);
               }
             }
           }
@@ -655,12 +663,14 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
           topjet.set_tau1(pat_topjet.userFloat("NjettinessAK8Puppi:tau1"));
           topjet.set_tau2(pat_topjet.userFloat("NjettinessAK8Puppi:tau2"));
           topjet.set_tau3(pat_topjet.userFloat("NjettinessAK8Puppi:tau3"));
+          topjet.set_tau4(pat_topjet.userFloat("NjettinessAK8Puppi:tau4"));
         }
-	if(njettiness_groomed_src.empty()){
-
+        if(njettiness_groomed_src.empty()){
+          // as miniaod doesn't calculate groomed tau_i
           topjet.set_tau1_groomed(-9999.);
           topjet.set_tau2_groomed(-9999.);
           topjet.set_tau3_groomed(-9999.);
+          topjet.set_tau4_groomed(-9999.);
         }
         /*---------------------*/
 
