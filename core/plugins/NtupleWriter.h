@@ -140,6 +140,14 @@ class NtupleWriter : public edm::EDFilter {
 
       std::vector<bool> puppi;
 
+      std::vector<edm::EDGetToken> hotvr_tokens;
+      std::vector<edm::EDGetToken> hotvr_subjet_tokens;
+      std::vector<std::vector<TopJet>> newHotvrJets;
+
+      std::vector<edm::EDGetToken> xcone_tokens;
+      std::vector<edm::EDGetToken> xcone_subjet_tokens;
+      std::vector<std::vector<TopJet>> newXConeJets;
+
       std::vector<TopJet> hotvrJets;
       std::vector<TopJet> xconeJets;
       std::vector<GenTopJet> genhotvrJets;
