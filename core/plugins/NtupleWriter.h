@@ -18,8 +18,7 @@
 
 #include <memory>
 
-// Jet Cluster for HOTVR & XCone by Alex and Dennis
-#include "UHH2/core/include/UniversalJetCluster.h"
+// GenJet Cluster for HOTVR & XCone by Alex and Dennis
 #include "UHH2/core/include/UniversalGenJetCluster.h"
 
 namespace uhh2 {
@@ -140,14 +139,12 @@ class NtupleWriter : public edm::EDFilter {
 
       std::vector<edm::EDGetToken> hotvr_tokens;
       std::vector<edm::EDGetToken> hotvr_subjet_tokens;
-      std::vector<std::vector<TopJet>> newHotvrJets;
+      std::vector<std::vector<TopJet>> hotvrJets;
 
       std::vector<edm::EDGetToken> xcone_tokens;
       std::vector<edm::EDGetToken> xcone_subjet_tokens;
-      std::vector<std::vector<TopJet>> newXConeJets;
+      std::vector<std::vector<TopJet>> xconeJets;
 
-      std::vector<TopJet> hotvrJets;
-      std::vector<TopJet> xconeJets;
       std::vector<GenTopJet> genhotvrJets;
       std::vector<GenTopJet> genxcone33Jets;
       std::vector<GenTopJet> genxcone33Jets_softdrop;

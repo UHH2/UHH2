@@ -585,37 +585,24 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 
   if (doHOTVR) {
     auto hotvr_sources = iConfig.getParameter<std::vector<edm::InputTag> >("HOTVR_sources");
-    newHotvrJets.resize(hotvr_sources.size());
+    hotvrJets.resize(hotvr_sources.size());
     for (size_t j=0; j<hotvr_sources.size(); ++j) {
       hotvr_tokens.push_back(consumes<pat::JetCollection>(hotvr_sources[j]));
       hotvr_subjet_tokens.push_back(consumes<pat::JetCollection>(edm::InputTag(hotvr_sources[j].label(), "SubJets")));
-      branch(tr, hotvr_sources[j].encode().c_str(), "std::vector<TopJet>", &newHotvrJets[j]);
+      branch(tr, hotvr_sources[j].encode().c_str(), "std::vector<TopJet>", &hotvrJets[j]);
     }
   }
 
   if (doXCone) {
     auto xcone_sources = iConfig.getParameter<std::vector<edm::InputTag> >("XCone_sources");
-    newXConeJets.resize(xcone_sources.size());
+    xconeJets.resize(xcone_sources.size());
     for (size_t j=0; j<xcone_sources.size(); ++j) {
       xcone_tokens.push_back(consumes<pat::JetCollection>(xcone_sources[j]));
       xcone_subjet_tokens.push_back(consumes<pat::JetCollection>(edm::InputTag(xcone_sources[j].label(), "SubJets")));
-      branch(tr, xcone_sources[j].encode().c_str(), "std::vector<TopJet>", &newXConeJets[j]);
+      branch(tr, xcone_sources[j].encode().c_str(), "std::vector<TopJet>", &xconeJets[j]);
     }
   }
 
-  if(doHOTVR || doXCone)
-    // HOTVR and XCone need full pf_collection for clustering
-    {
-      pf_collection_token = consumes<vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("pf_collection_source"));
-      if(doHOTVR)
-	{      
-	  branch(tr, "HOTVRTopJets", "std::vector<TopJet>", &hotvrJets);
-	}
-      if(doXCone)
-	{
-	  branch(tr, "XConeTopJets", "std::vector<TopJet>", &xconeJets);
-	}
-    }
   // GenJets
   if(doGenHOTVR || doGenXCone)
     {
@@ -1336,7 +1323,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    // ------------- HOTVR and XCone Jets  -------------
    if (doHOTVR) {
     for (size_t j=0; j < hotvr_tokens.size(); ++j){
-      newHotvrJets[j].clear();
+      hotvrJets[j].clear();
       edm::Handle<pat::JetCollection> hotvr_patjets;
       iEvent.getByToken(hotvr_tokens[j], hotvr_patjets);
       edm::Handle<pat::JetCollection> hotvr_subjet_patjets;
@@ -1363,14 +1350,14 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           thisJet.add_subjet(subjet);
         }
 
-        newHotvrJets[j].push_back(thisJet);
+        hotvrJets[j].push_back(thisJet);
       }
     }
    }
 
    if (doXCone) {
     for (size_t j=0; j < xcone_tokens.size(); ++j){
-      newXConeJets[j].clear();
+      xconeJets[j].clear();
       edm::Handle<pat::JetCollection> xcone_patjets;
       iEvent.getByToken(xcone_tokens[j], xcone_patjets);
       edm::Handle<pat::JetCollection> xcone_subjet_patjets;
@@ -1396,44 +1383,10 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           thisJet.add_subjet(subjet);
         }
 
-        newXConeJets[j].push_back(thisJet);
+        xconeJets[j].push_back(thisJet);
       }
     }
    }
-
-   if(doHOTVR || doXCone)
-     {
-       // get PFParticles
-       edm::Handle<vector<pat::PackedCandidate>> pfColl_handle;
-       iEvent.getByToken(pf_collection_token, pfColl_handle);
-
-       const std::vector<pat::PackedCandidate>& pf_coll = *(pfColl_handle.product()); 
-       std::vector<PFParticle> pfparticles;
-       for ( unsigned int j = 0; j<pf_coll.size(); ++j){
-	 const pat::PackedCandidate pf = pf_coll.at(j);
-       
-	 PFParticle part;
-	 part.set_pt(pf.pt());
-	 part.set_eta(pf.eta());
-	 part.set_phi(pf.phi());
-	 part.set_energy(pf.energy());
-	 pfparticles.push_back(part);
-       }
-       print_times(timer, "HOTVR_loop_packedCands"); 
-
-       UniversalJetCluster jetCluster(&pfparticles,doHOTVR,doXCone);
-       print_times(timer, "HOTVR_jetCluster"); 
-       if (doHOTVR)
-	 {
-       hotvrJets = jetCluster.GetHOTVRTopJets();
-       print_times(timer, "HOTVR_GetHOTVRTopJets"); 
-	 }
-       if (doXCone)
-	 {
-	   xconeJets = jetCluster.GetXCone33Jets();
-	 }
-       print_times(timer, "HOTVR_end"); 
-     }
 
   if(doGenHOTVR || doGenXCone)
      {
