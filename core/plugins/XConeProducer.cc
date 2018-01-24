@@ -110,25 +110,26 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<std::vector<pat::PackedCandidate>> particles;
   iEvent.getByToken(src_token_, particles);
 
-
   if (particles->size() < 15) {
-    auto outputJets = std::make_unique<pat::JetCollection>();
-    iEvent.put(std::move(outputJets));
+    auto jetCollection = std::make_unique<pat::JetCollection>();
+    iEvent.put(std::move(jetCollection));
+    auto subjetCollection = std::make_unique<pat::JetCollection>();
+    iEvent.put(std::move(subjetCollection), subjetCollName_);
     return;
   }
 
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
   for (const auto & cand: *particles) {
-    if (std::isnan(cand.p4().Px()) ||
-        std::isnan(cand.p4().Py()) ||
-        std::isnan(cand.p4().Pz()) ||
-        std::isinf(cand.p4().Px()) ||
-        std::isinf(cand.p4().Py()) ||
-        std::isinf(cand.p4().Pz()))
+    if (std::isnan(cand.px()) ||
+        std::isnan(cand.py()) ||
+        std::isnan(cand.pz()) ||
+        std::isinf(cand.px()) ||
+        std::isinf(cand.py()) ||
+        std::isinf(cand.pz()))
       continue;
 
-    _psj.push_back(PseudoJet(cand.p4().X(), cand.p4().Y(), cand.p4().Z(), cand.p4().T()));
+    _psj.push_back(PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy()));
   }
 
   // Run first clustering step (N=2, R=1.2)
