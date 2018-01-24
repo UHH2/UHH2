@@ -104,15 +104,15 @@ HOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
   for (const auto & cand: *particles) {
-    if (std::isnan(cand.p4().Px()) || 
-        std::isnan(cand.p4().Py()) || 
-        std::isnan(cand.p4().Pz()) || 
-        std::isinf(cand.p4().Px()) || 
-        std::isinf(cand.p4().Py()) ||
-        std::isinf(cand.p4().Pz()))
+    if (std::isnan(cand.px()) ||
+        std::isnan(cand.py()) ||
+        std::isnan(cand.pz()) ||
+        std::isinf(cand.px()) ||
+        std::isinf(cand.py()) ||
+        std::isinf(cand.pz()))
       continue;
 
-    _psj.push_back(PseudoJet(cand.p4().X(), cand.p4().Y(), cand.p4().Z(), cand.p4().T()));
+    _psj.push_back(PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy()));
   }
 
   // Do the clustering, make jets, nsub, store
