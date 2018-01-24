@@ -61,14 +61,12 @@ class XConeProducer : public edm::stream::EDProducer<> {
     virtual void beginStream(edm::StreamID) override;
     virtual void produce(edm::Event&, const edm::EventSetup&) override;
     virtual void endStream() override;
-    
+
     virtual pat::Jet createPatJet(const fastjet::PseudoJet &);
-    virtual pat::Jet createPatJet(const fastjet::PseudoJet & , const std::vector<fastjet::PseudoJet> &, double , std::vector<double>, float);
 
     // ----------member data ---------------------------
     edm::EDGetToken src_token_;
-
-    // ----------member data ---------------------------
+    const std::string subjetCollName_;
 };
 
 //
@@ -84,9 +82,12 @@ class XConeProducer : public edm::stream::EDProducer<> {
 // constructors and destructor
 //
 XConeProducer::XConeProducer(const edm::ParameterSet& iConfig):
-  src_token_(consumes<edm::View<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("src")))
+  src_token_(consumes<edm::View<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("src"))),
+  subjetCollName_("SubJets")
 {
+  // We make both the fat jets and subjets, and we must store them as separate collections
   produces<pat::JetCollection>();
+  produces<pat::JetCollection>(subjetCollName_);
 }
 
 
@@ -165,8 +166,7 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   if(particle_in_fat1.size() < 3 || particle_in_fat2.size()<3) {
-    cms::Exception("InsufficientParticles", 
-                   "Not enough particles to run second XCone step");
+    cms::Exception("InsufficientParticles", "Not enough particles to run second XCone step");
   }
 
   // Run second clustering step (N=3, R=0.4) for each fat jet
@@ -184,46 +184,65 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   ClusterSequenceArea clust_seq_sub2(particle_in_fat2, jet_def_sub2, area_def);
   subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
 
-  // set TopJets with subjets and JetArea
-
+  double jet1_area = 0;
+  double jet2_area = 0;
   //double jet1_area = fatjets[0].area();
   //double jet2_area = fatjets[1].area();
+
   vector<double> subjet1_area;
   vector<double> subjet2_area;
   for (unsigned int j = 0; j < subjets_1.size(); ++j) subjet1_area.push_back(subjets_1[j].area());
   for (unsigned int k = 0; k < subjets_2.size(); ++k) subjet2_area.push_back(subjets_2[k].area());
 
-  double jet1_area = 0;
-  double jet2_area = 0;
-  /*
-  vector<double> subjet1_area;
-  vector<double> subjet2_area;
-  for (unsigned int j = 0; j < subjets_1.size(); ++j) subjet1_area.push_back(0.);
-  for (unsigned int k = 0; k < subjets_2.size(); ++k) subjet2_area.push_back(0.);
-  */
-  auto outputJets = std::make_unique<pat::JetCollection>();
-  outputJets->push_back(createPatJet(fatjets[0], subjets_1, jet1_area, subjet1_area, sd_mass1));
-  outputJets->push_back(createPatJet(fatjets[1], subjets_2, jet2_area, subjet2_area, sd_mass2));
-  iEvent.put(std::move(outputJets));
+  // pat-ify jets and subjets
+  auto jetCollection = std::make_unique<pat::JetCollection>();
+
+  auto patJet1 = createPatJet(fatjets[0]);
+  patJet1.setJetArea(jet1_area);
+  patJet1.addUserFloat("softdropmass", sd_mass1);
+  jetCollection->push_back(patJet1);
+
+  auto patJet2 = createPatJet(fatjets[1]);
+  patJet2.setJetArea(jet2_area);
+  patJet2.addUserFloat("softdropmass", sd_mass2);
+  jetCollection->push_back(patJet2);
+
+  auto subjetCollection = std::make_unique<pat::JetCollection>();
+  std::vector< std::vector<int> > indices;
+  indices.resize(jetCollection->size());
+  for (uint s=0; s<subjets_1.size(); s++) {
+    indices[0].push_back(subjetCollection->size());
+    auto subjet = createPatJet(subjets_1[s]);
+    subjet.setJetArea(subjet1_area[s]);
+    subjetCollection->push_back(subjet);
+  }
+  for (uint s=0; s<subjets_2.size(); s++) {
+    indices[1].push_back(subjetCollection->size());
+    auto subjet = createPatJet(subjets_2[s]);
+    subjet.setJetArea(subjet2_area[s]);
+    subjetCollection->push_back(subjet);
+  }
+
+  edm::OrphanHandle<pat::JetCollection> subjetHandleAfterPut = iEvent.put(std::move(subjetCollection), subjetCollName_);
+
+  // setup refs between jets & subjets
+  for (auto & jetItr : *jetCollection) {
+    for (const auto ind : indices) {
+      pat::JetPtrCollection subjetPtrs;
+      for (const auto indItr : ind) {
+        edm::Ptr<pat::Jet> subjetPtr(subjetHandleAfterPut, indItr);
+        subjetPtrs.push_back(subjetPtr);
+      }
+      jetItr.addSubjets(subjetPtrs);
+    }
+  }
+  iEvent.put(std::move(jetCollection));
 }
 
 pat::Jet XConeProducer::createPatJet(const PseudoJet & psj)
 {
   pat::Jet newJet;
   newJet.setP4(math::XYZTLorentzVector(psj.pt(), psj.eta(), psj.phi(), psj.E()));
-  return newJet;
-}
-
-pat::Jet XConeProducer::createPatJet(const PseudoJet & psj, const vector<PseudoJet> &subpsj, double jet_area, vector<double> subjet_area, float sd_mass)
-{
-  pat::Jet newJet = createPatJet(psj);
-  newJet.setJetArea(jet_area);
-  newJet.addUserFloat("softdropmass", sd_mass);
-  for (uint i=0; i<subpsj.size(); i++) {
-    pat::Jet subjet = createPatJet(subpsj[i]);
-    subjet.setJetArea(subjet_area[i]);
-  }
-
   return newJet;
 }
 

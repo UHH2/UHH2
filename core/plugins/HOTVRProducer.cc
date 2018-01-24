@@ -64,19 +64,22 @@ class HOTVRProducer : public edm::stream::EDProducer<> {
     virtual void endStream() override;
 
     virtual pat::Jet createPatJet(const PseudoJet &);
-    virtual pat::Jet createPatJet(const PseudoJet &, const std::vector<PseudoJet> &, double, double, double, double, std::vector<double>);
 
     // ----------member data ---------------------------
     edm::EDGetToken src_token_;
+    const std::string subjetCollName_;
 };
 
 //
 // constructors and destructor
 //
 HOTVRProducer::HOTVRProducer(const edm::ParameterSet& iConfig):
-  src_token_(consumes<edm::View<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("src")))
+  src_token_(consumes<edm::View<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("src"))),
+  subjetCollName_("SubJets")
 {
+  // We make both the fat jets and subjets, and we must store them as separate collections
   produces<pat::JetCollection>();
+  produces<pat::JetCollection>(subjetCollName_);
 }
 
 
@@ -192,7 +195,15 @@ HOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     throw cms::Exception("MismatchedSizes", "Number of HOTVR jets found with ClusterSequence does not match number of jets with ClusterSequenceArea.");
   }
 
-  auto outputJets = std::make_unique<pat::JetCollection>();
+  auto jetCollection = std::make_unique<pat::JetCollection>();
+  auto subjetCollection = std::make_unique<pat::JetCollection>();
+
+  // Follow the similar pattern as in VirtualJetProducer to output both
+  // jets & subjets, with correct linkage
+
+  // this is the mapping of subjet to hard jet
+  std::vector< std::vector<int> > indices;
+  indices.resize(hotvr_jets.size());
 
   for (unsigned int i = 0; i < hotvr_jets.size(); ++i) {
     double beta = 1.0;
@@ -204,10 +215,11 @@ HOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     double tau2 = nSub2(hotvr_jets[i]);
     double tau3 = nSub3(hotvr_jets[i]);
 
-    // getting jet and subjet area
+    std::vector<PseudoJet> subjets;
+
     double jet_area = 0;
     std::vector<double> subjet_area;
-    std::vector<PseudoJet> subjets;
+
     if (hotvr_jets_area[i].pt()>0) {
       jet_area = hotvr_jets_area[i].area();
       HOTVRinfo hi_area = hotvr_jets_area[i].user_info<HOTVRinfo>();
@@ -222,32 +234,46 @@ HOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
       edm::LogWarning("NoJetArea") << "HOTVRProducer: could not find area jet for a HOTVR jet; set area and subjet areas to 0.";
     }
-    outputJets->push_back(createPatJet(hotvr_jets[i], subjets, tau1, tau2, tau3, jet_area, subjet_area));
-  }
 
-  iEvent.put(std::move(outputJets));
+    // Convert jet and subjets to pat::Jets
+    auto thisPatJet = createPatJet(hotvr_jets[i]);
+    thisPatJet.setJetArea(jet_area);
+    thisPatJet.addUserFloat("tau1", tau1);
+    thisPatJet.addUserFloat("tau2", tau2);
+    thisPatJet.addUserFloat("tau3", tau3);
+    jetCollection->push_back(thisPatJet);
+
+    for (uint s=0; s<subjets.size(); s++) {
+      indices[i].push_back(subjetCollection->size());
+
+      auto subjet = createPatJet(subjets[s]);
+      subjet.setJetArea(subjet_area[s]);
+      subjetCollection->push_back(subjet);
+    }
+
+  } // end loop over jets
+
+  edm::OrphanHandle<pat::JetCollection> subjetHandleAfterPut = iEvent.put(std::move(subjetCollection), subjetCollName_);
+
+  // setup refs between jets & subjets
+  for (auto & jetItr : *jetCollection) {
+    for (const auto ind : indices) {
+      pat::JetPtrCollection subjetPtrs;
+      for (const auto indItr : ind) {
+        edm::Ptr<pat::Jet> subjetPtr(subjetHandleAfterPut, indItr);
+        subjetPtrs.push_back(subjetPtr);
+      }
+      jetItr.addSubjets(subjetPtrs);
+    }
+  }
+  iEvent.put(std::move(jetCollection));
 }
+
 
 pat::Jet HOTVRProducer::createPatJet(const PseudoJet & psj)
 {
   pat::Jet newJet;
   newJet.setP4(math::XYZTLorentzVector(psj.pt(), psj.eta(), psj.phi(), psj.E()));
-  return newJet;
-}
-
-pat::Jet HOTVRProducer::createPatJet(const PseudoJet & psj, const std::vector<PseudoJet> &subpsj, double tau1, double tau2, double tau3, double jet_area, std::vector<double> subjet_area)
-{
-  pat::Jet newJet = createPatJet(psj);
-  newJet.setJetArea(jet_area);
-  newJet.addUserFloat("tau1", tau1);
-  newJet.addUserFloat("tau2", tau2);
-  newJet.addUserFloat("tau3", tau3);
-
-  for (uint i=0; i<subpsj.size(); i++) {
-    pat::Jet subjet = createPatJet(subpsj[i]);
-    subjet.setJetArea(subjet_area[i]);
-  }
-
   return newJet;
 }
 
