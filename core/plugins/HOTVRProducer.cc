@@ -273,7 +273,7 @@ HOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 pat::Jet HOTVRProducer::createPatJet(const PseudoJet & psj)
 {
   pat::Jet newJet;
-  newJet.setP4(math::XYZTLorentzVector(psj.pt(), psj.eta(), psj.phi(), psj.E()));
+  newJet.setP4(math::XYZTLorentzVector(psj.px(), psj.py(), psj.pz(), psj.E()));
   return newJet;
 }
 
