@@ -696,7 +696,7 @@ task.add(process.NjettinessCa15CHS)
 
 process.NjettinessCa15SoftDropCHS = Njettiness.clone(
     src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
-    Njets=cms.vuint32(1, 2, 3),          # compute 1-, 2-, 3- subjettiness
+    Njets=cms.vuint32(1, 2, 3, 4),          # compute 1-, 2-, 3-, 4- subjettiness
     # variables for measure definition :
     measureDefinition=cms.uint32(0),  # CMS default is normalized measure
     beta=cms.double(1.0),              # CMS default is 1
@@ -717,7 +717,7 @@ process.NjettinessCa15SoftDropPuppi = process.NjettinessCa15SoftDropCHS.clone(
 )
 process.NjettinessAk8SoftDropCHS = Njettiness.clone(
     src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
-    Njets=cms.vuint32(1, 2, 3),          # compute 1-, 2-, 3- subjettiness
+    Njets=cms.vuint32(1, 2, 3, 4),          # compute 1-, 2-, 3-, 4- subjettiness
     # variables for measure definition :
     measureDefinition=cms.uint32(0),  # CMS default is normalized measure
     beta=cms.double(1.0),              # CMS default is 1
