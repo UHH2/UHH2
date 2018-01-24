@@ -505,7 +505,6 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 )
 """
 
-
 # for JEC cluster AK8 jets with lower pt (compare to miniAOD)
 addJetCollection(process,labelName = 'AK8PFPUPPI', jetSource = cms.InputTag('ak8PuppiJets'), algo = 'AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),pfCandidates = cms.InputTag('packedPFCandidates'),
     pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
@@ -520,6 +519,18 @@ addJetCollection(process,labelName = 'AK8PFCHS', jetSource = cms.InputTag('ak8CH
     elSource = cms.InputTag('slimmedElectrons')
 )
 
+# HOTVR & XCONE
+process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
+    src=cms.InputTag("puppi")
+)
+
+process.hotvrPfCand = cms.EDProducer("HOTVRProducer",
+    src=cms.InputTag("packedPFCandidates")
+)
+
+process.xconePfCand = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("packedPFCandidates")
+)
 
 ### MET
 
@@ -859,16 +870,18 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doAllPFParticles = cms.bool(False),
         pf_collection_source = cms.InputTag("packedPFCandidates"),
 
-        # # *** HOTVR & XCone stuff
+        # *** HOTVR & XCone stuff
         doHOTVR = cms.bool(True),
         doXCone = cms.bool(True),
         doGenHOTVR = cms.bool(not useData),
         doGenXCone = cms.bool(not useData),    
-         # doHOTVR = cms.bool(False),
-         # doXCone = cms.bool(False),
-         # doGenHOTVR = cms.bool(False),
-         # doGenXCone =  cms.bool(False),
-
+        HOTVR_sources=cms.VInputTag(
+            cms.InputTag("hotvrPfCand"),
+            cms.InputTag("hotvrPuppi")
+        ),
+        XCone_sources=cms.VInputTag(
+            cms.InputTag("xconePfCand")
+        )
 )
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
