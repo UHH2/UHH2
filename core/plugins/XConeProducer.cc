@@ -108,7 +108,7 @@ XConeProducer::~XConeProducer()
 void
 XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-  edm::Handle<std::vector<pat::PackedCandidate>> particles;
+  edm::Handle<edm::View<pat::PackedCandidate>> particles;
   iEvent.getByToken(src_token_, particles);
 
   if (particles->size() < 15) {
