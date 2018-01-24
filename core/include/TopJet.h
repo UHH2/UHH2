@@ -81,7 +81,7 @@ public:
    }
 
   TopJet(){
-      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_mvahiggsdiscr = m_prunedmass = m_softdropmass = m_tau1_groomed = m_tau2_groomed = m_tau3_groomed = -1.0f;
+      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_tau4 = m_mvahiggsdiscr = m_prunedmass = m_softdropmass = m_tau1_groomed = m_tau2_groomed = m_tau3_groomed = m_tau4_groomed = -1.0f;
   }
 
   // getters
@@ -89,9 +89,11 @@ public:
   float tau1() const {return m_tau1;}
   float tau2() const {return m_tau2;}
   float tau3() const {return m_tau3;}
+  float tau4() const {return m_tau3;}
   float tau1_groomed() const {return m_tau1_groomed;}
   float tau2_groomed() const {return m_tau2_groomed;}
   float tau3_groomed() const {return m_tau3_groomed;}
+  float tau4_groomed() const {return m_tau3_groomed;}
   
   float mvahiggsdiscr() const {return m_mvahiggsdiscr;}
 
@@ -110,9 +112,11 @@ public:
   void set_tau1(float x){m_tau1 = x;}
   void set_tau2(float x){m_tau2 = x;}
   void set_tau3(float x){m_tau3 = x;}
+  void set_tau4(float x){m_tau4 = x;}
   void set_tau1_groomed(float x){m_tau1_groomed = x;}
   void set_tau2_groomed(float x){m_tau2_groomed = x;}
   void set_tau3_groomed(float x){m_tau3_groomed = x;}
+  void set_tau4_groomed(float x){m_tau4_groomed = x;}
 
   void set_mvahiggsdiscr(float x){m_mvahiggsdiscr = x;}
 
@@ -134,9 +138,11 @@ private:
   float m_tau1;
   float m_tau2;
   float m_tau3;
+  float m_tau4;
   float m_tau1_groomed;
   float m_tau2_groomed;
   float m_tau3_groomed;
+  float m_tau4_groomed;
   
   float m_mvahiggsdiscr;
 
