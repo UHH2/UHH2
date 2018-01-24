@@ -127,7 +127,8 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         std::isnan(cand.pz()) ||
         std::isinf(cand.px()) ||
         std::isinf(cand.py()) ||
-        std::isinf(cand.pz()))
+        std::isinf(cand.pz()) ||
+        (cand.pt() == 0))
       continue;
 
     _psj.push_back(PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy()));
