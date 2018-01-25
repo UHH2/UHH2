@@ -387,8 +387,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         }
         if(substructure_groomed_variables){
           if(!topjets_list[j].exists("substructure_groomed_variables_source")){
-            cerr << "Exception: groomed njettiness or ECF sources defined without definition of substructure_groomed_variables_source" << endl;
-            throw;
+            throw cms::Exception("MissingSourceName", "Groomed njettiness or ECF sources defined without definition of substructure_groomed_variables_source for topjets " + topjet_source);
           }
           cfg.substructure_groomed_variables_src = topjets_list[j].getParameter<std::string>("substructure_groomed_variables_source");
         }
