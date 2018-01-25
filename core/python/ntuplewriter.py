@@ -1197,8 +1197,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         # If blank, will use the ones in the jet userFloat.
                                         # These are assumed to be calculated from the
                                         # substructure_groomed_variables_source
-                                        ecf_beta1_source=cms.string(""),
-                                        ecf_beta2_source=cms.string("")
+                                        # ecf_beta1_source=cms.string(""),
+                                        # ecf_beta2_source=cms.string("")
                                     ),
                                     cms.PSet(
                                         topjet_source=cms.string(
