@@ -769,7 +769,49 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 )
 """
 
-# for JEC purposes, cluster AK8 jets but with lower pt (compared to higher threshold in miniAOD)
+# Add in Energy Correlation Functions for groomed jets only
+from RecoJets.JetProducers.ECF_cff import ecfNbeta1, ecfNbeta2
+process.ECFNbeta1Ak8SoftDropCHS = ecfNbeta1.clone(
+    src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
+    cuts=cms.vstring('', '', 'pt > 250')
+)
+task.add(process.ECFNbeta1Ak8SoftDropCHS)
+
+process.ECFNbeta2Ak8SoftDropCHS = ecfNbeta2.clone(
+    src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
+    cuts=cms.vstring('', '', 'pt > 250')
+)
+task.add(process.ECFNbeta2Ak8SoftDropCHS)
+
+
+process.ECFNbeta1Ak8SoftDropPuppi = ecfNbeta1.clone(
+    src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
+    cuts=cms.vstring('', '', 'pt > 250')
+)
+task.add(process.ECFNbeta1Ak8SoftDropPuppi)
+
+process.ECFNbeta2Ak8SoftDropPuppi = ecfNbeta2.clone(
+    src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
+    cuts=cms.vstring('', '', 'pt > 250')
+)
+task.add(process.ECFNbeta2Ak8SoftDropPuppi)
+
+
+process.ECFNbeta1CA15SoftDropCHS = ecfNbeta1.clone(
+    src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
+    cuts=cms.vstring('', '', 'pt > 250')
+)
+task.add(process.ECFNbeta1CA15SoftDropCHS)
+
+process.ECFNbeta2CA15SoftDropCHS = ecfNbeta2.clone(
+    src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
+    cuts=cms.vstring('', '', 'pt > 250')
+)
+task.add(process.ECFNbeta2CA15SoftDropCHS)
+
+
+# for JEC purposes, cluster AK8 jets but with lower pt (compared to higher
+# threshold in miniAOD)
 ak8_label = "AK8PFPUPPI"
 ak8puppi_patname = 'patJets' + ak8_label
 print 'Adding', ak8puppi_patname
@@ -1166,15 +1208,28 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         topjet_source=cms.string("patJetsAk8CHSJetsSoftDropPacked"),
                                         subjet_source=cms.string("daughters"),
                                         do_subjet_taginfo=cms.bool(True),
-                                        higgstag_source=cms.string("patJetsAk8CHSJets"),
-                                        higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                        higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfos"),
-                                        njettiness_source=cms.string("NjettinessAk8CHS"),
-                                        substructure_variables_source=cms.string("ak8CHSJets"),
-                                        njettiness_groomed_source=cms.string("NjettinessAk8SoftDropCHS"),
-                                        substructure_groomed_variables_source=cms.string("ak8CHSJetsSoftDropforsub"),
-                                        prunedmass_source=cms.string("patJetsAk8CHSJetsPrunedPacked"),
-                                        softdropmass_source=cms.string("patJetsAk8CHSJetsSoftDropPacked"),
+                                        higgstag_source=cms.string(
+                                            "patJetsAk8CHSJets"),
+                                        higgstag_name=cms.string(
+                                            "pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                                        higgstaginfo_source=cms.string(
+                                            "pfBoostedDoubleSVTagInfos"),
+                                        njettiness_source=cms.string(
+                                            "NjettinessAk8CHS"),
+                                        substructure_variables_source=cms.string(
+                                            "ak8CHSJets"),
+                                        njettiness_groomed_source=cms.string(
+                                            "NjettinessAk8SoftDropCHS"),
+                                        substructure_groomed_variables_source=cms.string(
+                                            "ak8CHSJetsSoftDropforsub"),
+                                        prunedmass_source=cms.string(
+                                            "patJetsAk8CHSJetsPrunedPacked"),
+                                        softdropmass_source=cms.string(
+                                            "patJetsAk8CHSJetsSoftDropPacked"),
+                                        ecf_beta1_source=cms.string(
+                                            "ECFNbeta1Ak8SoftDropCHS"),
+                                        ecf_beta2_source=cms.string(
+                                            "ECFNbeta2Ak8SoftDropCHS")
                                     ),
                                     cms.PSet(
                                         # The fat jets that HepTopTag produces are the Top jet candidates,
@@ -1204,7 +1259,11 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         prunedmass_source=cms.string(
                                             "patJetsCa15CHSJetsPrunedPacked"),
                                         # softdropmass_source  = cms.string(""),
-                                    ),
+                                        ecf_beta1_source=cms.string(
+                                            "ECFNbeta1CA15SoftDropCHS"),
+                                        ecf_beta2_source=cms.string(
+                                            "ECFNbeta2CA15SoftDropCHS")
+                                    ) ,
                                     # cms.PSet(
                                     #    topjet_source = cms.string("patJetsHepTopTagPuppiPacked"),
                                     #    subjet_source = cms.string("daughters"),
@@ -1222,14 +1281,27 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         topjet_source=cms.string("patJetsAk8PuppiJetsSoftDropPacked"),
                                         subjet_source=cms.string("daughters"),
                                         do_subjet_taginfo=cms.bool(True),
-                                        higgstag_source=cms.string("patJetsAk8PuppiJetsFat"),
-                                        higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                        njettiness_source=cms.string("NjettinessAk8Puppi"),
-                                        substructure_variables_source=cms.string("ak8PuppiJetsFat"),
-                                        njettiness_groomed_source=cms.string("NjettinessAk8SoftDropPuppi"),
-                                        substructure_groomed_variables_source=cms.string("ak8PuppiJetsSoftDropforsub"),
-                                        prunedmass_source=cms.string("patJetsAk8CHSJetsPrunedPacked"),
-                                        softdropmass_source=cms.string("patJetsAk8PuppiJetsSoftDropPacked"),
+                                        higgstag_source=cms.string(
+                                            "patJetsAk8PuppiJetsFat"),
+                                        higgstag_name=cms.string(
+                                            "pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                                        njettiness_source=cms.string(
+                                            "NjettinessAk8Puppi"),
+                                        substructure_variables_source=cms.string(
+                                            "ak8PuppiJetsFat"),
+                                        njettiness_groomed_source=cms.string(
+                                            "NjettinessAk8SoftDropPuppi"),
+                                        substructure_groomed_variables_source=cms.string(
+                                            "ak8PuppiJetsSoftDropforsub"),
+                                        prunedmass_source=cms.string(
+                                            "patJetsAk8CHSJetsPrunedPacked"),
+                                        softdropmass_source=cms.string(
+                                            "patJetsAk8PuppiJetsSoftDropPacked"),
+                                        ecf_beta1_source=cms.string(
+                                            "ECFNbeta1Ak8SoftDropPuppi"),
+                                        ecf_beta2_source=cms.string(
+                                            "ECFNbeta2Ak8SoftDropPuppi")
+
                                     ),
 
                                 ),

@@ -324,6 +324,13 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     qjets_src = cfg.qjets_src;
     src_qjets_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(qjets_src, "QjetsVolatility"));
 
+    ecf_beta1_src = cfg.ecf_beta1_src;
+    src_ecf_beta1_N2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta1_src, "ecfN2"));
+    src_ecf_beta1_N3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta1_src, "ecfN3"));
+    ecf_beta2_src = cfg.ecf_beta2_src;
+    src_ecf_beta2_N2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta2_src, "ecfN2"));
+    src_ecf_beta2_N3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta2_src, "ecfN3"));
+
     subjet_src = cfg.subjet_src;
     higgs_src= cfg.higgs_src;
 
@@ -395,7 +402,8 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3, h_njettiness4;
     edm::Handle<edm::ValueMap<float>> h_njettiness1_groomed, h_njettiness2_groomed, h_njettiness3_groomed, h_njettiness4_groomed;
     edm::Handle<edm::ValueMap<float>> h_qjets;
-    
+    edm::Handle<edm::ValueMap<float>> h_ecf_beta1_N2, h_ecf_beta1_N3, h_ecf_beta2_N2, h_ecf_beta2_N3;
+
     edm::Handle<reco::BasicJetCollection> topjets_with_cands;
     edm::Handle<reco::PFJetCollection> topjets_with_cands_reco;
 
@@ -434,6 +442,15 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
       else{
         event.getByToken(substructure_groomed_variables_src_token, topjets_groomed_with_cands);
       }
+    }
+
+    if (!ecf_beta1_src.empty()) {
+      event.getByToken(src_ecf_beta1_N2_token, h_ecf_beta1_N2);
+      event.getByToken(src_ecf_beta1_N3_token, h_ecf_beta1_N3);
+    }
+    if (!ecf_beta2_src.empty()) {
+      event.getByToken(src_ecf_beta2_N2_token, h_ecf_beta2_N2);
+      event.getByToken(src_ecf_beta2_N3_token, h_ecf_beta2_N3);
     }
 
     vector<TopJet> topjets;
@@ -530,9 +547,11 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         }
         /*-------------------*/
 
-        /*--- Njettiness/Qjets ------*/
+        /*--- Njettiness/Qjets/ECFs ------*/
 
-	//1. Take Njettiness/Qjets from matched jet collection if respective source is specified
+	// Take Njettiness/Qjets/ECFs from matched jet collection if respective source is specified.
+        // Since these variables are stored in ValueMaps, we need to figure out the correct
+        // reference Jet to access the value. We do this by deltaR matching
 
         // match a unpruned jet according to topjets_with_cands:
         int i_pat_topjet_wc = -1;
@@ -613,6 +632,16 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 topjet.set_tau3_groomed((*h_njettiness3_groomed)[ref]);
                 topjet.set_tau4_groomed((*h_njettiness4_groomed)[ref]);
               }
+              // ECF are for groomed jets only
+              if(!ecf_beta1_src.empty()){
+                topjet.set_ecfN2_beta1((*h_ecf_beta1_N2)[ref]);
+                topjet.set_ecfN3_beta1((*h_ecf_beta1_N3)[ref]);
+              }
+              if(!ecf_beta2_src.empty()){
+                topjet.set_ecfN2_beta2((*h_ecf_beta2_N2)[ref]);
+                topjet.set_ecfN3_beta2((*h_ecf_beta2_N3)[ref]);
+              }
+
             }
             else{
               auto ref = edm::Ref<reco::BasicJetCollection>(topjets_groomed_with_cands, i_pat_topjet_wc_groomed);
@@ -621,6 +650,14 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 topjet.set_tau2_groomed((*h_njettiness2_groomed)[ref]);
                 topjet.set_tau3_groomed((*h_njettiness3_groomed)[ref]);
                 topjet.set_tau4_groomed((*h_njettiness4_groomed)[ref]);
+              }
+              if(!ecf_beta1_src.empty()){
+                topjet.set_ecfN2_beta1((*h_ecf_beta1_N2)[ref]);
+                topjet.set_ecfN3_beta1((*h_ecf_beta1_N3)[ref]);
+              }
+              if(!ecf_beta2_src.empty()){
+                topjet.set_ecfN2_beta2((*h_ecf_beta2_N2)[ref]);
+                topjet.set_ecfN3_beta2((*h_ecf_beta2_N3)[ref]);
               }
             }
           }
@@ -671,6 +708,18 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
           topjet.set_tau2_groomed(-9999.);
           topjet.set_tau3_groomed(-9999.);
           topjet.set_tau4_groomed(-9999.);
+        }
+        /*---------------------*/
+
+        /*--- energy correlation functions -----*/
+        if (ecf_beta1_src.empty()) {
+          topjet.set_ecfN2_beta1(pat_topjet.userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2"));
+          topjet.set_ecfN3_beta1(pat_topjet.userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3"));
+        }
+
+        if (ecf_beta2_src.empty()) {
+          topjet.set_ecfN2_beta2(pat_topjet.userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2"));
+          topjet.set_ecfN3_beta2(pat_topjet.userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3"));
         }
         /*---------------------*/
 
