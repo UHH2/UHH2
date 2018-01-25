@@ -34,6 +34,13 @@ using namespace std;
 
 bool btag_warning;
 
+// Get userFloat entry, with some default return value if it doesn't exist
+// TODO: template this?
+float getPatJetUserFloat(const pat::Jet & jet, const std::string & key, float defaultValue=-9999.){
+  return (jet.hasUserFloat(key) ? jet.userFloat(key) : defaultValue);
+}
+
+
 NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member){
     handle = cfg.ctx.declare_event_output<vector<Jet>>(cfg.dest_branchname, cfg.dest);
     ptmin = cfg.ptmin;
@@ -698,10 +705,10 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         /*--- Njettiness ------*/
         if(njettiness_src.empty()){
 
-          topjet.set_tau1(pat_topjet.userFloat("NjettinessAK8Puppi:tau1"));
-          topjet.set_tau2(pat_topjet.userFloat("NjettinessAK8Puppi:tau2"));
-          topjet.set_tau3(pat_topjet.userFloat("NjettinessAK8Puppi:tau3"));
-          topjet.set_tau4(pat_topjet.userFloat("NjettinessAK8Puppi:tau4"));
+          topjet.set_tau1(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau1"));
+          topjet.set_tau2(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau2"));
+          topjet.set_tau3(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau3"));
+          topjet.set_tau4(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau4"));
         }
         if(njettiness_groomed_src.empty()){
           // as miniaod doesn't calculate groomed tau_i
@@ -714,20 +721,20 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
         /*--- energy correlation functions -----*/
         if (ecf_beta1_src.empty()) {
-          topjet.set_ecfN2_beta1(pat_topjet.userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2"));
-          topjet.set_ecfN3_beta1(pat_topjet.userFloat("ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3"));
+          topjet.set_ecfN2_beta1(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2"));
+          topjet.set_ecfN3_beta1(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3"));
         }
 
         if (ecf_beta2_src.empty()) {
-          topjet.set_ecfN2_beta2(pat_topjet.userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2"));
-          topjet.set_ecfN3_beta2(pat_topjet.userFloat("ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3"));
+          topjet.set_ecfN2_beta2(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2"));
+          topjet.set_ecfN3_beta2(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3"));
         }
         /*---------------------*/
 
         /*--- pruned mass -----*/
         if(pruned_src.find("Mass")!=string::npos){
 
-          topjet.set_prunedmass(pat_topjet.userFloat(pruned_src));
+          topjet.set_prunedmass(getPatJetUserFloat(pat_topjet, pruned_src));
         }
         else if(pruned_src!=""){//pruned mass set through matching with pruned-jet collection
 
@@ -759,7 +766,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         /*--- softdrop mass ---*/
         if(softdrop_src.find("Mass")!=string::npos){
 
-          topjet.set_softdropmass(pat_topjet.userFloat(softdrop_src));
+          topjet.set_softdropmass(getPatJetUserFloat(pat_topjet, softdrop_src));
         }
         else if(softdrop_src!=""){//softdrop mass set through matching with softdrop-jet collection
 
