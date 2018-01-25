@@ -377,19 +377,20 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
           cfg.njettiness_groomed_src = topjets_list[j].getParameter<std::string>("njettiness_groomed_source");
           substructure_groomed_variables = true;
         }
-        if(substructure_groomed_variables){
-          if(!topjets_list[j].exists("substructure_groomed_variables_source")){
-            cerr << "Exception: groomed njettiness source defined without definition of substructure_groomed_variables_source" << endl;
-            throw;
-          }
-          cfg.substructure_groomed_variables_src = topjets_list[j].getParameter<std::string>("substructure_groomed_variables_source");
-        }
-
         if (topjets_list[j].exists("ecf_beta1_source")) {
           cfg.ecf_beta1_src = topjets_list[j].getParameter<std::string>("ecf_beta1_source");
+          substructure_groomed_variables = true;
         }
         if (topjets_list[j].exists("ecf_beta2_source")) {
           cfg.ecf_beta2_src = topjets_list[j].getParameter<std::string>("ecf_beta2_source");
+          substructure_groomed_variables = true;
+        }
+        if(substructure_groomed_variables){
+          if(!topjets_list[j].exists("substructure_groomed_variables_source")){
+            cerr << "Exception: groomed njettiness or ECF sources defined without definition of substructure_groomed_variables_source" << endl;
+            throw;
+          }
+          cfg.substructure_groomed_variables_src = topjets_list[j].getParameter<std::string>("substructure_groomed_variables_source");
         }
 
         std::string topbranch=topjet_source+"_"+subjet_source;

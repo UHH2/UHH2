@@ -768,6 +768,7 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 """
 
 # Add in Energy Correlation Functions for groomed jets only
+# The cut is taken from PhysicsTools/PatAlgos/python/slimming/applySubstructure_cff.py
 from RecoJets.JetProducers.ECF_cff import ecfNbeta1, ecfNbeta2
 process.ECFNbeta1Ak8SoftDropCHS = ecfNbeta1.clone(
     src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
@@ -1192,6 +1193,12 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                             "ak8PFJetsPuppiSoftDropMass"),
                                         # switch off qjets for now, as it takes a long time:
                                         #qjets_source = cms.string("QJetsCa8CHS")
+                                        # Energy correlation functions, for beta=1 and beta=2
+                                        # If blank, will use the ones in the jet userFloat.
+                                        # These are assumed to be calculated from the
+                                        # substructure_groomed_variables_source
+                                        ecf_beta1_source=cms.string(""),
+                                        ecf_beta2_source=cms.string("")
                                     ),
                                     cms.PSet(
                                         topjet_source=cms.string(
