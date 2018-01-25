@@ -81,7 +81,7 @@ public:
    }
 
   TopJet(){
-      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_mvahiggsdiscr = m_prunedmass = m_softdropmass = m_tau1_groomed = m_tau2_groomed = m_tau3_groomed = -1.0f;
+      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_tau4 = m_mvahiggsdiscr = m_prunedmass = m_softdropmass = m_tau1_groomed = m_tau2_groomed = m_tau3_groomed = m_tau4_groomed = m_ecfN2_beta1 = m_ecfN2_beta2 = m_ecfN3_beta1 = m_ecfN3_beta2 = -1.0f;
   }
 
   // getters
@@ -93,6 +93,13 @@ public:
   float tau2_groomed() const {return m_tau2_groomed;}
   float tau3_groomed() const {return m_tau3_groomed;}
   
+  // energy correlation functions, N2 & N3, each with beta=1 or beta=2
+  // calculated on softdrop jets
+  float ecfN2_beta1() const {return m_ecfN2_beta1;}
+  float ecfN2_beta2() const {return m_ecfN2_beta2;}
+  float ecfN3_beta1() const {return m_ecfN3_beta1;}
+  float ecfN3_beta2() const {return m_ecfN3_beta2;}
+
   float mvahiggsdiscr() const {return m_mvahiggsdiscr;}
 
   float prunedmass() const {return m_prunedmass;}
@@ -113,6 +120,11 @@ public:
   void set_tau1_groomed(float x){m_tau1_groomed = x;}
   void set_tau2_groomed(float x){m_tau2_groomed = x;}
   void set_tau3_groomed(float x){m_tau3_groomed = x;}
+
+  void set_ecfN2_beta1(float x){m_ecfN2_beta1 = x;}
+  void set_ecfN2_beta2(float x){m_ecfN2_beta2 = x;}
+  void set_ecfN3_beta1(float x){m_ecfN3_beta1 = x;}
+  void set_ecfN3_beta2(float x){m_ecfN3_beta2 = x;}
 
   void set_mvahiggsdiscr(float x){m_mvahiggsdiscr = x;}
 
@@ -138,6 +150,11 @@ private:
   float m_tau2_groomed;
   float m_tau3_groomed;
   
+  float m_ecfN2_beta1;
+  float m_ecfN2_beta2;
+  float m_ecfN3_beta1;
+  float m_ecfN3_beta2;
+
   float m_mvahiggsdiscr;
 
   float m_prunedmass;
