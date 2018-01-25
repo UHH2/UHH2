@@ -797,18 +797,18 @@ process.ECFNbeta2Ak8SoftDropPuppi = ecfNbeta2.clone(
 )
 task.add(process.ECFNbeta2Ak8SoftDropPuppi)
 
+# Warning, can be very slow
+# process.ECFNbeta1CA15SoftDropCHS = ecfNbeta1.clone(
+#     src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
+#     cuts=cms.vstring('', '', 'pt > 250')
+# )
+# task.add(process.ECFNbeta1CA15SoftDropCHS)
 
-process.ECFNbeta1CA15SoftDropCHS = ecfNbeta1.clone(
-    src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
-    cuts=cms.vstring('', '', 'pt > 250')
-)
-task.add(process.ECFNbeta1CA15SoftDropCHS)
-
-process.ECFNbeta2CA15SoftDropCHS = ecfNbeta2.clone(
-    src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
-    cuts=cms.vstring('', '', 'pt > 250')
-)
-task.add(process.ECFNbeta2CA15SoftDropCHS)
+# process.ECFNbeta2CA15SoftDropCHS = ecfNbeta2.clone(
+#     src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
+#     cuts=cms.vstring('', '', 'pt > 250')
+# )
+# task.add(process.ECFNbeta2CA15SoftDropCHS)
 
 
 # for JEC purposes, cluster AK8 jets but with lower pt (compared to higher
@@ -1266,10 +1266,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         prunedmass_source=cms.string(
                                             "patJetsCa15CHSJetsPrunedPacked"),
                                         # softdropmass_source  = cms.string(""),
-                                        ecf_beta1_source=cms.string(
-                                            "ECFNbeta1CA15SoftDropCHS"),
-                                        ecf_beta2_source=cms.string(
-                                            "ECFNbeta2CA15SoftDropCHS")
+                                        # ecf_beta1_source=cms.string(
+                                        #     "ECFNbeta1CA15SoftDropCHS"),
+                                        # ecf_beta2_source=cms.string(
+                                        #     "ECFNbeta2CA15SoftDropCHS")
                                     ) ,
                                     # cms.PSet(
                                     #    topjet_source = cms.string("patJetsHepTopTagPuppiPacked"),
