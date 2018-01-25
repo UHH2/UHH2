@@ -385,6 +385,13 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
           cfg.substructure_groomed_variables_src = topjets_list[j].getParameter<std::string>("substructure_groomed_variables_source");
         }
 
+        if (topjets_list[j].exists("ecf_beta1_source")) {
+          cfg.ecf_beta1_src = topjets_list[j].getParameter<std::string>("ecf_beta1_source");
+        }
+        if (topjets_list[j].exists("ecf_beta2_source")) {
+          cfg.ecf_beta2_src = topjets_list[j].getParameter<std::string>("ecf_beta2_source");
+        }
+
         std::string topbranch=topjet_source+"_"+subjet_source;
         cfg.dest_branchname = topbranch;
         cfg.dest = topbranch;
