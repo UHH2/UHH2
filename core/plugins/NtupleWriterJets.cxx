@@ -705,36 +705,36 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         /*--- Njettiness ------*/
         if(njettiness_src.empty()){
 
-          topjet.set_tau1(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau1"));
-          topjet.set_tau2(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau2"));
-          topjet.set_tau3(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau3"));
-          topjet.set_tau4(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau4"));
+          topjet.set_tau1(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau1", -1.));
+          topjet.set_tau2(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau2", -1.));
+          topjet.set_tau3(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau3", -1.));
+          topjet.set_tau4(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau4", -1.));
         }
         if(njettiness_groomed_src.empty()){
           // as miniaod doesn't calculate groomed tau_i
-          topjet.set_tau1_groomed(-9999.);
-          topjet.set_tau2_groomed(-9999.);
-          topjet.set_tau3_groomed(-9999.);
-          topjet.set_tau4_groomed(-9999.);
+          topjet.set_tau1_groomed(-1.);
+          topjet.set_tau2_groomed(-1.);
+          topjet.set_tau3_groomed(-1.);
+          topjet.set_tau4_groomed(-1.);
         }
         /*---------------------*/
 
         /*--- energy correlation functions -----*/
         if (ecf_beta1_src.empty()) {
-          topjet.set_ecfN2_beta1(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2"));
-          topjet.set_ecfN3_beta1(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3"));
+          topjet.set_ecfN2_beta1(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2", -1.));
+          topjet.set_ecfN3_beta1(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3", -1.));
         }
 
         if (ecf_beta2_src.empty()) {
-          topjet.set_ecfN2_beta2(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2"));
-          topjet.set_ecfN3_beta2(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3"));
+          topjet.set_ecfN2_beta2(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2", -1.));
+          topjet.set_ecfN3_beta2(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3", -1.));
         }
         /*---------------------*/
 
         /*--- pruned mass -----*/
         if(pruned_src.find("Mass")!=string::npos){
 
-          topjet.set_prunedmass(getPatJetUserFloat(pat_topjet, pruned_src));
+          topjet.set_prunedmass(getPatJetUserFloat(pat_topjet, pruned_src, -1.));
         }
         else if(pruned_src!=""){//pruned mass set through matching with pruned-jet collection
 
@@ -766,7 +766,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         /*--- softdrop mass ---*/
         if(softdrop_src.find("Mass")!=string::npos){
 
-          topjet.set_softdropmass(getPatJetUserFloat(pat_topjet, softdrop_src));
+          topjet.set_softdropmass(getPatJetUserFloat(pat_topjet, softdrop_src, -1.));
         }
         else if(softdrop_src!=""){//softdrop mass set through matching with softdrop-jet collection
 
