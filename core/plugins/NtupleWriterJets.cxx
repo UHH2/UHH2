@@ -118,9 +118,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
           fill_jet_info(pat_jet, jet, true, false);
         }
         catch(runtime_error & ex){
-
-          cerr << "Exception in fill_jet_info in NtupleWriterJets::process for jets with src=" << src << endl;
-          throw;
+          throw cms::Exception("fill_jet_info error", "Error in fill_jet_info NtupleWriterJets::process for jets with src = " + src.label());
         }
 
         /*--- lepton keys ---*/
@@ -536,8 +534,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	}
 
         }catch(runtime_error &){
-           cerr << "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " << src << "." << endl;
-           throw;
+          throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " + src.label());
         }
 
         /*--- lepton keys ---*/
@@ -897,8 +894,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	      try{
 		NtupleWriterJets::fill_jet_info(*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets);
 	      }catch(runtime_error &){
-		cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
-		throw;
+                throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for daughters in NtupleWriterTopJets with src = " + src.label());
 	      }
             }
             else {
@@ -911,7 +907,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 		subjet.set_energy(daughter->energy());
 	      }
 	      else{
-		throw runtime_error("subjet was nullptr");
+		throw cms::Exception("NullSubjet", "daughter is nullptr");
 	      }
             }
             topjet.add_subjet(subjet);
@@ -927,8 +923,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	      try{
 		NtupleWriterJets::fill_jet_info(*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets);
 	      }catch(runtime_error &){
-		cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
-		throw;
+                throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " + src.label());
 	      }
 
               /*--- lepton keys ---*/
@@ -949,8 +944,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
               /*-------------------*/
             }
 	    else{
-	      cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
-	      throw;
+              throw cms::Exception("MissingSubjet", "Cannot get subjets from topjet src = " + src.label());
 	    }
 	    topjet.add_subjet(subjet);
 	  }//loop over subjets
