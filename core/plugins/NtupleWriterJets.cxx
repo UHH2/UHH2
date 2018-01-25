@@ -602,8 +602,9 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
             }
           }
         }
-	 int i_pat_topjet_wc_groomed = -1;
-	if(!njettiness_groomed_src.empty()){
+
+        int i_pat_topjet_wc_groomed = -1;
+        if(!njettiness_groomed_src.empty() || !ecf_beta1_src.empty() || !ecf_beta2_src.empty()){
           double drmin = numeric_limits<double>::infinity();
           if(checkjettypegroomed){
             for (size_t i_wc=0; i_wc < topjets_groomed_with_cands_reco->size(); ++i_wc) {
