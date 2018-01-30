@@ -14,10 +14,10 @@ class Electron : public RecParticle {
   enum tag {
     twodcut_dRmin,
     twodcut_pTrel,
-    cutBasedElectronID_Fall17_94X_V1_Preliminary_veto,
-    cutBasedElectronID_Fall17_94X_V1_Preliminary_loose,
-    cutBasedElectronID_Fall17_94X_V1_Preliminary_medium,
-    cutBasedElectronID_Fall17_94X_V1_Preliminary_tight,
+    cutBasedElectronID_Fall17_94X_V1_veto,
+    cutBasedElectronID_Fall17_94X_V1_loose,
+    cutBasedElectronID_Fall17_94X_V1_medium,
+    cutBasedElectronID_Fall17_94X_V1_tight,
     heepElectronID_HEEPV70,
     mvaEleID_Fall17_noIso_V1_wp90,
     mvaEleID_Fall17_noIso_V1_wp80,
@@ -28,10 +28,10 @@ class Electron : public RecParticle {
   };
 
   static tag tagname2tag(const std::string & tagname){
-    if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_veto") return cutBasedElectronID_Fall17_94X_V1_Preliminary_veto;
-    if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_loose") return cutBasedElectronID_Fall17_94X_V1_Preliminary_loose;
-    if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_medium") return cutBasedElectronID_Fall17_94X_V1_Preliminary_medium;
-    if(tagname == "cutBasedElectronID_Fall17_94X_V1_Preliminary_tight") return cutBasedElectronID_Fall17_94X_V1_Preliminary_tight;
+    if(tagname == "cutBasedElectronID_Fall17_94X_V1_veto") return cutBasedElectronID_Fall17_94X_V1_veto;
+    if(tagname == "cutBasedElectronID_Fall17_94X_V1_loose") return cutBasedElectronID_Fall17_94X_V1_loose;
+    if(tagname == "cutBasedElectronID_Fall17_94X_V1_medium") return cutBasedElectronID_Fall17_94X_V1_medium;
+    if(tagname == "cutBasedElectronID_Fall17_94X_V1_tight") return cutBasedElectronID_Fall17_94X_V1_tight;
     if(tagname == "heepElectronID_HEEPV70") return heepElectronID_HEEPV70;
     if(tagname == "mvaEleID_Fall17_noIso_V1_wp90") return mvaEleID_Fall17_noIso_V1_wp90;
     if(tagname == "mvaEleID_Fall17_noIso_V1_wp80") return mvaEleID_Fall17_noIso_V1_wp80;
