@@ -1301,6 +1301,17 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     'hltSinglePFJet400',
                                     'hltSinglePFJet450',
                                     'hltSinglePFJet500',
+                                    #single jet FWD triggers
+                                    'hltSinglePFFwdJet40',
+                                    'hltSinglePFFwdJet60',
+                                    'hltSinglePFFwdJet80',
+                                    'hltSinglePFFwdJet140',
+                                    'hltSinglePFFwdJet200',
+                                    'hltSinglePFFwdJet260',
+                                    'hltSinglePFFwdJet320',
+                                    'hltSinglePFFwdJet400',
+                                    'hltSinglePFFwdJet450',
+                                    'hltSinglePFFwdJet500',
 
                                     # single jet FWD triggers
                                     'hltSinglePFFwdJet40',
