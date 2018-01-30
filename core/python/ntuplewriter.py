@@ -822,8 +822,7 @@ addJetCollection(process,
                  rParam=0.8,
                  genJetCollection=cms.InputTag('slimmedGenJetsAK8'),
 
-                 jetCorrections=(
-                     'AK8PFPuppi', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
+                 jetCorrections=('AK8PFPuppi', ['L2Relative', 'L3Absolute'], 'None'),
 
                  pfCandidates=cms.InputTag('packedPFCandidates'),
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
