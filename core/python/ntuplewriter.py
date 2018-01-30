@@ -981,7 +981,7 @@ from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
 elecID_mod_ls = [
-    'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_Preliminary_cff',
+    'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff',
     'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff',
     'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff',
     'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff',
@@ -998,14 +998,14 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
 
                                               vmaps_bool=cms.PSet(
 
-                                                  cutBasedElectronID_Fall17_94X_V1_Preliminary_veto=cms.InputTag(
-                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-veto'),
-                                                  cutBasedElectronID_Fall17_94X_V1_Preliminary_loose=cms.InputTag(
-                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-loose'),
-                                                  cutBasedElectronID_Fall17_94X_V1_Preliminary_medium=cms.InputTag(
-                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-medium'),
-                                                  cutBasedElectronID_Fall17_94X_V1_Preliminary_tight=cms.InputTag(
-                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-Preliminary-tight'),
+                                                  cutBasedElectronID_Fall17_94X_V1_veto=cms.InputTag(
+                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1--veto'),
+                                                  cutBasedElectronID_Fall17_94X_V1_loose=cms.InputTag(
+                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1--loose'),
+                                                  cutBasedElectronID_Fall17_94X_V1_medium=cms.InputTag(
+                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1--medium'),
+                                                  cutBasedElectronID_Fall17_94X_V1_tight=cms.InputTag(
+                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1--tight'),
                                                   heepElectronID_HEEPV70=cms.InputTag(
                                                       'egmGsfElectronIDs:heepElectronID-HEEPV70'),
                                                   mvaEleID_Fall17_noIso_V1_wp90=cms.InputTag(
@@ -1067,10 +1067,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     # each string should correspond to a variable saved
                                     # via the "userInt" method in the pat::Electron collection used 'electron_source'
                                     # [the configuration of the pat::Electron::userInt variables should be done in PATElectronUserData]
-                                    'cutBasedElectronID_Fall17_94X_V1_Preliminary_veto',
-                                    'cutBasedElectronID_Fall17_94X_V1_Preliminary_loose',
-                                    'cutBasedElectronID_Fall17_94X_V1_Preliminary_medium',
-                                    'cutBasedElectronID_Fall17_94X_V1_Preliminary_tight',
+                                    'cutBasedElectronID_Fall17_94X_V1_veto',
+                                    'cutBasedElectronID_Fall17_94X_V1_loose',
+                                    'cutBasedElectronID_Fall17_94X_V1_medium',
+                                    'cutBasedElectronID_Fall17_94X_V1_tight',
                                     'heepElectronID_HEEPV70',
                                     'mvaEleID_Fall17_noIso_V1_wp90',
                                     'mvaEleID_Fall17_noIso_V1_wp80',
