@@ -907,6 +907,20 @@ task.add(process.pfBoostedDoubleSVTagInfos)
 
 process.pfBoostedDoubleSVTagInfos.trackSelection.jetDeltaRMax = cms.double(0.8)
 
+# Add subjets from groomed fat jet to its corresponding ungroomed fatjet
+process.packedPatJetsAk8CHSJets = cms.EDProducer("JetSubstructurePacker",
+    jetSrc = cms.InputTag("patJetsAk8CHSJets"),
+    distMax = cms.double(0.8),
+    algoTags = cms.VInputTag(
+        cms.InputTag("patJetsAk8CHSJetsSoftDropPacked")
+    ),
+    algoLabels = cms.vstring(
+        'SoftDropCHS'
+    ),
+    fixDaughters = cms.bool(False)
+)
+task.add(process.packedPatJetsAk8CHSJets)
+
 # HOTVR & XCONE
 process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
                                     src=cms.InputTag("puppi")
@@ -1205,8 +1219,9 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         # ecf_beta2_source=cms.string("")
                                     ),
                                     cms.PSet(
-                                        topjet_source=cms.string("patJetsAk8CHSJetsSoftDropPacked"),
-                                        subjet_source=cms.string("daughters"),
+                                        topjet_source=cms.string(
+                                            "packedPatJetsAk8CHSJets"),
+                                        subjet_source=cms.string("SoftDropCHS"),
                                         do_subjet_taginfo=cms.bool(True),
                                         higgstag_source=cms.string(
                                             "patJetsAk8CHSJets"),
