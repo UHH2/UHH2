@@ -504,9 +504,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     for(size_t j=0; j< met_sources.size(); ++j){
       met_tokens.push_back(consumes<vector<pat::MET>>(met_sources[j]));
       branch(tr, met_sources[j].c_str(), "MET", &met[j]);
-      //      if (met_sources[j]=="slimmedMETsPuppi") puppi.push_back(true);
-      if (met_sources[j]=="slimmedMETsPuppi" || met_sources[j]=="slMETsCHST1") puppi.push_back(true); //Puppi and CHS don't have METUncertainty
-      else puppi.push_back(false);
+      if (met_sources[j]=="slimmedMETsPuppi") skipMETUncertainties.push_back(true);  // Puppi doesn't have METUncertainty
+      else skipMETUncertainties.push_back(false);
     }
     if(!met_sources.empty()){
         event->met = &met[0];
@@ -1102,8 +1101,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          met[j].set_mEtSig(pat_met.mEtSig());
          met[j].set_uncorr_pt(pat_met.uncorPt());
          met[j].set_uncorr_phi(pat_met.uncorPhi());
-         //      std::cout<<"MET uncorrPt = "<<pat_met.uncorPt()<<" uncorrPhi = "<<pat_met.uncorPhi()<<" corrPt = "<<pat_met.pt()<<" corrPhi = "<<pat_met.phi()<<std::endl;
-         if(!puppi.at(j))
+         // std::cout<<"MET uncorrPt = "<<pat_met.uncorPt()<<" uncorrPhi = "<<pat_met.uncorPhi()<<" corrPt = "<<pat_met.pt()<<" corrPhi = "<<pat_met.phi()<<std::endl;
+         if(!skipMETUncertainties.at(j))
             {
                met[j].set_shiftedPx_JetEnUp(pat_met.shiftedPx(pat::MET::METUncertainty::JetEnUp, pat::MET::METCorrectionLevel::Type1));
                met[j].set_shiftedPx_JetEnDown(pat_met.shiftedPx(pat::MET::METUncertainty::JetEnDown, pat::MET::METCorrectionLevel::Type1));
@@ -1129,6 +1128,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
                met[j].set_shiftedPy_TauEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::TauEnDown, pat::MET::METCorrectionLevel::Type1));
                met[j].set_shiftedPy_MuonEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::MuonEnDown, pat::MET::METCorrectionLevel::Type1));
                met[j].set_shiftedPy_MuonEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::MuonEnUp, pat::MET::METCorrectionLevel::Type1));
+               met[j].set_corrPx_CHS(pat_met.corPy(pat::MET::METCorrectionLevel::RawChs));
+               met[j].set_corrPy_CHS(pat_met.corPy(pat::MET::METCorrectionLevel::RawChs));
             }
        }
       }

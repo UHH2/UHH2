@@ -4,7 +4,7 @@ isDebug = False
 useData = True
 #useData = False
 
-met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi", "slMETsCHS")
+met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi")
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15,
 # cmstoptag, heptoptag). Also applied for the corresponding genjets.
@@ -896,48 +896,6 @@ process.xconePfCand = cms.EDProducer("XConeProducer",
 )
 task.add(process.xconePfCand)
 
-# MET
-
-# MET CHS (not available as slimmedMET collection)
-# copied from
-# https://github.com/cms-jet/JMEValidator/blob/CMSSW_7_6_X/python/FrameworkConfiguration.py
-
-
-def clean_met_(met):
-    del met.t01Variation
-    del met.t1Uncertainties
-    del met.t1SmearedVarsAndUncs
-    del met.tXYUncForRaw
-    del met.tXYUncForT1
-    del met.tXYUncForT01
-    del met.tXYUncForT1Smear
-    del met.tXYUncForT01Smear
-    del met.chsMET  # FIXME: utilise the chsMET part instead of having multiple METs?
-    del met.trkMET
-
-
-from PhysicsTools.PatAlgos.tools.metTools import addMETCollection
-
-# Raw PAT METs
-process.load('RecoMET.METProducers.PFMET_cfi')
-process.pfMet.src = cms.InputTag('chs')
-task.add(process.pfMet)
-addMETCollection(process, labelName='patPFMetCHS',
-                 metSource='pfMet')  # RAW MET
-addMETCollection(process, labelName='patPFMet', metSource='pfMet')  # RAW MET
-process.patPFMet.addGenMET = False
-process.patPFMetCHS.addGenMET = False
-# Slimmed METs
-from PhysicsTools.PatAlgos.slimming.slimmedMETs_cfi import slimmedMETs
-#### CaloMET is not available in MiniAOD
-del slimmedMETs.caloMET
-# ### CHS
-process.slMETsCHS = slimmedMETs.clone()
-process.slMETsCHS.src = cms.InputTag("patPFMetCHS")
-process.slMETsCHS.rawUncertainties = cms.InputTag(
-    "patPFMetCHS")  # only central value
-task.add(process.slMETsCHS)
-clean_met_(process.slMETsCHS)
 
 # LEPTON cfg
 
