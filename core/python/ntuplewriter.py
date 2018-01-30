@@ -1003,13 +1003,13 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
                                               vmaps_bool=cms.PSet(
 
                                                   cutBasedElectronID_Fall17_94X_V1_veto=cms.InputTag(
-                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1--veto'),
+                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-veto'),
                                                   cutBasedElectronID_Fall17_94X_V1_loose=cms.InputTag(
-                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1--loose'),
+                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-loose'),
                                                   cutBasedElectronID_Fall17_94X_V1_medium=cms.InputTag(
-                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1--medium'),
+                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-medium'),
                                                   cutBasedElectronID_Fall17_94X_V1_tight=cms.InputTag(
-                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1--tight'),
+                                                      'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-tight'),
                                                   heepElectronID_HEEPV70=cms.InputTag(
                                                       'egmGsfElectronIDs:heepElectronID-HEEPV70'),
                                                   mvaEleID_Fall17_noIso_V1_wp90=cms.InputTag(
