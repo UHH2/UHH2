@@ -348,6 +348,7 @@ process.load('CommonTools/PileupAlgos/Puppi_cff')
 process.puppi.candName = cms.InputTag('packedPFCandidates')
 process.puppi.vertexName = cms.InputTag('offlineSlimmedPrimaryVertices')
 process.puppi.clonePackedCands = cms.bool(True)
+process.puppi.useExistingWeights = cms.bool(True)
 task.add(process.puppi)
 
 process.ca15PuppiJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(
@@ -878,6 +879,22 @@ process.pfBoostedDoubleSVTagInfos = cms.EDProducer("BoostedDoubleSVProducer",
 task.add(process.pfBoostedDoubleSVTagInfos)
 
 process.pfBoostedDoubleSVTagInfos.trackSelection.jetDeltaRMax = cms.double(0.8)
+
+# HOTVR & XCONE
+process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
+    src=cms.InputTag("puppi")
+)
+task.add(process.hotvrPuppi)
+
+process.hotvrPfCand = cms.EDProducer("HOTVRProducer",
+    src=cms.InputTag("packedPFCandidates")
+)
+task.add(process.hotvrPfCand)
+
+process.xconePfCand = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("packedPFCandidates")
+)
+task.add(process.xconePfCand)
 
 # MET
 
@@ -1411,6 +1428,12 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 # *** HOTVR & XCone stuff
                                 doHOTVR=cms.bool(True),
                                 doXCone=cms.bool(True),
+                                HOTVR_sources=cms.VInputTag(
+                                    cms.InputTag("hotvrPfCand"),
+                                    cms.InputTag("hotvrPuppi")
+                                ),
+                                XCone_sources=cms.VInputTag(cms.InputTag("xconePfCand")),
+
                                 doGenHOTVR=cms.bool(not useData),
                                 doGenXCone=cms.bool(not useData),
                                 )
