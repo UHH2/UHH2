@@ -539,8 +539,11 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
 
     jetcorr_list = ['L1FastJet', 'L2Relative', 'L3Absolute']
     if useData:
-        jetcorr_list = ['L1FastJet', 'L2Relative',
-                        'L3Absolute', 'L2L3Residual']
+        jetcorr_list.append('L2L3Residual')
+    if "puppi" in fatjets_name.lower():
+        # Since used for both fat & subjets,
+        # assumes both require same level of corrections
+        jetcorr_list.remove("L1FastJet")
     if jetcorr_label:
         jetcorr_arg = (jetcorr_label, cms.vstring(jetcorr_list), 'None')
     else:
