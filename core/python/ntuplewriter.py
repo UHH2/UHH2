@@ -695,7 +695,7 @@ task.add(process.NjettinessCa15CHS)
 
 process.NjettinessCa15SoftDropCHS = Njettiness.clone(
     src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
-    Njets=cms.vuint32(1, 2, 3),          # compute 1-, 2-, 3- subjettiness
+    Njets=cms.vuint32(1, 2, 3, 4),          # compute 1-, 2-, 3-, 4- subjettiness
     # variables for measure definition :
     measureDefinition=cms.uint32(0),  # CMS default is normalized measure
     beta=cms.double(1.0),              # CMS default is 1
@@ -716,7 +716,7 @@ process.NjettinessCa15SoftDropPuppi = process.NjettinessCa15SoftDropCHS.clone(
 )
 process.NjettinessAk8SoftDropCHS = Njettiness.clone(
     src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
-    Njets=cms.vuint32(1, 2, 3),          # compute 1-, 2-, 3- subjettiness
+    Njets=cms.vuint32(1, 2, 3, 4),          # compute 1-, 2-, 3-, 4- subjettiness
     # variables for measure definition :
     measureDefinition=cms.uint32(0),  # CMS default is normalized measure
     beta=cms.double(1.0),              # CMS default is 1
@@ -767,6 +767,48 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
    )
 )
 """
+
+# Add in Energy Correlation Functions for groomed jets only
+# The cut is taken from PhysicsTools/PatAlgos/python/slimming/applySubstructure_cff.py
+from RecoJets.JetProducers.ECF_cff import ecfNbeta1, ecfNbeta2
+process.ECFNbeta1Ak8SoftDropCHS = ecfNbeta1.clone(
+    src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
+    cuts=cms.vstring('', '', 'pt > 250')
+)
+task.add(process.ECFNbeta1Ak8SoftDropCHS)
+
+process.ECFNbeta2Ak8SoftDropCHS = ecfNbeta2.clone(
+    src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
+    cuts=cms.vstring('', '', 'pt > 250')
+)
+task.add(process.ECFNbeta2Ak8SoftDropCHS)
+
+
+process.ECFNbeta1Ak8SoftDropPuppi = ecfNbeta1.clone(
+    src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
+    cuts=cms.vstring('', '', 'pt > 250')
+)
+task.add(process.ECFNbeta1Ak8SoftDropPuppi)
+
+process.ECFNbeta2Ak8SoftDropPuppi = ecfNbeta2.clone(
+    src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
+    cuts=cms.vstring('', '', 'pt > 250')
+)
+task.add(process.ECFNbeta2Ak8SoftDropPuppi)
+
+# Warning, can be very slow
+# process.ECFNbeta1CA15SoftDropCHS = ecfNbeta1.clone(
+#     src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
+#     cuts=cms.vstring('', '', 'pt > 250')
+# )
+# task.add(process.ECFNbeta1CA15SoftDropCHS)
+
+# process.ECFNbeta2CA15SoftDropCHS = ecfNbeta2.clone(
+#     src=cms.InputTag("ca15CHSJetsSoftDropforsub"),
+#     cuts=cms.vstring('', '', 'pt > 250')
+# )
+# task.add(process.ECFNbeta2CA15SoftDropCHS)
+
 
 # for JEC purposes, cluster AK8 jets but with lower pt (compared to higher
 # threshold in miniAOD)
@@ -1168,6 +1210,12 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                             "ak8PFJetsPuppiSoftDropMass"),
                                         # switch off qjets for now, as it takes a long time:
                                         #qjets_source = cms.string("QJetsCa8CHS")
+                                        # Energy correlation functions, for beta=1 and beta=2
+                                        # If blank, will use the ones in the jet userFloat.
+                                        # These are assumed to be calculated from the
+                                        # substructure_groomed_variables_source
+                                        # ecf_beta1_source=cms.string(""),
+                                        # ecf_beta2_source=cms.string("")
                                     ),
                                     cms.PSet(
                                         topjet_source=cms.string(
@@ -1192,6 +1240,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                             "patJetsAk8CHSJetsPrunedPacked"),
                                         softdropmass_source=cms.string(
                                             "patJetsAk8CHSJetsSoftDropPacked"),
+                                        ecf_beta1_source=cms.string(
+                                            "ECFNbeta1Ak8SoftDropCHS"),
+                                        ecf_beta2_source=cms.string(
+                                            "ECFNbeta2Ak8SoftDropCHS")
                                     ),
                                     cms.PSet(
                                         # The fat jets that HepTopTag produces are the Top jet candidates,
@@ -1219,6 +1271,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         prunedmass_source = cms.string(
                                             "patJetsCa15CHSJetsPrunedPacked"),
                                         # softdropmass_source  = cms.string(""),
+                                        # ecf_beta1_source=cms.string(
+                                        #     "ECFNbeta1CA15SoftDropCHS"),
+                                        # ecf_beta2_source=cms.string(
+                                        #     "ECFNbeta2CA15SoftDropCHS")
                                     ) ,
                                     # cms.PSet(
                                     #    topjet_source = cms.string("patJetsHepTopTagPuppiPacked"),
@@ -1254,6 +1310,11 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                             "patJetsAk8CHSJetsPrunedPacked"),
                                         softdropmass_source=cms.string(
                                             "patJetsAk8PuppiJetsSoftDropPacked"),
+                                        ecf_beta1_source=cms.string(
+                                            "ECFNbeta1Ak8SoftDropPuppi"),
+                                        ecf_beta2_source=cms.string(
+                                            "ECFNbeta2Ak8SoftDropPuppi")
+
                                     ),
 
                                 ),
