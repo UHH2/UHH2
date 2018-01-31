@@ -95,6 +95,14 @@ git cms-merge-topic guitargeek:ElectronID_MVA2017_940pre3
 # Necessary for using our FastJet
 git cms-addpkg RecoJets/JetProducers
 
+# For adding in Puppi multiplicities, until they get merged into a 94X release
+# Do a manual cherry-pick of the PR commits otherwise merge-topic will get loads of extra fluff
+git cms-addpkg PhysicsTools/PatAlgos
+git remote add ahinzmann git@github.com:ahinzmann/cmssw.git
+git fetch ahinzmann puppiWeightedMultiplicities94
+git cherry-pick 074af13a443
+git cherry-pick 3c96176da18
+
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
 OLD_FJ_VER=$(getToolVersion fastjet)
