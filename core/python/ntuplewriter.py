@@ -946,20 +946,6 @@ process.packedPatJetsAk8CHSJets = cms.EDProducer("JetSubstructurePacker",
 )
 task.add(process.packedPatJetsAk8CHSJets)
 
-# Ditto for CA15/TopTagger
-process.packedPatJetsCa15CHSJets = cms.EDProducer("JetSubstructurePacker",
-    jetSrc = cms.InputTag("patJetsCa15CHSJets"),
-    distMax = cms.double(1.5),
-    algoTags = cms.VInputTag(
-        cms.InputTag("patJetsHepTopTagCHSPacked")
-    ),
-    algoLabels = cms.vstring(
-        'HepTopTag'
-    ),
-    fixDaughters = cms.bool(False)
-)
-task.add(process.packedPatJetsCa15CHSJets)
-
 # HOTVR & XCONE
 process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
                                     src=cms.InputTag("puppi")
@@ -1258,10 +1244,6 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         # ecf_beta2_source=cms.string("")
                                     ),
                                     cms.PSet(
-                                        # Here we store as the "main" pt/et/phi
-                                        # the ungroomed AK8CHS pt/eta/phi so one can do JEC etc.
-                                        # To recover the groomed fat jet pt/eta/phi,
-                                        # one should sum the subjets.
                                         topjet_source=cms.string(
                                             "packedPatJetsAk8CHSJets"),
                                         subjet_source=cms.string("SoftDropCHS"),
@@ -1290,13 +1272,12 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                             "ECFNbeta2Ak8SoftDropCHS")
                                     ),
                                     cms.PSet(
-                                        # Here we store as the "main" pt/et/phi
-                                        # the ungroomed CA15 pt/eta/phi so one can do JEC etc.
-                                        # To recover the fat jets that HepTopTag produces
-                                        # (ie Top jet candidates), one should sum the subjets.
+                                        # The fat jets that HepTopTag produces are the Top jet candidates,
+                                        # i.e. the sum of its subjets. Therefore they will NOT have
+                                        # the same pt/eta/phi as normal ca15 jets.
                                         topjet_source = cms.string(
-                                            "packedPatJetsCa15CHSJets"),
-                                        subjet_source = cms.string("HepTopTag"),
+                                            "patJetsHepTopTagCHSPacked"),
+                                        subjet_source = cms.string("daughters"),
                                         do_subjet_taginfo = cms.bool(True),
                                         higgstag_source = cms.string(
                                             "patJetsCa15CHSJets"),
