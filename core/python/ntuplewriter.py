@@ -1199,6 +1199,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         # For each, we store the jets in topjet_source as TopJet objects,
                                         # with its subjets stored depending on subjet_source.
                                         # Tagging info can also be stored, as well as various substructure variables.
+                                        # The topjet_source can either be groomed or ungroomed,
+                                        # but it determines the pt/eta/phi etc of the TopJet object
                                         topjet_source=cms.string(
                                             # "slimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
                                             "updatedPatJetsSlimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
@@ -1282,6 +1284,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         # The fat jets that HepTopTag produces are the Top jet candidates,
                                         # i.e. the sum of its subjets. Therefore they will NOT have
                                         # the same pt/eta/phi as normal ca15 jets.
+                                        # Unlike the other TopJet collections,
+                                        # the pt/eta/phi is the groomed one, since
+                                        # we are primarily interested in the HTTTopJetTagInfo,
+                                        # which is only stored for each groomed jet.
                                         topjet_source = cms.string(
                                             "patJetsHepTopTagCHSPacked"),
                                         subjet_source = cms.string("daughters"),
