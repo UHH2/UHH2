@@ -67,6 +67,8 @@ public:
         std::string pruned_src;
         std::string softdrop_src;
         std::string toptagging_src;
+        std::string ecf_beta1_src;
+        std::string ecf_beta2_src;
     };
 
     explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member);
@@ -81,11 +83,12 @@ private:
     float ptmin, etamax;
     bool do_btagging, do_btagging_subjets, do_taginfo_subjets, do_toptagging;
     edm::EDGetToken src_token, src_higgs_token, src_pruned_token, src_softdrop_token, substructure_variables_src_token, substructure_variables_src_tokenreco, substructure_groomed_variables_src_token, substructure_groomed_variables_src_tokenreco;
-    edm::EDGetToken src_njettiness1_token, src_njettiness2_token, src_njettiness3_token, src_qjets_token;
-    edm::EDGetToken src_njettiness1_groomed_token, src_njettiness2_groomed_token, src_njettiness3_groomed_token;
+    edm::EDGetToken src_njettiness1_token, src_njettiness2_token, src_njettiness3_token, src_njettiness4_token, src_qjets_token;
+    edm::EDGetToken src_njettiness1_groomed_token, src_njettiness2_groomed_token, src_njettiness3_groomed_token, src_njettiness4_groomed_token;
+    edm::EDGetToken src_ecf_beta1_N2_token, src_ecf_beta1_N3_token, src_ecf_beta2_N2_token, src_ecf_beta2_N3_token;
     edm::EDGetToken src_hepTopTag_token;
     edm::EDGetToken src_higgstaginfo_token;
-    std::string njettiness_src, njettiness_groomed_src, qjets_src, subjet_src, higgs_src, higgs_name, higgstaginfo_src, pruned_src, softdrop_src, topjet_collection;
+    std::string njettiness_src, njettiness_groomed_src, qjets_src, ecf_beta1_src, ecf_beta2_src, subjet_src, higgs_src, higgs_name, higgstaginfo_src, pruned_src, softdrop_src, topjet_collection;
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;
     std::vector<TopJet::tag> id_tags;

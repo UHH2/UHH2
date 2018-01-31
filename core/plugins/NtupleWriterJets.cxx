@@ -34,6 +34,13 @@ using namespace std;
 
 bool btag_warning;
 
+// Get userFloat entry, with some default return value if it doesn't exist
+// TODO: template this?
+float getPatJetUserFloat(const pat::Jet & jet, const std::string & key, float defaultValue=-9999.){
+  return (jet.hasUserFloat(key) ? jet.userFloat(key) : defaultValue);
+}
+
+
 NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member){
     handle = cfg.ctx.declare_event_output<vector<Jet>>(cfg.dest_branchname, cfg.dest);
     ptmin = cfg.ptmin;
@@ -111,9 +118,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
           fill_jet_info(pat_jet, jet, true, false);
         }
         catch(runtime_error & ex){
-
-          cerr << "Exception in fill_jet_info in NtupleWriterJets::process for jets with src=" << src << endl;
-          throw;
+          throw cms::Exception("fill_jet_info error", "Error in fill_jet_info NtupleWriterJets::process for jets with src = " + src.label());
         }
 
         /*--- lepton keys ---*/
@@ -313,14 +318,23 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     src_njettiness1_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau1"));
     src_njettiness2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau2"));
     src_njettiness3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau3"));
+    src_njettiness4_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau4"));
 
     njettiness_groomed_src = cfg.njettiness_groomed_src;    
     src_njettiness1_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau1"));
     src_njettiness2_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau2"));
     src_njettiness3_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau3"));
+    src_njettiness4_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau4"));
 
     qjets_src = cfg.qjets_src;
     src_qjets_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(qjets_src, "QjetsVolatility"));
+
+    ecf_beta1_src = cfg.ecf_beta1_src;
+    src_ecf_beta1_N2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta1_src, "ecfN2"));
+    src_ecf_beta1_N3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta1_src, "ecfN3"));
+    ecf_beta2_src = cfg.ecf_beta2_src;
+    src_ecf_beta2_N2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta2_src, "ecfN2"));
+    src_ecf_beta2_N3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta2_src, "ecfN3"));
 
     subjet_src = cfg.subjet_src;
     higgs_src= cfg.higgs_src;
@@ -390,10 +404,11 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     event.getByToken(src_token, h_pat_topjets);
     const vector<pat::Jet> & pat_topjets = *h_pat_topjets;
 
-    edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3;
-    edm::Handle<edm::ValueMap<float>> h_njettiness1_groomed, h_njettiness2_groomed, h_njettiness3_groomed;
+    edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3, h_njettiness4;
+    edm::Handle<edm::ValueMap<float>> h_njettiness1_groomed, h_njettiness2_groomed, h_njettiness3_groomed, h_njettiness4_groomed;
     edm::Handle<edm::ValueMap<float>> h_qjets;
-    
+    edm::Handle<edm::ValueMap<float>> h_ecf_beta1_N2, h_ecf_beta1_N3, h_ecf_beta2_N2, h_ecf_beta2_N3;
+
     edm::Handle<reco::BasicJetCollection> topjets_with_cands;
     edm::Handle<reco::PFJetCollection> topjets_with_cands_reco;
 
@@ -404,11 +419,13 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         event.getByToken(src_njettiness1_token, h_njettiness1);
         event.getByToken(src_njettiness2_token, h_njettiness2);
         event.getByToken(src_njettiness3_token, h_njettiness3);
+        event.getByToken(src_njettiness4_token, h_njettiness4);
     }
     if(!njettiness_groomed_src.empty()){
         event.getByToken(src_njettiness1_groomed_token, h_njettiness1_groomed);
         event.getByToken(src_njettiness2_groomed_token, h_njettiness2_groomed);
         event.getByToken(src_njettiness3_groomed_token, h_njettiness3_groomed);
+        event.getByToken(src_njettiness4_groomed_token, h_njettiness4_groomed);
     }
     if(!qjets_src.empty()){
         event.getByToken(src_qjets_token, h_qjets);
@@ -430,6 +447,15 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
       else{
         event.getByToken(substructure_groomed_variables_src_token, topjets_groomed_with_cands);
       }
+    }
+
+    if (!ecf_beta1_src.empty()) {
+      event.getByToken(src_ecf_beta1_N2_token, h_ecf_beta1_N2);
+      event.getByToken(src_ecf_beta1_N3_token, h_ecf_beta1_N3);
+    }
+    if (!ecf_beta2_src.empty()) {
+      event.getByToken(src_ecf_beta2_N2_token, h_ecf_beta2_N2);
+      event.getByToken(src_ecf_beta2_N3_token, h_ecf_beta2_N3);
     }
 
     vector<TopJet> topjets;
@@ -471,22 +497,25 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
     for (unsigned int i = 0; i < pat_topjets.size(); i++) {
         const pat::Jet & pat_topjet =  pat_topjets[i];
-	//use CHS jet momentum in case of CHS subjet collection (see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Jets)
-	if(subjet_src.find("CHS")!=string::npos){
-	  TLorentzVector puppi_v4;
-	  puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
-				pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
-				pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
-				pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
-	  //skip jets with incredibly high pT (99999 seems to be a default value in MINIAOD if the puppi jet is not defined)
-	  if(puppi_v4.Pt()>=99999) continue;
-	  if(puppi_v4.Pt() < ptmin) continue;
-	  if(fabs(puppi_v4.Eta()) > etamax) continue;
-	}
-	else{
-	  if(pat_topjet.pt() < ptmin) continue;
-	  if(fabs(pat_topjet.eta()) > etamax) continue;
-	}
+        //use CHS jet momentum in case of CHS subjet collection (see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Jets)
+        if(subjet_src.find("CHS")!=string::npos){
+          TLorentzVector puppi_v4;
+          if (!pat_topjet.hasUserFloat("ak8PFJetsCHSValueMap:pt")) {
+            throw cms::Exception("Missing userFloat", "You wanted CHS subjets but no ak8PFJetsCHSValueMap entries in the ValueMap");
+          }
+          puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
+            pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
+            pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
+            pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
+          //skip jets with incredibly high pT (99999 seems to be a default value in MINIAOD if the puppi jet is not defined)
+          if(puppi_v4.Pt()>=99999) continue;
+          if(puppi_v4.Pt() < ptmin) continue;
+          if(fabs(puppi_v4.Eta()) > etamax) continue;
+        }
+        else{
+          if(pat_topjet.pt() < ptmin) continue;
+          if(fabs(pat_topjet.eta()) > etamax) continue;
+        }
         
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
@@ -505,8 +534,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	}
 
         }catch(runtime_error &){
-           cerr << "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " << src << "." << endl;
-           throw;
+          throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " + src.label());
         }
 
         /*--- lepton keys ---*/
@@ -526,9 +554,11 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         }
         /*-------------------*/
 
-        /*--- Njettiness/Qjets ------*/
+        /*--- Njettiness/Qjets/ECFs ------*/
 
-	//1. Take Njettiness/Qjets from matched jet collection if respective source is specified
+	// Take Njettiness/Qjets/ECFs from matched jet collection if respective source is specified.
+        // Since these variables are stored in ValueMaps, we need to figure out the correct
+        // reference Jet to access the value. We do this by deltaR matching
 
         // match a unpruned jet according to topjets_with_cands:
         int i_pat_topjet_wc = -1;
@@ -559,6 +589,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 topjet.set_tau1((*h_njettiness1)[ref]);
                 topjet.set_tau2((*h_njettiness2)[ref]);
                 topjet.set_tau3((*h_njettiness3)[ref]);
+                topjet.set_tau4((*h_njettiness4)[ref]);
               }
               if(!qjets_src.empty()){
                 topjet.set_qjets_volatility((*h_qjets)[ref]);
@@ -570,6 +601,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 topjet.set_tau1((*h_njettiness1)[ref]);
                 topjet.set_tau2((*h_njettiness2)[ref]);
                 topjet.set_tau3((*h_njettiness3)[ref]);
+                topjet.set_tau4((*h_njettiness4)[ref]);
               }
               if(!qjets_src.empty()){
                 topjet.set_qjets_volatility((*h_qjets)[ref]);
@@ -577,8 +609,9 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
             }
           }
         }
-	 int i_pat_topjet_wc_groomed = -1;
-	if(!njettiness_groomed_src.empty()){
+
+        int i_pat_topjet_wc_groomed = -1;
+        if(!njettiness_groomed_src.empty() || !ecf_beta1_src.empty() || !ecf_beta2_src.empty()){
           double drmin = numeric_limits<double>::infinity();
           if(checkjettypegroomed){
             for (size_t i_wc=0; i_wc < topjets_groomed_with_cands_reco->size(); ++i_wc) {
@@ -605,7 +638,18 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 topjet.set_tau1_groomed((*h_njettiness1_groomed)[ref]);
                 topjet.set_tau2_groomed((*h_njettiness2_groomed)[ref]);
                 topjet.set_tau3_groomed((*h_njettiness3_groomed)[ref]);
+                topjet.set_tau4_groomed((*h_njettiness4_groomed)[ref]);
               }
+              // ECF are for groomed jets only
+              if(!ecf_beta1_src.empty()){
+                topjet.set_ecfN2_beta1((*h_ecf_beta1_N2)[ref]);
+                topjet.set_ecfN3_beta1((*h_ecf_beta1_N3)[ref]);
+              }
+              if(!ecf_beta2_src.empty()){
+                topjet.set_ecfN2_beta2((*h_ecf_beta2_N2)[ref]);
+                topjet.set_ecfN3_beta2((*h_ecf_beta2_N3)[ref]);
+              }
+
             }
             else{
               auto ref = edm::Ref<reco::BasicJetCollection>(topjets_groomed_with_cands, i_pat_topjet_wc_groomed);
@@ -613,6 +657,15 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 topjet.set_tau1_groomed((*h_njettiness1_groomed)[ref]);
                 topjet.set_tau2_groomed((*h_njettiness2_groomed)[ref]);
                 topjet.set_tau3_groomed((*h_njettiness3_groomed)[ref]);
+                topjet.set_tau4_groomed((*h_njettiness4_groomed)[ref]);
+              }
+              if(!ecf_beta1_src.empty()){
+                topjet.set_ecfN2_beta1((*h_ecf_beta1_N2)[ref]);
+                topjet.set_ecfN3_beta1((*h_ecf_beta1_N3)[ref]);
+              }
+              if(!ecf_beta2_src.empty()){
+                topjet.set_ecfN2_beta2((*h_ecf_beta2_N2)[ref]);
+                topjet.set_ecfN3_beta2((*h_ecf_beta2_N3)[ref]);
               }
             }
           }
@@ -652,22 +705,36 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         /*--- Njettiness ------*/
         if(njettiness_src.empty()){
 
-          topjet.set_tau1(pat_topjet.userFloat("NjettinessAK8Puppi:tau1"));
-          topjet.set_tau2(pat_topjet.userFloat("NjettinessAK8Puppi:tau2"));
-          topjet.set_tau3(pat_topjet.userFloat("NjettinessAK8Puppi:tau3"));
+          topjet.set_tau1(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau1", -1.));
+          topjet.set_tau2(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau2", -1.));
+          topjet.set_tau3(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau3", -1.));
+          topjet.set_tau4(getPatJetUserFloat(pat_topjet, "NjettinessAK8Puppi:tau4", -1.));
         }
-	if(njettiness_groomed_src.empty()){
+        if(njettiness_groomed_src.empty()){
+          // as miniaod doesn't calculate groomed tau_i
+          topjet.set_tau1_groomed(-1.);
+          topjet.set_tau2_groomed(-1.);
+          topjet.set_tau3_groomed(-1.);
+          topjet.set_tau4_groomed(-1.);
+        }
+        /*---------------------*/
 
-          topjet.set_tau1_groomed(-9999.);
-          topjet.set_tau2_groomed(-9999.);
-          topjet.set_tau3_groomed(-9999.);
+        /*--- energy correlation functions -----*/
+        if (ecf_beta1_src.empty()) {
+          topjet.set_ecfN2_beta1(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN2", -1.));
+          topjet.set_ecfN3_beta1(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb1AK8PuppiSoftDropN3", -1.));
+        }
+
+        if (ecf_beta2_src.empty()) {
+          topjet.set_ecfN2_beta2(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2", -1.));
+          topjet.set_ecfN3_beta2(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3", -1.));
         }
         /*---------------------*/
 
         /*--- pruned mass -----*/
         if(pruned_src.find("Mass")!=string::npos){
 
-          topjet.set_prunedmass(pat_topjet.userFloat(pruned_src));
+          topjet.set_prunedmass(getPatJetUserFloat(pat_topjet, pruned_src, -1.));
         }
         else if(pruned_src!=""){//pruned mass set through matching with pruned-jet collection
 
@@ -699,7 +766,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         /*--- softdrop mass ---*/
         if(softdrop_src.find("Mass")!=string::npos){
 
-          topjet.set_softdropmass(pat_topjet.userFloat(softdrop_src));
+          topjet.set_softdropmass(getPatJetUserFloat(pat_topjet, softdrop_src, -1.));
         }
         else if(softdrop_src!=""){//softdrop mass set through matching with softdrop-jet collection
 
@@ -827,8 +894,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	      try{
 		NtupleWriterJets::fill_jet_info(*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets);
 	      }catch(runtime_error &){
-		cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
-		throw;
+                throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for daughters in NtupleWriterTopJets with src = " + src.label());
 	      }
             }
             else {
@@ -841,7 +907,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 		subjet.set_energy(daughter->energy());
 	      }
 	      else{
-		throw runtime_error("subjet was nullptr");
+		throw cms::Exception("NullSubjet", "daughter is nullptr");
 	      }
             }
             topjet.add_subjet(subjet);
@@ -857,8 +923,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	      try{
 		NtupleWriterJets::fill_jet_info(*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets);
 	      }catch(runtime_error &){
-		cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
-		throw;
+                throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " + src.label());
 	      }
 
               /*--- lepton keys ---*/
@@ -879,8 +944,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
               /*-------------------*/
             }
 	    else{
-	      cerr << "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " << src << "." << endl;
-	      throw;
+              throw cms::Exception("MissingSubjet", "Cannot get subjets from topjet src = " + src.label());
 	    }
 	    topjet.add_subjet(subjet);
 	  }//loop over subjets
