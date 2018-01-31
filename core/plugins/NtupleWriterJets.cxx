@@ -514,40 +514,40 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     for (unsigned int i = 0; i < pat_topjets.size(); i++) {
         const pat::Jet & pat_topjet =  pat_topjets[i];
         //use CHS jet momentum in case of CHS subjet collection (see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Jets)
-        if(subjet_src.find("CHS")!=string::npos){
-          TLorentzVector puppi_v4;
-          if (!pat_topjet.hasUserFloat("ak8PFJetsCHSValueMap:pt")) {
-            throw cms::Exception("Missing userFloat", "You wanted CHS subjets but no ak8PFJetsCHSValueMap entries in the ValueMap");
-          }
-          puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
-            pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
-            pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
-            pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
-          //skip jets with incredibly high pT (99999 seems to be a default value in MINIAOD if the puppi jet is not defined)
-          if(puppi_v4.Pt()>=99999) continue;
-          if(puppi_v4.Pt() < ptmin) continue;
-          if(fabs(puppi_v4.Eta()) > etamax) continue;
-        }
-        else{
+        // if(subjet_src.find("CHS")!=string::npos){
+        //   TLorentzVector puppi_v4;
+        //   if (!pat_topjet.hasUserFloat("ak8PFJetsCHSValueMap:pt")) {
+        //     throw cms::Exception("Missing userFloat", "You wanted CHS subjets but no ak8PFJetsCHSValueMap entries in the ValueMap");
+        //   }
+        //   puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
+        //     pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
+        //     pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
+        //     pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
+        //   //skip jets with incredibly high pT (99999 seems to be a default value in MINIAOD if the puppi jet is not defined)
+        //   if(puppi_v4.Pt()>=99999) continue;
+        //   if(puppi_v4.Pt() < ptmin) continue;
+        //   if(fabs(puppi_v4.Eta()) > etamax) continue;
+        // }
+        // else{
           if(pat_topjet.pt() < ptmin) continue;
           if(fabs(pat_topjet.eta()) > etamax) continue;
-        }
+        // }
         
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
         try{
-           uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer);
-	   if(subjet_src.find("CHS")!=string::npos){
-	     TLorentzVector puppi_v4;
-	     puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
-				   pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
-				   pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
-				   pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
-	     topjet.set_pt(puppi_v4.Pt());
-	     topjet.set_eta(puppi_v4.Eta());
-	     topjet.set_phi(puppi_v4.Phi());
-	     topjet.set_energy(puppi_v4.E());
-	}
+          uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer);
+          // if(subjet_src.find("CHS")!=string::npos){
+          //   TLorentzVector puppi_v4;
+          //   puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
+          //                         pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
+          //                         pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
+          //                         pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
+          //   topjet.set_pt(puppi_v4.Pt());
+          //   topjet.set_eta(puppi_v4.Eta());
+          //   topjet.set_phi(puppi_v4.Phi());
+          //   topjet.set_energy(puppi_v4.E());
+          // }
 
         }catch(runtime_error &){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " + src.label());
