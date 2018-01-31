@@ -98,7 +98,7 @@ git cms-addpkg RecoJets/JetProducers
 # For adding in Puppi multiplicities, until they get merged into a 94X release
 # Do a manual cherry-pick of the PR commits otherwise merge-topic will get loads of extra fluff
 git cms-addpkg PhysicsTools/PatAlgos
-git remote add ahinzmann git@github.com:ahinzmann/cmssw.git
+git remote add ahinzmann https://github.com/ahinzmann/cmssw.git 
 git fetch ahinzmann puppiWeightedMultiplicities94
 git cherry-pick 074af13a443
 git cherry-pick 3c96176da18
@@ -140,3 +140,11 @@ cd $CMSSW_BASE/src
 git clone -b RunII_94X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 git clone https://github.com/cms-jet/JECDatabase.git
+
+#remove not needed files to keep tarball for crab small
+rm $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/TMVA_BDTSimpleCat_17Feb2011.weights.xml
+rm -r $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/Spring16*
+rm -r  $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/Spring15/
+rm $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/TMVA_BDTSoftElectrons_7Feb2014.weights.xml
+rm $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/TMVA_BDTSoftElectrons_9Dec2013.weights.xml
+rm -r $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/PHYS14/
