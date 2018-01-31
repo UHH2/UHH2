@@ -781,17 +781,17 @@ process.NjettinessAk8SoftDropPuppi = process.NjettinessAk8SoftDropCHS.clone(
 task.add(process.NjettinessAk8SoftDropPuppi)
 
 # AK8 GenJets
-process.NjettinessAk8Gen = Njettiness.clone(
-    src=cms.InputTag("ak8GenJets"),
-    cone=cms.double(0.8)
-)
-task.add(process.NjettinessAk8Gen)
+# process.NjettinessAk8Gen = Njettiness.clone(
+#     src=cms.InputTag("ak8GenJets"),
+#     cone=cms.double(0.8)
+# )
+# task.add(process.NjettinessAk8Gen)
 
-process.NjettinessAk8SoftDropGen = Njettiness.clone(
-    src=cms.InputTag("ak8GenJetsSoftDrop"),
-    cone=cms.double(0.8)
-)
-task.add(process.NjettinessAk8SoftDropGen)
+# process.NjettinessAk8SoftDropGen = Njettiness.clone(
+#     src=cms.InputTag("ak8GenJetsSoftDrop"),
+#     cone=cms.double(0.8)
+# )
+# task.add(process.NjettinessAk8SoftDropGen)
 
 """
 process.QJetsCa8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa8CHSJets"), jetRad = cms.double(0.8))
