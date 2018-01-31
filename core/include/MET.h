@@ -33,6 +33,8 @@ public:
       m_shiftedPy_TauEnDown = 0;
       m_shiftedPy_MuonEnDown = 0;
       m_shiftedPy_MuonEnUp = 0;
+      m_rawCHS_px = 0;
+      m_rawCHS_py = 0;
       /* m_corr_x = 0; */
       /* m_corr_y = 0; */
       /* //  m_corr_SumEt = 0; */
@@ -104,7 +106,15 @@ public:
 
    float shiftedPy_MuonEnUp() const{return m_shiftedPy_MuonEnUp;}
    
+<<<<<<< HEAD
    
+=======
+   float rawCHS_px() const{return m_rawCHS_px;}
+
+   float rawCHS_py() const{return m_rawCHS_py;}
+
+
+>>>>>>> 814d4b5... Rename CHS MET variable
    /// set transverse momentum
    void set_pt(float pt){m_pt=pt;}  
    /// set phi
@@ -170,6 +180,10 @@ public:
 
    void set_shiftedPy_MuonEnUp(float shiftedPy_MuonEnUp) {m_shiftedPy_MuonEnUp = shiftedPy_MuonEnUp;}
 
+   void set_rawCHS_px(float CHS_px){m_rawCHS_px = CHS_px;}
+
+   void set_rawCHS_py(float CHS_py){m_rawCHS_py = CHS_py;}
+
    /// convert missing transverse energy into 4-vector
    LorentzVector v4(){
       LorentzVector met(0,0,0,0);
@@ -214,6 +228,8 @@ private:
    float m_shiftedPy_TauEnDown;
    float m_shiftedPy_MuonEnDown;
    float m_shiftedPy_MuonEnUp;
+   float m_rawCHS_px;
+   float m_rawCHS_py;
    float m_uncorr_pt;
    float m_uncorr_phi;
    /* float m_corr_x; */
