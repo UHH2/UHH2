@@ -565,6 +565,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                          **common_btag_parameters
                          )
         getattr(process, ungroomed_patname).addTagInfos = True
+        delattr(process, "selectedPatJets"+cap(fatjets_name))
 
     # patify groomed fat jets, with b-tagging:
     groomed_patname = "patJets" + cap(groomed_jets_name)
@@ -586,6 +587,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     getattr(process, groomed_patname).addTagInfos = True
     if top_tagging:
         getattr(process, groomed_patname).tagInfoSources = cms.VInputTag(groomed_jets_name)
+    delattr(process, "selectedPatJets"+cap(groomed_jets_name))
 
     # patify subjets, with subjet b-tagging:
     subjets_patname = "patJets" + cap(subjets_name)
@@ -612,6 +614,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
     # Always add taginfos to subjets, but possible not to store them,
     # configurable with ntuple writer parameter: subjet_taginfos
     getattr(process, subjets_patname).addTagInfos = True
+    delattr(process, "selectedPatJets"+cap(subjets_name))
 
     # add the merged jet collection which contains the links from fat jets to
     # subjets:
@@ -833,6 +836,7 @@ addJetCollection(process,
                  muSource=cms.InputTag('slimmedMuons'),
                  elSource=cms.InputTag('slimmedElectrons')
                  )
+delattr(process, "selectedPatJets"+cap(ak8_label))
 # For data, turn off every gen-related part - can't do this via
 # addJetCollection annoyingly
 if useData:
@@ -856,6 +860,7 @@ addJetCollection(process,
                  muSource=cms.InputTag('slimmedMuons'),
                  elSource=cms.InputTag('slimmedElectrons')
                  )
+delattr(process, "selectedPatJets"+cap(ak8_label))
 # For data, turn off every gen-related part - can't do this via
 # addJetCollection annoyingly
 if useData:
