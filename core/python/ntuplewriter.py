@@ -859,6 +859,39 @@ if useData:
     producer = getattr(process, ak8chs_patname)
     modify_patjetproducer_for_data(producer)
 
+# Add puppi multiplicity producers
+# For each, we have to add a PATPuppiJetSpecificProducer,
+# then update the relevant pat::Jet collection using updateJetCollection
+for name in ["slimmedJetsPuppi", "patJetsAK8PFPUPPI", "slimmedJetsAK8"]:
+    suffix = cap(name)
+    update_name = "updatedPatJets"+suffix
+    # This is hard coded into NtupleWriterJets - don't change it!
+    # (should get user to properly specify it)
+    puppi_mult_name = "patPuppiJetSpecificProducer" + update_name
+    setattr(process,
+            puppi_mult_name,
+            cms.EDProducer("PATPuppiJetSpecificProducer",
+                src = cms.InputTag(name)
+                )
+            )
+    task.add(getattr(process, puppi_mult_name))
+
+    # produces module called "updatedPatJets"+labelName
+    updateJetCollection(
+        process,
+        labelName = suffix,
+        jetSource = cms.InputTag(name),
+    )
+    getattr(process, update_name).userData.userFloats.src = [
+        '%s:puppiMultiplicity' % puppi_mult_name,
+        '%s:neutralPuppiMultiplicity' % puppi_mult_name,
+        '%s:neutralHadronPuppiMultiplicity' % puppi_mult_name,
+        '%s:photonPuppiMultiplicity' % puppi_mult_name,
+        '%s:HFHadronPuppiMultiplicity' % puppi_mult_name,
+        '%s:HFEMPuppiMultiplicity' % puppi_mult_name
+    ]
+
+
 # Higgs tagging commissioning
 
 from RecoBTag.SecondaryVertex.trackSelection_cff import *
@@ -1105,7 +1138,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 doJets=cms.bool(True),
                                 #jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
                                 jet_sources=cms.vstring(
-                                    "slimmedJets", "slimmedJetsPuppi", ak8puppi_patname, ak8chs_patname),
+                                    # "slimmedJets", "slimmedJetsPuppi", ak8puppi_patname, ak8chs_patname),
+                                    "slimmedJets", "updatedPatJetsSlimmedJetsPuppi", "updatedPatJetsPatJetsAK8PFPUPPI", ak8chs_patname),
                                 jet_ptmin=cms.double(10.0),
                                 jet_etamax=cms.double(999.0),
 
@@ -1126,7 +1160,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         # with its subjets stored depending on subjet_source.
                                         # Tagging info can also be stored, as well as various substructure variables.
                                         topjet_source=cms.string(
-                                            "slimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
+                                            # "slimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
+                                            "updatedPatJetsSlimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
                                         # For subjet_source, use label "daughters" if you want to store as
                                         # subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!).
                                         # Otherwise, to store a subjet collection present in miniAOD indicate the
