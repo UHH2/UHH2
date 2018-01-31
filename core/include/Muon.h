@@ -67,7 +67,15 @@ class Muon : public Particle {
     GhostHeavyQuark             = -3,
     GhostLightQuark             = -2
     
-};
+  };
+
+  enum MuonTrackType{
+    InnerTk,
+    OuterTk,
+    GlobalTk,
+    Segments,
+    GlbOrTrk
+  };
 
   enum tag {
     twodcut_dRmin,
@@ -120,6 +128,11 @@ class Muon : public Particle {
     m_simMotherPdgId = 0;
     m_simHeaviestMotherFlavor = 0; 
 
+    m_tunePTrackPt = 0;
+    m_tunePTrackEta = -999;
+    m_tunePTrackPhi = -999;
+    m_tunePTrackType = InnerTk;
+
     m_source_candidates.clear();
   }
 
@@ -156,6 +169,11 @@ class Muon : public Particle {
   int simMotherPdgId()          const {return m_simMotherPdgId;}
   int simHeaviestMotherFlavor() const {return m_simHeaviestMotherFlavor;} 
 
+  float tunePTrackPt()           const {return m_tunePTrackPt;}
+  float tunePTrackEta()          const {return m_tunePTrackEta;}
+  float tunePTrackPhi()          const {return m_tunePTrackPhi;}
+  MuonTrackType tunePTrackType() const {return m_tunePTrackType;}
+
   const std::vector<source_candidate>& source_candidates() const { return m_source_candidates; }
 
   void set_dxy(float x){m_dxy=x;}
@@ -190,6 +208,11 @@ class Muon : public Particle {
   void set_simPdgId               (int x){m_simPdgId = x;}
   void set_simMotherPdgId         (int x){m_simMotherPdgId = x;}
   void set_simHeaviestMotherFlavor(int x){m_simHeaviestMotherFlavor = x;} 
+
+  void set_tunePTrackPt  (float x){ m_tunePTrackPt = x; }
+  void set_tunePTrackEta (float x){ m_tunePTrackEta = x; }
+  void set_tunePTrackPhi (float x){ m_tunePTrackPhi = x; }
+  void set_tunePTrackType(MuonTrackType x){ m_tunePTrackType = x; }
 
   void set_source_candidates(const std::vector<source_candidate>& vsc){ m_source_candidates = vsc; }
   void add_source_candidate (const source_candidate& sc){ m_source_candidates.push_back(sc); }
@@ -249,7 +272,12 @@ class Muon : public Particle {
   int m_simFlavor;
   int m_simPdgId;
   int m_simMotherPdgId;
-  int m_simHeaviestMotherFlavor; 
+  int m_simHeaviestMotherFlavor;
+
+  float m_tunePTrackPt;
+  float m_tunePTrackEta;
+  float m_tunePTrackPhi;
+  MuonTrackType m_tunePTrackType;
 
   std::vector<source_candidate> m_source_candidates;
 
