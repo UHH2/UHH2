@@ -252,6 +252,12 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent, 
      mu.set_pfMINIIso_NH_pfwgt(pat_mu.hasUserFloat("muPFMiniIsoValueNHPFWGT") ? pat_mu.userFloat("muPFMiniIsoValueNHPFWGT") : -999.);
      mu.set_pfMINIIso_Ph_pfwgt(pat_mu.hasUserFloat("muPFMiniIsoValuePhPFWGT") ? pat_mu.userFloat("muPFMiniIsoValuePhPFWGT") : -999.);
 
+     const auto & tunePTrack = pat_mu.tunePMuonBestTrack();
+     mu.set_tunePTrackPt(tunePTrack->pt());
+     mu.set_tunePTrackEta(tunePTrack->eta());
+     mu.set_tunePTrackPhi(tunePTrack->phi());
+     mu.set_tunePTrackType(static_cast<Muon::MuonTrackType>(pat_mu.tunePMuonBestTrackType()));
+
      /* source candidates */
      if(save_source_candidates_){
 
