@@ -769,11 +769,11 @@ task.add(process.NjettinessCa15SoftDropCHS)
 # task.add(process.NjettinessCa15SoftDropPuppi)
 
 # AK8 PUPPI
-process.NjettinessAk8Puppi = Njettiness.clone(
-    src=cms.InputTag("ak8PuppiJetsFat"),
-    cone=cms.double(0.8)
-)
-task.add(process.NjettinessAk8Puppi)
+# process.NjettinessAk8Puppi = Njettiness.clone(
+#     src=cms.InputTag("ak8PuppiJetsFat"),
+#     cone=cms.double(0.8)
+# )
+# task.add(process.NjettinessAk8Puppi)
 
 process.NjettinessAk8SoftDropPuppi = process.NjettinessAk8SoftDropCHS.clone(
     src=cms.InputTag("ak8PuppiJetsSoftDropforsub")
@@ -823,17 +823,17 @@ process.ECFNbeta2Ak8SoftDropCHS = ecfNbeta2.clone(
 task.add(process.ECFNbeta2Ak8SoftDropCHS)
 
 
-process.ECFNbeta1Ak8SoftDropPuppi = ecfNbeta1.clone(
-    src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
-    cuts=cms.vstring('', '', 'pt > 250')
-)
-task.add(process.ECFNbeta1Ak8SoftDropPuppi)
+# process.ECFNbeta1Ak8SoftDropPuppi = ecfNbeta1.clone(
+#     src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
+#     cuts=cms.vstring('', '', 'pt > 250')
+# )
+# task.add(process.ECFNbeta1Ak8SoftDropPuppi)
 
-process.ECFNbeta2Ak8SoftDropPuppi = ecfNbeta2.clone(
-    src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
-    cuts=cms.vstring('', '', 'pt > 250')
-)
-task.add(process.ECFNbeta2Ak8SoftDropPuppi)
+# process.ECFNbeta2Ak8SoftDropPuppi = ecfNbeta2.clone(
+#     src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
+#     cuts=cms.vstring('', '', 'pt > 250')
+# )
+# task.add(process.ECFNbeta2Ak8SoftDropPuppi)
 
 # Warning, can be very slow
 # process.ECFNbeta1CA15SoftDropCHS = ecfNbeta1.clone(
@@ -1242,8 +1242,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                         # Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
                                         #njettiness_source = cms.string(""),
                                         #substructure_variables_source = cms.string(""),
-                                        #njettiness_groomed_source = cms.string(""),
-                                        #substructure_groomed_variables_source = cms.string(""),
+                                        njettiness_groomed_source = cms.string(
+                                            "NjettinessAk8SoftDropPuppi"),
+                                        substructure_groomed_variables_source = cms.string(
+                                            "ak8PuppiJetsSoftDropforsub"),
                                         # Note: for slimmedJetsAK8 on miniAOD, the pruned mass is
                                         # available as user float, with label ak8PFJetsCHSPrunedMass.
                                         # Alternatively it is possible to specify another pruned jet collection
@@ -1340,32 +1342,33 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     #    prunedmass_source = cms.string("patJetsCa15CHSJetsPrunedPacked"),
                                     #    #softdropmass_source  = cms.string(""),
                                     #) ,
-                                    cms.PSet(
-                                        topjet_source=cms.string("patJetsAk8PuppiJetsSoftDropPacked"),
-                                        subjet_source=cms.string("daughters"),
-                                        do_subjet_taginfo=cms.bool(True),
-                                        higgstag_source=cms.string(
-                                            "patJetsAk8PuppiJetsFat"),
-                                        higgstag_name=cms.string(
-                                            "pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                        njettiness_source=cms.string(
-                                            "NjettinessAk8Puppi"),
-                                        substructure_variables_source=cms.string(
-                                            "ak8PuppiJetsFat"),
-                                        njettiness_groomed_source=cms.string(
-                                            "NjettinessAk8SoftDropPuppi"),
-                                        substructure_groomed_variables_source=cms.string(
-                                            "ak8PuppiJetsSoftDropforsub"),
-                                        prunedmass_source=cms.string(
-                                            "patJetsAk8CHSJetsPrunedPacked"),
-                                        softdropmass_source=cms.string(
-                                            "patJetsAk8PuppiJetsSoftDropPacked"),
-                                        ecf_beta1_source=cms.string(
-                                            "ECFNbeta1Ak8SoftDropPuppi"),
-                                        ecf_beta2_source=cms.string(
-                                            "ECFNbeta2Ak8SoftDropPuppi")
+                                    # cms.PSet(
+                                    #     topjet_source=cms.string(
+                                    #         "patJetsAk8PuppiJetsSoftDropPacked"),
+                                    #     subjet_source=cms.string("daughters"),
+                                    #     do_subjet_taginfo=cms.bool(True),
+                                    #     higgstag_source=cms.string(
+                                    #         "patJetsAk8PuppiJetsFat"),
+                                    #     higgstag_name=cms.string(
+                                    #         "pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                                    #     njettiness_source=cms.string(
+                                    #         "NjettinessAk8Puppi"),
+                                    #     substructure_variables_source=cms.string(
+                                    #         "ak8PuppiJetsFat"),
+                                    #     njettiness_groomed_source=cms.string(
+                                    #         "NjettinessAk8SoftDropPuppi"),
+                                    #     substructure_groomed_variables_source=cms.string(
+                                    #         "ak8PuppiJetsSoftDropforsub"),
+                                    #     prunedmass_source=cms.string(
+                                    #         "patJetsAk8CHSJetsPrunedPacked"),
+                                    #     softdropmass_source=cms.string(
+                                    #         "patJetsAk8PuppiJetsSoftDropPacked"),
+                                    #     ecf_beta1_source=cms.string(
+                                    #         "ECFNbeta1Ak8SoftDropPuppi"),
+                                    #     ecf_beta2_source=cms.string(
+                                    #         "ECFNbeta2Ak8SoftDropPuppi")
 
-                                    ),
+                                    # ),
 
                                 ),
 
