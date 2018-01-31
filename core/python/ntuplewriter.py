@@ -865,7 +865,8 @@ if useData:
 for name in ["slimmedJetsPuppi", "patJetsAK8PFPUPPI", "slimmedJetsAK8"]:
     suffix = cap(name)
     update_name = "updatedPatJets"+suffix
-    # This is hard coded into NtupleWriterJets - should get user to specify it!
+    # This is hard coded into NtupleWriterJets - don't change it!
+    # (should get user to properly specify it)
     puppi_mult_name = "patPuppiJetSpecificProducer" + update_name
     setattr(process,
             puppi_mult_name,
