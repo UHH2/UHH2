@@ -441,18 +441,31 @@ process.packedGenParticlesForJetsNoNu = cms.EDFilter("CandPtrSelector",
 task.add(process.packedGenParticlesForJetsNoNu)
 
 
-def modify_patjetproducer_for_data(producer):
+def del_attr_safely(obj, name):
+    if hasattr(obj, name):
+        delattr(obj, name)
+
+
+def modify_patjetproducer_for_data(process, producer):
     """Modify a PATJetProducer for use with data i.e. turn off all gen-related parts
+
+    Also delete all the extra producers it adds in
 
     See PhysicsTools/PatAlgos/python/producersLayer1/jetProducer_cfi.py
     for all available options
     """
     producer.addGenPartonMatch = cms.bool(False)
     producer.embedGenPartonMatch = cms.bool(False)
+    del_attr_safely(process, producer.genPartonMatch.value().split(":")[0])
     producer.genPartonMatch = cms.InputTag("")
     producer.addGenJetMatch = cms.bool(False)
     producer.embedGenJetMatch = cms.bool(False)
+    del_attr_safely(process, producer.genJetMatch.value().split(":")[0])
     producer.genJetMatch = cms.InputTag("")
+    del_attr_safely(process, producer.JetPartonMapSource.value().split(":")[0])
+    producer.JetPartonMapSource = cms.InputTag("")
+    if (producer.addJetFlavourInfo):
+        del_attr_safely(process, producer.JetFlavourInfoSource.value().split(":")[0])
     producer.JetFlavourInfoSource = cms.InputTag("")
     producer.addPartonJetMatch = cms.bool(False)
     producer.partonJetSource = cms.InputTag("NOT_IMPLEMENTED")
@@ -558,6 +571,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                          rParam=rParam,
                          jetCorrections=jetcorr_arg,
                          genJetCollection=cms.InputTag(ungroomed_genjets_name),
+                         getJetMCFlavour=not useData,
                          **common_btag_parameters
                          )
         getattr(process, ungroomed_patname).addTagInfos = True
@@ -578,6 +592,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                      # subjets are BasicJets, so PAT cannot be used for this
                      # matching ...
                      genJetCollection=cms.InputTag("slimmedGenJets"),
+                     getJetMCFlavour=not useData,
                      **common_btag_parameters
                      )
     getattr(process, groomed_patname).addTagInfos = True
@@ -604,7 +619,9 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
                      svClustering=True,
                      fatJets=cms.InputTag(fatjets_name),
                      groomedFatJets=cms.InputTag(groomed_jets_name),
-                     genJetCollection=cms.InputTag(groomed_genjets_name, 'SubJets'),
+                     genJetCollection=cms.InputTag(
+                         groomed_genjets_name, 'SubJets'),
+                     getJetMCFlavour=not useData,
                      **common_btag_parameters
                      )
     # Always add taginfos to subjets, but possible not to store them,
@@ -646,7 +663,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label=
             producer.getJetMCFlavour = False
         # For data, turn off every gen-related part - can't do this via addJetCollection annoyingly
         if useData:
-            modify_patjetproducer_for_data(producer)
+            modify_patjetproducer_for_data(process, producer)
 
 
 #add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'))
@@ -830,14 +847,15 @@ addJetCollection(process,
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons')
+                 elSource=cms.InputTag('slimmedElectrons'),
+                 getJetMCFlavour=not useData
                  )
 delattr(process, "selectedPatJets"+cap(ak8_label))
 # For data, turn off every gen-related part - can't do this via
 # addJetCollection annoyingly
 if useData:
     producer = getattr(process, ak8puppi_patname)
-    modify_patjetproducer_for_data(producer)
+    modify_patjetproducer_for_data(process, producer)
 
 ak8_label = "AK8PFCHS"
 ak8chs_patname = 'patJets' + ak8_label
@@ -853,14 +871,15 @@ addJetCollection(process,
                  pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
                  svSource=cms.InputTag('slimmedSecondaryVertices'),
                  muSource=cms.InputTag('slimmedMuons'),
-                 elSource=cms.InputTag('slimmedElectrons')
+                 elSource=cms.InputTag('slimmedElectrons'),
+                 getJetMCFlavour=not useData
                  )
 delattr(process, "selectedPatJets"+cap(ak8_label))
 # For data, turn off every gen-related part - can't do this via
 # addJetCollection annoyingly
 if useData:
     producer = getattr(process, ak8chs_patname)
-    modify_patjetproducer_for_data(producer)
+    modify_patjetproducer_for_data(process, producer)
 
 # Add puppi multiplicity producers
 # For each, we have to add a PATPuppiJetSpecificProducer,
