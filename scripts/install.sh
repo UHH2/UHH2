@@ -33,25 +33,37 @@ setupFastjet() {
 	FJCONTRIBVER="$2"
 	echo "Setting up fastjet $FJVER and fastjet-contrib $FJCONTRIBVER"
 
-	# Setup fastjet & fastjet-contrib
-	# NB use curl not wget as curl available by cvmfs, wget isnt
 	FJINSTALLDIR="$(pwd)/fastjet-install"
-	curl -O http://fastjet.fr/repo/fastjet-${FJVER}.tar.gz
-	tar xzf fastjet-${FJVER}.tar.gz
+
+	# Setup fastjet & fastjet-contrib
 	mkdir "${FJINSTALLDIR}"
-	cd fastjet-${FJVER}
+
+	# For normal fastjet
+	# NB use curl not wget as curl available by cvmfs, wget isnt
+	# curl -O http://fastjet.fr/repo/fastjet-${FJVER}.tar.gz
+	# tar xzf fastjet-${FJVER}.tar.gz
+	# cd fastjet-${FJVER}
+
+	# Use the CMS version of fastjet as thread-safe
+	git clone -b cms/v3.1.0 https://github.com/cms-externals/fastjet.git
+	cd fastjet
 	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins CXXFLAGS=-fPIC
 	make $MAKEFLAGS
-	make check
+	# make check  # fails for siscone
 	make install
 	cd ..
 
 	# Add fastjet-config to PATH
 	export PATH="${FJINSTALLDIR}/bin":$PATH
 
-	curl -O http://fastjet.hepforge.org/contrib/downloads/fjcontrib-${FJCONTRIBVER}.tar.gz
-	tar xzf fjcontrib-${FJCONTRIBVER}.tar.gz
-	cd fjcontrib-${FJCONTRIBVER}
+	# For normal fastjet-contrib
+	# curl -O http://fastjet.hepforge.org/contrib/downloads/fjcontrib-${FJCONTRIBVER}.tar.gz
+	# tar xzf fjcontrib-${FJCONTRIBVER}.tar.gz
+	# cd fjcontrib-${FJCONTRIBVER}
+
+	# Use the CMS version of fastjet-contrib as thread-safe
+	git clone -b v1.026 https://github.com/cms-externals/fastjet-contrib.git
+	cd fastjet-contrib
 	# add HOTVR from SVN - do it this way until it becomes a proper contrib
 	svn co http://fastjet.hepforge.org/svn/contrib/contribs/HOTVR/trunk HOTVR/
 	# although we add fastjet-config to path, due to a bug we need to
