@@ -38,11 +38,17 @@ public:
     m_FlightDistance3dVal.clear();
     m_FlightDistance3dSig.clear();
     m_VertexJetDeltaR.clear();
+    m_JetNSecondaryVertices = 0;
     m_VertexNTracks.clear();
     m_SecondaryVertex.clear();
     m_VertexChi2.clear();                                
     m_VertexNdof.clear();                    
     m_VertexNormalizedChi2.clear();
+
+    m_VertexCategoryJTC = 0;
+    m_VertexMassJTC = 0;
+    m_VertexEnergyRatioJTC = 0;
+    m_TrackSip3dSigAboveCharmJTC = 0;
   }
 
   //track impact parameter tag info getters
