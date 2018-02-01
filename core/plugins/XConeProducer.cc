@@ -108,6 +108,21 @@ XConeProducer::~XConeProducer()
 void
 XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
+  // Set the fastjet random seed to a deterministic function
+  // of the run/lumi/event.
+  // NOTE!!! The fastjet random number sequence is a global singleton.
+  // Thus, we have to create an object and get access to the global singleton
+  // in order to change it.
+  // Taken from VirtualJetProducer
+  fastjet::GhostedAreaSpec gas;
+  std::vector<int> seeds(2);
+  unsigned int runNum_uint = static_cast <unsigned int> (iEvent.id().run());
+  unsigned int evNum_uint = static_cast <unsigned int> (iEvent.id().event());
+  uint minSeed_ = 14327;
+  seeds[0] = std::max(runNum_uint, minSeed_ + 3) + 3 * evNum_uint;
+  seeds[1] = std::max(runNum_uint, minSeed_ + 5) + 5 * evNum_uint;
+  gas.set_random_status(seeds);
+
   edm::Handle<edm::View<pat::PackedCandidate>> particles;
   iEvent.getByToken(src_token_, particles);
 
