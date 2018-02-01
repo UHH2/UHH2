@@ -1,5 +1,5 @@
 #include <FWCore/Framework/interface/Frameworkfwd.h>
-#include <FWCore/Framework/interface/EDProducer.h>
+#include <FWCore/Framework/interface/stream/EDProducer.h>
 #include <FWCore/Framework/interface/Event.h>
 #include <FWCore/Framework/interface/MakerMacros.h>
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
@@ -8,14 +8,14 @@
 #include <DataFormats/ParticleFlowCandidate/interface/PFCandidate.h>
 #include <memory>
 
-class convertPackedCandToPFCand : public edm::EDProducer {
+class convertPackedCandToPFCand : public edm::stream::EDProducer<> {
 
  public:
   convertPackedCandToPFCand(const edm::ParameterSet& iConfig);
   ~convertPackedCandToPFCand() {}
   
  private:
-  void produce(edm::Event& iEvent, const edm::EventSetup& iSetup);
+  virtual void produce(edm::Event& iEvent, const edm::EventSetup& iSetup) override;
   edm::EDGetTokenT< pat::PackedCandidateCollection > src_;
 };
 

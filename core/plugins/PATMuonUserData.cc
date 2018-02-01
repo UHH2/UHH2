@@ -3,20 +3,20 @@
 #include <string>
 
 #include <FWCore/Framework/interface/Frameworkfwd.h>
-#include <FWCore/Framework/interface/EDProducer.h>
+#include <FWCore/Framework/interface/stream/EDProducer.h>
 #include <FWCore/Framework/interface/Event.h>
 #include <FWCore/Framework/interface/MakerMacros.h>
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
 
 #include <DataFormats/PatCandidates/interface/Muon.h>
 
-class PATMuonUserData : public edm::EDProducer {
+class PATMuonUserData : public edm::stream::EDProducer<> {
  public:
   explicit PATMuonUserData(const edm::ParameterSet&);
   virtual ~PATMuonUserData() {}
 
  private:
-  virtual void produce(edm::Event&, const edm::EventSetup&);
+  virtual void produce(edm::Event&, const edm::EventSetup&) override;
 
   edm::EDGetTokenT< edm::View<pat::Muon> > src_;
   std::vector<std::string> vmaps_double_;

@@ -1459,6 +1459,8 @@ void NtupleWriter::beginRun(edm::Run const& iRun, edm::EventSetup const&  iSetup
   */
 }
 
+void NtupleWriter::endRun(edm::Run const& iRun, edm::EventSetup const&  iSetup){}
+
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void NtupleWriter::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation

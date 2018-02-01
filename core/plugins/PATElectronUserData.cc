@@ -3,7 +3,7 @@
 #include <string>
 
 #include <FWCore/Framework/interface/Frameworkfwd.h>
-#include <FWCore/Framework/interface/EDProducer.h>
+#include <FWCore/Framework/interface/stream/EDProducer.h>
 #include <FWCore/Framework/interface/Event.h>
 #include <FWCore/Framework/interface/MakerMacros.h>
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
@@ -12,13 +12,13 @@
 
 #include <RecoEgamma/EgammaTools/interface/EffectiveAreas.h>
 
-class PATElectronUserData : public edm::EDProducer {
+class PATElectronUserData : public edm::stream::EDProducer<> {
  public:
   explicit PATElectronUserData(const edm::ParameterSet&);
   virtual ~PATElectronUserData() {}
 
  private:
-  virtual void produce(edm::Event&, const edm::EventSetup&);
+  virtual void produce(edm::Event&, const edm::EventSetup&) override;
 
   edm::EDGetTokenT< edm::View<pat::Electron> > src_;
   edm::EDGetTokenT< edm::View<reco::Vertex> > vertices_;
