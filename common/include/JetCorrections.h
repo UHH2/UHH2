@@ -133,6 +133,18 @@ namespace JERFiles{
     extern const std::vector<std::string> Fall17_17Nov2017_V3_F_L123_AK4PFchs_DATA;
   
     extern const std::vector<std::string> Fall17_17Nov2017_V3_L123_AK4PFchs_MC;
+
+  
+    extern const std::vector<std::string> Fall17_17Nov2017_V3_B_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V3_C_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V3_D_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V3_E_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V3_F_L1RC_AK4PFchs_DATA;
+  
+    extern const std::vector<std::string> Fall17_17Nov2017_V3_L1RC_AK4PFchs_MC;
+
+  
+  
 }
 
 
