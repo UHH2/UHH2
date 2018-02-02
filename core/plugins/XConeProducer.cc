@@ -22,7 +22,7 @@
 
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/stream/EDProducer.h"
+#include "FWCore/Framework/interface/global/EDProducer.h"
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
@@ -50,7 +50,7 @@ using namespace contrib;
 // class declaration
 //
 
-class XConeProducer : public edm::stream::EDProducer<> {
+class XConeProducer : public edm::global::EDProducer<> {
   public:
     explicit XConeProducer(const edm::ParameterSet&);
     ~XConeProducer();
@@ -58,11 +58,9 @@ class XConeProducer : public edm::stream::EDProducer<> {
     static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
   private:
-    virtual void beginStream(edm::StreamID) override;
-    virtual void produce(edm::Event&, const edm::EventSetup&) override;
-    virtual void endStream() override;
+    virtual void produce(edm::StreamID, edm::Event&, const edm::EventSetup&) const override;
 
-    virtual pat::Jet createPatJet(const fastjet::PseudoJet &);
+    virtual pat::Jet createPatJet(const fastjet::PseudoJet &) const;
 
     // ----------member data ---------------------------
     edm::EDGetToken src_token_;
@@ -106,7 +104,7 @@ XConeProducer::~XConeProducer()
 
 // ------------ method called to produce the data  ------------
 void
-XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
+XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSetup& iSetup) const
 {
   // Set the fastjet random seed to a deterministic function
   // of the run/lumi/event.
@@ -255,22 +253,11 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.put(std::move(jetCollection));
 }
 
-pat::Jet XConeProducer::createPatJet(const PseudoJet & psj)
+pat::Jet XConeProducer::createPatJet(const PseudoJet & psj) const
 {
   pat::Jet newJet;
   newJet.setP4(math::XYZTLorentzVector(psj.px(), psj.py(), psj.pz(), psj.E()));
   return newJet;
-}
-
-// ------------ method called once each stream before processing any runs, lumis or events  ------------
-void
-XConeProducer::beginStream(edm::StreamID)
-{
-}
-
-// ------------ method called once each stream after processing all runs, lumis and events  ------------
-void
-XConeProducer::endStream() {
 }
 
 
