@@ -27,7 +27,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     edm::Handle<std::vector<reco::Vertex>> pv_handle;
    event.getByToken(pv_token, pv_handle);
    if(pv_handle->empty()){
-       cout << "WARNING: no PVs found, not writing electrons!" << endl;
+       edm::LogWarning("NtupleWriterElectrons") << "No PVs found, not writing electrons!";
        return;
    }
    const auto & PV = pv_handle->front();
@@ -102,7 +102,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
 
         for(const auto& tag_str : IDtag_keys){
 
-          if(!pat_ele.hasUserInt(tag_str)) throw std::runtime_error("NtupleWriterElectrons::process -- label for pat::Electron::userInt not found: "+tag_str);
+          if(!pat_ele.hasUserInt(tag_str)) throw cms::Exception("Missing userInt label", "Label for pat::Electron::userInt not found: "+tag_str);
           ele.set_tag(Electron::tagname2tag(tag_str), float(pat_ele.userInt(tag_str)));
         }
 
@@ -149,7 +149,7 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent, 
    edm::Handle<std::vector<reco::Vertex>> pv_handle;
    event.getByToken(pv_token, pv_handle);
    if(pv_handle->empty()){
-       cout << "WARNING: no PVs found, not writing muons!" << endl;
+       edm::LogWarning("NtupleWriterMuons") << "No PVs found, not writing muons!";
        return;
    }
    const auto & PV = pv_handle->front();

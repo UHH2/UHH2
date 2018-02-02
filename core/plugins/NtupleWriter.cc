@@ -106,7 +106,7 @@ public:
             dir = outfile->GetDirectory(path.c_str());
         }
         if(!dir){
-            throw runtime_error("Could not create directory '" + path + "' in outfile!");
+            throw cms::Exception("FailedMkDir", "Could not create directory '" + path + "' in outfile!");
         }
         h->SetDirectory(dir);
     }
@@ -120,7 +120,7 @@ public:
 
 private:
     virtual void do_declare_event_input(const std::type_info & ti, const std::string & bname, const std::string & mname) override {
-        throw runtime_error("declare_event_input not implemented in CMSSW!");
+        throw cms::Exception("NotImplementedError" "declare_event_input not implemented in CMSSW!");
     }
 
     virtual void do_declare_event_output(const std::type_info & ti, const std::string & bname, const std::string & mname) override {
@@ -129,11 +129,11 @@ private:
     }
 
     virtual void do_undeclare_event_output(const std::string & bname) override {
-        throw runtime_error("undeclare_event_output not implemented in CMSSW!");
+        throw cms::Exception("NotImplementedError", "undeclare_event_output not implemented in CMSSW!");
     }
 
     virtual void do_undeclare_all_event_output() override {
-        throw runtime_error("undeclare_all_event_output not implemented in CMSSW!");
+        throw cms::Exception("NotImplementedError", "undeclare_all_event_output not implemented in CMSSW!");
     }
 
     TFile * outfile;
@@ -164,7 +164,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       edm::ParameterSet module_pset = iConfig.getParameter<edm::ParameterSet>("AnalysisModule");
       string modulename = module_pset.getParameter<std::string>("name");
       string libname = module_pset.getParameter<std::string>("library");
-      cout << "Trying to build AnalysisModule '" << modulename << "' from library '" << libname << "'" << endl;
+      edm::LogInfo("NtupleWriter") << "Trying to build AnalysisModule '" << modulename << "' from library '" << libname << "'";
       gSystem->Load(libname.c_str());
       context.reset(new uhh2::CMSSWContext(*ges, outfile, tr));
       auto names = module_pset.getParameterNamesForType<string>();
@@ -311,13 +311,11 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 
       for(unsigned int j=0; j<topjets_list.size(); ++j){
         if(!topjets_list[j].exists("topjet_source")){
-          cerr << "Exception: it is necessary to specify the source of the topjet collection" << endl;
-          throw;
+          throw cms::Exception("MissingSourceName", "It is necessary to specify the source of the topjet collection");
         }
         std::string topjet_source = topjets_list[j].getParameter<std::string>("topjet_source");
         if(!topjets_list[j].exists("subjet_source")){
-          cerr << "Exception: it is necessary to specify the subjets for each topjet collection" << endl;
-          throw;
+          throw cms::Exception("MissingSourceName", "It is necessary to specify the subjets for each topjet collection");
         }
         std::string subjet_source = topjets_list[j].getParameter<std::string>("subjet_source");
 
@@ -345,8 +343,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
           cfg.higgs_name = topjets_list[j].getParameter<std::string>("higgstag_name");
         }
         if(cfg.higgs_src!="" && cfg.higgs_name==""){
-          cerr << "Exception: higgstag source specified, but no higgstag discriminator name" << endl;
-          throw;
+          throw cms::Exception("MissingSourceName", "higgstag source specified, but no higgstag discriminator name");
         }
         if(topjets_list[j].exists("higgstaginfo_source")){
           cfg.higgstaginfo_src = topjets_list[j].getParameter<std::string>("higgstaginfo_source");
@@ -368,8 +365,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         }
         if(substructure_variables){
           if(!topjets_list[j].exists("substructure_variables_source")){
-            cerr << "Exception: njettiness or qjets sources defined without definition of substructure_variables_source" << endl;
-            throw;
+            throw cms::Exception("MissingSourceName", "njettiness or qjets sources defined without definition of substructure_variables_source");
           }
           cfg.substructure_variables_src = topjets_list[j].getParameter<std::string>("substructure_variables_source");
         }
@@ -1092,7 +1088,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        iEvent.getByToken(met_tokens[j], met_handle);
        const std::vector<pat::MET>& pat_mets = *met_handle;
        if(pat_mets.size()!=1){
-         std::cout<< "WARNING: number of METs = " << pat_mets.size() <<", should be 1" << std::endl;
+         edm::LogWarning("NtupleWriter") << "WARNING: number of METs = " << pat_mets.size() <<", should be 1";
        }
        else{
          pat::MET pat_met = pat_mets[0];
@@ -1141,7 +1137,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        iEvent.getByToken(genmet_tokens[j], genmet_handle);
        const std::vector<pat::MET>& pat_genmets = *genmet_handle;
        if(pat_genmets.size()!=1){
-         std::cout<< "WARNING: number of GenMETs = " << pat_genmets.size() <<", should be 1" << std::endl;
+         edm::LogWarning("NtupleWriter") << "WARNING: number of GenMETs = " << pat_genmets.size() <<", should be 1";
        }
        else{
          pat::MET pat_genmet = pat_genmets[0];
