@@ -90,6 +90,26 @@ cd CMSSW_9_4_1/src
 eval `scramv1 runtime -sh`
 git cms-init
 
+# Install FastJet & contribs for HOTVR & XCONE
+cd ../..
+FJVER="3.2.1"
+FJCONTRIBVER="1.032"
+time setupFastjet $FJVER $FJCONTRIBVER
+
+cd $CMSSW_BASE/src
+
+time git cms-init -y  # not needed if not addpkg ing
+
+# Necessary for using our FastJet
+git cms-addpkg RecoJets/JetProducers
+# Necessary for using Fastjet 3.2.1 to pickup new JetDefinition default arg order
+rm RecoJets/JetProducers/test/Buildfile.xml
+rm RecoJets/JetProducers/test/test-voronoi-area.cc
+git cms-addpkg RecoBTag/SecondaryVertex
+git cms-addpkg RecoJets/JetAlgorithms
+git cms-addpkg PhysicsTools/JetMCAlgos
+
+
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
 OLD_FJ_VER=$(getToolVersion fastjet)
