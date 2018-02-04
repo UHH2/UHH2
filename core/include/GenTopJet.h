@@ -5,6 +5,10 @@
 class GenTopJet : public Particle {
 public:
 
+  GenTopJet() {
+    m_tau1 = m_tau2 = m_tau3 = m_chf = m_cef = m_nhf = m_nef = -1.0;
+  }
+
   const std::vector<Particle> & subjets() const{return m_subjets;}
   void add_subjet(const Particle & p){m_subjets.push_back(p);}
   const float tau1() const{return m_tau1;}
