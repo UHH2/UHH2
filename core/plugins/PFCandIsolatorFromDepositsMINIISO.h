@@ -30,7 +30,7 @@ public:
 
   virtual ~PFCandIsolatorFromDepositsMINIISO();
 
-  virtual void produce(edm::Event&, const edm::EventSetup&);
+  virtual void produce(edm::Event&, const edm::EventSetup&) override;
 
 private:
   class SingleDeposit {

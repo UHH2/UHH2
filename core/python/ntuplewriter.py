@@ -37,8 +37,10 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
 #process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 process.options = cms.untracked.PSet(
-    wantSummary=cms.untracked.bool(False)
-    # wantSummary=cms.untracked.bool(True)
+    wantSummary=cms.untracked.bool(False),
+    # wantSummary=cms.untracked.bool(True),
+    # numberOfThreads = cms.untracked.uint32(8), # if running crab jobs, you must set this to agree with numCores
+    numberOfStreams = cms.untracked.uint32(0) # 0 = use number of threads; to set use -n
 )
 
 # DEBUG ----------------
