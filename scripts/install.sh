@@ -91,8 +91,8 @@ eval `scramv1 runtime -sh`
 
 # Install FastJet & contribs for HOTVR & XCONE
 cd ../..
-FJVER="3.1.0"
-FJCONTRIBVER="1.026"
+FJVER="3.2.1"
+FJCONTRIBVER="1.032"
 time setupFastjet $FJVER $FJCONTRIBVER
 
 cd $CMSSW_BASE/src
@@ -106,6 +106,12 @@ git cms-merge-topic guitargeek:ElectronID_MVA2017_940pre3
 
 # Necessary for using our FastJet
 git cms-addpkg RecoJets/JetProducers
+# Necessary for using Fastjet 3.2.1 to pickup new JetDefinition default arg order
+rm RecoJets/JetProducers/test/BuildFile.xml
+rm RecoJets/JetProducers/test/test-large-voronoi-area.cc  # old test, not used?
+git cms-addpkg RecoBTag/SecondaryVertex
+git cms-addpkg RecoJets/JetAlgorithms
+git cms-addpkg PhysicsTools/JetMCAlgos
 
 # For adding in Puppi multiplicities, until they get merged into a 94X release
 # Do a manual cherry-pick of the PR commits otherwise merge-topic will get loads of extra fluff
