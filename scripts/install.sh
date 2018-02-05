@@ -95,8 +95,8 @@ git cms-merge-topic guitargeek:ElectronID_MVA2017_940pre3
 # Necessary for using our FastJet
 git cms-addpkg RecoJets/JetProducers
 # Necessary for using Fastjet 3.2.1 to pickup new JetDefinition default arg order
-rm RecoJets/JetProducers/test/Buildfile.xml
-rm RecoJets/JetProducers/test/test-voronoi-area.cc
+rm RecoJets/JetProducers/test/BuildFile.xml
+rm RecoJets/JetProducers/test/test-large-voronoi-area.cc  # old test, not used?
 git cms-addpkg RecoBTag/SecondaryVertex
 git cms-addpkg RecoJets/JetAlgorithms
 git cms-addpkg PhysicsTools/JetMCAlgos
