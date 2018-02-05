@@ -45,7 +45,7 @@ setupFastjet() {
 	# cd fastjet-${FJVER}
 
 	# Use the CMS version of fastjet as thread-safe
-	git clone -b cms/v3.1.0 https://github.com/UHH2/fastjet.git
+	git clone -b cms/v$FJVER https://github.com/UHH2/fastjet.git
 	cd fastjet
 	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins CXXFLAGS=-fPIC
 	make $MAKEFLAGS
@@ -62,7 +62,7 @@ setupFastjet() {
 	# cd fjcontrib-${FJCONTRIBVER}
 
 	# Use the CMS version of fastjet-contrib as thread-safe
-	git clone -b v1.026 https://github.com/UHH2/fastjet-contrib.git
+	git clone -b cms/v$FJCONTRIBVER https://github.com/UHH2/fastjet-contrib.git
 	cd fastjet-contrib
 	# add HOTVR from SVN - do it this way until it becomes a proper contrib
 	svn co http://fastjet.hepforge.org/svn/contrib/contribs/HOTVR/trunk HOTVR/
