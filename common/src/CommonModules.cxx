@@ -50,15 +50,17 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
        }
     }
     if(metfilters){
+      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
        metfilters_selection.reset(new AndSelection(ctx, "metfilters"));
        metfilters_selection->add<TriggerSelection>("HBHENoiseFilter", "Flag_HBHENoiseFilter");
        metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
        metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter", "Flag_globalSuperTightHalo2016Filter");
        metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
-       metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
+       // metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");  // Not recommended, but do check
        metfilters_selection->add<TriggerSelection>("BadChargedCandidateFilter", "Flag_BadChargedCandidateFilter"); 
        metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
        metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
+       metfilters_selection->add<TriggerSelection>("ecalBadCalibFilter", "Flag_ecalBadCalibFilter");
        if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
     }
     if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
