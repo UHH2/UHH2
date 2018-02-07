@@ -1140,7 +1140,7 @@ task.add(process.slimmedElectronsUSER)
 if useData:
     metfilterpath = "RECO"
 else:
-    metfilterpath = "HLT"
+    metfilterpath = "PAT"
 
 process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 # AnalysisModule = cms.PSet(

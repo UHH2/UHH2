@@ -770,13 +770,39 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
   //propagate to MET
   //apply type1 MET correction to RAW MET
   //NB: jet with substracted muon Pt should be used
-
-  void correct_MET(const Event & event, const bool & do_L1corr, const bool do_L1RCcorr, FactorizedJetCorrector & corrector_L1RC){
-
+  void correct_MET(const Event & event, const bool & do_L1corr){
     //we start from raw MET
     LorentzVector metv4= event.met->uncorr_v4();
-
     for(auto & jet : *event.jets){
+      //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
+      if(jet.v4().Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){
+	auto factor_raw = jet.JEC_factor_raw();
+	auto L1factor_raw = jet.JEC_L1factor_raw();
+
+	LorentzVector L1corr =   (L1factor_raw*factor_raw)*jet.v4();            //L1 corrected jets
+	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
+	metv4 -=  L123corr;
+
+	//For Puppi jets, no L1 correction is needed
+	if(do_L1corr){
+	  //slimmed MET is corrected by L1FastJet
+	  metv4 += L1corr;
+	}
+      }
+    }
+    event.met->set_pt(metv4.Pt());
+    event.met->set_phi(metv4.Phi());
+  }
+
+  //propagate JEC to chsMET
+  //Attention: the corrected values stored as standart MET values
+  void correct_MET(const Event & event, FactorizedJetCorrector & corrector_L1RC){
+
+  //we start from raw CHS MET
+  LorentzVector metv4= LorentzVector(0,0,0,0);
+  metv4.SetPt(hypot(event.met->rawCHS_px(),event.met->rawCHS_py()));
+  metv4.SetPhi(TMath::ATan2(event.met->rawCHS_py(),event.met->rawCHS_px()));
+  for(auto & jet : *event.jets){
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
       if(jet.v4().Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){
 	auto factor_raw = jet.JEC_factor_raw();
@@ -790,19 +816,10 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 	auto correctionfactors_L1RC = corrector_L1RC.getSubCorrections();
 	auto correctionfactor_L1RC  = correctionfactors_L1RC.back();
 
-
-	LorentzVector L1corr =   (L1factor_raw*factor_raw)*jet.v4();            //L1 corrected jets
 	LorentzVector L1RCcorr = (correctionfactor_L1RC*factor_raw)*jet.v4();   //L1RC corrected jets
 	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
-
 	metv4 -=  L123corr;
-
-	//For Puppi jets, no L1 correction is needed
-	if(do_L1corr){
-	  //slimmed MET is corrected by L1FastJet, CHS MET is corrected by L1RC
-	  if(!do_L1RCcorr) metv4 += L1corr;
-	  else             metv4 += L1RCcorr;
-	}
+	metv4 += L1RCcorr;
       }
     }
 
@@ -861,22 +878,19 @@ JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> &
     //MET is always corrected using the jet collection stated in the "JetCollection" Item in the context and only in case one of the stated jet collections is used. 
     //Particularly, only one of these two AK8 collections should be used.
     propagate_to_met = used_ak4chs || used_ak4puppi || metprop_possible_ak8chs || metprop_possible_ak8puppi;
-    if(!propagate_to_met) cout << "WARNING in JetCorrections.cxx: You specified a jet collection in the 'JetCollection' item in the config file that is not suited to correct MET. You should change that if zou are using MET." << endl;
+    if(!propagate_to_met) cout << "WARNING in JetCorrections.cxx: You specified a jet collection in the 'JetCollection' item in the config file that is not suited to correct MET. You should change that if you are using MET." << endl;
 
     //The first two collections are standard MET collections. The third one is only used for derivation of JECs
     used_slimmedmet = ctx.get("METName")=="slimmedMETs";
     used_puppimet = ctx.get("METName")=="slimmedMETsPuppi";
-    used_chsmet = ctx.get("METName")=="slMETsCHS";
-    if((used_slimmedmet || used_chsmet) && !(used_ak4chs || metprop_possible_ak8chs)) throw runtime_error("In JetCorrections.cxx: You are using slimmedMET or slMETchs but neither AK4CHS nor AK8CHS jets. You need to correct MET using one of those two.");
-    else if(used_puppimet && !(used_ak4puppi || metprop_possible_ak8puppi)) throw runtime_error("In JetCorrections.cxx: You are using slimmedMETpuppi but neither AK4Puppi nor AK8Puppi jets. You need to correct MET using one of those two.");
+   
 
     //if CHS MET is used, the correction is based on the (L123 - L1RC) scheme, else it is based on the standard (L123-L1).
     //See also: https://twiki.cern.ch/twiki/bin/viewauth/CMS/METType1Type2Formulae
-    do_metL1RC = propagate_to_met && used_chsmet;
-    
-    //If using CHS MET and therefore going for (L123 - L1RC), the L1RC corrections have to be provided in a separate const std::vector<std::string>. This must only contain the L1RC correction.
-    if(do_metL1RC && (filenames_L1RC.size() == 1)) corrector_L1RC = build_corrector(filenames_L1RC);
-    else if(do_metL1RC && (filenames_L1RC.size() != 1)) throw runtime_error("In JetCorrections.cxx: CHS MET should be corrected via (L123 - L1RC) but the JERFile for L1RC is empty or too large (should have one entry).");
+    //If using CHS MET and therefore going for (L123 - L1RC), 
+    //the L1RC corrections have to be provided in a separate const std::vector<std::string>. This must only contain the L1RC correction.
+    if(filenames_L1RC.size() == 1) 
+      corrector_L1RC = build_corrector(filenames_L1RC);
     //create dummy if L1RC is not needed. It is not applied anyway
     else corrector_L1RC = build_corrector(filenames);
 
@@ -891,22 +905,20 @@ bool JetCorrector::process(uhh2::Event & event){
       correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
  
-    /*
-    //propagate jet corrections to MET
-    bool correct_with_chs = used_ak4chs || metprop_possible_ak8chs;
-    correct_MET(event, correct_with_chs, do_metL1RC, *corrector_L1RC); 
-    */	
-
     return true;
 }
 
-bool JetCorrector::correct_met(uhh2::Event & event){
+bool JetCorrector::correct_met(uhh2::Event & event, const bool & isCHSmet){
   assert(event.jets);
-
+  if(!isCHSmet){ //for standart MET collection (most of the case) proceed with standart correction
   //propagate jet corrections to MET
-  bool correct_with_chs = used_ak4chs || metprop_possible_ak8chs;
-  correct_MET(event, correct_with_chs, do_metL1RC, *corrector_L1RC); 
-  
+    bool correct_with_chs = used_ak4chs || metprop_possible_ak8chs;//for CHS use L1, for PUPPI L1 is not used
+    correct_MET(event, correct_with_chs); 
+  }
+  else{
+    correct_MET(event, *corrector_L1RC); 
+  }
+
   return true;
 }
 
