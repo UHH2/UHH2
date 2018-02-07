@@ -1019,18 +1019,18 @@ GenericSubJetCorrector::~GenericSubJetCorrector(){}
 // ** JetLeptonCleaner
 
 JetLeptonCleaner::JetLeptonCleaner(uhh2::Context & ctx, const std::vector<std::string> & filenames){
-    corrector = build_corrector(filenames);
+     corrector = build_corrector(filenames);
     direction = 0;
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
 
 bool JetLeptonCleaner::process(uhh2::Event & event){
-    assert(event.jets);
-    if(event.muons){
-        for(const auto & mu : *event.muons){
+     assert(event.jets);
+     if(event.muons){
+          for(const auto & mu : *event.muons){
             if(mu_id && !(mu_id(mu, event))) continue;
             for(auto & jet : *event.jets){
-                if(deltaR(jet, mu) < drmax && jet.muonMultiplicity() > 0){
+	      if(deltaR(jet, mu) < drmax && jet.muonMultiplicity() > 0){
                     auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
                     // note that muon energy fraction as stored in the jet refers to the raw jet energy.
                     double muon_energy_in_jet = jet_p4_raw.E() * jet.muonEnergyFraction();
@@ -1066,9 +1066,12 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
         }
     }
     if(event.electrons){
+  std::cout<<"event.electrons true"<<std::endl; 
         for(const auto & ele : *event.electrons){
+	  std::cout<<"electron loop"<<std::endl;    
             if(ele_id && !(ele_id(ele, event))) continue;
             for(auto & jet : *event.jets){
+	  std::cout<<"jet loop"<<endl;  
                 if(deltaR(jet, ele) < drmax && jet.electronMultiplicity() > 0){
                     auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
                     double electron_energy_in_jet = jet_p4_raw.E() * jet.chargedEmEnergyFraction();
