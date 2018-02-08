@@ -734,9 +734,9 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
     }
 
     if(event.genInfo){
-          for (unsigned int i=0; i<event.genInfo->weights().size(); i++){
-	      event.weight *= event.genInfo->weights().at(i);
-	  }
+        // Use first weight as the central weight, all others are actually
+        // variations e.g. scale, parton shower
+        event.weight = event.genInfo->weights().at(0);
     }
 
     bool keep = pimpl->analysis->process(event);
