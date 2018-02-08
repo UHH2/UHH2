@@ -44,6 +44,7 @@ public:
   std::vector< Particle>* genjets;
   std::vector< PFParticle>* pfparticles;
 
+
   /** \brief Access to trigger results.
    * 
    * Access to trigger results is treated differently from the other
@@ -156,6 +157,8 @@ private:
 
     std::vector<std::string> triggerNames_currentrun;
     int triggerNames_currentrun_runid;
+    // generic flag to alert the user to something the first time, and not on subsequent occurrences.
+    mutable bool doOnce;
 };
 
 }
