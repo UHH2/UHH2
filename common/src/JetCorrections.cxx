@@ -1143,12 +1143,9 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
         }
     }
     if(event.electrons){
-  std::cout<<"event.electrons true"<<std::endl; 
         for(const auto & ele : *event.electrons){
-	  std::cout<<"electron loop"<<std::endl;    
             if(ele_id && !(ele_id(ele, event))) continue;
             for(auto & jet : *event.jets){
-	  std::cout<<"jet loop"<<endl;  
                 if(deltaR(jet, ele) < drmax && jet.electronMultiplicity() > 0){
                     auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
                     double electron_energy_in_jet = jet_p4_raw.E() * jet.chargedEmEnergyFraction();
