@@ -871,7 +871,6 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
       if(jet.v4().Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){
 	auto factor_raw = jet.JEC_factor_raw();
-	auto L1factor_raw = jet.JEC_L1factor_raw();
 
 	corrector_L1RC.setJetPt(jet.pt() * factor_raw);
 	corrector_L1RC.setJetEta(jet.eta());
