@@ -1508,8 +1508,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 ),
                                 XCone_sources=cms.VInputTag(cms.InputTag("xconePfCand")),
 
-                                doGenHOTVR=cms.bool(not useData),
-                                doGenXCone=cms.bool(not useData),
+                                doGenHOTVR=cms.bool(False),
+                                doGenXCone=cms.bool(False),
                                 )
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
