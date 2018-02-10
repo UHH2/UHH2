@@ -424,13 +424,13 @@ namespace JERSmearing {
 class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
  public:
-  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const bool allow_met_smear=true,
+  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets",
                                        const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016, const TString ResolutionFileName="Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt");
   virtual ~GenericJetResolutionSmearer() {m_resfile.close();}
 
   virtual bool process(uhh2::Event&) override;
 
-  template<typename RJ, typename GJ> void apply_JER_smearing(std::vector<RJ>&, const std::vector<GJ>&, LorentzVector&, float radius, float rho);
+  template<typename RJ, typename GJ> void apply_JER_smearing(std::vector<RJ>&, const std::vector<GJ>&, float radius, float rho);
 
  private:
   uhh2::Event::Handle<std::vector<Jet> >       h_recjets_;

@@ -871,7 +871,6 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
       if(jet.v4().Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){
 	auto factor_raw = jet.JEC_factor_raw();
-	auto L1factor_raw = jet.JEC_L1factor_raw();
 
 	corrector_L1RC.setJetPt(jet.pt() * factor_raw);
 	corrector_L1RC.setJetEta(jet.eta());
@@ -936,9 +935,9 @@ JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> &
 
     //MET should only be corrected using AK8 jets, iff there is no AK4 collection that could be used for this because the calculation of our raw MET is based on AK4 jets
     used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
-    used_ak4puppi = ctx.get("JetCollection")=="slimmedJetsPuppi";
+    used_ak4puppi = ctx.get("JetCollection")=="slimmedJetsPuppi" || ctx.get("JetCollection")=="updatedPatJetsSlimmedJetsPuppi";
     metprop_possible_ak8chs = ctx.get("JetCollection")=="patJetsAK8PFCHS";
-    metprop_possible_ak8puppi = ctx.get("JetCollection")=="patJetsAK8PFPUPPI";
+    metprop_possible_ak8puppi = ctx.get("JetCollection")=="patJetsAK8PFPUPPI" || ctx.get("JetCollection")=="updatedPatJetsPatJetsAK8PFPUPPI";
 
     //MET is always corrected using the jet collection stated in the "JetCollection" Item in the context and only in case one of the stated jet collections is used. 
     //Particularly, only one of these two AK8 collections should be used.
@@ -1339,7 +1338,7 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_2016_03Feb2017 = {
 ////
 
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf){
-  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", true, JER_sf);
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JER_sf);
 }
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
@@ -1352,7 +1351,7 @@ JetResolutionSmearer::~JetResolutionSmearer(){}
 
 ////
 
-GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const bool allow_met_smearing, const JERSmearing::SFtype1& JER_sf, const TString ResolutionFileName){
+GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const JERSmearing::SFtype1& JER_sf, const TString ResolutionFileName){
 
   if(ctx.get("meta_jer_applied__"+recjet_label, "") != "true") ctx.set_metadata("jer_applied__"+recjet_label, "true");
   else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already applied to this RECO-jets collection: "+recjet_label);
@@ -1411,19 +1410,16 @@ bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
   else if(evt.is_valid(h_gentopjets_)) gen_topjets = &evt.get(h_gentopjets_);
   else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid handle to GEN-jets");
 
-  LorentzVector met;
-  if(evt.met) met = evt.met->v4();
-
-  if     (rec_jets    && gen_jets)    apply_JER_smearing(*rec_jets   , *gen_jets   , met, 0.4, evt.rho);
-  else if(rec_topjets && gen_jets)    apply_JER_smearing(*rec_topjets, *gen_jets   , met, 0.8, evt.rho);
-  else if(rec_topjets && gen_topjets) apply_JER_smearing(*rec_topjets, *gen_topjets, met, 0.8, evt.rho);
+  if     (rec_jets    && gen_jets)    apply_JER_smearing(*rec_jets   , *gen_jets   , 0.4, evt.rho);
+  else if(rec_topjets && gen_jets)    apply_JER_smearing(*rec_topjets, *gen_jets   , 0.8, evt.rho);
+  else if(rec_topjets && gen_topjets) apply_JER_smearing(*rec_topjets, *gen_topjets, 0.8, evt.rho);
   else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid combination of RECO-GEN jet collections");
 
   return true;
 }
 
 template<typename RJ, typename GJ>
-void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, const std::vector<GJ>& gen_jets, LorentzVector& met, float radius, float rho){
+void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, const std::vector<GJ>& gen_jets, float radius, float rho){
 
   for(unsigned int i=0; i<rec_jets.size(); ++i){
 
