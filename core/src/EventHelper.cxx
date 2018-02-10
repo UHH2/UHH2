@@ -37,6 +37,8 @@ EventHelper::EventHelper(uhh2::Context & ctx_): ctx(ctx_), event(0), pvs(false),
 #define IMPL_SETUP(name, type) void EventHelper::setup_##name (const std::string & bname) {\
     if(bname.empty()) return; \
     name = true; \
+    std::cout<<"going to declare "<<bname<<std::endl; \
+    if(bname == "genInfo") return; \ 
     h_##name = declare_in_out<type>(bname, #name, ctx); \
 }
 
@@ -54,6 +56,8 @@ IMPL_SETUP(gentopjets, vector<GenTopJet>)
 IMPL_SETUP(genparticles, vector<GenParticle>)
 IMPL_SETUP(genjets, vector<Particle>)
 IMPL_SETUP(genmet, MET)
+
+
 
 void EventHelper::setup_trigger(){
     trigger = true;
@@ -110,10 +114,25 @@ void EventHelper::event_read(){
         if(toppuppijets)  event->toppuppijets = &event->get(h_toppuppijets);
         if(met) event->met = &event->get(h_met);
 	if(genmet) event->genmet = &event->get(h_genmet);
-        if(genInfo) event->genInfo = &event->get(h_genInfo);
+	try{
+        if(genInfo) event->genInfo = &event->get(h_genInfo);}
+	catch(const std::runtime_error& error){
+	  std::cout<<"Problem with genInfo in EventHelper.cxx"<<std::endl;
+	  std::cout<<error.what();
+	}
         if(gentopjets) event->gentopjets = &event->get(h_gentopjets);
-        if(genparticles) event->genparticles = & event->get(h_genparticles);
-        if(genjets) event->genjets = &event->get(h_genjets);
+	try{
+        if(genparticles) event->genparticles = & event->get(h_genparticles);}
+	catch(const std::runtime_error& error){
+	  std::cout<<"Problem with genparticles in EventHelper.cxx"<<std::endl;
+	  std::cout<<error.what();
+	}
+	try{
+        if(genjets) event->genjets = &event->get(h_genjets);}
+	catch(const std::runtime_error& error){
+	  std::cout<<"Problem with genjets in EventHelper.cxx"<<std::endl;
+	  std::cout<<error.what();
+	}	
         if(trigger){
             event->get_triggerResults() = &event->get(h_triggerResults);
 	    event->get_triggerPrescales() = &event->get(h_triggerPrescales);
