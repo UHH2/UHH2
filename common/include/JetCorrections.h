@@ -173,6 +173,28 @@ namespace JERFiles{
 
 }
 
+namespace JERFiles{
+      //Fall17_17Nov2017_V4
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_B_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_C_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_D_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_E_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_F_L123_AK4PFchs_DATA;
+  
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_L123_AK4PFchs_MC;
+
+  
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_B_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_C_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_D_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_E_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_F_L1RC_AK4PFchs_DATA;
+  
+    extern const std::vector<std::string> Fall17_17Nov2017_V4_L1RC_AK4PFchs_MC;
+
+  
+  
+}
 
 void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const uhh2::Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0);
 
@@ -402,13 +424,13 @@ namespace JERSmearing {
 class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
  public:
-  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const bool allow_met_smear=true,
+  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets",
                                        const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016, const TString ResolutionFileName="Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt");
   virtual ~GenericJetResolutionSmearer() {m_resfile.close();}
 
   virtual bool process(uhh2::Event&) override;
 
-  template<typename RJ, typename GJ> void apply_JER_smearing(std::vector<RJ>&, const std::vector<GJ>&, LorentzVector&, float radius, float rho);
+  template<typename RJ, typename GJ> void apply_JER_smearing(std::vector<RJ>&, const std::vector<GJ>&, float radius, float rho);
 
  private:
   uhh2::Event::Handle<std::vector<Jet> >       h_recjets_;

@@ -138,9 +138,23 @@ bool MCPileupReweight::process(Event &event){
     }
 
     double weight = 0., weight_up = 0., weight_down = 0.;
-    int binnumber = h_npu_mc->GetXaxis()->FindBin(event.genInfo->pileup_TrueNumInteractions());
-    auto mc_cont = h_npu_mc->GetBinContent(binnumber);
+    // handle scenarios where events fall outside of our histograms
+    // esp for 94X MC screwup where -ve # vertices exist
+    auto trueNumInteractions = event.genInfo->pileup_TrueNumInteractions();
+    if (event.genInfo->pileup_TrueNumInteractions() < h_npu_mc->GetXaxis()->GetXmin()) {
+      cout << "WARNING trueNumInteractions = " << trueNumInteractions << " < lower edge of MC hist = " << h_npu_mc->GetXaxis()->GetXmin();
+      cout << " Setting event weight_pu to 0" << endl;
+      event.set(h_pu_weight_, 0.f);
+      return false;
+    } else if (event.genInfo->pileup_TrueNumInteractions() > h_npu_mc->GetXaxis()->GetXmax()) {
+      cout << "WARNING trueNumInteractions = " << trueNumInteractions << " > upper edge of MC hist = " << h_npu_mc->GetXaxis()->GetXmax();
+      cout << " Setting event weight_pu to 0" << endl;
+      event.set(h_pu_weight_, 0.f);
+      return false;
+    }
 
+    int binnumber = h_npu_mc->GetXaxis()->FindBin(trueNumInteractions);
+    auto mc_cont = h_npu_mc->GetBinContent(binnumber);
     if (mc_cont > 0) {
         weight = h_npu_data->GetBinContent(binnumber)/mc_cont;
         event.set(h_pu_weight_, weight);
@@ -154,6 +168,11 @@ bool MCPileupReweight::process(Event &event){
             weight_down = h_npu_data_down->GetBinContent(binnumber)/mc_cont;
             event.set(h_pu_weight_down_, weight_down);
         }
+    } else {
+      cout << "WARNING no value in MC hist for trueNumInteractions = " << trueNumInteractions;
+      cout << " Setting event weight_pu to 0" << endl;
+      event.set(h_pu_weight_, 0.f);
+      return false;
     }
 
     if (sysType_ == "") {

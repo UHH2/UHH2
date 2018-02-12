@@ -27,6 +27,7 @@ void Event::clear(){
     triggerPrescales = 0;
     triggerNames_currentrun.clear();
     triggerNames_currentrun_runid = -1; // this is an invalid runid
+    doOnce = true;
 }
 
 Event::Event(const GenericEventStructure & ges): GenericEvent(ges){
@@ -54,8 +55,7 @@ bool Event::lookup_trigger_index(TriggerIndex & ti) const{
            << ". Is reading trigger names configured correctly?";
         throw runtime_error(ss.str());
     }
-    int runid = -1;
-    size_t index = triggerNames_currentrun.size();
+    ti.index = triggerNames_currentrun.size();
     for(size_t i=0; i<triggerNames_currentrun.size(); ++i){
         bool matches = false;
         if(ti.is_prefix){
@@ -65,23 +65,30 @@ bool Event::lookup_trigger_index(TriggerIndex & ti) const{
             matches = triggerNames_currentrun[i] == ti.triggername;
         }
         if(matches){
-            if(index == triggerNames_currentrun.size()){ // first match
-                index = i;
-                runid = run;
+            if(ti.index == triggerNames_currentrun.size()){ // first match
+                ti.index = i;
+                ti.runid = run;
             }
             else{
-                stringstream ss;
-                ss << "Trigger name '" << ti.triggername << (ti.is_prefix ? "*" : "")  << "' not unique: found at index " << ti.index << " and at index " << i << ".";
-                throw runtime_error(ss.str());
+                // FIXME: return to always throwing after ntuples made fixing MC trigger error
+                if (doOnce) {
+                    stringstream ss;
+                    ss << "Trigger name '" << ti.triggername << (ti.is_prefix ? "*" : "")  << "' not unique: found at index " << ti.index << " and at index " << i << ".";
+                    if (isRealData) {
+                        throw runtime_error(ss.str());
+                    } else {
+                        ss << " This is probably due to double-storing triggers, or a non-unique wildcard match.";
+                        cout << ss.str() << endl;
+                        doOnce = false;
+                    }
+                }
             }
         }
     }
-    if(runid == -1){
+    if(ti.runid == -1){
         return false;
     }
-    assert(index < triggerNames_currentrun.size());
-    ti.runid = runid;
-    ti.index = index;
+    assert(ti.index < triggerNames_currentrun.size());
     return true;
 }
 
