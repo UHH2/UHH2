@@ -151,29 +151,7 @@ namespace JERFiles {
 
 //2017
 namespace JERFiles{
-      //Fall17_17Nov2017_V3
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_B_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_C_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_D_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_E_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_F_L123_AK4PFchs_DATA;
-  
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_L123_AK4PFchs_MC;
 
-  
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_B_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_C_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_D_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_E_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_F_L1RC_AK4PFchs_DATA;
-  
-    extern const std::vector<std::string> Fall17_17Nov2017_V3_L1RC_AK4PFchs_MC;
-
-  
-  
-}
-
-namespace JERFiles{
       //Fall17_17Nov2017_V4
     extern const std::vector<std::string> Fall17_17Nov2017_V4_B_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V4_C_L123_AK4PFchs_DATA;
@@ -182,7 +160,6 @@ namespace JERFiles{
     extern const std::vector<std::string> Fall17_17Nov2017_V4_F_L123_AK4PFchs_DATA;
   
     extern const std::vector<std::string> Fall17_17Nov2017_V4_L123_AK4PFchs_MC;
-
   
     extern const std::vector<std::string> Fall17_17Nov2017_V4_B_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V4_C_L1RC_AK4PFchs_DATA;
@@ -192,9 +169,9 @@ namespace JERFiles{
   
     extern const std::vector<std::string> Fall17_17Nov2017_V4_L1RC_AK4PFchs_MC;
 
-  
-  
+
 }
+
 
 void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const uhh2::Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0);
 
