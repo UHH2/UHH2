@@ -7165,4 +7165,4 @@
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/akaravdi/RunII_80X_v3_allGEN/QCD_PU_pythia8/QCD_Pt-15to7000_TuneCUETP8M1_FlatP6_13TeV_pythia8/crab_QCD_Pt-15to7000_TuneCUETP8M1_FlatP6_13TeV_pythia8/171214_130243/0007/Ntuple_7165.root" Lumi="0.0"/>
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/akaravdi/RunII_80X_v3_allGEN/QCD_PU_pythia8/QCD_Pt-15to7000_TuneCUETP8M1_FlatP6_13TeV_pythia8/crab_QCD_Pt-15to7000_TuneCUETP8M1_FlatP6_13TeV_pythia8/171214_130243/0007/Ntuple_7166.root" Lumi="0.0"/>
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/akaravdi/RunII_80X_v3_allGEN/QCD_PU_pythia8/QCD_Pt-15to7000_TuneCUETP8M1_FlatP6_13TeV_pythia8/crab_QCD_Pt-15to7000_TuneCUETP8M1_FlatP6_13TeV_pythia8/171214_130243/0007/Ntuple_7167.root" Lumi="0.0"/>
-<!-- < NumberEntries="9627108" Method=fast /> -->
+<!-- < NumberEntries="9627108" Method=fast /> --><!-- < NumberEntries="1723.7142256" Method=weights /> -->
