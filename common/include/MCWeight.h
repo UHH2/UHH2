@@ -104,7 +104,7 @@ public:
                              const std::string & sf_name,
                              float sys_error_percantage,
                              const std::string & weight_postfix="",
-			     bool etaYaxis=true,
+			     bool etaYaxis=false,
                              const std::string & sys_uncert="nominal",
                              const std::string & muons_handle_name="muons"); 
 
