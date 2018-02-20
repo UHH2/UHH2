@@ -152,10 +152,10 @@ git clone https://github.com/lsoffi/RecoEgamma-ElectronIdentification.git data/R
 cd data/RecoEgamma/ElectronIdentification/data
 git checkout CMSSW_9_4_0_pre3_TnP
 #remove not needed files to keep tarball for crab small
-rm $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/TMVA_*.weights.xml
-rm -r $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/Spring16*
-rm -r  $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/Spring15/
-rm -r $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/PHYS14/
+rm TMVA_*.weights.xml
+rm -r Spring16*
+rm -r  Spring15/
+rm -r PHYS14/
 # prune their .git as it gets included in crab tarball
 # remove if you really struggle for space
 git gc --prune
