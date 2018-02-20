@@ -272,11 +272,11 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
     throw runtime_error("Scale factor file for muons not found: " + sf_file_path);
   }
   
-  sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/pt_abseta_ratio").c_str()));
+  sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/abseta_pt").c_str()));
   if (!sf_hist_.get()) {
-    sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/ptetadata").c_str()));
+    sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/abseta_pt_ratio").c_str()));
     if (!sf_hist_.get()) {
-      sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/pt_abseta_DATA").c_str())); //For muon HLT efficiency
+      sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/abseta_pair_newTuneP_probe_pt").c_str()));
       if (!sf_hist_.get()) {
 	throw runtime_error("Scale factor directory not found in file: " + sf_name);
       }
