@@ -60,8 +60,8 @@ std::vector<double> PDFWeights::GetWeightList(const uhh2::Event & event){
   if(!m_libvalid) return pdf_weights;
 
   //pdf weighting code taken from https://twiki.cern.ch/twiki/bin/view/CMS/TWikiTopRefSyst#PDF_uncertainties
- 
 
+  try{
   double x1=event.genInfo->pdf_x1();
   double x2=event.genInfo->pdf_x2();
  
@@ -85,6 +85,11 @@ std::vector<double> PDFWeights::GetWeightList(const uhh2::Event & event){
     else{ 
       pdf_weights.push_back(weight);
     }
+  }
+  }
+  catch(const std::runtime_error& error){
+	    std::cout<<"Problem with genInfo in PDFWeights.cxx"<<std::endl;
+	    std::cout<<error.what();
   }
 
   return pdf_weights;

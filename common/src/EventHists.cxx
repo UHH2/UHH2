@@ -33,7 +33,12 @@ void EventHists::fill(const uhh2::Event & e){
     assert(e.met);
     assert(e.pvs);
     N_PrimVertices->Fill(e.pvs->size(), e.weight);
-    if(e.genInfo) N_TrueInteractions->Fill(e.genInfo->pileup_TrueNumInteractions(), e.weight);
+    try{
+    if(e.genInfo) N_TrueInteractions->Fill(e.genInfo->pileup_TrueNumInteractions(), e.weight);}
+    catch(const std::runtime_error& error){
+	    std::cout<<"Problem with genInfo in EventHists.cxx"<<std::endl;
+	    std::cout<<error.what();
+  }
     Weights->Fill(e.weight);
     WeightsLogBins->Fill(e.weight);
     MET->Fill(e.met->pt(), e.weight);
