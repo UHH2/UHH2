@@ -608,25 +608,10 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
        
         bool is_mc = context->get("dataset_type") == "MC";
         if (is_mc) {
-	  try{
-            eh->setup_genInfo(context->get("GenInfoName", "genInfo"));}
-	  catch(const std::runtime_error& error){
-	    std::cout<<"Problem with genInfo in AnalysisModuleRunner.cxx"<<std::endl;
-	    std::cout<<error.what();
-	  }
-	  try{
-            eh->setup_genjets(context->get("GenJetCollection", ""));}
-	  catch(const std::runtime_error& error){
-	    std::cout<<"Problem with genJetCollection in AnalysisModuleRunner.cxx"<<std::endl;
-	    std::cout<<error.what();
-	  }
-	  eh->setup_gentopjets(context->get("GenTopJetCollection", ""));
-	  try{
-            eh->setup_genparticles(context->get("GenParticleCollection", ""));}
-	  catch(const std::runtime_error& error){
-	    std::cout<<"Problem with genParticleCollection in AnalysisModuleRunner.cxx"<<std::endl;
-	    std::cout<<error.what();
-	  }	  
+            eh->setup_genInfo(context->get("GenInfoName", "genInfo"));
+            eh->setup_genjets(context->get("GenJetCollection", ""));
+            eh->setup_gentopjets(context->get("GenTopJetCollection", ""));
+            eh->setup_genparticles(context->get("GenParticleCollection", ""));
 	    eh->setup_genmet(context->get("genMETName", ""));
         }
 
@@ -747,17 +732,13 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
     else{
         event.weight = 1.0;
     }
-    try{
+
     if(event.genInfo){
         // Use first weight as the central weight, all others are actually
         // variations e.g. scale, parton shower
         event.weight = event.genInfo->weights().at(0);
     }
-    }
-    catch(const std::runtime_error& error){
-	    std::cout<<"Problem with genInfo in AnalysisModuleRunner.cxx"<<std::endl;
-	    std::cout<<error.what();
-    }
+
     bool keep = pimpl->analysis->process(event);
 
     if (!keep) {

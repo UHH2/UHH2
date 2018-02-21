@@ -638,7 +638,6 @@ const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_L1RC_AK4PFchs_MC 
 };
 
 
-
 //2017-------------------------- 17Nov2017 
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_L123_AK4PFchs_MC = {
   "JECDatabase/textFiles/Fall17_17Nov2017_V4_MC/Fall17_17Nov2017_V4_MC_L1FastJet_AK4PFchs.txt",
