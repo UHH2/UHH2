@@ -37,8 +37,6 @@ EventHelper::EventHelper(uhh2::Context & ctx_): ctx(ctx_), event(0), pvs(false),
 #define IMPL_SETUP(name, type) void EventHelper::setup_##name (const std::string & bname) {\
     if(bname.empty()) return; \
     name = true; \
-    std::cout<<"going to declare "<<bname<<std::endl; \
-    if(bname == "genInfo") return; \ 
     h_##name = declare_in_out<type>(bname, #name, ctx); \
 }
 
