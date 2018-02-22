@@ -137,12 +137,10 @@ bool MCPileupReweight::process(Event &event){
         return true;
     }
 
-    double weight = 0., weight_up = 0., weight_down = 0., trueNumInteractions = 0.;
+    double weight = 0., weight_up = 0., weight_down = 0.;
     // handle scenarios where events fall outside of our histograms
     // esp for 94X MC screwup where -ve # vertices exist
-    
-    try{
-    trueNumInteractions = event.genInfo->pileup_TrueNumInteractions();
+    auto trueNumInteractions = event.genInfo->pileup_TrueNumInteractions();
     if (event.genInfo->pileup_TrueNumInteractions() < h_npu_mc->GetXaxis()->GetXmin()) {
       cout << "WARNING trueNumInteractions = " << trueNumInteractions << " < lower edge of MC hist = " << h_npu_mc->GetXaxis()->GetXmin();
       cout << " Setting event weight_pu to 0" << endl;
@@ -154,12 +152,7 @@ bool MCPileupReweight::process(Event &event){
       event.set(h_pu_weight_, 0.f);
       return false;
     }
-    }
-    catch(const std::runtime_error& error){
-      std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
-      std::cout<<error.what();
-    }
-    
+
     int binnumber = h_npu_mc->GetXaxis()->FindBin(trueNumInteractions);
     auto mc_cont = h_npu_mc->GetBinContent(binnumber);
     if (mc_cont > 0) {
@@ -190,7 +183,6 @@ bool MCPileupReweight::process(Event &event){
         event.weight *= weight_up;
     }
 
-
     return true;
 }
 
@@ -215,8 +207,6 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
 
 bool MCScaleVariation::process(Event & event){
   if (event.isRealData) {return true;}
-
-  try{
   if(event.genInfo->systweights().size() == 0) return true;
 
   if(i_mu_r == 0 && i_mu_f == 0) return true;
@@ -232,12 +222,7 @@ bool MCScaleVariation::process(Event & event){
   else if(i_mu_r == 2 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(8);
 
   event.weight *= syst_weight/event.genInfo->originalXWGTUP();
-  }
-  catch(const std::runtime_error& error){
-      std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
-      std::cout<<error.what();
-  }
-  
+
   return true;
 }
 
@@ -891,18 +876,12 @@ bool TauEffVariation::process(Event & event){
     {
       bool real = false;
       Tau tau = event.taus->at(j);
-      try{
       for(unsigned int i=0; i<event.genparticles->size(); ++i)
 	{
 	  GenParticle genp = event.genparticles->at(i);
 	  double dr = deltaR(genp,tau);
 	  if (dr < 0.4 && abs(genp.pdgId())==15) real = true;
 	}
-      }
-      catch(const std::runtime_error& error){
-      std::cout<<"Problem with genparticles in MCWeight.cxx"<<std::endl;
-      std::cout<<error.what();
-    }
       if(real) real_taus.push_back(tau);
     }
   for(unsigned int i=0; i<real_taus.size(); ++i)
@@ -943,7 +922,6 @@ bool TauChargeVariation::process(Event & event){
   for(unsigned int j=0; j<event.taus->size(); ++j)
     {
       Tau tau = event.taus->at(j);
-      try{
       for(unsigned int i=0; i<event.genparticles->size(); ++i)
 	{
 	  GenParticle genp = event.genparticles->at(i);
@@ -960,12 +938,7 @@ bool TauChargeVariation::process(Event & event){
 	    }
 	  } 
 	}
-      }
-      catch(const std::runtime_error& error){
-	std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
-	std::cout<<error.what();
-      }
-          }
+    }
   return true;
 }
 

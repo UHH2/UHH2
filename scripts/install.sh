@@ -151,6 +151,14 @@ cd $CMSSW_BASE/external/$SCRAM_ARCH
 git clone https://github.com/lsoffi/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
 cd data/RecoEgamma/ElectronIdentification/data
 git checkout CMSSW_9_4_0_pre3_TnP
+#remove not needed files to keep tarball for crab small
+rm TMVA_*.weights.xml
+rm -r Spring16*
+rm -r  Spring15/
+rm -r PHYS14/
+# prune their .git as it gets included in crab tarball
+# remove if you really struggle for space
+git gc --prune
 cd $CMSSW_BASE/src
 
 # Get the UHH2 repo & JEC files
@@ -158,11 +166,3 @@ cd $CMSSW_BASE/src
 git clone -b RunII_94X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 git clone https://github.com/cms-jet/JECDatabase.git
-
-#remove not needed files to keep tarball for crab small
-rm $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/TMVA_BDTSimpleCat_17Feb2011.weights.xml
-rm -r $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/Spring16*
-rm -r  $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/Spring15/
-rm $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/TMVA_BDTSoftElectrons_7Feb2014.weights.xml
-rm $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/TMVA_BDTSoftElectrons_9Dec2013.weights.xml
-rm -r $CMSSW_BASE/external/slc6_amd64_gcc630/data/RecoEgamma/ElectronIdentification/data/PHYS14/
