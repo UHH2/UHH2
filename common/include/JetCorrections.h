@@ -170,6 +170,12 @@ namespace JERFiles{
     extern const std::vector<std::string> Fall17_17Nov2017_V4_L1RC_AK4PFchs_MC;
 
       //Fall17_17Nov2017_V6
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_noRes_AK4PFchs_DATA;  
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_noRes_AK4PFchs_DATA;
+  
     extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_AK4PFchs_DATA;
@@ -188,6 +194,12 @@ namespace JERFiles{
 
   
       //Fall17_17Nov2017_V7
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_B_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_C_L123_noRes_AK4PFchs_DATA;  
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_D_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_E_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_F_L123_noRes_AK4PFchs_DATA;
+
     extern const std::vector<std::string> Fall17_17Nov2017_V7_B_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V7_C_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V7_D_L123_AK4PFchs_DATA;
