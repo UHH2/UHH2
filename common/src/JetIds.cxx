@@ -65,6 +65,7 @@ bool JetPFID::operator()(const Jet & jet, const Event &) const{
   return false;
 }
 
+//not updated since 2016 recomandation
 bool JetPFID::looseID(const Jet & jet) const{
   if(fabs(jet.eta())<=2.7
      && jet.numberOfDaughters()>1 
@@ -92,20 +93,40 @@ bool JetPFID::looseID(const Jet & jet) const{
   return false;
 }
 
+
+//according to https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID13TeVRun2017
 bool JetPFID::tightID(const Jet & jet) const{
-  if(!looseID(jet)) return false;
-  if(fabs(jet.eta())<=2.7 
-     && jet.neutralEmEnergyFraction()<0.90
-     && jet.neutralHadronEnergyFraction()<0.90){ //2016 jetID: "tight" differ from "loose" only at |eta|<2.7
+    if(fabs(jet.eta())<=2.7
+     && jet.numberOfDaughters()>1 
+     && jet.neutralHadronEnergyFraction()<0.90
+     && jet.neutralEmEnergyFraction()<0.90){
+    
+    if(fabs(jet.eta())>=2.4)
+      return true;
+      
+    if(jet.chargedHadronEnergyFraction()>0
+       && jet.chargedMultiplicity()>0)
+      return true;   
+  }
+  else if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3
+	  &&jet.neutralEmEnergyFraction()<0.90
+	  &&jet.neutralEmEnergyFraction()>0.02
+	  &&jet.neutralMultiplicity()>2){
     return true;
   }
-  else  
-    if(fabs(jet.eta())>2.7)
-      return true;
+  else if(fabs(jet.eta())>3
+	  && jet.neutralMultiplicity()>10
+	  && jet.neutralEmEnergyFraction()<0.99
+	  && jet.neutralHadronEnergyFraction()>0.02){
+    return true;
+  }
   return false;
 }
 
 bool JetPFID::tightLepVetoID(const Jet & jet) const{
   if(!tightID(jet))return false;
-  return jet.muonEnergyFraction() <0.8;
+  if(jet.muonEnergyFraction() <0.8
+     &&jet.chargedEmEnergyFraction()<0.80)
+    return true;
+  return false;
 }
