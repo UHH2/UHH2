@@ -128,5 +128,5 @@ bool JetPFID::tightLepVetoID(const Jet & jet) const{
   if(jet.muonEnergyFraction() <0.8
      &&jet.chargedEmEnergyFraction()<0.80)
     return true;
-  return false
+  return false;
 }
