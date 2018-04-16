@@ -48,51 +48,22 @@ DeepCSVBTag::DeepCSVBTag(float float_point):deepcsv_threshold(float_point) {}
 bool DeepCSVBTag::operator()(const Jet & jet, const Event &) const{
     return jet.btag_DeepCSV() > deepcsv_threshold;
 }
+
+
 ///
 JetPFID::JetPFID(wp working_point):m_working_point(working_point){}
 
 bool JetPFID::operator()(const Jet & jet, const Event &) const{
   switch(m_working_point){
-  case WP_LOOSE:
-    return looseID(jet);
   case WP_TIGHT:
     return tightID(jet);
   case  WP_TIGHT_LEPVETO:
     return tightLepVetoID(jet);
   default:
-    throw invalid_argument("invalid working point passed to CSVBTag");
+    throw invalid_argument("invalid working point passed to JetPFID");
   }
   return false;
 }
-
-//not updated since 2016 recomandation
-bool JetPFID::looseID(const Jet & jet) const{
-  if(fabs(jet.eta())<=2.7
-     && jet.numberOfDaughters()>1 
-     && jet.neutralHadronEnergyFraction()<0.99
-     && jet.neutralEmEnergyFraction()<0.99){
-    
-    if(fabs(jet.eta())>=2.4)
-      return true;
-      
-    if(jet.chargedEmEnergyFraction()<0.99
-       && jet.chargedHadronEnergyFraction()>0
-       && jet.chargedMultiplicity()>0)
-      return true;   
-  }
-  else if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3
-	  &&jet.neutralEmEnergyFraction()<0.90
-	  &&jet.neutralMultiplicity()>2){
-    return true;
-  }
-  else if(fabs(jet.eta())>3
-	  && jet.neutralMultiplicity()>10
-	  && jet.neutralEmEnergyFraction()<0.90){
-    return true;
-  }
-  return false;
-}
-
 
 //according to https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID13TeVRun2017
 bool JetPFID::tightID(const Jet & jet) const{
