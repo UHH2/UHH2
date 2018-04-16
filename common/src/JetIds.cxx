@@ -107,5 +107,8 @@ bool JetPFID::tightID(const Jet & jet) const{
 
 bool JetPFID::tightLepVetoID(const Jet & jet) const{
   if(!tightID(jet))return false;
-  return jet.muonEnergyFraction() <0.8;
+  if(jet.muonEnergyFraction() <0.8
+     &&jet.chargedEmEnergyFraction()<0.80)
+    return true;
+  return false;
 }
