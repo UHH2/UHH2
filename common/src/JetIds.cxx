@@ -116,7 +116,7 @@ bool JetPFID::tightID(const Jet & jet) const{
   }
   else if(fabs(jet.eta())>3
 	  && jet.neutralMultiplicity()>10
-	  && jet.neutralEmEnergyFraction()<0.90
+	  && jet.neutralEmEnergyFraction()<0.99
 	  && jet.neutralHadronEnergyFraction()>0.02){
     return true;
   }
