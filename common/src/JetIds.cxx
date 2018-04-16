@@ -93,10 +93,28 @@ bool JetPFID::looseID(const Jet & jet) const{
 }
 
 bool JetPFID::tightID(const Jet & jet) const{
-  if(!looseID(jet)) return false;
-  if(fabs(jet.eta())<=2.7 
-     && jet.neutralEmEnergyFraction()<0.90
-     && jet.neutralHadronEnergyFraction()<0.90){ //2016 jetID: "tight" differ from "loose" only at |eta|<2.7
+    if(fabs(jet.eta())<=2.7
+     && jet.numberOfDaughters()>1 
+     && jet.neutralHadronEnergyFraction()<0.90
+     && jet.neutralEmEnergyFraction()<0.90){
+    
+    if(fabs(jet.eta())>=2.4)
+      return true;
+      
+    if(jet.chargedHadronEnergyFraction()>0
+       && jet.chargedMultiplicity()>0)
+      return true;   
+  }
+  else if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3
+	  &&jet.neutralEmEnergyFraction()<0.90
+	  &&jet.neutralEmEnergyFraction()>0.02
+	  &&jet.neutralMultiplicity()>2){
+    return true;
+  }
+  else if(fabs(jet.eta())>3
+	  && jet.neutralMultiplicity()>10
+	  && jet.neutralEmEnergyFraction()<0.99
+	  && jet.neutralHadronEnergyFraction()>0.02){
     return true;
   }
   else  
