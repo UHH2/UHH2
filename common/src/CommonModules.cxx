@@ -19,7 +19,7 @@ void CommonModules::fail_if_init() const{
 
 
 CommonModules::CommonModules(){
-  working_point = JetPFID::WP_LOOSE;
+  working_point = JetPFID::WP_TIGHT;
 }
 
 
