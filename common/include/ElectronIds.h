@@ -94,6 +94,16 @@ bool ElectronID_Spring16_medium_noIso(const Electron&, const uhh2::Event&);
 bool ElectronID_Spring16_tight       (const Electron&, const uhh2::Event&);
 bool ElectronID_Spring16_tight_noIso (const Electron&, const uhh2::Event&);
 
+// --- Cut-Based ID: Fall17
+bool ElectronID_Fall17_veto        (const Electron&, const uhh2::Event&);
+bool ElectronID_Fall17_veto_noIso  (const Electron&, const uhh2::Event&);
+bool ElectronID_Fall17_loose       (const Electron&, const uhh2::Event&);
+bool ElectronID_Fall17_loose_noIso (const Electron&, const uhh2::Event&);
+bool ElectronID_Fall17_medium      (const Electron&, const uhh2::Event&);
+bool ElectronID_Fall17_medium_noIso(const Electron&, const uhh2::Event&);
+bool ElectronID_Fall17_tight       (const Electron&, const uhh2::Event&);
+bool ElectronID_Fall17_tight_noIso (const Electron&, const uhh2::Event&);
+
 // --- Cut-Based ID: look-up table for ID working points
 // REF https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
 namespace ElectronID {
@@ -248,6 +258,45 @@ namespace ElectronID {
      },
     },
   /*******************/
+
+
+    /** Fall17 according to https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2#Offline_selection_criteria **/
+    {"Fall 17", {
+ 
+	{"barrel", {
+                          /* Veto   , Loose   , Medium  , Tight   */
+	{"sigmaIetaIeta" , { 0.0128 , 0.0105  , 0.0105  , 0.0104  }},
+        {"|dEtaIn|"      , { 0.00523, 0.00387 , 0.00365 , 0.00353 }},
+        {"|dPhiIn|"      , { 0.159  , 0.0716  , 0.0588  , 0.0499  }},
+        {"C0"            , { 0.05   , 0.05    , 0.026   , 0.026   }},
+        {"relIsoEA"      , { 0.168  , 0.133   , 0.0718  , 0.0361  }},
+        {"|ooEmooP|"     , { 0.193  , 0.129   , 0.0327  , 0.0278  }},
+        {"|d0|"          , { float(uhh2::infinity), float(uhh2::infinity)  , float(uhh2::infinity)  , float(uhh2::infinity)     }},
+        {"|dz|"          , { float(uhh2::infinity) , float(uhh2::infinity)    , float(uhh2::infinity)   , float(uhh2::infinity) }},
+        {"missingHits"   , { 2      , 1       , 1       , 1       }},
+        {"passConvVeto"  , { 1      , 1       , 1       , 1       }},
+       },
+      },
+      
+	{"endcap", {
+                          /* Veto   , Loose   , Medium  , Tight   */
+	{"sigmaIetaIeta" , { 0.0445  , 0.0356 , 0.0309  , 0.0305  }},
+	{"|dEtaIn|"      , { 0.00984 , 0.0072 , 0.00625 , 0.00567 }},
+	{"|dPhiIn|"      , { 0.157   , 0.147  , 0.0355  , 0.0165  }},
+        {"C0"            , { 0.05    , 0.0414 , 0.026   , 0.026   }},
+	{"relIsoEA"      , { 0.185   , 0.146  , 0.143   , 0.094   }},
+	{"|ooEmooP|"     , { 0.0962  , 0.0875 , 0.0335  , 0.0158  }},
+        {"|d0|"          , { float(uhh2::infinity)  , float(uhh2::infinity)   , float(uhh2::infinity)  , float(uhh2::infinity)  }},
+        {"|dz|"          , { float(uhh2::infinity)  , float(uhh2::infinity)   , float(uhh2::infinity)   , float(uhh2::infinity) }},
+        {"missingHits"   , { 3       , 1      , 1       , 1       }},
+        {"passConvVeto"  , { 1       , 1      , 1       , 1       }},
+       },
+
+      },
+     },
+    },
+  /*******************/
+
   };
 
 }
