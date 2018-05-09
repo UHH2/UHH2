@@ -30,7 +30,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/StreamID.h"
 
-#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
+#include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 
 #include "fastjet/ClusterSequence.hh"
@@ -80,7 +80,7 @@ class XConeProducer : public edm::global::EDProducer<> {
 // constructors and destructor
 //
 XConeProducer::XConeProducer(const edm::ParameterSet& iConfig):
-  src_token_(consumes<edm::View<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("src"))),
+  src_token_(consumes<edm::View<reco::Candidate>>(iConfig.getParameter<edm::InputTag>("src"))),
   subjetCollName_("SubJets")
 {
   // We make both the fat jets and subjets, and we must store them as separate collections
@@ -121,7 +121,7 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
   seeds[1] = std::max(runNum_uint, minSeed_ + 5) + 5 * evNum_uint;
   gas.set_random_status(seeds);
 
-  edm::Handle<edm::View<pat::PackedCandidate>> particles;
+  edm::Handle<edm::View<reco::Candidate>> particles;
   iEvent.getByToken(src_token_, particles);
 
   if (particles->size() < 15) {
