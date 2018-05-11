@@ -205,7 +205,7 @@ namespace JERFiles{
     extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_AK4PFchs_DATA;
   
-    // extern const std::vector<std::string> Fall17_17Nov2017_V6_L123_AK4PFchs_MC;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_L123_AK4PFchs_MC;
   
     extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L1RC_AK4PFchs_DATA;
@@ -213,7 +213,7 @@ namespace JERFiles{
     extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L1RC_AK4PFchs_DATA;
   
-    // extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK4PFchs_MC;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK4PFchs_MC;
 
   
       //Fall17_17Nov2017_V7
@@ -262,7 +262,7 @@ public:
   explicit JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::vector<std::string> & filenames_L1RC = {});
     
     virtual bool process(uhh2::Event & event) override;
-    virtual bool correct_met(uhh2::Event & event, const bool & isCHSmet = false);
+  virtual bool correct_met(uhh2::Event & event, const bool & isCHSmet = false, double pt_thresh = 15., double eta_thresh_low=0., double eta_thresh_high=5.5);
     
     virtual ~JetCorrector();
     
