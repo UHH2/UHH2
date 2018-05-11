@@ -828,12 +828,12 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_F_L1RC_AK4PFchs_DAT
 
 
 //2017-------------------------- 17Nov2017  V6
-// const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L123_AK4PFchs_MC = {
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1FastJet_AK4PFchs.txt",
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L2Relative_AK4PFchs.txt",
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L3Absolute_AK4PFchs.txt",
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L123_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L3Absolute_AK4PFchs.txt",
 
-// };
+};
 
 
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L123_noRes_AK4PFchs_DATA = {
@@ -897,9 +897,9 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L123_AK4PFchs_DAT
   "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2L3Residual_AK4PFchs.txt",
 };
 
-// const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L1RC_AK4PFchs_MC = {
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1RC_AK4PFchs.txt",
-// };
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L1RC_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1RC_AK4PFchs.txt",
+};
 
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1RC_AK4PFchs.txt",
@@ -1090,12 +1090,15 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
   //propagate to MET
   //apply type1 MET correction to RAW MET
   //NB: jet with substracted muon Pt should be used
-  void correct_MET(const Event & event, const bool & do_L1corr){
+  void correct_MET(const Event & event, const bool & do_L1corr, double pt_thresh, double eta_thresh_low, double eta_thresh_high){
     //we start from raw MET
     LorentzVector metv4= event.met->uncorr_v4();
     for(auto & jet : *event.jets){
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
-      if(jet.v4().Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){
+      bool to_be_corrected = jet.v4().Pt() > 15.;
+      to_be_corrected = to_be_corrected && ( fabs(jet.v4().Eta())<eta_thresh_low || fabs(jet.v4().Eta())>eta_thresh_high || jet.v4().Pt() > pt_thresh );
+      to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
+      if(to_be_corrected){
 	auto factor_raw = jet.JEC_factor_raw();
 	auto L1factor_raw = jet.JEC_L1factor_raw();
 
@@ -1116,7 +1119,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 
   //propagate JEC to chsMET
   //Attention: the corrected values stored as standart MET values
-  void correct_MET(const Event & event, FactorizedJetCorrector & corrector_L1RC){
+  void correct_MET(const Event & event, FactorizedJetCorrector & corrector_L1RC, double pt_thresh, double eta_thresh_low, double eta_thresh_high){
 
   //we start from raw CHS MET
   LorentzVector metv4= LorentzVector(0,0,0,0);
@@ -1124,7 +1127,10 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
   metv4.SetPhi(TMath::ATan2(event.met->rawCHS_py(),event.met->rawCHS_px()));
   for(auto & jet : *event.jets){
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
-      if(jet.v4().Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){
+      bool to_be_corrected = jet.v4().Pt() > 15.;
+      to_be_corrected = to_be_corrected && ( fabs(jet.v4().Eta())<eta_thresh_low || fabs(jet.v4().Eta())>eta_thresh_high || jet.v4().Pt() > pt_thresh );
+      to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
+      if(to_be_corrected){
 	auto factor_raw = jet.JEC_factor_raw();
 
 	corrector_L1RC.setJetPt(jet.pt() * factor_raw);
@@ -1227,15 +1233,15 @@ bool JetCorrector::process(uhh2::Event & event){
     return true;
 }
 
-bool JetCorrector::correct_met(uhh2::Event & event, const bool & isCHSmet){
+bool JetCorrector::correct_met(uhh2::Event & event, const bool & isCHSmet, double pt_thresh, double eta_thresh_low, double eta_thresh_high){
   assert(event.jets);
   if(!isCHSmet){ //for standart MET collection (most of the case) proceed with standart correction
   //propagate jet corrections to MET
     bool correct_with_chs = used_ak4chs || metprop_possible_ak8chs;//for CHS use L1, for PUPPI L1 is not used
-    correct_MET(event, correct_with_chs); 
+    correct_MET(event, correct_with_chs, pt_thresh, eta_thresh_low,  eta_thresh_high); 
   }
   else{
-    correct_MET(event, *corrector_L1RC); 
+    correct_MET(event, *corrector_L1RC, pt_thresh, eta_thresh_low,  eta_thresh_high); 
   }
 
   return true;
