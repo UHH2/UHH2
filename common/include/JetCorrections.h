@@ -5,6 +5,9 @@
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/JetMETObjects/interface/JetCorrectionUncertainty.h"
 
+#include "TFile.h"
+#include "TF1.h"
+
 class FactorizedJetCorrector;
 
 /// namespace to define some useful filename constants to be used for jet energy corrections
@@ -537,5 +540,27 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 
   return;
 }
+
+
+/**
+ * Calculate the softdrop mass using the subjets, and can optionally apply corrections
+ * See https://twiki.cern.ch/twiki/bin/view/CMS/JetWtagging
+ */
+class SoftDropMassCalculator: public uhh2::AnalysisModule {
+public:
+    explicit SoftDropMassCalculator(uhh2::Context & ctx,
+                                    bool applyCorrections=true,
+                                    const std::string & puppiCorrFilename="",
+                                    const std::string & jetCollName="topjets");
+    virtual ~SoftDropMassCalculator() {};
+    virtual bool process(uhh2::Event&) override;
+    float calcSDmass(const TopJet & jet);
+    float getPUPPIweight(float pt, float eta);
+private:
+    uhh2::Event::Handle<std::vector<TopJet>> h_topjets_;
+    bool applyCorrections_;
+    std::unique_ptr<TFile> puppiCorrFile;
+    std::unique_ptr<TF1> puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for;
+};
 
 //// -----------------------------------------------------------------
