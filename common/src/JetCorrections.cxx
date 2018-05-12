@@ -993,7 +993,7 @@ float SoftDropMassCalculator::calcSDmass(const TopJet & jet) {
     // Important, must use UNCORRECTED subjet
     puppi_softdrop += (subjet.JEC_factor_raw() * subjet.v4());
   }
-  return puppi_softdrop.M();
+  return inv_mass_safe(puppi_softdrop);
 }
 
 float SoftDropMassCalculator::getPUPPIweight(float pt, float eta) {
