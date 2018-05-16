@@ -974,15 +974,23 @@ process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
                                     )
 task.add(process.hotvrPuppi)
 
-process.hotvrPfCand = cms.EDProducer("HOTVRProducer",
-                                     src=cms.InputTag("packedPFCandidates")
-                                     )
-task.add(process.hotvrPfCand)
+process.hotvrCHS = cms.EDProducer("HOTVRProducer",
+    src=cms.InputTag("chs")
+)
+task.add(process.hotvrCHS)
 
-process.xconePfCand = cms.EDProducer("XConeProducer",
-                                     src=cms.InputTag("packedPFCandidates")
-                                     )
-task.add(process.xconePfCand)
+usePseudoXCone = cms.bool(True)
+process.xconePuppi = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("puppi"),
+    usePseudoXCone=usePseudoXCone
+)
+task.add(process.xconePuppi)
+
+process.xconeCHS = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("chs"),
+    usePseudoXCone=usePseudoXCone
+)
+task.add(process.xconeCHS)
 
 
 # LEPTON cfg
