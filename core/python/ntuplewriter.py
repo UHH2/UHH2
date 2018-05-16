@@ -521,20 +521,25 @@ addJetCollection(process,labelName = 'AK8PFCHS', jetSource = cms.InputTag('ak8CH
 )
 
 # HOTVR & XCONE
+usePseudoXCone = cms.bool(True)
 process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
-    src=cms.InputTag("puppi")
+    src=cms.InputTag("puppi"),
+    usePseudoXCone=usePseudoXCone
 )
 
 process.hotvrCHS = cms.EDProducer("HOTVRProducer",
-    src=cms.InputTag("chs")
+    src=cms.InputTag("chs"),
+    usePseudoXCone=usePseudoXCone
 )
 
 process.xconePuppi = cms.EDProducer("XConeProducer",
-    src=cms.InputTag("puppi")
+    src=cms.InputTag("puppi"),
+    usePseudoXCone=usePseudoXCone
 )
 
 process.xconeCHS = cms.EDProducer("XConeProducer",
-    src=cms.InputTag("chs")
+    src=cms.InputTag("chs"),
+    usePseudoXCone=usePseudoXCone
 )
 
 ### MET
