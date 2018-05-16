@@ -86,3 +86,36 @@ private:
 
 UHH2_REGISTER_ANALYSIS_MODULE(TestJERSmear)
 
+
+class TestSDMassCalc: public uhh2::AnalysisModule {
+public:
+    explicit TestSDMassCalc(Context & ctx) {
+        massCalcUncorr.reset(new SoftDropMassCalculator(ctx, false, ""));
+        massCalcCorr.reset(new SoftDropMassCalculator(ctx, true, "common/data/puppiCorr.root"));
+    }
+    void print_topjets(const std::vector<TopJet> & topjets) {
+        for (auto & jet : topjets){
+            cout << "pt = " << jet.pt() << " eta = " << jet.eta() << " # subjets = " << jet.subjets().size() << " SD mass = " << jet.softdropmass() << endl;
+        }
+    }
+
+    virtual bool process(Event & e) override {
+        cout << "TopJets existing mSD:" << endl;
+        print_topjets(*e.topjets);
+        massCalcUncorr->process(e);
+        cout << "TopJets new mSD, no corrections:" << endl;
+        print_topjets(*e.topjets);
+        massCalcCorr->process(e);
+        cout << "TopJets new mSD, with corrections:" << endl;
+        print_topjets(*e.topjets);
+
+        return true;
+    }
+    
+private:
+    std::unique_ptr<AnalysisModule> massCalcUncorr, massCalcCorr;
+};
+
+
+UHH2_REGISTER_ANALYSIS_MODULE(TestSDMassCalc)
+
