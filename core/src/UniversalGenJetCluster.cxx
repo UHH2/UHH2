@@ -69,7 +69,7 @@ void UniversalGenJetCluster::ClusterXCone23()
 {
   // Run first clustering step (N=2, R=1.2) 
   std::vector<PseudoJet> fatjets;
-  XConePlugin plugin_xcone(2, 1.2, 2.0);
+  PseudoXConePlugin plugin_xcone(2, 1.2, 2.0);
   JetDefinition jet_def_xcone(&plugin_xcone);
   ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
@@ -112,13 +112,13 @@ void UniversalGenJetCluster::ClusterXCone23()
 
   if(jet1_is_had){
     // subjets from fat jet 1 (hadronic)
-    XConePlugin plugin_xcone_sub1(3, 0.4, 2.0);
+    PseudoXConePlugin plugin_xcone_sub1(3, 0.4, 2.0);
     JetDefinition jet_def_sub1(&plugin_xcone_sub1);
     ClusterSequence clust_seq_sub1(particle_in_fat1, jet_def_sub1);
     subjets_1 = sorted_by_pt(clust_seq_sub1.inclusive_jets(0));
 
     // subjets from fat jet 2 (leptonic)
-    XConePlugin plugin_xcone_sub2(2, 0.4, 2.0);
+    PseudoXConePlugin plugin_xcone_sub2(2, 0.4, 2.0);
     JetDefinition jet_def_sub2(&plugin_xcone_sub2);
     ClusterSequence clust_seq_sub2(particle_in_fat2, jet_def_sub2);
     subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
@@ -126,13 +126,13 @@ void UniversalGenJetCluster::ClusterXCone23()
   }
   if(!jet1_is_had){
     // subjets from fat jet 1 (leptonic)
-    XConePlugin plugin_xcone_sub1(2, 0.4, 2.0);
+    PseudoXConePlugin plugin_xcone_sub1(2, 0.4, 2.0);
     JetDefinition jet_def_sub1(&plugin_xcone_sub1);
     ClusterSequence clust_seq_sub1(particle_in_fat1, jet_def_sub1);
     subjets_1 = sorted_by_pt(clust_seq_sub1.inclusive_jets(0));
 
     // subjets from fat jet 2 (hadronic)
-    XConePlugin plugin_xcone_sub2(3, 0.4, 2.0);
+    PseudoXConePlugin plugin_xcone_sub2(3, 0.4, 2.0);
     JetDefinition jet_def_sub2(&plugin_xcone_sub2);
     ClusterSequence clust_seq_sub2(particle_in_fat2, jet_def_sub2);
     subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
@@ -161,7 +161,7 @@ void UniversalGenJetCluster::ClusterXCone33()
 {
   // Run first clustering step (N=2, R=1.2) 
   vector<PseudoJet> fatjets;
-  XConePlugin plugin_xcone(2, 1.2, 2.0);
+  PseudoXConePlugin plugin_xcone(2, 1.2, 2.0);
   JetDefinition jet_def_xcone(&plugin_xcone);
   ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
@@ -193,13 +193,13 @@ void UniversalGenJetCluster::ClusterXCone33()
   vector<PseudoJet> subjets_1, subjets_2;
 
   // subjets from fat jet 1 
-  XConePlugin plugin_xcone_sub1(3, 0.4, 2.0);
+  PseudoXConePlugin plugin_xcone_sub1(3, 0.4, 2.0);
   JetDefinition jet_def_sub1(&plugin_xcone_sub1);
   ClusterSequence clust_seq_sub1(particle_in_fat1, jet_def_sub1);
   subjets_1 = sorted_by_pt(clust_seq_sub1.inclusive_jets(0));
 
   // subjets from fat jet 2 
-  XConePlugin plugin_xcone_sub2(3, 0.4, 2.0);
+  PseudoXConePlugin plugin_xcone_sub2(3, 0.4, 2.0);
   JetDefinition jet_def_sub2(&plugin_xcone_sub2);
   ClusterSequence clust_seq_sub2(particle_in_fat2, jet_def_sub2);
   subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));

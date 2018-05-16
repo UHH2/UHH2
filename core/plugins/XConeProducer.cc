@@ -151,7 +151,7 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // Run first clustering step (N=2, R=1.2)
   vector<PseudoJet> fatjets;
-  XConePlugin plugin_xcone(2, 1.2, 2.0);
+  PseudoXConePlugin plugin_xcone(2, 1.2, 2.0);
   double ghost_maxrap = 4.0;      // maxiumum y of ghost particles
   AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
   JetDefinition jet_def_xcone(&plugin_xcone);
@@ -189,13 +189,13 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   vector<PseudoJet> subjets_1, subjets_2;
 
   // subjets from fat jet 1
-  XConePlugin plugin_xcone_sub1(3, 0.4, 2.0);
+  PseudoXConePlugin plugin_xcone_sub1(3, 0.4, 2.0);
   JetDefinition jet_def_sub1(&plugin_xcone_sub1);
   ClusterSequenceArea clust_seq_sub1(particle_in_fat1, jet_def_sub1, area_def);
   subjets_1 = sorted_by_pt(clust_seq_sub1.inclusive_jets(0));
 
   //subjets from fat jet 2
-  XConePlugin plugin_xcone_sub2(3, 0.4, 2.0);
+  PseudoXConePlugin plugin_xcone_sub2(3, 0.4, 2.0);
   JetDefinition jet_def_sub2(&plugin_xcone_sub2);
   ClusterSequenceArea clust_seq_sub2(particle_in_fat2, jet_def_sub2, area_def);
   subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
