@@ -198,22 +198,74 @@ namespace JERFiles{
     extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_noRes_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_noRes_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_noRes_AK4PFchs_DATA;
-  
     extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_AK4PFchs_DATA;
-  
     extern const std::vector<std::string> Fall17_17Nov2017_V6_L123_AK4PFchs_MC;
-  
     extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L1RC_AK4PFchs_DATA;
-  
     extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK4PFchs_MC;
+
+
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_noRes_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_noRes_AK4PFPuppi_DATA;  
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_noRes_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_noRes_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_noRes_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_L123_AK4PFPuppi_MC;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L1RC_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L1RC_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L1RC_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L1RC_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L1RC_AK4PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK4PFPuppi_MC;
+
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_noRes_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_noRes_AK8PFchs_DATA;  
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_noRes_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_noRes_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_noRes_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_L123_AK8PFchs_MC;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L1RC_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L1RC_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L1RC_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L1RC_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L1RC_AK8PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK8PFchs_MC;
+
+
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_noRes_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_noRes_AK8PFPuppi_DATA;  
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_noRes_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_noRes_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_noRes_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_L123_AK8PFPuppi_MC;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L1RC_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L1RC_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L1RC_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L1RC_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L1RC_AK8PFPuppi_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK8PFPuppi_MC;
 
   
       //Fall17_17Nov2017_V7
@@ -262,7 +314,7 @@ public:
   explicit JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::vector<std::string> & filenames_L1RC = {});
     
     virtual bool process(uhh2::Event & event) override;
-  virtual bool correct_met(uhh2::Event & event, const bool & isCHSmet = false, double pt_thresh = 15., double eta_thresh_low=0., double eta_thresh_high=5.5);
+    virtual bool correct_met(uhh2::Event & event, const bool & isCHSmet = false);
     
     virtual ~JetCorrector();
     
@@ -454,6 +506,7 @@ namespace JERSmearing {
 
   extern const SFtype1 SF_13TeV_2016;
   extern const SFtype1 SF_13TeV_2016_03Feb2017;
+  extern const SFtype1 SF_13TeV_Summer16_25nsV1;
 }
 
 
@@ -471,7 +524,7 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
  public:
   explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets",
-                                       const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016, const TString ResolutionFileName="Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt");
+                                       const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_Summer16_25nsV1, const TString ResolutionFileName="Fall17_25nsV1_MC_PtResolution_AK4PFchs.txt");
   virtual ~GenericJetResolutionSmearer() {m_resfile.close();}
 
   virtual bool process(uhh2::Event&) override;
