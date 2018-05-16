@@ -61,10 +61,12 @@ class XConeProducer : public edm::global::EDProducer<> {
     virtual void produce(edm::StreamID, edm::Event&, const edm::EventSetup&) const override;
 
     virtual pat::Jet createPatJet(const fastjet::PseudoJet &) const;
+    virtual void initPlugin(std::unique_ptr<NjettinessPlugin> & ptr, int N, double R0, double beta, bool usePseudoXCone) const;
 
     // ----------member data ---------------------------
     edm::EDGetToken src_token_;
     const std::string subjetCollName_;
+    const bool usePseudoXCone_;
 };
 
 //
@@ -81,7 +83,8 @@ class XConeProducer : public edm::global::EDProducer<> {
 //
 XConeProducer::XConeProducer(const edm::ParameterSet& iConfig):
   src_token_(consumes<edm::View<reco::Candidate>>(iConfig.getParameter<edm::InputTag>("src"))),
-  subjetCollName_("SubJets")
+  subjetCollName_("SubJets"),
+  usePseudoXCone_(iConfig.getParameter<bool>("usePseudoXCone"))
 {
   // We make both the fat jets and subjets, and we must store them as separate collections
   produces<pat::JetCollection>();
@@ -101,6 +104,19 @@ XConeProducer::~XConeProducer()
 //
 // member functions
 //
+
+// Setup either XConePlugin or PseudoXConePlugin and assign to ptr
+// Use NjettinessPlugin as it is the base class of both XConePlugin and PseudoXConePlugin
+void
+XConeProducer::initPlugin(std::unique_ptr<NjettinessPlugin> & ptr, int N, double R0, double beta, bool usePseudoXCone) const
+{
+  if (usePseudoXCone) {
+    ptr.reset(new PseudoXConePlugin(N, R0, beta));
+  } else {
+    ptr.reset(new XConePlugin(N, R0, beta));
+  }
+}
+
 
 // ------------ method called to produce the data  ------------
 void
@@ -149,10 +165,11 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
 
   // Run first clustering step (N=2, R=1.2)
   vector<PseudoJet> fatjets;
-  XConePlugin plugin_xcone(2, 1.2, 2.0);
+  std::unique_ptr<NjettinessPlugin> plugin_xcone;
+  initPlugin(plugin_xcone, 2, 1.2, 2.0, usePseudoXCone_);
   double ghost_maxrap = 4.0;      // maxiumum y of ghost particles
   AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
-  JetDefinition jet_def_xcone(&plugin_xcone);
+  JetDefinition jet_def_xcone(plugin_xcone.get());
   ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
 
@@ -187,14 +204,16 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
   vector<PseudoJet> subjets_1, subjets_2;
 
   // subjets from fat jet 1
-  XConePlugin plugin_xcone_sub1(3, 0.4, 2.0);
-  JetDefinition jet_def_sub1(&plugin_xcone_sub1);
+  std::unique_ptr<NjettinessPlugin> plugin_xcone_sub1;
+  initPlugin(plugin_xcone_sub1, 3, 0.4, 2.0, usePseudoXCone_);
+  JetDefinition jet_def_sub1(plugin_xcone_sub1.get());
   ClusterSequenceArea clust_seq_sub1(particle_in_fat1, jet_def_sub1, area_def);
   subjets_1 = sorted_by_pt(clust_seq_sub1.inclusive_jets(0));
 
   //subjets from fat jet 2
-  XConePlugin plugin_xcone_sub2(3, 0.4, 2.0);
-  JetDefinition jet_def_sub2(&plugin_xcone_sub2);
+  std::unique_ptr<NjettinessPlugin> plugin_xcone_sub2;
+  initPlugin(plugin_xcone_sub2, 3, 0.4, 2.0, usePseudoXCone_);
+  JetDefinition jet_def_sub2(plugin_xcone_sub2.get());
   ClusterSequenceArea clust_seq_sub2(particle_in_fat2, jet_def_sub2, area_def);
   subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
 

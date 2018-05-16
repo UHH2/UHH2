@@ -986,13 +986,16 @@ process.hotvrCHS = cms.EDProducer("HOTVRProducer",
 )
 task.add(process.hotvrCHS)
 
+usePseudoXCone = cms.bool(True)
 process.xconePuppi = cms.EDProducer("XConeProducer",
-    src=cms.InputTag("puppi")
+    src=cms.InputTag("puppi"),
+    usePseudoXCone=usePseudoXCone
 )
 task.add(process.xconePuppi)
 
 process.xconeCHS = cms.EDProducer("XConeProducer",
-    src=cms.InputTag("chs")
+    src=cms.InputTag("chs"),
+    usePseudoXCone=usePseudoXCone
 )
 task.add(process.xconeCHS)
 
