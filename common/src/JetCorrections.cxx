@@ -1545,3 +1545,55 @@ bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
 }
 
 //// -----------------------------------------------------------------
+
+SoftDropMassCalculator::SoftDropMassCalculator(uhh2::Context & ctx, bool applyCorrections, const std::string & puppiCorrFilename, const std::string & jetCollName):
+applyCorrections_(applyCorrections)
+{
+  h_topjets_ = ctx.get_handle<std::vector<TopJet>>(jetCollName);
+  if (applyCorrections_) {
+    puppiCorrFile.reset(TFile::Open(locate_file(puppiCorrFilename).c_str()));
+    puppisd_corrGEN.reset((TF1*) puppiCorrFile->Get("puppiJECcorr_gen"));
+    puppisd_corrRECO_cen.reset((TF1*) puppiCorrFile->Get("puppiJECcorr_reco_0eta1v3"));
+    puppisd_corrRECO_for.reset((TF1*) puppiCorrFile->Get("puppiJECcorr_reco_1v3eta2v5"));
+  }
+}
+
+bool SoftDropMassCalculator::process(uhh2::Event & evt) {
+  std::vector<TopJet>* topjets(0);
+
+  if (evt.is_valid(h_topjets_)) topjets = &evt.get(h_topjets_);
+  else throw std::runtime_error("SoftDropMassCalculator::process -- invalid handle to topjets");
+
+  for (auto & jet : *topjets) {
+    float puppi_softdrop_mass = calcSDmass(jet);
+    if (applyCorrections_) { puppi_softdrop_mass *= getPUPPIweight(jet.pt(), jet.eta()); }
+    jet.set_softdropmass(puppi_softdrop_mass);
+  }
+
+  return true;
+}
+
+float SoftDropMassCalculator::calcSDmass(const TopJet & jet) {
+  // Calculate uncorrected SD mass from subjets
+  LorentzVector puppi_softdrop;
+  for (auto & subjet : jet.subjets()) {
+    // Important, must use UNCORRECTED subjet
+    puppi_softdrop += (subjet.JEC_factor_raw() * subjet.v4());
+  }
+  return inv_mass_safe(puppi_softdrop);
+}
+
+float SoftDropMassCalculator::getPUPPIweight(float pt, float eta) {
+  // TODO: add check /safety if outside x range
+  // Calculate correction factor for SD mass
+  // The final correction is a combination of 2 factors:
+  // one that corrects reco -> gen,
+  // and one that corrects the generator W mass to its PDG value.
+  //
+  // pt and eta shold be either from CHS AK8 jets or PUPPI
+  // AK8 jets with full JEC applied,
+  // but not the PUPPI softdrop AK8 jet pt and eta
+  float genCorr = puppisd_corrGEN->Eval(pt);
+  float recoCorr = (fabs(eta) <= 1.3) ? puppisd_corrRECO_cen->Eval(pt) : puppisd_corrRECO_for->Eval(pt);
+  return genCorr * recoCorr;
+}
