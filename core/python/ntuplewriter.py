@@ -524,12 +524,16 @@ process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
     src=cms.InputTag("puppi")
 )
 
-process.hotvrPfCand = cms.EDProducer("HOTVRProducer",
-    src=cms.InputTag("packedPFCandidates")
+process.hotvrCHS = cms.EDProducer("HOTVRProducer",
+    src=cms.InputTag("chs")
 )
 
-process.xconePfCand = cms.EDProducer("XConeProducer",
-    src=cms.InputTag("packedPFCandidates")
+process.xconePuppi = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("puppi")
+)
+
+process.xconeCHS = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("chs")
 )
 
 ### MET
@@ -876,11 +880,12 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doGenHOTVR = cms.bool(not useData),
         doGenXCone = cms.bool(not useData),    
         HOTVR_sources=cms.VInputTag(
-            cms.InputTag("hotvrPfCand"),
+            cms.InputTag("hotvrCHS"),
             cms.InputTag("hotvrPuppi")
         ),
         XCone_sources=cms.VInputTag(
-            cms.InputTag("xconePfCand")
+            cms.InputTag("xconeCHS"),
+            cms.InputTag("xconePuppi")
         )
 )
 
