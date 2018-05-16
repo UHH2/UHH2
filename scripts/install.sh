@@ -20,12 +20,12 @@ git-cms-addpkg RecoBTag
 git-cms-addpkg PhysicsTools
 
 sed -i "s|use_common_bge_for_rho_and_rhom|set_common_bge_for_rho_and_rhom|g" RecoJets/JetProducers/plugins/FastjetJetProducer.cc
-sed -i "s|1.020|1.025|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml
-sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet-contrib/1.025|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc530/fastjet-install|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml
-sed -i "s|1.020|1.025|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib-archive.xml
-sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet-contrib/1.025|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc530/fastjet-install|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib-archive.xml
+sed -i "s|1.020|1.033|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml
+sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet-contrib/1.033|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc530_fj321_fjc1033/fastjet-install|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml
+sed -i "s|1.020|1.033|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib-archive.xml
+sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet-contrib/1.033|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc530_fj321_fjc1033/fastjet-install|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib-archive.xml
 sed -i "s|3.1.0|3.2.1|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet.xml
-sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet/3.2.1|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc530/fastjet-install|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet.xml
+sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet/3.2.1|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc530_fj321_fjc1033/fastjet-install|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet.xml
 scram b clean
 scram b -j 20
 cd $CMSSW_BASE/external
@@ -34,6 +34,6 @@ git clone https://github.com/ikrav/RecoEgamma-ElectronIdentification.git data/Re
 cd data/RecoEgamma/ElectronIdentification/data
 git checkout egm_id_80X_v1
 cd $CMSSW_BASE/src
-git clone -b RunII_80X_v3 https://github.com/UHH2/UHH2.git
+git clone -b RunII_80X_v5 https://github.com/UHH2/UHH2.git
 cd UHH2
 git clone https://github.com/cms-jet/JECDatabase.git
