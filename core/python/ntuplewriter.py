@@ -266,6 +266,7 @@ process.load('CommonTools/PileupAlgos/Puppi_cff')
 process.puppi.candName = cms.InputTag('packedPFCandidates')
 process.puppi.vertexName = cms.InputTag('offlineSlimmedPrimaryVertices')
 process.puppi.clonePackedCands   = cms.bool(True)
+process.puppi.useExistingWeights   = cms.bool(True)
 
 process.ca15PuppiJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('puppi'), jetPtMin = fatjet_ptmin, jetAlgorithm = cms.string("CambridgeAachen"), rParam = 1.5, R0 = 1.5, zcut = cms.double(0.2), beta = cms.double(1.0))
 
