@@ -324,12 +324,12 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
     src_hepTopTagPuppi_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag("hepTopTagPuppi"));
 
     pruned_src = cfg.pruned_src;
-    if(pruned_src.find("Mass")==string::npos){
+    if(pruned_src.find("Mass")==string::npos && pruned_src != ""){
       src_pruned_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.pruned_src);
     }
 
     softdrop_src = cfg.softdrop_src;
-    if(softdrop_src.find("Mass")==string::npos){
+    if(softdrop_src.find("Mass")==string::npos && softdrop_src != ""){
       src_softdrop_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.softdrop_src);
     }
 
@@ -604,7 +604,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
           topjet.set_prunedmass(pat_topjet.userFloat(pruned_src));
         }
-        else{//pruned mass set through matching with pruned-jet collection
+        else if (pruned_src != ""){//pruned mass set through matching with pruned-jet collection
 
           edm::Handle<pat::JetCollection> pruned_pat_topjets;
           event.getByToken(src_pruned_token, pruned_pat_topjets);
@@ -636,8 +636,29 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
           topjet.set_softdropmass(pat_topjet.userFloat(softdrop_src));
         }
-        else {//softdrop mass set through matching with softdrop-jet collection
-          /* not implemented */
+        else if (softdrop_src != ""){//softdrop mass set through matching with softdrop-jet collection
+          edm::Handle<pat::JetCollection> softdrop_pat_topjets;
+          event.getByToken(src_softdrop_token, softdrop_pat_topjets);
+          const vector<pat::Jet> & pat_softdropjets = *softdrop_pat_topjets;
+
+          //match a jet from softdrop collection
+          int i_pat_softdropjet = -1;
+          double drmin = numeric_limits<double>::infinity();
+          for (unsigned int ih = 0; ih < pat_softdropjets.size(); ih++) {
+
+            const pat::Jet & softdrop_jet = pat_softdropjets[ih];
+            auto dr = reco::deltaR(softdrop_jet, pat_topjet);
+            if(dr < drmin){
+              i_pat_softdropjet = ih;
+              drmin = dr;
+            }
+          }
+
+          if(i_pat_softdropjet >= 0 && drmin < 1.0){
+
+            const pat::Jet & softdrop_jet = pat_softdropjets[i_pat_softdropjet];
+            topjet.set_softdropmass(softdrop_jet.mass());
+          }
         }
         /*---------------------*/
 
