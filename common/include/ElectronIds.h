@@ -261,7 +261,7 @@ namespace ElectronID {
 
 
     /** Fall17 according to https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2#Offline_selection_criteria **/
-    {"Fall 17", {
+    {"Fall17", {
  
 	{"barrel", {
                           /* Veto   , Loose   , Medium  , Tight   */
