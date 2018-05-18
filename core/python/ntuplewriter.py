@@ -266,6 +266,7 @@ process.load('CommonTools/PileupAlgos/Puppi_cff')
 process.puppi.candName = cms.InputTag('packedPFCandidates')
 process.puppi.vertexName = cms.InputTag('offlineSlimmedPrimaryVertices')
 process.puppi.clonePackedCands   = cms.bool(True)
+process.puppi.useExistingWeights   = cms.bool(True)
 
 process.ca15PuppiJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(src = cms.InputTag('puppi'), jetPtMin = fatjet_ptmin, jetAlgorithm = cms.string("CambridgeAachen"), rParam = 1.5, R0 = 1.5, zcut = cms.double(0.2), beta = cms.double(1.0))
 
@@ -505,7 +506,6 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 )
 """
 
-
 # for JEC cluster AK8 jets with lower pt (compare to miniAOD)
 addJetCollection(process,labelName = 'AK8PFPUPPI', jetSource = cms.InputTag('ak8PuppiJets'), algo = 'AK', rParam=0.8, genJetCollection=cms.InputTag('slimmedGenJetsAK8'), jetCorrections = ('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),pfCandidates = cms.InputTag('packedPFCandidates'),
     pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
@@ -520,6 +520,27 @@ addJetCollection(process,labelName = 'AK8PFCHS', jetSource = cms.InputTag('ak8CH
     elSource = cms.InputTag('slimmedElectrons')
 )
 
+# HOTVR & XCONE
+usePseudoXCone = cms.bool(True)
+process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
+    src=cms.InputTag("puppi"),
+    usePseudoXCone=usePseudoXCone
+)
+
+process.hotvrCHS = cms.EDProducer("HOTVRProducer",
+    src=cms.InputTag("chs"),
+    usePseudoXCone=usePseudoXCone
+)
+
+process.xconePuppi = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("puppi"),
+    usePseudoXCone=usePseudoXCone
+)
+
+process.xconeCHS = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("chs"),
+    usePseudoXCone=usePseudoXCone
+)
 
 ### MET
 
@@ -835,7 +856,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         # *** gen stuff:
         doGenInfo = cms.bool(not useData),
         genparticle_source = cms.InputTag("prunedPrunedGenParticles"),
-        stablegenparticle_source = cms.InputTag("packedGenParticles"),
+        stablegenparticle_source = cms.InputTag("packedGenParticlesForJetsNoNu"),
         doAllGenParticles = cms.bool(False), #set to true if you want to store all gen particles, otherwise, only prunedPrunedGenParticles are stored (see above)
         doAllGenParticlesPythia8 =  cms.bool(False), #set to true if you want to store all gen particles with pythia8 (see status codes in http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
         doGenJets = cms.bool(not useData),
@@ -859,16 +880,19 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doAllPFParticles = cms.bool(False),
         pf_collection_source = cms.InputTag("packedPFCandidates"),
 
-        # # *** HOTVR & XCone stuff
+        # *** HOTVR & XCone stuff
         doHOTVR = cms.bool(True),
         doXCone = cms.bool(True),
         doGenHOTVR = cms.bool(not useData),
         doGenXCone = cms.bool(not useData),    
-         # doHOTVR = cms.bool(False),
-         # doXCone = cms.bool(False),
-         # doGenHOTVR = cms.bool(False),
-         # doGenXCone =  cms.bool(False),
-
+        HOTVR_sources=cms.VInputTag(
+            cms.InputTag("hotvrCHS"),
+            cms.InputTag("hotvrPuppi")
+        ),
+        XCone_sources=cms.VInputTag(
+            cms.InputTag("xconeCHS"),
+            cms.InputTag("xconePuppi")
+        )
 )
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
