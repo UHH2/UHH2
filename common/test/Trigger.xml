@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd"[
-<!ENTITY MC_QCD_Pt15to30  SYSTEM "../../common/datasets/MC_QCD_Pt15to30.xml">
-<!ENTITY MC_QCD_Pt50to80  SYSTEM "../../common/datasets/MC_QCD_Pt50to80.xml">
 ]>
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
-   <Library Name="libTestSUHH2common"/>
-   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="MC_QCD_Pt15to30_TestTrigger" Cacheable="True">
-	  &MC_QCD_Pt15to30;
-            <InputTree Name="AnalysisTree" /> 
-        </InputData>
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="MC_QCD_Pt50to80_TestTrigger" Cacheable="True">
-	  &MC_QCD_Pt50to80;
+    <Library Name="libTestSUHH2common"/>
+    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+        <InputData Lumi="1" NEventsMax="1" Type="MC" Version="MC_TestTrigger" Cacheable="True">
+            <In FileName="core/python/Ntuple.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" /> 
         </InputData>
             
         <UserConfig>
+            <Item Name="AnalysisModule" Value="TestTriggerLister" /> 
+        </UserConfig>
+    </Cycle>
+  
+    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+        <InputData Lumi="1" NEventsMax="1" Type="MC" Version="MC_TestTrigger" Cacheable="True">
+            <In FileName="core/python/Ntuple.root" Lumi="0.0"/> 
+            <InputTree Name="AnalysisTree" /> 
+        </InputData>
             
+        <UserConfig>
             <Item Name="AnalysisModule" Value="TestTrigger" /> 
         </UserConfig>
     </Cycle>
+
 </JobConfiguration>
