@@ -197,8 +197,20 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
     }
   }
 
-  if(particle_in_fat1.size() < 3 || particle_in_fat2.size()<3) {
-    cms::Exception("InsufficientParticles", "Not enough particles to run second XCone step");
+  uint minParticlesPerJet = 3;
+  if(particle_in_fat1.size() < minParticlesPerJet || particle_in_fat2.size() < minParticlesPerJet) {
+    edm::LogWarning("InsufficientParticles")
+      << "Not enough particles in fatjets to run second XCone step (# in jet1, jet2): "
+      << std::to_string(particle_in_fat1.size())
+      << ", " << std::to_string(particle_in_fat2.size())
+      << " - will insert empty fatjets & subjets"
+      << std::endl;
+
+    auto jetCollection = std::make_unique<pat::JetCollection>();
+    iEvent.put(std::move(jetCollection));
+    auto subjetCollection = std::make_unique<pat::JetCollection>();
+    iEvent.put(std::move(subjetCollection), subjetCollName_);
+    return;
   }
 
   // Run second clustering step (N=3, R=0.4) for each fat jet
