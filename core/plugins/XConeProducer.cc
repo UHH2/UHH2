@@ -140,14 +140,6 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
   edm::Handle<edm::View<pat::PackedCandidate>> particles;
   iEvent.getByToken(src_token_, particles);
 
-  if (particles->size() < 15) {
-    auto jetCollection = std::make_unique<pat::JetCollection>();
-    iEvent.put(std::move(jetCollection));
-    auto subjetCollection = std::make_unique<pat::JetCollection>();
-    iEvent.put(std::move(subjetCollection), subjetCollName_);
-    return;
-  }
-
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
   for (const auto & cand: *particles) {
@@ -162,6 +154,15 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
 
     _psj.push_back(PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy()));
   }
+
+  if (_psj.size() < 15) {
+    auto jetCollection = std::make_unique<pat::JetCollection>();
+    iEvent.put(std::move(jetCollection));
+    auto subjetCollection = std::make_unique<pat::JetCollection>();
+    iEvent.put(std::move(subjetCollection), subjetCollName_);
+    return;
+  }
+
 
   // Run first clustering step (N=2, R=1.2)
   vector<PseudoJet> fatjets;
