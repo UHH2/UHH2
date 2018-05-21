@@ -198,47 +198,51 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
   }
 
   uint minParticlesPerJet = 3;
-  if(particle_in_fat1.size() < minParticlesPerJet || particle_in_fat2.size() < minParticlesPerJet) {
+  bool doJet1Subjets = (particle_in_fat1.size() > minParticlesPerJet);
+  if (!doJet1Subjets) {
     edm::LogWarning("InsufficientParticles")
-      << "Not enough particles in fatjets to run second XCone step (# in jet1, jet2): "
+      << "Not enough particles in fatjet 1 to run second XCone step: "
       << std::to_string(particle_in_fat1.size())
-      << ", " << std::to_string(particle_in_fat2.size())
-      << " - will insert empty fatjets & subjets"
       << std::endl;
+  }
 
-    auto jetCollection = std::make_unique<pat::JetCollection>();
-    iEvent.put(std::move(jetCollection));
-    auto subjetCollection = std::make_unique<pat::JetCollection>();
-    iEvent.put(std::move(subjetCollection), subjetCollName_);
-    return;
+  bool doJet2Subjets = (particle_in_fat2.size() > minParticlesPerJet);
+  if (!doJet2Subjets) {
+    edm::LogWarning("InsufficientParticles")
+      << "Not enough particles in fatjet 2 to run second XCone step: "
+      << std::to_string(particle_in_fat2.size())
+      << std::endl;
   }
 
   // Run second clustering step (N=3, R=0.4) for each fat jet
   vector<PseudoJet> subjets_1, subjets_2;
 
   // subjets from fat jet 1
-  std::unique_ptr<NjettinessPlugin> plugin_xcone_sub1;
-  initPlugin(plugin_xcone_sub1, 3, 0.4, 2.0, usePseudoXCone_);
-  JetDefinition jet_def_sub1(plugin_xcone_sub1.get());
-  ClusterSequenceArea clust_seq_sub1(particle_in_fat1, jet_def_sub1, area_def);
-  subjets_1 = sorted_by_pt(clust_seq_sub1.inclusive_jets(0));
+  vector<double> subjet1_area;
+  if (doJet1Subjets) {
+    std::unique_ptr<NjettinessPlugin> plugin_xcone_sub1;
+    initPlugin(plugin_xcone_sub1, 3, 0.4, 2.0, usePseudoXCone_);
+    JetDefinition jet_def_sub1(plugin_xcone_sub1.get());
+    ClusterSequenceArea clust_seq_sub1(particle_in_fat1, jet_def_sub1, area_def);
+    subjets_1 = sorted_by_pt(clust_seq_sub1.inclusive_jets(0));
+    for (unsigned int j = 0; j < subjets_1.size(); ++j) subjet1_area.push_back(subjets_1[j].area());
+  }
 
   //subjets from fat jet 2
-  std::unique_ptr<NjettinessPlugin> plugin_xcone_sub2;
-  initPlugin(plugin_xcone_sub2, 3, 0.4, 2.0, usePseudoXCone_);
-  JetDefinition jet_def_sub2(plugin_xcone_sub2.get());
-  ClusterSequenceArea clust_seq_sub2(particle_in_fat2, jet_def_sub2, area_def);
-  subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
+  vector<double> subjet2_area;
+  if (doJet2Subjets) {
+    std::unique_ptr<NjettinessPlugin> plugin_xcone_sub2;
+    initPlugin(plugin_xcone_sub2, 3, 0.4, 2.0, usePseudoXCone_);
+    JetDefinition jet_def_sub2(plugin_xcone_sub2.get());
+    ClusterSequenceArea clust_seq_sub2(particle_in_fat2, jet_def_sub2, area_def);
+    subjets_2 = sorted_by_pt(clust_seq_sub2.inclusive_jets(0));
+    for (unsigned int k = 0; k < subjets_2.size(); ++k) subjet2_area.push_back(subjets_2[k].area());
+  }
 
   double jet1_area = 0;
   double jet2_area = 0;
   //double jet1_area = fatjets[0].area();
   //double jet2_area = fatjets[1].area();
-
-  vector<double> subjet1_area;
-  vector<double> subjet2_area;
-  for (unsigned int j = 0; j < subjets_1.size(); ++j) subjet1_area.push_back(subjets_1[j].area());
-  for (unsigned int k = 0; k < subjets_2.size(); ++k) subjet2_area.push_back(subjets_2[k].area());
 
   // pat-ify jets and subjets
   auto jetCollection = std::make_unique<pat::JetCollection>();
