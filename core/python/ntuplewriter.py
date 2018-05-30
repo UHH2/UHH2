@@ -2,8 +2,8 @@ import FWCore.ParameterSet.Config as cms
 
 #isDebug = True
 isDebug = False
-#useData = False
-useData = True
+useData = False
+#useData = True
 if useData:
     met_sources_GL =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean","slimmedMETsEGClean","slimmedMETsUncorrected")
 else:
@@ -53,7 +53,7 @@ if isDebug:
     )
 
     process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",
-    ignoreTotal = cms.untracked.int32(2),                                            
+    ignoreTotal = cms.untracked.int32(2),
     moduleMemorySummary = cms.untracked.bool(True)
     )
 
@@ -61,10 +61,12 @@ if isDebug:
 
 process.source = cms.Source("PoolSource",
   fileNames  = cms.untracked.vstring([
-            '/store/data/Run2016B/SingleElectron/MINIAOD/03Feb2017_ver2-v2/110000/028CD245-EFEA-E611-8A2B-90B11C2801E1.root'
-  ]),
+            #'/store/data/Run2016B/SingleElectron/MINIAOD/03Feb2017_ver2-v2/110000/028CD245-EFEA-E611-8A2B-90B11C2801E1.root'
+             '/store/mc/RunIISummer16MiniAODv2/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/6ADE8687-9DBE-E611-AB0F-001E677924C6.root'
+ ]),
   skipEvents = cms.untracked.uint32(0)
 )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300))
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000))
@@ -124,9 +126,9 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 #see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions for latest global tags
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 if useData:
-    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v5' 
+    process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v5'
 else:
-    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6' 
+    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
 
 
 from RecoJets.Configuration.RecoPFJets_cff import *
@@ -160,7 +162,7 @@ process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
     src = cms.InputTag("prunedTmp"),
     select = cms.vstring(
         'keep *',
-        'drop 11 <= abs(pdgId) <= 16 && numberOfMothers() == 1 && abs(mother().pdgId())==6',  
+        'drop 11 <= abs(pdgId) <= 16 && numberOfMothers() == 1 && abs(mother().pdgId())==6',
         'keep 11 <= abs(pdgId) <= 16 && numberOfMothers() == 1 && abs(mother().pdgId())==6 && mother().numberOfDaughters() > 2 && abs(mother().daughter(0).pdgId()) != 24 && abs(mother().daughter(1).pdgId()) != 24 && abs(mother().daughter(2).pdgId()) != 24',
     )
 )
@@ -190,8 +192,8 @@ process.ca15CHSJetsFiltered = ak5PFJetsFiltered.clone(
         jetPtMin = cms.double(fatjet_ptmin)
 )
 
-from RecoJets.JetProducers.AnomalousCellParameters_cfi import *  
-from RecoJets.JetProducers.PFJetParameters_cfi import *          
+from RecoJets.JetProducers.AnomalousCellParameters_cfi import *
+from RecoJets.JetProducers.PFJetParameters_cfi import *
 from RecoJets.JetProducers.CATopJetParameters_cfi import CATopJetParameters
 process.cmsTopTagCHS = cms.EDProducer(
     "CATopJetProducer",
@@ -207,7 +209,7 @@ process.cmsTopTagCHS = cms.EDProducer(
     writeCompound = cms.bool(True)
 )
 
-#process.hepTopTagCHS = process.cmsTopTagCHS.clone(  
+#process.hepTopTagCHS = process.cmsTopTagCHS.clone(
 #    rParam = cms.double(1.5),
 #    tagAlgo = cms.int32(2), #2=fastjet heptt
 #    muCut = cms.double(0.8),
@@ -215,13 +217,13 @@ process.cmsTopTagCHS = cms.EDProducer(
 #    useSubjetMass = cms.bool(False),
 #)
 
-process.hepTopTagCHS = cms.EDProducer(     
+process.hepTopTagCHS = cms.EDProducer(
         "HTTTopJetProducer",
          PFJetParameters.clone( src = cms.InputTag('chs'),
                                doAreaFastjet = cms.bool(True),
                                doRhoFastjet = cms.bool(False),
                                jetPtMin = cms.double(fatjet_ptmin)
-                               ),   
+                               ),
         AnomalousCellParameters,
         optimalR = cms.bool(True),
         algorithm = cms.int32(1),
@@ -348,13 +350,13 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         assert getattr(process, fatjets_name).jetAlgorithm.value() == 'AntiKt'
     else:
         raise RuntimeError, "cannot guess jet algo (ca/ak) from fatjets name %s" % fatjets_name
-    
+
     subjets_name = groomed_jets_name + 'Subjets' # e.g. CA8CHSPruned + Subjets
-    
+
     # add genjet producers, if requested:
     groomed_genjets_name = 'INVALID'
     ungroomed_genjets_name = 'INVALID'
-    
+
     if genjets_name is not None:
         groomed_jetproducer = getattr(process, groomed_jets_name)
         assert groomed_jetproducer.type_() in ('FastjetJetProducer', 'CATopJetProducer'), "do not know how to construct genjet collection for %s" % repr(groomed_jetproducer)
@@ -367,7 +369,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         ungroomed_genjets_name = genjets_name(fatjets_name)
         if verbose: print "Adding ungroomed genjets ", ungroomed_genjets_name
         setattr(process, ungroomed_genjets_name, ungroomed_jetproducer.clone(src = cms.InputTag('packedGenParticlesForJetsNoNu'), jetType = 'GenJet'))
-        
+
 
     # patify ungroomed jets, if not already done:
     add_ungroomed = not hasattr(process, 'patJets' + cap(fatjets_name))
@@ -382,7 +384,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
             **common_btag_parameters
         )
         getattr(process,"patJets" + cap(fatjets_name)).addTagInfos = True
-    
+
     # patify groomed fat jets, with b-tagging:
     if verbose: print "adding grommed jets patJets" + cap(groomed_jets_name)
     addJetCollection(process, labelName = groomed_jets_name, jetSource = cms.InputTag(groomed_jets_name), algo = algo, rParam = rParam,
@@ -411,7 +413,7 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
     setattr(process, 'patJets' + cap(groomed_jets_name) + 'Packed',cms.EDProducer("BoostedJetMerger",
         jetSrc=cms.InputTag("patJets" + cap(groomed_jets_name)),
         subjetSrc=cms.InputTag("patJets" + cap(subjets_name))))
-        
+
     # adapt all for b-tagging, and switch off some PAT features not supported in miniAOD:
     module_names = [subjets_name, groomed_jets_name]
     if add_ungroomed: module_names += [fatjets_name]
@@ -465,7 +467,7 @@ process.NjettinessCa15CHS = Njettiness.clone(src = cms.InputTag("ca15CHSJets"), 
 process.NjettinessCa15SoftDropCHS = Njettiness.clone(
                                                  src = cms.InputTag("ca15CHSJetsSoftDropforsub"),
                                                  Njets=cms.vuint32(1,2,3),          # compute 1-, 2-, 3- subjettiness
-                                                 # variables for measure definition : 
+                                                 # variables for measure definition :
                                                  measureDefinition = cms.uint32( 0 ), # CMS default is normalized measure
                                                  beta = cms.double(1.0),              # CMS default is 1
                                                  R0 = cms.double(1.5),                  # CMS default is jet cone size
@@ -479,7 +481,7 @@ process.NjettinessCa15SoftDropPuppi = process.NjettinessCa15SoftDropCHS.clone(sr
 process.NjettinessAk8SoftDropCHS = Njettiness.clone(
                                                  src = cms.InputTag("ak8CHSJetsSoftDropforsub"),
                                                  Njets=cms.vuint32(1,2,3),          # compute 1-, 2-, 3- subjettiness
-                                                 # variables for measure definition : 
+                                                 # variables for measure definition :
                                                  measureDefinition = cms.uint32( 0 ), # CMS default is normalized measure
                                                  beta = cms.double(1.0),              # CMS default is 1
                                                  R0 = cms.double(0.8),                  # CMS default is jet cone size
@@ -537,25 +539,35 @@ process.packedPatJetsAk8PuppiJets = cms.EDProducer("JetSubstructurePacker",
 )
 
 # HOTVR & XCONE
-usePseudoXCone = cms.bool(True)
 process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
-    src=cms.InputTag("puppi"),
-    usePseudoXCone=usePseudoXCone
+    src=cms.InputTag("puppi")
 )
 
 process.hotvrCHS = cms.EDProducer("HOTVRProducer",
-    src=cms.InputTag("chs"),
-    usePseudoXCone=usePseudoXCone
+    src=cms.InputTag("chs")
 )
 
+usePseudoXCone = cms.bool(True)
 process.xconePuppi = cms.EDProducer("XConeProducer",
     src=cms.InputTag("puppi"),
-    usePseudoXCone=usePseudoXCone
+    usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+    NJets = cms.uint32(2),          # number of fatjets
+    RJets = cms.double(1.2),        # cone radius of fatjets
+    BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+    NSubJets = cms.uint32(3),       # number of subjets in each fatjet
+    RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+    BetaSubJets = cms.double(2.0)   # conical mesure for subjets
 )
 
 process.xconeCHS = cms.EDProducer("XConeProducer",
     src=cms.InputTag("chs"),
-    usePseudoXCone=usePseudoXCone
+    usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+    NJets = cms.uint32(2),          # number of fatjets
+    RJets = cms.double(1.2),        # cone radius of fatjets
+    BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+    NSubJets = cms.uint32(3),       # number of subjets in each fatjet
+    RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+    BetaSubJets = cms.double(2.0)   # conical mesure for subjets
 )
 
 ### MET
@@ -605,7 +617,7 @@ else:
     process.patPFMetCHS.addGenMET = False
     process.slimmedMETsCHS.src = cms.InputTag("patPFMetCHS")
     del process.slimmedMETsCHS.rawUncertainties # not available
-    
+
 clean_met_(process.slimmedMETsCHS)
 addMETCollection(process, labelName="slMETsCHS", metSource="slimmedMETsCHS")
 process.slMETsCHS.addGenMET = False
@@ -747,7 +759,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #    # Note: all other settings of type string are passed to the module, e.g.:
         #    TestKey = cms.string("TestValue")
         #),
-        fileName = cms.string("Ntuple.root"), 
+        fileName = cms.string("Ntuple.root"),
         doPV = cms.bool(True),
         pv_sources = cms.vstring("offlineSlimmedPrimaryVertices"),
         doRho = cms.untracked.bool(True),
@@ -770,7 +782,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
           'cutBasedElectronHLTPreselection_Summer16_V1',
           'heepElectronID_HEEPV60',
         ),
-        #Add variables to trace possible issues with the ECAL slew rate mitigation 
+        #Add variables to trace possible issues with the ECAL slew rate mitigation
         #https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#EGM
         doEleAddVars = cms.bool(useData),
         dupECALClusters_source = cms.InputTag('particleFlowEGammaGSFixed:dupECALClusters'),
@@ -784,14 +796,14 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         tau_etamax = cms.double(999.0),
         doPhotons = cms.bool(False),
         #photon_sources = cms.vstring("selectedPatPhotons"),
-        
+
         doJets = cms.bool(True),
         #jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
    #     jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi"),
         jet_sources = cms.vstring("slimmedJets","slimmedJetsPuppi","patJetsAK8PFPUPPI","patJetsAK8PFCHS"),
         jet_ptmin = cms.double(10.0),
         jet_etamax = cms.double(999.0),
-        
+
         doMET = cms.bool(True),
         #met_sources =  cms.vstring("slimmedMETs","slimmedMETsPuppi","slMETsCHS","slimmedMETsMuEGClean"),
         met_sources =  met_sources_GL,
@@ -844,8 +856,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
         # switch off qjets for now, as it takes a long time:
         #topjet_qjets_sources = cms.vstring("QJetsCa15CHS", "QJetsCa8CHS", "QJetsCa8CHS", "QJetsCa15CHS"),
-        
-        doTrigger = cms.bool(True), 
+
+        doTrigger = cms.bool(True),
         trigger_bits = cms.InputTag("TriggerResults","",triggerpath),
         # MET filters (HBHE noise, CSC, etc.) are stored as trigger Bits in MINIAOD produced in path "PAT"/"RECO" with prefix "Flag_"
         metfilter_bits = cms.InputTag("TriggerResults","",metfilterpath),
@@ -855,7 +867,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         # Give the names of filters for that you want to store the trigger objects that have fired the respecitve trigger
         # filter paths for a given trigger can be found in https://cmsweb.cern.ch/confdb/
         # Example: for HLT_Mu45_eta2p1 the last trigger filter is hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q
-        #          for HLT_Ele35_CaloIdVT_GsfTrkIdT_PFJet150_PFJet50: relevant filters are hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter (last electron filter), hltEle35CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned and hltEle35CaloIdVTGsfTrkIdTCentralPFJet150EleCleaned (for the two jets). 
+        #          for HLT_Ele35_CaloIdVT_GsfTrkIdT_PFJet150_PFJet50: relevant filters are hltEle35CaloIdVTGsfTrkIdTGsfDphiFilter (last electron filter), hltEle35CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned and hltEle35CaloIdVTGsfTrkIdTCentralPFJet150EleCleaned (for the two jets).
         #          The  filter hltEle35CaloIdVTGsfTrkIdTCentralPFJet150EleCleaned only included redundant objects that are already included in hltEle35CaloIdVTGsfTrkIdTCentralPFJet50EleCleaned.
         #          for HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50: relevant filters are hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter (last electron filter), hltEle45CaloIdVTGsfTrkIdTDiCentralPFJet50EleCleaned
         triggerObjects_sources = cms.vstring(""),
@@ -870,7 +882,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         trigger_objects = cms.InputTag("selectedPatTrigger"),
 
 
-        
+
         # *** gen stuff:
         doGenInfo = cms.bool(not useData),
         genparticle_source = cms.InputTag("prunedPrunedGenParticles"),
@@ -881,11 +893,11 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         genjet_sources = cms.vstring("slimmedGenJets","slimmedGenJetsAK8","ca15GenJets"),
         genjet_ptmin = cms.double(10.0),
         genjet_etamax = cms.double(5.0),
-                            
+
         doGenTopJets = cms.bool(not useData),
         gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJetsSoftDrop")),
         #gentopjet_sources = cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")), #this can be used to save N-subjettiness for ungroomed GenJets
-        gentopjet_ptmin = cms.double(150.0), 
+        gentopjet_ptmin = cms.double(150.0),
         gentopjet_etamax = cms.double(5.0),
         gentopjet_tau1 = cms.VInputTag(),
         gentopjet_tau2 = cms.VInputTag(),
@@ -893,7 +905,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         #gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
         #gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
         #gentopjet_tau3 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")), #this can be used to save N-subjettiness for GenJets
-        
+
         doGenJetsWithParts = cms.bool(False),
         doAllPFParticles = cms.bool(False),
         pf_collection_source = cms.InputTag("packedPFCandidates"),
@@ -902,7 +914,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         doHOTVR = cms.bool(True),
         doXCone = cms.bool(True),
         doGenHOTVR = cms.bool(not useData),
-        doGenXCone = cms.bool(not useData),    
+        doGenXCone = cms.bool(not useData),
         HOTVR_sources=cms.VInputTag(
             cms.InputTag("hotvrCHS"),
             cms.InputTag("hotvrPuppi")
