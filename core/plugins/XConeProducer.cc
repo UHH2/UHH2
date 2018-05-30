@@ -223,12 +223,6 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
 
     // check if there are more particles then required subjets
     bool enoughParticles = (particle_in_fatjet.size() > NSubJets_);
-    if (!enoughParticles) {
-      edm::LogWarning("InsufficientParticles")
-        << "Not enough particles in fatjet 1 to run second XCone step: "
-        << std::to_string(particle_in_fatjet.size())
-        << std::endl;
-    }
 
     // Run second clustering step (subjets) for each fat jet
     vector<PseudoJet> subjets;
