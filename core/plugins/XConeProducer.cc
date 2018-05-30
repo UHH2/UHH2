@@ -69,12 +69,12 @@ class XConeProducer : public edm::stream::EDProducer<> {
     edm::EDGetToken src_token_;
     const std::string subjetCollName_;
     const bool usePseudoXCone_;
-    unsigned int NJets_;
-    double RJets_;
-    double BetaJets_;
-    unsigned int NSubJets_;
-    double RSubJets_;
-    double BetaSubJets_;
+    unsigned int NJets_ = 2;
+    double RJets_ = 1.2;
+    double BetaJets_ = 2.0;
+    unsigned int NSubJets_ = 3;
+    double RSubJets_ = 0.4;
+    double BetaSubJets_ = 2.0;
 };
 
 //

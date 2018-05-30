@@ -560,6 +560,7 @@ process.xconePuppi = cms.EDProducer("XConeProducer",
 )
 
 process.xconeCHS = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("chs"),
     usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
     NJets = cms.uint32(2),          # number of fatjets
     RJets = cms.double(1.2),        # cone radius of fatjets
