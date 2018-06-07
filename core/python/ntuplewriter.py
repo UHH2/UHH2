@@ -981,15 +981,20 @@ process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
 )
 task.add(process.hotvrPuppi)
 
-process.hotvrPfCand = cms.EDProducer("HOTVRProducer",
-    src=cms.InputTag("packedPFCandidates")
+process.hotvrCHS = cms.EDProducer("HOTVRProducer",
+    src=cms.InputTag("chs")
 )
-task.add(process.hotvrPfCand)
+task.add(process.hotvrCHS)
 
-process.xconePfCand = cms.EDProducer("XConeProducer",
-    src=cms.InputTag("packedPFCandidates")
+process.xconePuppi = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("puppi")
 )
-task.add(process.xconePfCand)
+task.add(process.xconePuppi)
+
+process.xconeCHS = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("chs")
+)
+task.add(process.xconeCHS)
 
 
 # LEPTON cfg
@@ -1503,10 +1508,13 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 doHOTVR=cms.bool(True),
                                 doXCone=cms.bool(True),
                                 HOTVR_sources=cms.VInputTag(
-                                    cms.InputTag("hotvrPfCand"),
+                                    cms.InputTag("hotvrCHS"),
                                     cms.InputTag("hotvrPuppi")
                                 ),
-                                XCone_sources=cms.VInputTag(cms.InputTag("xconePfCand")),
+                                XCone_sources=cms.VInputTag(
+                                    cms.InputTag("xconeCHS"),
+                                    cms.InputTag("xconePuppi")
+                                ),
 
                                 doGenHOTVR=cms.bool(not useData),
                                 doGenXCone=cms.bool(not useData),
