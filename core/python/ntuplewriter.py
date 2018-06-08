@@ -1469,8 +1469,10 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
                                 # *** gen stuff:
                                 doGenInfo=cms.bool(not useData),
-                                genparticle_source=cms.InputTag("prunedPrunedGenParticles"),
-                                stablegenparticle_source=cms.InputTag("packedGenParticles"),
+                                genparticle_source=cms.InputTag(
+                                    "prunedPrunedGenParticles"),
+                                stablegenparticle_source=cms.InputTag(
+                                    "packedGenParticlesForJetsNoNu"),
                                 # set to true if you want to store all gen particles, otherwise, only
                                 # prunedPrunedGenParticles are stored (see above)
                                 doAllGenParticles=cms.bool(False),
