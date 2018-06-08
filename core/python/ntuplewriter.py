@@ -1471,7 +1471,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 genparticle_source=cms.InputTag(
                                     "prunedPrunedGenParticles"),
                                 stablegenparticle_source=cms.InputTag(
-                                    "packedGenParticles"),
+                                    "packedGenParticlesForJetsNoNu"),
                                 # set to true if you want to store all gen particles, otherwise, only
                                 # prunedPrunedGenParticles are stored (see
                                 # above)
