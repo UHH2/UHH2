@@ -989,13 +989,25 @@ task.add(process.hotvrCHS)
 usePseudoXCone = cms.bool(True)
 process.xconePuppi = cms.EDProducer("XConeProducer",
     src=cms.InputTag("puppi"),
-    usePseudoXCone=usePseudoXCone
+    usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+    NJets = cms.uint32(2),          # number of fatjets
+    RJets = cms.double(1.2),        # cone radius of fatjets
+    BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+    NSubJets = cms.uint32(3),       # number of subjets in each fatjet
+    RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+    BetaSubJets = cms.double(2.0)   # conical mesure for subjets
 )
 task.add(process.xconePuppi)
 
 process.xconeCHS = cms.EDProducer("XConeProducer",
     src=cms.InputTag("chs"),
-    usePseudoXCone=usePseudoXCone
+    usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+    NJets = cms.uint32(2),          # number of fatjets
+    RJets = cms.double(1.2),        # cone radius of fatjets
+    BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+    NSubJets = cms.uint32(3),       # number of subjets in each fatjet
+    RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+    BetaSubJets = cms.double(2.0)   # conical mesure for subjets
 )
 task.add(process.xconeCHS)
 
