@@ -527,7 +527,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   }
   if(doGenInfo){
     genparticle_token = consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genparticle_source"));
-    if(doAllGenParticles) stablegenparticle_token = consumes<edm::View<pat::PackedGenParticle> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
+    if(doAllGenParticles) stablegenparticle_token = consumes<edm::View<reco::Candidate> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
     event->genInfo = new GenInfo();
     event->genparticles = new vector<GenParticle>();
     branch(tr, "genInfo","GenInfo", event->genInfo);
@@ -585,7 +585,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   // GenJets
   if(doGenHOTVR || doGenXCone)
     {
-      stablegenparticle_token = consumes<edm::View<pat::PackedGenParticle> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
+      stablegenparticle_token = consumes<edm::View<reco::Candidate> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
      if(doGenHOTVR)
         {
           branch(tr, "genHOTVRTopJets", "std::vector<GenTopJet>", &genhotvrJets);
@@ -796,13 +796,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
      //store stable gen particles from packed collection
      if(doAllGenParticles){
-       edm::Handle<edm::View<pat::PackedGenParticle> > packed;
+       edm::Handle<edm::View<reco::Candidate> > packed;
        // use packed particle collection for all STABLE (status 1) particles
        iEvent.getByToken(stablegenparticle_token,packed);
 
        for(size_t j=0; j<packed->size();j++){
          bool skip_particle = false;
-         const pat::PackedGenParticle* iter = &(*packed)[j];
+         const pat::PackedGenParticle* iter = dynamic_cast<const pat::PackedGenParticle*>(&(packed->at(j)));
          //      if(iter->status()!=1) cout<<"iter->status() = "<<iter->status()<<endl;
          if(doAllGenParticlesPythia8){//for pythia8: store particles with status code, see http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
            if(iter->status()<2)
@@ -1369,13 +1369,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
   if(doGenHOTVR || doGenXCone)
      {
-       edm::Handle<edm::View<pat::PackedGenParticle> > packed;
+       edm::Handle<edm::View<reco::Candidate> > packed;
        // use packed particle collection for all STABLE (status 1) particles
        iEvent.getByToken(stablegenparticle_token,packed);
        vector<GenParticle> genparticles;
        for(size_t j=0; j<packed->size();j++){
 
-         const pat::PackedGenParticle* iter = &(*packed)[j];
+         const pat::PackedGenParticle* iter = dynamic_cast<const pat::PackedGenParticle*>(&(packed->at(j)));
          if(iter->status()!=1) continue;
 
          GenParticle genp;

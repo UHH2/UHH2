@@ -981,15 +981,35 @@ process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
 )
 task.add(process.hotvrPuppi)
 
-process.hotvrPfCand = cms.EDProducer("HOTVRProducer",
-    src=cms.InputTag("packedPFCandidates")
+process.hotvrCHS = cms.EDProducer("HOTVRProducer",
+    src=cms.InputTag("chs")
 )
-task.add(process.hotvrPfCand)
+task.add(process.hotvrCHS)
 
-process.xconePfCand = cms.EDProducer("XConeProducer",
-    src=cms.InputTag("packedPFCandidates")
+usePseudoXCone = cms.bool(True)
+process.xconePuppi = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("puppi"),
+    usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+    NJets = cms.uint32(2),          # number of fatjets
+    RJets = cms.double(1.2),        # cone radius of fatjets
+    BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+    NSubJets = cms.uint32(3),       # number of subjets in each fatjet
+    RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+    BetaSubJets = cms.double(2.0)   # conical mesure for subjets
 )
-task.add(process.xconePfCand)
+task.add(process.xconePuppi)
+
+process.xconeCHS = cms.EDProducer("XConeProducer",
+    src=cms.InputTag("chs"),
+    usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+    NJets = cms.uint32(2),          # number of fatjets
+    RJets = cms.double(1.2),        # cone radius of fatjets
+    BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+    NSubJets = cms.uint32(3),       # number of subjets in each fatjet
+    RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+    BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+)
+task.add(process.xconeCHS)
 
 
 # LEPTON cfg
@@ -1463,7 +1483,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 genparticle_source=cms.InputTag(
                                     "prunedPrunedGenParticles"),
                                 stablegenparticle_source=cms.InputTag(
-                                    "packedGenParticles"),
+                                    "packedGenParticlesForJetsNoNu"),
                                 # set to true if you want to store all gen particles, otherwise, only
                                 # prunedPrunedGenParticles are stored (see
                                 # above)
@@ -1503,10 +1523,13 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 doHOTVR=cms.bool(True),
                                 doXCone=cms.bool(True),
                                 HOTVR_sources=cms.VInputTag(
-                                    cms.InputTag("hotvrPfCand"),
+                                    cms.InputTag("hotvrCHS"),
                                     cms.InputTag("hotvrPuppi")
                                 ),
-                                XCone_sources=cms.VInputTag(cms.InputTag("xconePfCand")),
+                                XCone_sources=cms.VInputTag(
+                                    cms.InputTag("xconeCHS"),
+                                    cms.InputTag("xconePuppi")
+                                ),
 
                                 doGenHOTVR=cms.bool(not useData),
                                 doGenXCone=cms.bool(not useData),
