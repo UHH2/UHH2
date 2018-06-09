@@ -182,7 +182,6 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   // declare jet collections
   auto jetCollection = std::make_unique<pat::JetCollection>();
   auto subjetCollection = std::make_unique<pat::JetCollection>();
-  std::vector< std::vector<int> > indices;
 
   // Run clustering of fatjets
   vector<PseudoJet> fatjets;
@@ -206,11 +205,15 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   bool doSubjets = true;
   if(NSubJets_ == 0) doSubjets = false;
 
-  // first get and wirte list of particles in fatjets:
+  // first get and write list of particles in fatjets:
   // if particle i is clustered in jet j, the i-th entry of the list == j
   vector<int> list_fat;
   list_fat.clear();
   list_fat = clust_seq_xcone.particle_jet_indices(fatjets);
+
+  // this is the mapping of subjet to hard jet
+  std::vector< std::vector<int> > indices;
+  indices.resize(fatjets.size());
 
   // loop over all fatjets and cluster subjets
   for(unsigned int i=0; i<fatjets.size(); i++){
@@ -248,9 +251,8 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     patJet.addUserFloat("softdropmass", sd_mass[i]);
     jetCollection->push_back(patJet);
 
-    indices.resize(jetCollection->size());
     for (uint s=0; s<subjets.size(); s++) {
-      indices[i].push_back(subjetCollection->size());
+      indices[i].push_back(subjetCollection->size()); // store index of subjet in the whole subjet collection
       auto subjet = createPatJet(subjets[s]);
       subjet.setJetArea(subjet_area[s]);
       subjetCollection->push_back(subjet);
@@ -258,18 +260,20 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   }
 
+  // Following inspired by CompoundJetProducer/VirtualJetProducer
   edm::OrphanHandle<pat::JetCollection> subjetHandleAfterPut = iEvent.put(std::move(subjetCollection), subjetCollName_);
 
-  // setup refs between jets & subjets
+  // setup refs between jets & subjets using indices of subjets in the SubjetCollection
+  int jetInd = 0;
   for (auto & jetItr : *jetCollection) {
-    for (const auto ind : indices) {
-      pat::JetPtrCollection subjetPtrs;
-      for (const auto indItr : ind) {
-        edm::Ptr<pat::Jet> subjetPtr(subjetHandleAfterPut, indItr);
-        subjetPtrs.push_back(subjetPtr);
-      }
-      jetItr.addSubjets(subjetPtrs);
+    std::vector<int> & ind = indices[jetInd];
+    pat::JetPtrCollection subjetPtrs;
+    for (const auto indItr : ind) {
+      edm::Ptr<pat::Jet> subjetPtr(subjetHandleAfterPut, indItr);
+      subjetPtrs.push_back(subjetPtr);
     }
+    jetItr.addSubjets(subjetPtrs);
+    jetInd++;
   }
   iEvent.put(std::move(jetCollection));
 }
