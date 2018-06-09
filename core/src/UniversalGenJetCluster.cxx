@@ -14,7 +14,8 @@ UniversalGenJetCluster::UniversalGenJetCluster(vector<GenParticle> *genparticles
     {
       //      _psj.push_back(ConvertGenToPsj(&(genparticles->at(i))));
       _psj.push_back(ConvertGenToPsj(genparticles->at(i))); //TEST
-      if(abs(genparticles->at(i).pdgId()==11) || abs(genparticles->at(i).pdgId()==13)){
+      uint pdgid = abs(genparticles->at(i).pdgId());
+      if(pdgid==11 || pdgid==13){
 	if(genparticles->at(i).v4().Pt() > pt_max){
 	  pt_max = genparticles->at(i).v4().Pt();
 	  lepton = genparticles->at(i);
