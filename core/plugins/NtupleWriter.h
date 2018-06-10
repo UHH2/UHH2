@@ -13,6 +13,8 @@
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
 
+#include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
+
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
 #include "TTree.h"
@@ -63,6 +65,7 @@ class NtupleWriter : public edm::one::EDFilter<edm::one::WatchRuns> {
       bool doAllGenParticlesPythia8;
       bool doPV;
       bool doTrigger;
+      bool doPrefireFilter;
       bool runOnMiniAOD;
       bool doRho;
       bool doTrigHTEmu;
@@ -152,6 +155,8 @@ class NtupleWriter : public edm::one::EDFilter<edm::one::WatchRuns> {
       std::vector<GenTopJet> genxcone33Jets;
       std::vector<GenTopJet> genxcone33Jets_softdrop;
       std::vector<GenTopJet> genxcone23Jets;
+
+      edm::EDGetTokenT<BXVector<GlobalAlgBlk>> l1GtToken_;
 
 };
 

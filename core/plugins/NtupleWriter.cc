@@ -23,11 +23,13 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/Common/interface/EDCollection.h"
 
+#include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
 
 #include "RecoBTau/JetTagComputer/interface/GenericMVAJetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/GenericMVAJetTagComputerWrapper.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputerRecord.h"
+
 
 #include "TSystem.h"
 #include "TFile.h"
@@ -207,6 +209,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
+  doPrefireFilter = iConfig.getParameter<bool>("doPrefireFilter");
   //doTrigHTEmu = iConfig.getParameter<bool>("doTrigHTEmu");
 
   doHOTVR = iConfig.getParameter<bool>("doHOTVR");
@@ -554,6 +557,14 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
 
   }
+  if(doPrefireFilter){
+    //    edm::EDGetTokenT<BXVector<GlobalAlgBlk>> l1GtToken_;
+    l1GtToken_ = consumes<BXVector<GlobalAlgBlk>>(iConfig.getParameter<edm::InputTag>("l1GtSrc"));
+    // edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
+    // iEvent.getByToken(l1GtToken_, l1GtHandle);
+    // bool prefire = l1GtHandle->begin(-1)->getFinalOR();
+  }
+
   if(doAllPFParticles){
     event->pfparticles = new vector<PFParticle>;
     pf_collection_token = consumes<vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("pf_collection_source"));
@@ -1298,6 +1309,25 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    }
 
    print_times(timer, "trigger");
+
+  if(doPrefireFilter){
+    auto & triggerResults = *event->get_triggerResults();    
+    edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
+    iEvent.getByToken(l1GtToken_, l1GtHandle);
+    bool prefire = l1GtHandle->begin(-1)->getFinalOR();
+    triggerNames_outbranch.push_back("muGT_BX_minus_1__prefire");
+    triggerResults.push_back(prefire);
+
+    bool postfire = l1GtHandle->begin(1)->getFinalOR();
+    triggerNames_outbranch.push_back("muGT_BX_plus_1");
+    triggerResults.push_back(postfire);
+
+    bool fire = l1GtHandle->begin(0)->getFinalOR();
+    triggerNames_outbranch.push_back("muGT_BX_plus_0");
+    triggerResults.push_back(fire);
+
+  }
+
 
    // ------------- HOTVR and XCone Jets  -------------
    if (doHOTVR) {
