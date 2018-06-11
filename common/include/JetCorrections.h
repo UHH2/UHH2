@@ -53,6 +53,30 @@ namespace JERFiles {
 
 }
 
+namespace JERFiles {
+    //Summer16_07Aug2017_V7_noRes needed for L2Res people
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_BCD_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_EF_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_GH_L123_noRes_AK4PFchs_DATA;
+ 
+    //Summer16_07Aug2017_V7 --> Official JEC recommendation for Legacy2016
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_BCD_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_EF_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_GH_L123_AK4PFchs_DATA;
+
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_BCD_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_EF_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_GH_L123_AK8PFchs_DATA;
+
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_L123_AK4PFchs_MC;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_L123_AK8PFchs_MC;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_BCD_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_EF_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_GH_L1RC_AK4PFchs_DATA;
+
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_L1RC_AK4PFchs_MC;
+}
+
 void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const uhh2::Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0);
 
 /** \brief (Re-)Correct jets according to the corrections in the passed txt files
@@ -264,6 +288,8 @@ namespace JERSmearing {
   typedef std::vector<std::array<float, 4> > SFtype1;
 
   extern const SFtype1 SF_13TeV_2016;
+  extern const SFtype1 SF_13TeV_2016_03Feb2017;
+  extern const SFtype1 SF_13TeV_2016_07Aug2017_v1;
 
 }
 
