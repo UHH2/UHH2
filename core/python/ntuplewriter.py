@@ -999,6 +999,17 @@ process.hotvrCHS = cms.EDProducer("HOTVRProducer",
 )
 task.add(process.hotvrCHS)
 
+process.hotvrGen = cms.EDProducer("GenHOTVRProducer",
+    src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+    mu=cms.double(30),
+    theta=cms.double(0.7),
+    max_r=cms.double(1.5),
+    min_r=cms.double(0.1),
+    rho=cms.double(600),
+    hotvr_pt_min=cms.double(30),
+)
+task.add(process.hotvrGen)
+
 usePseudoXCone = cms.bool(True)
 process.xconePuppi = cms.EDProducer("XConeProducer",
     src=cms.InputTag("puppi"),
@@ -1023,6 +1034,35 @@ process.xconeCHS = cms.EDProducer("XConeProducer",
     BetaSubJets = cms.double(2.0)   # conical mesure for subjets
 )
 task.add(process.xconeCHS)
+
+process.xconeGen23Lepton = cms.EDProducer("GenXConeProducer",
+    src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+    usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+    NJets = cms.uint32(2),          # number of fatjets
+    RJets = cms.double(1.2),        # cone radius of fatjets
+    BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+    NSubJets = cms.uint32(3),       # number of subjets in each fatjet
+    RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+    BetaSubJets = cms.double(2.0),  # conical mesure for subjets
+    doLeptonSpecific = cms.bool(True),
+    DRLeptonJet = cms.double(999),
+    applySoftDrop = cms.bool(False),
+)
+task.add(process.xconeGen23Lepton)
+
+process.xconeGen33SoftDrop = cms.EDProducer("GenXConeProducer",
+    src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+    usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+    NJets = cms.uint32(2),          # number of fatjets
+    RJets = cms.double(1.2),        # cone radius of fatjets
+    BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+    NSubJets = cms.uint32(3),       # number of subjets in each fatjet
+    RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+    BetaSubJets = cms.double(2.0),  # conical mesure for subjets
+    doLeptonSpecific = cms.bool(False),
+    applySoftDrop = cms.bool(True),
+)
+task.add(process.xconeGen33SoftDrop)
 
 
 # LEPTON cfg
@@ -1561,7 +1601,14 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
                                 doGenHOTVR=cms.bool(not useData),
                                 doGenXCone=cms.bool(not useData),
+                                GenHOTVR_sources=cms.VInputTag(
+                                    cms.InputTag("hotvrGen")
+                                ),
+                                GenXCone_sources=cms.VInputTag(
+                                    cms.InputTag("xconeGen23Lepton"),
+                                    cms.InputTag("xconeGen33SoftDrop")
                                 )
+)
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
