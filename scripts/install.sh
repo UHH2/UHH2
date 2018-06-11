@@ -1,10 +1,82 @@
 #!/bin/sh
 
-# might be usefull to call 
+# might be usefull to call
 #
 #   export CMSSW_GIT_REFERENCE=<DIRECTORYWITHENOUGHSPACE>/cmssw.git
 #
 # before running this script
+
+
+# Create default make args for parallel jobs
+if [ -z "$MAKEFLAGS" ]
+then
+	np=$(grep -c ^processor /proc/cpuinfo)
+	let np+=2
+	# Be nice on shared machines, don't take up all the cores
+	limit="12"
+	if [[ "$np" -gt "$limit" ]]
+	then
+		np=$limit
+	fi
+	export MAKEFLAGS="-j$np"
+fi
+
+getToolVersion() {
+    # Get CMSSW tool version using scram
+    # args: <toolname>
+    local toolname="$1"
+    scram tool info "$toolname" | grep -i "Version : " | sed "s/Version : //"
+}
+
+setupFastjet() {
+	FJVER="$1"
+	FJCONTRIBVER="$2"
+	echo "Setting up fastjet $FJVER and fastjet-contrib $FJCONTRIBVER"
+
+	FJINSTALLDIR="$(pwd)/fastjet-install"
+
+	# Setup fastjet & fastjet-contrib
+	mkdir "${FJINSTALLDIR}"
+
+	# For normal fastjet
+	# NB use curl not wget as curl available by cvmfs, wget isnt
+	# curl -O http://fastjet.fr/repo/fastjet-${FJVER}.tar.gz
+	# tar xzf fastjet-${FJVER}.tar.gz
+	# cd fastjet-${FJVER}
+
+	# Use the CMS version of fastjet as thread-safe
+	git clone -b cms/v$FJVER https://github.com/UHH2/fastjet.git
+	cd fastjet
+	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins CXXFLAGS=-fPIC
+	make $MAKEFLAGS
+	# make check  # fails for siscone
+	make install
+	cd ..
+
+	# Add fastjet-config to PATH
+	export PATH="${FJINSTALLDIR}/bin":$PATH
+
+	# For normal fastjet-contrib
+	# curl -O http://fastjet.hepforge.org/contrib/downloads/fjcontrib-${FJCONTRIBVER}.tar.gz
+	# tar xzf fjcontrib-${FJCONTRIBVER}.tar.gz
+	# cd fjcontrib-${FJCONTRIBVER}
+
+	# Use the CMS version of fastjet-contrib as thread-safe
+	git clone -b cms/v$FJCONTRIBVER https://github.com/UHH2/fastjet-contrib.git
+	cd fastjet-contrib
+	# add HOTVR from SVN - do it this way until it becomes a proper contrib
+	svn co http://fastjet.hepforge.org/svn/contrib/contribs/HOTVR/trunk HOTVR/
+	# although we add fastjet-config to path, due to a bug we need to
+	# explicitly state its path to ensure the necessary fragile library gets built
+	./configure --fastjet-config="${FJINSTALLDIR}/bin/fastjet-config" CXXFLAGS=-fPIC
+	make $MAKEFLAGS
+	make check
+	make install
+	# the fragile libs are necessary for CMSSW
+	make fragile-shared
+	make fragile-shared-install
+	cd ..
+}
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
@@ -12,33 +84,54 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh
 git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
-export SCRAM_ARCH=slc6_amd64_gcc530
-eval `cmsrel CMSSW_9_1_0_pre3`
-cd CMSSW_9_1_0_pre3/src
+export SCRAM_ARCH=slc6_amd64_gcc630
+eval `cmsrel CMSSW_9_4_1`
+cd CMSSW_9_4_1/src
 eval `scramv1 runtime -sh`
 git cms-init
-#git cms-merge-topic -u cms-met:fromCMSSW_8_0_20_postICHEPfilter
-#git cms-merge-topic gkasieczka:test-httv2-8014
-#git cms-merge-topic ikrav:egm_id_80X_v2
-git cms-addpkg RecoJets/JetProducers
-git cms-addpkg RecoJets/JetAlgorithms
-git cms-addpkg DataFormats/JetReco
-git cms-addpkg PhysicsTools/JetMCAlgos
-git cms-addpkg RecoBTag
-git cms-addpkg RecoEgamma
 
-#sed -i "s|use_common_bge_for_rho_and_rhom|set_common_bge_for_rho_and_rhom|g" RecoJets/JetProducers/plugins/FastjetJetProducer.cc
-#sed -i "s|1.020|1.025|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml ## FASTJET-CONTRIB IS PART OF CMSSW 91X
-#sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet-contrib/1.025|/afs/desy.de/user/p/peiffer/www/FastJet|g" ## FASTJET-CONTRIB IS PART OF CMSSW 91X $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet-contrib.xml
-sed -i "s|3.1.0|3.2.1|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet.xml
-sed -i "s|/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/fastjet/3.2.1|/afs/desy.de/user/a/aggleton/public/fastjet/slc6_amd64_gcc530/fastjet-install|g" $CMSSW_BASE/config/toolbox/slc6_amd64_gcc530/tools/selected/fastjet.xml
+# Install FastJet & contribs for HOTVR & XCONE
+cd ../..
+FJVER="3.2.1"
+FJCONTRIBVER="1.032"
+time setupFastjet $FJVER $FJCONTRIBVER
+
+cd $CMSSW_BASE/src
+
+time git cms-init -y  # not needed if not addpkg ing
+
+# Necessary for using our FastJet
+git cms-addpkg RecoJets/JetProducers
+# Necessary for using Fastjet 3.2.1 to pickup new JetDefinition default arg order
+rm RecoJets/JetProducers/test/BuildFile.xml
+rm RecoJets/JetProducers/test/test-large-voronoi-area.cc  # old test, not used?
+git cms-addpkg RecoBTag/SecondaryVertex
+git cms-addpkg RecoJets/JetAlgorithms
+git cms-addpkg PhysicsTools/JetMCAlgos
+
+
+# Update FastJet and contribs for HOTVR and UniversalJetCluster
+FJINSTALL=$(fastjet-config --prefix)
+OLD_FJ_VER=$(getToolVersion fastjet)
+FJ_TOOL_FILE=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet.xml
+sed -i "s|/cvmfs/cms.cern.ch/$SCRAM_ARCH/external/fastjet/$OLD_FJ_VER|$FJINSTALL|g" "$FJ_TOOL_FILE"
+sed -i "s|$OLD_FJ_VER|$FJVER|g" "$FJ_TOOL_FILE"
+
+OLD_FJCONTRIB_VER=$(getToolVersion fastjet-contrib)
+FJCONFIG_TOOL_FILE=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib.xml
+sed -i "s|/cvmfs/cms.cern.ch/$SCRAM_ARCH/external/fastjet-contrib/$OLD_FJCONTRIB_VER|$FJINSTALL|g" "$FJCONFIG_TOOL_FILE"
+sed -i "s|$OLD_FJCONTRIB_VER|$FJCONTRIBVER|g" "$FJCONFIG_TOOL_FILE"
+
+FJCONFIG_ARCHIVE_TOOL_FILE=$CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/fastjet-contrib-archive.xml
+sed -i "s|/cvmfs/cms.cern.ch/$SCRAM_ARCH/external/fastjet-contrib/$OLD_FJCONTRIB_VER|$FJINSTALL|g" "$FJCONFIG_ARCHIVE_TOOL_FILE"
+sed -i "s|$OLD_FJCONTRIB_VER|$FJCONTRIBVER|g" "$FJCONFIG_ARCHIVE_TOOL_FILE"
+
+scram setup fastjet
+scram setup fastjet-contrib
+scram setup fastjet-contrib-archive
+
 scram b clean
-scram b -j 20
-#cd $CMSSW_BASE/external
-#cd slc6_amd64_gcc530/
-#git clone https://github.com/ikrav/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
-#cd data/RecoEgamma/ElectronIdentification/data
-#git checkout egm_id_80X_v1
+time scram b $MAKEFLAGS
 
 # Get the UHH2 repo & JEC files
 cd $CMSSW_BASE/src

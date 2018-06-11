@@ -1,5 +1,5 @@
 #include <FWCore/Framework/interface/Frameworkfwd.h>
-#include <FWCore/Framework/interface/EDProducer.h>
+#include <FWCore/Framework/interface/global/EDProducer.h>
 #include <FWCore/Framework/interface/Event.h>
 #include <FWCore/Framework/interface/MakerMacros.h>
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
@@ -8,14 +8,14 @@
 #include <DataFormats/ParticleFlowCandidate/interface/PFCandidate.h>
 #include <memory>
 
-class convertPackedCandToPFCand : public edm::EDProducer {
+class convertPackedCandToPFCand : public edm::global::EDProducer<> {
 
  public:
   convertPackedCandToPFCand(const edm::ParameterSet& iConfig);
   ~convertPackedCandToPFCand() {}
   
  private:
-  void produce(edm::Event& iEvent, const edm::EventSetup& iSetup);
+  virtual void produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSetup& iSetup) const override;
   edm::EDGetTokenT< pat::PackedCandidateCollection > src_;
 };
 
@@ -25,7 +25,8 @@ convertPackedCandToPFCand::convertPackedCandToPFCand(const edm::ParameterSet& iC
   produces<reco::PFCandidateCollection>();
 }
 
-void convertPackedCandToPFCand::produce(edm::Event& iEvent,const edm::EventSetup& iSetup){
+void convertPackedCandToPFCand::produce(edm::StreamID id, edm::Event& iEvent,const edm::EventSetup& iSetup) const
+{
 
   edm::Handle< pat::PackedCandidateCollection > packedCands_;
   iEvent.getByToken(src_, packedCands_);
@@ -41,7 +42,6 @@ void convertPackedCandToPFCand::produce(edm::Event& iEvent,const edm::EventSetup
 
   iEvent.put(std::move(recoPFCands));
 
-  return;
 }
 
 DEFINE_FWK_MODULE(convertPackedCandToPFCand);

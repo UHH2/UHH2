@@ -42,7 +42,6 @@ bool MCLumiWeight::process(uhh2::Event & event){
 
 
 MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
-    h_pu_weight_(ctx.declare_event_output<float>("weight_pu")),
     h_npu_data_up(0),
     h_npu_data_down(0),
     sysType_(sysType)
@@ -53,6 +52,8 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
         cout << "Warning: MCPileupReweight will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
         return;
     }
+
+    h_pu_weight_ = ctx.declare_event_output<float>("weight_pu");
 
     // backward compatibility: (((no tag) is chosen over 25ns) is chosen over 50ns)
     TString pileup_directory           = ctx.get("pileup_directory",
@@ -136,10 +137,31 @@ bool MCPileupReweight::process(Event &event){
         return true;
     }
 
-    double weight = 0., weight_up = 0., weight_down = 0.;
-    int binnumber = h_npu_mc->GetXaxis()->FindBin(event.genInfo->pileup_TrueNumInteractions());
+    double weight = 0., weight_up = 0., weight_down = 0., trueNumInteractions = 0.;
+    // handle scenarios where events fall outside of our histograms
+    // esp for 94X MC screwup where -ve # vertices exist
+    
+    try{
+    trueNumInteractions = event.genInfo->pileup_TrueNumInteractions();
+    if (event.genInfo->pileup_TrueNumInteractions() < h_npu_mc->GetXaxis()->GetXmin()) {
+      cout << "WARNING trueNumInteractions = " << trueNumInteractions << " < lower edge of MC hist = " << h_npu_mc->GetXaxis()->GetXmin();
+      cout << " Setting event weight_pu to 0" << endl;
+      event.set(h_pu_weight_, 0.f);
+      return false;
+    } else if (event.genInfo->pileup_TrueNumInteractions() > h_npu_mc->GetXaxis()->GetXmax()) {
+      cout << "WARNING trueNumInteractions = " << trueNumInteractions << " > upper edge of MC hist = " << h_npu_mc->GetXaxis()->GetXmax();
+      cout << " Setting event weight_pu to 0" << endl;
+      event.set(h_pu_weight_, 0.f);
+      return false;
+    }
+    }
+    catch(const std::runtime_error& error){
+      std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
+      std::cout<<error.what();
+    }
+    
+    int binnumber = h_npu_mc->GetXaxis()->FindBin(trueNumInteractions);
     auto mc_cont = h_npu_mc->GetBinContent(binnumber);
-
     if (mc_cont > 0) {
         weight = h_npu_data->GetBinContent(binnumber)/mc_cont;
         event.set(h_pu_weight_, weight);
@@ -153,6 +175,11 @@ bool MCPileupReweight::process(Event &event){
             weight_down = h_npu_data_down->GetBinContent(binnumber)/mc_cont;
             event.set(h_pu_weight_down_, weight_down);
         }
+    } else {
+      cout << "WARNING no value in MC hist for trueNumInteractions = " << trueNumInteractions;
+      cout << " Setting event weight_pu to 0" << endl;
+      event.set(h_pu_weight_, 0.f);
+      return false;
     }
 
     if (sysType_ == "") {
@@ -162,6 +189,7 @@ bool MCPileupReweight::process(Event &event){
     } else {
         event.weight *= weight_up;
     }
+
 
     return true;
 }
@@ -187,6 +215,8 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
 
 bool MCScaleVariation::process(Event & event){
   if (event.isRealData) {return true;}
+
+  try{
   if(event.genInfo->systweights().size() == 0) return true;
 
   if(i_mu_r == 0 && i_mu_f == 0) return true;
@@ -202,7 +232,12 @@ bool MCScaleVariation::process(Event & event){
   else if(i_mu_r == 2 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(8);
 
   event.weight *= syst_weight/event.genInfo->originalXWGTUP();
-
+  }
+  catch(const std::runtime_error& error){
+      std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
+      std::cout<<error.what();
+  }
+  
   return true;
 }
 
@@ -237,11 +272,11 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
     throw runtime_error("Scale factor file for muons not found: " + sf_file_path);
   }
   
-  sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/pt_abseta_ratio").c_str()));
+  sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/abseta_pt").c_str()));
   if (!sf_hist_.get()) {
-    sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/ptetadata").c_str()));
+    sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/abseta_pt_ratio").c_str()));
     if (!sf_hist_.get()) {
-      sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/pt_abseta_DATA").c_str())); //For muon HLT efficiency
+      sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/abseta_pair_newTuneP_probe_pt").c_str()));
       if (!sf_hist_.get()) {
 	throw runtime_error("Scale factor directory not found in file: " + sf_name);
       }
@@ -856,12 +891,18 @@ bool TauEffVariation::process(Event & event){
     {
       bool real = false;
       Tau tau = event.taus->at(j);
+      try{
       for(unsigned int i=0; i<event.genparticles->size(); ++i)
 	{
 	  GenParticle genp = event.genparticles->at(i);
 	  double dr = deltaR(genp,tau);
 	  if (dr < 0.4 && abs(genp.pdgId())==15) real = true;
 	}
+      }
+      catch(const std::runtime_error& error){
+      std::cout<<"Problem with genparticles in MCWeight.cxx"<<std::endl;
+      std::cout<<error.what();
+    }
       if(real) real_taus.push_back(tau);
     }
   for(unsigned int i=0; i<real_taus.size(); ++i)
@@ -902,6 +943,7 @@ bool TauChargeVariation::process(Event & event){
   for(unsigned int j=0; j<event.taus->size(); ++j)
     {
       Tau tau = event.taus->at(j);
+      try{
       for(unsigned int i=0; i<event.genparticles->size(); ++i)
 	{
 	  GenParticle genp = event.genparticles->at(i);
@@ -918,7 +960,12 @@ bool TauChargeVariation::process(Event & event){
 	    }
 	  } 
 	}
-    }
+      }
+      catch(const std::runtime_error& error){
+	std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
+	std::cout<<error.what();
+      }
+          }
   return true;
 }
 

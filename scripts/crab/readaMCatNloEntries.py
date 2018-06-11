@@ -40,9 +40,9 @@ def read_tree(rootDir):
         ntuple = TFile(str(rootDir))
         AnalysisTree = ntuple.Get("AnalysisTree")
         for event in AnalysisTree:
-            #numberOfweightedEntries+=event.m_weights[0]
-            for value in event.m_weights:
-                numberOfweightedEntries += value
+            numberOfweightedEntries+=event.m_weights[0]
+            #for value in event.m_weights:
+            #    numberOfweightedEntries += value
     except Exception as e:
         print 'unable to count events in root file',rootDir
         print e

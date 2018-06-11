@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 
-import os, sys, glob, ROOT
+import os
+import sys
+import glob
+import ROOT
 
 if len(sys.argv) < 2:
-   print "Usage:\n" \
-         "    ./%s <rootfile pattern with full path> " \
-         "<optional: xml output file POSTFIX> \n" \
-         "    (it's a good idea to try this script in a test directory)" \
-         % os.path.basename(sys.argv[0])
-   sys.exit(1)
+    print "Usage:\n" \
+          "    ./%s <rootfile pattern with full path> " \
+          "<optional: xml output file POSTFIX> \n" \
+          "    (it's a good idea to try this script in a test directory)" \
+          % os.path.basename(sys.argv[0])
+    sys.exit(1)
 
 if len(sys.argv) >= 3:
     postfix = '_' + sys.argv[2]
@@ -21,11 +24,14 @@ files = glob.glob(pattern)
 print "Found %d files matching pattern" % len(files)
 files.sort()
 
+
 def get_basename(filename):
     if filename.startswith('/pnfs/'):       # use crab-project name
-        return filename.split('/')[-4]
+      # return filename.split('/')[-2]        # use dCache path with
+      # ntuplewtiter output style, therefore needed this change
+        filename = filename.split('/')[-1]
 
-    #remove jobnumber and 'Ntuple' and make a set
+    # remove jobnumber and 'Ntuple' and make a set
     filename = os.path.splitext(filename)[0]
     filename = os.path.basename(filename)
     tokens = filename.split('_')
@@ -36,13 +42,13 @@ def get_basename(filename):
     basename = '_'.join(tokens)
     return basename
 
-### find common element in filenames
+# find common element in filenames
 
 
 basenames = sorted(set(get_basename(name) for name in files))
 print "Found these basenames: %s " % basenames
 
-if basenames == ['']:
+if basenames == [''] or len(sys.argv) > 3:
     print 'No basenames found. Did you give the pattern in the correct way? '
     print 'E.g. "my/path/*" (with double quotes)'
     exit(-1)
@@ -53,7 +59,7 @@ entity_template = """\
 """
 
 conf_template = """
-<InputData Lumi="%d" NEventsMax="-1" Type="MC" Version="%s" Cacheable="True">
+<InputData Lumi="%d" NEventsMax="-1" Type="Data" Version="%s" Cacheable="True">
     &%s;
     <InputTree Name="AnalysisTree" />
     <OutputTree Name="AnalysisTree" />
@@ -79,8 +85,6 @@ for basename in basenames:
         config_lines.append(conf_template % (n_events, basename, basename))
         print '%s: %d events' % (basename, n_events)
 
-
-with open('TEMPLATE_CONFIG%s.xml' % postfix, 'w') as out:
+with open('TEMPLATE_CONFIG_%s.xml' % basename + postfix, 'w') as out:
     out.writelines(entity_lines)
     out.writelines(config_lines)
-

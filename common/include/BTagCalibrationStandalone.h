@@ -158,7 +158,7 @@ public:
   BTagCalibrationReader();
   BTagCalibrationReader(BTagEntry::OperatingPoint op,
                         std::string sysType="central");
-
+  ~BTagCalibrationReader();
   void load(const BTagCalibration & c,
             BTagEntry::JetFlavor jf,
             std::string measurementType="comb");
@@ -174,7 +174,7 @@ public:
 
 protected:
   class BTagCalibrationReaderImpl;
-  std::auto_ptr<BTagCalibrationReaderImpl> pimpl;
+  std::unique_ptr<BTagCalibrationReaderImpl> pimpl;
 };
 
 #endif  // BTagCalibrationReader_H

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "UHH2/core/include/Event.h"
-
 #include <limits>
 
 /** Find the particle (from particles) with smallest DeltaR to particle p

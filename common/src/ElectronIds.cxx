@@ -47,6 +47,13 @@ bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const st
   if(ele_.EcalEnergy() <= 0.) return false;
   const float abs_ooEmooP = fabs(1./ele_.EcalEnergy() - ele_.EoverPIn()/ele_.EcalEnergy());
 
+  float C0 = -1.;
+  const float C0_barrel = ele_.HoverE() - 1.12/ele_.EcalEnergy() - (0.0368*evt_.rho)/ele_.EcalEnergy();
+  const float C0_endcap = ele_.HoverE() - 0.5/ele_.EcalEnergy() - (0.201*evt_.rho)/ele_.EcalEnergy();
+  if(eleSC_pos_ == "barrel") C0 = C0_barrel;
+  else if(eleSC_pos_ == "endcap") C0 = C0_endcap;
+  else throw std::runtime_error("Invalid value for variable eleSC_pos_. May be 'barrel' or 'endcap'.");
+
   const int expMissingHits = ele_.gsfTrack_trackerExpectedHitsInner_numberOfLostHits();
 
   const int passConvVeto = int(ele_.passconversionveto());
@@ -54,7 +61,7 @@ bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const st
   if(!( ele_.sigmaIEtaIEta() < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("sigmaIetaIeta").at(wp_idx_)  )) return false;// sigmaIetaIeta
   if(!( fabs(ele_.dEtaIn())  < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|dEtaIn|")     .at(wp_idx_)  )) return false;// |dEtaIn|
   if(!( fabs(ele_.dPhiIn())  < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|dPhiIn|")     .at(wp_idx_)  )) return false;// |dPhiIn|
-  if(!( ele_.HoverE()        < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("HoverE")       .at(wp_idx_)  )) return false;// HoverE
+  if(!( C0                   > ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("C0")           .at(wp_idx_)  )) return false;// Substitute for HoverE
   if(!( abs_ooEmooP          < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|ooEmooP|")    .at(wp_idx_)  )) return false;// |ooEmooP|
   if(!( abs_d0               < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|d0|")         .at(wp_idx_)  )) return false;// |d0|
   if(!( abs_dz               < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|dz|")         .at(wp_idx_)  )) return false;// |dz|
@@ -109,7 +116,7 @@ bool ElectronID_Spring15_25ns_medium_noIso(const Electron& ele, const uhh2::Even
 bool ElectronID_Spring15_25ns_tight       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "TIGHT" , true) ; }
 bool ElectronID_Spring15_25ns_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "TIGHT" , false); }
 
-// --- Cut-Based ID: Spring15 25ns
+// --- Cut-Based ID: Spring16
 bool ElectronID_Spring16_veto        (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "VETO"  , true) ; }
 bool ElectronID_Spring16_veto_noIso  (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "VETO"  , false); }
 
@@ -122,68 +129,61 @@ bool ElectronID_Spring16_medium_noIso(const Electron& ele, const uhh2::Event& ev
 bool ElectronID_Spring16_tight       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "TIGHT" , true) ; }
 bool ElectronID_Spring16_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "TIGHT" , false); }
 
+// --- Cut-Based ID: Fall17
+bool ElectronID_Fall17_veto        (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Fall17", "VETO"  , true) ; }
+bool ElectronID_Fall17_veto_noIso  (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Fall17", "VETO"  , false); }
+
+bool ElectronID_Fall17_loose       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Fall17", "LOOSE" , true) ; }
+bool ElectronID_Fall17_loose_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Fall17", "LOOSE" , false); }
+
+bool ElectronID_Fall17_medium      (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Fall17", "MEDIUM", true) ; }
+bool ElectronID_Fall17_medium_noIso(const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Fall17", "MEDIUM", false); }
+
+bool ElectronID_Fall17_tight       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Fall17", "TIGHT" , true) ; }
+bool ElectronID_Fall17_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Fall17", "TIGHT" , false); }
+
 ////
 
 //// General Purpose MVA ID
 
-bool Electron_GeneralPurposeMVAID(const Electron& ele_, const uhh2::Event&, const std::string& tuning_, const std::string& wp_){
+bool Electron_MVAID(const Electron& ele_, const uhh2::Event&, const std::string& tuning_, const std::string& wp_, const bool iso_){
 
   std::string category("");
 
   const float pt(ele_.pt()), abs_etaSC(fabs(ele_.supercluster_eta()));
-  if(pt > 10.){
+  const float ebSplit = 0.8;
+  const float ebeeSplit = 1.479;
 
-    if                         (abs_etaSC < 0.8)   category = "high-pt_barrel1";
-    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) category = "high-pt_barrel2";
-    else if                    (abs_etaSC < 2.5)   category = "high-pt_endcap";
+  if (abs_etaSC > 2.5) return false;
+  if (pt > 10.){
+    if       (abs_etaSC < ebSplit)  category = "high-pt_barrel1";
+    else if (abs_etaSC < ebeeSplit) category = "high-pt_barrel2";
+    else                            category = "high-pt_endcap";
+  } else if (pt > 5.) {
+    if       (abs_etaSC < ebSplit)  category = "low-pt_barrel1";
+    else if (abs_etaSC < ebeeSplit) category = "low-pt_barrel2";
+    else                            category = "low-pt_endcap";
   }
   else return false;
 
   int wp_idx(-1);
-  if     (wp_ == "80p_sigeff") wp_idx = 0;
-  else if(wp_ == "90p_sigeff") wp_idx = 1;
-  else throw std::runtime_error("Electron_GeneralPurposeMVAID -- undefined working-point tag: "+wp_);
+  if (wp_ == "loose") wp_idx = 0;
+  else throw std::runtime_error("Electron_MVAID -- undefined working-point tag: "+wp_);
 
-  const float MVA(ele_.mvaGeneralPurpose());
-
-  return (MVA > ElectronID::GeneralPurposeMVA_LUT.at(tuning_).at(category).at(wp_idx));
+  // FIXME: better way to handle this...?
+  if (iso_) {
+    const float MVA = ele_.mvaIso();
+    return (MVA > ElectronID::MVA_LUT_Iso.at(tuning_).at(category).at(wp_idx));
+  } else {
+    const float MVA = ele_.mvaNoIso();
+    return (MVA > ElectronID::MVA_LUT_NoIso.at(tuning_).at(category).at(wp_idx));
+  }
 }
 
-bool ElectronID_MVAGeneralPurpose_Spring16_loose(const Electron& ele, const uhh2::Event& evt){ return Electron_GeneralPurposeMVAID(ele, evt, "Spring16", "90p_sigeff"); }
-bool ElectronID_MVAGeneralPurpose_Spring16_tight(const Electron& ele, const uhh2::Event& evt){ return Electron_GeneralPurposeMVAID(ele, evt, "Spring16", "80p_sigeff"); }
+bool ElectronID_MVA_Fall17_loose_iso(const Electron& ele, const uhh2::Event& evt){ return Electron_MVAID(ele, evt, "Fall17", "loose", true); }
+bool ElectronID_MVA_Fall17_loose_noIso(const Electron& ele, const uhh2::Event& evt){ return Electron_MVAID(ele, evt, "Fall17", "loose", false); }
 
-
-//// HZZ MVA ID
-
-bool Electron_HZZMVAID(const Electron& ele_, const uhh2::Event&, const std::string& tuning_, const std::string& wp_){ 
-
-  std::string category("");
-  const float pt(ele_.pt()), abs_etaSC(fabs(ele_.supercluster_eta()));
-  if(5. < pt && pt <= 10.){ 
-    if                         (abs_etaSC < 0.8)   category = "low-pt_barrel1";
-    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) category = "low-pt_barrel2";
-    else if                    (abs_etaSC < 2.5)   category = "low-pt_endcap";
-  }
-  if(pt > 10.){
-    if                         (abs_etaSC < 0.8)   category = "high-pt_barrel1";
-    else if(0.8 <= abs_etaSC && abs_etaSC < 1.479) category = "high-pt_barrel2";
-    else if                    (abs_etaSC < 2.5)   category = "high-pt_endcap";
-  }
-  else return false; 
-
-  int wp_idx(-1);
-  if     (wp_ == "98p_sigeff") wp_idx = 0;
-  else throw std::runtime_error("Electron_HZZPurposeMVAID -- undefined working-point tag: "+wp_);
-
-  const float MVA(ele_.mvaHZZ());
-
-  return (MVA > ElectronID::HZZMVA_LUT.at(tuning_).at(category).at(wp_idx));
-
-}
-
-bool ElectronID_MVAHZZ_Spring16_loose(const Electron& ele, const uhh2::Event& evt){ return Electron_HZZMVAID(ele, evt, "Spring16", "98p_sigeff"); }
-
-////
+//// HEEP ID
 
 bool ElectronID_HEEP_RunII_25ns(const Electron& ele, const uhh2::Event&){ return Electron_HEEP(ele, "RunII_25ns", "CMS_WorkPoint_NoIso"); }
 

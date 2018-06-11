@@ -4,6 +4,7 @@
 #include <typeindex>
 #include <algorithm>
 #include <memory>
+#include <vector>
 #include <boost/optional.hpp>
 
 namespace uhh2 {

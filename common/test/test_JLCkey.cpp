@@ -44,14 +44,14 @@ test_JLCkey::test_JLCkey(uhh2::Context& ctx){
   ////
 
   //// OBJ CLEANING
-  const     MuonId muo(AndId<Muon>    (PtEtaCut  (50., 2.1), MuonIDMedium()));
+  const     MuonId muo(AndId<Muon>    (PtEtaCut  (50., 2.1), MuonID(Muon::CutBasedIdMedium)));
   const ElectronId ele(AndId<Electron>(PtEtaSCCut(50., 2.5), ElectronID_Spring15_25ns_tight_noIso));
 
   muo_cleaner.reset(new     MuonCleaner(muo));
   ele_cleaner.reset(new ElectronCleaner(ele));
   //
 
-  const JetId jetID(JetPFID(JetPFID::WP_LOOSE));
+  const JetId jetID(JetPFID(JetPFID::WP_TIGHT));
 
   std::vector<std::string> JEC_AK4, JEC_AK8;
   if(isMC){

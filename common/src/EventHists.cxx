@@ -7,8 +7,8 @@
 using namespace uhh2;
 
 EventHists::EventHists(uhh2::Context & ctx, const std::string & dirname): Hists(ctx, dirname){
-    N_PrimVertices = book<TH1F>("N_PrimVertices", "number of primary vertices", 56, -0.5, 55.5);
-    N_TrueInteractions = book<TH1F>("N_TrueInteractions", "number of true interactions", 50, 0, 50);
+    N_PrimVertices = book<TH1F>("N_PrimVertices", "number of primary vertices", 102, -0.5, 101.5);
+    N_TrueInteractions = book<TH1F>("N_TrueInteractions", "number of true interactions", 100, 0, 100);
     Weights = book<TH1F>("Weights", "weights", 100,0,2);
     MET = book<TH1F>("MET", "missing E_{T}", 200,0,1000);
     HT = book<TH1F>("HT", "H_{T} Jets", 100, 0, 3500);
@@ -33,7 +33,12 @@ void EventHists::fill(const uhh2::Event & e){
     assert(e.met);
     assert(e.pvs);
     N_PrimVertices->Fill(e.pvs->size(), e.weight);
-    if(e.genInfo) N_TrueInteractions->Fill(e.genInfo->pileup_TrueNumInteractions(), e.weight);
+    try{
+    if(e.genInfo) N_TrueInteractions->Fill(e.genInfo->pileup_TrueNumInteractions(), e.weight);}
+    catch(const std::runtime_error& error){
+	    std::cout<<"Problem with genInfo in EventHists.cxx"<<std::endl;
+	    std::cout<<error.what();
+  }
     Weights->Fill(e.weight);
     WeightsLogBins->Fill(e.weight);
     MET->Fill(e.met->pt(), e.weight);

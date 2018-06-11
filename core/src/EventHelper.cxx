@@ -55,6 +55,8 @@ IMPL_SETUP(genparticles, vector<GenParticle>)
 IMPL_SETUP(genjets, vector<Particle>)
 IMPL_SETUP(genmet, MET)
 
+
+
 void EventHelper::setup_trigger(){
     trigger = true;
     h_triggerResults = declare_in_out<std::vector<bool>>("triggerResults", "triggerResults", ctx);
@@ -110,10 +112,25 @@ void EventHelper::event_read(){
         if(toppuppijets)  event->toppuppijets = &event->get(h_toppuppijets);
         if(met) event->met = &event->get(h_met);
 	if(genmet) event->genmet = &event->get(h_genmet);
-        if(genInfo) event->genInfo = &event->get(h_genInfo);
+	try{
+        if(genInfo) event->genInfo = &event->get(h_genInfo);}
+	catch(const std::runtime_error& error){
+	  std::cout<<"Problem with genInfo in EventHelper.cxx"<<std::endl;
+	  std::cout<<error.what();
+	}
         if(gentopjets) event->gentopjets = &event->get(h_gentopjets);
-        if(genparticles) event->genparticles = & event->get(h_genparticles);
-        if(genjets) event->genjets = &event->get(h_genjets);
+	try{
+        if(genparticles) event->genparticles = & event->get(h_genparticles);}
+	catch(const std::runtime_error& error){
+	  std::cout<<"Problem with genparticles in EventHelper.cxx"<<std::endl;
+	  std::cout<<error.what();
+	}
+	try{
+        if(genjets) event->genjets = &event->get(h_genjets);}
+	catch(const std::runtime_error& error){
+	  std::cout<<"Problem with genjets in EventHelper.cxx"<<std::endl;
+	  std::cout<<error.what();
+	}	
         if(trigger){
             event->get_triggerResults() = &event->get(h_triggerResults);
 	    event->get_triggerPrescales() = &event->get(h_triggerPrescales);

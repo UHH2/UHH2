@@ -1,7 +1,17 @@
 #ifndef PDFWeights_H
 #define PDFWeights_H
 
+// save diagnostic state
+#pragma GCC diagnostic push
+// turn off the specific warning. Can also use "-Wall"
+#pragma GCC diagnostic ignored "-Wignored-qualifiers"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 #include "LHAPDF/LHAPDF.h"
+
+// turn the warnings back on
+#pragma GCC diagnostic pop
+
 #include "TSystem.h"
 #include "UHH2/core/include/Event.h"
 

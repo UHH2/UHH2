@@ -27,7 +27,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     edm::Handle<std::vector<reco::Vertex>> pv_handle;
    event.getByToken(pv_token, pv_handle);
    if(pv_handle->empty()){
-       cout << "WARNING: no PVs found, not writing electrons!" << endl;
+       edm::LogWarning("NtupleWriterElectrons") << "No PVs found, not writing electrons!";
        return;
    }
    const auto & PV = pv_handle->front();
@@ -57,7 +57,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_trackIso(pfiso.sumChargedParticlePt);
         ele.set_photonIso(pfiso.sumPhotonEt);
         ele.set_puChargedHadronIso(pfiso.sumPUPt);
-        ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::MISSING_INNER_HITS));
+        ele.set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(pat_ele.gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS));
         ele.set_gsfTrack_px(pat_ele.gsfTrack()->px());
         ele.set_gsfTrack_py(pat_ele.gsfTrack()->py());
         ele.set_gsfTrack_pz(pat_ele.gsfTrack()->pz());
@@ -77,8 +77,8 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_hcalPFClusterIso(pat_ele.hcalPFClusterIso());
         ele.set_dr03TkSumPt     (pat_ele.dr03TkSumPt());
 
-	ele.set_mvaGeneralPurpose   (pat_ele.hasUserFloat("mvaGeneralPurpose")   ? pat_ele.userFloat("mvaGeneralPurpose")   : -999.);
-	ele.set_mvaHZZ   (pat_ele.hasUserFloat("mvaHZZ")   ? pat_ele.userFloat("mvaHZZ")   : -999.);
+        ele.set_mvaIso   (pat_ele.hasUserFloat("ElectronMVAEstimatorIso") ? pat_ele.userFloat("ElectronMVAEstimatorIso") : -999.);
+        ele.set_mvaNoIso   (pat_ele.hasUserFloat("ElectronMVAEstimatorNoIso") ? pat_ele.userFloat("ElectronMVAEstimatorNoIso") : -999.);
 
         ele.set_effArea(pat_ele.hasUserFloat("EffArea") ? pat_ele.userFloat("EffArea") : -999.);
 
@@ -102,7 +102,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
 
         for(const auto& tag_str : IDtag_keys){
 
-          if(!pat_ele.hasUserInt(tag_str)) throw std::runtime_error("NtupleWriterElectrons::process -- label for pat::Electron::userInt not found: "+tag_str);
+          if(!pat_ele.hasUserInt(tag_str)) throw cms::Exception("Missing userInt label", "Label for pat::Electron::userInt not found: "+tag_str);
           ele.set_tag(Electron::tagname2tag(tag_str), float(pat_ele.userInt(tag_str)));
         }
 
@@ -149,7 +149,7 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent, 
    edm::Handle<std::vector<reco::Vertex>> pv_handle;
    event.getByToken(pv_token, pv_handle);
    if(pv_handle->empty()){
-       cout << "WARNING: no PVs found, not writing muons!" << endl;
+       edm::LogWarning("NtupleWriterMuons") << "No PVs found, not writing muons!";
        return;
    }
    const auto & PV = pv_handle->front();
@@ -168,15 +168,58 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent, 
      // mu.set_phiError( pat_mu.phiError());
      // mu.set_energyError( pat_mu.energyError());
 
-     mu.set_bool(Muon::global    , pat_mu.isGlobalMuon());
-     mu.set_bool(Muon::pf        , pat_mu.isPFMuon());
-     mu.set_bool(Muon::tracker   , pat_mu.isTrackerMuon());
-     mu.set_bool(Muon::standalone, pat_mu.isStandAloneMuon());
-     mu.set_bool(Muon::soft      , pat_mu.isSoftMuon(PV));
-     mu.set_bool(Muon::loose     , pat_mu.isLooseMuon());
-     mu.set_bool(Muon::medium    , pat_mu.isMediumMuon());
-     mu.set_bool(Muon::tight     , pat_mu.isTightMuon(PV));
-     mu.set_bool(Muon::highpt    , pat_mu.isHighPtMuon(PV));
+     mu.set_selector(Muon::Global    , pat_mu.isGlobalMuon());
+     mu.set_selector(Muon::PF        , pat_mu.isPFMuon());
+     mu.set_selector(Muon::Tracker   , pat_mu.isTrackerMuon());
+     mu.set_selector(Muon::Standalone, pat_mu.isStandAloneMuon());
+
+     mu.set_selector(Muon::CutBasedIdLoose       , pat_mu.passed(reco::Muon::CutBasedIdLoose));
+     mu.set_selector(Muon::CutBasedIdMedium      , pat_mu.passed(reco::Muon::CutBasedIdMedium));
+     mu.set_selector(Muon::CutBasedIdMediumPrompt, pat_mu.passed(reco::Muon::CutBasedIdMediumPrompt));
+     mu.set_selector(Muon::CutBasedIdTight       , pat_mu.passed(reco::Muon::CutBasedIdTight));
+     mu.set_selector(Muon::CutBasedIdGlobalHighPt, pat_mu.passed(reco::Muon::CutBasedIdGlobalHighPt));
+     mu.set_selector(Muon::CutBasedIdTrkHighPt   , pat_mu.passed(reco::Muon::CutBasedIdTrkHighPt));
+     mu.set_selector(Muon::SoftCutBasedId        , pat_mu.passed(reco::Muon::SoftCutBasedId));
+     mu.set_selector(Muon::SoftMvaId             , pat_mu.passed(reco::Muon::SoftMvaId));
+     mu.set_selector(Muon::MvaLoose              , pat_mu.passed(reco::Muon::MvaLoose));
+     mu.set_selector(Muon::MvaMedium             , pat_mu.passed(reco::Muon::MvaMedium));
+     mu.set_selector(Muon::MvaTight              , pat_mu.passed(reco::Muon::MvaTight));
+
+     mu.set_selector(Muon::PFIsoVeryLoose  , pat_mu.passed(reco::Muon::PFIsoVeryLoose));
+     mu.set_selector(Muon::PFIsoLoose      , pat_mu.passed(reco::Muon::PFIsoLoose));
+     mu.set_selector(Muon::PFIsoMedium     , pat_mu.passed(reco::Muon::PFIsoMedium));
+     mu.set_selector(Muon::PFIsoTight      , pat_mu.passed(reco::Muon::PFIsoTight));
+     mu.set_selector(Muon::PFIsoVeryTight  , pat_mu.passed(reco::Muon::PFIsoVeryTight));
+     mu.set_selector(Muon::TkIsoLoose      , pat_mu.passed(reco::Muon::TkIsoLoose));
+     mu.set_selector(Muon::TkIsoTight      , pat_mu.passed(reco::Muon::TkIsoTight));
+     mu.set_selector(Muon::MiniIsoLoose    , pat_mu.passed(reco::Muon::MiniIsoLoose));
+     mu.set_selector(Muon::MiniIsoMedium   , pat_mu.passed(reco::Muon::MiniIsoMedium));
+     mu.set_selector(Muon::MiniIsoTight    , pat_mu.passed(reco::Muon::MiniIsoTight));
+     mu.set_selector(Muon::MiniIsoVeryTight, pat_mu.passed(reco::Muon::MiniIsoVeryTight));
+
+     if(pat_mu.simType() == reco::NotMatched)                       mu.set_simType(Muon::NotMatched);
+     else if(pat_mu.simType() == reco::MatchedPunchthrough)         mu.set_simType(Muon::MatchedPunchthrough);
+     else if(pat_mu.simType() == reco::MatchedElectron)             mu.set_simType(Muon::MatchedElectron);
+     else if(pat_mu.simType() == reco::MatchedPrimaryMuon)          mu.set_simType(Muon::MatchedPrimaryMuon);
+     else if(pat_mu.simType() == reco::MatchedMuonFromLightFlavour) mu.set_simType(Muon::MatchedLightQuark);
+     else if(pat_mu.simType() == reco::GhostPunchthrough)           mu.set_simType(Muon::GhostPunchthrough);
+     else if(pat_mu.simType() == reco::GhostElectron)               mu.set_simType(Muon::GhostElectron);
+     else if(pat_mu.simType() == reco::GhostPrimaryMuon)            mu.set_simType(Muon::GhostPrimaryMuon);
+     else if(pat_mu.simType() == reco::GhostMuonFromLightFlavour)   mu.set_simType(Muon::GhostLightQuark);
+     else if(pat_mu.simType() == reco::MatchedMuonFromHeavyFlavour){
+       if(pat_mu.simExtType() == reco::MatchedMuonFromTau)          mu.set_simType(Muon::MatchedTau);
+       else                                                         mu.set_simType(Muon::MatchedHeavyQuark);
+     }
+     else if(pat_mu.simType() == reco::GhostMuonFromHeavyFlavour){
+       if(pat_mu.simExtType() == reco::GhostMuonFromTau)            mu.set_simType(Muon::GhostTau);
+       else                                                         mu.set_simType(Muon::GhostHeavyQuark);
+     }
+     else                                                           mu.set_simType(Muon::Unknown);
+
+     mu.set_simFlavor(pat_mu.simFlavour());
+     mu.set_simPdgId(pat_mu.simPdgId());
+     mu.set_simMotherPdgId(pat_mu.simMotherPdgId());
+     mu.set_simHeaviestMotherFlavor(pat_mu.simHeaviestMotherFlavour());
 
      mu.set_dxy      (pat_mu.muonBestTrack()->dxy(PV.position()));
      mu.set_dxy_error(pat_mu.muonBestTrack()->dxyError());
@@ -208,6 +251,12 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent, 
      mu.set_pfMINIIso_PU      (pat_mu.hasUserFloat("muPFMiniIsoValuePUSTAND") ? pat_mu.userFloat("muPFMiniIsoValuePUSTAND") : -999.);
      mu.set_pfMINIIso_NH_pfwgt(pat_mu.hasUserFloat("muPFMiniIsoValueNHPFWGT") ? pat_mu.userFloat("muPFMiniIsoValueNHPFWGT") : -999.);
      mu.set_pfMINIIso_Ph_pfwgt(pat_mu.hasUserFloat("muPFMiniIsoValuePhPFWGT") ? pat_mu.userFloat("muPFMiniIsoValuePhPFWGT") : -999.);
+
+     const auto & tunePTrack = pat_mu.tunePMuonBestTrack();
+     mu.set_tunePTrackPt(tunePTrack->pt());
+     mu.set_tunePTrackEta(tunePTrack->eta());
+     mu.set_tunePTrackPhi(tunePTrack->phi());
+     mu.set_tunePTrackType(static_cast<Muon::MuonTrackType>(pat_mu.tunePMuonBestTrackType()));
 
      /* source candidates */
      if(save_source_candidates_){

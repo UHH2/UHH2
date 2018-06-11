@@ -19,7 +19,7 @@ void CommonModules::fail_if_init() const{
 
 
 CommonModules::CommonModules(){
-  working_point = JetPFID::WP_LOOSE;
+  working_point = JetPFID::WP_TIGHT;
 }
 
 
@@ -36,28 +36,32 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
         if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx,SysType_PU));
         if(jec){
-	  jet_corrector_MC.reset(new JetCorrector(ctx, JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC));
+	  jet_corrector_MC.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_L123_AK4PFchs_MC));
 	}
         if(jersmear) jet_resolution_smearer.reset(new JetResolutionSmearer(ctx));
     }
     else{
        if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
        if(jec){
-	 jet_corrector_BCD.reset(new JetCorrector(ctx, JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA));
-	 jet_corrector_EFearly.reset(new JetCorrector(ctx, JERFiles::Summer16_23Sep2016_V4_EF_L123_AK4PFchs_DATA));
-	 jet_corrector_FlateG.reset(new JetCorrector(ctx, JERFiles::Summer16_23Sep2016_V4_G_L123_AK4PFchs_DATA));
-	 jet_corrector_H.reset(new JetCorrector(ctx, JERFiles::Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA));
+	 jet_corrector_B.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_B_L123_AK4PFchs_DATA));
+	 jet_corrector_C.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_C_L123_AK4PFchs_DATA));
+	 jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_D_L123_AK4PFchs_DATA));
+	 jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_E_L123_AK4PFchs_DATA));
+	 jet_corrector_F.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_F_L123_AK4PFchs_DATA));
        }
     }
     if(metfilters){
+      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
        metfilters_selection.reset(new AndSelection(ctx, "metfilters"));
        metfilters_selection->add<TriggerSelection>("HBHENoiseFilter", "Flag_HBHENoiseFilter");
        metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
-       metfilters_selection->add<TriggerSelection>("globalTightHalo2016Filter", "Flag_globalTightHalo2016Filter");
+       metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter", "Flag_globalSuperTightHalo2016Filter");
        metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
-       metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
-       //metfilters_selection->add<TriggerSelection>("chargedHadronTrackResolutionFilter", "Flag_chargedHadronTrackResolutionFilter"); 
-       //metfilters_selection->add<TriggerSelection>("muonBadTrackFilter", "Flag_muonBadTrackFilter");
+       if (!is_mc) metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");  // Not recommended for MC, but do check
+       metfilters_selection->add<TriggerSelection>("BadChargedCandidateFilter", "Flag_BadChargedCandidateFilter"); 
+       metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
+       metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
+       metfilters_selection->add<TriggerSelection>("ecalBadCalibFilter", "Flag_ecalBadCalibFilter");
        if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
     }
     if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
@@ -67,12 +71,13 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
       modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
     }
     if(jetlepcleaner) {
-      if(is_mc)	JLC_MC.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC));
+      if(is_mc)	JLC_MC.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_L123_AK4PFchs_MC));
       else{
-	JLC_BCD.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA));
-	JLC_EFearly.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_EF_L123_AK4PFchs_DATA));
-	JLC_FlateG.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_G_L123_AK4PFchs_DATA));
-	JLC_H.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA));
+	JLC_B.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_B_L123_AK4PFchs_DATA));
+	JLC_C.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_C_L123_AK4PFchs_DATA));
+	JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_D_L123_AK4PFchs_DATA));
+	JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_E_L123_AK4PFchs_DATA));
+	JLC_F.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_F_L123_AK4PFchs_DATA));
       }
     }
     modules.emplace_back(new HTCalculator(ctx,HT_jetid));
@@ -96,10 +101,11 @@ bool CommonModules::process(uhh2::Event & event){
     if(jetlepcleaner){
       if(is_mc) JLC_MC->process(event);
       else{
-	if(event.run <= runnr_BCD)         JLC_BCD->process(event);
-	else if(event.run < runnr_EFearly) JLC_EFearly->process(event); //< is correct, not <= 
-	else if(event.run <= runnr_FlateG) JLC_FlateG->process(event);
-	else if(event.run > runnr_FlateG)  JLC_H->process(event);
+	if(event.run <= runnr_B)      JLC_B->process(event);
+	else if(event.run <= runnr_C) JLC_C->process(event);
+	else if(event.run <= runnr_D) JLC_D->process(event);
+	else if(event.run <= runnr_E) JLC_E->process(event);
+        else if(event.run <= runnr_F) JLC_F->process(event);
 	else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
       }
     }
@@ -107,10 +113,11 @@ bool CommonModules::process(uhh2::Event & event){
     if(jec){
       if(is_mc)jet_corrector_MC->process(event);
       else{
-	if(event.run <= runnr_BCD)         jet_corrector_BCD->process(event);
-	else if(event.run < runnr_EFearly) jet_corrector_EFearly->process(event); //< is correct, not <= 
-	else if(event.run <= runnr_FlateG) jet_corrector_FlateG->process(event);
-	else if(event.run > runnr_FlateG)  jet_corrector_H->process(event);
+	if(event.run <= runnr_B)      jet_corrector_B->process(event);
+	else if(event.run <= runnr_C) jet_corrector_C->process(event);
+	else if(event.run <= runnr_D) jet_corrector_D->process(event);
+	else if(event.run <= runnr_E) jet_corrector_E->process(event);
+	else if(event.run <= runnr_F) jet_corrector_F->process(event);
 	else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
       }
     }
@@ -121,10 +128,11 @@ bool CommonModules::process(uhh2::Event & event){
     if((jetlepcleaner && jec) || (do_metcorrection && jec)){
       if(is_mc) jet_corrector_MC->correct_met(event);
       else{
-	if(event.run <= runnr_BCD)         jet_corrector_BCD->correct_met(event);
-	else if(event.run < runnr_EFearly) jet_corrector_EFearly->correct_met(event); //< is correct, not <= 
-	else if(event.run <= runnr_FlateG) jet_corrector_FlateG->correct_met(event);
-	else if(event.run > runnr_FlateG)  jet_corrector_H->correct_met(event);
+	if(event.run <= runnr_B)      jet_corrector_B->correct_met(event);
+	else if(event.run <= runnr_C) jet_corrector_C->correct_met(event);
+	else if(event.run <= runnr_D) jet_corrector_D->correct_met(event);
+	else if(event.run <= runnr_E) jet_corrector_E->correct_met(event);
+	else if(event.run <= runnr_F) jet_corrector_F->correct_met(event);
 	else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
       }
     }

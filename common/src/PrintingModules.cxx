@@ -20,7 +20,7 @@ bool MuonPrinter::process(Event & event){
     for(const Muon & mu : *event.muons){
         ++i;
         cout << " mu[" << i << "]: E=" << mu.energy() << "; pt=" << mu.pt() << ", eta=" << mu.eta() << "; phi=" << mu.phi() << "; reliso=" << mu.relIso()
-             << "; global=" << mu.get_bool(Muon::global) << "; pf=" << mu.get_bool(Muon::pf)
+             << "; global=" << mu.get_selector(Muon::Global) << "; pf=" << mu.get_selector(Muon::PF)
              << "; dxy=" << mu.dxy() << "; dz=" << mu.dz() << endl;
     }
     return true;
