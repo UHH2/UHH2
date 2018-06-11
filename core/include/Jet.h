@@ -92,6 +92,7 @@ class Jet : public FlavorParticle {
   void set_btag_BoostedDoubleSecondaryVertexAK8(float x){m_btag_BoostedDoubleSecondaryVertexAK8=x;}
   void set_btag_BoostedDoubleSecondaryVertexCA15(float x){m_btag_BoostedDoubleSecondaryVertexCA15=x;}
   void set_JEC_factor_raw(float x){m_JEC_factor_raw=x;}
+  void set_JER_factor_raw(float x){m_JER_factor_raw=x;}
   void set_JEC_L1factor_raw(float x){m_JEC_L1factor_raw=x;}
   void set_genjet_index(int x){m_genjet_index=x;}
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
