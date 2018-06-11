@@ -257,8 +257,7 @@ HOTVRProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
     jetCollection->push_back(thisPatJet);
 
     for (uint s=0; s<subjets.size(); s++) {
-      indices[i].push_back(subjetCollection->size());
-
+      indices[i].push_back(subjetCollection->size()); // store index of subjet in the whole subjet collection
       auto subjet = createPatJet(subjets[s]);
       subjet.setJetArea(subjet_area[s]);
       subjetCollection->push_back(subjet);
@@ -266,18 +265,20 @@ HOTVRProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
 
   } // end loop over jets
 
+  // Following inspired by CompoundJetProducer/VirtualJetProducer
   edm::OrphanHandle<pat::JetCollection> subjetHandleAfterPut = iEvent.put(std::move(subjetCollection), subjetCollName_);
 
-  // setup refs between jets & subjets
+  // setup refs between jets & subjets using indices of subjets in the SubjetCollection
+  uint jetInd = 0;
   for (auto & jetItr : *jetCollection) {
-    for (const auto ind : indices) {
-      pat::JetPtrCollection subjetPtrs;
-      for (const auto indItr : ind) {
-        edm::Ptr<pat::Jet> subjetPtr(subjetHandleAfterPut, indItr);
-        subjetPtrs.push_back(subjetPtr);
-      }
-      jetItr.addSubjets(subjetPtrs);
+    std::vector<int> & ind = indices[jetInd];
+    pat::JetPtrCollection subjetPtrs;
+    for (const auto indItr : ind) {
+      edm::Ptr<pat::Jet> subjetPtr(subjetHandleAfterPut, indItr);
+      subjetPtrs.push_back(subjetPtr);
     }
+    jetItr.addSubjets(subjetPtrs);
+    jetInd++;
   }
   iEvent.put(std::move(jetCollection));
 }
