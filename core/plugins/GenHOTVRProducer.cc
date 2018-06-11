@@ -179,20 +179,20 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   } // end loop over jets
   
-  // Follow the similar pattern as in VirtualJetProducer to output both
-  // jets & subjets, with correct linkage
+  // Following inspired by CompoundJetProducer/VirtualJetProducer
   edm::OrphanHandle<pat::JetCollection> subjetHandleAfterPut = iEvent.put(std::move(subjetCollection), subjetCollName_);
 
-  // setup refs between jets & subjets
+  // setup refs between jets & subjets using indices of subjets in the SubjetCollection
+  uint jetInd = 0;
   for (auto & jetItr : *jetCollection) {
-    for (const auto ind : indices) {
-      pat::JetPtrCollection subjetPtrs;
-      for (const auto indItr : ind) {
-        edm::Ptr<pat::Jet> subjetPtr(subjetHandleAfterPut, indItr);
-        subjetPtrs.push_back(subjetPtr);
-      }
-      jetItr.addSubjets(subjetPtrs);
+    std::vector<int> & ind = indices[jetInd];
+    pat::JetPtrCollection subjetPtrs;
+    for (const auto indItr : ind) {
+      edm::Ptr<pat::Jet> subjetPtr(subjetHandleAfterPut, indItr);
+      subjetPtrs.push_back(subjetPtr);
     }
+    jetItr.addSubjets(subjetPtrs);
+    jetInd++;
   }
   iEvent.put(std::move(jetCollection));
 }
