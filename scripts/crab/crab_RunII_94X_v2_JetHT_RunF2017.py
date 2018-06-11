@@ -41,20 +41,21 @@ config.General.transferOutputs = True
 config.General.transferLogs = True
         
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '/nfs/dust/cms/user/karavdia/CMSSW_9_4_3/src/UHH2/core/python/ntuplewriter_addPrefireInfo_woElectrons.py'
+#config.JobType.psetName = '/nfs/dust/cms/user/karavdia/CMSSW_9_4_3/src/UHH2/core/python/ntuplewriter_addPrefireInfo_woElectrons.py'
+config.JobType.psetName = '/nfs/dust/cms/user/karavdia/CMSSW_9_4_3/src/UHH2/core/python/ntuplewriter_addPrefireInfo_woElectrons_woXCONE_woHOTVR.py'
 config.JobType.outputFiles = ["Ntuple.root"]
 config.JobType.inputFiles = ['/nfs/dust/cms/user/karavdia/CMSSW_9_4_2/src/UHH2/JECDatabase/SQLiteFiles/Summer16_03Feb2017_V9_MC.db']
 config.JobType.sendExternalFolder = True
 config.Data.useParent = True
 config.Data.inputDBS = 'global'
-config.Data.splitting = 'FileBased'
-config.Data.unitsPerJob = 1
-#config.Data.splitting = 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 10000
+#config.Data.splitting = 'FileBased'
+#config.Data.unitsPerJob = 1
+config.Data.splitting = 'EventAwareLumiBased'
+config.Data.unitsPerJob = 15000
 #NJOBS = 1
 #config.Data.totalUnits = config.Data.unitsPerJob * NJOBS #For test run 1 job only
 #config.Data.unitsPerJob = 5000
-config.Data.outLFNDirBase = '/store/user/%s/RunII_94X_v2/DATA_JetHT_woElectrons/' % (getUsernameFromSiteDB())
+config.Data.outLFNDirBase = '/store/user/%s/RunII_94X_v2/DATA_JetHT_woElectrons_woXCONE_woHOTVR/' % (getUsernameFromSiteDB())
 config.Data.publication = False
 config.Data.lumiMask ='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/ReReco/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
 
