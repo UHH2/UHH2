@@ -204,7 +204,6 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   // declare jet collections
   auto jetCollection = std::make_unique<pat::JetCollection>();
   auto subjetCollection = std::make_unique<pat::JetCollection>();
-  std::vector< std::vector<int> > indices;
 
   // Run clustering of fatjets
   vector<PseudoJet> fatjets;
@@ -237,6 +236,10 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   vector<int> list_fat;
   list_fat.clear();
   list_fat = clust_seq_xcone.particle_jet_indices(fatjets);
+
+  // this is the mapping of subjet to hard jet
+  std::vector< std::vector<int> > indices;
+  indices.resize(fatjets.size());
 
   // For lepton specific clustering, we find the fatjet closest to the lepton,
   // and then use N-1 on its constituents.
@@ -294,7 +297,6 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     patJet.addUserFloat("softdropmass", sd_mass[i]);
     jetCollection->push_back(patJet);
 
-    indices.resize(jetCollection->size());
     for (uint s=0; s<subjets.size(); s++) {
       indices[i].push_back(subjetCollection->size());
       auto subjet = createPatJet(subjets[s]);
@@ -304,18 +306,20 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   }
 
+  // Following inspired by CompoundJetProducer/VirtualJetProducer
   edm::OrphanHandle<pat::JetCollection> subjetHandleAfterPut = iEvent.put(std::move(subjetCollection), subjetCollName_);
 
-  // setup refs between jets & subjets
+  // setup refs between jets & subjets using indices of subjets in the SubjetCollection
+  int jetInd = 0;
   for (auto & jetItr : *jetCollection) {
-    for (const auto ind : indices) {
-      pat::JetPtrCollection subjetPtrs;
-      for (const auto indItr : ind) {
-        edm::Ptr<pat::Jet> subjetPtr(subjetHandleAfterPut, indItr);
-        subjetPtrs.push_back(subjetPtr);
-      }
-      jetItr.addSubjets(subjetPtrs);
+    std::vector<int> & ind = indices[jetInd];
+    pat::JetPtrCollection subjetPtrs;
+    for (const auto indItr : ind) {
+      edm::Ptr<pat::Jet> subjetPtr(subjetHandleAfterPut, indItr);
+      subjetPtrs.push_back(subjetPtr);
     }
+    jetItr.addSubjets(subjetPtrs);
+    jetInd++;
   }
   iEvent.put(std::move(jetCollection));
 }
