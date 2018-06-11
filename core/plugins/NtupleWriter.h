@@ -156,10 +156,11 @@ class NtupleWriter : public edm::one::EDFilter<edm::one::WatchRuns> {
       std::vector<edm::EDGetToken> xcone_subjet_tokens;
       std::vector<std::vector<TopJet>> xconeJets;
 
-      std::vector<GenTopJet> genhotvrJets;
-      std::vector<GenTopJet> genxcone33Jets;
-      std::vector<GenTopJet> genxcone33Jets_softdrop;
-      std::vector<GenTopJet> genxcone23Jets;
+      std::vector<edm::EDGetToken> genhotvr_tokens;
+      std::vector<std::vector<GenTopJet>> genhotvrJets;
+
+      std::vector<edm::EDGetToken> genxcone_tokens;
+      std::vector<std::vector<GenTopJet>> genxconeJets;
 
       edm::EDGetTokenT<BXVector<GlobalAlgBlk>> l1GtToken_;
       edm::EDGetTokenT<BXVector<l1t::EGamma>> l1EGToken_;
