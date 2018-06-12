@@ -461,30 +461,31 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     for(auto & jet : *event.jets){
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
       if(jet.v4().Pt() > 15 && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9){
-	auto factor_raw = jet.JEC_factor_raw();
+	auto factor_raw_JEC = jet.JEC_factor_raw();
 	auto L1factor_raw = jet.JEC_L1factor_raw();
 	auto factor_raw_JER = jet.JER_factor_raw();
 
-	corrector_L1RC.setJetPt(jet.pt() * factor_raw_JER);
+	corrector_L1RC.setJetPt(jet.pt() * factor_raw_JEC * factor_raw_JER);
 	corrector_L1RC.setJetEta(jet.eta());
-	corrector_L1RC.setJetE(jet.energy() * factor_raw_JER);
+	corrector_L1RC.setJetE(jet.energy() * factor_raw_JEC * factor_raw_JER);
 	corrector_L1RC.setJetA(jet.jetArea());
 	corrector_L1RC.setRho(event.rho);
 	auto correctionfactors_L1RC = corrector_L1RC.getSubCorrections();
 	auto correctionfactor_L1RC  = correctionfactors_L1RC.back();
 
-	corrector.setJetPt(jet.pt() * factor_raw);
+	corrector.setJetPt(jet.pt() * factor_raw_JEC);
 	corrector.setJetEta(jet.eta());
-	corrector.setJetE(jet.energy() * factor_raw);
+	corrector.setJetE(jet.energy() * factor_raw_JEC);
 	corrector.setJetA(jet.jetArea());
 	corrector.setRho(event.rho);
 	auto correctionfactors = corrector.getSubCorrections();
 	auto correctionfactor  = correctionfactors.back();
 
-	LorentzVector L1corr =   (L1factor_raw*factor_raw_JER)*jet.v4();            //L1 corrected jets
-	//	LorentzVector L1RCcorr = (correctionfactor_L1RC*factor_raw_JER)*jet.v4();   //L1RC corrected jets 
-       	LorentzVector L1RCcorr = (correctionfactor_L1RC/correctionfactor)*jet.v4();   //L1RC corrected jets Update 15 May 2018
+	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC)*jet.v4();            //L1 corrected jets
+       	LorentzVector L1RCcorr = (correctionfactor_L1RC * factor_raw_JEC )*jet.v4();   //L1RC corrected jets Update 15 May 2018
 	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
+
+	cout<<"inv. correction_factor: "<<1/correctionfactor<<",    factor_raw_JEC: "<<factor_raw_JEC<<endl;  
 
 	metv4 -=  L123corr;
 
@@ -1124,10 +1125,8 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
       }
       jet_v4 *= new_pt / recopt;
 
-      //update JEC_factor_raw needed for smearing MET
-      float factor_raw_JER = jet.JEC_factor_raw();
-
-      factor_raw_JER *= recopt/new_pt;
+      //Save new factor_raw_JER for smearing MET
+      float factor_raw_JER =  recopt/new_pt;
 
       jet.set_JER_factor_raw(factor_raw_JER);
       

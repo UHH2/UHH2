@@ -33,9 +33,9 @@ class Jet : public FlavorParticle {
     m_btag_jetProbability = 0;
     m_btag_BoostedDoubleSecondaryVertexAK8 = 0;
     m_btag_BoostedDoubleSecondaryVertexCA15 = 0;
-    m_JEC_factor_raw = 0;
-    m_JER_factor_raw = 0;
-    m_JEC_L1factor_raw = 0;
+    m_JEC_factor_raw = 1;  //correct for JEC only 
+    m_JER_factor_raw = 1;  //correct for JER smearing only;   To fully correct jet (JEC and JER), you have to multiply both factors
+    m_JEC_L1factor_raw = 1;
     m_genjet_index = 0;
     m_hadronFlavor = 0;
 
