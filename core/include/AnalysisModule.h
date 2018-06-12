@@ -237,6 +237,7 @@ GenericEvent::Handle<T> Context::declare_event_output(const std::string & bname,
 }
 
 typedef Registry<AnalysisModule, Context &> AnalysisModuleRegistry;
-#define UHH2_REGISTER_ANALYSIS_MODULE(T) namespace { int dummy##T = ::uhh2::AnalysisModuleRegistry::register_<T>(#T); }
+// mark as unused otherwise generates warnings
+#define UHH2_REGISTER_ANALYSIS_MODULE(T) namespace { __attribute__ ((unused)) int dummy##T = ::uhh2::AnalysisModuleRegistry::register_<T>(#T); }
 
 }
