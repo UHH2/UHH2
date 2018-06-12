@@ -473,19 +473,10 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 	auto correctionfactors_L1RC = corrector_L1RC.getSubCorrections();
 	auto correctionfactor_L1RC  = correctionfactors_L1RC.back();
 
-	corrector.setJetPt(jet.pt() * factor_raw_JEC);
-	corrector.setJetEta(jet.eta());
-	corrector.setJetE(jet.energy() * factor_raw_JEC);
-	corrector.setJetA(jet.jetArea());
-	corrector.setRho(event.rho);
-	auto correctionfactors = corrector.getSubCorrections();
-	auto correctionfactor  = correctionfactors.back();
-
 	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC)*jet.v4();            //L1 corrected jets
        	LorentzVector L1RCcorr = (correctionfactor_L1RC * factor_raw_JEC )*jet.v4();   //L1RC corrected jets Update 15 May 2018
 	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
 
-	cout<<"inv. correction_factor: "<<1/correctionfactor<<",    factor_raw_JEC: "<<factor_raw_JEC<<endl;  
 
 	metv4 -=  L123corr;
 
