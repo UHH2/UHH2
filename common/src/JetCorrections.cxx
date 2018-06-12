@@ -1453,8 +1453,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
   //propagate to MET
   //apply type1 MET correction to RAW MET
   //NB: jet with substracted muon Pt should be used
-
- void correct_MET(const Event & event, const bool & do_L1corr, const bool do_L1RCcorr, FactorizedJetCorrector & corrector_L1RC, FactorizedJetCorrector & corrector){
+ void correct_MET(const Event & event, const bool & do_L1corr, const bool do_L1RCcorr, FactorizedJetCorrector & corrector_L1RC){
 
     //we start from raw MET
     LorentzVector metv4= event.met->uncorr_v4();
@@ -1593,8 +1592,8 @@ bool JetCorrector::correct_met(uhh2::Event & event, const bool & isCHSmet, doubl
 
   //propagate jet corrections to MET
   bool correct_with_chs = used_ak4chs || metprop_possible_ak8chs;
-  correct_MET(event, correct_with_chs, do_metL1RC, *corrector_L1RC, *corrector); 
-
+  correct_MET(event, correct_with_chs, do_metL1RC, *corrector_L1RC); 
+  
   return true;
 }
 
