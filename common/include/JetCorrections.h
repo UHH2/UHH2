@@ -49,7 +49,7 @@ namespace JERFiles {
     extern const std::vector<std::string> Fall17_17Nov2017_V7_E_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V7_F_L123_AK4PFchs_DATA;
   
-    // extern const std::vector<std::string> Fall17_17Nov2017_V7_L123_AK4PFchs_MC;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_L123_AK4PFchs_MC;
   
     extern const std::vector<std::string> Fall17_17Nov2017_V7_B_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V7_C_L1RC_AK4PFchs_DATA;
@@ -57,7 +57,7 @@ namespace JERFiles {
     extern const std::vector<std::string> Fall17_17Nov2017_V7_E_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V7_F_L1RC_AK4PFchs_DATA;
   
-    // extern const std::vector<std::string> Fall17_17Nov2017_V7_L1RC_AK4PFchs_MC;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_L1RC_AK4PFchs_MC;
 
 }
 
@@ -271,8 +271,6 @@ namespace JERSmearing {
 
   typedef std::vector<std::array<float, 4> > SFtype1;
 
-  extern const SFtype1 SF_13TeV_2016;
-  extern const SFtype1 SF_13TeV_2016_03Feb2017;
   extern const SFtype1 SF_13TeV_Summer16_25nsV1;
 }
 
@@ -336,7 +334,7 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
  */
 class JetResolutionSmearer: public uhh2::AnalysisModule{
 public:
-    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016_03Feb2017);
+    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_Summer16_25nsV1);
 
     virtual bool process(uhh2::Event & event) override;
 
