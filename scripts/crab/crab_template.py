@@ -18,7 +18,11 @@ requestNames = []
 for x in inputDatasets:
     name = x.split('/')[1]
     modified_name =name.replace('_TuneCUETP8M1_13TeV-madgraphMLM-pythia8','')
-    if 'ext' in x:
+    if 'ext1' in x:
+        modified_name += '_ext1'
+    elif 'ext2' in x:
+        modified_name += '_ext2'
+    elif 'ext' in x:
         modified_name += '_ext'
     requestNames.append(modified_name)
 
