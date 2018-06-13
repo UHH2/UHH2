@@ -14,6 +14,9 @@
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
 
 #include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
+#include "DataFormats/L1Trigger/interface/EGamma.h"
+#include "DataFormats/L1Trigger/interface/Jet.h"
+
 
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
@@ -157,6 +160,11 @@ class NtupleWriter : public edm::one::EDFilter<edm::one::WatchRuns> {
       std::vector<GenTopJet> genxcone23Jets;
 
       edm::EDGetTokenT<BXVector<GlobalAlgBlk>> l1GtToken_;
+      edm::EDGetTokenT<BXVector<l1t::EGamma>> l1EGToken_;
+      edm::EDGetTokenT<BXVector<l1t::Jet>> l1JetToken_;
+
+      std::vector<L1EGamma>  L1EG_seeds;
+      std::vector<L1Jet>  L1Jet_seeds;
 
 };
 

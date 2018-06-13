@@ -35,4 +35,8 @@
 <class name="std::vector<PFParticle>"/>
 <class name="source_candidate"/>
 <class name="std::vector<source_candidate>"/>
+<class name="L1EGamma"/>
+<class name="std::vector<L1EGamma>"/>
+<class name="L1Jet"/>
+<class name="std::vector<L1Jet>"/>
 </lcgdict>
