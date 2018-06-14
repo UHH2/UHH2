@@ -146,9 +146,11 @@ private:
   float m_tau1;
   float m_tau2;
   float m_tau3;
+  float m_tau4;
   float m_tau1_groomed;
   float m_tau2_groomed;
   float m_tau3_groomed;
+  float m_tau4_groomed;
   
   float m_ecfN2_beta1;
   float m_ecfN2_beta2;
