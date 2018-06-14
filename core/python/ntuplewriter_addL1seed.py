@@ -1,8 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
 isDebug = False
-useData = True
-#useData = False
+#useData = True
+useData = False
 
 met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi")
 

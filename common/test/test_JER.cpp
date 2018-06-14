@@ -52,13 +52,13 @@ test_JER::test_JER(uhh2::Context& ctx){
   std::vector<std::string> JEC_AK4, JEC_AK8;
   if(isMC){
 
-    JEC_AK4 = JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC;
-    JEC_AK8 = JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC;
+    JEC_AK4 = JERFiles::Summer16_07Aug2017_V7_L123_AK4PFchs_MC;
+    JEC_AK8 = JERFiles::Summer16_07Aug2017_V7_L123_AK4PFchs_MC;
   }
   else {
 
-    JEC_AK4 = JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA;
-    JEC_AK8 = JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA;
+    JEC_AK4 = JERFiles::Summer16_07Aug2017_V7_BCD_L123_AK4PFchs_DATA;
+    JEC_AK8 = JERFiles::Summer16_07Aug2017_V7_BCD_L123_AK4PFchs_DATA;
   }
 
   jet_IDcleaner.reset(new JetCleaner(ctx, jetID));
@@ -71,7 +71,7 @@ test_JER::test_JER(uhh2::Context& ctx){
   topjet_IDcleaner.reset(new JetCleaner(ctx, jetID));
   topjet_corrector.reset(new TopJetCorrector(ctx, JEC_AK8));
   topjet_subjet_corrector.reset(new SubJetCorrector(ctx, JEC_AK4));
-  if(isMC) topjetER_smearer.reset(new GenericJetResolutionSmearer(ctx, "topjets", "topjetsGEN", JERSmearing::SF_13TeV_2016, "Spring16_25nsV10_MC_PtResolution_AK8PFchs.txt"));
+  if(isMC) topjetER_smearer.reset(new GenericJetResolutionSmearer(ctx, "topjets", "topjetsGEN", JERSmearing::SF_13TeV_Summer16_25nsV1, "Spring16_25nsV10_MC_PtResolution_AK8PFchs.txt"));
   ////
 }
 

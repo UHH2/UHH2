@@ -39,6 +39,7 @@ class Jet : public FlavorParticle {
     m_btag_BoostedDoubleSecondaryVertexAK8 = 0;
     m_btag_BoostedDoubleSecondaryVertexCA15 = 0;
     m_JEC_factor_raw = 0;
+    m_JER_factor_raw = 0;
     m_JEC_L1factor_raw = 0;
     m_genjet_index = 0;
     m_hadronFlavor = 0;
@@ -71,6 +72,7 @@ class Jet : public FlavorParticle {
   float btag_BoostedDoubleSecondaryVertexAK8() const{return m_btag_BoostedDoubleSecondaryVertexAK8;}
   float btag_BoostedDoubleSecondaryVertexCA15() const{return m_btag_BoostedDoubleSecondaryVertexCA15;}
   float JEC_factor_raw() const{return m_JEC_factor_raw;}
+  float JER_factor_raw() const{return m_JER_factor_raw;}
   float JEC_L1factor_raw() const{return m_JEC_L1factor_raw;}
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
   JetBTagInfo btaginfo() const{return m_btaginfo;}
@@ -140,6 +142,7 @@ class Jet : public FlavorParticle {
   float m_btag_BoostedDoubleSecondaryVertexAK8;
   float m_btag_BoostedDoubleSecondaryVertexCA15;
   float m_JEC_factor_raw;
+  float m_JER_factor_raw;
   float m_JEC_L1factor_raw;
   int m_genjet_index;
   int m_hadronFlavor;

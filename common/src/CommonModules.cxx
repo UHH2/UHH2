@@ -36,18 +36,18 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
         if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
         if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx,SysType_PU));
         if(jec){
-	  jet_corrector_MC.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_L123_AK4PFchs_MC));
+	  jet_corrector_MC.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V7_L123_AK4PFchs_MC));
 	}
         if(jersmear) jet_resolution_smearer.reset(new JetResolutionSmearer(ctx));
     }
     else{
        if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
        if(jec){
-	 jet_corrector_B.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_B_L123_AK4PFchs_DATA));
-	 jet_corrector_C.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_C_L123_AK4PFchs_DATA));
-	 jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_D_L123_AK4PFchs_DATA));
-	 jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_E_L123_AK4PFchs_DATA));
-	 jet_corrector_F.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V6_F_L123_AK4PFchs_DATA));
+	 jet_corrector_B.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V7_B_L123_AK4PFchs_DATA));
+	 jet_corrector_C.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V7_C_L123_AK4PFchs_DATA));
+	 jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V7_D_L123_AK4PFchs_DATA));
+	 jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V7_E_L123_AK4PFchs_DATA));
+	 jet_corrector_F.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V7_F_L123_AK4PFchs_DATA));
        }
     }
     if(metfilters){
@@ -71,13 +71,13 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
       modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
     }
     if(jetlepcleaner) {
-      if(is_mc)	JLC_MC.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_L123_AK4PFchs_MC));
+      if(is_mc)	JLC_MC.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V7_L123_AK4PFchs_MC));
       else{
-	JLC_B.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_B_L123_AK4PFchs_DATA));
-	JLC_C.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_C_L123_AK4PFchs_DATA));
-	JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_D_L123_AK4PFchs_DATA));
-	JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_E_L123_AK4PFchs_DATA));
-	JLC_F.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V6_F_L123_AK4PFchs_DATA));
+	JLC_B.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V7_B_L123_AK4PFchs_DATA));
+	JLC_C.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V7_C_L123_AK4PFchs_DATA));
+	JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V7_D_L123_AK4PFchs_DATA));
+	JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V7_E_L123_AK4PFchs_DATA));
+	JLC_F.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V7_F_L123_AK4PFchs_DATA));
       }
     }
     modules.emplace_back(new HTCalculator(ctx,HT_jetid));
