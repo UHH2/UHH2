@@ -47,6 +47,7 @@ setupFastjet() {
 	# Use the CMS version of fastjet as thread-safe
 	git clone -b cms/v$FJVER https://github.com/UHH2/fastjet.git
 	cd fastjet
+	autoreconf -f -i  # needed to avoid 'aclocal-1.15' is missing on your system
 	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins CXXFLAGS=-fPIC
 	make $MAKEFLAGS
 	# make check  # fails for siscone
@@ -66,6 +67,7 @@ setupFastjet() {
 	cd fastjet-contrib
 	# add HOTVR from SVN - do it this way until it becomes a proper contrib
 	svn co http://fastjet.hepforge.org/svn/contrib/contribs/HOTVR/trunk HOTVR/
+	autoreconf -f -i
 	# although we add fastjet-config to path, due to a bug we need to
 	# explicitly state its path to ensure the necessary fragile library gets built
 	./configure --fastjet-config="${FJINSTALLDIR}/bin/fastjet-config" CXXFLAGS=-fPIC
