@@ -14,261 +14,29 @@ class FactorizedJetCorrector;
 
 /// namespace to define some useful filename constants to be used for jet energy corrections
 namespace JERFiles {
-    //Summer16_23Sep2016_V4_noRes needed for L2Res people
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L123_noRes_AK4PFchs_DATA;
+    //Summer16_07Aug2017_V7_noRes needed for L2Res people
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_BCD_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_EF_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_GH_L123_noRes_AK4PFchs_DATA;
+ 
+    //Summer16_07Aug2017_V7 --> Official JEC recommendation for Legacy2016
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_BCD_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_EF_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_GH_L123_AK4PFchs_DATA;
 
-    //Summer16_23Sep2016_V4 --> Official JEC recommendation for Moriond17
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_L123_AK4PFchs_MC;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_L123_AK8PFchs_MC;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_L1RC_AK4PFchs_MC; 
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_BCD_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_EF_L123_AK8PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_GH_L123_AK8PFchs_DATA;
 
-   //Summer16_23Sep2016_V4 --> PUPPI Jet Corrections
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_BCD_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_EF_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_G_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_H_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_L123_AK4PFPuppi_MC;
-    extern const std::vector<std::string> Summer16_23Sep2016_V4_L123_AK8PFPuppi_MC;
-}
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_L123_AK4PFchs_MC;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_L123_AK8PFchs_MC;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_BCD_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_EF_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_GH_L1RC_AK4PFchs_DATA;
 
+    extern const std::vector<std::string> Summer16_07Aug2017_V7_L1RC_AK4PFchs_MC;
 
-/// namespace to define some useful filename constants to be used for jet energy corrections
-namespace JERFiles {
-    //Summer16_03Feb2017_V3_noRes needed for L2Res people
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_BCD_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_EF_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_G_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_H_L123_noRes_AK4PFchs_DATA;
-
-    //Summer16_03Feb2017_V3 --> Official JEC recommendation for Moriond17
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_BCD_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_EF_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_G_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_H_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_BCD_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_EF_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_G_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_H_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V1_L123_AK4PFchs_MC;
-    extern const std::vector<std::string> Summer16_03Feb2017_V1_L123_AK8PFchs_MC;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_BCD_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_EF_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_G_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V3_H_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V1_L1RC_AK4PFchs_MC; 
-}
-
-/// namespace to define some useful filename constants to be used for jet energy corrections
-namespace JERFiles {
-    //Summer16_03Feb2017_V4_noRes needed for L2Res people
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_BCD_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_EF_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_G_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_H_L123_noRes_AK4PFchs_DATA;
-
-    //Summer16_03Feb2017_V4 --> Official JEC recommendation for Moriond17
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_BCD_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_EF_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_G_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_H_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_BCD_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_EF_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_G_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_H_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_BCD_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_EF_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_G_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V4_H_L1RC_AK4PFchs_DATA;
- }
-
-/// namespace to define some useful filename constants to be used for jet energy corrections
-namespace JERFiles {
-    //Summer16_03Feb2017_V5_noRes needed for L2Res people
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_BCD_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_EF_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_G_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_H_L123_noRes_AK4PFchs_DATA;
-
-    //Summer16_03Feb2017_V5 --> Official JEC recommendation for Moriond17
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_BCD_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_EF_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_G_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_H_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_BCD_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_EF_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_G_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_H_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_BCD_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_EF_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_G_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V5_H_L1RC_AK4PFchs_DATA;
- }
-
-/// namespace to define some useful filename constants to be used for jet energy corrections
-namespace JERFiles {
-    //Summer16_03Feb2017_V6_noRes needed for L2Res people
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_BCD_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_EF_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_G_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_H_L123_noRes_AK4PFchs_DATA;
-
-    //Summer16_03Feb2017_V6 --> Official JEC recommendation for Moriond17
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_BCD_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_EF_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_G_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_H_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_BCD_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_EF_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_G_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_H_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_L123_AK4PFchs_MC;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_L123_AK8PFchs_MC;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_BCD_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_EF_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_G_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_H_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Summer16_03Feb2017_V6_L1RC_AK4PFchs_MC;
- }
-
-//2017
-namespace JERFiles{
-
-      //Fall17_17Nov2017_V4
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_B_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_C_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_D_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_E_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_F_L123_AK4PFchs_DATA;
-  
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_L123_AK4PFchs_MC;
-  
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_B_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_C_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_D_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_E_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_F_L1RC_AK4PFchs_DATA;
-  
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_L1RC_AK4PFchs_MC;
-
-      //Fall17_17Nov2017_V5
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_B_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_C_L123_noRes_AK4PFchs_DATA;  
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_D_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_E_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_F_L123_noRes_AK4PFchs_DATA;
-  
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_B_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_C_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_D_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_E_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_F_L123_AK4PFchs_DATA;
-  
-    // extern const std::vector<std::string> Fall17_17Nov2017_V5_L123_AK4PFchs_MC;
-  
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_B_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_C_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_D_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_E_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V5_F_L1RC_AK4PFchs_DATA;
-  
-    // extern const std::vector<std::string> Fall17_17Nov2017_V5_L1RC_AK4PFchs_MC;
-
-      //Fall17_17Nov2017_V6
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_noRes_AK4PFchs_DATA;  
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_noRes_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_L123_AK4PFchs_MC;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK4PFchs_MC;
-
-
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_noRes_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_noRes_AK4PFPuppi_DATA;  
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_noRes_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_noRes_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_noRes_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_L123_AK4PFPuppi_MC;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L1RC_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L1RC_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L1RC_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L1RC_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L1RC_AK4PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK4PFPuppi_MC;
-
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_noRes_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_noRes_AK8PFchs_DATA;  
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_noRes_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_noRes_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_noRes_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_L123_AK8PFchs_MC;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L1RC_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L1RC_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L1RC_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L1RC_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L1RC_AK8PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK8PFchs_MC;
-
-
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_noRes_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_noRes_AK8PFPuppi_DATA;  
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_noRes_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_noRes_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_noRes_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L123_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_L123_AK8PFPuppi_MC;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_B_L1RC_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_C_L1RC_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_D_L1RC_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_E_L1RC_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L1RC_AK8PFPuppi_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK8PFPuppi_MC;
-
-  
-      //Fall17_17Nov2017_V7
+    //Fall17_17Nov2017_V7
     extern const std::vector<std::string> Fall17_17Nov2017_V7_B_L123_noRes_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V7_C_L123_noRes_AK4PFchs_DATA;  
     extern const std::vector<std::string> Fall17_17Nov2017_V7_D_L123_noRes_AK4PFchs_DATA;
@@ -281,7 +49,7 @@ namespace JERFiles{
     extern const std::vector<std::string> Fall17_17Nov2017_V7_E_L123_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V7_F_L123_AK4PFchs_DATA;
   
-    // extern const std::vector<std::string> Fall17_17Nov2017_V7_L123_AK4PFchs_MC;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_L123_AK4PFchs_MC;
   
     extern const std::vector<std::string> Fall17_17Nov2017_V7_B_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V7_C_L1RC_AK4PFchs_DATA;
@@ -289,10 +57,9 @@ namespace JERFiles{
     extern const std::vector<std::string> Fall17_17Nov2017_V7_E_L1RC_AK4PFchs_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V7_F_L1RC_AK4PFchs_DATA;
   
-    // extern const std::vector<std::string> Fall17_17Nov2017_V7_L1RC_AK4PFchs_MC;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_L1RC_AK4PFchs_MC;
 
 }
-
 
 void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const uhh2::Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0);
 
@@ -504,8 +271,6 @@ namespace JERSmearing {
 
   typedef std::vector<std::array<float, 4> > SFtype1;
 
-  extern const SFtype1 SF_13TeV_2016;
-  extern const SFtype1 SF_13TeV_2016_03Feb2017;
   extern const SFtype1 SF_13TeV_Summer16_25nsV1;
 }
 
@@ -569,7 +334,7 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
  */
 class JetResolutionSmearer: public uhh2::AnalysisModule{
 public:
-    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_2016_03Feb2017);
+    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_Summer16_25nsV1);
 
     virtual bool process(uhh2::Event & event) override;
 
