@@ -63,6 +63,9 @@ public:
     void setup_genparticles(const std::string & bname);
     void setup_genjets(const std::string & bname);
     
+    void setup_L1EG_seeds(const std::string & bname);
+    void setup_L1J_seeds(const std::string & bname);
+
     void setup_trigger();
     
     // note: event has to outlive this class. If creating a new event, also create a new EventHelper!
@@ -86,6 +89,7 @@ private:
     bool pvs, electrons, muons, taus, photons, jets, topjets, toppuppijets, met, genmet;
     bool genInfo, gentopjets, genparticles, genjets;
     bool trigger;
+    bool L1EG_seeds, L1J_seeds;
     bool first_event_read;
     
     // trigger handling:
@@ -117,6 +121,9 @@ private:
     Event::Handle<std::vector<bool>> h_triggerResults;
     Event::Handle<std::vector<int>> h_triggerPrescales;
     Event::Handle<std::vector<std::string>> h_triggerNames;
+
+    Event::Handle<std::vector<L1EGamma>> h_L1EG_seeds;
+    Event::Handle<std::vector<L1Jet>> h_L1J_seeds;
 };
 
 
