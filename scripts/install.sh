@@ -85,8 +85,9 @@ git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
 export SCRAM_ARCH=slc6_amd64_gcc630
-eval `cmsrel CMSSW_9_4_1`
-cd CMSSW_9_4_1/src
+CMSREL=CMSSW_9_4_1
+eval `cmsrel ${CMSREL}`
+cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
 git cms-init
 
