@@ -1313,7 +1313,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
    print_times(timer, "trigger");
 
-  if(doL1seed){
+  if(doL1seed && iEvent.isRealData()){
     auto & triggerResults = *event->get_triggerResults();   
     //muGT 
     edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
@@ -1343,9 +1343,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	l1eg.set_eta(itL1->p4().Eta());
 	l1eg.set_phi(itL1->p4().Phi());
 	l1eg.set_energy(itL1->p4().energy());
-	l1eg.set_towerIeta(itL1->towerIEta());
-	l1eg.set_towerIphi(itL1->towerIPhi());
-	l1eg.set_nTT(itL1->nTT());
 	l1eg.set_Shape(itL1->shape());
 	l1eg.set_iso(itL1->hwIso());
 	L1EG_seeds.push_back(l1eg);
@@ -1370,8 +1367,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	l1jet.set_eta(itL1->p4().Eta());
 	l1jet.set_phi(itL1->p4().Phi());
 	l1jet.set_energy(itL1->p4().energy());
-	l1jet.set_towerIeta(itL1->towerIEta());
-	l1jet.set_towerIphi(itL1->towerIPhi());
 	l1jet.set_puEt(itL1->puEt());
 	l1jet.set_seedEt(itL1->seedEt());
 	l1jet.set_rawEt(itL1->rawEt());

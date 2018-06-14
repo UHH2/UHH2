@@ -61,7 +61,8 @@ if isDebug:
 process.source = cms.Source("PoolSource",
                             fileNames=cms.untracked.vstring([
 #                                '/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/70000/F0F5EBA3-28E1-E711-85AA-44A842CFCA00.root'
-                                '/store/data/Run2017F/JetHT/MINIAOD/31Mar2018-v1/30000/54B9283C-C637-E811-A002-B496910A0554.root'
+#                                '/store/data/Run2017F/JetHT/MINIAOD/31Mar2018-v1/30000/54B9283C-C637-E811-A002-B496910A0554.root'
+                                '/store/mc/RunIIFall17MiniAOD/QCD_Pt-15to7000_TuneCP5_Flat2017_13TeV_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/70000/FEA67458-19DB-E711-9D44-0242AC130002.root'
                             ]),
                             skipEvents=cms.untracked.uint32(0)
                             )
