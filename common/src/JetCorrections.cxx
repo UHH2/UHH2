@@ -15,1180 +15,98 @@ using namespace uhh2;
 //TODO make this better redeable by generating all the pathes with loops over the different possibilities
 
 
-/* ++++++++++++++ Summer16_23Sep2016_V4_noRes needed for L2Res people +++++++++++++++ */
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_BCD_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_EF_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_G_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_H_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-
-/***************** Summer16_23Sep2016_V4 --> Official JEC recommendation for Moriond17 **********************************/
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_EF_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_G_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_H_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_L123_AK8PFchs_MC = {
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L3Absolute_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_EF_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_G_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_H_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-/***************** Summer16_23Sep2016_V4 --> PUPPI Jet Corrections  **********************************/
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L3Absolute_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2L3Residual_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_EF_L123_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L3Absolute_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L2L3Residual_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_G_L123_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L3Absolute_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L2L3Residual_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_H_L123_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L3Absolute_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L2L3Residual_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_L123_AK4PFPuppi_MC = {
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L3Absolute_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_L123_AK8PFPuppi_MC = {
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L3Absolute_AK8PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L3Absolute_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2L3Residual_AK8PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_EF_L123_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L3Absolute_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L2L3Residual_AK8PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_G_L123_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L3Absolute_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L2L3Residual_AK8PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_H_L123_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L3Absolute_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L2L3Residual_AK8PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_BCD_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_EF_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016EFV4_DATA/Summer16_23Sep2016EFV4_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_G_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016GV4_DATA/Summer16_23Sep2016GV4_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_H_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_23Sep2016HV4_DATA/Summer16_23Sep2016HV4_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_23Sep2016_V4_L1RC_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Summer16_23Sep2016V4_MC/Summer16_23Sep2016V4_MC_L1RC_AK4PFchs.txt"
-};
-
-
-
-
-/* ++++++++++++++ Summer16_03Feb2017_V3_noRes needed for L2Res people +++++++++++++++ */
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_BCD_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_EF_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_G_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017G_V3_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017G_V3_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017G_V3_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_H_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-
-/***************** Summer16_03Feb2017_V3 --> Official JEC recommendation for Moriond17 **********************************/
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_BCD_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_EF_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_G_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017GV3_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017GV3_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017GV3_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017GV3_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_H_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V1_L123_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Summer16_03Feb2017_V1_MC/Summer16_03Feb2017_V1_MC_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017_V1_MC/Summer16_03Feb2017_V1_MC_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017_V1_MC/Summer16_03Feb2017_V1_MC_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V1_L123_AK8PFchs_MC = {
-  "JECDatabase/textFiles/Summer16_03Feb2017_V1_MC/Summer16_03Feb2017_V1_MC_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017_V1_MC/Summer16_03Feb2017_V1_MC_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017_V1_MC/Summer16_03Feb2017_V1_MC_L3Absolute_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_BCD_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_EF_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_G_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017G_V3_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017G_V3_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017G_V3_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017G_V3_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_H_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_BCD_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V3_DATA/Summer16_03Feb2017BCD_V3_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_EF_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V3_DATA/Summer16_03Feb2017EF_V3_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_G_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V3_DATA/Summer16_03Feb2017G_V3_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V3_H_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V3_DATA/Summer16_03Feb2017H_V3_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V1_L1RC_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Summer16_03Feb2017_V1_MC/Summer16_03Feb2017_V1_MC_L1RC_AK4PFchs.txt"
-};
-
-/* ++++++++++++++ Summer16_03Feb2017_V4_noRes needed for L2Res people +++++++++++++++ */
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_BCD_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCD_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCD_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCD_V4_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_EF_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V4_DATA/Summer16_03Feb2017EF_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V4_DATA/Summer16_03Feb2017EF_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V4_DATA/Summer16_03Feb2017EF_V4_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_G_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017GV4_DATA/Summer16_03Feb2017G_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017GV4_DATA/Summer16_03Feb2017G_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017GV4_DATA/Summer16_03Feb2017G_V4_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_H_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V4_DATA/Summer16_03Feb2017H_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V4_DATA/Summer16_03Feb2017H_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V4_DATA/Summer16_03Feb2017H_V4_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-
-/***************** Summer16_03Feb2017_V4 --> Official JEC recommendation for Moriond17 **********************************/
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_BCD_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCD_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCD_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCD_V4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCD_V4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_EF_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EFV4_DATA/Summer16_03Feb2017EF_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EFV4_DATA/Summer16_03Feb2017EF_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EFV4_DATA/Summer16_03Feb2017EF_V4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EFV4_DATA/Summer16_03Feb2017EF_V4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_G_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V4_DATA/Summer16_03Feb2017G_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V4_DATA/Summer16_03Feb2017G_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V4_DATA/Summer16_03Feb2017G_V4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V4_DATA/Summer16_03Feb2017G_V4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_H_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017HV4_DATA/Summer16_03Feb2017H_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017HV4_DATA/Summer16_03Feb2017H_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017HV4_DATA/Summer16_03Feb2017H_V4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017HV4_DATA/Summer16_03Feb2017H_V4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_BCD_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCDV4_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCDV4_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCDV4_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCDV4_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_EF_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V4_DATA/Summer16_03Feb2017EF_V4_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V4_DATA/Summer16_03Feb2017EF_V4_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V4_DATA/Summer16_03Feb2017EF_V4_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V4_DATA/Summer16_03Feb2017EF_V4_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_G_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017GV4_DATA/Summer16_03Feb2017G_V4_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017GV4_DATA/Summer16_03Feb2017G_V4_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017GV4_DATA/Summer16_03Feb2017G_V4_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017GV4_DATA/Summer16_03Feb2017G_V4_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_H_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V4_DATA/Summer16_03Feb2017HV4_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V4_DATA/Summer16_03Feb2017HV4_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V4_DATA/Summer16_03Feb2017HV4_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V4_DATA/Summer16_03Feb2017HV4_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_BCD_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V4_DATA/Summer16_03Feb2017BCD_V4_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_EF_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V4_DATA/Summer16_03Feb2017EF_V4_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_G_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V4_DATA/Summer16_03Feb2017G_V4_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V4_H_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V4_DATA/Summer16_03Feb2017H_V4_DATA_L1RC_AK4PFchs.txt"
-};
-
-
-
-/* ++++++++++++++ Summer16_03Feb2017_V5_noRes needed for L2Res people +++++++++++++++ */
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_BCD_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_EF_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V5_DATA/Summer16_03Feb2017EF_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V5_DATA/Summer16_03Feb2017EF_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V5_DATA/Summer16_03Feb2017EF_V5_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_G_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_H_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-
-/***************** Summer16_03Feb2017_V5 --> Official JEC recommendation for Moriond17 **********************************/
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_BCD_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_EF_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V5_DATA/Summer16_03Feb2017EF_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V5_DATA/Summer16_03Feb2017EF_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V5_DATA/Summer16_03Feb2017EF_V5_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V5_DATA/Summer16_03Feb2017EF_V5_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_G_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_H_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_BCD_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_EF_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EFV5_DATA/Summer16_03Feb2017EF_V5_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EFV5_DATA/Summer16_03Feb2017EF_V5_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EFV5_DATA/Summer16_03Feb2017EF_V5_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EFV5_DATA/Summer16_03Feb2017EF_V5_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_G_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_H_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_BCD_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V5_DATA/Summer16_03Feb2017BCD_V5_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_EF_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V5_DATA/Summer16_03Feb2017EF_V5_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_G_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V5_DATA/Summer16_03Feb2017G_V5_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V5_H_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V5_DATA/Summer16_03Feb2017H_V5_DATA_L1RC_AK4PFchs.txt"
-};
-
-
-
-/* ++++++++++++++ Summer16_03Feb2017_V6_noRes needed for L2Res people +++++++++++++++ */
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_BCD_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_EF_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_G_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_H_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-
-/***************** Summer16_03Feb2017_V6 --> Official JEC recommendation for Moriond17 **********************************/
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_BCD_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_EF_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_G_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_H_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_BCD_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_L123_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Summer16_03Feb2017_V6_MC/Summer16_03Feb2017_V6_MC_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017_V6_MC/Summer16_03Feb2017_V6_MC_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017_V6_MC/Summer16_03Feb2017_V6_MC_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_L123_AK8PFchs_MC = {
-  "JECDatabase/textFiles/Summer16_03Feb2017V6_MC/Summer16_03Feb2017V6_MC_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017V6_MC/Summer16_03Feb2017V6_MC_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017V6_MC/Summer16_03Feb2017V6_MC_L3Absolute_AK8PFchs.txt",
-};
-
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_EF_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_G_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_H_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_BCD_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_EF_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_G_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017G_V6_DATA/Summer16_03Feb2017G_V6_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_H_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L1RC_AK4PFchs.txt"
-};
-
-const std::vector<std::string> JERFiles::Summer16_03Feb2017_V6_L1RC_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Summer16_03Feb2017_V6_MC/Summer16_03Feb2017_V6_MC_L1RC_AK4PFchs.txt"
-};
-
-
-//2017-------------------------- 17Nov2017  V4
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_L123_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V4_MC/Fall17_17Nov2017_V4_MC_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V4_MC/Fall17_17Nov2017_V4_MC_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V4_MC/Fall17_17Nov2017_V4_MC_L3Absolute_AK4PFchs.txt",
-
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_B_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V4_DATA/Fall17_17Nov2017B_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V4_DATA/Fall17_17Nov2017B_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V4_DATA/Fall17_17Nov2017B_V4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V4_DATA/Fall17_17Nov2017B_V4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_C_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V4_DATA/Fall17_17Nov2017C_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V4_DATA/Fall17_17Nov2017C_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V4_DATA/Fall17_17Nov2017C_V4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V4_DATA/Fall17_17Nov2017C_V4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_D_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V4_DATA/Fall17_17Nov2017D_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V4_DATA/Fall17_17Nov2017D_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V4_DATA/Fall17_17Nov2017D_V4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V4_DATA/Fall17_17Nov2017D_V4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_E_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V4_DATA/Fall17_17Nov2017E_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V4_DATA/Fall17_17Nov2017E_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V4_DATA/Fall17_17Nov2017E_V4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V4_DATA/Fall17_17Nov2017E_V4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_F_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V4_DATA/Fall17_17Nov2017F_V4_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V4_DATA/Fall17_17Nov2017F_V4_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V4_DATA/Fall17_17Nov2017F_V4_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V4_DATA/Fall17_17Nov2017F_V4_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_L1RC_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V4_MC/Fall17_17Nov2017_V4_MC_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_B_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V4_DATA/Fall17_17Nov2017B_V4_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_C_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V4_DATA/Fall17_17Nov2017C_V4_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_D_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V4_DATA/Fall17_17Nov2017D_V4_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_E_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V4_DATA/Fall17_17Nov2017E_V4_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V4_F_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V4_DATA/Fall17_17Nov2017F_V4_DATA_L1RC_AK4PFchs.txt",
-
-};
-
-
-
-
-//2017-------------------------- 17Nov2017  V5
-// const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_L123_AK4PFchs_MC = {
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V5_MC/Fall17_17Nov2017_V5_MC_L1FastJet_AK4PFchs.txt",
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V5_MC/Fall17_17Nov2017_V5_MC_L2Relative_AK4PFchs.txt",
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V5_MC/Fall17_17Nov2017_V5_MC_L3Absolute_AK4PFchs.txt",
-
-// };
-
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_B_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V5_DATA/Fall17_17Nov2017B_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V5_DATA/Fall17_17Nov2017B_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V5_DATA/Fall17_17Nov2017B_V5_DATA_L3Absolute_AK4PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_C_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V5_DATA/Fall17_17Nov2017C_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V5_DATA/Fall17_17Nov2017C_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V5_DATA/Fall17_17Nov2017C_V5_DATA_L3Absolute_AK4PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_D_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V5_DATA/Fall17_17Nov2017D_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V5_DATA/Fall17_17Nov2017D_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V5_DATA/Fall17_17Nov2017D_V5_DATA_L3Absolute_AK4PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_E_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V5_DATA/Fall17_17Nov2017E_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V5_DATA/Fall17_17Nov2017E_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V5_DATA/Fall17_17Nov2017E_V5_DATA_L3Absolute_AK4PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_F_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V5_DATA/Fall17_17Nov2017F_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V5_DATA/Fall17_17Nov2017F_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V5_DATA/Fall17_17Nov2017F_V5_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_B_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V5_DATA/Fall17_17Nov2017B_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V5_DATA/Fall17_17Nov2017B_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V5_DATA/Fall17_17Nov2017B_V5_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V5_DATA/Fall17_17Nov2017B_V5_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_C_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V5_DATA/Fall17_17Nov2017C_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V5_DATA/Fall17_17Nov2017C_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V5_DATA/Fall17_17Nov2017C_V5_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V5_DATA/Fall17_17Nov2017C_V5_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_D_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V5_DATA/Fall17_17Nov2017D_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V5_DATA/Fall17_17Nov2017D_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V5_DATA/Fall17_17Nov2017D_V5_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V5_DATA/Fall17_17Nov2017D_V5_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_E_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V5_DATA/Fall17_17Nov2017E_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V5_DATA/Fall17_17Nov2017E_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V5_DATA/Fall17_17Nov2017E_V5_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V5_DATA/Fall17_17Nov2017E_V5_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_F_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V5_DATA/Fall17_17Nov2017F_V5_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V5_DATA/Fall17_17Nov2017F_V5_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V5_DATA/Fall17_17Nov2017F_V5_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V5_DATA/Fall17_17Nov2017F_V5_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-// const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_L1RC_AK4PFchs_MC = {
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V5_MC/Fall17_17Nov2017_V5_MC_L1RC_AK4PFchs.txt",
-// };
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_B_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V5_DATA/Fall17_17Nov2017B_V5_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_C_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V5_DATA/Fall17_17Nov2017C_V5_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_D_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V5_DATA/Fall17_17Nov2017D_V5_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_E_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V5_DATA/Fall17_17Nov2017E_V5_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V5_F_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V5_DATA/Fall17_17Nov2017F_V5_DATA_L1RC_AK4PFchs.txt",
-
-};
-
-
-
-
-//2017-------------------------- 17Nov2017  V6
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L123_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L3Absolute_AK4PFchs.txt",
-
-};
-
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L3Absolute_AK4PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L3Absolute_AK4PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L3Absolute_AK4PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L3Absolute_AK4PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L123_noRes_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L3Absolute_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L1RC_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1RC_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L1RC_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1RC_AK4PFchs.txt",
-
-};
-
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L123_AK4PFPuppi_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L3Absolute_AK4PFPuppi.txt",
-
-};
-
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L123_noRes_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L3Absolute_AK4PFPuppi.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L123_noRes_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L3Absolute_AK4PFPuppi.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L123_noRes_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L3Absolute_AK4PFPuppi.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L123_noRes_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L3Absolute_AK4PFPuppi.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L123_noRes_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L3Absolute_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L123_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L3Absolute_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2L3Residual_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L123_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L3Absolute_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2L3Residual_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L123_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L3Absolute_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2L3Residual_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L123_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L3Absolute_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2L3Residual_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L123_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1FastJet_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2Relative_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L3Absolute_AK4PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2L3Residual_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L1RC_AK4PFPuppi_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1RC_AK4PFPuppi.txt",
-};
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L1RC_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1RC_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L1RC_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1RC_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L1RC_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1RC_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L1RC_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1RC_AK4PFPuppi.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L1RC_AK4PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1RC_AK4PFPuppi.txt",
-
-};
-
-
-
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L123_AK8PFchs_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L3Absolute_AK8PFchs.txt",
-
-};
-
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L123_noRes_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L3Absolute_AK8PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L123_noRes_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L3Absolute_AK8PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L123_noRes_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L3Absolute_AK8PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L123_noRes_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L3Absolute_AK8PFchs.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L123_noRes_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L3Absolute_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L123_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1FastJet_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2Relative_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L3Absolute_AK8PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2L3Residual_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L1RC_AK8PFchs_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1RC_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L1RC_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1RC_AK8PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L1RC_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1RC_AK8PFchs.txt",
-};
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L1RC_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1RC_AK8PFchs.txt",
+/* ++++++++++++++ Summer16_07Aug2017_V7_noRes needed for L2Res people +++++++++++++++ */
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_BCD_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L3Absolute_AK4PFchs.txt",
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L1RC_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1RC_AK8PFchs.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_EF_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L3Absolute_AK4PFchs.txt",
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L1RC_AK8PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1RC_AK8PFchs.txt",
-
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_GH_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L3Absolute_AK4PFchs.txt",
 };
 
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L123_AK8PFPuppi_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L3Absolute_AK8PFPuppi.txt",
-
+/*****************Summer16_07Aug2017_V7 --> Official JEC recommendation forLegacy2016 **********************************/
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_BCD_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L2L3Residual_AK4PFchs.txt",
 };
-
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L123_noRes_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L3Absolute_AK8PFPuppi.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_EF_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L2L3Residual_AK4PFchs.txt",
 };
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L123_noRes_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L3Absolute_AK8PFPuppi.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L123_noRes_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L3Absolute_AK8PFPuppi.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L123_noRes_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L3Absolute_AK8PFPuppi.txt",
-};
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L123_noRes_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L3Absolute_AK8PFPuppi.txt",
-};
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L123_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L3Absolute_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L2L3Residual_AK8PFPuppi.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_GH_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L2L3Residual_AK4PFchs.txt",
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L123_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L3Absolute_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L2L3Residual_AK8PFPuppi.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_BCD_L123_AK8PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L3Absolute_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L2L3Residual_AK8PFchs.txt",
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L123_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L3Absolute_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L2L3Residual_AK8PFPuppi.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_L123_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Summer16_07Aug2017_V7_MC/Summer16_07Aug2017_V7_MC_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017_V7_MC/Summer16_07Aug2017_V7_MC_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017_V7_MC/Summer16_07Aug2017_V7_MC_L3Absolute_AK4PFchs.txt",
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L123_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L3Absolute_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L2L3Residual_AK8PFPuppi.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_L123_AK8PFchs_MC = {
+  "JECDatabase/textFiles/Summer16_07Aug2017_V7_MC/Summer16_07Aug2017_V7_MC_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017_V7_MC/Summer16_07Aug2017_V7_MC_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017_V7_MC/Summer16_07Aug2017_V7_MC_L3Absolute_AK8PFchs.txt",
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L123_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1FastJet_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2Relative_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L3Absolute_AK8PFPuppi.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L2L3Residual_AK8PFPuppi.txt",
-};
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_L1RC_AK8PFPuppi_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V6_MC/Fall17_17Nov2017_V6_MC_L1RC_AK8PFPuppi.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_EF_L123_AK8PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L3Absolute_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L2L3Residual_AK8PFchs.txt",
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_B_L1RC_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V6_DATA/Fall17_17Nov2017B_V6_DATA_L1RC_AK8PFPuppi.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_GH_L123_AK8PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L3Absolute_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L2L3Residual_AK8PFchs.txt",
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_C_L1RC_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V6_DATA/Fall17_17Nov2017C_V6_DATA_L1RC_AK8PFPuppi.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_BCD_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017BCD_V7_DATA/Summer16_07Aug2017BCD_V7_DATA_L1RC_AK4PFchs.txt"
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_D_L1RC_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V6_DATA/Fall17_17Nov2017D_V6_DATA_L1RC_AK8PFPuppi.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_EF_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017EF_V7_DATA/Summer16_07Aug2017EF_V7_DATA_L1RC_AK4PFchs.txt"
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_E_L1RC_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V6_DATA/Fall17_17Nov2017E_V6_DATA_L1RC_AK8PFPuppi.txt",
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_GH_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_07Aug2017GH_V7_DATA/Summer16_07Aug2017GH_V7_DATA_L1RC_AK4PFchs.txt"
 };
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L1RC_AK8PFPuppi_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V6_DATA/Fall17_17Nov2017F_V6_DATA_L1RC_AK8PFPuppi.txt",
 
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V7_L1RC_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Summer16_07Aug2017_V7_MC/Summer16_07Aug2017_V7_MC_L1RC_AK4PFchs.txt"
 };
 
 
@@ -1198,12 +116,12 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V6_F_L1RC_AK8PFPuppi_D
 
 
 //2017-------------------------- 17Nov2017  V7
-// const std::vector<std::string> JERFiles::Fall17_17Nov2017_V7_L123_AK4PFchs_MC = {
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V7_MC/Fall17_17Nov2017_V7_MC_L1FastJet_AK4PFchs.txt",
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V7_MC/Fall17_17Nov2017_V7_MC_L2Relative_AK4PFchs.txt",
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V7_MC/Fall17_17Nov2017_V7_MC_L3Absolute_AK4PFchs.txt",
 
-// };
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V7_L123_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Fall17_17Nov2017_V7_MC/Fall17_17Nov2017_V7_MC_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017_V7_MC/Fall17_17Nov2017_V7_MC_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017_V7_MC/Fall17_17Nov2017_V7_MC_L3Absolute_AK4PFchs.txt",
+};
 
 
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V7_B_L123_noRes_AK4PFchs_DATA = {
@@ -1268,9 +186,9 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V7_F_L123_AK4PFchs_DAT
   "JECDatabase/textFiles/Fall17_17Nov2017F_V7_DATA/Fall17_17Nov2017F_V7_DATA_L2L3Residual_AK4PFchs.txt",
 };
 
-// const std::vector<std::string> JERFiles::Fall17_17Nov2017_V7_L1RC_AK4PFchs_MC = {
-//   "JECDatabase/textFiles/Fall17_17Nov2017_V7_MC/Fall17_17Nov2017_V7_MC_L1RC_AK4PFchs.txt",
-// };
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V7_L1RC_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Fall17_17Nov2017_V7_MC/Fall17_17Nov2017_V7_MC_L1RC_AK4PFchs.txt",
+};
 
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V7_B_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017B_V7_DATA/Fall17_17Nov2017B_V7_DATA_L1RC_AK4PFchs.txt",
@@ -1355,26 +273,33 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 }
 
  
-
-  
   //propagate to MET
   //apply type1 MET correction to RAW MET
   //NB: jet with substracted muon Pt should be used
+
+//TypeI MET (JEC): -L1L2L3 + L1
+//TypeI MET "smearing" (JER): -L1L2L3*JER+L1L2L3
+//-> TypeI MET (JEC+JER): -L1L2L3*JER+L1
+//In case of chs MET, L1RC is used instead of L1
   void correct_MET(const Event & event, const bool & do_L1corr, double pt_thresh, double eta_thresh_low, double eta_thresh_high){
     //we start from raw MET
     LorentzVector metv4= event.met->uncorr_v4();
     for(auto & jet : *event.jets){
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
       bool to_be_corrected = jet.v4().Pt() > 15.;
-      to_be_corrected = to_be_corrected && ( fabs(jet.v4().Eta())<eta_thresh_low || fabs(jet.v4().Eta())>eta_thresh_high || jet.v4().Pt() > pt_thresh );
+      bool good_eta = fabs(jet.v4().Eta())<eta_thresh_low || fabs(jet.v4().Eta())>eta_thresh_high;
+      bool good_pt = jet.v4().Pt() > pt_thresh;
+      bool use_jet = good_eta || (!good_eta && good_pt);
+      to_be_corrected = to_be_corrected && use_jet;
       to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
       if(to_be_corrected){
-	auto factor_raw = jet.JEC_factor_raw();
+	auto factor_raw_JEC = jet.JEC_factor_raw();
 	auto L1factor_raw = jet.JEC_L1factor_raw();
+	auto factor_raw_JER = jet.JER_factor_raw();
 
-	LorentzVector L1corr =   (L1factor_raw*factor_raw)*jet.v4();            //L1 corrected jets
-	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
-	metv4 -=  L123corr;
+	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC * factor_raw_JER)*jet.v4();            //L1 corrected jets * JER smearing
+	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi) * JER smearing
+	metv4 -= L123corr;
 
 	//For Puppi jets, no L1 correction is needed
 	if(do_L1corr){
@@ -1398,23 +323,29 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     for(auto & jet : *event.jets){
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
       bool to_be_corrected = jet.v4().Pt() > 15.;
-      to_be_corrected = to_be_corrected && ( fabs(jet.v4().Eta())<eta_thresh_low || fabs(jet.v4().Eta())>eta_thresh_high || jet.v4().Pt() > pt_thresh );
+      bool good_eta = fabs(jet.v4().Eta())<eta_thresh_low || fabs(jet.v4().Eta())>eta_thresh_high;
+      bool good_pt = jet.v4().Pt() > pt_thresh;
+      bool use_jet = good_eta || (!good_eta && good_pt);
+      to_be_corrected = to_be_corrected && use_jet;
       to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
       if(to_be_corrected){
-	auto factor_raw = jet.JEC_factor_raw();
+	auto factor_raw_JEC = jet.JEC_factor_raw();
+	auto factor_raw_JER = jet.JER_factor_raw();
 
-	corrector_L1RC.setJetPt(jet.pt() * factor_raw);
+	corrector_L1RC.setJetPt(jet.pt() * factor_raw_JEC * factor_raw_JER);
 	corrector_L1RC.setJetEta(jet.eta());
-	corrector_L1RC.setJetE(jet.energy() * factor_raw);
+	corrector_L1RC.setJetE(jet.energy() * factor_raw_JEC * factor_raw_JER);
 	corrector_L1RC.setJetA(jet.jetArea());
 	corrector_L1RC.setRho(event.rho);
 	auto correctionfactors_L1RC = corrector_L1RC.getSubCorrections();
 	auto correctionfactor_L1RC  = correctionfactors_L1RC.back();
 
-	LorentzVector L1RCcorr = (correctionfactor_L1RC*factor_raw)*jet.v4();   //L1RC corrected jets
-	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
+       	LorentzVector L1RCcorr = (correctionfactor_L1RC * factor_raw_JEC * factor_raw_JER)*jet.v4();   //L1RC corrected jets * JER smearing
+	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi) * JER smearing
+
 	metv4 -=  L123corr;
 	metv4 += L1RCcorr;
+	
       }
     }
 
@@ -1422,8 +353,6 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     event.met->set_phi(metv4.Phi());
   }
 
-
-  
 
 JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::vector<std::string> & filenames, int &direction){
     
@@ -1514,7 +443,7 @@ bool JetCorrector::correct_met(uhh2::Event & event, const bool & isCHSmet, doubl
   else{
     correct_MET(event, *corrector_L1RC, pt_thresh, eta_thresh_low,  eta_thresh_high); 
   }
-
+  
   return true;
 }
 
@@ -1821,53 +750,6 @@ bool JetLeptonCleaner_by_KEYmatching::process(uhh2::Event& event){
 
 
 //// ----- modules for Jet Energy Resolution data/MC corrections -----
-
-// https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution [13TeV JER measurement]
-
-const JERSmearing::SFtype1 JERSmearing::SF_13TeV_2016 = {
-  // 0 = upper jet-eta limit
-  // 1 = JER SF
-  // 2 = JER SF + 1sigma
-  // 3 = JER SF - 1sigma
-  {{0.5, 1.109, 1.117, 1.101}},
-  {{0.8, 1.138, 1.151, 1.125}},
-  {{1.1, 1.114, 1.127, 1.101}},
-  {{1.3, 1.123, 1.147, 1.099}},
-  {{1.7, 1.084, 1.092, 1.070}},
-  {{1.9, 1.082, 1.117, 1.047}},
-  {{2.1, 1.140, 1.187, 1.093}},
-  {{2.3, 1.067, 1.120, 1.014}},
-  {{2.5, 1.177, 1.218, 1.136}},
-  {{2.8, 1.364, 1.403, 1.325}},
-  {{3.0, 1.857, 1.928, 1.786}},
-  {{3.2, 1.328, 1.350, 1.306}},
-  {{5.0, 1.160, 1.189, 1.131}},
-};
-
-
-// https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution [13TeV JER measurement]
-// New JER files from Marek (8 Aug 2017)
-const JERSmearing::SFtype1 JERSmearing::SF_13TeV_2016_03Feb2017 = {
-  // 0 = upper jet-eta limit
-  // 1 = JER SF
-  // 2 = JER SF + 1sigma
-  // 3 = JER SF - 1sigma
-  {{0.5, 1.093, 1.201, 0.983}},
-  {{0.8, 1.144, 1.259, 1.029}},
-  {{1.1, 1.087, 1.202, 0.972}},
-  {{1.3, 1.119, 1.234, 1.006}},
-  {{1.7, 1.093, 1.218, 0.996}},
-  {{1.9, 1.072, 1.199, 0.977}},
-  {{2.1, 1.122, 1.266, 1.030}},
-  {{2.3, 1.127, 1.305, 0.997}},
-  {{2.5, 1.206, 1.370, 1.102}},
-  {{2.8, 1.340, 1.485, 1.197}},
-  {{3.0, 1.761, 1.957, 1.551}},
-  {{3.2, 1.317, 1.452, 1.182}},
-  {{5.0, 1.140, 1.270, 1.018}},
-};
-
-
 // https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution [13TeV JER measurement]
 // Summer16_25nsV1 to be used with 2017 MC as long as results on 2017 data are not official
 const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Summer16_25nsV1 = {

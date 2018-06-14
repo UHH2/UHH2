@@ -19,7 +19,7 @@ Event::Handle<T> declare_in_out(const std::string & branch_name, const std::stri
 }
 
 EventHelper::EventHelper(uhh2::Context & ctx_): ctx(ctx_), event(0), pvs(false), electrons(false), muons(false), taus(false), photons(false), jets(false),
-    topjets(false), toppuppijets(false), met(false),  genmet(false), genInfo(false), gentopjets(false), genparticles(false), genjets(false), trigger(false), first_event_read(true){
+						topjets(false), toppuppijets(false), met(false),  genmet(false), genInfo(false), gentopjets(false), genparticles(false), genjets(false), trigger(false), L1EG_seeds(false),  L1J_seeds(false), first_event_read(true){
     h_run = declare_in_out<int>("run", "run", ctx);
     h_lumi = declare_in_out<int>("luminosityBlock", "luminosityBlock", ctx);
     h_event = declare_in_out<int>("event", "event", ctx);
@@ -54,6 +54,9 @@ IMPL_SETUP(gentopjets, vector<GenTopJet>)
 IMPL_SETUP(genparticles, vector<GenParticle>)
 IMPL_SETUP(genjets, vector<Particle>)
 IMPL_SETUP(genmet, MET)
+IMPL_SETUP(L1EG_seeds, vector<L1EGamma>)
+IMPL_SETUP(L1J_seeds, vector<L1Jet>)
+
 
 void EventHelper::setup_trigger(){
     trigger = true;
@@ -118,6 +121,12 @@ void EventHelper::event_read(){
             event->get_triggerResults() = &event->get(h_triggerResults);
 	    event->get_triggerPrescales() = &event->get(h_triggerPrescales);
         }
+	if(L1EG_seeds){
+	  event->L1EG_seeds =  &event->get(h_L1EG_seeds);
+	}
+	if(L1J_seeds){
+	  event->L1J_seeds =  &event->get(h_L1J_seeds);
+	}
     }
 }
 
