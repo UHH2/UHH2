@@ -20,7 +20,7 @@ namespace edm {
             return *this;
         }
         
-        ~LogError(){
+        ~LogError() noexcept(false) {
             throw std::runtime_error(msg.str());
         }
         
