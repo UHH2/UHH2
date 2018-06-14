@@ -37,13 +37,15 @@ public:
   std::vector< TopJet >* toppuppijets;
   MET* met;
   MET* genmet;
-    
+  std::vector< L1EGamma>* L1EG_seeds;
+  std::vector< L1Jet>* L1J_seeds;
+
   GenInfo* genInfo;
   std::vector< GenTopJet >* gentopjets;
   std::vector< GenParticle >* genparticles;
   std::vector< Particle>* genjets;
   std::vector< PFParticle>* pfparticles;
-
+ 
 
   /** \brief Access to trigger results.
    * 

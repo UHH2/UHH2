@@ -3,6 +3,7 @@
 #include "FWCore/Common/interface/TriggerNames.h"
 
 #include "UHH2/core/include/root-utils.h"
+
 #include "UHH2/core/plugins/NtupleWriter.h"
 #include "UHH2/core/plugins/NtupleWriterJets.h"
 #include "UHH2/core/plugins/NtupleWriterLeptons.h"
@@ -23,11 +24,13 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/Common/interface/EDCollection.h"
 
+#include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
 
 #include "RecoBTau/JetTagComputer/interface/GenericMVAJetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/GenericMVAJetTagComputerWrapper.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputerRecord.h"
+
 
 #include "TSystem.h"
 #include "TFile.h"
@@ -207,6 +210,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
+  doL1seed = iConfig.getParameter<bool>("doL1seed");
   //doTrigHTEmu = iConfig.getParameter<bool>("doTrigHTEmu");
 
   doHOTVR = iConfig.getParameter<bool>("doHOTVR");
@@ -554,6 +558,16 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
 
   }
+  if(doL1seed){
+    l1GtToken_ = consumes<BXVector<GlobalAlgBlk>>(iConfig.getParameter<edm::InputTag>("l1GtSrc"));
+    l1EGToken_ = consumes<BXVector<l1t::EGamma>>(iConfig.getParameter<edm::InputTag>("l1EGSrc"));
+    l1JetToken_ = consumes<BXVector<l1t::Jet>>(iConfig.getParameter<edm::InputTag>("l1JetSrc"));
+
+    branch(tr,"L1EGamma_seeds","std::vector<L1EGamma>",&L1EG_seeds);
+    branch(tr,"L1Jet_seeds","std::vector<L1Jet>",&L1Jet_seeds);
+
+  }
+
   if(doAllPFParticles){
     event->pfparticles = new vector<PFParticle>;
     pf_collection_token = consumes<vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("pf_collection_source"));
@@ -1298,6 +1312,97 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    }
 
    print_times(timer, "trigger");
+
+  if(doL1seed){
+    auto & triggerResults = *event->get_triggerResults();   
+    //muGT 
+    edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
+    iEvent.getByToken(l1GtToken_, l1GtHandle);
+    bool prefire = l1GtHandle->begin(-1)->getFinalOR();
+    triggerNames_outbranch.push_back("muGT_BX_minus_1__prefire");
+    triggerResults.push_back(prefire);
+
+    bool postfire = l1GtHandle->begin(1)->getFinalOR();
+    triggerNames_outbranch.push_back("muGT_BX_plus_1");
+    triggerResults.push_back(postfire);
+
+    bool fire = l1GtHandle->begin(0)->getFinalOR();
+    triggerNames_outbranch.push_back("muGT_BX_plus_0");
+    triggerResults.push_back(fire);
+
+    //L1EG
+
+    edm::Handle<BXVector<l1t::EGamma>> l1EGHandle;
+    iEvent.getByToken(l1EGToken_, l1EGHandle);
+    L1EG_seeds.clear();
+    auto readBx = [&] (const BXVector<l1t::EGamma>& egVect, int bx) {
+      for (auto itL1=l1EGHandle->begin(bx); itL1!=l1EGHandle->end(bx); ++itL1) {
+	L1EGamma l1eg;
+	l1eg.set_bx(bx);
+	l1eg.set_pt(itL1->p4().Pt());
+	l1eg.set_eta(itL1->p4().Eta());
+	l1eg.set_phi(itL1->p4().Phi());
+	l1eg.set_energy(itL1->p4().energy());
+	l1eg.set_towerIeta(itL1->towerIEta());
+	l1eg.set_towerIphi(itL1->towerIPhi());
+	l1eg.set_nTT(itL1->nTT());
+	l1eg.set_Shape(itL1->shape());
+	l1eg.set_iso(itL1->hwIso());
+	L1EG_seeds.push_back(l1eg);
+	//	cout<<"bx = "<<bx<<" itL1->p4() = "<<itL1->p4()<<" itL1->nTT() = "<<itL1->nTT()<<endl;
+      }
+    };
+    readBx(*l1EGHandle, -2);
+    readBx(*l1EGHandle, -1);
+    readBx(*l1EGHandle, 0);
+    readBx(*l1EGHandle, +1);
+    readBx(*l1EGHandle, +2);
+
+    //L1Jet
+    edm::Handle<BXVector<l1t::Jet>> l1JetHandle;
+    iEvent.getByToken(l1JetToken_, l1JetHandle);
+    L1Jet_seeds.clear();
+    auto readBxjet = [&] (const BXVector<l1t::Jet>& egVect, int bx) {
+      for (auto itL1=l1JetHandle->begin(bx); itL1!=l1JetHandle->end(bx); ++itL1) {
+	L1Jet l1jet;
+	l1jet.set_bx(bx);
+	l1jet.set_pt(itL1->p4().Pt());
+	l1jet.set_eta(itL1->p4().Eta());
+	l1jet.set_phi(itL1->p4().Phi());
+	l1jet.set_energy(itL1->p4().energy());
+	l1jet.set_towerIeta(itL1->towerIEta());
+	l1jet.set_towerIphi(itL1->towerIPhi());
+	l1jet.set_puEt(itL1->puEt());
+	l1jet.set_seedEt(itL1->seedEt());
+	l1jet.set_rawEt(itL1->rawEt());
+	L1Jet_seeds.push_back(l1jet);
+	//	cout<<"bx = "<<bx<<" itL1->p4() = "<<itL1->p4()<<" itL1->puEt() = "<<itL1->puEt()<<endl;
+      }
+    };
+    readBxjet(*l1JetHandle, -2);
+    readBxjet(*l1JetHandle, -1);
+    readBxjet(*l1JetHandle, 0);
+    readBxjet(*l1JetHandle, +1);
+    readBxjet(*l1JetHandle, +2);
+
+
+    // //L1Jet
+    // edm::Handle<BXVector<l1t::Jet>> l1JetHandle;
+    // iEvent.getByToken(l1JetToken_, l1JetHandle);
+
+    // prefire = l1JetHandle->begin(-1)->getFinalOR();
+    // triggerNames_outbranch.push_back("L1Jet_BX_minus_1__prefire");
+    // triggerResults.push_back(prefire);
+
+    // postfire = l1JetHandle->begin(1)->getFinalOR();
+    // triggerNames_outbranch.push_back("L1Jet_BX_plus_1");
+    // triggerResults.push_back(postfire);
+
+    // fire = l1JetHandle->begin(0)->getFinalOR();
+    // triggerNames_outbranch.push_back("L1Jet_BX_plus_0");
+    // triggerResults.push_back(fire);
+  }
+
 
    // ------------- HOTVR and XCone Jets  -------------
    if (doHOTVR) {

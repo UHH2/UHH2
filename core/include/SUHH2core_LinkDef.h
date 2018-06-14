@@ -41,6 +41,10 @@
 #pragma link C++ class std::vector<GenParticle>+;
 #pragma link C++ class PFParticle+;
 #pragma link C++ class std::vector<PFParticle>+;
+#pragma link C++ class L1EGamma+;
+#pragma link C++ class std::vector<L1EGamma>+;
+#pragma link C++ class L1Jet+;
+#pragma link C++ class std::vector<L1Jet>+;
 #pragma link C++ class source_candidate+;
 #pragma link C++ class std::vector<source_candidate>+;
 
