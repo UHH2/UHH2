@@ -242,17 +242,26 @@ namespace JERFiles{
     extern const std::vector<std::string> Fall17_17Nov2017_V6_F_L1RC_AK8PFPuppi_DATA;
     extern const std::vector<std::string> Fall17_17Nov2017_V6_L1RC_AK8PFPuppi_MC;
 
-  
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_B_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_C_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_D_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_E_L1RC_AK4PFchs_DATA;
-    extern const std::vector<std::string> Fall17_17Nov2017_V4_F_L1RC_AK4PFchs_DATA;
-  
     // extern const std::vector<std::string> Fall17_17Nov2017_V7_L123_AK4PFchs_MC;
   
   
     // extern const std::vector<std::string> Fall17_17Nov2017_V7_L1RC_AK4PFchs_MC;
+
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_B_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_C_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_D_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_E_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_F_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_B_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_C_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_D_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_E_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_F_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_B_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_C_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_D_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_E_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V7_F_L1RC_AK4PFchs_DATA;
 
 }
 
