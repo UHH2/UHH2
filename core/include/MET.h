@@ -106,15 +106,11 @@ public:
 
    float shiftedPy_MuonEnUp() const{return m_shiftedPy_MuonEnUp;}
    
-<<<<<<< HEAD
-   
-=======
    float rawCHS_px() const{return m_rawCHS_px;}
 
    float rawCHS_py() const{return m_rawCHS_py;}
 
 
->>>>>>> 814d4b5... Rename CHS MET variable
    /// set transverse momentum
    void set_pt(float pt){m_pt=pt;}  
    /// set phi
