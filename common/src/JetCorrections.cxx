@@ -276,6 +276,11 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
   //propagate to MET
   //apply type1 MET correction to RAW MET
   //NB: jet with substracted muon Pt should be used
+
+//TypeI MET (JEC): -L1L2L3 + L1
+//TypeI MET "smearing" (JER): -L1L2L3*JER+L1L2L3
+//-> TypeI MET (JEC+JER): -L1L2L3*JER+L1
+//In case of chs MET, L1RC is used instead of L1
   void correct_MET(const Event & event, const bool & do_L1corr, double pt_thresh, double eta_thresh_low, double eta_thresh_high){
     //we start from raw MET
     LorentzVector metv4= event.met->uncorr_v4();
@@ -290,8 +295,9 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       if(to_be_corrected){
 	auto factor_raw_JEC = jet.JEC_factor_raw();
 	auto L1factor_raw = jet.JEC_L1factor_raw();
+	auto factor_raw_JER = jet.JER_factor_raw();
 
-	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC)*jet.v4();            //L1 corrected jets * JER smearing
+	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC * factor_raw_JER)*jet.v4();            //L1 corrected jets * JER smearing
 	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi) * JER smearing
 	metv4 -= L123corr;
 
@@ -324,7 +330,6 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
       if(to_be_corrected){
 	auto factor_raw_JEC = jet.JEC_factor_raw();
-	auto L1factor_raw = jet.JEC_L1factor_raw();
 	auto factor_raw_JER = jet.JER_factor_raw();
 
 	corrector_L1RC.setJetPt(jet.pt() * factor_raw_JEC * factor_raw_JER);
@@ -335,7 +340,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 	auto correctionfactors_L1RC = corrector_L1RC.getSubCorrections();
 	auto correctionfactor_L1RC  = correctionfactors_L1RC.back();
 
-       	LorentzVector L1RCcorr = (correctionfactor_L1RC * factor_raw_JEC )*jet.v4();   //L1RC corrected jets * JER smearing
+       	LorentzVector L1RCcorr = (correctionfactor_L1RC * factor_raw_JEC * factor_raw_JER)*jet.v4();   //L1RC corrected jets * JER smearing
 	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi) * JER smearing
 
 	metv4 -=  L123corr;
