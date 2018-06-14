@@ -163,6 +163,6 @@ cd $CMSSW_BASE/src
 
 # Get the UHH2 repo & JEC files
 cd $CMSSW_BASE/src
-git clone -b RunII_94X_v1 https://github.com/UHH2/UHH2.git
+git clone -b RunII_94X_v2 https://github.com/UHH2/UHH2.git
 cd UHH2
 git clone https://github.com/cms-jet/JECDatabase.git
