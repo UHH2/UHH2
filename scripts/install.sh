@@ -48,7 +48,7 @@ setupFastjet() {
 	git clone -b cms/v$FJVER https://github.com/UHH2/fastjet.git
 	cd fastjet
 	autoreconf -f -i  # needed to avoid 'aclocal-1.15' is missing on your system
-	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins CXXFLAGS=-fPIC
+	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins --enable-pyext CXXFLAGS=-fPIC
 	make $MAKEFLAGS
 	# make check  # fails for siscone
 	make install
@@ -87,16 +87,15 @@ git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
 export SCRAM_ARCH=slc6_amd64_gcc630
-CMSREL=CMSSW_9_4_1
+CMSREL=CMSSW_10_1_7
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
-git cms-init
 
 # Install FastJet & contribs for HOTVR & XCONE
 cd ../..
-FJVER="3.2.1"
-FJCONTRIBVER="1.032"
+FJVER="3.3.0"
+FJCONTRIBVER="1.033"
 time setupFastjet $FJVER $FJCONTRIBVER
 
 cd $CMSSW_BASE/src
@@ -105,13 +104,10 @@ time git cms-init -y  # not needed if not addpkg ing
 
 # Necessary for using our FastJet
 git cms-addpkg RecoJets/JetProducers
-# Necessary for using Fastjet 3.2.1 to pickup new JetDefinition default arg order
-rm RecoJets/JetProducers/test/BuildFile.xml
-rm RecoJets/JetProducers/test/test-large-voronoi-area.cc  # old test, not used?
+# Necessary for using Fastjet >=3.2.1 to pickup new JetDefinition default arg order
 git cms-addpkg RecoBTag/SecondaryVertex
 git cms-addpkg RecoJets/JetAlgorithms
 git cms-addpkg PhysicsTools/JetMCAlgos
-
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
@@ -136,8 +132,9 @@ scram setup fastjet-contrib-archive
 scram b clean
 time scram b $MAKEFLAGS
 
+
 # Get the UHH2 repo & JEC files
 cd $CMSSW_BASE/src
-git clone -b master https://github.com/UHH2/UHH2.git
+git clone -b RunII_101_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 git clone https://github.com/cms-jet/JECDatabase.git
