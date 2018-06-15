@@ -1,6 +1,7 @@
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/common/include/PrintingModules.h"
 #include "UHH2/common/include/JetCorrections.h"
+#include "UHH2/common/include/JetCorrectionSets.h"
 
 using namespace uhh2;
 using namespace std;
