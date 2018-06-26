@@ -877,8 +877,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 genp.set_daughter1(-1);
 	 genp.set_daughter2(-1);
 
-	 int nm=iter->numberOfMothers();
-	 int nd=iter->numberOfDaughters();
+	 // int nm=iter->numberOfMothers();
+	 // int nd=iter->numberOfDaughters();
 
 	 // if (nm>0) genp.set_mother1( iter->motherRef(0).key());
 	 // if (nm>1) genp.set_mother2( iter->motherRef(1).key());
