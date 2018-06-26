@@ -593,7 +593,7 @@ process.xconeGen23Lepton = cms.EDProducer("GenXConeProducer",
     # and whichever jet it is closest do get clustered with NJets-1 instead of NJets
     DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
 )
-process.xconeGen33SoftDrop = cms.EDProducer("GenXConeProducer",
+process.xconeGen33 = cms.EDProducer("GenXConeProducer",
     src=cms.InputTag("packedGenParticlesForJetsNoNu"),
     usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
     NJets = cms.uint32(2),          # number of fatjets
@@ -963,7 +963,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         ),
         GenXCone_sources=cms.VInputTag(
             cms.InputTag("xconeGen23Lepton"),
-            cms.InputTag("xconeGen33SoftDrop")
+            cms.InputTag("xconeGen33")
         )
 )
 
