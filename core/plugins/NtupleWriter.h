@@ -24,9 +24,6 @@
 
 #include <memory>
 
-// GenJet Cluster for HOTVR & XCone by Alex and Dennis
-#include "UHH2/core/include/UniversalGenJetCluster.h"
-
 namespace uhh2 {
     class CMSSWContext;
     class NtupleWriterModule;
