@@ -39,7 +39,6 @@
 #include "fastjet/contrib/HOTVRinfo.hh"
 #include "fastjet/contrib/Nsubjettiness.hh"
 #include "fastjet/contrib/XConePlugin.hh"
-#include "fastjet/contrib/SoftDrop.hh"
 
 #include "vector"
 
@@ -70,7 +69,6 @@ class GenXConeProducer : public edm::stream::EDProducer<> {
     const std::string subjetCollName_;
     const bool usePseudoXCone_;
     const bool doLeptonSpecific_;
-    const bool applySoftDrop_;
     unsigned int NJets_ = 2;
     double RJets_ = 1.2;
     double BetaJets_ = 2.0;
@@ -97,7 +95,6 @@ GenXConeProducer::GenXConeProducer(const edm::ParameterSet& iConfig):
   subjetCollName_("SubJets"),
   usePseudoXCone_(iConfig.getParameter<bool>("usePseudoXCone")),
   doLeptonSpecific_(iConfig.getParameter<bool>("doLeptonSpecific")),
-  applySoftDrop_(iConfig.getParameter<bool>("applySoftDrop")),
   NJets_(iConfig.getParameter<unsigned int>("NJets")),
   RJets_(iConfig.getParameter<double>("RJets")),
   BetaJets_(iConfig.getParameter<double>("BetaJets")),
@@ -159,7 +156,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   edm::Handle<edm::View<reco::Candidate>> particles;
   iEvent.getByToken(src_token_, particles);
-  
+
   const reco::Candidate * lepton(nullptr);
   float lepton_max_pt = 0;
 
@@ -176,7 +173,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       continue;
 
     _psj.push_back(PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy()));
-    
+
     if (doLeptonSpecific_) {
       uint pdgid = abs(cand.pdgId());
       auto candPt = cand.pt();
@@ -215,17 +212,10 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
 
-  // get SoftDrop Mass for every fat jet
-  SoftDrop sd(0.0, 0.1, 1.2);
-  vector<float> sd_mass;
-  for(unsigned int i=0; i<fatjets.size(); i++){
-    if (applySoftDrop_) {
-      PseudoJet sdjet = sd(fatjets[i]);
-      sd_mass.push_back(sdjet.m());
-    } else {
-      sd_mass.push_back(0.);
-    }
-  }
+  // Note to future dev: if you want to add SoftDrop, you must use the full
+  // constructor, otherwise your fatjet will only have 1 constitutent,
+  // making it useless for subjets. It will also ensure that the proper
+  // reclustering with C/A will happen
 
   // check if subjets should be clustered
   bool doSubjets = true;
@@ -236,7 +226,6 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   vector<int> list_fat;
   list_fat.clear();
   list_fat = clust_seq_xcone.particle_jet_indices(fatjets);
-
   // this is the mapping of subjet to hard jet
   std::vector< std::vector<int> > indices;
   indices.resize(fatjets.size());
@@ -294,7 +283,6 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     // pat-ify fatjets
     auto patJet = createPatJet(fatjets[i]);
     patJet.setJetArea(jet_area);
-    patJet.addUserFloat("softdropmass", sd_mass[i]);
     jetCollection->push_back(patJet);
 
     for (uint s=0; s<subjets.size(); s++) {
