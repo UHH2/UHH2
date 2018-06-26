@@ -589,9 +589,9 @@ process.xconeGen23Lepton = cms.EDProducer("GenXConeProducer",
     NSubJets = cms.uint32(3),       # number of subjets in each fatjet
     RSubJets = cms.double(0.4),     # cone radius of subjetSrc
     BetaSubJets = cms.double(2.0),  # conical mesure for subjets
-    doLeptonSpecific = cms.bool(True),
-    DRLeptonJet = cms.double(999),
-    applySoftDrop = cms.bool(False),
+    doLeptonSpecific = cms.bool(True),  # if true, look for gen electron or muon,
+    # and whichever jet it is closest do get clustered with NJets-1 instead of NJets
+    DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
 )
 process.xconeGen33SoftDrop = cms.EDProducer("GenXConeProducer",
     src=cms.InputTag("packedGenParticlesForJetsNoNu"),
@@ -603,7 +603,6 @@ process.xconeGen33SoftDrop = cms.EDProducer("GenXConeProducer",
     RSubJets = cms.double(0.4),     # cone radius of subjetSrc
     BetaSubJets = cms.double(2.0),  # conical mesure for subjets
     doLeptonSpecific = cms.bool(False),
-    applySoftDrop = cms.bool(True),
 )
 
 ### MET
