@@ -588,7 +588,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     hotvrJets.resize(hotvr_sources.size());
     for (size_t j=0; j<hotvr_sources.size(); ++j) {
       hotvr_tokens.push_back(consumes<pat::JetCollection>(hotvr_sources[j]));
-      hotvr_subjet_tokens.push_back(consumes<pat::JetCollection>(edm::InputTag(hotvr_sources[j].label(), "SubJets")));
       branch(tr, hotvr_sources[j].encode().c_str(), "std::vector<TopJet>", &hotvrJets[j]);
     }
   }
@@ -598,7 +597,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     xconeJets.resize(xcone_sources.size());
     for (size_t j=0; j<xcone_sources.size(); ++j) {
       xcone_tokens.push_back(consumes<pat::JetCollection>(xcone_sources[j]));
-      xcone_subjet_tokens.push_back(consumes<pat::JetCollection>(edm::InputTag(xcone_sources[j].label(), "SubJets")));
       branch(tr, xcone_sources[j].encode().c_str(), "std::vector<TopJet>", &xconeJets[j]);
     }
   }
@@ -1330,8 +1328,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       hotvrJets[j].clear();
       edm::Handle<pat::JetCollection> hotvr_patjets;
       iEvent.getByToken(hotvr_tokens[j], hotvr_patjets);
-      edm::Handle<pat::JetCollection> hotvr_subjet_patjets;
-      iEvent.getByToken(hotvr_subjet_tokens[j], hotvr_subjet_patjets);
 
       // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
       for (const auto & patJet : *hotvr_patjets) {
@@ -1364,8 +1360,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       xconeJets[j].clear();
       edm::Handle<pat::JetCollection> xcone_patjets;
       iEvent.getByToken(xcone_tokens[j], xcone_patjets);
-      edm::Handle<pat::JetCollection> xcone_subjet_patjets;
-      iEvent.getByToken(xcone_subjet_tokens[j], xcone_subjet_patjets);
 
       // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
       for (const auto & patJet : *xcone_patjets) {
@@ -1398,7 +1392,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       edm::Handle<pat::JetCollection> genhotvr_patjets;
       iEvent.getByToken(genhotvr_tokens[j], genhotvr_patjets);
 
-      // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
+      // Convert from pat::Jet to GenTopJet with subjets
       for (const auto & patJet : *genhotvr_patjets) {
         GenTopJet thisJet;
         thisJet.set_pt(patJet.p4().pt());
@@ -1425,7 +1419,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       edm::Handle<pat::JetCollection> genxcone_patjets;
       iEvent.getByToken(genxcone_tokens[j], genxcone_patjets);
 
-      // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
+      // Convert from pat::Jet to GenTopJet with subjets
       for (const auto & patJet : *genxcone_patjets) {
         GenTopJet thisJet;
         thisJet.set_pt(patJet.p4().pt());
