@@ -146,11 +146,9 @@ class NtupleWriter : public edm::one::EDFilter<edm::one::WatchRuns> {
       std::vector<bool> skipMETUncertainties;
 
       std::vector<edm::EDGetToken> hotvr_tokens;
-      std::vector<edm::EDGetToken> hotvr_subjet_tokens;
       std::vector<std::vector<TopJet>> hotvrJets;
 
       std::vector<edm::EDGetToken> xcone_tokens;
-      std::vector<edm::EDGetToken> xcone_subjet_tokens;
       std::vector<std::vector<TopJet>> xconeJets;
 
       std::vector<edm::EDGetToken> genhotvr_tokens;
