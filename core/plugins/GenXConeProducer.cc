@@ -188,8 +188,11 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     edm::LogWarning("NoXConeLepton") << "No lepton found in GenXConeProducer" << std::endl;
   }
 
+
   // make sure to have enough particles with non-zero momentum in event
-  unsigned int minParticleCount = NJets_ * 3;
+  unsigned int minParticleCount = NJets_ * NSubJets_;
+  if (doLeptonSpecific_ && (lepton != nullptr)) minParticleCount -= 1;  // since one jet will use NSubJets_-1
+
   if (_psj.size() < minParticleCount) {
     auto jetCollection = std::make_unique<pat::JetCollection>();
     iEvent.put(std::move(jetCollection));
@@ -206,8 +209,6 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   vector<PseudoJet> fatjets;
   std::unique_ptr<NjettinessPlugin> plugin_xcone;
   initPlugin(plugin_xcone, NJets_, RJets_, BetaJets_, usePseudoXCone_);
-  double ghost_maxrap = 4.0;      // maxiumum y of ghost particles
-  AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
   JetDefinition jet_def_xcone(plugin_xcone.get());
   ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
@@ -266,29 +267,22 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     // Run second clustering step (subjets) for each fat jet
     vector<PseudoJet> subjets;
-    vector<double> subjet_area;
     if (enoughParticles && doSubjets) {
       std::unique_ptr<NjettinessPlugin> plugin_xcone_sub;
       initPlugin(plugin_xcone_sub, thisNSubJets_, RSubJets_, BetaSubJets_, usePseudoXCone_);
       JetDefinition jet_def_sub(plugin_xcone_sub.get());
-      ClusterSequenceArea clust_seq_sub(particle_in_fatjet, jet_def_sub, area_def);
+      ClusterSequence clust_seq_sub(particle_in_fatjet, jet_def_sub);
       subjets = sorted_by_pt(clust_seq_sub.inclusive_jets(0));
-      for (unsigned int j = 0; j < subjets.size(); ++j) { subjet_area.push_back(subjets[j].area()); }
     }
 
-    // jet area for fat jet
-    double jet_area = 0;
-    // double jet_area = fatjets[i].area();
 
     // pat-ify fatjets
     auto patJet = createPatJet(fatjets[i]);
-    patJet.setJetArea(jet_area);
     jetCollection->push_back(patJet);
 
     for (uint s=0; s<subjets.size(); s++) {
       indices[i].push_back(subjetCollection->size());
       auto subjet = createPatJet(subjets[s]);
-      subjet.setJetArea(subjet_area[s]);
       subjetCollection->push_back(subjet);
     }
 
