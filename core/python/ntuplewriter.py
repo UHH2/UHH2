@@ -1035,7 +1035,7 @@ process.xconeCHS = cms.EDProducer("XConeProducer",
 )
 task.add(process.xconeCHS)
 
-process.xconeGen23Lepton = cms.EDProducer("GenXConeProducer",
+process.genXCone23TopJets = cms.EDProducer("GenXConeProducer",
     src=cms.InputTag("packedGenParticlesForJetsNoNu"),
     usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
     NJets = cms.uint32(2),          # number of fatjets
@@ -1048,9 +1048,9 @@ process.xconeGen23Lepton = cms.EDProducer("GenXConeProducer",
     # and whichever jet it is closest do get clustered with NJets-1 instead of NJets
     DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
 )
-task.add(process.xconeGen23Lepton)
+task.add(process.genXCone23TopJets)
 
-process.xconeGen33 = cms.EDProducer("GenXConeProducer",
+process.genXCone33TopJets = cms.EDProducer("GenXConeProducer",
     src=cms.InputTag("packedGenParticlesForJetsNoNu"),
     usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
     NJets = cms.uint32(2),          # number of fatjets
@@ -1061,7 +1061,7 @@ process.xconeGen33 = cms.EDProducer("GenXConeProducer",
     BetaSubJets = cms.double(2.0),  # conical mesure for subjets
     doLeptonSpecific = cms.bool(False),
 )
-task.add(process.xconeGen33)
+task.add(process.genXCone33TopJets)
 
 
 # LEPTON cfg
@@ -1222,6 +1222,7 @@ else:
     metfilterpath = "PAT"
 
 process.MyNtuple = cms.EDFilter('NtupleWriter',
+<<<<<<< HEAD
                                 # AnalysisModule = cms.PSet(
                                 #    name = cms.string("NoopAnalysisModule"),
                                 #    library = cms.string("libUHH2examples.so"),
@@ -1604,8 +1605,8 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     cms.InputTag("hotvrGen")
                                 ),
                                 GenXCone_sources=cms.VInputTag(
-                                    cms.InputTag("xconeGen23Lepton"),
-                                    cms.InputTag("xconeGen33")
+                                    cms.InputTag("genXCone23TopJets"),
+                                    cms.InputTag("genXCone33TopJets")
                                 )
 )
 
