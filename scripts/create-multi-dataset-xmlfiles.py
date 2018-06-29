@@ -68,10 +68,10 @@ for basename in basenames:
         for fname in files:
             if get_basename(fname) != basename:
                 continue
-            out.write('<In FileName="%s" Lumi="0.0"/>\n' % fname)
-
             f = ROOT.TFile(fname)
             n_events += f.Get('AnalysisTree').GetEntriesFast()
+            if f.Get('AnalysisTree').GetEntriesFast() > 0:
+               out.write('<In FileName="%s" Lumi="0.0"/>\n' % fname)
             f.Close()
 
         out.write('<!-- number of events: %d -->\n' % n_events)
