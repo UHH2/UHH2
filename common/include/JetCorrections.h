@@ -59,6 +59,29 @@ namespace JERFiles {
   
     extern const std::vector<std::string> Fall17_17Nov2017_V7_L1RC_AK4PFchs_MC;
 
+    //Fall17_17Nov2017_V11
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L123_noRes_AK4PFchs_DATA;  
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L123_noRes_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L123_noRes_AK4PFchs_DATA;
+
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L123_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L123_AK4PFchs_DATA;
+  
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_L123_AK4PFchs_MC;
+  
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L1RC_AK4PFchs_DATA;
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DATA;
+  
+    extern const std::vector<std::string> Fall17_17Nov2017_V11_L1RC_AK4PFchs_MC;
+
 }
 
 void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const uhh2::Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0);

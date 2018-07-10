@@ -107,8 +107,13 @@ public:
    * Throws the same exceptions as \c lookup_trigger_index. In addition, throws a runtime_error
    * if \c lookup_trigger_index returns false.
    */
-  bool trigger_prescale(TriggerIndex & ti) const;
-  
+  //  bool trigger_prescale(TriggerIndex & ti) const;
+  int trigger_prescale(TriggerIndex & ti) const;
+  //L1 prescales, see for more details:
+  //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2017#Trigger
+  int trigger_prescaleL1min(TriggerIndex & ti) const;
+  int trigger_prescaleL1max(TriggerIndex & ti) const;
+
   /** \brief Test whether a given trigger is available for the current event
    * 
    * Note that this method is only needed to test whether a trigger is available at all;
@@ -138,7 +143,13 @@ public:
   std::vector<int>* & get_triggerPrescales(){
       return triggerPrescales;
   }
-  
+  std::vector<int>* & get_triggerPrescalesL1min(){
+      return triggerPrescalesL1min;
+  }
+    std::vector<int>* & get_triggerPrescalesL1max(){
+      return triggerPrescalesL1max;
+  }
+
   void set_triggernames(std::vector<std::string> names){ // for the current run(!)
       triggerNames_currentrun = move(names);
       triggerNames_currentrun_runid = run;
@@ -156,6 +167,8 @@ public:
 private:
     std::vector<bool>* triggerResults;
     std::vector<int>* triggerPrescales;
+    std::vector<int>* triggerPrescalesL1min;
+    std::vector<int>* triggerPrescalesL1max;
 
     std::vector<std::string> triggerNames_currentrun;
     int triggerNames_currentrun_runid;

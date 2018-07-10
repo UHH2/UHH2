@@ -604,8 +604,10 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
         eh->setup_jets(context->get("JetCollection", ""));
         eh->setup_topjets(context->get("TopJetCollection", ""));
         eh->setup_toppuppijets(context->get("TopPuppiJetCollection", ""));
-        eh->setup_met(context->get("METName", ""));
-       
+        eh->setup_L1EG_seeds(context->get("L1EGseedsCollection", ""));
+        eh->setup_L1J_seeds(context->get("L1JseedsCollection", ""));
+	eh->setup_met(context->get("METName", ""));
+
         bool is_mc = context->get("dataset_type") == "MC";
         if (is_mc) {
             eh->setup_genInfo(context->get("GenInfoName", "genInfo"));
