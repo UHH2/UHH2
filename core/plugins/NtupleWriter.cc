@@ -541,12 +541,22 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     trigger_prefixes = iConfig.getParameter<std::vector<std::string> >("trigger_prefixes");
     event->get_triggerResults() = new vector<bool>();
     event->get_triggerPrescales() = new vector<int>();
+    event->get_triggerPrescalesL1min() = new vector<int>();
+    event->get_triggerPrescalesL1max() = new vector<int>();
+
     branch(tr, "triggerNames", "std::vector<std::string>", &triggerNames_outbranch);
     branch(tr, "triggerResults", "std::vector<bool>", event->get_triggerResults());
     branch(tr, "triggerPrescales", "std::vector<int>", event->get_triggerPrescales());
+    branch(tr, "triggerPrescalesL1min", "std::vector<int>", event->get_triggerPrescalesL1min());
+    branch(tr, "triggerPrescalesL1max", "std::vector<int>", event->get_triggerPrescalesL1max());
     triggerBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("trigger_bits"));
     edm::InputTag triggerPrescalesTag("patTrigger");
     triggerPrescales_ = consumes<pat::PackedTriggerPrescales>(triggerPrescalesTag);
+    edm::InputTag triggerPrescalesL1minTag("patTrigger:l1min");
+    triggerPrescalesL1min_ = consumes<pat::PackedTriggerPrescales>(triggerPrescalesL1minTag);
+    edm::InputTag triggerPrescalesL1maxTag("patTrigger:l1max");
+    triggerPrescalesL1max_ = consumes<pat::PackedTriggerPrescales>(triggerPrescalesL1maxTag);
+
     metfilterBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("metfilter_bits"));
     triggerObjects_ = consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("trigger_objects"));
     triggerObjects_sources = iConfig.getParameter<std::vector<std::string> >("triggerObjects_sources");
@@ -1212,22 +1222,31 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    if(doTrigger){
      auto & triggerResults = *event->get_triggerResults();
      auto & triggerPrescales = *event->get_triggerPrescales();
+     auto & triggerPrescalesL1min = *event->get_triggerPrescalesL1min();
+     auto & triggerPrescalesL1max = *event->get_triggerPrescalesL1max();
+
      triggerResults.clear();
      triggerPrescales.clear();
+     triggerPrescalesL1min.clear();
+     triggerPrescalesL1max.clear();
      triggerNames_outbranch.clear();
 
      //read trigger info from triggerBits (k=0) and from metfilterBits (k=1)
      for(int k=0;k<2; k++){
        edm::Handle<edm::TriggerResults> triggerBits;
        edm::Handle<pat::PackedTriggerPrescales> packedTriggerPrescales;
+       edm::Handle<pat::PackedTriggerPrescales> packedTriggerPrescalesL1min;
+       edm::Handle<pat::PackedTriggerPrescales> packedTriggerPrescalesL1max;
        if(k==0)
          iEvent.getByToken(triggerBits_, triggerBits);
        else
          iEvent.getByToken(metfilterBits_, triggerBits);
 
-       if(iEvent.isRealData())
+       if(iEvent.isRealData()){
          iEvent.getByToken(triggerPrescales_, packedTriggerPrescales);
-
+	 iEvent.getByToken(triggerPrescalesL1min_, packedTriggerPrescalesL1min);	 
+	 iEvent.getByToken(triggerPrescalesL1min_, packedTriggerPrescalesL1max);
+       }
        const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
 
        for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) {
@@ -1238,8 +1257,15 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          if(it==trigger_prefixes.end()) continue;
          triggerResults.push_back(triggerBits->accept(i));
 
-         if(iEvent.isRealData())
+         if(iEvent.isRealData()){
            triggerPrescales.push_back(packedTriggerPrescales->getPrescaleForIndex(i));
+           triggerPrescalesL1min.push_back(packedTriggerPrescalesL1min->getPrescaleForIndex(i));
+           triggerPrescalesL1max.push_back(packedTriggerPrescalesL1max->getPrescaleForIndex(i));
+	   // cout<<"Prescale HLT: "<<packedTriggerPrescales->getPrescaleForIndex(i)<<" L1 min: "<<packedTriggerPrescalesL1min->getPrescaleForIndex(i)
+	   //     <<" L1 max: "<<packedTriggerPrescalesL1max->getPrescaleForIndex(i)<<endl;
+	   // if(packedTriggerPrescales->getPrescaleForIndex(i)>1)
+	   //   cout<<"For trigger "<<names.triggerName(i)<<" prescale = "<<packedTriggerPrescales->getPrescaleForIndex(i)<<endl;
+	 }
 
          if(newrun){
            triggerNames_outbranch.push_back(names.triggerName(i));
@@ -1315,21 +1341,33 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
   if(doL1seed && iEvent.isRealData()){
     auto & triggerResults = *event->get_triggerResults();   
+    auto & triggerPrescales = *event->get_triggerPrescales();
+    auto & triggerPrescalesL1min = *event->get_triggerPrescalesL1min();
+    auto & triggerPrescalesL1max = *event->get_triggerPrescalesL1max();
+
     //muGT 
     edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
     iEvent.getByToken(l1GtToken_, l1GtHandle);
     bool prefire = l1GtHandle->begin(-1)->getFinalOR();
     triggerNames_outbranch.push_back("muGT_BX_minus_1__prefire");
     triggerResults.push_back(prefire);
+    triggerPrescales.push_back(1);
+    triggerPrescalesL1min.push_back(1);
+    triggerPrescalesL1max.push_back(1);
 
     bool postfire = l1GtHandle->begin(1)->getFinalOR();
     triggerNames_outbranch.push_back("muGT_BX_plus_1");
     triggerResults.push_back(postfire);
+    triggerPrescales.push_back(1);
+    triggerPrescalesL1min.push_back(1);
+    triggerPrescalesL1max.push_back(1);
 
     bool fire = l1GtHandle->begin(0)->getFinalOR();
     triggerNames_outbranch.push_back("muGT_BX_plus_0");
     triggerResults.push_back(fire);
-
+    triggerPrescales.push_back(1);
+    triggerPrescalesL1min.push_back(1);
+    triggerPrescalesL1max.push_back(1);
     //L1EG
 
     edm::Handle<BXVector<l1t::EGamma>> l1EGHandle;

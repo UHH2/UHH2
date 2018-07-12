@@ -16,3 +16,11 @@ bool TriggerSelection::passes(const Event & event){
   return event.passes_trigger(triggerIndex);
 }
 
+int TriggerSelection::prescale(const Event & event){
+ if(!triggerInit){
+    triggerIndex = event.get_trigger_index(triggerName);
+    triggerInit = true;
+  }
+ int prescale = event.trigger_prescale(triggerIndex);
+ return 0;
+}

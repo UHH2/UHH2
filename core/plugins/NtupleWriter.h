@@ -139,6 +139,8 @@ class NtupleWriter : public edm::one::EDFilter<edm::one::WatchRuns> {
       edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
       edm::EDGetTokenT<edm::TriggerResults>  metfilterBits_;
       edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescales_;
+      edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescalesL1min_;
+      edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescalesL1max_;
       edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
 
       std::vector<std::vector<FlavorParticle> > triggerObjects_out;

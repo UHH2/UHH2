@@ -62,6 +62,8 @@ void EventHelper::setup_trigger(){
     trigger = true;
     h_triggerResults = declare_in_out<std::vector<bool>>("triggerResults", "triggerResults", ctx);
     h_triggerPrescales = declare_in_out<std::vector<int>>("triggerPrescales", "triggerPrescales", ctx);
+    h_triggerPrescalesL1min = declare_in_out<std::vector<int>>("triggerPrescalesL1min", "triggerPrescalesL1min", ctx);
+    h_triggerPrescalesL1max = declare_in_out<std::vector<int>>("triggerPrescalesL1max", "triggerPrescalesL1max", ctx);
     h_triggerNames = declare_in_out<std::vector<std::string>>("triggerNames", "triggerNames", ctx);
 }
 
@@ -120,6 +122,8 @@ void EventHelper::event_read(){
         if(trigger){
             event->get_triggerResults() = &event->get(h_triggerResults);
 	    event->get_triggerPrescales() = &event->get(h_triggerPrescales);
+	    event->get_triggerPrescalesL1min() = &event->get(h_triggerPrescalesL1min);
+	    event->get_triggerPrescalesL1max() = &event->get(h_triggerPrescalesL1max);
         }
 	if(L1EG_seeds){
 	  event->L1EG_seeds =  &event->get(h_L1EG_seeds);

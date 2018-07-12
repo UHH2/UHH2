@@ -120,6 +120,8 @@ private:
     
     Event::Handle<std::vector<bool>> h_triggerResults;
     Event::Handle<std::vector<int>> h_triggerPrescales;
+    Event::Handle<std::vector<int>> h_triggerPrescalesL1min;
+    Event::Handle<std::vector<int>> h_triggerPrescalesL1max;
     Event::Handle<std::vector<std::string>> h_triggerNames;
 
     Event::Handle<std::vector<L1EGamma>> h_L1EG_seeds;
