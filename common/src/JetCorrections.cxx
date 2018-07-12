@@ -1398,12 +1398,6 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DA
 
 
 //2017-------------------------- 17Nov2017  V12
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_L123_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V12_MC/Fall17_17Nov2017_V12_MC_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V12_MC/Fall17_17Nov2017_V12_MC_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017_V12_MC/Fall17_17Nov2017_V12_MC_L3Absolute_AK4PFchs.txt",
-};
-
 
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_B_L123_noRes_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L1FastJet_AK4PFchs.txt",
@@ -1467,9 +1461,6 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_F_L123_AK4PFchs_DA
   "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L2L3Residual_AK4PFchs.txt",
 };
 
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_L1RC_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V12_MC/Fall17_17Nov2017_V12_MC_L1RC_AK4PFchs.txt",
-};
 
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_B_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L1RC_AK4PFchs.txt",
