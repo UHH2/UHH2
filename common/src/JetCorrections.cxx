@@ -1296,18 +1296,217 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V7_F_L1RC_AK4PFchs_DAT
 
 
 
-//2017-------------------------- 17Nov2017  V11
+//Fall17_17Nov2017_V10
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_L123_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Fall17_17Nov2017_V10_MC/Fall17_17Nov2017_V10_MC_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017_V10_MC/Fall17_17Nov2017_V10_MC_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017_V10_MC/Fall17_17Nov2017_V10_MC_L3Absolute_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_L1RC_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Fall17_17Nov2017_V10_MC/Fall17_17Nov2017_V10_MC_L1RC_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_L123_AK8PFPuppi_MC = {
+  "JECDatabase/textFiles/Fall17_17Nov2017_V10_MC/Fall17_17Nov2017_V10_MC_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017_V10_MC/Fall17_17Nov2017_V10_MC_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017_V10_MC/Fall17_17Nov2017_V10_MC_L3Absolute_AK8PFPuppi.txt",
+};
+
+
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_B_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_C_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_D_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_E_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_F_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_B_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_C_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L3Absolute_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_D_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L3Absolute_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_E_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L3Absolute_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_F_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L3Absolute_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_B_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L1RC_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_C_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L1RC_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_D_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L1RC_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_E_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L1RC_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_F_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L1RC_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_B_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_C_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_D_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_E_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_F_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_B_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_C_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_D_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_E_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_F_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_B_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V10_DATA/Fall17_17Nov2017B_V10_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_C_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V10_DATA/Fall17_17Nov2017C_V10_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_D_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V10_DATA/Fall17_17Nov2017D_V10_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_E_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V10_DATA/Fall17_17Nov2017E_V10_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V10_F_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V10_DATA/Fall17_17Nov2017F_V10_DATA_L1RC_AK8PFPuppi.txt",
+};
+
+
+
+
+//Fall17_17Nov2017_V11
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_L123_AK4PFchs_MC = {
   "JECDatabase/textFiles/Fall17_17Nov2017_V11_MC/Fall17_17Nov2017_V11_MC_L1FastJet_AK4PFchs.txt",
   "JECDatabase/textFiles/Fall17_17Nov2017_V11_MC/Fall17_17Nov2017_V11_MC_L2Relative_AK4PFchs.txt",
   "JECDatabase/textFiles/Fall17_17Nov2017_V11_MC/Fall17_17Nov2017_V11_MC_L3Absolute_AK4PFchs.txt",
 };
-
-
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_L1RC_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Fall17_17Nov2017_V11_MC/Fall17_17Nov2017_V11_MC_L1RC_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_L123_AK8PFPuppi_MC = {
+  "JECDatabase/textFiles/Fall17_17Nov2017_V11_MC/Fall17_17Nov2017_V11_MC_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017_V11_MC/Fall17_17Nov2017_V11_MC_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017_V11_MC/Fall17_17Nov2017_V11_MC_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_B_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_C_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_D_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_E_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L2L3Residual_AK4PFchs.txt",
+};
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_B_L123_noRes_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L1FastJet_AK4PFchs.txt",
   "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L2Relative_AK4PFchs.txt",
   "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L2L3Residual_AK4PFchs.txt",
 };
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_C_L123_noRes_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L1FastJet_AK4PFchs.txt",
@@ -1329,80 +1528,131 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L123_noRes_AK4PF
   "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L2Relative_AK4PFchs.txt",
   "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L3Absolute_AK4PFchs.txt",
 };
-
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_B_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_C_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_D_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_E_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_L1RC_AK4PFchs_MC = {
-  "JECDatabase/textFiles/Fall17_17Nov2017_V11_MC/Fall17_17Nov2017_V11_MC_L1RC_AK4PFchs.txt",
-};
-
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_B_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L1RC_AK4PFchs.txt",
 };
-
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_C_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L1RC_AK4PFchs.txt",
 };
-
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_D_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L1RC_AK4PFchs.txt",
 };
-
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_E_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L1RC_AK4PFchs.txt",
 };
-
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L1RC_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_B_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_C_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_D_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_E_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_B_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_C_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_D_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_E_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_B_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V11_DATA/Fall17_17Nov2017B_V11_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_C_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V11_DATA/Fall17_17Nov2017C_V11_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_D_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V11_DATA/Fall17_17Nov2017D_V11_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_E_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V11_DATA/Fall17_17Nov2017E_V11_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V11_DATA/Fall17_17Nov2017F_V11_DATA_L1RC_AK8PFPuppi.txt",
 };
 
 
 
-
-
-
-
-
-//2017-------------------------- 17Nov2017  V12
-
+//Fall17_17Nov2017_V12
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_B_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_C_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_D_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_E_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L2L3Residual_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_F_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L2L3Residual_AK4PFchs.txt",
+};
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_B_L123_noRes_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L1FastJet_AK4PFchs.txt",
   "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L2Relative_AK4PFchs.txt",
   "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L2L3Residual_AK4PFchs.txt",
 };
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_C_L123_noRes_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L1FastJet_AK4PFchs.txt",
@@ -1424,62 +1674,91 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_F_L123_noRes_AK4PF
   "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L2Relative_AK4PFchs.txt",
   "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L3Absolute_AK4PFchs.txt",
 };
-
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_B_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_C_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_D_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_E_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_F_L123_AK4PFchs_DATA = {
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L1FastJet_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L2Relative_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L3Absolute_AK4PFchs.txt",
-  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L2L3Residual_AK4PFchs.txt",
-};
-
-
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_B_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L1RC_AK4PFchs.txt",
 };
-
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_C_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L1RC_AK4PFchs.txt",
 };
-
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_D_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L1RC_AK4PFchs.txt",
 };
-
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_E_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L1RC_AK4PFchs.txt",
 };
-
 const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_F_L1RC_AK4PFchs_DATA = {
   "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L1RC_AK4PFchs.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_B_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_C_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_D_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_E_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_F_L123_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_B_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L3Absolute_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L2L3Residual_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_C_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_D_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_E_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_F_L123_noRes_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L1FastJet_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L2Relative_AK8PFPuppi.txt",
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L3Absolute_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_B_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017B_V12_DATA/Fall17_17Nov2017B_V12_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_C_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017C_V12_DATA/Fall17_17Nov2017C_V12_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_D_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017D_V12_DATA/Fall17_17Nov2017D_V12_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_E_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017E_V12_DATA/Fall17_17Nov2017E_V12_DATA_L1RC_AK8PFPuppi.txt",
+};
+const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_F_L1RC_AK8PFPuppi_DATA = {
+  "JECDatabase/textFiles/Fall17_17Nov2017F_V12_DATA/Fall17_17Nov2017F_V12_DATA_L1RC_AK8PFPuppi.txt",
 };
 
 
@@ -1488,67 +1767,68 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V12_F_L1RC_AK4PFchs_DA
 
 
 
- void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc, int jec_unc_direction){
-    auto factor_raw = jet.JEC_factor_raw();
-    corrector.setJetPt(jet.pt() * factor_raw);
-    corrector.setJetEta(jet.eta());
-    corrector.setJetE(jet.energy() * factor_raw);
-    corrector.setJetA(jet.jetArea());
-    corrector.setRho(event.rho);
-    auto correctionfactors = corrector.getSubCorrections();
-    auto correctionfactor_L1  = correctionfactors.front();
-    auto correctionfactor = correctionfactors.back();
 
-    LorentzVector jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-   
-    if(jec_unc_direction!=0){
-      if (jec_unc==NULL){
-	std::cerr << "JEC variation should be applied, but JEC uncertainty object is NULL! Abort." << std::endl;
-	exit(EXIT_FAILURE);
-      }
-      // ignore jets with very low pt or high eta, avoiding a crash from the JESUncertainty tool
-      double pt = jet_v4_corrected.Pt();
-      double eta = jet_v4_corrected.Eta();
-      if (!(pt<5. || fabs(eta)>5.)) {
-      
-	jec_unc->setJetEta(eta);
-	jec_unc->setJetPt(pt);
-	
-	double unc = 0.;	  
-	if (jec_unc_direction == 1){
-	  unc = jec_unc->getUncertainty(1);
-	  correctionfactor *= (1 + fabs(unc));
-	} else if (jec_unc_direction == -1){
-	  unc = jec_unc->getUncertainty(-1);
-	  correctionfactor *= (1 - fabs(unc));
-	}
-	jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-      }
+void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc, int jec_unc_direction){
+  auto factor_raw = jet.JEC_factor_raw();
+  corrector.setJetPt(jet.pt() * factor_raw);
+  corrector.setJetEta(jet.eta());
+  corrector.setJetE(jet.energy() * factor_raw);
+  corrector.setJetA(jet.jetArea());
+  corrector.setRho(event.rho);
+  auto correctionfactors = corrector.getSubCorrections();
+  auto correctionfactor_L1  = correctionfactors.front();
+  auto correctionfactor = correctionfactors.back();
+
+  LorentzVector jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
+
+  if(jec_unc_direction!=0){
+    if (jec_unc==NULL){
+      std::cerr << "JEC variation should be applied, but JEC uncertainty object is NULL! Abort." << std::endl;
+      exit(EXIT_FAILURE);
     }
+    // ignore jets with very low pt or high eta, avoiding a crash from the JESUncertainty tool
+    double pt = jet_v4_corrected.Pt();
+    double eta = jet_v4_corrected.Eta();
+    if (!(pt<5. || fabs(eta)>5.)) {
 
-  
-    jet.set_v4(jet_v4_corrected);
-    jet.set_JEC_factor_raw(1. / correctionfactor);
-    jet.set_JEC_L1factor_raw(correctionfactor_L1);
+      jec_unc->setJetEta(eta);
+      jec_unc->setJetPt(pt);
 
+      double unc = 0.;
+      if (jec_unc_direction == 1){
+        unc = jec_unc->getUncertainty(1);
+        correctionfactor *= (1 + fabs(unc));
+      } else if (jec_unc_direction == -1){
+        unc = jec_unc->getUncertainty(-1);
+        correctionfactor *= (1 - fabs(unc));
+      }
+      jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
+    }
   }
 
 
-namespace {
-    
-// to share some code between JetCorrector and JetLeptonCleaner, provide some methods
-// dealing with jet energy corrections here:
-std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::string> & filenames){
-    std::vector<JetCorrectorParameters> pars;
-    for(const auto & filename : filenames){
-        pars.emplace_back(locate_file(filename));
-    }
-    return uhh2::make_unique<FactorizedJetCorrector>(pars);
+  jet.set_v4(jet_v4_corrected);
+  jet.set_JEC_factor_raw(1. / correctionfactor);
+  jet.set_JEC_L1factor_raw(correctionfactor_L1);
+
 }
 
- 
 
-  
+namespace {
+
+  // to share some code between JetCorrector and JetLeptonCleaner, provide some methods
+  // dealing with jet energy corrections here:
+  std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::string> & filenames){
+    std::vector<JetCorrectorParameters> pars;
+    for(const auto & filename : filenames){
+      pars.emplace_back(locate_file(filename));
+    }
+    return uhh2::make_unique<FactorizedJetCorrector>(pars);
+  }
+
+
+
+
   //propagate to MET
   //apply type1 MET correction to RAW MET
   //NB: jet with substracted muon Pt should be used
@@ -1561,18 +1841,18 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       to_be_corrected = to_be_corrected && ( fabs(jet.v4().Eta())<eta_thresh_low || fabs(jet.v4().Eta())>eta_thresh_high || jet.v4().Pt() > pt_thresh );
       to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
       if(to_be_corrected){
-	auto factor_raw = jet.JEC_factor_raw();
-	auto L1factor_raw = jet.JEC_L1factor_raw();
+        auto factor_raw = jet.JEC_factor_raw();
+        auto L1factor_raw = jet.JEC_L1factor_raw();
 
-	LorentzVector L1corr =   (L1factor_raw*factor_raw)*jet.v4();            //L1 corrected jets
-	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
-	metv4 -=  L123corr;
+        LorentzVector L1corr =   (L1factor_raw*factor_raw)*jet.v4();            //L1 corrected jets
+        LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
+        metv4 -=  L123corr;
 
-	//For Puppi jets, no L1 correction is needed
-	if(do_L1corr){
-	  //slimmed MET is corrected by L1FastJet
-	  metv4 += L1corr;
-	}
+        //For Puppi jets, no L1 correction is needed
+        if(do_L1corr){
+          //slimmed MET is corrected by L1FastJet
+          metv4 += L1corr;
+        }
       }
     }
     event.met->set_pt(metv4.Pt());
@@ -1593,20 +1873,20 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       to_be_corrected = to_be_corrected && ( fabs(jet.v4().Eta())<eta_thresh_low || fabs(jet.v4().Eta())>eta_thresh_high || jet.v4().Pt() > pt_thresh );
       to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
       if(to_be_corrected){
-	auto factor_raw = jet.JEC_factor_raw();
+        auto factor_raw = jet.JEC_factor_raw();
 
-	corrector_L1RC.setJetPt(jet.pt() * factor_raw);
-	corrector_L1RC.setJetEta(jet.eta());
-	corrector_L1RC.setJetE(jet.energy() * factor_raw);
-	corrector_L1RC.setJetA(jet.jetArea());
-	corrector_L1RC.setRho(event.rho);
-	auto correctionfactors_L1RC = corrector_L1RC.getSubCorrections();
-	auto correctionfactor_L1RC  = correctionfactors_L1RC.back();
+        corrector_L1RC.setJetPt(jet.pt() * factor_raw);
+        corrector_L1RC.setJetEta(jet.eta());
+        corrector_L1RC.setJetE(jet.energy() * factor_raw);
+        corrector_L1RC.setJetA(jet.jetArea());
+        corrector_L1RC.setRho(event.rho);
+        auto correctionfactors_L1RC = corrector_L1RC.getSubCorrections();
+        auto correctionfactor_L1RC  = correctionfactors_L1RC.back();
 
-	LorentzVector L1RCcorr = (correctionfactor_L1RC*factor_raw)*jet.v4();   //L1RC corrected jets
-	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
-	metv4 -=  L123corr;
-	metv4 += L1RCcorr;
+        LorentzVector L1RCcorr = (correctionfactor_L1RC*factor_raw)*jet.v4();   //L1RC corrected jets
+        LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
+        metv4 -=  L123corr;
+        metv4 += L1RCcorr;
       }
     }
 
@@ -1615,20 +1895,20 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
   }
 
 
-  
 
-JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::vector<std::string> & filenames, int &direction){
-    
+
+  JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::vector<std::string> & filenames, int &direction){
+
     auto dir = ctx.get("jecsmear_direction", "nominal");
     if(dir == "up"){
-        direction = 1;
+      direction = 1;
     }
     else if(dir == "down"){
-        direction = -1;
+      direction = -1;
     }
     else if(dir != "nominal"){
-        // direction = 0 is default
-        throw runtime_error("JetCorrector: invalid value jecsmear_direction='" + dir + "' (valid: 'nominal', 'up', 'down')");
+      // direction = 0 is default
+      throw runtime_error("JetCorrector: invalid value jecsmear_direction='" + dir + "' (valid: 'nominal', 'up', 'down')");
     }
 
     //initialize JetCorrectionUncertainty if shift direction is not "nominal", else return NULL pointer
@@ -1648,52 +1928,52 @@ JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::
       return jec_uncertainty;
     }
     return NULL;
-    
-}
+
+  }
 
 }
 
 JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::vector<std::string> & filenames_L1RC){
-    corrector = build_corrector(filenames);
-    direction = 0;
+  corrector = build_corrector(filenames);
+  direction = 0;
 
-    //MET should only be corrected using AK8 jets, iff there is no AK4 collection that could be used for this because the calculation of our raw MET is based on AK4 jets
-    used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
-    used_ak4puppi = ctx.get("JetCollection")=="slimmedJetsPuppi" || ctx.get("JetCollection")=="updatedPatJetsSlimmedJetsPuppi";
-    metprop_possible_ak8chs = ctx.get("JetCollection")=="patJetsAK8PFCHS";
-    metprop_possible_ak8puppi = ctx.get("JetCollection")=="patJetsAK8PFPUPPI" || ctx.get("JetCollection")=="updatedPatJetsPatJetsAK8PFPUPPI";
+  //MET should only be corrected using AK8 jets, iff there is no AK4 collection that could be used for this because the calculation of our raw MET is based on AK4 jets
+  used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
+  used_ak4puppi = ctx.get("JetCollection")=="slimmedJetsPuppi" || ctx.get("JetCollection")=="updatedPatJetsSlimmedJetsPuppi";
+  metprop_possible_ak8chs = ctx.get("JetCollection")=="patJetsAK8PFCHS";
+  metprop_possible_ak8puppi = ctx.get("JetCollection")=="patJetsAK8PFPUPPI" || ctx.get("JetCollection")=="updatedPatJetsPatJetsAK8PFPUPPI";
 
-    //MET is always corrected using the jet collection stated in the "JetCollection" Item in the context and only in case one of the stated jet collections is used. 
-    //Particularly, only one of these two AK8 collections should be used.
-    propagate_to_met = used_ak4chs || used_ak4puppi || metprop_possible_ak8chs || metprop_possible_ak8puppi;
-    if(!propagate_to_met) cout << "WARNING in JetCorrections.cxx: You specified a jet collection in the 'JetCollection' item in the config file that is not suited to correct MET. You should change that if you are using MET." << endl;
+  //MET is always corrected using the jet collection stated in the "JetCollection" Item in the context and only in case one of the stated jet collections is used.
+  //Particularly, only one of these two AK8 collections should be used.
+  propagate_to_met = used_ak4chs || used_ak4puppi || metprop_possible_ak8chs || metprop_possible_ak8puppi;
+  if(!propagate_to_met) cout << "WARNING in JetCorrections.cxx: You specified a jet collection in the 'JetCollection' item in the config file that is not suited to correct MET. You should change that if you are using MET." << endl;
 
-    //The first two collections are standard MET collections. The third one is only used for derivation of JECs
-    used_slimmedmet = ctx.get("METName")=="slimmedMETs";
-    used_puppimet = ctx.get("METName")=="slimmedMETsPuppi";
-   
+  //The first two collections are standard MET collections. The third one is only used for derivation of JECs
+  used_slimmedmet = ctx.get("METName")=="slimmedMETs";
+  used_puppimet = ctx.get("METName")=="slimmedMETsPuppi";
 
-    //if CHS MET is used, the correction is based on the (L123 - L1RC) scheme, else it is based on the standard (L123-L1).
-    //See also: https://twiki.cern.ch/twiki/bin/viewauth/CMS/METType1Type2Formulae
-    //If using CHS MET and therefore going for (L123 - L1RC), 
-    //the L1RC corrections have to be provided in a separate const std::vector<std::string>. This must only contain the L1RC correction.
-    if(filenames_L1RC.size() == 1) 
-      corrector_L1RC = build_corrector(filenames_L1RC);
-    //create dummy if L1RC is not needed. It is not applied anyway
-    else corrector_L1RC = build_corrector(filenames);
 
-    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
+  //if CHS MET is used, the correction is based on the (L123 - L1RC) scheme, else it is based on the standard (L123-L1).
+  //See also: https://twiki.cern.ch/twiki/bin/viewauth/CMS/METType1Type2Formulae
+  //If using CHS MET and therefore going for (L123 - L1RC),
+  //the L1RC corrections have to be provided in a separate const std::vector<std::string>. This must only contain the L1RC correction.
+  if(filenames_L1RC.size() == 1)
+  corrector_L1RC = build_corrector(filenames_L1RC);
+  //create dummy if L1RC is not needed. It is not applied anyway
+  else corrector_L1RC = build_corrector(filenames);
+
+  jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
-    
-bool JetCorrector::process(uhh2::Event & event){
-    assert(event.jets);
 
-    //apply jet corrections
-    for(auto & jet : *event.jets){
-      correct_jet(*corrector, jet, event, jec_uncertainty, direction);
-    }
- 
-    return true;
+bool JetCorrector::process(uhh2::Event & event){
+  assert(event.jets);
+
+  //apply jet corrections
+  for(auto & jet : *event.jets){
+    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
+  }
+
+  return true;
 }
 
 bool JetCorrector::correct_met(uhh2::Event & event, const bool & isCHSmet, double pt_thresh, double eta_thresh_low, double eta_thresh_high){
@@ -1701,10 +1981,10 @@ bool JetCorrector::correct_met(uhh2::Event & event, const bool & isCHSmet, doubl
   if(!isCHSmet){ //for standart MET collection (most of the case) proceed with standart correction
     //propagate jet corrections to MET
     bool correct_with_chs = used_ak4chs || metprop_possible_ak8chs;//for CHS use L1, for PUPPI L1 is not used
-    correct_MET(event, correct_with_chs, pt_thresh, eta_thresh_low,  eta_thresh_high); 
+    correct_MET(event, correct_with_chs, pt_thresh, eta_thresh_low,  eta_thresh_high);
   }
   else{
-    correct_MET(event, *corrector_L1RC, pt_thresh, eta_thresh_low,  eta_thresh_high); 
+    correct_MET(event, *corrector_L1RC, pt_thresh, eta_thresh_low,  eta_thresh_high);
   }
 
   return true;
@@ -1715,102 +1995,102 @@ JetCorrector::~JetCorrector(){}
 
 
 TopJetCorrector::TopJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames){
-    corrector = build_corrector(filenames);
-    direction = 0;
-    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
+  corrector = build_corrector(filenames);
+  direction = 0;
+  jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
-    
+
 bool TopJetCorrector::process(uhh2::Event & event){
-    assert(event.topjets);
-    for(auto & jet : *event.topjets){
-        correct_jet(*corrector, jet, event, jec_uncertainty, direction);
-    }
-    return true;
+  assert(event.topjets);
+  for(auto & jet : *event.topjets){
+    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
+  }
+  return true;
 }
 
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
 TopJetCorrector::~TopJetCorrector(){}
 
 SubJetCorrector::SubJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames){
-    corrector = build_corrector(filenames);
-    direction = 0;
-    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
+  corrector = build_corrector(filenames);
+  direction = 0;
+  jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
-    
+
 bool SubJetCorrector::process(uhh2::Event & event){
-    assert(event.topjets);
-    for(auto & topjet : *event.topjets){
-        auto subjets = topjet.subjets();
-        for (auto & subjet : subjets) { 
-            correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
-        }
-        topjet.set_subjets(move(subjets));
+  assert(event.topjets);
+  for(auto & topjet : *event.topjets){
+    auto subjets = topjet.subjets();
+    for (auto & subjet : subjets) {
+      correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
     }
-    return true;
+    topjet.set_subjets(move(subjets));
+  }
+  return true;
 }
 
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
 SubJetCorrector::~SubJetCorrector(){}
 
 GenericJetCorrector::GenericJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
-    corrector = build_corrector(filenames);
-    direction = 0;
-    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
-    h_jets = ctx.get_handle<std::vector<Jet> >(collectionname);
+  corrector = build_corrector(filenames);
+  direction = 0;
+  jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
+  h_jets = ctx.get_handle<std::vector<Jet> >(collectionname);
 }
-    
+
 bool GenericJetCorrector::process(uhh2::Event & event){
 
-    const auto jets = &event.get(h_jets);
-    assert(jets);
-    for(auto & jet : *jets){
-        correct_jet(*corrector, jet, event, jec_uncertainty, direction);
-    }
-    return true;
+  const auto jets = &event.get(h_jets);
+  assert(jets);
+  for(auto & jet : *jets){
+    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
+  }
+  return true;
 }
 
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
 GenericJetCorrector::~GenericJetCorrector(){}
 
 GenericTopJetCorrector::GenericTopJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
-    corrector = build_corrector(filenames);
-    direction = 0;
-    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
-    h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
+  corrector = build_corrector(filenames);
+  direction = 0;
+  jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
+  h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
 }
-    
+
 bool GenericTopJetCorrector::process(uhh2::Event & event){
 
-    const auto jets = &event.get(h_jets);
-    assert(jets);
-    for(auto & jet : *jets){
-        correct_jet(*corrector, jet, event, jec_uncertainty, direction);
-    }
-    return true;
+  const auto jets = &event.get(h_jets);
+  assert(jets);
+  for(auto & jet : *jets){
+    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
+  }
+  return true;
 }
 
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
 GenericTopJetCorrector::~GenericTopJetCorrector(){}
 
 GenericSubJetCorrector::GenericSubJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname){
-    corrector = build_corrector(filenames);
-    direction = 0;
-    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
-    h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
+  corrector = build_corrector(filenames);
+  direction = 0;
+  jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
+  h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
 }
-    
+
 bool GenericSubJetCorrector::process(uhh2::Event & event){
 
-    const auto topjets = &event.get(h_jets);
-    assert(topjets);
-    for(auto & topjet : *topjets){
-        auto subjets = topjet.subjets();
-        for (auto & subjet : subjets) { 
-            correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
-        }
-        topjet.set_subjets(move(subjets));
+  const auto topjets = &event.get(h_jets);
+  assert(topjets);
+  for(auto & topjet : *topjets){
+    auto subjets = topjet.subjets();
+    for (auto & subjet : subjets) {
+      correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
     }
-    return true;
+    topjet.set_subjets(move(subjets));
+  }
+  return true;
 }
 
 // note: implement here because only here (and not in the header file), the destructor of FactorizedJetCorrector is known
@@ -1819,81 +2099,81 @@ GenericSubJetCorrector::~GenericSubJetCorrector(){}
 // ** JetLeptonCleaner
 
 JetLeptonCleaner::JetLeptonCleaner(uhh2::Context & ctx, const std::vector<std::string> & filenames){
-     corrector = build_corrector(filenames);
-    direction = 0;
-    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
+  corrector = build_corrector(filenames);
+  direction = 0;
+  jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
 
 bool JetLeptonCleaner::process(uhh2::Event & event){
-     assert(event.jets);
-     if(event.muons){
-          for(const auto & mu : *event.muons){
-            if(mu_id && !(mu_id(mu, event))) continue;
-            for(auto & jet : *event.jets){
-	      if(deltaR(jet, mu) < drmax && jet.muonMultiplicity() > 0){
-                    auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
-                    // note that muon energy fraction as stored in the jet refers to the raw jet energy.
-                    double muon_energy_in_jet = jet_p4_raw.E() * jet.muonEnergyFraction();
-                    double new_muon_energy_in_jet = muon_energy_in_jet - mu.energy();
-                    
-                    // test compatibility of the hypothesis that the muon has been clustered to the jet with
-                    // the jet information. The hypothesis is rejected if the muon energy in the jet is too small
-                    // (but allow 10% off). Note that in general (for muon multiplicity > 1), the muon energy in
-                    // the jet might be larger than from the single muon; make sure to consider that in the test
-                    // by requiring one direction in the comparison only in case the muon multiplicity is 1.
-                    if(new_muon_energy_in_jet < -0.1 * mu.energy() || (jet.muonMultiplicity() == 1 && new_muon_energy_in_jet > 0.1 * mu.energy())){
-                        continue;
-                    }
-                    jet_p4_raw -= mu.v4();
-                    // if that subtraction flipped the jet direction (angle between new and old > 90 degrees or pi/2), emit a warning and set its momentum to 0.
-                    // Only warn if pt > 5GeV (otherwise, the jet is 0 anyway for all practical purposes).
-                    if(jet_p4_raw.pt() > 5 && deltaR(jet_p4_raw, jet) > M_PI/2){
-                        cout << "Warning: subtracting lepton flipped jet direction" << endl;
-                        jet.set_v4(LorentzVector());
-                        continue;
-                    }
-                    // re-correct jet. First, set p4_raw = p4_corrected such that
-                    // the 'correct_jet' method does what it should do if using JEC_factor_raw ...
-                    jet.set_JEC_factor_raw(1.0);
-                    jet.set_v4(jet_p4_raw);
-                    // set new muon multiplicity and muon energy fraction:
-                    jet.set_muonMultiplicity(jet.muonMultiplicity() - 1);
-                    jet.set_muonEnergyFraction(max(new_muon_energy_in_jet / jet_p4_raw.E(), 0.0));
-		    //                    correct_jet(*corrector, jet, event, jec_uncertainty, direction, false);
-                    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
-                }
-            }
+  assert(event.jets);
+  if(event.muons){
+    for(const auto & mu : *event.muons){
+      if(mu_id && !(mu_id(mu, event))) continue;
+      for(auto & jet : *event.jets){
+        if(deltaR(jet, mu) < drmax && jet.muonMultiplicity() > 0){
+          auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
+          // note that muon energy fraction as stored in the jet refers to the raw jet energy.
+          double muon_energy_in_jet = jet_p4_raw.E() * jet.muonEnergyFraction();
+          double new_muon_energy_in_jet = muon_energy_in_jet - mu.energy();
+
+          // test compatibility of the hypothesis that the muon has been clustered to the jet with
+          // the jet information. The hypothesis is rejected if the muon energy in the jet is too small
+          // (but allow 10% off). Note that in general (for muon multiplicity > 1), the muon energy in
+          // the jet might be larger than from the single muon; make sure to consider that in the test
+          // by requiring one direction in the comparison only in case the muon multiplicity is 1.
+          if(new_muon_energy_in_jet < -0.1 * mu.energy() || (jet.muonMultiplicity() == 1 && new_muon_energy_in_jet > 0.1 * mu.energy())){
+            continue;
+          }
+          jet_p4_raw -= mu.v4();
+          // if that subtraction flipped the jet direction (angle between new and old > 90 degrees or pi/2), emit a warning and set its momentum to 0.
+          // Only warn if pt > 5GeV (otherwise, the jet is 0 anyway for all practical purposes).
+          if(jet_p4_raw.pt() > 5 && deltaR(jet_p4_raw, jet) > M_PI/2){
+            cout << "Warning: subtracting lepton flipped jet direction" << endl;
+            jet.set_v4(LorentzVector());
+            continue;
+          }
+          // re-correct jet. First, set p4_raw = p4_corrected such that
+          // the 'correct_jet' method does what it should do if using JEC_factor_raw ...
+          jet.set_JEC_factor_raw(1.0);
+          jet.set_v4(jet_p4_raw);
+          // set new muon multiplicity and muon energy fraction:
+          jet.set_muonMultiplicity(jet.muonMultiplicity() - 1);
+          jet.set_muonEnergyFraction(max(new_muon_energy_in_jet / jet_p4_raw.E(), 0.0));
+          //                    correct_jet(*corrector, jet, event, jec_uncertainty, direction, false);
+          correct_jet(*corrector, jet, event, jec_uncertainty, direction);
         }
+      }
     }
-    if(event.electrons){
-        for(const auto & ele : *event.electrons){
-            if(ele_id && !(ele_id(ele, event))) continue;
-            for(auto & jet : *event.jets){
-                if(deltaR(jet, ele) < drmax && jet.electronMultiplicity() > 0){
-                    auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
-                    double electron_energy_in_jet = jet_p4_raw.E() * jet.chargedEmEnergyFraction();
-                    double new_electron_energy_in_jet = electron_energy_in_jet - ele.energy();
-                    
-                    if(new_electron_energy_in_jet < -0.1 * ele.energy() || (jet.chargedEmEnergyFraction() == 1 && new_electron_energy_in_jet > 0.1 * ele.energy())){
-                        continue;
-                    }
-                    jet_p4_raw -= ele.v4();
-                    if(jet_p4_raw.pt() > 5 && deltaR(jet_p4_raw, jet) > M_PI/2){
-                        cout << "Warning: subtracting lepton flipped jet direction" << endl;
-                        jet.set_v4(LorentzVector());
-                        continue;
-                    }
-                    // re-correct jet:
-                    jet.set_JEC_factor_raw(1.0);
-                    jet.set_v4(jet_p4_raw);
-                    jet.set_electronMultiplicity(jet.electronMultiplicity() - 1);
-                    jet.set_chargedEmEnergyFraction(max(new_electron_energy_in_jet / jet_p4_raw.E(), 0.0));
-                    correct_jet(*corrector, jet, event, jec_uncertainty, direction);
-                }
-            }
+  }
+  if(event.electrons){
+    for(const auto & ele : *event.electrons){
+      if(ele_id && !(ele_id(ele, event))) continue;
+      for(auto & jet : *event.jets){
+        if(deltaR(jet, ele) < drmax && jet.electronMultiplicity() > 0){
+          auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
+          double electron_energy_in_jet = jet_p4_raw.E() * jet.chargedEmEnergyFraction();
+          double new_electron_energy_in_jet = electron_energy_in_jet - ele.energy();
+
+          if(new_electron_energy_in_jet < -0.1 * ele.energy() || (jet.chargedEmEnergyFraction() == 1 && new_electron_energy_in_jet > 0.1 * ele.energy())){
+            continue;
+          }
+          jet_p4_raw -= ele.v4();
+          if(jet_p4_raw.pt() > 5 && deltaR(jet_p4_raw, jet) > M_PI/2){
+            cout << "Warning: subtracting lepton flipped jet direction" << endl;
+            jet.set_v4(LorentzVector());
+            continue;
+          }
+          // re-correct jet:
+          jet.set_JEC_factor_raw(1.0);
+          jet.set_v4(jet_p4_raw);
+          jet.set_electronMultiplicity(jet.electronMultiplicity() - 1);
+          jet.set_chargedEmEnergyFraction(max(new_electron_energy_in_jet / jet_p4_raw.E(), 0.0));
+          correct_jet(*corrector, jet, event, jec_uncertainty, direction);
         }
+      }
     }
-    return true;
+  }
+  return true;
 }
 
 // see ~JetCorrector
@@ -1904,11 +2184,11 @@ JetLeptonCleaner::~JetLeptonCleaner(){}
 
 JetLeptonCleaner_by_KEYmatching::JetLeptonCleaner_by_KEYmatching(uhh2::Context& ctx, const std::vector<std::string> & filenames, const std::string& jet_label){
 
-    h_jets_ = ctx.get_handle<std::vector<Jet>>(jet_label);
-    h_topjets_ = ctx.get_handle<std::vector<TopJet>>(jet_label);
-    corrector = build_corrector(filenames);
-    direction = 0;
-    jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
+  h_jets_ = ctx.get_handle<std::vector<Jet>>(jet_label);
+  h_topjets_ = ctx.get_handle<std::vector<TopJet>>(jet_label);
+  corrector = build_corrector(filenames);
+  direction = 0;
+  jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
 
 JetLeptonCleaner_by_KEYmatching::~JetLeptonCleaner_by_KEYmatching(){}
@@ -1919,7 +2199,7 @@ bool JetLeptonCleaner_by_KEYmatching::do_cleaning(Jet & jet, uhh2::Event& event)
 
   const auto& jet_lepton_keys = jet.lepton_keys();
 
-    // muon-cleaning
+  // muon-cleaning
   if(event.muons){
 
     for(const auto& muo : *event.muons){
@@ -1944,7 +2224,7 @@ bool JetLeptonCleaner_by_KEYmatching::do_cleaning(Jet & jet, uhh2::Event& event)
     }
   }
 
-    // electron-cleaning
+  // electron-cleaning
   if(event.electrons){
 
     for(const auto& ele : *event.electrons){
@@ -1969,7 +2249,7 @@ bool JetLeptonCleaner_by_KEYmatching::do_cleaning(Jet & jet, uhh2::Event& event)
     }
   }
 
-    // jet-p4 correction
+  // jet-p4 correction
   if(correct_p4){
 
     jet.set_JEC_factor_raw(1.);
@@ -2008,7 +2288,7 @@ bool JetLeptonCleaner_by_KEYmatching::process(uhh2::Event& event){
   }
 
   return true;
-    
+
 }
 
 
@@ -2083,6 +2363,28 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Summer16_25nsV1 = {
   {{5.191, 1.1922, 1.3410, 1.0434}},
 };
 
+
+// 2017
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.522, 1.05325, 1.0563, 1.0502}},
+  {{0.783, 1.12443, 1.13123, 1.11763}},
+  {{1.131, 1.07745, 1.08264, 1.07226}},
+  {{1.305, 1.07706, 1.08918, 1.06494}},
+  {{1.74, 1.07232, 1.07863, 1.06601}},
+  {{1.93, 1.07241, 1.09621, 1.04861}},
+  {{2.043, 1.08814, 1.14028, 1.036}},
+  {{2.322, 1.07464, 1.10508, 1.0442}},
+  {{2.5, 1.07105, 1.16178, 0.980317}},
+  {{2.853, 1.46856, 1.55712, 1.38}},
+  {{2.964, 2.65947, 2.72613, 2.59281}},
+  {{3.139, 1.43135, 1.44844, 1.41426}},
+  {{5.191, 1.31982, 1.34467, 1.29497}},
+
+};
 ////
 
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf){
@@ -2177,78 +2479,78 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 
   for(unsigned int i=0; i<rec_jets.size(); ++i){
 
-    
-      auto& jet = rec_jets.at(i);
 
-      LorentzVector jet_v4 = jet.v4();
-      float recopt = jet_v4.pt();
-      float abseta = fabs(jet_v4.eta());
+    auto& jet = rec_jets.at(i);
 
-      // find next genjet:
-      auto closest_genjet = closestParticle(jet, gen_jets);
-      float genpt = -1.;
-      
-      float resolution = getResolution(jet_v4.eta(), rho, jet_v4.pt())  ;
+    LorentzVector jet_v4 = jet.v4();
+    float recopt = jet_v4.pt();
+    float abseta = fabs(jet_v4.eta());
 
-      // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt. These jets will be treated with the stochastic method.
-      if(!(closest_genjet == nullptr) && uhh2::deltaR(*closest_genjet, jet) < 0.5*radius){
-	genpt = closest_genjet->pt();
-      }
-      if( fabs(genpt-recopt) > 3*resolution*recopt){
-	genpt=-1;
-      }
-      if(genpt < 15.0f) {
-	genpt=-1.;
-      }
+    // find next genjet:
+    auto closest_genjet = closestParticle(jet, gen_jets);
+    float genpt = -1.;
 
+    float resolution = getResolution(jet_v4.eta(), rho, jet_v4.pt())  ;
 
-      int ieta(-1);
-
-      for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
+    // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt. These jets will be treated with the stochastic method.
+    if(!(closest_genjet == nullptr) && uhh2::deltaR(*closest_genjet, jet) < 0.5*radius){
+      genpt = closest_genjet->pt();
+    }
+    if( fabs(genpt-recopt) > 3*resolution*recopt){
+      genpt=-1;
+    }
+    if(genpt < 15.0f) {
+      genpt=-1.;
+    }
 
 
-	const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
-	const float max_eta =       JER_SFs_.at(idx)  .at(0);
+    int ieta(-1);
 
-	if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
-      }
-      if(ieta < 0) {
-	std::cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << std::endl;
-	std::cout << "         no JER smearing is applied." << std::endl;
-	continue;
-      }
+    for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
 
-      float c;
-      if(direction == 0){
-	c = JER_SFs_.at(ieta).at(1);
-      }
-      else if(direction == 1){
-	c = JER_SFs_.at(ieta).at(2);
-      }
-      else{
-	c = JER_SFs_.at(ieta).at(3);
-      }
-      float new_pt = -1.;
-      //use smearing method in case a matching generator jet was found
-      if(genpt>0){
-	new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
-      }
-      //use stochastic method if no generator jet could be matched to the reco jet
-      else{
-	//initialize random generator with eta-dependend random seed to be reproducible
-	TRandom rand((int)(1000*abseta));
-	float random_gauss = rand.Gaus(0,resolution);
-	new_pt = recopt * (1 + random_gauss*sqrt(std::max( c*c-1,0.0f)));
-      }
-      jet_v4 *= new_pt / recopt;
 
-      //update JEC_factor_raw needed for smearing MET
-      float factor_raw = jet.JEC_factor_raw();
-      factor_raw *= recopt/new_pt;
+      const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
+      const float max_eta =       JER_SFs_.at(idx)  .at(0);
 
-      jet.set_JEC_factor_raw(factor_raw);
-      jet.set_v4(jet_v4);
-    
+      if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
+    }
+    if(ieta < 0) {
+      std::cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << std::endl;
+      std::cout << "         no JER smearing is applied." << std::endl;
+      continue;
+    }
+
+    float c;
+    if(direction == 0){
+      c = JER_SFs_.at(ieta).at(1);
+    }
+    else if(direction == 1){
+      c = JER_SFs_.at(ieta).at(2);
+    }
+    else{
+      c = JER_SFs_.at(ieta).at(3);
+    }
+    float new_pt = -1.;
+    //use smearing method in case a matching generator jet was found
+    if(genpt>0){
+      new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
+    }
+    //use stochastic method if no generator jet could be matched to the reco jet
+    else{
+      //initialize random generator with eta-dependend random seed to be reproducible
+      TRandom rand((int)(1000*abseta));
+      float random_gauss = rand.Gaus(0,resolution);
+      new_pt = recopt * (1 + random_gauss*sqrt(std::max( c*c-1,0.0f)));
+    }
+    jet_v4 *= new_pt / recopt;
+
+    //update JEC_factor_raw needed for smearing MET
+    float factor_raw = jet.JEC_factor_raw();
+    factor_raw *= recopt/new_pt;
+
+    jet.set_JEC_factor_raw(factor_raw);
+    jet.set_v4(jet_v4);
+
   }
 
   return;
@@ -2276,7 +2578,7 @@ float GenericJetResolutionSmearer::getResolution(float eta, float rho, float pt)
   float par1;
   float par2;
   float par3;
-    
+
   bool valid=false;
 
   while(!m_resfile.eof() && !valid){
@@ -2292,7 +2594,7 @@ float GenericJetResolutionSmearer::getResolution(float eta, float rho, float pt)
     m_resfile >> par1;
     m_resfile >> par2;
     m_resfile >> par3;
-    
+
     //find correct bin
     if(eta_min <= eta && eta_max > eta && rho_min <= rho && rho_max > rho && pt_min <= pt && pt_max > pt){
       valid=true;
@@ -2303,7 +2605,7 @@ float GenericJetResolutionSmearer::getResolution(float eta, float rho, float pt)
     res_formula->SetParameters(par0,par1,par2,par3);
     resolution = res_formula->Eval(pt);
   }
-  
+
   return resolution;
 }
 
