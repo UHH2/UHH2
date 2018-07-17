@@ -10,6 +10,7 @@
 #include <UHH2/common/include/LumiSelection.h>
 #include <UHH2/common/include/TriggerSelection.h>
 #include <UHH2/common/include/JetCorrections.h>
+#include <UHH2/common/include/JetCorrectionSets.h>
 #include <UHH2/common/include/ObjectIdUtils.h>
 #include <UHH2/common/include/MuonIds.h>
 #include <UHH2/common/include/ElectronIds.h>
