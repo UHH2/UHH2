@@ -1537,8 +1537,11 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
 # Note: we run in unscheduled mode, i.e. all modules are run as required;
-# just make sure that MyNtuple runs:
-process.p = cms.Path(process.MyNtuple)
+# just make sure that the electron IDs run before MyNtuple
+process.p = cms.Path(
+    process.egmGsfElectronIDSequence *
+    process.MyNtuple
+)
 process.p.associate(task)
 process.p.associate(process.patAlgosToolsTask)
 
