@@ -58,7 +58,7 @@ public:
     
     virtual ~AnalysisModuleRunner();
         
-    ClassDef(AnalysisModuleRunner, 0);
+    ClassDefOverride(AnalysisModuleRunner, 0);
   
 
     class AnalysisModuleRunnerImpl;
