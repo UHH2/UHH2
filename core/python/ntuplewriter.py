@@ -126,9 +126,9 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load(
     'Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 if useData:
-    process.GlobalTag.globaltag = '92X_dataRun2_Jun23ReReco_PixelCommissioning'
+    process.GlobalTag.globaltag = '101X_dataRun2_Prompt_v11'
 else:
-    process.GlobalTag.globaltag = '94X_mc2017_realistic_v10'
+    process.GlobalTag.globaltag = '100X_upgrade2018_realistic_v10'
 
 
 from RecoJets.Configuration.RecoPFJets_cff import *
