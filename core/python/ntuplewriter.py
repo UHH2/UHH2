@@ -1522,11 +1522,13 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 doHOTVR=cms.bool(True),
                                 doXCone=cms.bool(True),
                                 HOTVR_sources=cms.VInputTag(
-                                    cms.InputTag("hotvrPfCand"),
+                                    cms.InputTag("hotvrCHS"),
                                     cms.InputTag("hotvrPuppi")
                                 ),
                                 XCone_sources=cms.VInputTag(
-                                    cms.InputTag("xconePfCand")),
+                                    cms.InputTag("xconeCHS"),
+                                    cms.InputTag("xconePuppi")
+                                ),
 
                                 doGenHOTVR=cms.bool(not useData),
                                 doGenXCone=cms.bool(not useData),
