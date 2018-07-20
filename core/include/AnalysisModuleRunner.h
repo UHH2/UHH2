@@ -54,11 +54,11 @@ public:
     
     void CloseOutputFile() throw( SError ) override;
     virtual void Initialize( TXMLNode* node ) throw( SError ) override;
-    virtual void SetConfig(const SCycleConfig& config);
+    virtual void SetConfig(const SCycleConfig& config) override;
     
     virtual ~AnalysisModuleRunner();
         
-    ClassDef(AnalysisModuleRunner, 0);
+    ClassDefOverride(AnalysisModuleRunner, 0);
   
 
     class AnalysisModuleRunnerImpl;
