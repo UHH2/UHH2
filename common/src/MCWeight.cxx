@@ -145,11 +145,15 @@ bool MCPileupReweight::process(Event &event){
       cout << "WARNING trueNumInteractions = " << trueNumInteractions << " < lower edge of MC hist = " << h_npu_mc->GetXaxis()->GetXmin();
       cout << " Setting event weight_pu to 0" << endl;
       event.set(h_pu_weight_, 0.f);
+      event.set(h_pu_weight_up_, 0.f);
+      event.set(h_pu_weight_down_, 0.f);
       return false;
     } else if (event.genInfo->pileup_TrueNumInteractions() > h_npu_mc->GetXaxis()->GetXmax()) {
       cout << "WARNING trueNumInteractions = " << trueNumInteractions << " > upper edge of MC hist = " << h_npu_mc->GetXaxis()->GetXmax();
       cout << " Setting event weight_pu to 0" << endl;
       event.set(h_pu_weight_, 0.f);
+      event.set(h_pu_weight_up_, 0.f);
+      event.set(h_pu_weight_down_, 0.f);
       return false;
     }
 
@@ -164,7 +168,7 @@ bool MCPileupReweight::process(Event &event){
             event.set(h_pu_weight_up_, weight_up);
         }
 
-        if (h_npu_data_up) {
+        if (h_npu_data_down) {
             weight_down = h_npu_data_down->GetBinContent(binnumber)/mc_cont;
             event.set(h_pu_weight_down_, weight_down);
         }
