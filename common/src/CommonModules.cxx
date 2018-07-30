@@ -1,5 +1,6 @@
 #include "UHH2/common/include/CommonModules.h"
 #include "UHH2/common/include/JetCorrections.h"
+#include "UHH2/common/include/JetCorrectionSets.h"
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/common/include/EventVariables.h"
 #include "UHH2/common/include/CleaningModules.h"

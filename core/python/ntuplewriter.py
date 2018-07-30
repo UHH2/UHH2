@@ -1522,11 +1522,13 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
                                 doHOTVR=cms.bool(True),
                                 doXCone=cms.bool(True),
                                 HOTVR_sources=cms.VInputTag(
-                                    cms.InputTag("hotvrPfCand"),
+                                    cms.InputTag("hotvrCHS"),
                                     cms.InputTag("hotvrPuppi")
                                 ),
                                 XCone_sources=cms.VInputTag(
-                                    cms.InputTag("xconePfCand")),
+                                    cms.InputTag("xconeCHS"),
+                                    cms.InputTag("xconePuppi")
+                                ),
 
                                 doGenHOTVR=cms.bool(not useData),
                                 doGenXCone=cms.bool(not useData),
@@ -1535,8 +1537,11 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
 # Note: we run in unscheduled mode, i.e. all modules are run as required;
-# just make sure that MyNtuple runs:
-process.p = cms.Path(process.MyNtuple)
+# just make sure that the electron IDs run before MyNtuple
+process.p = cms.Path(
+    process.egmGsfElectronIDSequence *
+    process.MyNtuple
+)
 process.p.associate(task)
 process.p.associate(process.patAlgosToolsTask)
 
