@@ -171,7 +171,7 @@ bool MCPileupReweight::process(Event &event){
             event.set(h_pu_weight_up_, weight_up);
         }
 
-        if (h_npu_data_up) {
+        if (h_npu_data_down) {
             weight_down = h_npu_data_down->GetBinContent(binnumber)/mc_cont;
             event.set(h_pu_weight_down_, weight_down);
         }
