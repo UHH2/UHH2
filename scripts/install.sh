@@ -108,6 +108,7 @@ git cms-addpkg RecoJets/JetProducers
 git cms-addpkg RecoBTag/SecondaryVertex
 git cms-addpkg RecoJets/JetAlgorithms
 git cms-addpkg PhysicsTools/JetMCAlgos
+git cms-addpkg RecoEgamma/ElectronIdentification
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
