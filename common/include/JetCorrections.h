@@ -627,6 +627,9 @@ namespace JERSmearing {
   typedef std::vector<std::array<float, 4> > SFtype1;
 
   extern const SFtype1 SF_13TeV_Summer16_25nsV1;
+  extern const SFtype1 SF_13TeV_2016;
+  extern const SFtype1 SF_13TeV_2016_03Feb2017;
+  extern const SFtype1 SF_13TeV_Fall17;
 }
 
 
