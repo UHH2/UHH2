@@ -307,6 +307,7 @@ namespace JERFiles{
   extern const std::vector<std::string> Fall17_17Nov2017_V12_F_L1RC_AK8PFPuppi_DATA;
 
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,22,AK4PFchs)
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
 
 }
 
