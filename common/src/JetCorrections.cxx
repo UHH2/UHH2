@@ -492,6 +492,7 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DA
 
 
 SET_JERFILES_STANDART(Fall17_17Nov2017,22,AK4PFchs)
+SET_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
 
 
  void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc, int jec_unc_direction){
