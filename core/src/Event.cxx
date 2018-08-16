@@ -85,15 +85,15 @@ bool Event::lookup_trigger_index(TriggerIndex & ti) const{
             }
         }
     }
-    if(ti.runid == -1){
+    if(ti.runid == -1 || ti.index >= triggerNames_currentrun.size()){
         return false;
     }
-    assert(ti.index < triggerNames_currentrun.size());
+    
     return true;
 }
 
 namespace {
-    
+
 string format_list(const vector<string> & l){
     string result;
     for(const auto & i : l){
@@ -140,5 +140,3 @@ bool Event::trigger_prescale(TriggerIndex & ti) const{
     assert(triggerNames_currentrun.size() == triggerPrescales->size());
     return triggerPrescales->at(ti.index);
 }
-
-
