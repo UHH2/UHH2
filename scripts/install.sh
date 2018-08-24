@@ -67,7 +67,6 @@ setupFastjet() {
 	cd fastjet-contrib
 	# add HOTVR from SVN - do it this way until it becomes a proper contrib
 	svn co http://fastjet.hepforge.org/svn/contrib/contribs/HOTVR/trunk HOTVR/
-	autoreconf -f -i
 	# although we add fastjet-config to path, due to a bug we need to
 	# explicitly state its path to ensure the necessary fragile library gets built
 	./configure --fastjet-config="${FJINSTALLDIR}/bin/fastjet-config" CXXFLAGS=-fPIC
