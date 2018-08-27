@@ -8,7 +8,6 @@
 
 import sys, multiprocessing, time
 from ROOT import *
-import os
 
 def read_xml(xmlFileDir):
     xmlFile = open(str(xmlFileDir))
