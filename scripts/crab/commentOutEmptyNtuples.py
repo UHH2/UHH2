@@ -24,15 +24,22 @@ import os
 def read_xml(xmlFileDir):
     xmlFile = open(str(xmlFileDir))
     rootFileStore = []
-    comment = False
-    for line in xmlFile:
-        if '<!--' in line and not '-->': 
-            comment = True
-            continue
-        if '-->' in line: 
-            comment = False
-            continue
-        rootFileStore.append(line.split('"')[1])
+    comment = False                      # Think this code through via this example:
+    for line in xmlFile:                 #
+        if '<!--' in line:               # asdfasdfasdfasdfasdf
+            if '-->' in line:            # asdfasdfasdfasdfasdf
+                continue                 # <!-- asfdasdfasdfasdfasdf -->
+            else:                        # asdfasdfasdfasdfasdf
+                comment = True           # <!-- asdfasdfasfdasdfasdf
+                continue                 # asdfasdfasdfasdfasdf
+        if comment == True:              # asdfasdfasdfasdfasdf -->
+            if not '-->' in line:        # asdfasdfasdfasdfasdf
+                continue                 # 
+            else:                        # Not waterproof if comment starts mid-line (or violates this scheme in another
+                comment = False          # way) but mid-line comments should not exist in these files in the first place
+                continue
+        if comment == False:
+            rootFileStore.append(line.split('"')[1])
     return rootFileStore
 
 # Empty Ntuples have a size of 36167 bytes. Ntuples with just one event are already significantly larger.
@@ -55,7 +62,7 @@ def commentOutEmptyRootFiles(xmlfiles):
         emptyRootFiles_allxmls.append(emptyRootFiles)
         xmlFile_in = open(str(xml))
         xmlFile_out_path = str(xml)
-        xmlFile_out_path = xmlFile_out_path[0:len(xmlFile_out_path)-4]+'_withoutEmptyNtuples.xml'
+        xmlFile_out_path = os.path.splitext(xmlFile_out_path)[0]+'_withoutEmptyNtuples.xml'
         xmlFile_out = open(xmlFile_out_path,"wt")
         for line in xmlFile_in:
             newline = line
