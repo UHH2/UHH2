@@ -61,7 +61,7 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
        metfilters_selection->add<TriggerSelection>("BadChargedCandidateFilter", "Flag_BadChargedCandidateFilter"); 
        metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
        metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
-       metfilters_selection->add<TriggerSelection>("ecalBadCalibFilter", "Flag_ecalBadCalibFilter");
+       metfilters_selection->add<TriggerSelection>("ecalBadCalibFilter", "Flag_ecalBadCalibFilter"); //only for 2017
        if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
     }
     if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
@@ -126,13 +126,13 @@ bool CommonModules::process(uhh2::Event & event){
 
     //set do_metcorrection = true in case you applied jet lepton cleaning by yourself and before calling common modules
     if((jetlepcleaner && jec) || (do_metcorrection && jec)){
-      if(is_mc) jet_corrector_MC->correct_met(event);
+      if(is_mc) jet_corrector_MC->correct_met(event, useCHSmet);
       else{
-	if(event.run <= runnr_B)      jet_corrector_B->correct_met(event);
-	else if(event.run <= runnr_C) jet_corrector_C->correct_met(event);
-	else if(event.run <= runnr_D) jet_corrector_D->correct_met(event);
-	else if(event.run <= runnr_E) jet_corrector_E->correct_met(event);
-	else if(event.run <= runnr_F) jet_corrector_F->correct_met(event);
+	if(event.run <= runnr_B)      jet_corrector_B->correct_met(event, useCHSmet);
+	else if(event.run <= runnr_C) jet_corrector_C->correct_met(event, useCHSmet);
+	else if(event.run <= runnr_D) jet_corrector_D->correct_met(event, useCHSmet);
+	else if(event.run <= runnr_E) jet_corrector_E->correct_met(event, useCHSmet);
+	else if(event.run <= runnr_F) jet_corrector_F->correct_met(event, useCHSmet);
 	else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
       }
     }
