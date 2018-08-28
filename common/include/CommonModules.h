@@ -70,6 +70,7 @@ public:
     //void switch_topjetlepcleaner(bool status = true, double dR = 0.8){fail_if_init();topjetlepcleaner=status;topjetcleanerDR = dR;}
     void switch_jetPtSorter(bool status = true){fail_if_init();jetptsort=status;}
     void switch_metcorrection(bool status = true){fail_if_init();do_metcorrection=status;};
+    void switch_metCHS(bool status = true){fail_if_init();useCHSmet=status;};
     void set_HTjetid(const boost::optional<JetId> & jetid = boost::none) {HT_jetid = jetid;}
 
     void set_jet_id(const JetId & jetid_){
@@ -114,12 +115,13 @@ private:
     const int runnr_E = 304826;
     const int runnr_F = 306462;
     
+
     bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, topjetlepcleaner =false, jetptsort = false, metfilters = true, pvfilter = true, jetpfidcleaner=true, do_metcorrection = false;
     
     double topjetcleanerDR;
     bool is_mc;
     bool init_done = false;
-
+    bool useCHSmet = false;
     std::unique_ptr<Selection> lumi_selection;
     std::unique_ptr<AndSelection> metfilters_selection;
 

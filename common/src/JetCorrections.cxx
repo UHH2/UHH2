@@ -394,7 +394,8 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 	auto L1factor_raw = jet.JEC_L1factor_raw();
 	auto factor_raw_JER = jet.JER_factor_raw();
 
-	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC * factor_raw_JER)*jet.v4();            //L1 corrected jets * JER smearing
+	//	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC * factor_raw_JER)*jet.v4();            //L1 corrected jets * JER smearing
+	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC)*jet.v4();            //L1 corrected jets
 	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi) * JER smearing
 	metv4 -= L123corr;
 
@@ -417,6 +418,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     LorentzVector metv4= LorentzVector(0,0,0,0);
     metv4.SetPt(hypot(event.met->rawCHS_px(),event.met->rawCHS_py()));
     metv4.SetPhi(TMath::ATan2(event.met->rawCHS_py(),event.met->rawCHS_px()));
+    //    cout<<"MET BEFORE: "<< metv4<<endl;
     for(auto & jet : *event.jets){
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
       bool to_be_corrected = jet.v4().Pt() > 15.;
@@ -437,7 +439,8 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 	auto correctionfactors_L1RC = corrector_L1RC.getSubCorrections();
 	auto correctionfactor_L1RC  = correctionfactors_L1RC.back();
 
-       	LorentzVector L1RCcorr = (correctionfactor_L1RC * factor_raw_JEC * factor_raw_JER)*jet.v4();   //L1RC corrected jets * JER smearing
+	//       	LorentzVector L1RCcorr = (correctionfactor_L1RC * factor_raw_JEC * factor_raw_JER)*jet.v4();   //L1RC corrected jets * JER smearing
+       	LorentzVector L1RCcorr = (correctionfactor_L1RC * factor_raw_JEC)*jet.v4();   //L1RC corrected jets 
 	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi) * JER smearing
 
 	metv4 -=  L123corr;
@@ -445,7 +448,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 	
       }
     }
-
+    //    cout<<"MET After: "<< metv4<<endl;
     event.met->set_pt(metv4.Pt());
     event.met->set_phi(metv4.Phi());
   }
@@ -492,8 +495,8 @@ JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> &
     direction = 0;
 
     //MET should only be corrected using AK8 jets, iff there is no AK4 collection that could be used for this because the calculation of our raw MET is based on AK4 jets
-    used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
-    used_ak4puppi = ctx.get("JetCollection")=="slimmedJetsPuppi" || ctx.get("JetCollection")=="updatedPatJetsSlimmedJetsPuppi";
+    used_ak4chs = ctx.get("JetCollection")=="slimmedJets" || ctx.get("JetCollection")=="patJetsAK4PFCHS";
+    used_ak4puppi = ctx.get("JetCollection")=="slimmedJetsPuppi" || ctx.get("JetCollection")=="updatedPatJetsSlimmedJetsPuppi" || ctx.get("JetCollection")=="patJetsAK4PFPUPPI";
     metprop_possible_ak8chs = ctx.get("JetCollection")=="patJetsAK8PFCHS";
     metprop_possible_ak8puppi = ctx.get("JetCollection")=="patJetsAK8PFPUPPI" || ctx.get("JetCollection")=="updatedPatJetsPatJetsAK8PFPUPPI";
 
