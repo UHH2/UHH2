@@ -185,7 +185,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   if (doLeptonSpecific_ && (lepton == nullptr)) {
-    edm::LogWarning("NoXConeLepton") << "No lepton found in GenXConeProducer" << std::endl;
+    edm::LogWarning("NoGenXConeLepton") << "No lepton found in GenXConeProducer" << std::endl;
   }
 
 
@@ -213,6 +213,9 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
 
+  if (fatjets.size() != NJets_) {
+    edm::LogWarning("XConeTooFewJets") << "XConePlugin has only found " << fatjets.size() << " jets but requested " << NJets_;
+  }
   // Note to future dev: if you want to add SoftDrop, you must use the full
   // constructor, otherwise your fatjet will only have 1 constitutent,
   // making it useless for subjets. It will also ensure that the proper
@@ -275,6 +278,21 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       subjets = sorted_by_pt(clust_seq_sub.inclusive_jets(0));
     }
 
+
+    if (subjets.size() != thisNSubJets_) {
+      edm::LogWarning("XConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << thisNSubJets_ << ". Fatjet had " << particle_in_fatjet.size() << " constituents" << endl;
+      std::cout << "fatjet: " << fatjets[i].pt() << " : " << fatjets[i].eta() << " : " << fatjets[i].phi() << endl;
+      for (const auto & citr : fatjets[i].constituents()) {
+          std::cout << "fatjet constitutent: " << citr.pt() << " : " << citr.eta() << " : " << citr.phi() << endl;
+      }
+
+      for ( const auto & itr: subjets) {
+        std::cout << "subjet: " << itr.pt() << " : " << itr.eta() << " : " << itr.phi() << endl;
+        for (const auto & citr : itr.constituents()) {
+          std::cout << "subjet constitutent: " << citr.pt() << " : " << citr.eta() << " : " << citr.phi() << endl;
+        }
+      }
+    }
 
     // pat-ify fatjets
     auto patJet = createPatJet(fatjets[i]);
