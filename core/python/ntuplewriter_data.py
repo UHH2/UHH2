@@ -1,5 +1,5 @@
 import FWCore.ParameterSet.Config as cms
-from ntuple_generator import generate_process
+from UHH2.core.ntuple_generator import generate_process  # use CMSSW type path for CRAB
 
 
 """NTuple config for MC datasets.
