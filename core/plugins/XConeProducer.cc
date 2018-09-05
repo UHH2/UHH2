@@ -239,6 +239,16 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
       for (unsigned int j = 0; j < subjets.size(); ++j) subjet_area.push_back(subjets[j].area());
     }
 
+    if (subjets.size() != NSubJets_) {
+      edm::LogWarning("XConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << NSubJets_ << ". "
+          << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"
+          << "Have added in blank subjets to make " << NSubJets_ << " subjets." << endl;
+      for (uint iSub=subjets.size(); iSub < NSubJets_; iSub++) {
+        subjets.push_back(PseudoJet(0, 0, 0, 0));
+        subjet_area.push_back(0);
+      }
+    }
+
     // jet area for fat jet
     double jet_area = 0;
     // double jet_area = fatjets[i].area();
