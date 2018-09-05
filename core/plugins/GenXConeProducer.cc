@@ -214,7 +214,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
 
   if (fatjets.size() != NJets_) {
-    edm::LogWarning("XConeTooFewJets") << "XConePlugin has only found " << fatjets.size() << " jets but requested " << NJets_;
+    edm::LogWarning("GenXConeTooFewJets") << "XConePlugin has only found " << fatjets.size() << " jets but requested " << NJets_;
   }
   // Note to future dev: if you want to add SoftDrop, you must use the full
   // constructor, otherwise your fatjet will only have 1 constitutent,
@@ -270,27 +270,23 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     // Run second clustering step (subjets) for each fat jet
     vector<PseudoJet> subjets;
+    //ClusterSequence * clust_seq_sub;
     if (enoughParticles && doSubjets) {
       std::unique_ptr<NjettinessPlugin> plugin_xcone_sub;
       initPlugin(plugin_xcone_sub, thisNSubJets_, RSubJets_, BetaSubJets_, usePseudoXCone_);
       JetDefinition jet_def_sub(plugin_xcone_sub.get());
-      ClusterSequence clust_seq_sub(particle_in_fatjet, jet_def_sub);
-      subjets = sorted_by_pt(clust_seq_sub.inclusive_jets(0));
+      ClusterSequence * clust_seq_sub = new ClusterSequence(particle_in_fatjet, jet_def_sub);
+      // subjets = sorted_by_pt(clust_seq_sub->inclusive_jets());
+      subjets = clust_seq_sub->inclusive_jets();
     }
 
 
     if (subjets.size() != thisNSubJets_) {
-      edm::LogWarning("XConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << thisNSubJets_ << ". Fatjet had " << particle_in_fatjet.size() << " constituents" << endl;
-      std::cout << "fatjet: " << fatjets[i].pt() << " : " << fatjets[i].eta() << " : " << fatjets[i].phi() << endl;
-      for (const auto & citr : fatjets[i].constituents()) {
-          std::cout << "fatjet constitutent: " << citr.pt() << " : " << citr.eta() << " : " << citr.phi() << endl;
-      }
-
-      for ( const auto & itr: subjets) {
-        std::cout << "subjet: " << itr.pt() << " : " << itr.eta() << " : " << itr.phi() << endl;
-        for (const auto & citr : itr.constituents()) {
-          std::cout << "subjet constitutent: " << citr.pt() << " : " << citr.eta() << " : " << citr.phi() << endl;
-        }
+      edm::LogWarning("GenXConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << thisNSubJets_ << ". "
+          << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"
+          << "Have added in blank subjets to make " << thisNSubJets_ << " subjets." << endl;
+      for (uint iSub=subjets.size(); iSub < thisNSubJets_; iSub++) {
+        subjets.push_back(PseudoJet(0, 0, 0, 0));
       }
     }
 
