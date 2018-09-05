@@ -490,9 +490,104 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DA
 
 };
 
-
 SET_JERFILES_STANDART(Fall17_17Nov2017,22,AK4PFchs)
 SET_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
+
+
+//2016
+/* ++++++++++++++ Summer16_07Aug2017_V14_noRes needed for L2Res people +++++++++++++++ */
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_BCD_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L3Absolute_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_EF_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L3Absolute_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_GH_L123_noRes_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L3Absolute_AK4PFchs.txt",
+};
+
+
+/***************** Summer16_07Aug2017_V14 --> Official JEC recommendation for Moriond17 **********************************/
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_BCD_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L2L3Residual_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_EF_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L2L3Residual_AK4PFchs.txt",
+};
+
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_GH_L123_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L3Absolute_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L2L3Residual_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_BCD_L123_AK8PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L3Absolute_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L2L3Residual_AK8PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_L123_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Summer16_07Aug2017_V14_MC/Summer16_07Aug2017_V14_MC_L1FastJet_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017_V14_MC/Summer16_07Aug2017_V14_MC_L2Relative_AK4PFchs.txt",
+  "JECDatabase/textFiles/Summer16_07Aug2017_V14_MC/Summer16_07Aug2017_V14_MC_L3Absolute_AK4PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_L123_AK8PFchs_MC = {
+  "JECDatabase/textFiles/Summer16_03Feb2017V6_MC/Summer16_03Feb2017V6_MC_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017V6_MC/Summer16_03Feb2017V6_MC_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017V6_MC/Summer16_03Feb2017V6_MC_L3Absolute_AK8PFchs.txt",
+};
+
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_EF_L123_AK8PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L3Absolute_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L2L3Residual_AK8PFchs.txt",
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_GH_L123_AK8PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L1FastJet_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L2Relative_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L3Absolute_AK8PFchs.txt",
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L2L3Residual_AK8PFchs.txt",
+};
+
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_BCD_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017BCD_V6_DATA/Summer16_03Feb2017BCD_V6_DATA_L1RC_AK4PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_EF_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017EF_V6_DATA/Summer16_03Feb2017EF_V6_DATA_L1RC_AK4PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_GH_L1RC_AK4PFchs_DATA = {
+  "JECDatabase/textFiles/Summer16_03Feb2017H_V6_DATA/Summer16_03Feb2017H_V6_DATA_L1RC_AK4PFchs.txt"
+};
+
+const std::vector<std::string> JERFiles::Summer16_07Aug2017_V14_L1RC_AK4PFchs_MC = {
+  "JECDatabase/textFiles/Summer16_07Aug2017_V14_MC/Summer16_07Aug2017_V14_MC_L1RC_AK4PFchs.txt"
+};
 
 
  void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc, int jec_unc_direction){
@@ -576,7 +671,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       if(to_be_corrected){
 	auto factor_raw_JEC = jet.JEC_factor_raw();
 	auto L1factor_raw = jet.JEC_L1factor_raw();
-	auto factor_raw_JER = jet.JER_factor_raw();
+	//	auto factor_raw_JER = jet.JER_factor_raw();
 
 	//	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC * factor_raw_JER)*jet.v4();            //L1 corrected jets * JER smearing
 	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC)*jet.v4();            //L1 corrected jets
@@ -613,11 +708,13 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
       if(to_be_corrected){
 	auto factor_raw_JEC = jet.JEC_factor_raw();
-	auto factor_raw_JER = jet.JER_factor_raw();
+	//	auto factor_raw_JER = jet.JER_factor_raw();
 
-	corrector_L1RC.setJetPt(jet.pt() * factor_raw_JEC * factor_raw_JER);
+	//	corrector_L1RC.setJetPt(jet.pt() * factor_raw_JEC * factor_raw_JER);
+	corrector_L1RC.setJetPt(jet.pt() * factor_raw_JEC);
 	corrector_L1RC.setJetEta(jet.eta());
-	corrector_L1RC.setJetE(jet.energy() * factor_raw_JEC * factor_raw_JER);
+	//	corrector_L1RC.setJetE(jet.energy() * factor_raw_JEC * factor_raw_JER);
+	corrector_L1RC.setJetE(jet.energy() * factor_raw_JEC);
 	corrector_L1RC.setJetA(jet.jetArea());
 	corrector_L1RC.setRho(event.rho);
 	auto correctionfactors_L1RC = corrector_L1RC.getSubCorrections();
