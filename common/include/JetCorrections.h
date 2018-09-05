@@ -12,6 +12,32 @@
 
 class FactorizedJetCorrector;
 
+namespace JERFiles {
+  //Summer16_07Aug2017_V14_noRes needed for L2Res people
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_BCD_L123_noRes_AK4PFchs_DATA;
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_EF_L123_noRes_AK4PFchs_DATA;
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_GH_L123_noRes_AK4PFchs_DATA;
+
+
+  //Summer16_07Aug2017_V14 --> Official JEC recommendation for Moriond17
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_BCD_L123_AK4PFchs_DATA;
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_EF_L123_AK4PFchs_DATA;
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_GH_L123_AK4PFchs_DATA;
+
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_BCD_L123_AK8PFchs_DATA;
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_EF_L123_AK8PFchs_DATA;
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_GH_L123_AK8PFchs_DATA;
+
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_BCD_L1RC_AK4PFchs_DATA;
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_EF_L1RC_AK4PFchs_DATA;
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_GH_L1RC_AK4PFchs_DATA;
+
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_L123_AK4PFchs_MC;
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_L123_AK8PFchs_MC;
+  extern const std::vector<std::string> Summer16_07Aug2017_V14_L1RC_AK4PFchs_MC;
+
+}
+
 /// namespace to define some useful filename constants to be used for jet energy corrections
 namespace JERFiles {
 
