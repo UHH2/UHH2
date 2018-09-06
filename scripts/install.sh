@@ -67,7 +67,6 @@ setupFastjet() {
 	cd fastjet-contrib
 	# add HOTVR from SVN - do it this way until it becomes a proper contrib
 	svn co http://fastjet.hepforge.org/svn/contrib/contribs/HOTVR/trunk HOTVR/
-	autoreconf -f -i
 	# although we add fastjet-config to path, due to a bug we need to
 	# explicitly state its path to ensure the necessary fragile library gets built
 	./configure --fastjet-config="${FJINSTALLDIR}/bin/fastjet-config" CXXFLAGS=-fPIC
@@ -83,7 +82,7 @@ setupFastjet() {
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
 # Get SFrame, do not compile it until we have the right ROOT etc
-git clone https://github.com/UHH2/SFrame.git
+time git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
 export SCRAM_ARCH=slc6_amd64_gcc630
@@ -91,7 +90,6 @@ CMSREL=CMSSW_9_4_1
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
-git cms-init
 
 # Install FastJet & contribs for HOTVR & XCONE
 cd ../..
@@ -104,13 +102,13 @@ cd $CMSSW_BASE/src
 time git cms-init -y  # not needed if not addpkg ing
 
 # Necessary for using our FastJet
-git cms-addpkg RecoJets/JetProducers
+time git cms-addpkg RecoJets/JetProducers
 # Necessary for using Fastjet 3.2.1 to pickup new JetDefinition default arg order
 rm RecoJets/JetProducers/test/BuildFile.xml
 rm RecoJets/JetProducers/test/test-large-voronoi-area.cc  # old test, not used?
-git cms-addpkg RecoBTag/SecondaryVertex
-git cms-addpkg RecoJets/JetAlgorithms
-git cms-addpkg PhysicsTools/JetMCAlgos
+time git cms-addpkg RecoBTag/SecondaryVertex
+time git cms-addpkg RecoJets/JetAlgorithms
+time git cms-addpkg PhysicsTools/JetMCAlgos
 
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
@@ -138,6 +136,6 @@ time scram b $MAKEFLAGS
 
 # Get the UHH2 repo & JEC files
 cd $CMSSW_BASE/src
-git clone -b master https://github.com/UHH2/UHH2.git
+time git clone -b master https://github.com/UHH2/UHH2.git
 cd UHH2
-git clone https://github.com/cms-jet/JECDatabase.git
+time git clone https://github.com/cms-jet/JECDatabase.git
