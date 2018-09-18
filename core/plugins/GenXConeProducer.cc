@@ -213,8 +213,9 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
 
+  // Check we got the number of subjets we asked for
   if (fatjets.size() != NJets_) {
-    edm::LogWarning("GenXConeTooFewJets") << "XConePlugin has only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
+    edm::LogWarning("GenXConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
         << "Have added in blank jets to make " << NJets_ << " subjets." << endl;
     for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
       fatjets.push_back(PseudoJet(0, 0, 0, 0));
@@ -285,7 +286,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       subjets = clust_seq_sub->inclusive_jets();
     }
 
-
+    // Check we got the number of subjets we asked for
     if (doSubjets && subjets.size() != thisNSubJets_) {
       edm::LogWarning("GenXConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << thisNSubJets_ << ". "
           << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"
