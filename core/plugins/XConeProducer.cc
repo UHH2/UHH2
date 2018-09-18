@@ -199,6 +199,17 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
     sd_mass.push_back(sdjet.m());
   }
 
+
+  // Check we actually got the number of jets we requested
+  if (fatjets.size() != NJets_) {
+    edm::LogWarning("XConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
+        << "Have added in blank jets to make " << NJets_ << " jets." << endl;
+    for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
+      fatjets.push_back(PseudoJet(0, 0, 0, 0));
+      sd_mass.push_back(0.);
+    }
+  }
+
   // check if subjets should be clustered
   bool doSubjets = true;
   if(NSubJets_ == 0) doSubjets = false;
@@ -239,7 +250,8 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
       for (unsigned int j = 0; j < subjets.size(); ++j) subjet_area.push_back(subjets[j].area());
     }
 
-    if (subjets.size() != NSubJets_) {
+    // Check we got the number of subjets we asked for
+    if (doSubjets && subjets.size() != NSubJets_) {
       edm::LogWarning("XConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << NSubJets_ << ". "
           << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"
           << "Have added in blank subjets to make " << NSubJets_ << " subjets." << endl;
