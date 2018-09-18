@@ -286,7 +286,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
 
-    if (subjets.size() != thisNSubJets_) {
+    if (doSubjets && subjets.size() != thisNSubJets_) {
       edm::LogWarning("GenXConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << thisNSubJets_ << ". "
           << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"
           << "Have added in blank subjets to make " << thisNSubJets_ << " subjets." << endl;
