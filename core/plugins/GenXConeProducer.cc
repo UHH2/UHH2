@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    UHH2/XConeProducer
-// Class:      XConeProducer
+// Package:    UHH2/GenXConeProducer
+// Class:      GenXConeProducer
 //
-/**\class XConeProducer XConeProducer.cc UHH2/XConeProducer/plugins/XConeProducer.cc
+/**\class GenXConeProducer GenXConeProducer.cc UHH2/GenXConeProducer/plugins/GenXConeProducer.cc
 
  Description: [one line class summary]
 
@@ -39,7 +39,6 @@
 #include "fastjet/contrib/HOTVRinfo.hh"
 #include "fastjet/contrib/Nsubjettiness.hh"
 #include "fastjet/contrib/XConePlugin.hh"
-#include "fastjet/contrib/SoftDrop.hh"
 
 #include "vector"
 
@@ -50,10 +49,10 @@ using namespace contrib;
 // class declaration
 //
 
-class XConeProducer : public edm::stream::EDProducer<> {
+class GenXConeProducer : public edm::stream::EDProducer<> {
   public:
-    explicit XConeProducer(const edm::ParameterSet&);
-    ~XConeProducer();
+    explicit GenXConeProducer(const edm::ParameterSet&);
+    ~GenXConeProducer();
 
     static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
@@ -69,12 +68,14 @@ class XConeProducer : public edm::stream::EDProducer<> {
     edm::EDGetToken src_token_;
     const std::string subjetCollName_;
     const bool usePseudoXCone_;
+    const bool doLeptonSpecific_;
     unsigned int NJets_ = 2;
     double RJets_ = 1.2;
     double BetaJets_ = 2.0;
     unsigned int NSubJets_ = 3;
     double RSubJets_ = 0.4;
     double BetaSubJets_ = 2.0;
+    double DRLeptonJet_ = 999.;
 };
 
 //
@@ -89,16 +90,18 @@ class XConeProducer : public edm::stream::EDProducer<> {
 //
 // constructors and destructor
 //
-XConeProducer::XConeProducer(const edm::ParameterSet& iConfig):
+GenXConeProducer::GenXConeProducer(const edm::ParameterSet& iConfig):
   src_token_(consumes<edm::View<reco::Candidate>>(iConfig.getParameter<edm::InputTag>("src"))),
   subjetCollName_("SubJets"),
   usePseudoXCone_(iConfig.getParameter<bool>("usePseudoXCone")),
+  doLeptonSpecific_(iConfig.getParameter<bool>("doLeptonSpecific")),
   NJets_(iConfig.getParameter<unsigned int>("NJets")),
   RJets_(iConfig.getParameter<double>("RJets")),
   BetaJets_(iConfig.getParameter<double>("BetaJets")),
   NSubJets_(iConfig.getParameter<unsigned int>("NSubJets")),
   RSubJets_(iConfig.getParameter<double>("RSubJets")),
-  BetaSubJets_(iConfig.getParameter<double>("BetaSubJets"))
+  BetaSubJets_(iConfig.getParameter<double>("BetaSubJets")),
+  DRLeptonJet_(iConfig.exists("DRLeptonJet") ? iConfig.getParameter<double>("DRLeptonJet") : 999.)
 {
   // We make both the fat jets and subjets, and we must store them as separate collections
   produces<pat::JetCollection>();
@@ -106,7 +109,7 @@ XConeProducer::XConeProducer(const edm::ParameterSet& iConfig):
 }
 
 
-XConeProducer::~XConeProducer()
+GenXConeProducer::~GenXConeProducer()
 {
 
   // do anything here that needs to be done at destruction time
@@ -122,7 +125,7 @@ XConeProducer::~XConeProducer()
 // Setup either XConePlugin or PseudoXConePlugin and assign to ptr
 // Use NjettinessPlugin as it is the base class of both XConePlugin and PseudoXConePlugin
 void
-XConeProducer::initPlugin(std::unique_ptr<NjettinessPlugin> & ptr, int N, double R0, double beta, bool usePseudoXCone)
+GenXConeProducer::initPlugin(std::unique_ptr<NjettinessPlugin> & ptr, int N, double R0, double beta, bool usePseudoXCone)
 {
   if (usePseudoXCone) {
     ptr.reset(new PseudoXConePlugin(N, R0, beta));
@@ -134,7 +137,7 @@ XConeProducer::initPlugin(std::unique_ptr<NjettinessPlugin> & ptr, int N, double
 
 // ------------ method called to produce the data  ------------
 void
-XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
+GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   // Set the fastjet random seed to a deterministic function
   // of the run/lumi/event.
@@ -154,6 +157,9 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<edm::View<reco::Candidate>> particles;
   iEvent.getByToken(src_token_, particles);
 
+  const reco::Candidate * lepton(nullptr);
+  float lepton_max_pt = 0;
+
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
   for (const auto & cand: *particles) {
@@ -167,10 +173,26 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       continue;
 
     _psj.push_back(PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy()));
+
+    if (doLeptonSpecific_) {
+      uint pdgid = abs(cand.pdgId());
+      auto candPt = cand.pt();
+      if ((pdgid== 11 || pdgid == 13) && (candPt > lepton_max_pt)) {
+        lepton = &cand;
+        lepton_max_pt = candPt;
+      }
+    }
   }
 
+  if (doLeptonSpecific_ && (lepton == nullptr)) {
+    edm::LogWarning("NoGenXConeLepton") << "No lepton found in GenXConeProducer" << std::endl;
+  }
+
+
   // make sure to have enough particles with non-zero momentum in event
-  unsigned int minParticleCount = NJets_ * 3;
+  unsigned int minParticleCount = NJets_ * NSubJets_;
+  if (doLeptonSpecific_ && (lepton != nullptr)) minParticleCount -= 1;  // since one jet will use NSubJets_-1
+
   if (_psj.size() < minParticleCount) {
     auto jetCollection = std::make_unique<pat::JetCollection>();
     iEvent.put(std::move(jetCollection));
@@ -187,30 +209,23 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   vector<PseudoJet> fatjets;
   std::unique_ptr<NjettinessPlugin> plugin_xcone;
   initPlugin(plugin_xcone, NJets_, RJets_, BetaJets_, usePseudoXCone_);
-  double ghost_maxrap = 4.0;      // maxiumum y of ghost particles
-  AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
   JetDefinition jet_def_xcone(plugin_xcone.get());
   ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
 
-  // get SoftDrop Mass for every fat jet
-  SoftDrop sd(0.0, 0.1, 1.2);
-  vector<float> sd_mass;
-  for(unsigned int i=0; i<fatjets.size(); i++){
-    PseudoJet sdjet = sd(fatjets[i]);
-    sd_mass.push_back(sdjet.m());
-  }
-
-
-  // Check we actually got the number of jets we requested
+  // Check we got the number of subjets we asked for
   if (fatjets.size() != NJets_) {
-    edm::LogWarning("XConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
-        << "Have added in blank jets to make " << NJets_ << " jets." << endl;
+    edm::LogWarning("GenXConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
+        << "Have added in blank jets to make " << NJets_ << " subjets." << endl;
     for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
       fatjets.push_back(PseudoJet(0, 0, 0, 0));
-      sd_mass.push_back(0.);
     }
+
   }
+  // Note to future dev: if you want to add SoftDrop, you must use the full
+  // constructor, otherwise your fatjet will only have 1 constitutent,
+  // making it useless for subjets. It will also ensure that the proper
+  // reclustering with C/A will happen
 
   // check if subjets should be clustered
   bool doSubjets = true;
@@ -221,10 +236,24 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   vector<int> list_fat;
   list_fat.clear();
   list_fat = clust_seq_xcone.particle_jet_indices(fatjets);
-
   // this is the mapping of subjet to hard jet
   std::vector< std::vector<int> > indices;
   indices.resize(fatjets.size());
+
+  // For lepton specific clustering, we find the fatjet closest to the lepton,
+  // and then use N-1 on its constituents.
+  uint lepton_jet_ind = 999;
+  if (doLeptonSpecific_ && (lepton != nullptr)) {
+    double dr_min = 999;
+    for (uint iFj=0; iFj < fatjets.size(); iFj++) {
+      const auto & fj = fatjets[iFj];
+      double this_dr = deltaR(fj, *lepton);
+      if (this_dr < dr_min && this_dr < DRLeptonJet_) {
+        dr_min = this_dr;
+        lepton_jet_ind = iFj;
+      }
+    }
+  }
 
   // loop over all fatjets and cluster subjets
   for(unsigned int i=0; i<fatjets.size(); i++){
@@ -237,46 +266,43 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     }
 
+    auto thisNSubJets_ = NSubJets_;
+    if (doLeptonSpecific_ && (i == lepton_jet_ind)) {
+      --thisNSubJets_;
+    }
+
     // check if there are more particles then required subjets
-    bool enoughParticles = (particle_in_fatjet.size() > NSubJets_);
+    bool enoughParticles = (particle_in_fatjet.size() > thisNSubJets_);
 
     // Run second clustering step (subjets) for each fat jet
     vector<PseudoJet> subjets;
-    vector<double> subjet_area;
+    //ClusterSequence * clust_seq_sub;
     if (enoughParticles && doSubjets) {
       std::unique_ptr<NjettinessPlugin> plugin_xcone_sub;
-      initPlugin(plugin_xcone_sub, NSubJets_, RSubJets_, BetaSubJets_, usePseudoXCone_);
+      initPlugin(plugin_xcone_sub, thisNSubJets_, RSubJets_, BetaSubJets_, usePseudoXCone_);
       JetDefinition jet_def_sub(plugin_xcone_sub.get());
-      ClusterSequenceArea clust_seq_sub(particle_in_fatjet, jet_def_sub, area_def);
-      subjets = sorted_by_pt(clust_seq_sub.inclusive_jets(0));
-      for (unsigned int j = 0; j < subjets.size(); ++j) subjet_area.push_back(subjets[j].area());
+      ClusterSequence * clust_seq_sub = new ClusterSequence(particle_in_fatjet, jet_def_sub);
+      // subjets = sorted_by_pt(clust_seq_sub->inclusive_jets());
+      subjets = clust_seq_sub->inclusive_jets();
     }
 
     // Check we got the number of subjets we asked for
-    if (doSubjets && subjets.size() != NSubJets_) {
-      edm::LogWarning("XConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << NSubJets_ << ". "
+    if (doSubjets && subjets.size() != thisNSubJets_) {
+      edm::LogWarning("GenXConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << thisNSubJets_ << ". "
           << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"
-          << "Have added in blank subjets to make " << NSubJets_ << " subjets." << endl;
-      for (uint iSub=subjets.size(); iSub < NSubJets_; iSub++) {
+          << "Have added in blank subjets to make " << thisNSubJets_ << " subjets." << endl;
+      for (uint iSub=subjets.size(); iSub < thisNSubJets_; iSub++) {
         subjets.push_back(PseudoJet(0, 0, 0, 0));
-        subjet_area.push_back(0);
       }
     }
 
-    // jet area for fat jet
-    double jet_area = 0;
-    // double jet_area = fatjets[i].area();
-
     // pat-ify fatjets
     auto patJet = createPatJet(fatjets[i]);
-    patJet.setJetArea(jet_area);
-    patJet.addUserFloat("softdropmass", sd_mass[i]);
     jetCollection->push_back(patJet);
 
     for (uint s=0; s<subjets.size(); s++) {
-      indices[i].push_back(subjetCollection->size()); // store index of subjet in the whole subjet collection
+      indices[i].push_back(subjetCollection->size());
       auto subjet = createPatJet(subjets[s]);
-      subjet.setJetArea(subjet_area[s]);
       subjetCollection->push_back(subjet);
     }
 
@@ -300,7 +326,7 @@ XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.put(std::move(jetCollection));
 }
 
-pat::Jet XConeProducer::createPatJet(const PseudoJet & psj)
+pat::Jet GenXConeProducer::createPatJet(const PseudoJet & psj)
 {
   pat::Jet newJet;
   newJet.setP4(math::XYZTLorentzVector(psj.px(), psj.py(), psj.pz(), psj.E()));
@@ -309,19 +335,19 @@ pat::Jet XConeProducer::createPatJet(const PseudoJet & psj)
 
 // ------------ method called once each stream before processing any runs, lumis or events  ------------
 void
-XConeProducer::beginStream(edm::StreamID)
+GenXConeProducer::beginStream(edm::StreamID)
 {
 }
 
 // ------------ method called once each stream after processing all runs, lumis and events  ------------
 void
-XConeProducer::endStream() {
+GenXConeProducer::endStream() {
 }
 
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-XConeProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+GenXConeProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
@@ -330,4 +356,4 @@ XConeProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
 }
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(XConeProducer);
+DEFINE_FWK_MODULE(GenXConeProducer);

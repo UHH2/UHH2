@@ -547,6 +547,16 @@ process.hotvrCHS = cms.EDProducer("HOTVRProducer",
     src=cms.InputTag("chs")
 )
 
+process.hotvrGen = cms.EDProducer("GenHOTVRProducer",
+    src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+    mu=cms.double(30),
+    theta=cms.double(0.7),
+    max_r=cms.double(1.5),
+    min_r=cms.double(0.1),
+    rho=cms.double(600),
+    hotvr_pt_min=cms.double(30),
+)
+
 usePseudoXCone = cms.bool(True)
 process.xconePuppi = cms.EDProducer("XConeProducer",
     src=cms.InputTag("puppi"),
@@ -568,6 +578,31 @@ process.xconeCHS = cms.EDProducer("XConeProducer",
     NSubJets = cms.uint32(3),       # number of subjets in each fatjet
     RSubJets = cms.double(0.4),     # cone radius of subjetSrc
     BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+)
+
+process.genXCone23TopJets = cms.EDProducer("GenXConeProducer",
+    src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+    usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+    NJets = cms.uint32(2),          # number of fatjets
+    RJets = cms.double(1.2),        # cone radius of fatjets
+    BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+    NSubJets = cms.uint32(3),       # number of subjets in each fatjet
+    RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+    BetaSubJets = cms.double(2.0),  # conical mesure for subjets
+    doLeptonSpecific = cms.bool(True),  # if true, look for gen electron or muon,
+    # and whichever jet it is closest do get clustered with NJets-1 instead of NJets
+    DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
+)
+process.genXCone33TopJets = cms.EDProducer("GenXConeProducer",
+    src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+    usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+    NJets = cms.uint32(2),          # number of fatjets
+    RJets = cms.double(1.2),        # cone radius of fatjets
+    BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+    NSubJets = cms.uint32(3),       # number of subjets in each fatjet
+    RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+    BetaSubJets = cms.double(2.0),  # conical mesure for subjets
+    doLeptonSpecific = cms.bool(False),
 )
 
 ### MET
@@ -922,6 +957,13 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         XCone_sources=cms.VInputTag(
             cms.InputTag("xconeCHS"),
             cms.InputTag("xconePuppi")
+        ),
+        GenHOTVR_sources=cms.VInputTag(
+            cms.InputTag("hotvrGen")
+        ),
+        GenXCone_sources=cms.VInputTag(
+            cms.InputTag("genXCone23TopJets"),
+            cms.InputTag("genXCone33TopJets")
         )
 )
 
