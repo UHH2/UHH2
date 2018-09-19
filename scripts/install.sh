@@ -50,7 +50,7 @@ setupFastjet() {
 	git clone -b cms/v$FJVER https://github.com/UHH2/fastjet.git
 	cd fastjet
 	autoreconf -f -i  # needed to avoid 'aclocal-1.15' is missing on your system
-	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins --enable-pyext CXXFLAGS=-fPIC
+	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins --enable-pyext --disable-auto-ptr CXXFLAGS=-fPIC
 	make $MAKEFLAGS
 	# make check  # fails for siscone
 	make install
