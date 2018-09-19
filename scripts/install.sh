@@ -49,7 +49,7 @@ setupFastjet() {
 	# Use the CMS version of fastjet as thread-safe
 	git clone -b cms/v$FJVER https://github.com/UHH2/fastjet.git
 	cd fastjet
-	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins CXXFLAGS=-fPIC
+	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins --disable-auto-ptr CXXFLAGS=-fPIC
 	make $MAKEFLAGS
 	# make check  # fails for siscone
 	make install
