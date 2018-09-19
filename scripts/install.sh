@@ -6,6 +6,8 @@
 #
 # before running this script
 
+# Exit script if command fails
+set -e
 
 # Create default make args for parallel jobs
 if [ -z "$MAKEFLAGS" ]
