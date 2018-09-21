@@ -90,15 +90,15 @@ time git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
 export SCRAM_ARCH=slc6_amd64_gcc630
-CMSREL=CMSSW_9_4_1
+CMSREL=CMSSW_10_1_7
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
 
 # Install FastJet & contribs for HOTVR & XCONE
 cd ../..
-FJVER="3.2.1"
-FJCONTRIBVER="1.032"
+FJVER="3.3.0"
+FJCONTRIBVER="1.033"
 time setupFastjet $FJVER $FJCONTRIBVER
 
 cd $CMSSW_BASE/src
@@ -107,13 +107,11 @@ time git cms-init -y  # not needed if not addpkg ing
 
 # Necessary for using our FastJet
 time git cms-addpkg RecoJets/JetProducers
-# Necessary for using Fastjet 3.2.1 to pickup new JetDefinition default arg order
-rm RecoJets/JetProducers/test/BuildFile.xml
-rm RecoJets/JetProducers/test/test-large-voronoi-area.cc  # old test, not used?
+# Necessary for using Fastjet >=3.2.1 to pickup new JetDefinition default arg order
 time git cms-addpkg RecoBTag/SecondaryVertex
 time git cms-addpkg RecoJets/JetAlgorithms
 time git cms-addpkg PhysicsTools/JetMCAlgos
-
+time git cms-addpkg RecoEgamma/ElectronIdentification
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
