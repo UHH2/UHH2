@@ -6,6 +6,8 @@
 #
 # before running this script
 
+# Exit script if command fails
+set -e
 
 # Create default make args for parallel jobs
 if [ -z "$MAKEFLAGS" ]
@@ -48,7 +50,7 @@ setupFastjet() {
 	git clone -b cms/v$FJVER https://github.com/UHH2/fastjet.git
 	cd fastjet
 	autoreconf -f -i  # needed to avoid 'aclocal-1.15' is missing on your system
-	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins CXXFLAGS=-fPIC
+	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins --enable-pyext --disable-auto-ptr CXXFLAGS=-fPIC
 	make $MAKEFLAGS
 	# make check  # fails for siscone
 	make install
@@ -65,8 +67,10 @@ setupFastjet() {
 	# Use the CMS version of fastjet-contrib as thread-safe
 	git clone -b cms/v$FJCONTRIBVER https://github.com/UHH2/fastjet-contrib.git
 	cd fastjet-contrib
-	# add HOTVR from SVN - do it this way until it becomes a proper contrib
-	svn co http://fastjet.hepforge.org/svn/contrib/contribs/HOTVR/trunk HOTVR/
+	# add HOTVR from github
+	# really should do it from SVN, but currently doesn't allow anonymous access
+	# do it this way until it becomes a proper contrib
+	git clone https://github.com/UHH2/HOTVRContrib.git HOTVR/
 	# although we add fastjet-config to path, due to a bug we need to
 	# explicitly state its path to ensure the necessary fragile library gets built
 	./configure --fastjet-config="${FJINSTALLDIR}/bin/fastjet-config" CXXFLAGS=-fPIC
@@ -86,15 +90,15 @@ time git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
 export SCRAM_ARCH=slc6_amd64_gcc630
-CMSREL=CMSSW_9_4_1
+CMSREL=CMSSW_10_1_7
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
 
 # Install FastJet & contribs for HOTVR & XCONE
 cd ../..
-FJVER="3.2.1"
-FJCONTRIBVER="1.032"
+FJVER="3.3.0"
+FJCONTRIBVER="1.033"
 time setupFastjet $FJVER $FJCONTRIBVER
 
 cd $CMSSW_BASE/src
@@ -103,13 +107,11 @@ time git cms-init -y  # not needed if not addpkg ing
 
 # Necessary for using our FastJet
 time git cms-addpkg RecoJets/JetProducers
-# Necessary for using Fastjet 3.2.1 to pickup new JetDefinition default arg order
-rm RecoJets/JetProducers/test/BuildFile.xml
-rm RecoJets/JetProducers/test/test-large-voronoi-area.cc  # old test, not used?
+# Necessary for using Fastjet >=3.2.1 to pickup new JetDefinition default arg order
 time git cms-addpkg RecoBTag/SecondaryVertex
 time git cms-addpkg RecoJets/JetAlgorithms
 time git cms-addpkg PhysicsTools/JetMCAlgos
-
+time git cms-addpkg RecoEgamma/ElectronIdentification
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
