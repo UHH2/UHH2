@@ -6,6 +6,8 @@
 #
 # before running this script
 
+# Exit script if command fails
+set -e
 
 # Create default make args for parallel jobs
 if [ -z "$MAKEFLAGS" ]
@@ -48,7 +50,7 @@ setupFastjet() {
 	git clone -b cms/v$FJVER https://github.com/UHH2/fastjet.git
 	cd fastjet
 	autoreconf -f -i  # needed to avoid 'aclocal-1.15' is missing on your system
-	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins --enable-pyext CXXFLAGS=-fPIC
+	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins --enable-pyext --disable-auto-ptr CXXFLAGS=-fPIC
 	make $MAKEFLAGS
 	# make check  # fails for siscone
 	make install
@@ -65,8 +67,10 @@ setupFastjet() {
 	# Use the CMS version of fastjet-contrib as thread-safe
 	git clone -b cms/v$FJCONTRIBVER https://github.com/UHH2/fastjet-contrib.git
 	cd fastjet-contrib
-	# add HOTVR from SVN - do it this way until it becomes a proper contrib
-	svn co http://fastjet.hepforge.org/svn/contrib/contribs/HOTVR/trunk HOTVR/
+	# add HOTVR from github
+	# really should do it from SVN, but currently doesn't allow anonymous access
+	# do it this way until it becomes a proper contrib
+	git clone https://github.com/UHH2/HOTVRContrib.git HOTVR/
 	# although we add fastjet-config to path, due to a bug we need to
 	# explicitly state its path to ensure the necessary fragile library gets built
 	./configure --fastjet-config="${FJINSTALLDIR}/bin/fastjet-config" CXXFLAGS=-fPIC
