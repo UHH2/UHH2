@@ -58,7 +58,6 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_B_L123_noRes_##jetCollec
   string("JECDatabase/textFiles/")+#tag+"B_V"+#ver+"_DATA/"+#tag+"B_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
   string("JECDatabase/textFiles/")+#tag+"B_V"+#ver+"_DATA/"+#tag+"B_V"+#ver+"_DATA_L2Relative_"+#jetCollection+".txt", \
   string("JECDatabase/textFiles/")+#tag+"B_V"+#ver+"_DATA/"+#tag+"B_V"+#ver+"_DATA_L3Absolute_"+#jetCollection+".txt", \
-  string("JECDatabase/textFiles/")+#tag+"B_V"+#ver+"_DATA/"+#tag+"B_V"+#ver+"_DATA_L2L3Residual_"+#jetCollection+".txt", \
 }; \
 const std::vector<std::string> JERFiles::tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA = { \
   string("JECDatabase/textFiles/")+#tag+"C_V"+#ver+"_DATA/"+#tag+"C_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
@@ -492,6 +491,9 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DA
 
 SET_JERFILES_STANDART(Fall17_17Nov2017,22,AK4PFchs)
 SET_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
+SET_JERFILES_STANDART(Fall17_17Nov2017,24,AK4PFchs)
+SET_JERFILES_STANDART(Fall17_17Nov2017,25,AK4PFchs)
+SET_JERFILES_STANDART(Fall17_17Nov2017,26,AK4PFchs)
 
 
 //2016
