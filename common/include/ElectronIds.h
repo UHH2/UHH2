@@ -224,7 +224,7 @@ namespace ElectronID {
 
     /** Spring16 **/
     {"Spring16", {
- 
+
 	{"barrel", {
                           /* Veto   , Loose   , Medium  , Tight   */
 	{"sigmaIetaIeta" , { 0.0115, 0.011, 	0.00998,   0.00998  }},
@@ -239,7 +239,7 @@ namespace ElectronID {
         {"passConvVeto"  , { 1      , 1       , 1       , 1       }},
        },
       },
-      
+
 	{"endcap", {
                           /* Veto   , Loose   , Medium  , Tight   */
 	{"sigmaIetaIeta" , { 0.037, 	0.0314,   0.0298,     0.0292 }},
@@ -262,30 +262,30 @@ namespace ElectronID {
 
     /** Fall17 according to https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2#Offline_selection_criteria **/
     {"Fall17", {
- 
+
 	{"barrel", {
                           /* Veto   , Loose   , Medium  , Tight   */
 	{"sigmaIetaIeta" , { 0.0128 , 0.0105  , 0.0105  , 0.0104  }},
-        {"|dEtaIn|"      , { 0.00523, 0.00387 , 0.00365 , 0.00353 }},
-        {"|dPhiIn|"      , { 0.159  , 0.0716  , 0.0588  , 0.0499  }},
-        {"C0"            , { 0.05   , 0.05    , 0.026   , 0.026   }},
-        {"relIsoEA"      , { 0.168  , 0.133   , 0.0718  , 0.0361  }},
-        {"|ooEmooP|"     , { 0.193  , 0.129   , 0.0327  , 0.0278  }},
+        {"|dEtaIn|"      , { 0.00523, 0.00387 , 0.00365 , 0.00255 }},
+        {"|dPhiIn|"      , { 0.159  , 0.0716  , 0.0588  , 0.0022  }},
+        {"C0"            , { 0.05   , 0.05    , 0.046   , 0.026   }},
+        {"IsoDiscr"      , { 0.198  , 0.112   , 0.0478  , 0.0287  }},
+        {"|ooEmooP|"     , { 0.193  , 0.129   , 0.0327  , 0.159  }},
         {"|d0|"          , { float(uhh2::infinity), float(uhh2::infinity)  , float(uhh2::infinity)  , float(uhh2::infinity)     }},
         {"|dz|"          , { float(uhh2::infinity) , float(uhh2::infinity)    , float(uhh2::infinity)   , float(uhh2::infinity) }},
         {"missingHits"   , { 2      , 1       , 1       , 1       }},
         {"passConvVeto"  , { 1      , 1       , 1       , 1       }},
        },
       },
-      
+
 	{"endcap", {
                           /* Veto   , Loose   , Medium  , Tight   */
-	{"sigmaIetaIeta" , { 0.0445  , 0.0356 , 0.0309  , 0.0305  }},
-	{"|dEtaIn|"      , { 0.00984 , 0.0072 , 0.00625 , 0.00567 }},
-	{"|dPhiIn|"      , { 0.157   , 0.147  , 0.0355  , 0.0165  }},
-        {"C0"            , { 0.05    , 0.0414 , 0.026   , 0.026   }},
-	{"relIsoEA"      , { 0.185   , 0.146  , 0.143   , 0.094   }},
-	{"|ooEmooP|"     , { 0.0962  , 0.0875 , 0.0335  , 0.0158  }},
+	{"sigmaIetaIeta" , { 0.0445  , 0.0356 , 0.0309  , 0.0353  }},
+	{"|dEtaIn|"      , { 0.00984 , 0.0072 , 0.00625 , 0.00501 }},
+	{"|dPhiIn|"      , { 0.157   , 0.147  , 0.0355  , 0.0236  }},
+        {"C0"            , { 0.05    , 0.0441 , 0.0275   , 0.0188   }},
+	{"IsoDiscr"      , { 0.203   , 0.108  , 0.0658   , 0.0445   }},
+	{"|ooEmooP|"     , { 0.0962  , 0.0875 , 0.0335  , 0.0197  }},
         {"|d0|"          , { float(uhh2::infinity)  , float(uhh2::infinity)   , float(uhh2::infinity)  , float(uhh2::infinity)  }},
         {"|dz|"          , { float(uhh2::infinity)  , float(uhh2::infinity)   , float(uhh2::infinity)   , float(uhh2::infinity) }},
         {"missingHits"   , { 3       , 1      , 1       , 1       }},
