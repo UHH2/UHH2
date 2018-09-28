@@ -58,7 +58,6 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_B_L123_noRes_##jetCollec
   string("JECDatabase/textFiles/")+#tag+"B_V"+#ver+"_DATA/"+#tag+"B_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
   string("JECDatabase/textFiles/")+#tag+"B_V"+#ver+"_DATA/"+#tag+"B_V"+#ver+"_DATA_L2Relative_"+#jetCollection+".txt", \
   string("JECDatabase/textFiles/")+#tag+"B_V"+#ver+"_DATA/"+#tag+"B_V"+#ver+"_DATA_L3Absolute_"+#jetCollection+".txt", \
-  string("JECDatabase/textFiles/")+#tag+"B_V"+#ver+"_DATA/"+#tag+"B_V"+#ver+"_DATA_L2L3Residual_"+#jetCollection+".txt", \
 }; \
 const std::vector<std::string> JERFiles::tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA = { \
   string("JECDatabase/textFiles/")+#tag+"C_V"+#ver+"_DATA/"+#tag+"C_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
@@ -492,6 +491,9 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DA
 
 SET_JERFILES_STANDART(Fall17_17Nov2017,22,AK4PFchs)
 SET_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
+SET_JERFILES_STANDART(Fall17_17Nov2017,24,AK4PFchs)
+SET_JERFILES_STANDART(Fall17_17Nov2017,25,AK4PFchs)
+SET_JERFILES_STANDART(Fall17_17Nov2017,26,AK4PFchs)
 
 
 //2016
@@ -1203,7 +1205,7 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Summer16_25nsV1 = {
 
 
 // 2017
-const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17_V10 = {
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17 = {
   // 0 = upper jet-eta limit
   // 1 = JER SF
   // 2 = JER SF + 1sigma
@@ -1223,28 +1225,8 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17_V10 = {
   {{5.191, 1.31982, 1.34467, 1.29497}},
 
 };
-
-const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17_V24 = {
-  // 0 = upper jet-eta limit
-  // 1 = JER SF
-  // 2 = JER SF + 1sigma
-  // 3 = JER SF - 1sigma
-  {{0.522, 1.13329, 1.18356, 1.08302}},
-  {{0.783, 1.16198, 1.29762, 1.02634}},
-  {{1.131, 1.09764, 1.22871, 0.96657}},
-  {{1.305, 1.11755, 1.23273, 1.00236}},
-  {{1.74, 1.15108, 1.31459, 0.987563}},
-  {{1.93, 1.19383, 1.34164, 1.04603}},
-  {{2.043, 1.23268, 1.42141, 1.04395}},
-  {{2.322, 1.19869, 1.49164, 0.905754}},
-  {{2.5, 1.3285, 1.62844, 1.02856}},
-  {{2.853, 1.95684, 2.43126, 1.48243}},
-  {{2.964, 1.88728, 2.67417, 1.10039}},
-  {{3.139, 1.20581, 1.31145, 1.10017}},
-  {{5.191, 1.25396, 1.49, 1.01792}},
-
-};
 ////
+
 
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf){
   m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JER_sf);
