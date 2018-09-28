@@ -567,7 +567,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     hotvrJets.resize(hotvr_sources.size());
     for (size_t j=0; j<hotvr_sources.size(); ++j) {
       hotvr_tokens.push_back(consumes<pat::JetCollection>(hotvr_sources[j]));
-      hotvr_subjet_tokens.push_back(consumes<pat::JetCollection>(edm::InputTag(hotvr_sources[j].label(), "SubJets")));
       branch(tr, hotvr_sources[j].encode().c_str(), "std::vector<TopJet>", &hotvrJets[j]);
     }
   }
@@ -577,26 +576,28 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     xconeJets.resize(xcone_sources.size());
     for (size_t j=0; j<xcone_sources.size(); ++j) {
       xcone_tokens.push_back(consumes<pat::JetCollection>(xcone_sources[j]));
-      xcone_subjet_tokens.push_back(consumes<pat::JetCollection>(edm::InputTag(xcone_sources[j].label(), "SubJets")));
       branch(tr, xcone_sources[j].encode().c_str(), "std::vector<TopJet>", &xconeJets[j]);
     }
   }
 
-  // GenJets
-  if(doGenHOTVR || doGenXCone)
-    {
-      stablegenparticle_token = consumes<edm::View<reco::Candidate> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
-     if(doGenHOTVR)
-        {
-          branch(tr, "genHOTVRTopJets", "std::vector<GenTopJet>", &genhotvrJets);
-        }
-      if(doGenXCone)
-        {
-          branch(tr, "genXCone33TopJets", "std::vector<GenTopJet>", &genxcone33Jets);
-          branch(tr, "genXCone33TopJets_softdrop", "std::vector<GenTopJet>", &genxcone33Jets_softdrop);
-          branch(tr, "genXCone23TopJets", "std::vector<GenTopJet>", &genxcone23Jets);
-        }
+  if (doGenHOTVR) {
+    auto genhotvr_sources = iConfig.getParameter<std::vector<edm::InputTag> >("GenHOTVR_sources");
+    genhotvrJets.resize(genhotvr_sources.size());
+    for (size_t j=0; j<genhotvr_sources.size(); ++j) {
+      genhotvr_tokens.push_back(consumes<pat::JetCollection>(genhotvr_sources[j]));
+      branch(tr, genhotvr_sources[j].encode().c_str(), "std::vector<GenTopJet>", &genhotvrJets[j]);
     }
+  }
+
+  if (doGenXCone) {
+    auto genxcone_sources = iConfig.getParameter<std::vector<edm::InputTag> >("GenXCone_sources");
+    genxconeJets.resize(genxcone_sources.size());
+    for (size_t j=0; j<genxcone_sources.size(); ++j) {
+      genxcone_tokens.push_back(consumes<pat::JetCollection>(genxcone_sources[j]));
+      branch(tr, genxcone_sources[j].encode().c_str(), "std::vector<GenTopJet>", &genxconeJets[j]);
+    }
+  }
+
   newrun = true;
 }
 
@@ -1305,8 +1306,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       hotvrJets[j].clear();
       edm::Handle<pat::JetCollection> hotvr_patjets;
       iEvent.getByToken(hotvr_tokens[j], hotvr_patjets);
-      edm::Handle<pat::JetCollection> hotvr_subjet_patjets;
-      iEvent.getByToken(hotvr_subjet_tokens[j], hotvr_subjet_patjets);
 
       // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
       for (const auto & patJet : *hotvr_patjets) {
@@ -1339,8 +1338,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       xconeJets[j].clear();
       edm::Handle<pat::JetCollection> xcone_patjets;
       iEvent.getByToken(xcone_tokens[j], xcone_patjets);
-      edm::Handle<pat::JetCollection> xcone_subjet_patjets;
-      iEvent.getByToken(xcone_subjet_tokens[j], xcone_subjet_patjets);
 
       // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
       for (const auto & patJet : *xcone_patjets) {
@@ -1367,41 +1364,60 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     }
    }
 
-  if(doGenHOTVR || doGenXCone)
-     {
-       edm::Handle<edm::View<reco::Candidate> > packed;
-       // use packed particle collection for all STABLE (status 1) particles
-       iEvent.getByToken(stablegenparticle_token,packed);
-       vector<GenParticle> genparticles;
-       for(size_t j=0; j<packed->size();j++){
+   if (doGenHOTVR) {
+    for (size_t j=0; j < genhotvr_tokens.size(); ++j){
+      genhotvrJets[j].clear();
+      edm::Handle<pat::JetCollection> genhotvr_patjets;
+      iEvent.getByToken(genhotvr_tokens[j], genhotvr_patjets);
 
-         const pat::PackedGenParticle* iter = dynamic_cast<const pat::PackedGenParticle*>(&(packed->at(j)));
-         if(iter->status()!=1) continue;
+      // Convert from pat::Jet to GenTopJet with subjets
+      for (const auto & patJet : *genhotvr_patjets) {
+        GenTopJet thisJet;
+        thisJet.set_pt(patJet.p4().pt());
+        thisJet.set_eta(patJet.p4().eta());
+        thisJet.set_phi(patJet.p4().phi());
+        thisJet.set_energy(patJet.p4().E());
+        for (const auto & subItr : patJet.subjets()) {
+          Particle subjet;
+          subjet.set_pt(subItr->p4().pt());
+          subjet.set_eta(subItr->p4().eta());
+          subjet.set_phi(subItr->p4().phi());
+          subjet.set_energy(subItr->p4().E());
+          thisJet.add_subjet(subjet);
+        }
 
-         GenParticle genp;
-         genp.set_pt(iter->p4().pt());
-         genp.set_eta(iter->p4().eta());
-         genp.set_phi(iter->p4().phi());
-         genp.set_energy(iter->p4().E());
-         genp.set_status( iter->status());
-         genp.set_pdgId( iter->pdgId());
+        genhotvrJets[j].push_back(thisJet);
+      }
+    }
+   }
 
-         genparticles.push_back(genp);
-       }
+  if (doGenXCone) {
+    for (size_t j=0; j < genxcone_tokens.size(); ++j){
+      genxconeJets[j].clear();
+      edm::Handle<pat::JetCollection> genxcone_patjets;
+      iEvent.getByToken(genxcone_tokens[j], genxcone_patjets);
 
-       UniversalGenJetCluster genjetCluster(&genparticles);
-       if (doGenHOTVR)
-         {
-           genhotvrJets = genjetCluster.GetHOTVRTopJets();
-         }
-       if (doGenXCone)
-         {
-           genxcone33Jets = genjetCluster.GetXCone33Jets();
-           genxcone33Jets_softdrop = genjetCluster.GetXCone33Jets_softdrop();
-           genxcone23Jets = genjetCluster.GetXCone23Jets();
-         }
-       print_times(timer, "genHOTVR");
-     }
+      // Convert from pat::Jet to GenTopJet with subjets
+      for (const auto & patJet : *genxcone_patjets) {
+        GenTopJet thisJet;
+        thisJet.set_pt(patJet.p4().pt());
+        thisJet.set_eta(patJet.p4().eta());
+        thisJet.set_phi(patJet.p4().phi());
+        thisJet.set_energy(patJet.p4().E());
+
+        for (const auto & subItr : patJet.subjets()) {
+          Particle subjet;
+          subjet.set_pt(subItr->p4().pt());
+          subjet.set_eta(subItr->p4().eta());
+          subjet.set_phi(subItr->p4().phi());
+          subjet.set_energy(subItr->p4().E());
+          thisJet.add_subjet(subjet);
+        }
+
+        genxconeJets[j].push_back(thisJet);
+      }
+    }
+   }
 
    // * done filling the event; call the AnalysisModule if configured:
    bool keep = true;
