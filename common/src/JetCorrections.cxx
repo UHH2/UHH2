@@ -1206,7 +1206,7 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Summer16_25nsV1 = {
 
 
 // 2017
-const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17 = {
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17_V1 = {
   // 0 = upper jet-eta limit
   // 1 = JER SF
   // 2 = JER SF + 1sigma
