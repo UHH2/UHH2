@@ -1222,7 +1222,6 @@ else:
     metfilterpath = "PAT"
 
 process.MyNtuple = cms.EDFilter('NtupleWriter',
-<<<<<<< HEAD
                                 # AnalysisModule = cms.PSet(
                                 #    name = cms.string("NoopAnalysisModule"),
                                 #    library = cms.string("libUHH2examples.so"),
