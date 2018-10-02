@@ -47,12 +47,19 @@ bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const st
   if(ele_.EcalEnergy() <= 0.) return false;
   const float abs_ooEmooP = fabs(1./ele_.EcalEnergy() - ele_.EoverPIn()/ele_.EcalEnergy());
 
+  // Parameters for calculation of C0 at different WPs: VETO, LOOSE, MEDIUM, TIGHT
+  std::vector<float> C0_par1_barr = {1.16, 1.16, 1.16, 1.15};
+  std::vector<float> C0_par1_endc = {2.54, 2.54, 2.52, 2.06};
+  std::vector<float> C0_par2_barr = {0.324, 0.324, 0.324, 0.324};
+  std::vector<float> C0_par2_endc = {0.183, 0.183, 0.183, 0.183};
+
   float C0 = -1.;
-  const float C0_barrel = ele_.HoverE() - 1.12/ele_.EcalEnergy() - (0.0368*evt_.rho)/ele_.EcalEnergy();
-  const float C0_endcap = ele_.HoverE() - 0.5/ele_.EcalEnergy() - (0.201*evt_.rho)/ele_.EcalEnergy();
+  const float C0_barrel = ele_.HoverE() - C0_par1_barr.at(wp_idx_)/ele_.EcalEnergy() - (C0_par2_barr.at(wp_idx_)*evt_.rho)/ele_.EcalEnergy();
+  const float C0_endcap = ele_.HoverE() - C0_par1_endc.at(wp_idx_)/ele_.EcalEnergy() - (C0_par2_endc.at(wp_idx_)*evt_.rho)/ele_.EcalEnergy();
   if(eleSC_pos_ == "barrel") C0 = C0_barrel;
   else if(eleSC_pos_ == "endcap") C0 = C0_endcap;
   else throw std::runtime_error("Invalid value for variable eleSC_pos_. May be 'barrel' or 'endcap'.");
+
 
   const int expMissingHits = ele_.gsfTrack_trackerExpectedHitsInner_numberOfLostHits();
 
@@ -61,7 +68,8 @@ bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const st
   if(!( ele_.sigmaIEtaIEta() < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("sigmaIetaIeta").at(wp_idx_)  )) return false;// sigmaIetaIeta
   if(!( fabs(ele_.dEtaIn())  < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|dEtaIn|")     .at(wp_idx_)  )) return false;// |dEtaIn|
   if(!( fabs(ele_.dPhiIn())  < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|dPhiIn|")     .at(wp_idx_)  )) return false;// |dPhiIn|
-  if(!( C0                   > ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("C0")           .at(wp_idx_)  )) return false;// Substitute for HoverE
+  // if(!( ele_.HoverE()        < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("HoverE")           .at(wp_idx_)  )) return false;// HoverE for IDs older than Fall17
+  if(!( C0                   < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("C0")           .at(wp_idx_)  )) return false;// Substitute for HoverE in Fall17
   if(!( abs_ooEmooP          < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|ooEmooP|")    .at(wp_idx_)  )) return false;// |ooEmooP|
   if(!( abs_d0               < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|d0|")         .at(wp_idx_)  )) return false;// |d0|
   if(!( abs_dz               < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|dz|")         .at(wp_idx_)  )) return false;// |dz|
@@ -69,9 +77,19 @@ bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const st
   if(!( passConvVeto    >= int(ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("passConvVeto") .at(wp_idx_)) )) return false;// conversion veto
 
   if(apply_iso_cut_){
-
     const float pfIsoEA = ele_.relIsorho(evt_.rho);
-    if(!( pfIsoEA            < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("relIsoEA")     .at(wp_idx_)  )) return false;// pfIso (PU correction: effective-area)
+    float discr = -1.;
+    float discr_barrel = pfIsoEA - 0.506/ele_.pt();
+    float discr_endcap = pfIsoEA - 0.963/ele_.pt();
+    if(eleSC_pos_ == "barrel") discr = discr_barrel;
+    else if(eleSC_pos_ == "endcap") discr = discr_endcap;
+    else throw std::runtime_error("Invalid value for variable eleSC_pos_. May be 'barrel' or 'endcap'.");
+
+    // When using Fall17 ID
+    if(!( discr            < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("IsoDiscr")     .at(wp_idx_)  )) return false;// pfIso (PU correction: effective-area)
+
+    // When using older IDs
+    // if(!( pfIsoEA            < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("relIsoEA")     .at(wp_idx_)  )) return false;// pfIso (PU correction: effective-area)
   }
 
   return true;
@@ -198,7 +216,7 @@ bool Electron_HEEP(const Electron& ele_, const std::string& tuning_, const std::
   const float abs_etaSC(fabs(ele_.supercluster_eta()));
 
   if     (                     abs_etaSC < 1.4442) pass = Electron_HEEP(ele_, tuning_, "barrel", wp_idx);
-  else if(1.566 < abs_etaSC && abs_etaSC < 2.5   ) pass = Electron_HEEP(ele_, tuning_, "endcap", wp_idx); 
+  else if(1.566 < abs_etaSC && abs_etaSC < 2.5   ) pass = Electron_HEEP(ele_, tuning_, "endcap", wp_idx);
   else                                             pass = false;
 
   return pass;
@@ -223,19 +241,19 @@ bool Electron_HEEP(const Electron& ele_, const std::string& tuning_, const std::
     HoverE_threshold += ElectronID::HEEP_LUT.at(tuning_).at(eleSC_pos_).at("HoverE const").at(wp_idx_);
   }
 
-//  /* debugging */
-//  std::cout << std::endl;
-//  std::cout << "Et"            << " = " << Et            << std::endl;
-//  std::cout << "dEtaInSeed"    << " = " << dEtaInSeed    << std::endl;
-//  std::cout << "dPhiIn"        << " = " << dPhiIn        << std::endl;
-//  std::cout << "HoverE"        << " = " << HoverE        << std::endl;
-//  std::cout << "sigmaIEtaIEta" << " = " << sigmaIEtaIEta << std::endl;
-//  std::cout << "E25over55"     << " = " << E25over55     << std::endl;
-//  std::cout << "E15over55"     << " = " << E15over55     << std::endl;
-//  std::cout << "misshits"      << " = " << misshits      << std::endl;
-//  std::cout << "dxy"           << " = " << dxy           << std::endl;
-//  std::cout << std::endl;
-//  /*************/
+  //  /* debugging */
+  //  std::cout << std::endl;
+  //  std::cout << "Et"            << " = " << Et            << std::endl;
+  //  std::cout << "dEtaInSeed"    << " = " << dEtaInSeed    << std::endl;
+  //  std::cout << "dPhiIn"        << " = " << dPhiIn        << std::endl;
+  //  std::cout << "HoverE"        << " = " << HoverE        << std::endl;
+  //  std::cout << "sigmaIEtaIEta" << " = " << sigmaIEtaIEta << std::endl;
+  //  std::cout << "E25over55"     << " = " << E25over55     << std::endl;
+  //  std::cout << "E15over55"     << " = " << E15over55     << std::endl;
+  //  std::cout << "misshits"      << " = " << misshits      << std::endl;
+  //  std::cout << "dxy"           << " = " << dxy           << std::endl;
+  //  std::cout << std::endl;
+  //  /*************/
 
   if(!ele_.isEcalDriven()) return false;
 
