@@ -492,7 +492,7 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DA
 
 SET_JERFILES_STANDART(Fall17_17Nov2017,22,AK4PFchs)
 SET_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
-
+SET_JERFILES_STANDART(Fall17_17Nov2017,24,AK4PFchs)
 
 //2016
 /* ++++++++++++++ Summer16_07Aug2017_V14_noRes needed for L2Res people +++++++++++++++ */
