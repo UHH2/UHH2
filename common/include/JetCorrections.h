@@ -334,7 +334,11 @@ namespace JERFiles{
 
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,24,AK4PFchs)
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
-  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,22,AK4PFchs)
+
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,24,AK4PFchs)
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,25,AK4PFchs)
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,26,AK4PFchs)
+
 }
 
 
@@ -551,7 +555,7 @@ namespace JERSmearing {
   extern const SFtype1 SF_13TeV_Summer16_25nsV1;
   extern const SFtype1 SF_13TeV_2016;
   extern const SFtype1 SF_13TeV_2016_03Feb2017;
-  extern const SFtype1 SF_13TeV_Fall17;
+  extern const SFtype1 SF_13TeV_Fall17_V1;
 }
 
 
