@@ -1456,6 +1456,9 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         thisJet.set_tau1_groomed(patJet.userFloat("tau1"));
         thisJet.set_tau2_groomed(patJet.userFloat("tau2"));
         thisJet.set_tau3_groomed(patJet.userFloat("tau3"));
+	thisJet.set_JEC_factor_raw(1.); //jets are not corrected, i.e raw
+	thisJet.set_JEC_L1factor_raw(1.);//jets are not corrected, i.e raw
+	thisJet.set_JER_factor_raw(1.); //jets are not corrected, i.e raw
         for (const auto & subItr : patJet.subjets()) {
           Jet subjet;
           subjet.set_pt(subItr->p4().pt());
@@ -1486,7 +1489,9 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         thisJet.set_energy(patJet.p4().E());
         thisJet.set_jetArea(patJet.jetArea());
         thisJet.set_softdropmass(patJet.userFloat("softdropmass"));
-
+	thisJet.set_JEC_factor_raw(1.); //jets are not corrected, i.e raw
+	thisJet.set_JEC_L1factor_raw(1.);//jets are not corrected, i.e raw
+	thisJet.set_JER_factor_raw(1.); //jets are not corrected, i.e raw
         for (const auto & subItr : patJet.subjets()) {
           Jet subjet;
           subjet.set_pt(subItr->p4().pt());
@@ -1542,7 +1547,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         thisJet.set_eta(patJet.p4().eta());
         thisJet.set_phi(patJet.p4().phi());
         thisJet.set_energy(patJet.p4().E());
-
         for (const auto & subItr : patJet.subjets()) {
           Particle subjet;
           subjet.set_pt(subItr->p4().pt());
