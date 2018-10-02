@@ -188,7 +188,8 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
   double ghost_maxrap = 4.0;      // maxiumum y of ghost particles
   AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
   JetDefinition jet_def_xcone(plugin_xcone.get());
-  ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
+  //  ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
+  ClusterSequenceArea clust_seq_xcone(_psj, jet_def_xcone, area_def);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
 
   // get SoftDrop Mass for every fat jet
@@ -200,15 +201,15 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
   }
 
 
-  // Check we actually got the number of jets we requested
-  if (fatjets.size() != NJets_) {
-    edm::LogWarning("XConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
-        << "Have added in blank jets to make " << NJets_ << " jets." << endl;
-    for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
-      fatjets.push_back(PseudoJet(0, 0, 0, 0));
-      sd_mass.push_back(0.);
-    }
-  }
+  // // Check we actually got the number of jets we requested
+  // if (fatjets.size() != NJets_) {
+  //   edm::LogWarning("XConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
+  //       << "Have added in blank jets to make " << NJets_ << " jets." << endl;
+  //   for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
+  //     fatjets.push_back(PseudoJet(0, 0, 0, 0));
+  //     sd_mass.push_back(0.);
+  //   }
+  // }
 
   // check if subjets should be clustered
   bool doSubjets = true;
@@ -262,8 +263,8 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
     }
 
     // jet area for fat jet
-    double jet_area = 0;
-    // double jet_area = fatjets[i].area();
+    //    double jet_area = 0;
+    double jet_area = fatjets[i].area();
 
     // pat-ify fatjets
     auto patJet = createPatJet(fatjets[i]);
