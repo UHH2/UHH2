@@ -213,15 +213,14 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
 
-  // Check we got the number of subjets we asked for
-  if (fatjets.size() != NJets_) {
-    edm::LogWarning("GenXConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
-        << "Have added in blank jets to make " << NJets_ << " subjets." << endl;
-    for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
-      fatjets.push_back(PseudoJet(0, 0, 0, 0));
-    }
-
-  }
+  // // Check we got the number of subjets we asked for
+  // if (fatjets.size() != NJets_) {
+  //   edm::LogWarning("GenXConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
+  //       << "Have added in blank jets to make " << NJets_ << " subjets." << endl;
+  //   for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
+  //     fatjets.push_back(PseudoJet(0, 0, 0, 0));
+  //   }
+  // }
   // Note to future dev: if you want to add SoftDrop, you must use the full
   // constructor, otherwise your fatjet will only have 1 constitutent,
   // making it useless for subjets. It will also ensure that the proper
@@ -254,7 +253,6 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     }
   }
-
   // loop over all fatjets and cluster subjets
   for(unsigned int i=0; i<fatjets.size(); i++){
     // get set of particles in fatjet i
@@ -295,7 +293,6 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         subjets.push_back(PseudoJet(0, 0, 0, 0));
       }
     }
-
     // pat-ify fatjets
     auto patJet = createPatJet(fatjets[i]);
     jetCollection->push_back(patJet);
@@ -307,10 +304,8 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
   }
-
   // Following inspired by CompoundJetProducer/VirtualJetProducer
   edm::OrphanHandle<pat::JetCollection> subjetHandleAfterPut = iEvent.put(std::move(subjetCollection), subjetCollName_);
-
   // setup refs between jets & subjets using indices of subjets in the SubjetCollection
   int jetInd = 0;
   for (auto & jetItr : *jetCollection) {
