@@ -319,6 +319,31 @@ common_btag_parameters = dict(
 
 process.packedGenParticlesForJetsNoNu = cms.EDFilter("CandPtrSelector", src = cms.InputTag("packedGenParticles"), cut = cms.string("abs(pdgId) != 12 && abs(pdgId) != 14 && abs(pdgId) != 16"))
 
+
+def check_for_duplicate_module(process, module):
+    """
+    Check if there is another module already in the process object
+    with the exact same settings, to avoid repeating yourself.
+
+    Returns name of existing module if there is one, otherwise None
+    """
+    module_dict = None
+    if isinstance(module, cms.EDProducer):
+        module_dict = process.producers
+    elif isinstance(module, cms.EDFilter):
+        module_dict = process.filters
+    elif isinstance(module, cms.EDAnalyzer):
+        module_dict = process.analyzers
+
+    if not module_dict:
+        return None
+
+    for pname, prod in module_dict.iteritems():
+        if module.parameters_() == prod.parameters_():
+            print "Found identical module", pname
+            return pname
+
+
 # Add PAT part of fat jets and subjets, and optionally gen jets. Note that the input collections for the groomed PF jets have to be defined elsewhere
 # already.
 # This method assumes that you follow  certain naming convention. In particular:
@@ -363,14 +388,32 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         groomed_genjets_name = genjets_name(groomed_jets_name)
         if verbose: print "Adding groomed genjets ", groomed_genjets_name
         # disable area calcuation as faster + only needed for L1JEC anyway
-        setattr(process, groomed_genjets_name, groomed_jetproducer.clone(src = cms.InputTag('packedGenParticlesForJetsNoNu'), jetType = 'GenJet', doAreaFastjet = cms.bool(False)))
+        groomed_genjet_producer = groomed_jetproducer.clone(
+            src=cms.InputTag('packedGenParticlesForJetsNoNu'),
+            jetType='GenJet',
+            doAreaFastjet=cms.bool(False)
+        )
+        duplicate_name = check_for_duplicate_module(process, groomed_genjet_producer)
+        if duplicate_name:
+            groomed_genjets_name = duplicate_name
+        else:
+            setattr(process, groomed_genjets_name, groomed_genjet_producer)
         # add for ungroomed jets if not done yet (maybe never used in case ungroomed are not added, but that's ok ..)
         ungroomed_jetproducer = getattr(process, fatjets_name)
         assert ungroomed_jetproducer.type_() == 'FastjetJetProducer'
         ungroomed_genjets_name = genjets_name(fatjets_name)
         if verbose: print "Adding ungroomed genjets ", ungroomed_genjets_name
         # disable area calcuation as faster + only needed for L1JEC anyway
-        setattr(process, ungroomed_genjets_name, ungroomed_jetproducer.clone(src = cms.InputTag('packedGenParticlesForJetsNoNu'), jetType = 'GenJet', doAreaFastjet = cms.bool(False)))
+        ungroomed_genjet_producer = ungroomed_jetproducer.clone(
+            src=cms.InputTag('packedGenParticlesForJetsNoNu'),
+            jetType='GenJet',
+            doAreaFastjet=cms.bool(False)
+        )
+        duplicate_name = check_for_duplicate_module(process, ungroomed_genjet_producer)
+        if duplicate_name:
+            ungroomed_genjets_name = duplicate_name
+        else:
+            setattr(process, ungroomed_genjets_name, ungroomed_genjet_producer)
 
 
     # patify ungroomed jets, if not already done:
