@@ -387,11 +387,10 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         assert groomed_jetproducer.type_() in ('FastjetJetProducer', 'CATopJetProducer'), "do not know how to construct genjet collection for %s" % repr(groomed_jetproducer)
         groomed_genjets_name = genjets_name(groomed_jets_name)
         if verbose: print "Adding groomed genjets ", groomed_genjets_name
-        # disable area calcuation as faster + only needed for L1JEC anyway
         groomed_genjet_producer = groomed_jetproducer.clone(
             src=cms.InputTag('packedGenParticlesForJetsNoNu'),
             jetType='GenJet',
-            doAreaFastjet=cms.bool(False)
+            doAreaFastjet=cms.bool(True)
         )
         duplicate_name = check_for_duplicate_module(process, groomed_genjet_producer)
         if duplicate_name:
@@ -403,11 +402,10 @@ def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label 
         assert ungroomed_jetproducer.type_() == 'FastjetJetProducer'
         ungroomed_genjets_name = genjets_name(fatjets_name)
         if verbose: print "Adding ungroomed genjets ", ungroomed_genjets_name
-        # disable area calcuation as faster + only needed for L1JEC anyway
         ungroomed_genjet_producer = ungroomed_jetproducer.clone(
             src=cms.InputTag('packedGenParticlesForJetsNoNu'),
             jetType='GenJet',
-            doAreaFastjet=cms.bool(False)
+            doAreaFastjet=cms.bool(True)
         )
         duplicate_name = check_for_duplicate_module(process, ungroomed_genjet_producer)
         if duplicate_name:
