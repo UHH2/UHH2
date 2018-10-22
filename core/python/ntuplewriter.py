@@ -569,6 +569,7 @@ addJetCollection(process,labelName = 'AK8PFCHS', jetSource = cms.InputTag('ak8CH
     elSource = cms.InputTag('slimmedElectrons')
 )
 
+# Pack together ungroomed and groomed parts
 process.packedPatJetsAk8PuppiJets = cms.EDProducer("JetSubstructurePacker",
     jetSrc = cms.InputTag("patJetsAk8PuppiJetsFat"),
     distMax = cms.double(0.8),
@@ -577,6 +578,18 @@ process.packedPatJetsAk8PuppiJets = cms.EDProducer("JetSubstructurePacker",
     ),
     algoLabels = cms.vstring(
         'SoftDropPuppi'
+    ),
+    fixDaughters = cms.bool(False)
+)
+
+process.packedPatJetsAk8CHSJets = cms.EDProducer("JetSubstructurePacker",
+    jetSrc = cms.InputTag("patJetsAk8CHSJets"),
+    distMax = cms.double(0.8),
+    algoTags = cms.VInputTag(
+        cms.InputTag("patJetsAk8CHSJetsSoftDropPacked")
+    ),
+    algoLabels = cms.vstring(
+        'SoftDrop'
     ),
     fixDaughters = cms.bool(False)
 )
@@ -895,11 +908,12 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
         topjet_etamax = cms.double(5.0),
         # The collection here determines the pt, eta, energy fractions, daughters etc for a TopJet collection
         # Thus you should be careful if you are using groomed or ungroomed collections
-        # Use a JetSubstructurePacker if you want ungroomed, along with the correct subjet name in subjet_sources
-        topjet_sources = cms.vstring("slimmedJetsAK8","patJetsAk8CHSJetsSoftDropPacked","patJetsHepTopTagCHSPacked","patJetsHepTopTagPuppiPacked","packedPatJetsAk8PuppiJets"),
+        # The BoostedJetMerger collection should be used for groomed jet quantities,
+        # but use a JetSubstructurePacker if you want ungroomed (along with the correct subjet name in subjet_sources)
+        topjet_sources = cms.vstring("slimmedJetsAK8","packedPatJetsAk8CHSJets","patJetsHepTopTagCHSPacked","patJetsHepTopTagPuppiPacked","packedPatJetsAk8PuppiJets"),
         #Note: use label "daughters" for  subjet_sources if you want to store as subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!)
         #to store a subjet collection present in miniAOD indicate the proper label of the subjets method in pat::Jet: SoftDrop or CMSTopTag
-        subjet_sources = cms.vstring("SoftDrop","daughters","daughters","daughters","SoftDropPuppi"),
+        subjet_sources = cms.vstring("SoftDrop","SoftDrop","daughters","daughters","SoftDropPuppi"),
         #Specify "store" if you want to store b-tagging taginfos for subjet collection, make sure to have included them with .addTagInfos = True
         #addTagInfos = True is currently true by default, however, only for collections produced and not read directly from miniAOD
         #If you don't want to store stubjet taginfos leave string empy ""
