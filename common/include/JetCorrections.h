@@ -146,13 +146,24 @@ namespace JERFiles{
   extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L1RC_AK8PFPuppi_DATA;
   extern const std::vector<std::string> Fall17_17Nov2017_V11_L123_AK8PFPuppi_MC;
 
+<<<<<<< HEAD
 
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,6,AK4PFchs)
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,6,AK8PFPuppi)
+=======
+  
+>>>>>>> f18d0787ee8d2686594ce1bf3717a339eba1f9f7
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,24,AK4PFchs)
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,25,AK4PFchs)
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,26,AK4PFchs)
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,27,AK4PFchs)
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,28,AK4PFchs)
+<<<<<<< HEAD
   DEFINE_JERFILES_STANDART(Fall17_09May2018,1,AK4PFchs)
+=======
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,28,AK4PFchs)
+>>>>>>> f18d0787ee8d2686594ce1bf3717a339eba1f9f7
 
 }
 
@@ -370,6 +381,14 @@ namespace JERSmearing {
   extern const SFtype1 SF_13TeV_Summer16_25nsV1;
   extern const SFtype1 SF_13TeV_2016;
   extern const SFtype1 SF_13TeV_2016_03Feb2017;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunB;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunC;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunD;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunE;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunF;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunBC;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunDE;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunBCDEF;
   extern const SFtype1 SF_13TeV_Fall17_V1;
   extern const SFtype1 SF_13TeV_Fall17_V2_RunB;
   extern const SFtype1 SF_13TeV_Fall17_V2_RunC;

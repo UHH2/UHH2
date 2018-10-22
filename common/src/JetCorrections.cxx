@@ -196,13 +196,24 @@ const std::vector<std::string> JERFiles::Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DA
 
 };
 
+<<<<<<< HEAD
 SET_JERFILES_STANDART(Fall17_17Nov2017,6,AK4PFchs)
 SET_JERFILES_STANDART(Fall17_17Nov2017,6,AK8PFPuppi)
+=======
+
+>>>>>>> f18d0787ee8d2686594ce1bf3717a339eba1f9f7
 SET_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
 SET_JERFILES_STANDART(Fall17_17Nov2017,24,AK4PFchs)
+SET_JERFILES_STANDART(Fall17_17Nov2017,25,AK4PFchs)
+SET_JERFILES_STANDART(Fall17_17Nov2017,26,AK4PFchs)
 SET_JERFILES_STANDART(Fall17_17Nov2017,27,AK4PFchs)
+SET_JERFILES_STANDART(Fall17_17Nov2017,28,AK4PFchs)
+<<<<<<< HEAD
 SET_JERFILES_STANDART(Fall17_09May2018,1,AK4PFchs)
 
+=======
+SET_JERFILES_STANDART(Fall17_17Nov2017,28,AK4PFchs)
+>>>>>>> f18d0787ee8d2686594ce1bf3717a339eba1f9f7
 
 //2016
 /* ++++++++++++++ Summer16_07Aug2017_V14_noRes needed for L2Res people +++++++++++++++ */
@@ -934,6 +945,10 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17_V1 = {
 
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f18d0787ee8d2686594ce1bf3717a339eba1f9f7
 const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17_V2_RunB = {
   // 0 = upper jet-eta limit
   // 1 = JER SF
