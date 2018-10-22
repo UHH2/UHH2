@@ -371,6 +371,14 @@ namespace JERSmearing {
   extern const SFtype1 SF_13TeV_2016;
   extern const SFtype1 SF_13TeV_2016_03Feb2017;
   extern const SFtype1 SF_13TeV_Fall17_V1;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunB;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunC;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunD;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunE;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunF;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunBC;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunDE;
+  extern const SFtype1 SF_13TeV_Fall17_V2_RunBCDEF;
 }
 
 
