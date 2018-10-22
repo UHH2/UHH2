@@ -7,8 +7,8 @@
 #include "TRandom.h"
 #include "TFormula.h"
 
-#include <iostream> 
-#include <fstream> 
+#include <iostream>
+#include <fstream>
 
 class FactorizedJetCorrector;
 
@@ -41,7 +41,7 @@ namespace JERFiles {
 /* /// namespace to define some useful filename constants to be used for jet energy corrections */
 /* namespace JERFiles { */
 
-  
+
 
 /*     //Fall17_17Nov2017_V11 */
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L123_noRes_AK4PFchs_DATA; */
@@ -55,15 +55,15 @@ namespace JERFiles {
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L123_AK4PFchs_DATA; */
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L123_AK4PFchs_DATA; */
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L123_AK4PFchs_DATA; */
-  
+
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_L123_AK4PFchs_MC; */
-  
+
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L1RC_AK4PFchs_DATA; */
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L1RC_AK4PFchs_DATA; */
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L1RC_AK4PFchs_DATA; */
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L1RC_AK4PFchs_DATA; */
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DATA; */
-  
+
 /*     extern const std::vector<std::string> Fall17_17Nov2017_V11_L1RC_AK4PFchs_MC; */
 
 /* } */
@@ -89,8 +89,8 @@ namespace JERFiles{
   extern const std::vector<std::string> tag##_V##ver##_L123_##jetCollection##_MC;\
   extern const std::vector<std::string> tag##_V##ver##_L1RC_##jetCollection##_MC;\
 \
-  
-  
+
+
 #define DEFINE_JERFILES_noMC(tag,ver)\
   extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA;\
@@ -109,7 +109,7 @@ namespace JERFiles{
   extern const std::vector<std::string> tag##_V##ver##_F_L1RC_##jetCollection##_DATA;\
 \
 
- 
+
   //Fall17_17Nov2017_V11
   extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L123_noRes_AK4PFchs_DATA;
   extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L123_noRes_AK4PFchs_DATA;
@@ -146,9 +146,13 @@ namespace JERFiles{
   extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L1RC_AK8PFPuppi_DATA;
   extern const std::vector<std::string> Fall17_17Nov2017_V11_L123_AK8PFPuppi_MC;
 
- 
+
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,6,AK4PFchs)
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,6,AK8PFPuppi)
+  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,24,AK4PFchs)
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,27,AK4PFchs)
+  DEFINE_JERFILES_STANDART(Fall17_09May2018,1,AK4PFchs)
 
 }
 
@@ -156,31 +160,31 @@ namespace JERFiles{
 void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const uhh2::Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0);
 
 /** \brief (Re-)Correct jets according to the corrections in the passed txt files
- * 
+ *
  * txt files are available in JetMETObjects/data/; see README there for instructions how to produce
  * updated files.
- * 
+ *
  * For some standard jet energy corrections, you can use filenames defined in the JERFiles namespace.
  *
  * Options parsed from the given Context:
  *  - "jecsmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing resp.
- * 
+ *
  * Please note that the JetCorrector does not sort the (re-)corrected jets by pt;
  * you might want to do that before running algorithms / plotting which assume that.
  */
 class JetCorrector: public uhh2::AnalysisModule {
 public:
   explicit JetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::vector<std::string> & filenames_L1RC = {});
-    
+
     virtual bool process(uhh2::Event & event) override;
     virtual bool correct_met(uhh2::Event & event, const bool & isCHSmet = false, double pt_thresh = 15., double eta_thresh_low=0., double eta_thresh_high=5.5);
-    
+
     virtual ~JetCorrector();
-    
+
 protected:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     std::unique_ptr<FactorizedJetCorrector> corrector_L1RC;
-    
+
     JetCorrectionUncertainty* jec_uncertainty;
     int direction = 0; // -1 = down, +1 = up, 0 = nominal
     bool propagate_to_met = false;
@@ -197,11 +201,11 @@ protected:
 class TopJetCorrector: public uhh2::AnalysisModule {
 public:
     explicit TopJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames);
-    
+
     virtual bool process(uhh2::Event & event) override;
-    
+
     virtual ~TopJetCorrector();
-    
+
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
 
@@ -212,11 +216,11 @@ private:
 class SubJetCorrector: public uhh2::AnalysisModule {
 public:
     explicit SubJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames);
-    
+
     virtual bool process(uhh2::Event & event) override;
-    
+
     virtual ~SubJetCorrector();
-    
+
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     JetCorrectionUncertainty* jec_uncertainty;
@@ -226,11 +230,11 @@ private:
 class GenericJetCorrector: public uhh2::AnalysisModule {
 public:
     explicit GenericJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname);
-    
+
     virtual bool process(uhh2::Event & event) override;
-    
+
     virtual ~GenericJetCorrector();
-    
+
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     uhh2::Event::Handle<std::vector<Jet> > h_jets;
@@ -241,11 +245,11 @@ private:
 class GenericTopJetCorrector: public uhh2::AnalysisModule {
 public:
     explicit GenericTopJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname);
-    
+
     virtual bool process(uhh2::Event & event) override;
-    
+
     virtual ~GenericTopJetCorrector();
-    
+
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     uhh2::Event::Handle<std::vector<TopJet> > h_jets;
@@ -256,11 +260,11 @@ private:
 class GenericSubJetCorrector: public uhh2::AnalysisModule {
 public:
     explicit GenericSubJetCorrector(uhh2::Context & ctx, const std::vector<std::string> & filenames, const std::string & collectionname);
-    
+
     virtual bool process(uhh2::Event & event) override;
-    
+
     virtual ~GenericSubJetCorrector();
-    
+
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     uhh2::Event::Handle<std::vector<TopJet> > h_jets;
@@ -269,48 +273,48 @@ private:
 };
 
 /** \brief Cross-clean lepton and jets by subtracting lepton four momenta from nearby jets
- * 
+ *
  * Leptons are subtracted from the jets' raw four-momentum if:
  *  - DR(jet, lepton) < drmax (default: 0.4) and
  *  - electron/muon multiplicity is greater than 0 and
  *  - electron energy / muon energy of jet is compatible with lepton to subtract
- * 
+ *
  * Only implemented for muons and electrons, not for taus. As default, all muons
  * and electrons are used. To not consider all electrons/muons either:
  *   - run an appropriate cleaning module before this one or
  *   - set an explicit id via the set_electron_id / set_muon_id.
- * 
+ *
  * Note that the cleaning works well if using a muon or electron id which is stricly a subset of the
  * particle-flow id, because only particle-flow muons/electrons are considered in the muon/electron
  * energy fraction stored in the jet which is used to decide whether or not to subtract it.
  * So if you use non-PF muons or non-PF electrons, you might need to re-write the
  * JetLeptonCleaner for that case.
- * 
+ *
  * Please note that the JetLeptonCleaner does not sort the (re-)corrected jets by pt;
  * you might want to do that before running algorithms / plotting which assume that.
- * 
+ *
  */
 class JetLeptonCleaner: public uhh2::AnalysisModule {
 public:
     // jec_filenames is teh same as for the JetCorrector.
     explicit JetLeptonCleaner(uhh2::Context & ctx, const std::vector<std::string> & jec_filenames);
-    
+
     void set_muon_id(const MuonId & mu_id_){
         mu_id = mu_id_;
     }
-    
+
     void set_electron_id(const ElectronId & ele_id_){
         ele_id = ele_id_;
     }
-    
+
     void set_drmax(double drmax_){
         drmax = drmax_;
     }
-    
+
     virtual bool process(uhh2::Event & event) override;
-    
+
     virtual ~JetLeptonCleaner();
-    
+
 private:
     std::unique_ptr<FactorizedJetCorrector> corrector;
     MuonId mu_id;
@@ -423,7 +427,7 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
  *
  * Options parsed from the given Context:
  *  - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing resp.
- * 
+ *
  * Please note that the JetResolutionSmearer does not sort the (re-)corrected jets by pt;
  * you might want to do that before running algorithms / plotting which assume that.
  */
