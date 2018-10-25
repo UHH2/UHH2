@@ -89,6 +89,23 @@ namespace JERFiles{
   extern const std::vector<std::string> tag##_V##ver##_L123_##jetCollection##_MC;\
   extern const std::vector<std::string> tag##_V##ver##_L1RC_##jetCollection##_MC;\
 \
+  
+#define DEFINE_JERFILES_DEcombined(tag,ver,jetCollection)			\
+  extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_DE_L123_noRes_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_F_L123_noRes_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_B_L123_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_C_L123_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_DE_L123_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_F_L123_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_B_L1RC_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_C_L1RC_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_DE_L1RC_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_F_L1RC_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_L123_##jetCollection##_MC;\
+  extern const std::vector<std::string> tag##_V##ver##_L1RC_##jetCollection##_MC;\
+\
 
 
 #define DEFINE_JERFILES_noMC(tag,ver)\
@@ -155,7 +172,7 @@ namespace JERFiles{
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,26,AK4PFchs)
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,27,AK4PFchs)
   DEFINE_JERFILES_STANDART(Fall17_17Nov2017,28,AK4PFchs)
-  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,31,AK4PFchs)
+  DEFINE_JERFILES_DEcombined(Fall17_17Nov2017,31,AK4PFchs)
   
   DEFINE_JERFILES_STANDART(Fall17_09May2018,1,AK4PFchs)
 
