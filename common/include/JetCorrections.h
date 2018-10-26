@@ -12,65 +12,19 @@
 
 class FactorizedJetCorrector;
 
-namespace JERFiles {
-  //Summer16_07Aug2017_V14_noRes needed for L2Res people
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_BCD_L123_noRes_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_EF_L123_noRes_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_GH_L123_noRes_AK4PFchs_DATA;
-
-
-  //Summer16_07Aug2017_V14 --> Official JEC recommendation for Moriond17
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_BCD_L123_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_EF_L123_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_GH_L123_AK4PFchs_DATA;
-
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_BCD_L123_AK8PFchs_DATA;
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_EF_L123_AK8PFchs_DATA;
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_GH_L123_AK8PFchs_DATA;
-
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_BCD_L1RC_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_EF_L1RC_AK4PFchs_DATA;
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_GH_L1RC_AK4PFchs_DATA;
-
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_L123_AK4PFchs_MC;
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_L123_AK8PFchs_MC;
-  extern const std::vector<std::string> Summer16_07Aug2017_V14_L1RC_AK4PFchs_MC;
-
-}
-
 /* /// namespace to define some useful filename constants to be used for jet energy corrections */
 /* namespace JERFiles { */
 
-
-
-/*     //Fall17_17Nov2017_V11 */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L123_noRes_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L123_noRes_AK4PFchs_DATA;   */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L123_noRes_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L123_noRes_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L123_noRes_AK4PFchs_DATA; */
-
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L123_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L123_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L123_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L123_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L123_AK4PFchs_DATA; */
-
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_L123_AK4PFchs_MC; */
-
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L1RC_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L1RC_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L1RC_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L1RC_AK4PFchs_DATA; */
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DATA; */
-
-/*     extern const std::vector<std::string> Fall17_17Nov2017_V11_L1RC_AK4PFchs_MC; */
-
-/* } */
-
 //2017
 namespace JERFiles{
-#define DEFINE_JERFILES_STANDART(tag,ver,jetCollection)			\
+#define DEFINE_JERFILES_MC(tag,ver,jetCollection)			\
+  extern const std::vector<std::string> tag##_V##ver##_L123_##jetCollection##_MC;\
+  extern const std::vector<std::string> tag##_V##ver##_L1RC_##jetCollection##_MC;\
+\
+
+  
+
+#define DEFINE_JERFILES_DATA(tag,ver,jetCollection)\
   extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_D_L123_noRes_##jetCollection##_DATA;\
@@ -86,9 +40,9 @@ namespace JERFiles{
   extern const std::vector<std::string> tag##_V##ver##_D_L1RC_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_E_L1RC_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_F_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_L123_##jetCollection##_MC;\
-  extern const std::vector<std::string> tag##_V##ver##_L1RC_##jetCollection##_MC;\
 \
+
+
   
 #define DEFINE_JERFILES_DEcombined(tag,ver,jetCollection)			\
   extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
@@ -108,73 +62,28 @@ namespace JERFiles{
 \
 
 
-#define DEFINE_JERFILES_noMC(tag,ver)\
-  extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_B_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_C_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_B_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_C_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L1RC_##jetCollection##_DATA;\
-\
+  DEFINE_JERFILES_MC(Fall17_17Nov2017,6,AK4PFchs)
+  DEFINE_JERFILES_MC(Fall17_17Nov2017,6,AK8PFPuppi)
 
+  DEFINE_JERFILES_MC(Fall17_17Nov2017,11,AK4PFchs)
+  
+  DEFINE_JERFILES_MC(Fall17_17Nov2017,23,AK4PFchs)
+  DEFINE_JERFILES_MC(Fall17_17Nov2017,24,AK4PFchs)
 
-  //Fall17_17Nov2017_V11
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L123_noRes_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L123_noRes_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L123_noRes_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L123_noRes_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L123_noRes_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L123_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L123_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L123_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L123_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L123_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L1RC_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L1RC_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L1RC_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L1RC_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L1RC_AK4PFchs_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_L123_AK4PFchs_MC;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_L1RC_AK4PFchs_MC;
+  DEFINE_JERFILES_DATA(Fall17_17Nov2017,6,AK4PFchs)
+  DEFINE_JERFILES_DATA(Fall17_17Nov2017,6,AK8PFPuppi)
 
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L123_noRes_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L123_noRes_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L123_noRes_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L123_noRes_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L123_noRes_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L123_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L123_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L123_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L123_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L123_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_B_L1RC_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_C_L1RC_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_D_L1RC_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_E_L1RC_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_F_L1RC_AK8PFPuppi_DATA;
-  extern const std::vector<std::string> Fall17_17Nov2017_V11_L123_AK8PFPuppi_MC;
-
-  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,6,AK4PFchs)
-  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,6,AK8PFPuppi)
-
-  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,23,AK4PFchs)
-  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,24,AK4PFchs)
-  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,25,AK4PFchs)
-  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,26,AK4PFchs)
-  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,27,AK4PFchs)
-  DEFINE_JERFILES_STANDART(Fall17_17Nov2017,28,AK4PFchs)
+  DEFINE_JERFILES_DATA(Fall17_17Nov2017,11,AK4PFchs)
+  
+  DEFINE_JERFILES_DATA(Fall17_17Nov2017,23,AK4PFchs)
+  DEFINE_JERFILES_DATA(Fall17_17Nov2017,24,AK4PFchs)
+  DEFINE_JERFILES_DATA(Fall17_17Nov2017,25,AK4PFchs)
+  DEFINE_JERFILES_DATA(Fall17_17Nov2017,26,AK4PFchs)
+  DEFINE_JERFILES_DATA(Fall17_17Nov2017,27,AK4PFchs)
+  DEFINE_JERFILES_DATA(Fall17_17Nov2017,28,AK4PFchs)
   DEFINE_JERFILES_DEcombined(Fall17_17Nov2017,31,AK4PFchs)
   
-  DEFINE_JERFILES_STANDART(Fall17_09May2018,1,AK4PFchs)
+  DEFINE_JERFILES_DATA(Fall17_09May2018,1,AK4PFchs)
 
 }
 
