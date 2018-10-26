@@ -110,6 +110,18 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_C_L123_##jetCollection##
   string("JECDatabase/textFiles/")+#tag+"C_V"+#ver+"_DATA/"+#tag+"C_V"+#ver+"_DATA_L3Absolute_"+#jetCollection+".txt", \
   string("JECDatabase/textFiles/")+#tag+"C_V"+#ver+"_DATA/"+#tag+"C_V"+#ver+"_DATA_L2L3Residual_"+#jetCollection+".txt", \
 }; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_D_L123_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L2Relative_"+#jetCollection+".txt", \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L3Absolute_"+#jetCollection+".txt", \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L2L3Residual_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_E_L123_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L2Relative_"+#jetCollection+".txt", \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L3Absolute_"+#jetCollection+".txt", \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L2L3Residual_"+#jetCollection+".txt", \
+}; \
 const std::vector<std::string> JERFiles::tag##_V##ver##_DE_L123_##jetCollection##_DATA = { \
   string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
   string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L2Relative_"+#jetCollection+".txt", \
@@ -132,6 +144,16 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_C_L123_noRes_##jetCollec
   string("JECDatabase/textFiles/")+#tag+"C_V"+#ver+"_DATA/"+#tag+"C_V"+#ver+"_DATA_L2Relative_"+#jetCollection+".txt", \
   string("JECDatabase/textFiles/")+#tag+"C_V"+#ver+"_DATA/"+#tag+"C_V"+#ver+"_DATA_L3Absolute_"+#jetCollection+".txt", \
 }; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_D_L123_noRes_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L2Relative_"+#jetCollection+".txt", \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L3Absolute_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_E_L123_noRes_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L2Relative_"+#jetCollection+".txt", \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L3Absolute_"+#jetCollection+".txt", \
+}; \
 const std::vector<std::string> JERFiles::tag##_V##ver##_DE_L123_noRes_##jetCollection##_DATA = { \
   string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
   string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L2Relative_"+#jetCollection+".txt", \
@@ -149,6 +171,12 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_C_L1RC_##jetCollection##
   string("JECDatabase/textFiles/")+#tag+"C_V"+#ver+"_DATA/"+#tag+"C_V"+#ver+"_DATA_L1RC_"+#jetCollection+".txt", \
 }; \
 const std::vector<std::string> JERFiles::tag##_V##ver##_DE_L1RC_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1RC_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_D_L1RC_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1RC_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_E_L1RC_##jetCollection##_DATA = { \
   string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1RC_"+#jetCollection+".txt", \
 }; \
 const std::vector<std::string> JERFiles::tag##_V##ver##_F_L1RC_##jetCollection##_DATA = { \
