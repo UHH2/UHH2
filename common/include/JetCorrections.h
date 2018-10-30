@@ -43,18 +43,24 @@ namespace JERFiles{
 \
 
 
-  
+
 #define DEFINE_JERFILES_DEcombined(tag,ver,jetCollection)			\
   extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_D_L123_noRes_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_E_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_DE_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_F_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_B_L123_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_C_L123_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_D_L123_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_E_L123_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_DE_L123_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_F_L123_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_B_L1RC_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_C_L1RC_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_D_L1RC_##jetCollection##_DATA;\
+  extern const std::vector<std::string> tag##_V##ver##_E_L1RC_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_DE_L1RC_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_F_L1RC_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_L123_##jetCollection##_MC;\
