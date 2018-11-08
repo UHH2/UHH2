@@ -104,10 +104,8 @@ cd $CMSSW_BASE/src
 
 time git cms-init -y  # not needed if not addpkg ing
 
-# Add in preliminary cut-based EGamma VID
-git cms-merge-topic lsoffi:CMSSW_9_4_0_pre3_TnP
-# Add in preliminary MVA EGamma VID
-git cms-merge-topic guitargeek:ElectronID_MVA2017_940pre3
+# Add in both cut-based and MVA EGamma VID
+git cms-merge-topic guitargeek:EgammaID_9_4_X
 
 # Necessary for using our FastJet
 git cms-addpkg RecoJets/JetProducers
@@ -148,23 +146,6 @@ scram setup fastjet-contrib-archive
 
 scram b clean
 time scram b $MAKEFLAGS
-
-# Some manual hacking to get the MVA files - in future they should be
-# in the main release, and you can remove this
-# Note: the “external” area appears after “scram build” is run at least once
-cd $CMSSW_BASE/external/$SCRAM_ARCH
-git clone https://github.com/lsoffi/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
-cd data/RecoEgamma/ElectronIdentification/data
-git checkout CMSSW_9_4_0_pre3_TnP
-#remove not needed files to keep tarball for crab small
-rm TMVA_*.weights.xml
-rm -r Spring16*
-rm -r  Spring15/
-rm -r PHYS14/
-# prune their .git as it gets included in crab tarball
-# remove if you really struggle for space
-git gc --prune
-cd $CMSSW_BASE/src
 
 # Get the UHH2 repo & JEC files
 cd $CMSSW_BASE/src
