@@ -89,8 +89,9 @@ git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
 export SCRAM_ARCH=slc6_amd64_gcc630
-eval `cmsrel CMSSW_9_4_1`
-cd CMSSW_9_4_1/src
+CMSREL=CMSSW_9_4_10
+eval `cmsrel ${CMSREL}`
+cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
 
 # Install FastJet & contribs for HOTVR & XCONE
@@ -167,6 +168,6 @@ cd $CMSSW_BASE/src
 
 # Get the UHH2 repo & JEC files
 cd $CMSSW_BASE/src
-git clone -b RunII_94X_v2 https://github.com/UHH2/UHH2.git
+time git clone -b RunII_94X_v3 https://github.com/UHH2/UHH2.git
 cd UHH2
-git clone https://github.com/cms-jet/JECDatabase.git
+time git clone https://github.com/cms-jet/JECDatabase.git
