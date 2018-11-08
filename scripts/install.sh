@@ -97,7 +97,7 @@ eval `scramv1 runtime -sh`
 # Install FastJet & contribs for HOTVR & XCONE
 cd ../..
 FJVER="3.2.1"
-FJCONTRIBVER="1.032"
+FJCONTRIBVER="1.033"
 time setupFastjet $FJVER $FJCONTRIBVER
 
 cd $CMSSW_BASE/src
