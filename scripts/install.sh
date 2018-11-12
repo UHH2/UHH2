@@ -89,24 +89,23 @@ git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
 export SCRAM_ARCH=slc6_amd64_gcc630
-eval `cmsrel CMSSW_9_4_1`
-cd CMSSW_9_4_1/src
+CMSREL=CMSSW_9_4_10
+eval `cmsrel ${CMSREL}`
+cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
 
 # Install FastJet & contribs for HOTVR & XCONE
 cd ../..
 FJVER="3.2.1"
-FJCONTRIBVER="1.032"
+FJCONTRIBVER="1.033"
 time setupFastjet $FJVER $FJCONTRIBVER
 
 cd $CMSSW_BASE/src
 
 time git cms-init -y  # not needed if not addpkg ing
 
-# Add in preliminary cut-based EGamma VID
-git cms-merge-topic lsoffi:CMSSW_9_4_0_pre3_TnP
-# Add in preliminary MVA EGamma VID
-git cms-merge-topic guitargeek:ElectronID_MVA2017_940pre3
+# Add in both cut-based and MVA EGamma VID
+git cms-merge-topic guitargeek:EgammaID_9_4_X
 
 # Necessary for using our FastJet
 git cms-addpkg RecoJets/JetProducers
@@ -117,13 +116,8 @@ git cms-addpkg RecoBTag/SecondaryVertex
 git cms-addpkg RecoJets/JetAlgorithms
 git cms-addpkg PhysicsTools/JetMCAlgos
 
-# For adding in Puppi multiplicities, until they get merged into a 94X release
-# Do a manual cherry-pick of the PR commits otherwise merge-topic will get loads of extra fluff
-git cms-addpkg PhysicsTools/PatAlgos
-git remote add ahinzmann https://github.com/ahinzmann/cmssw.git 
-git fetch ahinzmann puppiWeightedMultiplicities94
-git cherry-pick 074af13a443
-git cherry-pick 3c96176da18
+# EE noise mitigation in MET
+git cms-merge-topic cms-met:METFixEE2017_949_v2
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
@@ -148,25 +142,8 @@ scram setup fastjet-contrib-archive
 scram b clean
 time scram b $MAKEFLAGS
 
-# Some manual hacking to get the MVA files - in future they should be
-# in the main release, and you can remove this
-# Note: the “external” area appears after “scram build” is run at least once
-cd $CMSSW_BASE/external/$SCRAM_ARCH
-git clone https://github.com/lsoffi/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
-cd data/RecoEgamma/ElectronIdentification/data
-git checkout CMSSW_9_4_0_pre3_TnP
-#remove not needed files to keep tarball for crab small
-rm TMVA_*.weights.xml
-rm -r Spring16*
-rm -r  Spring15/
-rm -r PHYS14/
-# prune their .git as it gets included in crab tarball
-# remove if you really struggle for space
-git gc --prune
-cd $CMSSW_BASE/src
-
 # Get the UHH2 repo & JEC files
 cd $CMSSW_BASE/src
-git clone -b RunII_94X_v2 https://github.com/UHH2/UHH2.git
+time git clone -b RunII_94X_v3 https://github.com/UHH2/UHH2.git
 cd UHH2
-git clone https://github.com/cms-jet/JECDatabase.git
+time git clone https://github.com/cms-jet/JECDatabase.git
