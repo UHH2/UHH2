@@ -17,12 +17,12 @@ class FactorizedJetCorrector;
 
 //2017
 namespace JERFiles{
-#define DEFINE_JERFILES_MC(tag,ver,jetCollection)			\
+#define DEFINE_JERFILES_MC(tag,ver,jetCollection)\
   extern const std::vector<std::string> tag##_V##ver##_L123_##jetCollection##_MC;\
   extern const std::vector<std::string> tag##_V##ver##_L1RC_##jetCollection##_MC;\
   extern const std::vector<std::string> tag##_V##ver##_L1FastJet_##jetCollection##_MC; \
-\  
-
+\
+  
 #define DEFINE_JERFILES_DATA(tag,ver,jetCollection)\
   extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA;\
@@ -46,9 +46,7 @@ namespace JERFiles{
   extern const std::vector<std::string> tag##_V##ver##_F_L1FastJet_##jetCollection##_DATA;\
 \
 
-
-
-#define DEFINE_JERFILES_DEcombined(tag,ver,jetCollection)			\
+#define DEFINE_JERFILES_DEcombined(tag,ver,jetCollection)\
   extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_D_L123_noRes_##jetCollection##_DATA;\
