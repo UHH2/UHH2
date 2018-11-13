@@ -4,7 +4,7 @@ isDebug = False
 useData = True
 #useData = False
 
-met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi")
+met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi","slimmedMETsModifiedMET")
 
 # minimum pt for the large-R jets (applies for all: vanilla CA8/CA15,
 # cmstoptag, heptoptag). Also applied for the corresponding genjets.
@@ -194,6 +194,19 @@ process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
                                                   )
 task.add(process.prunedPrunedGenParticles)
 
+###############################################
+# Modified TypeI MET
+#
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+
+runMetCorAndUncFromMiniAOD (
+        process,
+        isData = useData, # false for MC
+        fixEE2017 = True,
+        fixEE2017Params = {'userawPt': True, 'ptThreshold':50.0, 'minEtaThreshold':2.65, 'maxEtaThreshold': 3.139} ,
+        postfix = "ModifiedMET"
+)
+#task.add(process.fullPatMetSequenceModifiedMET)
 
 ###############################################
 # CHS JETS
@@ -1539,7 +1552,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 
                                 #For 2017 data, store prefiring Info
 #                                doPrefireFilter=cms.bool(True),
-                                doL1seed=cms.bool(False),
+                                doL1seed=cms.bool(True),
                                 l1GtSrc = cms.InputTag("gtStage2Digis"),
                                 l1EGSrc = cms.InputTag("caloStage2Digis:EGamma"),
                                 l1JetSrc = cms.InputTag("caloStage2Digis:Jet"),
@@ -1616,6 +1629,7 @@ process.MyNtuple = cms.EDFilter('NtupleWriter',
 # Note: we run in unscheduled mode, i.e. all modules are run as required;
 # just make sure that the electron IDs run before MyNtuple
 process.p = cms.Path(
+    process.fullPatMetSequenceModifiedMET *
     process.egmGsfElectronIDSequence *
     process.MyNtuple
 )
