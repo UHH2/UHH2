@@ -22,6 +22,9 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_L123_##jetCollection##_M
 const std::vector<std::string> JERFiles::tag##_V##ver##_L1RC_##jetCollection##_MC = { \
   string("JECDatabase/textFiles/")+#tag+"_V"+#ver+"_MC/"+#tag+"_V"+#ver+"_MC_L1RC_"+#jetCollection+".txt", \
 }; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_L1FastJet_##jetCollection##_MC = { \
+  string("JECDatabase/textFiles/")+#tag+"_V"+#ver+"_MC/"+#tag+"_V"+#ver+"_MC_L1FastJet_"+#jetCollection+".txt", \
+}; \
 
 #define SET_JERFILES_DATA(tag,ver,jetCollection)        \
 const std::vector<std::string> JERFiles::tag##_V##ver##_B_L123_##jetCollection##_DATA = { \
@@ -94,6 +97,22 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_E_L1RC_##jetCollection##
 const std::vector<std::string> JERFiles::tag##_V##ver##_F_L1RC_##jetCollection##_DATA = { \
   string("JECDatabase/textFiles/")+#tag+"F_V"+#ver+"_DATA/"+#tag+"F_V"+#ver+"_DATA_L1RC_"+#jetCollection+".txt", \
 }; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_B_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"B_V"+#ver+"_DATA/"+#tag+"B_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_C_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"C_V"+#ver+"_DATA/"+#tag+"C_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_D_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"D_V"+#ver+"_DATA/"+#tag+"D_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_E_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"E_V"+#ver+"_DATA/"+#tag+"E_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_F_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"F_V"+#ver+"_DATA/"+#tag+"F_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+ \
  \
 
 
@@ -182,7 +201,39 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_E_L1RC_##jetCollection##
 const std::vector<std::string> JERFiles::tag##_V##ver##_F_L1RC_##jetCollection##_DATA = { \
   string("JECDatabase/textFiles/")+#tag+"F_V"+#ver+"_DATA/"+#tag+"F_V"+#ver+"_DATA_L1RC_"+#jetCollection+".txt", \
 }; \
- \
+const std::vector<std::string> JERFiles::tag##_V##ver##_B_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"B_V"+#ver+"_DATA/"+#tag+"B_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_C_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"C_V"+#ver+"_DATA/"+#tag+"C_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_DE_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_D_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_E_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"DE_V"+#ver+"_DATA/"+#tag+"DE_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##_V##ver##_F_L1FastJet_##jetCollection##_DATA = { \
+  string("JECDatabase/textFiles/")+#tag+"F_V"+#ver+"_DATA/"+#tag+"F_V"+#ver+"_DATA_L1FastJet_"+#jetCollection+".txt", \
+}; \
+\
+
+#define SET_JERFILES_MC2016(tag,ver,jetCollection)	\
+const std::vector<std::string> JERFiles::tag##V##ver##_L123_##jetCollection##_MC = { \
+string("JECDatabase/textFiles/")+#tag+"V"+#ver+"_MC/"+#tag+"V"+#ver+"_MC_L1FastJet_"+#jetCollection+".txt", \
+string("JECDatabase/textFiles/")+#tag+"V"+#ver+"_MC/"+#tag+"V"+#ver+"_MC_L2Relative_"+#jetCollection+".txt", \
+string("JECDatabase/textFiles/")+#tag+"V"+#ver+"_MC/"+#tag+"V"+#ver+"_MC_L3Absolute_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##V##ver##_L1RC_##jetCollection##_MC = { \
+string("JECDatabase/textFiles/")+#tag+"V"+#ver+"_MC/"+#tag+"V"+#ver+"_MC_L1RC_"+#jetCollection+".txt", \
+}; \
+const std::vector<std::string> JERFiles::tag##V##ver##_L1FastJet_##jetCollection##_MC = { \
+string("JECDatabase/textFiles/")+#tag+"V"+#ver+"_MC/"+#tag+"V"+#ver+"_MC_L1FastJet_"+#jetCollection+".txt", \
+}; \
+\
 
 
 SET_JERFILES_MC(Fall17_17Nov2017,6,AK4PFchs)
@@ -206,7 +257,7 @@ SET_JERFILES_DATA(Fall17_17Nov2017,28,AK4PFchs)
 SET_JERFILES_DEcombined(Fall17_17Nov2017,31,AK4PFchs)
 
 SET_JERFILES_DATA(Fall17_09May2018,1,AK4PFchs)
-
+SET_JERFILES_MC2016(Summer16_23Sep2016,4,AK4PFchs)
 
  void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & event, JetCorrectionUncertainty* jec_unc, int jec_unc_direction){
     auto factor_raw = jet.JEC_factor_raw();
@@ -279,15 +330,16 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     //we start from raw MET
     LorentzVector metv4= event.met->uncorr_v4();
     for(auto & jet : *event.jets){
+      auto factor_raw_JEC = jet.JEC_factor_raw();
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
       bool to_be_corrected = jet.v4().Pt() > 15.;
       bool good_eta = fabs(jet.v4().Eta())<eta_thresh_low || fabs(jet.v4().Eta())>eta_thresh_high;
-      bool good_pt = jet.v4().Pt() > pt_thresh;
+      bool good_pt = jet.v4().Pt()*factor_raw_JEC > pt_thresh;//Modified MET recipe threshold on raw jet pt
       bool use_jet = good_eta || (!good_eta && good_pt);
       to_be_corrected = to_be_corrected && use_jet;
       to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
       if(to_be_corrected){
-	auto factor_raw_JEC = jet.JEC_factor_raw();
+	
 	auto L1factor_raw = jet.JEC_L1factor_raw();
 	//	auto factor_raw_JER = jet.JER_factor_raw();
 
@@ -317,15 +369,16 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     metv4.SetPhi(TMath::ATan2(event.met->rawCHS_py(),event.met->rawCHS_px()));
     //    cout<<"MET BEFORE: "<< metv4<<endl;
     for(auto & jet : *event.jets){
+      auto factor_raw_JEC = jet.JEC_factor_raw();
       //thresholds on the corrected jets: pt > 15, EM fraction < 0.9
       bool to_be_corrected = jet.v4().Pt() > 15.;
       bool good_eta = fabs(jet.v4().Eta())<eta_thresh_low || fabs(jet.v4().Eta())>eta_thresh_high;
-      bool good_pt = jet.v4().Pt() > pt_thresh;
+      bool good_pt = jet.v4().Pt()*factor_raw_JEC > pt_thresh; //Modified MET recipe threshold on raw jet pt
       bool use_jet = good_eta || (!good_eta && good_pt);
       to_be_corrected = to_be_corrected && use_jet;
       to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
       if(to_be_corrected){
-	auto factor_raw_JEC = jet.JEC_factor_raw();
+	
 	//	auto factor_raw_JER = jet.JER_factor_raw();
 
 	//	corrector_L1RC.setJetPt(jet.pt() * factor_raw_JEC * factor_raw_JER);

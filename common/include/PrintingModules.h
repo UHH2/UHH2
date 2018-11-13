@@ -40,3 +40,30 @@ private:
     std::string name;
     double ptmin;
 };
+
+class GenJetPrinter: public uhh2::AnalysisModule {
+public:
+    explicit GenJetPrinter(const std::string & name_, double ptmin_): name(name_), ptmin(ptmin_){}
+    virtual bool process(uhh2::Event & event) override;
+private:
+    std::string name;
+    double ptmin;
+};
+
+class TopJetPrinter: public uhh2::AnalysisModule {
+public:
+    explicit TopJetPrinter(const std::string & name_, double ptmin_): name(name_), ptmin(ptmin_){}
+    virtual bool process(uhh2::Event & event) override;
+private:
+    std::string name;
+    double ptmin;
+};
+
+class GenTopJetPrinter: public uhh2::AnalysisModule {
+public:
+    explicit GenTopJetPrinter(const std::string & name_, double ptmin_): name(name_), ptmin(ptmin_){}
+    virtual bool process(uhh2::Event & event) override;
+private:
+    std::string name;
+    double ptmin;
+};
