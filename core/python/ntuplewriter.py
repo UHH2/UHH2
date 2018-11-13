@@ -1175,6 +1175,8 @@ elecID_mod_ls = [
 for mod in elecID_mod_ls:
     setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
 
+from RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff import isoInputs
+
 # slimmedElectronsUSER ( = slimmedElectrons + USER variables)
 process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
                                               src=cms.InputTag(
@@ -1214,8 +1216,7 @@ process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
                                               vmaps_double=cms.vstring(
                                                   el_isovals),
 
-                                              effAreas_file=cms.FileInPath(
-                                                  'RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt'),
+                                              effAreas_file=cms.FileInPath(isoInputs.isoEffAreas),
                                               )
 
 process.electronMVAValueMapProducer.src = cms.InputTag("")
