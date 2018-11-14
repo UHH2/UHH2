@@ -107,7 +107,7 @@ endif
 
 
 LIBS := $(shell root-config --libs) -lSFrameCore -lXMLParser 
-CXXFLAGS := $(shell root-config --cflags) -std=c++1y -O3 -Wall -Wextra -Werror=overflow -Werror=maybe-uninitialized -Wno-unused-local-typedefs -Wdeprecated-declarations -g -fPIC -pipe $(BOOST_CFLAGS) $(INCLUDES) $(USERCXXFLAGS)
+CXXFLAGS := $(shell root-config --cflags) -std=c++17 -O3 -Wall -Wextra -Werror=overflow -Werror=maybe-uninitialized -Wno-unused-local-typedefs -Wdeprecated-declarations -g -fPIC -pipe $(BOOST_CFLAGS) $(INCLUDES) $(USERCXXFLAGS)
 LDFLAGS := $(LIBS) -fPIC -rdynamic -lrt -Wl,-z,defs -L$(SFRAME_LIB_PATH) $(USERLDFLAGS)
 
 SHARED_CMD = echo creating $@; $(CXX) $^ -shared $(LDFLAGS) -o $@ 
