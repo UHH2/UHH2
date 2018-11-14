@@ -108,7 +108,6 @@ time git cms-addpkg RecoJets/JetProducers
 time git cms-addpkg RecoBTag/SecondaryVertex
 time git cms-addpkg RecoJets/JetAlgorithms
 time git cms-addpkg PhysicsTools/JetMCAlgos
-time git cms-addpkg RecoEgamma/ElectronIdentification
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
@@ -135,6 +134,6 @@ time scram b $MAKEFLAGS
 
 # Get the UHH2 repo & JEC files
 cd $CMSSW_BASE/src
-time git clone -b master https://github.com/UHH2/UHH2.git
+time git clone -b RunII_102X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 time git clone https://github.com/cms-jet/JECDatabase.git
