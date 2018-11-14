@@ -1,13 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env bash -e
 
 # might be usefull to call
 #
 #   export CMSSW_GIT_REFERENCE=<DIRECTORYWITHENOUGHSPACE>/cmssw.git
 #
 # before running this script
-
-# Exit script if command fails
-set -e
 
 # Create default make args for parallel jobs
 if [ -z "$MAKEFLAGS" ]
