@@ -89,8 +89,8 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh
 time git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
-export SCRAM_ARCH=slc6_amd64_gcc630
-CMSREL=CMSSW_10_1_7
+export SCRAM_ARCH=slc6_amd64_gcc700
+CMSREL=CMSSW_10_2_6
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
