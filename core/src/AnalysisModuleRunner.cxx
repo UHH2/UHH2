@@ -22,8 +22,6 @@
 using namespace std;
 using namespace uhh2;
 
-using boost::optional;
-
 using uhh2::detail::EventHelper;
 
 namespace {
@@ -258,7 +256,7 @@ SFrameContext::SFrameContext(AnalysisModuleRunner & base_, const SInputData& sin
 optional<map<string, string>> SFrameContext::read_metadata(TDirectory * dir){
     TTree * meta_intree = dynamic_cast<TTree*>(dir->Get("uhh2_meta"));
     if(meta_intree == nullptr){
-        return boost::none;
+        return std::nullopt;
     }
     else{
         string data;
