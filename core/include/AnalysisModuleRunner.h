@@ -38,22 +38,22 @@ public:
     AnalysisModuleRunner();
     
     // called at the beginning of the cycle, but for proof only in one process!
-    void BeginCycle() throw( SError ) override {}
-    void EndCycle() throw( SError ) override {}
+    void BeginCycle() override {}
+    void EndCycle() override {}
 
     // called at the beginning of the input data, on all proof nodes:
-    void BeginInputData( const SInputData& ) throw( SError ) override;
-    void EndInputData  ( const SInputData& ) throw( SError ) override {}
+    void BeginInputData( const SInputData& ) override;
+    void EndInputData  ( const SInputData& ) override {}
 
     // called at the beginning of an input file, on the proof nodes:
-    void BeginInputFile( const SInputData& ) throw( SError ) override;
-    void ExecuteEvent( const SInputData&, Double_t ) throw( SError ) override;
+    void BeginInputFile( const SInputData& ) override;
+    void ExecuteEvent( const SInputData&, Double_t ) override;
     
     // called after processing the dataset, only on the proof master, not on the proof nodes:
-    void EndMasterInputData(const SInputData &) throw (SError) override;
+    void EndMasterInputData(const SInputData &) override;
     
-    void CloseOutputFile() throw( SError ) override;
-    virtual void Initialize( TXMLNode* node ) throw( SError ) override;
+    void CloseOutputFile() override;
+    virtual void Initialize( TXMLNode* node ) override;
     virtual void SetConfig(const SCycleConfig& config) override;
     
     virtual ~AnalysisModuleRunner();

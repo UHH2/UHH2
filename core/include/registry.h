@@ -16,7 +16,7 @@ public:
     
     template<typename T>
     static int register_(const std::string & key){
-        return instance().iregister<T>(key);
+        return instance().template iregister<T>(key);
     }
     
 private:
