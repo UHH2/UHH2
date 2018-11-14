@@ -532,7 +532,7 @@ AnalysisModuleRunner::~AnalysisModuleRunner() {
 //
 // Note that in proof mode, Initialize is only called on the master, where the configuration object is constructed
 // and then distributed to the other workers.
-void AnalysisModuleRunner::Initialize(TXMLNode* node) throw (SError) {
+void AnalysisModuleRunner::Initialize(TXMLNode* node) {
     TXMLNode* nodes = node->GetChildren();
     while (nodes != nullptr) {
         if (!nodes->HasChildren()) {
@@ -646,11 +646,11 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
     setup_output_done = false;
 }
 
-void AnalysisModuleRunner::BeginInputData(const SInputData& in) throw (SError) {
+void AnalysisModuleRunner::BeginInputData(const SInputData& in) {
     pimpl->begin_input_data(*this, in);
 }
 
-void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
+void AnalysisModuleRunner::BeginInputFile(const SInputData&) {
     // fill trigger names map:
     if (pimpl->m_readTrigger) {
         std::map<int, std::vector<std::string>> run2triggernames;
@@ -728,7 +728,7 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) throw (SError) {
     pimpl->context->begin_input_file(*pimpl->event);
 }
 
-void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SError) {
+void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) {
     // read in the event from the input tree:
     pimpl->context->begin_event(*pimpl->event);
     // copy to Event members and setup trigger:
@@ -774,7 +774,7 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) throw (SE
     }
 }
 
-void AnalysisModuleRunner::CloseOutputFile() throw( SError ){
+void AnalysisModuleRunner::CloseOutputFile(){
     // ideally, we want 'our' metadata output trees handled by SFrame. Unfortunately this is not foreseen.
     // So try to emulate behavior of SFrame, i.e. as is SCycleBaseNTuple::SaveOutputTrees would also save our metadata trees.
     // SaveOutputTrees cannot be overridden directly (it is not virtual), but SaveOutputTrees is only
@@ -783,7 +783,7 @@ void AnalysisModuleRunner::CloseOutputFile() throw( SError ){
     SCycleBase::CloseOutputFile();
 }
 
-void AnalysisModuleRunner::EndMasterInputData(const SInputData &) throw (SError) {
+void AnalysisModuleRunner::EndMasterInputData(const SInputData &) {
     TList * l = GetHistOutput();
     TIter next(l);
     TObject * obj;
