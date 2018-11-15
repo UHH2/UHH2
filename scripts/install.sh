@@ -104,10 +104,6 @@ time git cms-init -y  # not needed if not addpkg ing
 
 # Necessary for using our FastJet
 time git cms-addpkg RecoJets/JetProducers
-# Necessary for using Fastjet >=3.2.1 to pickup new JetDefinition default arg order
-time git cms-addpkg RecoBTag/SecondaryVertex
-time git cms-addpkg RecoJets/JetAlgorithms
-time git cms-addpkg PhysicsTools/JetMCAlgos
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
