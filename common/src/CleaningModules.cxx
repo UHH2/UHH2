@@ -23,6 +23,14 @@ bool JetCleaner::process(Event & event){
     return true;
 }
 
+GenJetCleaner::GenJetCleaner(Context & ctx, float minpt, float maxeta, string const & label_):
+  genjet_id(PtEtaCut(minpt, maxeta)){}
+
+bool GenJetCleaner::process(Event & event){
+    clean_collection(*event.genjets, event, genjet_id);
+    return true;
+}
+
 JetMuonOverlapRemoval::JetMuonOverlapRemoval(double deltaRmin):
 deltaRmin_(deltaRmin){}
 
