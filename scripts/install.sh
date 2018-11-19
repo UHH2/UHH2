@@ -50,7 +50,7 @@ setupFastjet() {
 	# Optimisation flags same as in CMSSW
 	# But not -fffast-time as fails Nsubjettiness checks
 	FJCXXFLAGS="-O3 -Wall -ftree-vectorize -msse3 -fPIC"
-	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins --enable-pyext --disable-auto-ptr CXXFLAGS="${FJCXXFLAGS}"
+	./configure --prefix="${FJINSTALLDIR}" --enable-atlascone --enable-cmsiterativecone --enable-siscone --enable-allcxxplugins --enable-pyext --disable-auto-ptr CXXFLAGS="${FJCXXFLAGS}"
 	make $MAKEFLAGS
 	# make check  # fails for siscone
 	make install
