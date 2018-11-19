@@ -47,7 +47,10 @@ setupFastjet() {
 	git clone -b cms/v$FJVER https://github.com/UHH2/fastjet.git
 	cd fastjet
 	autoreconf -f -i  # needed to avoid 'aclocal-1.15' is missing on your system
-	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins --enable-pyext --disable-auto-ptr CXXFLAGS=-fPIC
+	# Optimisation flags same as in CMSSW
+	# But not -fffast-time as fails Nsubjettiness checks
+	FJCXXFLAGS="-O3 -Wall -ftree-vectorize -msse3 -fPIC"
+	./configure --prefix="${FJINSTALLDIR}" --enable-allplugins --enable-allcxxplugins --enable-pyext --disable-auto-ptr CXXFLAGS="${FJCXXFLAGS}"
 	make $MAKEFLAGS
 	# make check  # fails for siscone
 	make install
@@ -70,7 +73,7 @@ setupFastjet() {
 	git clone https://github.com/UHH2/HOTVRContrib.git HOTVR/
 	# although we add fastjet-config to path, due to a bug we need to
 	# explicitly state its path to ensure the necessary fragile library gets built
-	./configure --fastjet-config="${FJINSTALLDIR}/bin/fastjet-config" CXXFLAGS=-fPIC
+	./configure --fastjet-config="${FJINSTALLDIR}/bin/fastjet-config" CXXFLAGS="${FJCXXFLAGS}"
 	make $MAKEFLAGS
 	make check
 	make install
