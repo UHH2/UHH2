@@ -3,8 +3,9 @@
 */obj
 */bin
 */tmp
-core/python/*.pyc
+pydump*.py
 core/python/__init__.py
+*.pyc
 *.root
 *~
 *.local
