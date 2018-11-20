@@ -108,21 +108,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     process.source = cms.Source("PoolSource",
                                 fileNames=cms.untracked.vstring([
-                                    #'file:////nfs/dust/cms/user/hinzmann/6214AEE4-751A-E711-8645-0025905A6056.root'
-                                    #            '/store/data/Run2017B/JetHT/MINIAOD/23Jun2017-v1/00000/004DBDB2-C859-E711-8DD0-002590D0B042.root'
-                                    # '/store/data/Run2017B/JetHT/MINIAOD/22Jun2017-v1/00000/00063668-8858-E711-9C49-001E67792486.root'
-                                    # '/store/data/Run2017D/JetHT/MINIAOD/PromptReco-v1/000/302/031/00000/24C14AB9-488F-E711-A2D5-02163E019D41.root'
-                                    # '/store/data/Run2017B/JetHT/MINIAOD/17Nov2017-v1/20000/0016BE6B-FACC-E711-88D8-B499BAAC0068.root'
                                     '/store/data/Run2017D/JetHT/MINIAOD/17Nov2017-v1/20000/0249B143-8CCC-E711-BA7C-0025905C2CD0.root'
-                                    # '/store/data/Run2017B/SingleElectron/MINIAOD/17Nov2017-v1/40000/00701B6B-E9DB-E711-B111-02163E019D6D.root'
-                                    # '/store/mc/RunIIFall17MiniAOD/QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/50000/00197229-2FDD-E711-9070-0025904AC2C4.root'
-                                    # '/store/data/Run2017B/SingleMuon/MINIAOD/PromptReco-v1/000/297/046/00000/32AC3177-7A56-E711-BE34-02163E019D73.root'
                                 ]),
                                 skipEvents=cms.untracked.uint32(0)
                                 )
 
     process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100))
-    # process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(10))
 
     # Grid-control changes:
     gc_maxevents = '__MAX_EVENTS__'
@@ -138,7 +129,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         process.source.skipEvents = int(gc_skipevents)
         process.maxEvents.input = int(gc_maxevents)
 
-    # process.source.skipEvents = int(30000) #TEST
 
     ###############################################
     # OUT
