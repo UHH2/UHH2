@@ -175,15 +175,33 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # RECO AND GEN SETUP
     process.load("Configuration.Geometry.GeometryRecoDB_cff")
     process.load("Configuration.StandardSequences.MagneticField_cff")
-    # see
-    # https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
+
+    # see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
     # for latest global tags
-    process.load(
-        'Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-    if useData:
-        process.GlobalTag.globaltag = '92X_dataRun2_Jun23ReReco_PixelCommissioning'
-    else:
-        process.GlobalTag.globaltag = '94X_mc2017_realistic_v10'
+    # But check with https://twiki.cern.ch/twiki/bin/viewauth/CMS/PdmVAnalysisSummaryTable
+    process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+
+    # There should be 1 key:value entry per entry in acceptable_years, and each
+    # should have a dictionary of "data" and "mc" with their respsective global tags
+    global_tags = {
+        "2016": {
+            # TODO: does this need runH specific GTs?
+            "data": "94X_dataRun2_v10",
+            "mc": "94X_mcRun2_asymptotic_v3",
+        },
+        "2017": {
+            "data": "94X_dataRun2_v6",
+            "mc": "94X_mc2017_realistic_v14"
+        },
+        "2018": {
+            "data": "102X_dataRun2_Prompt_v6",
+            "mc": "102X_upgrade2018_realistic_v12",
+        },
+    }
+    if set(global_tags.keys()) != set(acceptable_years):
+        raise KeyError("Mismatch between acceptable_years and global_tags")
+
+    process.GlobalTag.globaltag = global_tags[year]['data' if useData else 'mc']
 
     process.fixedGridRhoFastjetAll = fixedGridRhoFastjetAll.clone(
         pfCandidatesTag='packedPFCandidates'
