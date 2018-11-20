@@ -174,7 +174,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # There should be 1 key:value entry per entry in acceptable_years, and each
     # should have a dictionary of "data" and "mc" with their respsective global tags
     global_tags = {
-        "2016": {
+        "2016v2": {
+            "data": "80X_dataRun2_2016SeptRepro_v7",
+            "mc": "80X_mcRun2_asymptotic_2016_TrancheIV_v6",
+        },
+        "2016v3": {
             # TODO: does this need runH specific GTs?
             "data": "94X_dataRun2_v10",
             "mc": "94X_mcRun2_asymptotic_v3",

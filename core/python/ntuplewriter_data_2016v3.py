@@ -8,7 +8,7 @@ You should try and put any centralised changes in generate_process(), not here.
 """
 
 
-process = generate_process(year="2016", useData=True)
+process = generate_process(year="2016v3", useData=True)
 
 # Please do not commit changes to source filenames - used for consistency testing
 process.source.fileNames = cms.untracked.vstring([
@@ -17,5 +17,5 @@ process.source.fileNames = cms.untracked.vstring([
 process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(500))
 process.options.wantSummary = cms.untracked.bool(True)
 
-with open('pydump_data_2016.py', 'w') as f:
+with open('pydump_data_2016v3.py', 'w') as f:
     f.write(process.dumpPython())
