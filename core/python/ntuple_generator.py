@@ -1,3 +1,17 @@
+"""
+Module to generate our whole ntuple-making chain.
+
+Main function imported & used in other scripts - this file should not be used directly with cmsRun
+
+e.g.:
+
+>> import FWCore.ParameterSet.Config as cms
+>> from UHH2.core.ntuple_generator import generate_process
+>> process = generate_process(year="2016", useData=False)
+
+"""
+
+
 import FWCore.ParameterSet.Config as cms
 from Configuration.EventContent.EventContent_cff import *
 from RecoJets.Configuration.RecoPFJets_cff import *
@@ -15,30 +29,35 @@ from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 # NOTE: all from xxx import * must go here, not inside the function
 
 
-"""
-Module to generate our whole ntuple-making chain.
-
-Main function imported & used in other scripts - this file should not be used directly with cmsRun
-"""
-
-
-def generate_process(useData=True, isDebug=False, fatjet_ptmin=150.):
+def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     """Main function to make a cms.Process object to create ntuples.
-
+    
     Parameters
     ----------
+    year : str
+        Year to setup ntuplewriter for.
     useData : bool, optional
         True if running over data, False for MC
     isDebug : bool, optional
         True for extra debug printout, don't use in production as slower
     fatjet_ptmin : float, optional
         Minimum pT for large-R reco jets & their corresponding genjets
-
+    
     Returns
     -------
     cms.Process
         Required process object for cmsRun configs
+    
+    Raises
+    ------
+    ValueError
+        If the year argument is not one of the allowable options
     """
+    year = str(year)  # sanitise string
+    acceptable_years = ["2016v2", "2016v3", "2017", "2018"]
+    if year not in acceptable_years:
+        raise ValueError("year argument in generate_process() should be one of: %s. You provided: %s" % (acceptable_years, year))
+
     met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi")
 
     bTagDiscriminators = [
