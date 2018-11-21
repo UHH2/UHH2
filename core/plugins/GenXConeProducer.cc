@@ -185,7 +185,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   if (doLeptonSpecific_ && (lepton == nullptr)) {
-    edm::LogWarning("NoGenXConeLepton") << "No lepton found in GenXConeProducer" << std::endl;
+    edm::LogInfo("NoGenXConeLepton") << "No lepton found in GenXConeProducer" << std::endl;
   }
 
 
