@@ -1144,14 +1144,16 @@ def generate_process(useData=True, isDebug=False, fatjet_ptmin=150.):
     switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
     elecID_mod_ls = [
-        'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V1_cff',
+        'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff',
         'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff',
-        'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V1_cff',
-        'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V1_cff',
+        'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V2_cff',
+        'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V2_cff',
     ]
 
     for mod in elecID_mod_ls:
         setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
+
+    from RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff import isoInputs
 
     # slimmedElectronsUSER ( = slimmedElectrons + USER variables)
     process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
@@ -1160,42 +1162,41 @@ def generate_process(useData=True, isDebug=False, fatjet_ptmin=150.):
 
                                                   vmaps_bool=cms.PSet(
 
-                                                      cutBasedElectronID_Fall17_94X_V1_veto=cms.InputTag(
-                                                          'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-veto'),
-                                                      cutBasedElectronID_Fall17_94X_V1_loose=cms.InputTag(
-                                                          'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-loose'),
-                                                      cutBasedElectronID_Fall17_94X_V1_medium=cms.InputTag(
-                                                          'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-medium'),
-                                                      cutBasedElectronID_Fall17_94X_V1_tight=cms.InputTag(
-                                                          'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-tight'),
+                                                      cutBasedElectronID_Fall17_94X_V2_veto=cms.InputTag(
+                                                          'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-veto'),
+                                                      cutBasedElectronID_Fall17_94X_V2_loose=cms.InputTag(
+                                                          'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-loose'),
+                                                      cutBasedElectronID_Fall17_94X_V2_medium=cms.InputTag(
+                                                          'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-medium'),
+                                                      cutBasedElectronID_Fall17_94X_V2_tight=cms.InputTag(
+                                                          'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight'),
                                                       heepElectronID_HEEPV70=cms.InputTag(
                                                           'egmGsfElectronIDs:heepElectronID-HEEPV70'),
-                                                      mvaEleID_Fall17_noIso_V1_wp90=cms.InputTag(
-                                                          'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wp90'),
-                                                      mvaEleID_Fall17_noIso_V1_wp80=cms.InputTag(
-                                                          'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wp80'),
-                                                      mvaEleID_Fall17_noIso_V1_wpLoose=cms.InputTag(
-                                                          'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V1-wpLoose'),
-                                                      mvaEleID_Fall17_iso_V1_wp90=cms.InputTag(
-                                                          'egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wp90'),
-                                                      mvaEleID_Fall17_iso_V1_wp80=cms.InputTag(
-                                                          'egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wp80'),
-                                                      mvaEleID_Fall17_iso_V1_wpLoose=cms.InputTag(
-                                                          'egmGsfElectronIDs:mvaEleID-Fall17-iso-V1-wpLoose'),
+                                                      mvaEleID_Fall17_noIso_V2_wp90=cms.InputTag(
+                                                          'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V2-wp90'),
+                                                      mvaEleID_Fall17_noIso_V2_wp80=cms.InputTag(
+                                                          'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V2-wp80'),
+                                                      mvaEleID_Fall17_noIso_V2_wpLoose=cms.InputTag(
+                                                          'egmGsfElectronIDs:mvaEleID-Fall17-noIso-V2-wpLoose'),
+                                                      mvaEleID_Fall17_iso_V2_wp90=cms.InputTag(
+                                                          'egmGsfElectronIDs:mvaEleID-Fall17-iso-V2-wp90'),
+                                                      mvaEleID_Fall17_iso_V2_wp80=cms.InputTag(
+                                                          'egmGsfElectronIDs:mvaEleID-Fall17-iso-V2-wp80'),
+                                                      mvaEleID_Fall17_iso_V2_wpLoose=cms.InputTag(
+                                                          'egmGsfElectronIDs:mvaEleID-Fall17-iso-V2-wpLoose'),
                                                   ),
 
                                                   vmaps_float=cms.PSet(
                                                       ElectronMVAEstimatorIso=cms.InputTag(
-                                                          'electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17IsoV1Values'),
+                                                          'electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17IsoV2Values'),
                                                       ElectronMVAEstimatorNoIso=cms.InputTag(
-                                                          'electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values')
+                                                          'electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV2Values')
                                                   ),
 
                                                   vmaps_double=cms.vstring(
                                                       el_isovals),
 
-                                                  effAreas_file=cms.FileInPath(
-                                                      'RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt'),
+                                                  effAreas_file=cms.FileInPath(isoInputs.isoEffAreas),
                                                   )
     task.add(process.egmGsfElectronIDs)
     task.add(process.slimmedElectronsUSER)
@@ -1229,24 +1230,18 @@ def generate_process(useData=True, isDebug=False, fatjet_ptmin=150.):
                                         # each string should correspond to a variable saved
                                         # via the "userInt" method in the pat::Electron collection used 'electron_source'
                                         # [the configuration of the pat::Electron::userInt variables should be done in PATElectronUserData]
-                                        'cutBasedElectronID_Fall17_94X_V1_veto',
-                                        'cutBasedElectronID_Fall17_94X_V1_loose',
-                                        'cutBasedElectronID_Fall17_94X_V1_medium',
-                                        'cutBasedElectronID_Fall17_94X_V1_tight',
+                                        'cutBasedElectronID_Fall17_94X_V2_veto',
+                                        'cutBasedElectronID_Fall17_94X_V2_loose',
+                                        'cutBasedElectronID_Fall17_94X_V2_medium',
+                                        'cutBasedElectronID_Fall17_94X_V2_tight',
                                         'heepElectronID_HEEPV70',
-                                        'mvaEleID_Fall17_noIso_V1_wp90',
-                                        'mvaEleID_Fall17_noIso_V1_wp80',
-                                        'mvaEleID_Fall17_noIso_V1_wpLoose',
-                                        'mvaEleID_Fall17_iso_V1_wp90',
-                                        'mvaEleID_Fall17_iso_V1_wp80',
-                                        'mvaEleID_Fall17_iso_V1_wpLoose',
+                                        'mvaEleID_Fall17_noIso_V2_wp90',
+                                        'mvaEleID_Fall17_noIso_V2_wp80',
+                                        'mvaEleID_Fall17_noIso_V2_wpLoose',
+                                        'mvaEleID_Fall17_iso_V2_wp90',
+                                        'mvaEleID_Fall17_iso_V2_wp80',
+                                        'mvaEleID_Fall17_iso_V2_wpLoose',
                                     ),
-                                    # #Add variables to trace possible issues with the ECAL slew rate mitigation
-                                    # #https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#EGM
-                                    # doEleAddVars = cms.bool(useData),
-                                    # dupECALClusters_source = cms.InputTag('particleFlowEGammaGSFixed:dupECALClusters'),
-                                    # hitsNotReplaced_source = cms.InputTag('ecalMultiAndGSGlobalRecHitEB:hitsNotReplaced'),
-                                    doEleAddVars=cms.bool(False),
 
                                     doMuons=cms.bool(True),
                                     muon_sources=cms.vstring("slimmedMuonsUSER"),
