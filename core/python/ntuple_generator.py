@@ -994,11 +994,6 @@ def generate_process(useData=True, isDebug=False, fatjet_ptmin=150.):
                                         )
     task.add(process.hotvrPuppi)
 
-    process.hotvrCHS = cms.EDProducer("HOTVRProducer",
-        src=cms.InputTag("chs")
-    )
-    task.add(process.hotvrCHS)
-
     process.hotvrGen = cms.EDProducer("GenHOTVRProducer",
         src=cms.InputTag("packedGenParticlesForJetsNoNu"),
         mu=cms.double(30),
@@ -1576,7 +1571,6 @@ def generate_process(useData=True, isDebug=False, fatjet_ptmin=150.):
                                     doHOTVR=cms.bool(True),
                                     doXCone=cms.bool(True),
                                     HOTVR_sources=cms.VInputTag(
-                                        cms.InputTag("hotvrCHS"),
                                         cms.InputTag("hotvrPuppi")
                                     ),
                                     XCone_sources=cms.VInputTag(
