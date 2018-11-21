@@ -1,8 +1,9 @@
 import FWCore.ParameterSet.Config as cms
 from UHH2.core.ntuple_generator import generate_process  # use CMSSW type path for CRAB
+from UHH2.core.optionsParse import setup_opts, parse_apply_opts
 
 
-"""NTuple config for 2016 Data datasets.
+"""NTuple config for 2017 Data datasets.
 
 You should try and put any centralised changes in generate_process(), not here.
 """
@@ -17,8 +18,10 @@ process.source.fileNames = cms.untracked.vstring([
     # '/store/data/Run2017D/SingleMuon/MINIAOD/31Mar2018-v1/80000/1E703527-F436-E811-80A7-E0DB55FC1055.root',
     # '/store/data/Run2017D/MET/MINIAOD/31Mar2018-v1/00000/88C7FC3D-FD38-E811-97D5-0CC47A7C340C.root',
 ])
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(500))
-process.options.wantSummary = cms.untracked.bool(True)
+
+# Do this after setting process.source.fileNames, since we want the ability to override it on the commandline
+options = setup_opts()
+parse_apply_opts(process, options)
 
 with open('pydump_data_2017.py', 'w') as f:
     f.write(process.dumpPython())
