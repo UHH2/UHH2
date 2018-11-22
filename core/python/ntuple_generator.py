@@ -176,7 +176,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     global_tags = {
         "2016v2": {
             "data": "80X_dataRun2_2016SeptRepro_v7",
-            "mc": "80X_mcRun2_asymptotic_2016_TrancheIV_v6",
+            "mc": "80X_mcRun2_asymptotic_2016_TrancheIV_v8",
         },
         "2016v3": {
             # TODO: does this need runH specific GTs?
