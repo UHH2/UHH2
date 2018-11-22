@@ -189,7 +189,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         },
         "2018": {
             "data": "102X_dataRun2_Prompt_v6",
-            "mc": "102X_upgrade2018_realistic_v12",
+            "mc": "102X_upgrade2018_realistic_v15",
         },
     }
     if set(global_tags.keys()) != set(acceptable_years):
