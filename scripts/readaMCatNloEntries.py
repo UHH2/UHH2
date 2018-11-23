@@ -52,7 +52,7 @@ def main():
         pool.join()
         print "number of events in",arg,sum(result.get())
         xmlFile = open(arg,'a')
-        xmlFile.write('<!-- < NumberEntries="'+str(result_list[i])+'" Method=weights /> -->')
+        xmlFile.write('<!-- < NumberEntries="'+str(sum(result.get()))+'" Method=weights /> -->')
 
     #except:
     #    "usage of script: number of cores, first file, second file, ..."
