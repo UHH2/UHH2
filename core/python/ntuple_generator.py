@@ -1,3 +1,17 @@
+"""
+Module to generate our whole ntuple-making chain.
+
+Main function imported & used in other scripts - this file should not be used directly with cmsRun
+
+e.g.:
+
+>> import FWCore.ParameterSet.Config as cms
+>> from UHH2.core.ntuple_generator import generate_process
+>> process = generate_process(year="2016", useData=False)
+
+"""
+
+
 import FWCore.ParameterSet.Config as cms
 from Configuration.EventContent.EventContent_cff import *
 from RecoJets.Configuration.RecoPFJets_cff import *
@@ -15,30 +29,35 @@ from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 # NOTE: all from xxx import * must go here, not inside the function
 
 
-"""
-Module to generate our whole ntuple-making chain.
-
-Main function imported & used in other scripts - this file should not be used directly with cmsRun
-"""
-
-
-def generate_process(useData=True, isDebug=False, fatjet_ptmin=150.):
+def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     """Main function to make a cms.Process object to create ntuples.
-
+    
     Parameters
     ----------
+    year : str
+        Year to setup ntuplewriter for.
     useData : bool, optional
         True if running over data, False for MC
     isDebug : bool, optional
         True for extra debug printout, don't use in production as slower
     fatjet_ptmin : float, optional
         Minimum pT for large-R reco jets & their corresponding genjets
-
+    
     Returns
     -------
     cms.Process
         Required process object for cmsRun configs
+    
+    Raises
+    ------
+    ValueError
+        If the year argument is not one of the allowable options
     """
+    year = str(year)  # sanitise string
+    acceptable_years = ["2016v2", "2016v3", "2017", "2018"]
+    if year not in acceptable_years:
+        raise ValueError("year argument in generate_process() should be one of: %s. You provided: %s" % (acceptable_years, year))
+
     met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi")
 
     bTagDiscriminators = [
@@ -89,21 +108,12 @@ def generate_process(useData=True, isDebug=False, fatjet_ptmin=150.):
 
     process.source = cms.Source("PoolSource",
                                 fileNames=cms.untracked.vstring([
-                                    #'file:////nfs/dust/cms/user/hinzmann/6214AEE4-751A-E711-8645-0025905A6056.root'
-                                    #            '/store/data/Run2017B/JetHT/MINIAOD/23Jun2017-v1/00000/004DBDB2-C859-E711-8DD0-002590D0B042.root'
-                                    # '/store/data/Run2017B/JetHT/MINIAOD/22Jun2017-v1/00000/00063668-8858-E711-9C49-001E67792486.root'
-                                    # '/store/data/Run2017D/JetHT/MINIAOD/PromptReco-v1/000/302/031/00000/24C14AB9-488F-E711-A2D5-02163E019D41.root'
-                                    # '/store/data/Run2017B/JetHT/MINIAOD/17Nov2017-v1/20000/0016BE6B-FACC-E711-88D8-B499BAAC0068.root'
                                     '/store/data/Run2017D/JetHT/MINIAOD/17Nov2017-v1/20000/0249B143-8CCC-E711-BA7C-0025905C2CD0.root'
-                                    # '/store/data/Run2017B/SingleElectron/MINIAOD/17Nov2017-v1/40000/00701B6B-E9DB-E711-B111-02163E019D6D.root'
-                                    # '/store/mc/RunIIFall17MiniAOD/QCD_Pt-15to7000_TuneCP5_Flat_13TeV_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/50000/00197229-2FDD-E711-9070-0025904AC2C4.root'
-                                    # '/store/data/Run2017B/SingleMuon/MINIAOD/PromptReco-v1/000/297/046/00000/32AC3177-7A56-E711-BE34-02163E019D73.root'
                                 ]),
                                 skipEvents=cms.untracked.uint32(0)
                                 )
 
     process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100))
-    # process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(10))
 
     # Grid-control changes:
     gc_maxevents = '__MAX_EVENTS__'
@@ -119,7 +129,6 @@ def generate_process(useData=True, isDebug=False, fatjet_ptmin=150.):
         process.source.skipEvents = int(gc_skipevents)
         process.maxEvents.input = int(gc_maxevents)
 
-    # process.source.skipEvents = int(30000) #TEST
 
     ###############################################
     # OUT
@@ -156,15 +165,37 @@ def generate_process(useData=True, isDebug=False, fatjet_ptmin=150.):
     # RECO AND GEN SETUP
     process.load("Configuration.Geometry.GeometryRecoDB_cff")
     process.load("Configuration.StandardSequences.MagneticField_cff")
-    # see
-    # https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
+
+    # see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
     # for latest global tags
-    process.load(
-        'Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-    if useData:
-        process.GlobalTag.globaltag = '92X_dataRun2_Jun23ReReco_PixelCommissioning'
-    else:
-        process.GlobalTag.globaltag = '94X_mc2017_realistic_v10'
+    # But check with https://twiki.cern.ch/twiki/bin/viewauth/CMS/PdmVAnalysisSummaryTable
+    process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+
+    # There should be 1 key:value entry per entry in acceptable_years, and each
+    # should have a dictionary of "data" and "mc" with their respsective global tags
+    global_tags = {
+        "2016v2": {
+            "data": "80X_dataRun2_2016SeptRepro_v7",
+            "mc": "80X_mcRun2_asymptotic_2016_TrancheIV_v8",
+        },
+        "2016v3": {
+            # TODO: does this need runH specific GTs?
+            "data": "94X_dataRun2_v10",
+            "mc": "94X_mcRun2_asymptotic_v3",
+        },
+        "2017": {
+            "data": "94X_dataRun2_v6",
+            "mc": "94X_mc2017_realistic_v14"
+        },
+        "2018": {
+            "data": "102X_dataRun2_Prompt_v6",
+            "mc": "102X_upgrade2018_realistic_v15",
+        },
+    }
+    if set(global_tags.keys()) != set(acceptable_years):
+        raise KeyError("Mismatch between acceptable_years and global_tags")
+
+    process.GlobalTag.globaltag = global_tags[year]['data' if useData else 'mc']
 
     process.fixedGridRhoFastjetAll = fixedGridRhoFastjetAll.clone(
         pfCandidatesTag='packedPFCandidates'
