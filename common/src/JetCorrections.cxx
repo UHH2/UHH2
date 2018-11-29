@@ -275,7 +275,7 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
 //TypeI MET "smearing" (JER): -L1L2L3*JER+L1L2L3
 //-> TypeI MET (JEC+JER): -L1L2L3*JER+L1
 //In case of chs MET, L1RC is used instead of L1
-  void correct_MET(const Event & event, const bool & do_L1corr, double pt_thresh, double eta_thresh_low, double eta_thresh_high){
+  void correct_MET(const Event & event, double pt_thresh, double eta_thresh_low, double eta_thresh_high){
     //we start from raw MET
     LorentzVector metv4= event.met->uncorr_v4();
     for(auto & jet : *event.jets){
@@ -287,20 +287,15 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
       to_be_corrected = to_be_corrected && use_jet;
       to_be_corrected = to_be_corrected && (jet.neutralEmEnergyFraction()+jet.chargedEmEnergyFraction())<0.9;
       if(to_be_corrected){
-	auto factor_raw_JEC = jet.JEC_factor_raw();
-	auto L1factor_raw = jet.JEC_L1factor_raw();
-	//	auto factor_raw_JER = jet.JER_factor_raw();
+        auto factor_raw = jet.JEC_factor_raw();
+        auto L1factor_raw = jet.JEC_L1factor_raw();
 
-	//	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC * factor_raw_JER)*jet.v4();            //L1 corrected jets * JER smearing
-	LorentzVector L1corr =   (L1factor_raw * factor_raw_JEC)*jet.v4();            //L1 corrected jets
-	LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi) * JER smearing
-	metv4 -= L123corr;
+        LorentzVector L1corr =   (L1factor_raw*factor_raw)*jet.v4();            //L1 corrected jets
+        LorentzVector L123corr = jet.v4();                                      //L123 corrected jets (L23 in case of puppi)
+        metv4 -=  L123corr;
 
-	//For Puppi jets, no L1 correction is needed
-	if(do_L1corr){
-	  //slimmed MET is corrected by L1FastJet
-	  metv4 += L1corr;
-	}
+        //slimmed MET is corrected by L1FastJet, for Puppi: L1factor_raw = 1 --> L1corr = raw-jet pT.
+        metv4 += L1corr;
       }
     }
     event.met->set_pt(metv4.Pt());
@@ -436,8 +431,7 @@ bool JetCorrector::correct_met(uhh2::Event & event, const bool & isCHSmet, doubl
   assert(event.jets);
   if(!isCHSmet){ //for standart MET collection (most of the case) proceed with standart correction
     //propagate jet corrections to MET
-    bool correct_with_chs = used_ak4chs || metprop_possible_ak8chs;//for CHS use L1, for PUPPI L1 is not used
-    correct_MET(event, correct_with_chs, pt_thresh, eta_thresh_low,  eta_thresh_high);
+    correct_MET(event, pt_thresh, eta_thresh_low,  eta_thresh_high);
   }
   else{
     correct_MET(event, *corrector_L1RC, pt_thresh, eta_thresh_low,  eta_thresh_high);
