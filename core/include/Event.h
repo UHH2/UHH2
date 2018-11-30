@@ -104,7 +104,7 @@ public:
    * Throws the same exceptions as \c lookup_trigger_index. In addition, throws a runtime_error
    * if \c lookup_trigger_index returns false.
    */
-  bool trigger_prescale(TriggerIndex & ti) const;
+  int trigger_prescale(TriggerIndex & ti) const;
   
   /** \brief Test whether a given trigger is available for the current event
    * 

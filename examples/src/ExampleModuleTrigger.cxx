@@ -47,9 +47,11 @@ bool ExampleModuleTrigger::process(Event & event) {
     }
 
     // lookup_trigger_index allows to check whether a trigger is available.
-    // The code here is not really that useful, because the default
-    // behaviour of event.passes_trigger is also to throw an exception in case
-    // a trigger does not exist.
+    // Note that the default behaviour of event.passes_trigger
+    // is also to throw an exception in case a trigger does not exist,
+    // so normally one should use a TriggerSelection object.
+    // However it is useful if you also wish to lookup the trigger prescale,
+    // since you need the TriggerIndex
     if(!event.lookup_trigger_index(trigindex)){
         throw runtime_error("Trigger with name '" + triggername + "' not available");
     }
