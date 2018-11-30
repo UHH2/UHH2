@@ -56,7 +56,9 @@ bool ExampleModuleTrigger::process(Event & event) {
 
     bool passedTrigger = event.passes_trigger(trigindex);
     string passStr = passedTrigger ? " passed " : " did not pass ";
-    cout << "event " << event.event << passStr << "trigger " << triggername << endl;
+    int trigPrescale = -1;
+    if (event.isRealData) trigPrescale = event.trigger_prescale(trigindex);
+    cout << "event " << event.event << passStr << "trigger " << triggername << " with prescale " << trigPrescale << endl;
 
     // More most analyses, you would use a TriggerSelection object like this:
     bool passedMetFilter = met_filter_selection->passes(event);
