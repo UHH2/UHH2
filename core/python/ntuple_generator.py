@@ -1552,7 +1552,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     #  'hltL3crIsoL1sMu25L1f0L2f10QL3f27QL3trkIsoFiltered0p09', # HLT_IsoMu27_v*
                                     #  'hltEle27WPLooseGsfTrackIsoFilter',                      # HLT_Ele27_eta2p1_WPLoose_Gsf_v*
                                     #),
-                                    trigger_objects=cms.InputTag("slimmedPatTrigger"),
+                                    trigger_objects=cms.InputTag("selectedPatTrigger" if year == "2016v2" else "slimmedPatTrigger"),
 
                                     # *** gen stuff:
                                     doGenInfo=cms.bool(not useData),
