@@ -3,34 +3,36 @@
 
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
-#include "UHH2/common/include/CleaningModules.h"
-#include "UHH2/common/include/ElectronHists.h"
-#include "UHH2/examples/include/ExampleSelections.h"
-#include "UHH2/examples/include/ExampleHists.h"
+#include "UHH2/common/include/TriggerSelection.h"
 
 using namespace std;
 using namespace uhh2;
 
 /** \brief Example for accessing the trigger results of the event
- * 
- * This class is to show how to access trigger results directly. Usually, in analysis,
- * one should use the trigger selection modules in common.
+ *
+ * This class is to show how to access trigger results both directly,
+ * and in a more convenient manner using a TriggerSelection object.
  */
 class ExampleModuleTrigger: public AnalysisModule {
 public:
-    
+
     explicit ExampleModuleTrigger(Context & ctx);
     virtual bool process(Event & event) override;
 
 private:
-    string triggername;
+    string triggername, metfiltername;
     bool first_event;
     Event::TriggerIndex trigindex;
+    std::unique_ptr<Selection> met_filter_selection;
 };
 
 
-ExampleModuleTrigger::ExampleModuleTrigger(Context & ctx){
+ExampleModuleTrigger::ExampleModuleTrigger(Context & ctx):
+    first_event(true)
+{
     triggername = ctx.get("TriggerName");
+    metfiltername = ctx.get("MetFilterName");
+    met_filter_selection.reset(new TriggerSelection(metfiltername));
 }
 
 
@@ -43,26 +45,24 @@ bool ExampleModuleTrigger::process(Event & event) {
             cout << tname  << endl;
         }
     }
-    
-    // lookup_trigger allows to check whether a trigger is available.
+
+    // lookup_trigger_index allows to check whether a trigger is available.
     // The code here is not really that useful, because the default
-    // behavior of event.passes_trigger is also to throw an exception in case
+    // behaviour of event.passes_trigger is also to throw an exception in case
     // a trigger does not exist.
     if(!event.lookup_trigger_index(trigindex)){
         throw runtime_error("Trigger with name '" + triggername + "' not available");
     }
-    
-    bool passed = event.passes_trigger(trigindex);
-    
-    cout << "event " << event.event;
-    
-    if(passed){
-        cout << " passed ";
-    }
-    else{
-        cout << " did not pass ";
-    }
-    cout << triggername << endl;
+
+    bool passedTrigger = event.passes_trigger(trigindex);
+    string passStr = passedTrigger ? " passed " : " did not pass ";
+    cout << "event " << event.event << passStr << "trigger " << triggername << endl;
+
+    // More most analyses, you would use a TriggerSelection object like this:
+    bool passedMetFilter = met_filter_selection->passes(event);
+    passStr = passedMetFilter ? " passed " : " did not pass ";
+    cout << "event " << event.event << passStr << "met filter " << metfiltername << endl;
+
     return true;
 }
 
