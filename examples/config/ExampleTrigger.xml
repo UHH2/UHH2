@@ -11,8 +11,9 @@
         </InputData>
             
         <UserConfig>
-            <Item Name="AnalysisModule" Value="ExampleModuleTrigger" /> 
-            <Item Name="TriggerName" Value="HLT_Mu40_v*" />
+            <Item Name="AnalysisModule" Value="ExampleModuleTrigger" />
+            <Item Name="TriggerName" Value="HLT_PFJet80_v*" />
+            <Item Name="MetFilterName" Value="Flag_HBHENoiseFilter" />
         </UserConfig>
     </Cycle>
 </JobConfiguration>
