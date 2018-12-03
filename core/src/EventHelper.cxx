@@ -28,6 +28,9 @@ EventHelper::EventHelper(uhh2::Context & ctx_): ctx(ctx_), event(0), pvs(false),
     h_bsx = declare_in_out<float>("beamspot_x0", "beamspot_x0", ctx);
     h_bsy = declare_in_out<float>("beamspot_y0", "beamspot_y0", ctx);
     h_bsz = declare_in_out<float>("beamspot_z0", "beamspot_z0", ctx);
+    h_prefire = declare_in_out<float>("prefiringWeight", "prefiringWeight", ctx);
+    h_prefireUp = declare_in_out<float>("prefiringWeightUp", "prefiringWeightUp", ctx);
+    h_prefireDown = declare_in_out<float>("prefiringWeightDown", "prefiringWeightDown", ctx);
 }
 
 
@@ -86,7 +89,10 @@ void EventHelper::event_read(){
     event->beamspot_x0 = event->get(h_bsx);
     event->beamspot_y0 = event->get(h_bsy);
     event->beamspot_z0 = event->get(h_bsz);
-    
+    event->prefiringWeight = event->get(h_prefire);
+    event->prefiringWeightUp = event->get(h_prefireUp);
+    event->prefiringWeightDown = event->get(h_prefireDown);
+
     if(trigger){
         // fix triggerNames in case of a run change.
         if(triggernames_last_runid_event != event->run){
@@ -147,6 +153,9 @@ void EventHelper::event_write(){
     event->set(h_bsx, event->beamspot_x0);
     event->set(h_bsy, event->beamspot_y0);
     event->set(h_bsz, event->beamspot_z0);
+    event->set(h_prefire, event->prefiringWeight);
+    event->set(h_prefireUp, event->prefiringWeightUp);
+    event->set(h_prefireDown, event->prefiringWeightDown);
     
     // special case: trigger is saved only once per runid:
     if(trigger){

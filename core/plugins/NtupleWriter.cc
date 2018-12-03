@@ -207,6 +207,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
+  doPrefire = iConfig.getParameter<bool>("doPrefire");
   //doTrigHTEmu = iConfig.getParameter<bool>("doTrigHTEmu");
 
   doHOTVR = iConfig.getParameter<bool>("doHOTVR");
@@ -552,7 +553,15 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       name += triggerObjects_sources[j].c_str();
       branch(tr, name, "std::vector<FlavorParticle>", &triggerObjects_out[j]);
     }
-
+  }
+  branch(tr, "prefiringWeight", &event->prefiringWeight);
+  branch(tr, "prefiringWeightUp", &event->prefiringWeightUp);
+  branch(tr, "prefiringWeightDown", &event->prefiringWeightDown);
+  if(doPrefire){
+    std::string prefire_source = iConfig.getParameter<std::string>("prefire_source");
+    prefweight_token = consumes<double>(edm::InputTag(prefire_source, "NonPrefiringProb"));
+    prefweightup_token = consumes<double>(edm::InputTag(prefire_source, "NonPrefiringProbUp"));
+    prefweightdown_token = consumes<double>(edm::InputTag(prefire_source, "NonPrefiringProbDown"));
   }
   if(doAllPFParticles){
     event->pfparticles = new vector<PFParticle>;
@@ -1298,7 +1307,25 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      newrun=false;
    }
 
-   print_times(timer, "trigger");
+   if (doPrefire) {
+     edm::Handle<double> theprefweight;
+     iEvent.getByToken(prefweight_token, theprefweight);
+     float prefiringWeight = (*theprefweight);
+     event->prefiringWeight = prefiringWeight;
+
+     edm::Handle<double> theprefweightup;
+     iEvent.getByToken(prefweightup_token, theprefweightup);
+     float prefiringWeightUp = (*theprefweightup);
+     event->prefiringWeightUp = prefiringWeightUp;
+
+     edm::Handle<double> theprefweightdown;
+     iEvent.getByToken(prefweightdown_token, theprefweightdown);
+     float prefiringWeightDown = (*theprefweightdown);
+     event->prefiringWeightDown = prefiringWeightDown;
+
+   }
+
+   print_times(timer, "trigger+prefire");
 
    // ------------- HOTVR and XCone Jets  -------------
    if (doHOTVR) {
