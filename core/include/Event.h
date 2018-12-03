@@ -23,6 +23,10 @@ public:
 
   bool isRealData;
 
+  float prefiringWeight;
+  float prefiringWeightUp;
+  float prefiringWeightDown;
+
   float beamspot_x0;
   float beamspot_y0;
   float beamspot_z0;

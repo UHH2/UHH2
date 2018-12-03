@@ -12,6 +12,8 @@ e.g.:
 """
 
 
+import os
+
 import FWCore.ParameterSet.Config as cms
 from Configuration.EventContent.EventContent_cff import *
 from RecoJets.Configuration.RecoPFJets_cff import *
@@ -24,14 +26,13 @@ from RecoBTag.SecondaryVertex.trackSelection_cff import *
 from UHH2.core.muon_pfMiniIsolation_cff import *
 from UHH2.core.electron_pfMiniIsolation_cff import *
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
-from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 
 # NOTE: all from xxx import * must go here, not inside the function
 
 
 def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     """Main function to make a cms.Process object to create ntuples.
-    
+
     Parameters
     ----------
     year : str
@@ -42,12 +43,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         True for extra debug printout, don't use in production as slower
     fatjet_ptmin : float, optional
         Minimum pT for large-R reco jets & their corresponding genjets
-    
+
     Returns
     -------
     cms.Process
         Required process object for cmsRun configs
-    
+
     Raises
     ------
     ValueError
@@ -1232,6 +1233,34 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     task.add(process.egmGsfElectronIDs)
     task.add(process.slimmedElectronsUSER)
 
+    # L1 prefiring, only needed for simulation in 2016/7
+    prefire_era_dict = {
+        '2016v2': '2016BtoH',
+        '2016v3': '2016BtoH',
+        '2017': '2017BtoF'
+    }
+    prefire_era = None if useData else prefire_era_dict.get(year, None)
+    do_prefire = prefire_era is not None
+    prefire_source = "prefiringweight"
+    # Enable once they have sorted out the location of the map ROOT file
+    # otherwise major pain at the moment
+    do_prefire = False
+    if do_prefire:
+        L1Maps_file = os.path.join(os.environ['CMSSW_BASE'], "src/L1Prefiring/EventWeightProducer/files/L1PrefiringMaps_new.root") # update this when the EDProducer uses edm::FileInPath, so ugly.
+        setattr(process,
+                prefire_source,
+                cms.EDProducer("L1ECALPrefiringWeightProducer",
+                    ThePhotons = cms.InputTag("slimmedPhotons"),
+                    TheJets = cms.InputTag("slimmedJets"),
+                    L1Maps = cms.string(L1Maps_file),
+                    DataEra = cms.string(prefire_era),
+                    UseJetEMPt = cms.bool(False), #can be set to true to use jet prefiring maps parametrized vs pt(em) instead of pt
+                    PrefiringRateSystematicUncty = cms.double(0.2) #Minimum relative prefiring uncty per object
+                )
+        )
+        task.add(getattr(process, prefire_source))
+
+
     # NtupleWriter
 
     if useData:
@@ -1554,6 +1583,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     #),
                                     trigger_objects=cms.InputTag("selectedPatTrigger" if year == "2016v2" else "slimmedPatTrigger"),
 
+                                    doPrefire=cms.bool(do_prefire),
+                                    prefire_source=cms.string(prefire_source),
+
                                     # *** gen stuff:
                                     doGenInfo=cms.bool(not useData),
                                     genparticle_source=cms.InputTag(
@@ -1623,6 +1655,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         process.egmGsfElectronIDSequence *
         process.MyNtuple
     )
+    if do_prefire:
+        process.p.insert(0, process.prefiringweight)
     process.p.associate(task)
     process.p.associate(process.patAlgosToolsTask)
 

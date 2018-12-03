@@ -107,6 +107,8 @@ time git cms-init -y  # not needed if not addpkg ing
 
 # Necessary for using our FastJet
 time git cms-addpkg RecoJets/JetProducers
+# For L1 prefiring. In future this should be in a 10_2_X release
+time git cms-merge-topic lathomas:L1Prefiring_10_2_6
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)

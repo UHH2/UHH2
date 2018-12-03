@@ -67,6 +67,12 @@ bool ExampleModuleTrigger::process(Event & event) {
     passStr = passedMetFilter ? " passed " : " did not pass ";
     cout << "event " << event.event << passStr << "met filter " << metfiltername << endl;
 
+    if (!event.isRealData) {
+        cout << "event " << event.event << " has prefire weight: " << event.prefiringWeight;
+        cout << " up: " << event.prefiringWeightUp;
+        cout << " down: " << event.prefiringWeightDown << endl;
+    }
+
     return true;
 }
 

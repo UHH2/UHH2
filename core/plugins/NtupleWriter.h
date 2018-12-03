@@ -59,6 +59,7 @@ class NtupleWriter : public edm::EDFilter {
       bool doAllGenParticlesPythia8;
       bool doPV;
       bool doTrigger;
+      bool doPrefire;
       bool runOnMiniAOD;
       bool doRho;
       bool doTrigHTEmu;
@@ -123,6 +124,10 @@ class NtupleWriter : public edm::EDFilter {
       
       std::vector<std::string> trigger_prefixes;
       std::vector<std::string> triggerNames_outbranch;
+
+      edm::EDGetTokenT<double> prefweight_token;
+      edm::EDGetTokenT<double> prefweightup_token;
+      edm::EDGetTokenT<double> prefweightdown_token;
 
       bool newrun, setup_output_branches_done;
 
