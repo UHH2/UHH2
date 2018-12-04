@@ -1242,11 +1242,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     prefire_era = None if useData else prefire_era_dict.get(year, None)
     do_prefire = prefire_era is not None
     prefire_source = "prefiringweight"
-    # Enable once they have sorted out the location of the map ROOT file
-    # otherwise major pain at the moment
-    do_prefire = False
     if do_prefire:
-        L1Maps_file = os.path.join(os.environ['CMSSW_BASE'], "src/L1Prefiring/EventWeightProducer/files/L1PrefiringMaps_new.root") # update this when the EDProducer uses edm::FileInPath, so ugly.
+        # update this part when the EDProducer uses edm::FileInPath, so ugly:
+        L1Maps_file = os.path.join(os.environ['CMSSW_BASE'], "src/L1Prefiring/EventWeightProducer/files/L1PrefiringMaps_new.root")
+        # if using CRAB, you need this instead:
+        L1Maps_file = "L1PrefiringMaps_new.root"
         setattr(process,
                 prefire_source,
                 cms.EDProducer("L1ECALPrefiringWeightProducer",
