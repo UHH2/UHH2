@@ -1,7 +1,7 @@
 #pragma once
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Selection.h"
-#include "UHH2/core/include/Utils.h" 
+#include "UHH2/core/include/Utils.h"
 
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/NSelections.h"
@@ -37,7 +37,7 @@
  * no cleaner is run and all objects are kept.
  * All other modules are run as default; see the 'disable_*' methods below for disabling
  * certain modules, though.
- * 
+ *
  * Usage:
  * \code
  *  // in the AnalysisModule constructor:
@@ -45,7 +45,7 @@
  *  cm->set_jet_id(...);
  *  ... more set_*_id or disable_* calls ...
  *  cm->init(context);
- * 
+ *
  * // in AnalysisModule::process:
  *  bool pass_cm = cm->process(event);
  *  if(!pass_cm) return false;
@@ -104,18 +104,17 @@ private:
     MuonId muid;
     TauId tauid;
     JetPFID::wp working_point;
-    std::unique_ptr<JetCorrector> jet_corrector_MC, jet_corrector_B, jet_corrector_C, jet_corrector_D, jet_corrector_E, jet_corrector_F;
-    std::unique_ptr<JetLeptonCleaner_by_KEYmatching> JLC_MC, JLC_B, JLC_C, JLC_D, JLC_E, JLC_F;
+    std::unique_ptr<JetCorrector> jet_corrector_MC, jet_corrector_B, jet_corrector_C, jet_corrector_DE, jet_corrector_F;
+    std::unique_ptr<JetLeptonCleaner_by_KEYmatching> JLC_MC, JLC_B, JLC_C, JLC_DE, JLC_F;
     std::unique_ptr<JetResolutionSmearer> jet_resolution_smearer;
     std::unique_ptr<JetCleaner> jet_cleaner;
     const int runnr_B = 299329;
     const int runnr_C = 302029;
-    const int runnr_D = 303434;
-    const int runnr_E = 304826;
+    const int runnr_DE = 304826;
     const int runnr_F = 306462;
-    
+
     bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, topjetlepcleaner =false, jetptsort = false, metfilters = true, pvfilter = true, jetpfidcleaner=true, do_metcorrection = false;
-    
+
     double topjetcleanerDR;
     bool is_mc;
     bool init_done = false;
@@ -125,4 +124,3 @@ private:
 
     boost::optional<JetId> HT_jetid;
 };
-
