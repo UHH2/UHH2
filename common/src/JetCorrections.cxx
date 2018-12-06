@@ -23,7 +23,7 @@ using namespace uhh2;
     auto correctionfactor = correctionfactors.back();
 
     LorentzVector jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
-   
+
     if(jec_unc_direction!=0){
       if (jec_unc==NULL){
 	std::cerr << "JEC variation should be applied, but JEC uncertainty object is NULL! Abort." << std::endl;
@@ -33,11 +33,11 @@ using namespace uhh2;
       double pt = jet_v4_corrected.Pt();
       double eta = jet_v4_corrected.Eta();
       if (!(pt<5. || fabs(eta)>5.)) {
-      
+
 	jec_unc->setJetEta(eta);
 	jec_unc->setJetPt(pt);
-	
-	double unc = 0.;	  
+
+	double unc = 0.;
 	if (jec_unc_direction == 1){
 	  unc = jec_unc->getUncertainty(1);
 	  correctionfactor *= (1 + fabs(unc));
@@ -49,7 +49,7 @@ using namespace uhh2;
       }
     }
 
-  
+
     jet.set_v4(jet_v4_corrected);
     jet.set_JEC_factor_raw(1. / correctionfactor);
     jet.set_JEC_L1factor_raw(correctionfactor_L1);
@@ -58,7 +58,7 @@ using namespace uhh2;
 
 
 namespace {
-    
+
 // to share some code between JetCorrector and JetLeptonCleaner, provide some methods
 // dealing with jet energy corrections here:
 std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::string> & filenames){
@@ -69,9 +69,9 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
     return uhh2::make_unique<FactorizedJetCorrector>(pars);
 }
 
- 
 
-  
+
+
   //propagate to MET
   //apply type1 MET correction to RAW MET
   //NB: jet with substracted muon Pt should be used
@@ -138,10 +138,10 @@ std::unique_ptr<FactorizedJetCorrector> build_corrector(const std::vector<std::s
   }
 
 
-  
+
 
 JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::vector<std::string> & filenames, int &direction){
-    
+
     auto dir = ctx.get("jecsmear_direction", "nominal");
     if(dir == "up"){
         direction = 1;
@@ -171,7 +171,7 @@ JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::
       return jec_uncertainty;
     }
     return NULL;
-    
+
 }
 
 }
@@ -186,7 +186,7 @@ JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> &
     metprop_possible_ak8chs = ctx.get("JetCollection")=="patJetsAK8PFCHS";
     metprop_possible_ak8puppi = ctx.get("JetCollection")=="patJetsAK8PFPUPPI";
 
-    //MET is always corrected using the jet collection stated in the "JetCollection" Item in the context and only in case one of the stated jet collections is used. 
+    //MET is always corrected using the jet collection stated in the "JetCollection" Item in the context and only in case one of the stated jet collections is used.
     //Particularly, only one of these two AK8 collections should be used.
     propagate_to_met = used_ak4chs || used_ak4puppi || metprop_possible_ak8chs || metprop_possible_ak8puppi;
     if(!propagate_to_met) cout << "WARNING in JetCorrections.cxx: You specified a jet collection in the 'JetCollection' item in the config file that is not suited to correct MET. You should change that if you are using MET." << endl;
@@ -194,20 +194,20 @@ JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> &
     //The first two collections are standard MET collections. The third one is only used for derivation of JECs
     used_slimmedmet = ctx.get("METName")=="slimmedMETs";
     used_puppimet = ctx.get("METName")=="slimmedMETsPuppi";
-   
+
 
     //if CHS MET is used, the correction is based on the (L123 - L1RC) scheme, else it is based on the standard (L123-L1).
     //See also: https://twiki.cern.ch/twiki/bin/viewauth/CMS/METType1Type2Formulae
-    //If using CHS MET and therefore going for (L123 - L1RC), 
+    //If using CHS MET and therefore going for (L123 - L1RC),
     //the L1RC corrections have to be provided in a separate const std::vector<std::string>. This must only contain the L1RC correction.
-    if(filenames_L1RC.size() == 1) 
+    if(filenames_L1RC.size() == 1)
       corrector_L1RC = build_corrector(filenames_L1RC);
     //create dummy if L1RC is not needed. It is not applied anyway
     else corrector_L1RC = build_corrector(filenames);
 
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
-    
+
 bool JetCorrector::process(uhh2::Event & event){
     assert(event.jets);
 
@@ -215,7 +215,7 @@ bool JetCorrector::process(uhh2::Event & event){
     for(auto & jet : *event.jets){
       correct_jet(*corrector, jet, event, jec_uncertainty, direction);
     }
- 
+
     return true;
 }
 
@@ -224,10 +224,10 @@ bool JetCorrector::correct_met(uhh2::Event & event, const bool & isCHSmet, doubl
   if(!isCHSmet){ //for standart MET collection (most of the case) proceed with standart correction
     //propagate jet corrections to MET
     bool correct_with_chs = used_ak4chs || metprop_possible_ak8chs;//for CHS use L1, for PUPPI L1 is not used
-    correct_MET(event, correct_with_chs, pt_thresh, eta_thresh_low,  eta_thresh_high); 
+    correct_MET(event, correct_with_chs, pt_thresh, eta_thresh_low,  eta_thresh_high);
   }
   else{
-    correct_MET(event, *corrector_L1RC, pt_thresh, eta_thresh_low,  eta_thresh_high); 
+    correct_MET(event, *corrector_L1RC, pt_thresh, eta_thresh_low,  eta_thresh_high);
   }
 
   return true;
@@ -242,7 +242,7 @@ TopJetCorrector::TopJetCorrector(uhh2::Context & ctx, const std::vector<std::str
     direction = 0;
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
-    
+
 bool TopJetCorrector::process(uhh2::Event & event){
     assert(event.topjets);
     for(auto & jet : *event.topjets){
@@ -259,12 +259,12 @@ SubJetCorrector::SubJetCorrector(uhh2::Context & ctx, const std::vector<std::str
     direction = 0;
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
 }
-    
+
 bool SubJetCorrector::process(uhh2::Event & event){
     assert(event.topjets);
     for(auto & topjet : *event.topjets){
         auto subjets = topjet.subjets();
-        for (auto & subjet : subjets) { 
+        for (auto & subjet : subjets) {
             correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
         }
         topjet.set_subjets(move(subjets));
@@ -281,7 +281,7 @@ GenericJetCorrector::GenericJetCorrector(uhh2::Context & ctx, const std::vector<
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
     h_jets = ctx.get_handle<std::vector<Jet> >(collectionname);
 }
-    
+
 bool GenericJetCorrector::process(uhh2::Event & event){
 
     const auto jets = &event.get(h_jets);
@@ -301,7 +301,7 @@ GenericTopJetCorrector::GenericTopJetCorrector(uhh2::Context & ctx, const std::v
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
     h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
 }
-    
+
 bool GenericTopJetCorrector::process(uhh2::Event & event){
 
     const auto jets = &event.get(h_jets);
@@ -321,14 +321,14 @@ GenericSubJetCorrector::GenericSubJetCorrector(uhh2::Context & ctx, const std::v
     jec_uncertainty = corrector_uncertainty(ctx, filenames, direction) ;
     h_jets = ctx.get_handle<std::vector<TopJet> >(collectionname);
 }
-    
+
 bool GenericSubJetCorrector::process(uhh2::Event & event){
 
     const auto topjets = &event.get(h_jets);
     assert(topjets);
     for(auto & topjet : *topjets){
         auto subjets = topjet.subjets();
-        for (auto & subjet : subjets) { 
+        for (auto & subjet : subjets) {
             correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
         }
         topjet.set_subjets(move(subjets));
@@ -358,7 +358,7 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
                     // note that muon energy fraction as stored in the jet refers to the raw jet energy.
                     double muon_energy_in_jet = jet_p4_raw.E() * jet.muonEnergyFraction();
                     double new_muon_energy_in_jet = muon_energy_in_jet - mu.energy();
-                    
+
                     // test compatibility of the hypothesis that the muon has been clustered to the jet with
                     // the jet information. The hypothesis is rejected if the muon energy in the jet is too small
                     // (but allow 10% off). Note that in general (for muon multiplicity > 1), the muon energy in
@@ -396,7 +396,7 @@ bool JetLeptonCleaner::process(uhh2::Event & event){
                     auto jet_p4_raw = jet.v4() * jet.JEC_factor_raw();
                     double electron_energy_in_jet = jet_p4_raw.E() * jet.chargedEmEnergyFraction();
                     double new_electron_energy_in_jet = electron_energy_in_jet - ele.energy();
-                    
+
                     if(new_electron_energy_in_jet < -0.1 * ele.energy() || (jet.chargedEmEnergyFraction() == 1 && new_electron_energy_in_jet > 0.1 * ele.energy())){
                         continue;
                     }
@@ -531,7 +531,7 @@ bool JetLeptonCleaner_by_KEYmatching::process(uhh2::Event& event){
   }
 
   return true;
-    
+
 }
 
 
@@ -603,6 +603,52 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Summer16_25nsV1 = {
   {{2.964, 1.7788, 1.9796, 1.5780}},
   {{3.139, 1.1869, 1.3112, 1.0626}},
   {{5.191, 1.1922, 1.3410, 1.0434}},
+};
+
+
+// 2017
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.522, 1.05325, 1.0563, 1.0502}},
+  {{0.783, 1.12443, 1.13123, 1.11763}},
+  {{1.131, 1.07745, 1.08264, 1.07226}},
+  {{1.305, 1.07706, 1.08918, 1.06494}},
+  {{1.74, 1.07232, 1.07863, 1.06601}},
+  {{1.93, 1.07241, 1.09621, 1.04861}},
+  {{2.043, 1.08814, 1.14028, 1.036}},
+  {{2.322, 1.07464, 1.10508, 1.0442}},
+  {{2.5, 1.07105, 1.16178, 0.980317}},
+  {{2.853, 1.46856, 1.55712, 1.38}},
+  {{2.964, 2.65947, 2.72613, 2.59281}},
+  {{3.139, 1.43135, 1.44844, 1.41426}},
+  {{5.191, 1.31982, 1.34467, 1.29497}},
+
+};
+
+
+// 2017 --> To be used with 2017 data and 94X MC
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17_V3 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.522, 1.14320, 1.16543, 1.12097}},
+  {{0.783, 1.18152, 1.22987, 1.13317}},
+  {{1.131, 1.09887, 1.14444, 1.05330}},
+  {{1.305, 1.11365, 1.25332, 0.973979}},
+  {{1.740, 1.13072, 1.27776, 0.98369}},
+  {{1.930, 1.15996, 1.25759, 1.06232}},
+  {{2.043, 1.23926, 1.43013, 1.04839}},
+  {{2.322, 1.26039, 1.41049, 1.11029}},
+  {{2.500, 1.40853, 1.61049, 1.20657}},
+  {{2.853, 1.99090, 2.55927, 1.42253}},
+  {{2.964, 2.29227, 2.66654, 1.91800}},
+  {{3.139, 1.26957, 1.37847, 1.16067}},
+  {{5.191, 1.15425, 1.30663, 1.00187}},
+
 };
 
 ////
@@ -699,12 +745,12 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
       float recopt = jet_v4.pt();
       float abseta = fabs(jet_v4.eta());
 
-      
+
       // find next genjet:
       auto closest_genjet = closestParticle(jet, gen_jets);
       float genpt = -1.;
-      
-      float resolution = getResolution(jet_v4.eta(), rho, jet_v4.pt())  ; 
+
+      float resolution = getResolution(jet_v4.eta(), rho, jet_v4.pt())  ;
 
       // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt. These jets will be treated with the stochastic method.
       if(!(closest_genjet == nullptr) && uhh2::deltaR(*closest_genjet, jet) < 0.5*radius){
@@ -763,7 +809,7 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 
       jet.set_JEC_factor_raw(factor_raw);
       jet.set_v4(jet_v4);
-    
+
   }
 
   return;
@@ -791,7 +837,7 @@ float GenericJetResolutionSmearer::getResolution(float eta, float rho, float pt)
   float par1;
   float par2;
   float par3;
-    
+
   bool valid=false;
 
   while(!m_resfile.eof() && !valid){
@@ -807,7 +853,7 @@ float GenericJetResolutionSmearer::getResolution(float eta, float rho, float pt)
     m_resfile >> par1;
     m_resfile >> par2;
     m_resfile >> par3;
-    
+
     //find correct bin
     if(eta_min <= eta && eta_max > eta && rho_min <= rho && rho_max > rho && pt_min <= pt && pt_max > pt){
       valid=true;
@@ -819,7 +865,7 @@ float GenericJetResolutionSmearer::getResolution(float eta, float rho, float pt)
     res_formula->SetParameters(par0,par1,par2,par3);
     resolution = res_formula->Eval(pt);
   }
-  
+
   return resolution;
 }
 
