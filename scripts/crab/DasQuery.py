@@ -23,8 +23,8 @@ def autocomplete_Datasets(data):
         else:
             result_array.append(element)
     if len(result_array) == 0: 
-        print "No samples found going to exit"
-        sys.exit(0)
+        print "No samples found"
+        return []
     # Do this to remove duplicates but maintain order of insertion
     # We get duplicates because it queries ALL databases not just the main one
     # https://github.com/dmwm/DAS/issues/4287#issuecomment-390278822
