@@ -61,7 +61,8 @@ config.JobType.sendExternalFolder = True
 
 config.Site.storageSite = 'T2_DE_DESY'
 
-config.General.requestName = requestNames[0]
-config.Data.inputDataset = inputDatasets[0]
+if len(inputDatasets) > 0 and len(requestNames) > 0:
+    config.General.requestName = requestNames[0]
+    config.Data.inputDataset = inputDatasets[0]
 
 
