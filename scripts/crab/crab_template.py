@@ -32,6 +32,7 @@ for x in inputDatasets:
 #
 
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
+from CRABClient.ClientExceptions import ProxyException
 import os
 
 config = config()
@@ -53,7 +54,13 @@ config.JobType.inputFiles = [os.path.join(os.environ['CMSSW_BASE'], 'src/L1Prefi
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'
 config.Data.unitsPerJob = 7500
-config.Data.outLFNDirBase = '/store/user/%s/RunII_80X_v3/' % (getUsernameFromSiteDB())
+try:
+    config.Data.outLFNDirBase = '/store/user/%s/RunII_102X_v1/' % (getUsernameFromSiteDB())
+except ProxyException as e:
+    print "Encountered ProxyException:"
+    print e.message
+    print "Not setting config.Data.outLFNDirBase, will use default"
+
 config.Data.publication = False
 config.JobType.sendExternalFolder = True 
 #config.Data.allowNonValidInputDataset = True
