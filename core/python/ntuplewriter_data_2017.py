@@ -14,8 +14,8 @@ process = generate_process(year="2017", useData=True)
 # Please do not commit changes to source filenames - used for consistency testing
 process.source.fileNames = cms.untracked.vstring([
     '/store/data/Run2017D/JetHT/MINIAOD/31Mar2018-v1/70000/DAAA92B6-8044-E811-9E9E-0CC47A4D7638.root',
-    # '/store/data/Run2017D/SingleElectron/MINIAOD/31Mar2018-v1/80000/4899B9E7-F038-E811-8012-00000065FE80.root',
     # '/store/data/Run2017D/SingleMuon/MINIAOD/31Mar2018-v1/80000/1E703527-F436-E811-80A7-E0DB55FC1055.root',
+    # '/store/data/Run2017D/SingleElectron/MINIAOD/31Mar2018-v1/80000/4899B9E7-F038-E811-8012-00000065FE80.root',
     # '/store/data/Run2017D/MET/MINIAOD/31Mar2018-v1/00000/88C7FC3D-FD38-E811-97D5-0CC47A7C340C.root',
 ])
 
