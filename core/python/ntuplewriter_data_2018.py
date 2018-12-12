@@ -15,7 +15,7 @@ process = generate_process(year="2018", useData=True)
 process.source.fileNames = cms.untracked.vstring([
     '/store/data/Run2018D/JetHT/MINIAOD/PromptReco-v2/000/325/170/00000/9494B803-292B-F343-9BCC-6CAD47CB0C8B.root'
     # '/store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/321/233/00000/6C7B6F79-24A3-E811-A7BF-FA163EC61E98.root'
-    # '/store/data/Run2018D/EGamma/MINIAOD/PromptReco-v2/000/320/500/00000/CEC0AF98-F895-E811-919A-FA163EE8C7E8.root'
+    # '/store/data/Run2018D/EGamma/MINIAOD/PromptReco-v2/000/325/175/00000/9D0F9360-DD60-314A-BB24-33D62A3CD6BD.root'
 ])
 
 # Do this after setting process.source.fileNames, since we want the ability to override it on the commandline
