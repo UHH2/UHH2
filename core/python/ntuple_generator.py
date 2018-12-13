@@ -84,7 +84,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     task = cms.Task()
 
     process.load("FWCore.MessageService.MessageLogger_cfi")
-    process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
+    process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(250)
     #process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
     process.options = cms.untracked.PSet(
         wantSummary=cms.untracked.bool(False),
@@ -1527,17 +1527,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                         'hltSinglePFJet400',
                                         'hltSinglePFJet450',
                                         'hltSinglePFJet500',
-                                        #single jet FWD triggers
-                                        'hltSinglePFFwdJet40',
-                                        'hltSinglePFFwdJet60',
-                                        'hltSinglePFFwdJet80',
-                                        'hltSinglePFFwdJet140',
-                                        'hltSinglePFFwdJet200',
-                                        'hltSinglePFFwdJet260',
-                                        'hltSinglePFFwdJet320',
-                                        'hltSinglePFFwdJet400',
-                                        'hltSinglePFFwdJet450',
-                                        'hltSinglePFFwdJet500',
 
                                         # single jet FWD triggers
                                         'hltSinglePFFwdJet40',
