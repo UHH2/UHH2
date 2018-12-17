@@ -9,6 +9,9 @@ core/python/__init__.py
 *.root
 *~
 *.local
+*.pdf
+*.png
+*.json
 VLQToHiggsPairProd/*
 ZprimeSemiLeptonic/*
 
