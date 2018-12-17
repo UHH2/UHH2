@@ -22,7 +22,7 @@ namespace JERFiles{
   extern const std::vector<std::string> tag##_V##ver##_L1RC_##jetCollection##_MC;\
   extern const std::vector<std::string> tag##_V##ver##_L1FastJet_##jetCollection##_MC; \
 \
-  
+
 #define DEFINE_JERFILES_DATA(tag,ver,jetCollection)\
   extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
   extern const std::vector<std::string> tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA;\
@@ -86,7 +86,7 @@ namespace JERFiles{
   DEFINE_JERFILES_MC(Fall17_17Nov2017,6,AK8PFPuppi)
 
   DEFINE_JERFILES_MC(Fall17_17Nov2017,11,AK4PFchs)
-  
+
   DEFINE_JERFILES_MC(Fall17_17Nov2017,23,AK4PFchs)
   DEFINE_JERFILES_MC(Fall17_17Nov2017,24,AK4PFchs)
 
@@ -94,7 +94,7 @@ namespace JERFiles{
   DEFINE_JERFILES_DATA(Fall17_17Nov2017,6,AK8PFPuppi)
 
   DEFINE_JERFILES_DATA(Fall17_17Nov2017,11,AK4PFchs)
-  
+
   DEFINE_JERFILES_DATA(Fall17_17Nov2017,23,AK4PFchs)
   DEFINE_JERFILES_DATA(Fall17_17Nov2017,24,AK4PFchs)
   DEFINE_JERFILES_DATA(Fall17_17Nov2017,25,AK4PFchs)
@@ -102,7 +102,7 @@ namespace JERFiles{
   DEFINE_JERFILES_DATA(Fall17_17Nov2017,27,AK4PFchs)
   DEFINE_JERFILES_DATA(Fall17_17Nov2017,28,AK4PFchs)
   DEFINE_JERFILES_DEcombined(Fall17_17Nov2017,31,AK4PFchs)
-  
+
   DEFINE_JERFILES_DATA(Fall17_09May2018,1,AK4PFchs)
   DEFINE_JERFILES_MC2016(Summer16_23Sep2016,4,AK4PFchs)
 }
@@ -331,6 +331,8 @@ namespace JERSmearing {
   extern const SFtype1 SF_13TeV_Fall17_V2_RunDE;
   extern const SFtype1 SF_13TeV_Fall17_V2_RunBCDEF;
   extern const SFtype1 SF_13TeV_Fall17_V2_RunF_ECAL;
+  extern const SFtype1 SF_13TeV_Fall17_V3_RunBCDEF_Pythia;
+  extern const SFtype1 SF_13TeV_Fall17_V3_RunBCDEF_Madgraph;
 }
 
 
