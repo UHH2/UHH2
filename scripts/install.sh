@@ -160,9 +160,8 @@ rm TMVA_*.weights.xml
 rm -r Spring16*
 rm -r  Spring15/
 rm -r PHYS14/
-# prune their .git as it gets included in crab tarball
-# remove if you really struggle for space
-git gc --prune
+# remove their .git as it gets included in crab tarball
+rm -rf .git
 cd $CMSSW_BASE/src
 
 # Get the UHH2 repo & JEC files
