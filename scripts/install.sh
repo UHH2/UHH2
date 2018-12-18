@@ -106,6 +106,15 @@ time git cms-init -y  # not needed if not addpkg ing
 
 # Add in both cut-based and MVA EGamma VID
 git cms-merge-topic guitargeek:EgammaID_9_4_X
+# Remove old IDs that inflate CRAB tarball over limit
+rm -r RecoEgamma/PhotonIdentification/data/MVA/PHYS14
+rm -r RecoEgamma/PhotonIdentification/data/MVA/Spring16
+rm -r RecoEgamma/PhotonIdentification/data/MVA/Spring15
+rm -r RecoEgamma/ElectronIdentification/data/PHYS14
+rm -r RecoEgamma/ElectronIdentification/data/Spring15
+rm -r RecoEgamma/ElectronIdentification/data/Spring16_GeneralPurpose_V1
+rm -r RecoEgamma/ElectronIdentification/data/Spring16_HZZ_V1
+rm -r RecoEgamma/ElectronIdentification/data/Summer16
 
 # Necessary for using our FastJet
 git cms-addpkg RecoJets/JetProducers
