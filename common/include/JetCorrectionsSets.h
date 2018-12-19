@@ -22,7 +22,6 @@ namespace JERFiles{
   extern const std::vector<std::string> tag##_V##ver##_D_##Correction##_##jetCollection##_DATA;   \
   extern const std::vector<std::string> tag##_V##ver##_E_##Correction##_##jetCollection##_DATA;   \
   extern const std::vector<std::string> tag##_V##ver##_F_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_DE_##Correction##_##jetCollection##_DATA;  \
 
   #define DEFINE_JECFILES_MC(tag,ver,jetCollection)     \
   DEFINE_CORRECTION_MC(tag,ver,jetCollection,L123)      \
@@ -45,11 +44,13 @@ namespace JERFiles{
   DEFINE_JECFILES_MC(Fall17_17Nov2017,11,AK4PFchs)
   DEFINE_JECFILES_MC(Fall17_17Nov2017,24,AK4PFchs)
   DEFINE_JECFILES_MC(Fall17_17Nov2017,32,AK4PFchs)
+  DEFINE_JECFILES_MC(Fall17_17Nov2017,32,AK8PFPuppi)
 
   DEFINE_JECFILES_DATA(Fall17_17Nov2017,11,AK4PFchs)
   DEFINE_JECFILES_DATA(Fall17_17Nov2017,24,AK4PFchs)
   DEFINE_JECFILES_DATA(Fall17_17Nov2017,31,AK4PFchs)
   DEFINE_JECFILES_DATA(Fall17_17Nov2017,32,AK4PFchs)
   DEFINE_JECFILES_DATA(Fall17_09May2018,3,AK4PFchs)
+  DEFINE_JECFILES_DATA(Fall17_17Nov2017,32,AK8PFPuppi)
 
 }
