@@ -3,7 +3,9 @@
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/Utils.h"
+#include "UHH2/common/include/JetCorrectionsSets.h"
 #include "UHH2/JetMETObjects/interface/JetCorrectionUncertainty.h"
+
 #include "TRandom.h"
 #include "TFormula.h"
 
@@ -11,93 +13,6 @@
 #include <fstream>
 
 class FactorizedJetCorrector;
-
-/* /// namespace to define some useful filename constants to be used for jet energy corrections */
-/* namespace JERFiles { */
-
-//2017
-namespace JERFiles{
-#define DEFINE_JERFILES_MC(tag,ver,jetCollection)\
-  extern const std::vector<std::string> tag##_V##ver##_L123_##jetCollection##_MC;\
-  extern const std::vector<std::string> tag##_V##ver##_L1RC_##jetCollection##_MC;\
-  extern const std::vector<std::string> tag##_V##ver##_L1FastJet_##jetCollection##_MC; \
-\
-
-#define DEFINE_JERFILES_DATA(tag,ver,jetCollection)\
-  extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_B_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_C_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_B_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_C_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_B_L1FastJet_##jetCollection##_DATA; \
-  extern const std::vector<std::string> tag##_V##ver##_C_L1FastJet_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L1FastJet_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L1FastJet_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L1FastJet_##jetCollection##_DATA;\
-\
-
-#define DEFINE_JERFILES_DEcombined(tag,ver,jetCollection)\
-  extern const std::vector<std::string> tag##_V##ver##_B_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_C_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_DE_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L123_noRes_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_B_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_C_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_DE_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L123_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_B_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_C_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_DE_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L1RC_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_B_L1FastJet_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_C_L1FastJet_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_D_L1FastJet_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_E_L1FastJet_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_DE_L1FastJet_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_F_L1FastJet_##jetCollection##_DATA;\
-  extern const std::vector<std::string> tag##_V##ver##_L123_##jetCollection##_MC;\
-  extern const std::vector<std::string> tag##_V##ver##_L1RC_##jetCollection##_MC;\
-  extern const std::vector<std::string> tag##_V##ver##_L1FastJet_##jetCollection##_MC;\
-\
-
-#define DEFINE_JERFILES_MC2016(tag,ver,jetCollection)\
-  extern const std::vector<std::string> tag##V##ver##_L123_##jetCollection##_MC;\
-  extern const std::vector<std::string> tag##V##ver##_L1RC_##jetCollection##_MC;\
-  extern const std::vector<std::string> tag##V##ver##_L1FastJet_##jetCollection##_MC;\
-\
-
- 
-
-  DEFINE_JERFILES_MC(Fall17_17Nov2017,11,AK4PFchs)
-  DEFINE_JERFILES_MC(Fall17_17Nov2017,24,AK4PFchs) 
-  DEFINE_JERFILES_MC(Fall17_17Nov2017,32,AK4PFchs) 
-
-  DEFINE_JERFILES_DATA(Fall17_17Nov2017,11,AK4PFchs)
-  DEFINE_JERFILES_DATA(Fall17_17Nov2017,24,AK4PFchs)
-
-  DEFINE_JERFILES_DEcombined(Fall17_17Nov2017,31,AK4PFchs)
-  DEFINE_JERFILES_DEcombined(Fall17_17Nov2017,32,AK4PFchs)
-
-  DEFINE_JERFILES_DATA(Fall17_09May2018,3,AK4PFchs)
-  DEFINE_JERFILES_MC2016(Summer16_23Sep2016,4,AK4PFchs)
-}
-
 
 void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const uhh2::Event & event, JetCorrectionUncertainty* jec_unc = NULL, int jec_unc_direction=0);
 
