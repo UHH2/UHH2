@@ -14,6 +14,14 @@ class Electron : public RecParticle {
   enum tag {
     twodcut_dRmin,
     twodcut_pTrel,
+    // 2016
+    heepElectronID_HEEPV60,
+    cutBasedElectronID_Summer16_80X_V1_veto,
+    cutBasedElectronID_Summer16_80X_V1_loose,
+    cutBasedElectronID_Summer16_80X_V1_medium,
+    cutBasedElectronID_Summer16_80X_V1_tight,
+    cutBasedElectronHLTPreselection_Summer16_V1,
+    // 2017 & 2018
     cutBasedElectronID_Fall17_94X_V2_veto,
     cutBasedElectronID_Fall17_94X_V2_loose,
     cutBasedElectronID_Fall17_94X_V2_medium,
@@ -28,6 +36,12 @@ class Electron : public RecParticle {
   };
 
   static tag tagname2tag(const std::string & tagname){
+    if(tagname == "heepElectronID_HEEPV60") return heepElectronID_HEEPV60;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_veto") return cutBasedElectronID_Summer16_80X_V1_veto;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_loose") return cutBasedElectronID_Summer16_80X_V1_loose;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_medium") return cutBasedElectronID_Summer16_80X_V1_medium;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_tight") return cutBasedElectronID_Summer16_80X_V1_tight;
+    if(tagname == "cutBasedElectronHLTPreselection_Summer16_V1") return cutBasedElectronHLTPreselection_Summer16_V1;
     if(tagname == "cutBasedElectronID_Fall17_94X_V2_veto") return cutBasedElectronID_Fall17_94X_V2_veto;
     if(tagname == "cutBasedElectronID_Fall17_94X_V2_loose") return cutBasedElectronID_Fall17_94X_V2_loose;
     if(tagname == "cutBasedElectronID_Fall17_94X_V2_medium") return cutBasedElectronID_Fall17_94X_V2_medium;
@@ -71,6 +85,8 @@ class Electron : public RecParticle {
     m_ecalPFClusterIso = 0;
     m_hcalPFClusterIso = 0;
     m_dr03TkSumPt = 0;
+    m_mvaGeneralPurpose = 0;
+    m_mvaHZZ = 0;
     m_mvaIso = 0;
     m_mvaNoIso = 0;
     m_AEff = 0;
@@ -122,8 +138,10 @@ class Electron : public RecParticle {
   float ecalPFClusterIso() const { return m_ecalPFClusterIso; }
   float hcalPFClusterIso() const { return m_hcalPFClusterIso; }
   float dr03TkSumPt     () const { return m_dr03TkSumPt; }
-  float mvaIso() const { return m_mvaIso; }
-  float mvaNoIso() const { return m_mvaNoIso; }
+  float mvaGeneralPurpose() const{return m_mvaGeneralPurpose;} // 2016
+  float mvaHZZ() const{return m_mvaHZZ;}  // 2016
+  float mvaIso() const { return m_mvaIso; } // 2017 & 2018
+  float mvaNoIso() const { return m_mvaNoIso; } // 2017 & 2018
   float effArea() const{return m_AEff;}
 
   float pfMINIIso_CH      () const { return m_pfMINIIso_CH; }
@@ -162,6 +180,8 @@ class Electron : public RecParticle {
   void set_ecalPFClusterIso(float x){ m_ecalPFClusterIso = x; }
   void set_hcalPFClusterIso(float x){ m_hcalPFClusterIso = x; }
   void set_dr03TkSumPt     (float x){ m_dr03TkSumPt      = x; }
+  void set_mvaGeneralPurpose(float x){m_mvaGeneralPurpose=x;}
+  void set_mvaHZZ(float x){m_mvaHZZ=x;}
   void set_mvaIso(float x){m_mvaIso=x;}
   void set_mvaNoIso(float x){m_mvaNoIso=x;}
   void set_effArea(float x){m_AEff=x;}
@@ -259,6 +279,8 @@ class Electron : public RecParticle {
   float m_ecalPFClusterIso;
   float m_hcalPFClusterIso;
   float m_dr03TkSumPt;
+  float m_mvaGeneralPurpose;
+  float m_mvaHZZ;
   float m_mvaIso;
   float m_mvaNoIso;
   float m_AEff;

@@ -1176,6 +1176,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
     elecID_mod_ls = [
+        # For 2016
+        'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff',
+        'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronHLTPreselecition_Summer16_V1_cff',
+        'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff',
+        'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_GeneralPurpose_V1_cff',
+        'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Spring16_HZZ_V1_cff',
+        # For 2017 (& 2018 for now)
         'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff',
         'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff',
         'RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V2_cff',
@@ -1185,7 +1192,14 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     for mod in elecID_mod_ls:
         setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
 
-    from RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff import isoInputs
+    from RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff import isoInputs as ele_iso_16
+    from RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff import isoInputs as ele_iso_17
+    iso_input_era_dict = {
+        "2016v2": ele_iso_16,
+        "2016v3": ele_iso_16,
+        "2017": ele_iso_17,
+        "2018": ele_iso_17,
+    }
 
     # slimmedElectronsUSER ( = slimmedElectrons + USER variables)
     process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
@@ -1193,7 +1207,20 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                                       'slimmedElectrons'),
 
                                                   vmaps_bool=cms.PSet(
-
+                                                      # 2016
+                                                      cutBasedElectronID_Summer16_80X_V1_veto=cms.InputTag(
+                                                          'egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto'),
+                                                      cutBasedElectronID_Summer16_80X_V1_loose=cms.InputTag(
+                                                          'egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose'),
+                                                      cutBasedElectronID_Summer16_80X_V1_medium=cms.InputTag(
+                                                          'egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-medium'),
+                                                      cutBasedElectronID_Summer16_80X_V1_tight=cms.InputTag(
+                                                          'egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight'),
+                                                      cutBasedElectronHLTPreselection_Summer16_V1=cms.InputTag(
+                                                          'egmGsfElectronIDs:cutBasedElectronHLTPreselection-Summer16-V1'),
+                                                      heepElectronID_HEEPV60=cms.InputTag(
+                                                          'egmGsfElectronIDs:heepElectronID-HEEPV60'),
+                                                      # 2017 & 2018
                                                       cutBasedElectronID_Fall17_94X_V2_veto=cms.InputTag(
                                                           'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-veto'),
                                                       cutBasedElectronID_Fall17_94X_V2_loose=cms.InputTag(
@@ -1219,16 +1246,19 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                                   ),
 
                                                   vmaps_float=cms.PSet(
+                                                      mvaGeneralPurpose=cms.InputTag(
+                                                          'electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16GeneralPurposeV1Values'),
+                                                      mvaHZZ=cms.InputTag(
+                                                          'electronMVAValueMapProducer:ElectronMVAEstimatorRun2Spring16HZZV1Values'),
                                                       ElectronMVAEstimatorIso=cms.InputTag(
                                                           'electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17IsoV2Values'),
                                                       ElectronMVAEstimatorNoIso=cms.InputTag(
                                                           'electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV2Values')
                                                   ),
 
-                                                  vmaps_double=cms.vstring(
-                                                      el_isovals),
+                                                  vmaps_double=cms.vstring(el_isovals),
 
-                                                  effAreas_file=cms.FileInPath(isoInputs.isoEffAreas),
+                                                  effAreas_file=cms.FileInPath(iso_input_era_dict[year].isoEffAreas)
                                                   )
     task.add(process.egmGsfElectronIDs)
     task.add(process.slimmedElectronsUSER)
@@ -1290,6 +1320,14 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                         # each string should correspond to a variable saved
                                         # via the "userInt" method in the pat::Electron collection used 'electron_source'
                                         # [the configuration of the pat::Electron::userInt variables should be done in PATElectronUserData]
+                                        # 2016
+                                        'cutBasedElectronID_Summer16_80X_V1_veto',
+                                        'cutBasedElectronID_Summer16_80X_V1_loose',
+                                        'cutBasedElectronID_Summer16_80X_V1_medium',
+                                        'cutBasedElectronID_Summer16_80X_V1_tight',
+                                        'cutBasedElectronHLTPreselection_Summer16_V1',
+                                        'heepElectronID_HEEPV60',
+                                        # 2017 & 2018
                                         'cutBasedElectronID_Fall17_94X_V2_veto',
                                         'cutBasedElectronID_Fall17_94X_V2_loose',
                                         'cutBasedElectronID_Fall17_94X_V2_medium',

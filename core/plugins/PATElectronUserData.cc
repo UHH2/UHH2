@@ -39,6 +39,9 @@ class PATElectronUserData : public edm::EDProducer {
 
   EffectiveAreas effAreas_;
 
+  std::string mva_GeneralPurpose_;
+  std::string mva_HZZ_;
+
   std::string mva_Iso_;
   std::string mva_NoIso_;
 };
