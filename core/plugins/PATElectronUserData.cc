@@ -78,9 +78,6 @@ PATElectronUserData::PATElectronUserData(const edm::ParameterSet& iConfig):
     }
   }
 
-  if(iConfig.exists("mva_Iso")) mva_Iso_ = iConfig.getParameter<std::string>("mva_Iso"); 
-  if(iConfig.exists("mva_NoIso"))   mva_NoIso_   = iConfig.getParameter<std::string>("mva_NoIso"); 
-
   produces< pat::ElectronCollection >();
 }
 
@@ -125,7 +122,7 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     for(unsigned int j=0; j<vmapBs.size(); ++j){
 
       if(ele.hasUserInt(vmaps_bool_links_.at(j).vname))
-	throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-int label already exists: " << vmaps_bool_links_.at(j).vname;
+        throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-int label already exists: " << vmaps_bool_links_.at(j).vname;
 
       const bool& val = (*(vmapBs.at(j)))[patElecs->refAt(i)];
       ele.addUserInt(vmaps_bool_links_.at(j).vname, int(val));
@@ -134,7 +131,7 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     for(unsigned int j=0; j<vmapFs.size(); ++j){
 
       if(ele.hasUserFloat(vmaps_float_links_.at(j).vname))
-	throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float label already exists: " << vmaps_float_links_.at(j).vname;
+        throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float label already exists: " << vmaps_float_links_.at(j).vname;
 
       const float& val = (*(vmapFs.at(j)))[patElecs->refAt(i)];
       ele.addUserFloat(vmaps_float_links_.at(j).vname, float(val));
@@ -143,7 +140,7 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     for(unsigned int j=0; j<vmapDs.size(); ++j){
 
       if(ele.hasUserFloat(vmaps_double_.at(j)))
-	throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float label already exists: " << vmaps_double_.at(j);
+        throw cms::Exception("InputError") << "@@@ PATElectronUserData::produce -- PAT user-float label already exists: " << vmaps_double_.at(j);
 
       const double& val = (*(vmapDs.at(j)))[patElecs->refAt(i)];
       ele.addUserFloat(vmaps_double_.at(j), float(val));
@@ -151,7 +148,6 @@ void PATElectronUserData::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     const float eA  = effAreas_.getEffectiveArea(fabs(ele.superCluster()->eta()));
     ele.addUserFloat("EffArea", eA);
-
   }
 
   iEvent.put(std::move(newElecs));

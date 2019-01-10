@@ -43,11 +43,11 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_eta( pat_ele.eta());
         ele.set_phi( pat_ele.phi());
         ele.set_energy( pat_ele.energy());
-	//	cout<<"pat_ele.pt() = "<<pat_ele.pt()<<endl;
-	ele.set_ptError( pat_ele.gsfTrack()->ptError());
-	ele.set_etaError( pat_ele.gsfTrack()->etaError());
-	ele.set_phiError( pat_ele.gsfTrack()->phiError());
-	//	ele.set_energyError( pat_ele.energyError());
+        //	cout<<"pat_ele.pt() = "<<pat_ele.pt()<<endl;
+        ele.set_ptError( pat_ele.gsfTrack()->ptError());
+        ele.set_etaError( pat_ele.gsfTrack()->etaError());
+        ele.set_phiError( pat_ele.gsfTrack()->phiError());
+        //	ele.set_energyError( pat_ele.energyError());
         ele.set_supercluster_eta( pat_ele.superCluster()->eta() );
         ele.set_supercluster_phi( pat_ele.superCluster()->phi() );
         ele.set_dB(pat_ele.dB());
@@ -92,16 +92,16 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_pfMINIIso_NH_pfwgt(pat_ele.hasUserFloat("elPFMiniIsoValueNHPFWGT") ? pat_ele.userFloat("elPFMiniIsoValueNHPFWGT") : -999.);
         ele.set_pfMINIIso_Ph_pfwgt(pat_ele.hasUserFloat("elPFMiniIsoValuePhPFWGT") ? pat_ele.userFloat("elPFMiniIsoValuePhPFWGT") : -999.);
 
-	ele.set_Nclusters(pat_ele.superCluster()->clusters().size());
-	ele.set_Class(pat_ele.classification()); 
+        ele.set_Nclusters(pat_ele.superCluster()->clusters().size());
+        ele.set_Class(pat_ele.classification());
 
-	ele.set_isEcalDriven(pat_ele.ecalDriven());
-	ele.set_full5x5_e1x5(pat_ele.full5x5_e1x5());
-	ele.set_full5x5_e2x5Max(pat_ele.full5x5_e2x5Max());
-	ele.set_full5x5_e5x5(pat_ele.full5x5_e5x5());
-	ele.set_dEtaInSeed(pat_ele.deltaEtaSeedClusterTrackAtVtx());
+        ele.set_isEcalDriven(pat_ele.ecalDriven());
+        ele.set_full5x5_e1x5(pat_ele.full5x5_e1x5());
+        ele.set_full5x5_e2x5Max(pat_ele.full5x5_e2x5Max());
+        ele.set_full5x5_e5x5(pat_ele.full5x5_e5x5());
+        ele.set_dEtaInSeed(pat_ele.deltaEtaSeedClusterTrackAtVtx());
 
-	ele.set_dxy(pat_ele.gsfTrack()->dxy(PV.position()));// correct for vertex postion
+        ele.set_dxy(pat_ele.gsfTrack()->dxy(PV.position()));// correct for vertex postion
 
         for(const auto& tag_str : IDtag_keys){
 
@@ -309,17 +309,17 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent,  
          if(fabs(pat_tau.eta()) > etamax) continue;
          taus.emplace_back();
          Tau & tau = taus.back();
-         
+
          tau.set_charge( pat_tau.charge());
          tau.set_pt( pat_tau.pt());
          tau.set_eta( pat_tau.eta());
          tau.set_phi( pat_tau.phi());
          tau.set_energy( pat_tau.energy());
-         
+
          // use the macro to avoid typos: using this macro assures that the enum name
          // used in the same as the string used for the pat tauID.
          #define FILL_TAU_BIT(tauidname) tau.set_bool(Tau:: tauidname, pat_tau.tauID(#tauidname) > 0.5)
-        
+
          FILL_TAU_BIT(againstElectronVLooseMVA6);
          FILL_TAU_BIT(againstElectronLooseMVA6);
          FILL_TAU_BIT(againstElectronMediumMVA6);
@@ -337,14 +337,14 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent,  
          FILL_TAU_BIT(byTightIsolationMVArun2v1DBnewDMwLT);
          FILL_TAU_BIT(byVTightIsolationMVArun2v1DBnewDMwLT);
          FILL_TAU_BIT(byVVTightIsolationMVArun2v1DBnewDMwLT);
-	 
-	 FILL_TAU_BIT(decayModeFinding); 
+
+	 FILL_TAU_BIT(decayModeFinding);
          FILL_TAU_BIT(decayModeFindingNewDMs);
 
 
 
          #define FILL_TAU_FLOAT(name) tau.set_##name (pat_tau.tauID(#name))
-         
+
          FILL_TAU_FLOAT(byCombinedIsolationDeltaBetaCorrRaw3Hits);
          FILL_TAU_FLOAT(byIsolationMVArun2v1DBnewDMwLTraw);
          FILL_TAU_FLOAT(chargedIsoPtSum);
@@ -359,7 +359,7 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent,  
 	 FILL_TAU_FLOAT(neutralIsoPtSumWeight);
 	 FILL_TAU_FLOAT(footprintCorrection);
 	 FILL_TAU_FLOAT(photonPtSumOutsideSignalCone);
-         
+
          #undef FILL_TAU_BIT
          #undef FILL_TAU_FLOAT
 
