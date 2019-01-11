@@ -828,14 +828,15 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        for(size_t j=0; j<packed->size();j++){
          bool skip_particle = false;
          const pat::PackedGenParticle* iter = dynamic_cast<const pat::PackedGenParticle*>(&(packed->at(j)));
-         //      if(iter->status()!=1) cout<<"iter->status() = "<<iter->status()<<endl;
+	 //	 if(iter->status()!=1) cout<<"iter->status() = "<<iter->status()<<endl;
          if(doAllGenParticlesPythia8){//for pythia8: store particles with status code, see http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
            if(iter->status()<2)
              skip_particle = true;
          }
          else{
-           if(iter->status()!=1)
-             skip_particle = true;
+	   //for Herwig++ puning is already done in the ntuplewriter python script
+           // if(iter->status()!=1)
+           //   skip_particle = true;
          }
          // if(!doAllGenParticlesPythia8 && iter->status()!=1) //not pythia8: store all stable particles
          //   skip_particle = true;
