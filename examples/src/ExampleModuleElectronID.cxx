@@ -70,6 +70,12 @@ public:
     virtual bool process(Event & event) override;
 private:
     vector<string> electronIDs =  {
+        "heepElectronID_HEEPV60",
+        "cutBasedElectronID_Summer16_80X_V1_veto",
+        "cutBasedElectronID_Summer16_80X_V1_loose",
+        "cutBasedElectronID_Summer16_80X_V1_medium",
+        "cutBasedElectronID_Summer16_80X_V1_tight",
+        "cutBasedElectronHLTPreselection_Summer16_V1",
         "cutBasedElectronID_Fall17_94X_V2_veto",
         "cutBasedElectronID_Fall17_94X_V2_loose",
         "cutBasedElectronID_Fall17_94X_V2_medium",
@@ -97,6 +103,7 @@ bool ExampleModuleElectronID::process(Event & event) {
 
     for (const auto & eleItr : *event.electrons) {
         // We can use the enum directly, this is the easiest way
+        cout << "cutBasedElectronID_Summer16_80X_V1_veto: " << eleItr.get_tag(Electron::cutBasedElectronID_Summer16_80X_V1_veto) << endl;
         cout << "cutBasedElectronID_Fall17_94X_V2_veto: " << eleItr.get_tag(Electron::cutBasedElectronID_Fall17_94X_V2_veto) << endl;
     }
  
