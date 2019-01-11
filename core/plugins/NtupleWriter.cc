@@ -828,25 +828,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        for(size_t j=0; j<packed->size();j++){
          bool skip_particle = false;
          const pat::PackedGenParticle* iter = dynamic_cast<const pat::PackedGenParticle*>(&(packed->at(j)));
-	 //	 if(iter->status()!=1) cout<<"iter->status() = "<<iter->status()<<endl;
          if(doAllGenParticlesPythia8){//for pythia8: store particles with status code, see http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
            if(iter->status()<2)
              skip_particle = true;
          }
-         else{
-	   //for Herwig++ puning is already done in the ntuplewriter python script
-           // if(iter->status()!=1)
-           //   skip_particle = true;
-         }
-         // if(!doAllGenParticlesPythia8 && iter->status()!=1) //not pythia8: store all stable particles
-         //   skip_particle = true;
-         // else
-         //   if(doAllGenParticlesPythia8 && iter->status()<2)  //
-         //     skip_particle = true;
-
+	 //for Herwig++ pruning is already done in the ntuplewriter python script
          if(skip_particle) continue;
 
-         //      cout<<doAllGenParticlesPythia8<<" "<<doAllGenParticles<<" Particle stored!, iter->status() = "<<iter->status()<<endl;
          index++;
 
          GenParticle genp;
@@ -863,33 +851,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          genp.set_mother2(-1);
          genp.set_daughter1(-1);
          genp.set_daughter2(-1);
-
-         // int nm=iter->numberOfMothers();
-         // int nd=iter->numberOfDaughters();
-
-         // if (nm>0) genp.set_mother1( iter->motherRef(0).key());
-         // if (nm>1) genp.set_mother2( iter->motherRef(1).key());
-         // if (nd>0) genp.set_daughter1( iter->daughterRef(0).key());
-         // if (nd>1) genp.set_daughter2( iter->daughterRef(1).key());
-
-
          bool islepton = abs(iter->pdgId())>=11 && abs(iter->pdgId())<=16 ;
-          //check, if particle has already been filled in previous routine from reco::GenParticleCollection
-         // bool fill=true;
-         // for(unsigned int i=0; i< genps.size(); ++i){
-         //    if(genps[i].status()==1 && genps[i].pdgId()==genp.pdgId() && fabs(genps[i].pt()-genp.pt())<0.1 && fabs(genps[i].eta()-genp.eta())<0.1 && islepton){
-         //      std::cout << "Doppelt: " << genps[i].status() << "  " << genps[i].pt() << "  " << genp.pt() <<"    "<<  genps[i].eta() << "  " <<   genp.eta() << "  " <<  genps[i].pdgId() << "  " << genps[i].mother1() << "  " << genps[i].mother2()<< std::endl;
-         //      fill=false;
-         //      break;
-         //    }
-         //  }
-         //  if(fill) {
-
-         //    genps.push_back(genp);
-
-         //    if (islepton) std::cout << "Nicht Doppelt: " << genp.status() << "  " << genp.pt() << "  " << genp.eta() << "  " << genp.pdgId() << std::endl;
-         // }
-
          if(!islepton) {
              event->genparticles->push_back(genp);
          }
