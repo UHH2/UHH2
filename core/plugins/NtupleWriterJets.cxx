@@ -160,6 +160,10 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
   jet.set_hadronFlavor(pat_jet.hadronFlavour());
   jet.set_numberOfDaughters (pat_jet.numberOfDaughters());
   jet.set_jetArea(pat_jet.jetArea());
+  if(pat_jet.hasUserFloat("pileupJetId:fullDiscriminant")) {
+    jet.set_pileupID(pat_jet.userFloat("pileupJetId:fullDiscriminant"));
+  }
+
   if(pat_jet.isPFJet()){
     jet.set_neutralEmEnergyFraction (pat_jet.neutralEmEnergyFraction());
     jet.set_neutralHadronEnergyFraction (pat_jet.neutralHadronEnergyFraction());
@@ -553,6 +557,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         }catch(runtime_error &){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " + src.label());
         }
+
 
         /*--- lepton keys ---*/
         if(save_lepton_keys_){
