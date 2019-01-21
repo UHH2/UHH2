@@ -42,7 +42,7 @@ class Jet : public FlavorParticle {
     m_JEC_L1factor_raw = 0;
     m_genjet_index = 0;
     m_hadronFlavor = 0;
-    m_pileupID = 0;
+    m_pileupID = -2;
 
     m_lepton_keys.clear();
   }
