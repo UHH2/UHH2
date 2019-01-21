@@ -1243,19 +1243,16 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     do_prefire = prefire_era is not None
     prefire_source = "prefiringweight"
     if do_prefire:
-        # update this part when the EDProducer uses edm::FileInPath, so ugly:
-        L1Maps_file = os.path.join(os.environ['CMSSW_BASE'], "src/L1Prefiring/EventWeightProducer/files/L1PrefiringMaps_new.root")
-        # if using CRAB, you need this instead:
-        # L1Maps_file = "L1PrefiringMaps_new.root"
         setattr(process,
                 prefire_source,
                 cms.EDProducer("L1ECALPrefiringWeightProducer",
                     ThePhotons = cms.InputTag("slimmedPhotons"),
                     TheJets = cms.InputTag("slimmedJets"),
-                    L1Maps = cms.string(L1Maps_file),
+                    L1Maps = cms.string("L1PrefiringMaps.root"),
                     DataEra = cms.string(prefire_era),
-                    UseJetEMPt = cms.bool(False), #can be set to true to use jet prefiring maps parametrized vs pt(em) instead of pt
-                    PrefiringRateSystematicUncty = cms.double(0.2) #Minimum relative prefiring uncty per object
+                    UseJetEMPt = cms.bool(False),  # can be set to true to use jet prefiring maps parametrized vs pt(em) instead of pt
+                    PrefiringRateSystematicUncty = cms.double(0.2),  # Minimum relative prefiring uncty per object
+                    SkipWarnings = cms.bool(True)
                 )
         )
         task.add(getattr(process, prefire_source))
