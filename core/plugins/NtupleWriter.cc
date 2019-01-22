@@ -559,9 +559,9 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   branch(tr, "prefiringWeightDown", &event->prefiringWeightDown);
   if(doPrefire){
     std::string prefire_source = iConfig.getParameter<std::string>("prefire_source");
-    prefweight_token = consumes<double>(edm::InputTag(prefire_source, "NonPrefiringProb"));
-    prefweightup_token = consumes<double>(edm::InputTag(prefire_source, "NonPrefiringProbUp"));
-    prefweightdown_token = consumes<double>(edm::InputTag(prefire_source, "NonPrefiringProbDown"));
+    prefweight_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProb"));
+    prefweightup_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbUp"));
+    prefweightdown_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbDown"));
   }
   if(doAllPFParticles){
     event->pfparticles = new vector<PFParticle>;

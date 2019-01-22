@@ -44,12 +44,6 @@ config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/ntuplewriter_mc_2016v2.py')
 config.JobType.outputFiles = ["Ntuple.root"]
 config.JobType.maxMemoryMB = 2500
-# If you are using the L1 prefiring map, please modify the
-# L1Maps location in ntuple_generator to just "L1PrefiringMaps_new.root"
-# until this is properly handled
-# i.e.:
-# process.prefiringweight.L1Maps = cms.string("L1PrefiringMaps_new.root")
-config.JobType.inputFiles = [os.path.join(os.environ['CMSSW_BASE'], 'src/L1Prefiring/EventWeightProducer/files/L1PrefiringMaps_new.root')]
         
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'

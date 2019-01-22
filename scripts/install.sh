@@ -90,7 +90,7 @@ time git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
 export SCRAM_ARCH=slc6_amd64_gcc700
-CMSREL=CMSSW_10_2_6
+CMSREL=CMSSW_10_2_10
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
@@ -107,8 +107,6 @@ time git cms-init -y  # not needed if not addpkg ing
 
 # Necessary for using our FastJet
 time git cms-addpkg RecoJets/JetProducers
-# For L1 prefiring. In future this should be in a 10_2_X release
-time git cms-merge-topic lathomas:L1Prefiring_10_2_6
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
