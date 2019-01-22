@@ -238,6 +238,26 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
 
     ###############################################
+    # Modified TypeI MET
+    #
+    # Only applicable during 2017, this corrects the MET due to excess EE noise
+    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETUncertaintyPrescription?rev=89#Instructions_for_9_4_X_X_9_or_10
+    # To be used with 17Nov2017 and 31Mar2018 rereco of 2017 data, and MC events.
+    # The more accurate and long-term solution will come incorporated in planed "Ultra-Legacy" recreco
+    if year in ['2017']:
+        from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
+
+        runMetCorAndUncFromMiniAOD(
+            process,
+            isData=useData,
+            fixEE2017=True,
+            fixEE2017Params={'userawPt': True, 'ptThreshold': 50.0, 'minEtaThreshold': 2.65, 'maxEtaThreshold': 3.139},
+            postfix="ModifiedMET"
+        )
+
+        met_sources_GL.append("slimmedMETsModifiedMET")
+
+    ###############################################
     # CHS JETS
     #
     # configure additional jet collections, based on chs.
