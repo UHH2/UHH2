@@ -909,11 +909,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     ak8_label = "AK8PFPUPPI"
     ak8puppi_patname = 'patJets' + ak8_label
     print 'Adding', ak8puppi_patname
+    ak8puppi_jet_source = 'ak8PuppiJets'
     addJetCollection(process,
                      labelName=ak8_label,
-                     jetSource=cms.InputTag('ak8PuppiJets'),
+                     jetSource=cms.InputTag(ak8puppi_jet_source),
                      algo='AK',
-                     rParam=0.8,
+                     rParam=getattr(process, ak8puppi_jet_source).rParam.value(),  # this is NOT used for jet cluster cone size, only for jet-X matching
                      genJetCollection=cms.InputTag('slimmedGenJetsAK8'),
 
                      jetCorrections=('AK8PFPuppi', ['L2Relative', 'L3Absolute'], 'None'),
@@ -935,11 +936,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     ak8_label = "AK8PFCHS"
     ak8chs_patname = 'patJets' + ak8_label
     print 'Adding', ak8chs_patname
+    ak8chs_jet_source = "ak8CHSJets"
     addJetCollection(process,
                      labelName=ak8_label,
-                     jetSource=cms.InputTag('ak8CHSJets'),
+                     jetSource=cms.InputTag(ak8chs_jet_source),
                      algo='AK',
-                     rParam=0.8,
+                     rParam=getattr(process, ak8chs_jet_source).rParam.value(),  # this is NOT used for jet cluster cone size, only for jet-X matching
                      genJetCollection=cms.InputTag('slimmedGenJetsAK8'),
                      jetCorrections=('AK8PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None'),
                      pfCandidates=cms.InputTag('packedPFCandidates'),
