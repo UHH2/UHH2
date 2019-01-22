@@ -14,6 +14,14 @@ class Electron : public RecParticle {
   enum tag {
     twodcut_dRmin,
     twodcut_pTrel,
+    // 2016
+    heepElectronID_HEEPV60,
+    cutBasedElectronID_Summer16_80X_V1_veto,
+    cutBasedElectronID_Summer16_80X_V1_loose,
+    cutBasedElectronID_Summer16_80X_V1_medium,
+    cutBasedElectronID_Summer16_80X_V1_tight,
+    cutBasedElectronHLTPreselection_Summer16_V1,
+    // 2017 & 2018
     cutBasedElectronID_Fall17_94X_V2_veto,
     cutBasedElectronID_Fall17_94X_V2_loose,
     cutBasedElectronID_Fall17_94X_V2_medium,
@@ -28,6 +36,12 @@ class Electron : public RecParticle {
   };
 
   static tag tagname2tag(const std::string & tagname){
+    if(tagname == "heepElectronID_HEEPV60") return heepElectronID_HEEPV60;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_veto") return cutBasedElectronID_Summer16_80X_V1_veto;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_loose") return cutBasedElectronID_Summer16_80X_V1_loose;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_medium") return cutBasedElectronID_Summer16_80X_V1_medium;
+    if(tagname == "cutBasedElectronID_Summer16_80X_V1_tight") return cutBasedElectronID_Summer16_80X_V1_tight;
+    if(tagname == "cutBasedElectronHLTPreselection_Summer16_V1") return cutBasedElectronHLTPreselection_Summer16_V1;
     if(tagname == "cutBasedElectronID_Fall17_94X_V2_veto") return cutBasedElectronID_Fall17_94X_V2_veto;
     if(tagname == "cutBasedElectronID_Fall17_94X_V2_loose") return cutBasedElectronID_Fall17_94X_V2_loose;
     if(tagname == "cutBasedElectronID_Fall17_94X_V2_medium") return cutBasedElectronID_Fall17_94X_V2_medium;
@@ -44,13 +58,13 @@ class Electron : public RecParticle {
 
   Electron(){
 
-    m_supercluster_eta = 0; 
-    m_supercluster_phi = 0; 
-    m_dB = 0; 
-    m_neutralHadronIso = 0; 
-    m_chargedHadronIso = 0; 
+    m_supercluster_eta = 0;
+    m_supercluster_phi = 0;
+    m_dB = 0;
+    m_neutralHadronIso = 0;
+    m_chargedHadronIso = 0;
     m_photonIso = 0;
-    m_trackIso = 0; 
+    m_trackIso = 0;
     m_puChargedHadronIso = 0;
     m_gsfTrack_trackerExpectedHitsInner_numberOfLostHits = 0;
     m_gsfTrack_px = 0;
@@ -61,8 +75,8 @@ class Electron : public RecParticle {
     m_gsfTrack_vz = 0;
     m_passconversionveto = false;
     m_dEtaIn = 0;
-    m_dPhiIn = 0; 
-    m_sigmaIEtaIEta = 0; 
+    m_dPhiIn = 0;
+    m_sigmaIEtaIEta = 0;
     m_HoverE = 0;
     m_fbrem = 0;
     m_EoverPIn = 0;
@@ -71,6 +85,8 @@ class Electron : public RecParticle {
     m_ecalPFClusterIso = 0;
     m_hcalPFClusterIso = 0;
     m_dr03TkSumPt = 0;
+    m_mvaGeneralPurpose = 0;
+    m_mvaHZZ = 0;
     m_mvaIso = 0;
     m_mvaNoIso = 0;
     m_AEff = 0;
@@ -89,19 +105,19 @@ class Electron : public RecParticle {
 
     m_isEcalDriven = false;
     m_dxy = 0;
-    m_dEtaInSeed = 0; 
+    m_dEtaInSeed = 0;
     m_full5x5_e1x5 = 0;
     m_full5x5_e2x5Max = 0;
     m_full5x5_e5x5 = 0;
   }
 
-  float supercluster_eta() const{return m_supercluster_eta;} 
-  float supercluster_phi() const{return m_supercluster_phi;} 
-  float dB() const{return m_dB;} 
-  float neutralHadronIso() const{return m_neutralHadronIso;} 
-  float chargedHadronIso() const{return m_chargedHadronIso;} 
+  float supercluster_eta() const{return m_supercluster_eta;}
+  float supercluster_phi() const{return m_supercluster_phi;}
+  float dB() const{return m_dB;}
+  float neutralHadronIso() const{return m_neutralHadronIso;}
+  float chargedHadronIso() const{return m_chargedHadronIso;}
   float photonIso() const{return m_photonIso;}
-  float trackIso() const{return m_trackIso;} 
+  float trackIso() const{return m_trackIso;}
   float puChargedHadronIso() const{return m_puChargedHadronIso;}
   int gsfTrack_trackerExpectedHitsInner_numberOfLostHits() const{return m_gsfTrack_trackerExpectedHitsInner_numberOfLostHits;}
   float gsfTrack_px() const{return m_gsfTrack_px;}
@@ -112,8 +128,8 @@ class Electron : public RecParticle {
   float gsfTrack_vz() const{return m_gsfTrack_vz;}
   bool passconversionveto() const{return m_passconversionveto;}
   float dEtaIn() const{return m_dEtaIn;}
-  float dPhiIn() const{return m_dPhiIn;} 
-  float sigmaIEtaIEta() const{return m_sigmaIEtaIEta;} 
+  float dPhiIn() const{return m_dPhiIn;}
+  float sigmaIEtaIEta() const{return m_sigmaIEtaIEta;}
   float HoverE() const{return m_HoverE;}
   float fbrem() const{return m_fbrem;}
   float EoverPIn() const{return m_EoverPIn;}
@@ -122,8 +138,10 @@ class Electron : public RecParticle {
   float ecalPFClusterIso() const { return m_ecalPFClusterIso; }
   float hcalPFClusterIso() const { return m_hcalPFClusterIso; }
   float dr03TkSumPt     () const { return m_dr03TkSumPt; }
-  float mvaIso() const { return m_mvaIso; }
-  float mvaNoIso() const { return m_mvaNoIso; }
+  float mvaGeneralPurpose() const{return m_mvaGeneralPurpose;} // 2016
+  float mvaHZZ() const{return m_mvaHZZ;}  // 2016
+  float mvaIso() const { return m_mvaIso; } // 2017 & 2018
+  float mvaNoIso() const { return m_mvaNoIso; } // 2017 & 2018
   float effArea() const{return m_AEff;}
 
   float pfMINIIso_CH      () const { return m_pfMINIIso_CH; }
@@ -135,13 +153,13 @@ class Electron : public RecParticle {
 
   const std::vector<source_candidate>& source_candidates() const { return m_source_candidates; }
 
-  void set_supercluster_eta(float x){m_supercluster_eta=x;} 
-  void set_supercluster_phi(float x){m_supercluster_phi=x;} 
-  void set_dB(float x){m_dB=x;} 
-  void set_neutralHadronIso(float x){m_neutralHadronIso=x;} 
-  void set_chargedHadronIso(float x){m_chargedHadronIso=x;} 
+  void set_supercluster_eta(float x){m_supercluster_eta=x;}
+  void set_supercluster_phi(float x){m_supercluster_phi=x;}
+  void set_dB(float x){m_dB=x;}
+  void set_neutralHadronIso(float x){m_neutralHadronIso=x;}
+  void set_chargedHadronIso(float x){m_chargedHadronIso=x;}
   void set_photonIso(float x){m_photonIso=x;}
-  void set_trackIso(float x){m_trackIso=x;} 
+  void set_trackIso(float x){m_trackIso=x;}
   void set_puChargedHadronIso(float x){m_puChargedHadronIso=x;}
   void set_gsfTrack_trackerExpectedHitsInner_numberOfLostHits(int x){m_gsfTrack_trackerExpectedHitsInner_numberOfLostHits=x;}
   void set_gsfTrack_px(float x){m_gsfTrack_px=x;}
@@ -152,7 +170,7 @@ class Electron : public RecParticle {
   void set_gsfTrack_vz(float x){m_gsfTrack_vz=x;}
   void set_passconversionveto(bool x){m_passconversionveto=x;}
   void set_dEtaIn(float x){m_dEtaIn=x;}
-  void set_dPhiIn(float x){m_dPhiIn=x;} 
+  void set_dPhiIn(float x){m_dPhiIn=x;}
   void set_sigmaIEtaIEta(float x){m_sigmaIEtaIEta=x;}  // this is the 'full5x5sigma ieta ieta', (not the gsfelecton->sigmaIetaIeta)
   void set_HoverE(float x){m_HoverE=x;}
   void set_fbrem(float x){m_fbrem=x;}
@@ -162,6 +180,8 @@ class Electron : public RecParticle {
   void set_ecalPFClusterIso(float x){ m_ecalPFClusterIso = x; }
   void set_hcalPFClusterIso(float x){ m_hcalPFClusterIso = x; }
   void set_dr03TkSumPt     (float x){ m_dr03TkSumPt      = x; }
+  void set_mvaGeneralPurpose(float x){m_mvaGeneralPurpose=x;}
+  void set_mvaHZZ(float x){m_mvaHZZ=x;}
   void set_mvaIso(float x){m_mvaIso=x;}
   void set_mvaNoIso(float x){m_mvaNoIso=x;}
   void set_effArea(float x){m_AEff=x;}
@@ -189,12 +209,12 @@ class Electron : public RecParticle {
   void set_full5x5_e2x5Max(float x){m_full5x5_e2x5Max = x;}
   void set_full5x5_e5x5(float x){m_full5x5_e5x5 = x;}
 
-  float gsfTrack_dxy_vertex(const float point_x, const float point_y) const{ 
-    return ( - (m_gsfTrack_vx-point_x) * m_gsfTrack_py + (m_gsfTrack_vy-point_y) * m_gsfTrack_px ) / sqrt(m_gsfTrack_px*m_gsfTrack_px+m_gsfTrack_py*m_gsfTrack_py);  
+  float gsfTrack_dxy_vertex(const float point_x, const float point_y) const{
+    return ( - (m_gsfTrack_vx-point_x) * m_gsfTrack_py + (m_gsfTrack_vy-point_y) * m_gsfTrack_px ) / sqrt(m_gsfTrack_px*m_gsfTrack_px+m_gsfTrack_py*m_gsfTrack_py);
   };
 
-  float gsfTrack_dz_vertex(const float point_x, const float point_y, const float point_z) const{ 
-    return (m_gsfTrack_vz-point_z) - ((m_gsfTrack_vx-point_x)*m_gsfTrack_px+(m_gsfTrack_vy-point_y)*m_gsfTrack_py)/(m_gsfTrack_px*m_gsfTrack_px+m_gsfTrack_py*m_gsfTrack_py) * m_gsfTrack_pz; 
+  float gsfTrack_dz_vertex(const float point_x, const float point_y, const float point_z) const{
+    return (m_gsfTrack_vz-point_z) - ((m_gsfTrack_vx-point_x)*m_gsfTrack_px+(m_gsfTrack_vy-point_y)*m_gsfTrack_py)/(m_gsfTrack_px*m_gsfTrack_px+m_gsfTrack_py*m_gsfTrack_py) * m_gsfTrack_pz;
   }
 
   float relIso() const{
@@ -232,13 +252,13 @@ class Electron : public RecParticle {
   float dEtaInSeed() const {return m_dEtaInSeed;}
 
  private:
-  float m_supercluster_eta; 
-  float m_supercluster_phi; 
-  float m_dB; 
-  float m_neutralHadronIso; 
-  float m_chargedHadronIso; 
+  float m_supercluster_eta;
+  float m_supercluster_phi;
+  float m_dB;
+  float m_neutralHadronIso;
+  float m_chargedHadronIso;
   float m_photonIso;
-  float m_trackIso; 
+  float m_trackIso;
   float m_puChargedHadronIso;
   int m_gsfTrack_trackerExpectedHitsInner_numberOfLostHits;
   float m_gsfTrack_px;
@@ -249,8 +269,8 @@ class Electron : public RecParticle {
   float m_gsfTrack_vz;
   bool m_passconversionveto;
   float m_dEtaIn;
-  float m_dPhiIn; 
-  float m_sigmaIEtaIEta; 
+  float m_dPhiIn;
+  float m_sigmaIEtaIEta;
   float m_HoverE;
   float m_fbrem;
   float m_EoverPIn;
@@ -259,6 +279,8 @@ class Electron : public RecParticle {
   float m_ecalPFClusterIso;
   float m_hcalPFClusterIso;
   float m_dr03TkSumPt;
+  float m_mvaGeneralPurpose;
+  float m_mvaHZZ;
   float m_mvaIso;
   float m_mvaNoIso;
   float m_AEff;
