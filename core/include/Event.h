@@ -18,6 +18,7 @@ public:
   int run;
   int luminosityBlock;
   long long event;
+  std::string year;
 
   float rho;
 

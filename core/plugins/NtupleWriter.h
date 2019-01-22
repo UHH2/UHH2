@@ -46,7 +46,7 @@ class NtupleWriter : public edm::EDFilter {
       // ----------member data ---------------------------
       TFile *outfile;
       TTree *tr;
-      std::string fileName;
+      std::string fileName, year;
 
       bool doGenJets;
       bool doGenJetsWithParts;

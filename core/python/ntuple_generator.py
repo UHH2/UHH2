@@ -1303,6 +1303,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     #    TestKey = cms.string("TestValue")
                                     #),
                                     fileName=cms.string("Ntuple.root"),
+                                    year=cms.string(year),
                                     doPV=cms.bool(True),
                                     pv_sources=cms.vstring("offlineSlimmedPrimaryVertices"),
                                     doRho=cms.untracked.bool(True),
