@@ -402,11 +402,13 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   // initialization of tree variables
   event.reset(new uhh2::Event(*ges));
 
-  branch(tr, "run",&event->run);
-  branch(tr, "event",&event->event);
-  branch(tr, "luminosityBlock",&event->luminosityBlock);
-  branch(tr, "isRealData",&event->isRealData);
-  branch(tr, "rho",&event->rho);
+  branch(tr, "run", &event->run);
+  branch(tr, "event", &event->event);
+  branch(tr, "luminosityBlock", &event->luminosityBlock);
+  branch(tr, "isRealData", &event->isRealData);
+  year = iConfig.getParameter<std::string>("year");
+  branch(tr, "year", &event->year);
+  branch(tr, "rho", &event->rho);
   //always create rho branch, as some SFrame modules rely on it being present; only fill it
   // if doRho is true.
   if(doRho){
@@ -640,6 +642,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    event->event = iEvent.id().event();
    event->luminosityBlock = iEvent.luminosityBlock();
    event->isRealData      = iEvent.isRealData();
+   event->year = year;
 
    if(doRho){
       edm::Handle<double> m_rho;

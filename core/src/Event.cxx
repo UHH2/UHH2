@@ -7,6 +7,7 @@ using namespace std;
 
 void Event::clear(){
     run = luminosityBlock = event = -1;
+    year = "";
     rho = beamspot_x0 = beamspot_y0 = beamspot_z0 = NAN;
     prefiringWeight = prefiringWeightUp = prefiringWeightDown = 1.;
     electrons = 0;
