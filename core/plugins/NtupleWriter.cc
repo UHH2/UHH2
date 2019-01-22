@@ -1024,32 +1024,17 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          double nhf = 0;
          double nef = 0;
          for (unsigned int k = 0; k < daughters.size(); k++) {
-           switch(abs(daughters[k]->pdgId())){
-             case 11: //electron
-               cef += daughters[k]->energy();
-               break;
-             case 211: //pi+-
-             case 321: //K
-             case 2212: //p
-             case 3222: //Sigma+
-             case 3112: //Sigma-
-             case 3312: //Xi-
-             case 3334: //Omega-
-               chf += daughters[k]->energy();
-               break;
-             case 310: //KS0
-             case 130: //KL0
-             case 3122: //Lambda0
-             case 3212: //Sigma0
-             case 3322: //Xi0
-             case 2112: //n0
-               nhf += daughters[k]->energy();
-               break;
-             case 22: //photon
-               nef += daughters[k]->energy();
-               break;
-           }
-         }
+	   if(abs(daughters[k]->pdgId())==11) 
+	     cef += daughters[k]->energy();
+	   if(abs(daughters[k]->pdgId())==22)
+	     nef += daughters[k]->energy();
+	   else{
+	     if(abs(daughters[k]->charge())>0.1)
+	       chf += daughters[k]->energy();
+	     else
+	       nhf += daughters[k]->energy();
+	   }
+	 }
          chf /= gentopjet.energy();
          cef /= gentopjet.energy();
          nhf /= gentopjet.energy();
