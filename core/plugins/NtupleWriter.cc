@@ -1101,7 +1101,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          pat::MET pat_met = pat_mets[0];
          met[j].set_pt(pat_met.pt());
          met[j].set_phi(pat_met.phi());
-         met[j].set_mEtSig(pat_met.mEtSig());
+         met[j].set_sumEt(pat_met.sumEt());
+         met[j].set_mEtSignificance(pat_met.metSignificance());
          met[j].set_uncorr_pt(pat_met.uncorPt());
          met[j].set_uncorr_phi(pat_met.uncorPhi());
          // std::cout<<"MET uncorrPt = "<<pat_met.uncorPt()<<" uncorrPhi = "<<pat_met.uncorPhi()<<" corrPt = "<<pat_met.pt()<<" corrPhi = "<<pat_met.phi()<<std::endl;
@@ -1131,8 +1132,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
                met[j].set_shiftedPy_TauEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::TauEnDown, pat::MET::METCorrectionLevel::Type1));
                met[j].set_shiftedPy_MuonEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::MuonEnDown, pat::MET::METCorrectionLevel::Type1));
                met[j].set_shiftedPy_MuonEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::MuonEnUp, pat::MET::METCorrectionLevel::Type1));
-               met[j].set_rawCHS_px(pat_met.corPx(pat::MET::METCorrectionLevel::RawChs));
-               met[j].set_rawCHS_py(pat_met.corPy(pat::MET::METCorrectionLevel::RawChs));
+               met[j].set_rawCHS_px((year != "2016v2" ? pat_met.corPx(pat::MET::METCorrectionLevel::RawChs) : pat_met.px()));  // for 2016v2, rawCHS wasn't stored,
+               met[j].set_rawCHS_py((year != "2016v2" ? pat_met.corPy(pat::MET::METCorrectionLevel::RawChs) : pat_met.py()));  // so while it "works", it just returns junk
             }
        }
       }
@@ -1150,7 +1151,12 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          pat::MET pat_genmet = pat_genmets[0];
          genmet[j].set_pt(pat_genmet.genMET()->pt());
          genmet[j].set_phi(pat_genmet.genMET()->phi());
-         genmet[j].set_mEtSig(pat_genmet.genMET()->mEtSig());
+         genmet[j].set_sumEt(pat_genmet.genMET()->sumEt());
+         // Calculate the met significance ourselves, since it isn't stored
+         // this doesn't actually work for genMET - significane matrix probably needs calculating
+         // genmet[j].set_mEtSignificance(metsig::METSignificance::getSignificance(pat_genmet.genMET()->getSignificanceMatrix(), *(pat_genmet.genMET())));
+         // Instead just store MET/sqrt(sumEt)
+         genmet[j].set_mEtSignificance(pat_genmet.genMET()->mEtSig());
          //uncorrected MET is equal to normal MET for GenMET
          genmet[j].set_uncorr_pt(pat_genmet.genMET()->pt());
          genmet[j].set_uncorr_phi(pat_genmet.genMET()->phi());

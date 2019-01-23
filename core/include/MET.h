@@ -6,7 +6,8 @@ public:
   MET(){
       m_pt = 0;
       m_phi = 0;
-      m_mEtSig = 0;
+      m_sumEt = 0;
+      m_mEtSignificance = 0;
       m_uncorr_pt = 0;
       m_uncorr_phi = 0;
       m_shiftedPx_JetEnUp = 0;
@@ -44,8 +45,10 @@ public:
    float pt() const{return m_pt;}
    /// phi
    float phi() const{return m_phi;}
-   /// transverse momentum significance
-   float mEtSig() const{return m_mEtSig;}
+   /// sum of ET in the event
+   float sumEt() const{return m_sumEt;}
+   /// transverse momentum significance from covariance matrix
+   float mEtSignificance() const{return m_mEtSignificance;}
 
    /// uncorrected transverse momentum
    float uncorr_pt() const{return m_uncorr_pt;}
@@ -106,6 +109,7 @@ public:
 
    float shiftedPy_MuonEnUp() const{return m_shiftedPy_MuonEnUp;}
    
+   // For 2016v2, rawCHS does not exist, so it just returns the normal MET px & py
    float rawCHS_px() const{return m_rawCHS_px;}
 
    float rawCHS_py() const{return m_rawCHS_py;}
@@ -115,8 +119,10 @@ public:
    void set_pt(float pt){m_pt=pt;}  
    /// set phi
    void set_phi(float phi){m_phi=phi;}
-   /// set transverse momentum significance
-   void set_mEtSig(float mEtSig){m_mEtSig=mEtSig;}
+   /// set sum Et
+   void set_sumEt(float sumEt){m_sumEt=sumEt;}
+   /// set transverse momentum significance (should be from covariance matrix)
+   void set_mEtSignificance(float mEtSignificance){m_mEtSignificance=mEtSignificance;}
 
    /// set uncorrected transverse momentum
    void set_uncorr_pt(float pt){m_uncorr_pt=pt;}  
@@ -199,7 +205,8 @@ public:
 private:
    float m_pt;
    float m_phi;
-   float m_mEtSig;
+   float m_sumEt;
+   float m_mEtSignificance;
    float m_shiftedPx_JetEnUp;
    float m_shiftedPx_JetEnDown;
    float m_shiftedPx_JetResUp; 
