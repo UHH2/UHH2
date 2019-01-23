@@ -1023,26 +1023,35 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          double cef = 0;
          double nhf = 0;
          double nef = 0;
+         double muf = 0;
          for (unsigned int k = 0; k < daughters.size(); k++) {
 	   if(abs(daughters[k]->pdgId())==11) 
 	     cef += daughters[k]->energy();
-	   if(abs(daughters[k]->pdgId())==22)
-	     nef += daughters[k]->energy();
-	   else{
-	     if(abs(daughters[k]->charge())>0.1)
-	       chf += daughters[k]->energy();
-	     else
-	       nhf += daughters[k]->energy();
+	   else{ 
+	     if(abs(daughters[k]->pdgId())==22)
+	       nef += daughters[k]->energy();
+	     else{ 
+	       if(abs(daughters[k]->pdgId())==13)
+		 muf += daughters[k]->energy();
+	       else{
+		 if(abs(daughters[k]->charge())>0.1)
+		   chf += daughters[k]->energy();
+		 else
+		   nhf += daughters[k]->energy();
+	       }
+	     }
 	   }
 	 }
          chf /= gentopjet.energy();
          cef /= gentopjet.energy();
          nhf /= gentopjet.energy();
          nef /= gentopjet.energy();
+	 muf /=gentopjet.energy();
          gentopjet.set_chf(chf);
          gentopjet.set_cef(cef);
          gentopjet.set_nhf(nhf);
          gentopjet.set_nef(nef);
+         gentopjet.set_muf(muf);
          gentopjets[j].push_back(gentopjet);
        }
      }
