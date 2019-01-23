@@ -25,9 +25,11 @@ public:
   void  set_nhf(double nhf){m_nhf=nhf;}
   double nef() const{return m_nef;}
   void  set_nef(double nef){m_nef=nef;}
+  double muf() const{return m_muf;}
+  void  set_muf(double muf){m_muf=muf;}
   
 private:
   std::vector<Particle> m_subjets;
-  double m_tau1,m_tau2,m_tau3,m_chf,m_cef,m_nhf,m_nef;
+  double m_tau1,m_tau2,m_tau3,m_chf,m_cef,m_nhf,m_nef,m_muf;
 };
 
