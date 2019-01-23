@@ -1108,7 +1108,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          met[j].set_pt(pat_met.pt());
          met[j].set_phi(pat_met.phi());
          met[j].set_sumEt(pat_met.sumEt());
-         met[j].set_mEtSig(pat_met.mEtSig());
+         met[j].set_mEtSignificance(pat_met.metSignificance());
          met[j].set_uncorr_pt(pat_met.uncorPt());
          met[j].set_uncorr_phi(pat_met.uncorPhi());
          // std::cout<<"MET uncorrPt = "<<pat_met.uncorPt()<<" uncorrPhi = "<<pat_met.uncorPhi()<<" corrPt = "<<pat_met.pt()<<" corrPhi = "<<pat_met.phi()<<std::endl;
@@ -1158,7 +1158,11 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          genmet[j].set_pt(pat_genmet.genMET()->pt());
          genmet[j].set_phi(pat_genmet.genMET()->phi());
          genmet[j].set_sumEt(pat_genmet.genMET()->sumEt());
-         genmet[j].set_mEtSig(pat_genmet.genMET()->mEtSig());
+         // Calculate the met significance ourselves, since it isn't stored
+         // this doesn't actually work for genMET - significane matrix probably needs calculating
+         // genmet[j].set_mEtSignificance(metsig::METSignificance::getSignificance(pat_genmet.genMET()->getSignificanceMatrix(), *(pat_genmet.genMET())));
+         // Instead just store MET/sqrt(sumEt)
+         genmet[j].set_mEtSignificance(pat_genmet.genMET()->mEtSig());
          //uncorrected MET is equal to normal MET for GenMET
          genmet[j].set_uncorr_pt(pat_genmet.genMET()->pt());
          genmet[j].set_uncorr_phi(pat_genmet.genMET()->phi());
