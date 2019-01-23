@@ -176,6 +176,14 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent, 
      mu.set_selector(Muon::Tracker   , pat_mu.isTrackerMuon());
      mu.set_selector(Muon::Standalone, pat_mu.isStandAloneMuon());
 
+     // 2016v2 specific ones
+     mu.set_selector(Muon::Soft  , pat_mu.isSoftMuon(PV));
+     mu.set_selector(Muon::Loose , pat_mu.isLooseMuon());
+     mu.set_selector(Muon::Medium, pat_mu.isMediumMuon());
+     mu.set_selector(Muon::Tight , pat_mu.isTightMuon(PV));
+     mu.set_selector(Muon::Highpt, pat_mu.isHighPtMuon(PV));
+
+     // 2016v3 & 2017 onwards uses these instead
      mu.set_selector(Muon::CutBasedIdLoose       , pat_mu.passed(reco::Muon::CutBasedIdLoose));
      mu.set_selector(Muon::CutBasedIdMedium      , pat_mu.passed(reco::Muon::CutBasedIdMedium));
      mu.set_selector(Muon::CutBasedIdMediumPrompt, pat_mu.passed(reco::Muon::CutBasedIdMediumPrompt));
