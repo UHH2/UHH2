@@ -6,6 +6,7 @@ public:
   MET(){
       m_pt = 0;
       m_phi = 0;
+      m_sumEt = 0;
       m_mEtSig = 0;
       m_uncorr_pt = 0;
       m_uncorr_phi = 0;
@@ -44,6 +45,8 @@ public:
    float pt() const{return m_pt;}
    /// phi
    float phi() const{return m_phi;}
+   /// sum of ET in the event
+   float sumEt() const{return m_sumEt;}
    /// transverse momentum significance
    float mEtSig() const{return m_mEtSig;}
 
@@ -116,6 +119,8 @@ public:
    void set_pt(float pt){m_pt=pt;}  
    /// set phi
    void set_phi(float phi){m_phi=phi;}
+   /// set sum Et
+   void set_sumEt(float sumEt){m_sumEt=sumEt;}
    /// set transverse momentum significance
    void set_mEtSig(float mEtSig){m_mEtSig=mEtSig;}
 
@@ -200,6 +205,7 @@ public:
 private:
    float m_pt;
    float m_phi;
+   float m_sumEt;
    float m_mEtSig;
    float m_shiftedPx_JetEnUp;
    float m_shiftedPx_JetEnDown;

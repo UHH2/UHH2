@@ -1107,6 +1107,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          pat::MET pat_met = pat_mets[0];
          met[j].set_pt(pat_met.pt());
          met[j].set_phi(pat_met.phi());
+         met[j].set_sumEt(pat_met.sumEt());
          met[j].set_mEtSig(pat_met.mEtSig());
          met[j].set_uncorr_pt(pat_met.uncorPt());
          met[j].set_uncorr_phi(pat_met.uncorPhi());
@@ -1156,6 +1157,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          pat::MET pat_genmet = pat_genmets[0];
          genmet[j].set_pt(pat_genmet.genMET()->pt());
          genmet[j].set_phi(pat_genmet.genMET()->phi());
+         genmet[j].set_sumEt(pat_genmet.genMET()->sumEt());
          genmet[j].set_mEtSig(pat_genmet.genMET()->mEtSig());
          //uncorrected MET is equal to normal MET for GenMET
          genmet[j].set_uncorr_pt(pat_genmet.genMET()->pt());
