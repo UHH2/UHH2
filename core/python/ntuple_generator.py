@@ -1383,7 +1383,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     doMET=cms.bool(True),
                                     met_sources=met_sources_GL,
 
-                                    doGenMET=cms.bool(False),
+                                    doGenMET=cms.bool(not useData),
+                                    genmet_sources=cms.vstring("slimmedMETs"),
 
                                     # doTopJets=cms.bool(False),
                                     doTopJets = cms.bool(True),
