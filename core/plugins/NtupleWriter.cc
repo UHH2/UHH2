@@ -1137,8 +1137,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
                met[j].set_shiftedPy_TauEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::TauEnDown, pat::MET::METCorrectionLevel::Type1));
                met[j].set_shiftedPy_MuonEnDown(pat_met.shiftedPy(pat::MET::METUncertainty::MuonEnDown, pat::MET::METCorrectionLevel::Type1));
                met[j].set_shiftedPy_MuonEnUp(pat_met.shiftedPy(pat::MET::METUncertainty::MuonEnUp, pat::MET::METCorrectionLevel::Type1));
-               met[j].set_rawCHS_px(pat_met.corPx(pat::MET::METCorrectionLevel::RawChs));
-               met[j].set_rawCHS_py(pat_met.corPy(pat::MET::METCorrectionLevel::RawChs));
+               met[j].set_rawCHS_px((year != "2016v2" ? pat_met.corPx(pat::MET::METCorrectionLevel::RawChs) : pat_met.px()));  // for 2016v2, rawCHS wasn't stored,
+               met[j].set_rawCHS_py((year != "2016v2" ? pat_met.corPy(pat::MET::METCorrectionLevel::RawChs) : pat_met.py()));  // so while it "works", it just returns junk
             }
        }
       }

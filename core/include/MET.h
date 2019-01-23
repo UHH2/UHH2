@@ -106,6 +106,7 @@ public:
 
    float shiftedPy_MuonEnUp() const{return m_shiftedPy_MuonEnUp;}
    
+   // For 2016v2, rawCHS does not exist, so it just returns the normal MET px & py
    float rawCHS_px() const{return m_rawCHS_px;}
 
    float rawCHS_py() const{return m_rawCHS_py;}
