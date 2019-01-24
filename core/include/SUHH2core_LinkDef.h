@@ -17,14 +17,14 @@
 #pragma link C++ class std::vector<FlavorParticle>+;
 #pragma link C++ class Jet+;
 #pragma link C++ class std::vector<Jet>+;
+#pragma link C++ class GenJet+;
+#pragma link C++ class std::vector<GenJet>+;
 #pragma link C++ class JetBTagInfo+;
 #pragma link C++ class std::vector<JetBTagInfo>+;
 #pragma link C++ class TopJet+;
 #pragma link C++ class std::vector<TopJet>+;
 #pragma link C++ class GenTopJet+;
 #pragma link C++ class std::vector<GenTopJet>+;
-#pragma link C++ class GenJetWithParts+;
-#pragma link C++ class std::vector<GenJetWithParts>+;
 #pragma link C++ class Electron+;
 #pragma link C++ class std::vector<Electron>+;
 #pragma link C++ class Muon+;

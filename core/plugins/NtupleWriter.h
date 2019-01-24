@@ -40,7 +40,8 @@ class NtupleWriter : public edm::EDFilter {
       virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
       
       // fill gen particles from a gen topjet
-      void fill_genparticles_jet(const reco::GenJet& reco_genjet, GenJetWithParts& genjet);
+      void fill_genparticles_jet(const reco::Jet& reco_genjet, GenJet& genjet);
+
 
 
       // ----------member data ---------------------------
@@ -49,7 +50,6 @@ class NtupleWriter : public edm::EDFilter {
       std::string fileName, year;
 
       bool doGenJets;
-      bool doGenJetsWithParts;
       bool doGenTopJets;
       bool doMET;
       bool doGenMET;
@@ -85,10 +85,11 @@ class NtupleWriter : public edm::EDFilter {
       edm::EDGetToken generator_token;
       edm::EDGetToken pus_token;
       edm::EDGetToken lhe_token;
+      edm::EDGetToken genjetflavor_token;
       edm::EDGetToken dupECALClusters_token;
       edm::EDGetToken hitsNotReplaced_token;
       std::vector<edm::EDGetToken> genjet_tokens;
-      std::vector<std::vector<Particle>> genjets;
+      std::vector<std::vector<GenJet>> genjets;
       double genjet_ptmin;
       double genjet_etamax;
 
@@ -101,11 +102,6 @@ class NtupleWriter : public edm::EDFilter {
       std::vector<edm::EDGetToken> gentopjet_tau1_tokens;
       std::vector<edm::EDGetToken> gentopjet_tau2_tokens;
       std::vector<edm::EDGetToken> gentopjet_tau3_tokens;
-
-      std::vector<edm::EDGetToken> genjetwithparts_tokens;
-      std::vector<std::vector<GenJetWithParts>> genjetwithparts;
-      double genjetwithparts_ptmin;
-      double genjetwithparts_etamax;
 
       std::vector<edm::EDGetToken> photon_tokens;
       std::vector<std::vector<Photon>> phs;

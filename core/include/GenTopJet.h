@@ -2,11 +2,11 @@
 
 #include "Particle.h"
 
-class GenTopJet : public Particle {
+class GenTopJet : public GenJet {
 public:
 
   GenTopJet() {
-    m_tau1 = m_tau2 = m_tau3 = m_chf = m_cef = m_nhf = m_nef = -1.0;
+    m_tau1 = m_tau2 = m_tau3 = -1;
   }
 
   const std::vector<Particle> & subjets() const{return m_subjets;}
@@ -17,19 +17,9 @@ public:
   void  set_tau2(float tau2){m_tau2=tau2;}
   float tau3() const{return m_tau3;}
   void  set_tau3(float tau3){m_tau3=tau3;}
-  double chf() const{return m_chf;}
-  void  set_chf(double chf){m_chf=chf;}
-  double cef() const{return m_cef;}
-  void  set_cef(double cef){m_cef=cef;}
-  double nhf() const{return m_nhf;}
-  void  set_nhf(double nhf){m_nhf=nhf;}
-  double nef() const{return m_nef;}
-  void  set_nef(double nef){m_nef=nef;}
-  double muf() const{return m_muf;}
-  void  set_muf(double muf){m_muf=muf;}
-  
+ 
 private:
   std::vector<Particle> m_subjets;
-  double m_tau1,m_tau2,m_tau3,m_chf,m_cef,m_nhf,m_nef,m_muf;
+  double m_tau1,m_tau2,m_tau3;
 };
 

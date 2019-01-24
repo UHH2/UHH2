@@ -23,5 +23,5 @@ class GenJetsHists : public uhh2::Hists {
   std::vector<ParticleHist> single_ParticleHists;
   ParticleHist alljets;
   TH1F* number;
-  uhh2::Event::Handle<std::vector<Particle> > h_jets;
+  uhh2::Event::Handle<std::vector<GenJet> > h_jets;
 };

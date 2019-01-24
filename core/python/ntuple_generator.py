@@ -1646,7 +1646,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     # cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")),
                                     # #this can be used to save N-subjettiness for GenJets
 
-                                    doGenJetsWithParts=cms.bool(False),
                                     doAllPFParticles=cms.bool(False),
                                     pf_collection_source=cms.InputTag("packedPFCandidates"),
 
