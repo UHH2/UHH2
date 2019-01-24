@@ -43,7 +43,15 @@ float getPatJetUserFloat(const pat::Jet & jet, const std::string & key, float de
 // Generate the name of the puppiJetSpecificProducer module
 // So ugly, really should get the user to configure this in the NtupleWriter py
 std::string getPuppiJetSpecificProducer(const std::string & name){
-  return "patPuppiJetSpecificProducer"+name;
+  std::string multiplicity_name = "patPuppiJetSpecificProducer"+name;
+  if(multiplicity_name == "patPuppiJetSpecificProducerselectedUpdatedPatJetsSlimmedJetsPuppiNewDFTraining"){
+    multiplicity_name = "patPuppiJetSpecificProducerupdatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining";
+  }else if(multiplicity_name == "patPuppiJetSpecificProducerselectedUpdatedPatJetsPatJetsAK8PFPUPPINewDFTraining"){
+   multiplicity_name = "patPuppiJetSpecificProducerupdatedPatJetsTransientCorrectedPatJetsAK8PFPUPPINewDFTraining";
+  }else if("selectedUpdatedPatJetsSlimmedJetsAK8NewDFTraining"){
+    multiplicity_name = "patPuppiJetSpecificProducerupdatedPatJetsTransientCorrectedSlimmedJetsAK8NewDFTraining";
+  }
+  return multiplicity_name;
 }
 
 NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member){
@@ -281,7 +289,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
   }//do taginfos
   if(do_btagging){
     const auto & bdisc = pat_jet.getPairDiscri();
-    bool csv = false, csvmva = false, doubleak8 = false, doubleca15 = false, deepcsv_b = false, deepcsv_bb = false;
+    bool csv = false, csvmva = false, doubleak8 = false, doubleca15 = false, deepcsv_b = false, deepcsv_bb = false, deepflavour_bb=false, deepflavour_b=false, deepflavour_lepb=false, deepflavour_c=false, deepflavour_uds=false, deepflavour_g=false, deepboosted_bbvsLight=false,deepboosted_ccvsLight=false,deepboosted_TvsQCD=false,deepboosted_ZHccvsQCD=false,deepboosted_WvsQCD=false,deepboosted_ZHbbvsQCD=false,deepboosted_probHbb=false,deepboosted_probQCDbb=false,deepboosted_probQCDc=false,deepboosted_probTbqq=false,deepboosted_probTbcq=false,deepboosted_probTbq=false,deepboosted_probQCDothers=false,deepboosted_probQCDb=false,deepboosted_probTbc=false,deepboosted_probWqq=false,deepboosted_probQCDcc=false,deepboosted_probHcc=false,deepboosted_probWcq=false,deepboosted_probZcc=false,deepboosted_probZqq=false,deepboosted_probHqqqq=false,deepboosted_probZbb=false,deepdouble_H=false,deepdouble_QCD=false;
     for(const auto & name_value : bdisc){
       const auto & name = name_value.first;
       const auto & value = name_value.second;
@@ -309,9 +317,139 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
 	jet.set_btag_BoostedDoubleSecondaryVertexCA15(value);
 	doubleca15 = true;
       }
+      else if(name=="pfDeepFlavourJetTags:probbb"){
+      	jet.set_btag_DeepFlavour_probbb(value);
+      	deepflavour_bb =true;
+      }
+      else if(name=="pfDeepFlavourJetTags:probb"){
+      	jet.set_btag_DeepFlavour_probb(value);
+      	deepflavour_b =true;
+      }
+      else if(name=="pfDeepFlavourJetTags:problepb"){
+      	jet.set_btag_DeepFlavour_problepb(value);
+      	deepflavour_lepb =true;
+      }
+      else if(name=="pfDeepFlavourJetTags:probc"){
+      	jet.set_btag_DeepFlavour_probc(value);
+      	deepflavour_c =true;
+      }
+      else if(name=="pfDeepFlavourJetTags:probuds"){
+      	jet.set_btag_DeepFlavour_probuds(value);
+      	deepflavour_uds =true;
+      }
+      else if(name=="pfDeepFlavourJetTags:probg"){
+      	jet.set_btag_DeepFlavour_probg(value);
+      	deepflavour_g =true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:bbvsLight"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_bbvsLight(value);
+	deepboosted_bbvsLight=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ccvsLight"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_ccvsLight(value);
+	deepboosted_ccvsLight=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:TvsQCD"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_TvsQCD(value);
+	deepboosted_TvsQCD=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHccvsQCD"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_ZHccvsQCD(value);
+	deepboosted_ZHccvsQCD=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:WvsQCD"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_WvsQCD(value);
+	deepboosted_WvsQCD=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_ZHbbvsQCD(value);
+	deepboosted_ZHbbvsQCD=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probHbb"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probHbb(value);
+	deepboosted_probHbb=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probQCD"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probQCD(value);
+	deepboosted_probQCDc=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probQCDbb"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probQCDbb(value);
+	deepboosted_probQCDbb=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probTbqq"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probTbqq(value);
+	deepboosted_probTbqq=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probTbcq"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probTbcq(value);
+	deepboosted_probTbcq=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probTbq"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probTbq(value);
+	deepboosted_probTbq=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probQCDothers"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probQCDothers(value);
+	deepboosted_probQCDothers=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probQCDb"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probQCDb(value);
+	deepboosted_probQCDb=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probTbc"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probTbc(value);
+	deepboosted_probTbc=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probWqq"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probWqq(value);
+	deepboosted_probWqq=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probQCDcc"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probQCDcc(value);
+	deepboosted_probQCDcc=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probHbb"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probHbb(value);
+	deepboosted_probHbb=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probHcc"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probHcc(value);
+	deepboosted_probHcc=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probWcq"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probWcq(value);
+	deepboosted_probWcq=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probZcc"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probZcc(value);
+	deepboosted_probZcc=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probZqq"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probZqq(value);
+	deepboosted_probZqq=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probHqqqq"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probHqqqq(value);
+	deepboosted_probHqqqq=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:probZbb"){
+	jet.set_btag_MassDecorrelatedDeepBoosted_probZbb(value);
+	deepboosted_probZbb=true;
+      }
+      else if(name=="pfDeepDoubleBJetTags:probH"){
+	jet.set_btag_DeepDoubleB_probH(value);
+	deepdouble_H = true;
+      }
+      else if(name=="pfDeepDoubleBJetTags:probQCD"){
+	jet.set_btag_DeepDoubleB_probQCD(value);
+	deepdouble_QCD = true;
+      }
+
     }
 
-    if(!csv || !csvmva || !doubleak8 || !doubleca15 || !deepcsv_b || !deepcsv_bb){
+
+       if(!csv || !csvmva || !doubleak8 || !doubleca15 || !deepcsv_b || !deepcsv_bb || !deepflavour_bb || !deepflavour_b || !deepflavour_lepb || !deepflavour_uds || !deepflavour_c || !deepflavour_g || !deepboosted_bbvsLight || !deepboosted_ccvsLight || !deepboosted_TvsQCD || !deepboosted_ZHccvsQCD || !deepboosted_WvsQCD || !deepboosted_ZHbbvsQCD || !deepboosted_probHbb || !deepboosted_probQCDbb|| !deepboosted_probQCDc|| !deepboosted_probTbqq|| !deepboosted_probTbcq|| !deepboosted_probTbq|| !deepboosted_probQCDothers|| !deepboosted_probQCDb|| !deepboosted_probTbc|| !deepboosted_probWqq|| !deepboosted_probQCDcc|| !deepboosted_probHcc|| !deepboosted_probWcq|| !deepboosted_probZcc|| !deepboosted_probZqq|| !deepboosted_probHqqqq|| !deepboosted_probZbb|| !deepdouble_H|| !deepdouble_QCD){
       if(btag_warning){
         std::string btag_list = "";
         for(const auto & name_value : bdisc){
