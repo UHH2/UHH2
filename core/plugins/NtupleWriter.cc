@@ -1318,7 +1318,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           subjet.set_jetArea(subItr->jetArea());
           thisJet.add_subjet(subjet);
         }
-
         xconeJets[j].push_back(thisJet);
       }
     }
@@ -1348,6 +1347,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           subjet.set_energy(subItr->p4().E());
           subjet.set_partonFlavour(subItr->partonFlavour());
           subjet.set_hadronFlavour(subItr->hadronFlavour());
+	  fill_geninfo_patjet(subItr,subjet);
           thisJet.add_subjet(subjet);
         }
 	fill_geninfo_patjet(patJet,thisJet);
@@ -1380,6 +1380,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           subjet.set_energy(subItr->p4().E());
           subjet.set_partonFlavour(subItr->partonFlavour());
           subjet.set_hadronFlavour(subItr->hadronFlavour());
+	  fill_geninfo_patjet(subItr,subjet);
           thisJet.add_subjet(subjet);
         }
 	fill_geninfo_patjet(patJet,thisJet);
@@ -1466,8 +1467,7 @@ void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genje
   double muf = 0;
 
   // loop over all jet constituents, fill PF fractions info
-
- for(unsigned int l = 0; l<pat_genjet.numberOfSourceCandidatePtrs(); ++l){
+  for(unsigned int l = 0; l<pat_genjet.numberOfSourceCandidatePtrs(); ++l){
    const reco::Candidate* constituent =  pat_genjet.daughter(l);
    jet_charge += constituent->charge();
 
