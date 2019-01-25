@@ -156,8 +156,8 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
   jet.set_eta(pat_jet.eta());
   jet.set_phi(pat_jet.phi());
   jet.set_energy(pat_jet.energy());
-  jet.set_flavor(pat_jet.partonFlavour());
-  jet.set_hadronFlavor(pat_jet.hadronFlavour());
+  jet.set_partonFlavour(pat_jet.partonFlavour());
+  jet.set_hadronFlavour(pat_jet.hadronFlavour());
   jet.set_numberOfDaughters (pat_jet.numberOfDaughters());
   jet.set_jetArea(pat_jet.jetArea());
   if(pat_jet.hasUserFloat("pileupJetId:fullDiscriminant")) {

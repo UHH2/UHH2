@@ -10,9 +10,10 @@
 
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
+
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
-
+#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
 #include "TTree.h"
@@ -39,8 +40,10 @@ class NtupleWriter : public edm::EDFilter {
 
       virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
       
-      // fill gen particles from a gen topjet
-      void fill_genparticles_jet(const reco::Jet& reco_genjet, GenJet& genjet);
+      // fill gen particles and other info from a jet (for top)
+      void fill_geninfo_recojet(const reco::Jet& reco_genjet, GenJet& genjet);
+      // fill gen particles and other info from a pat-jet (for XCONE, HOTVR, etc)
+      void fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genjet);
 
 
 

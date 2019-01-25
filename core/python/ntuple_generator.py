@@ -1681,6 +1681,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     )
     if do_prefire:
         process.p.insert(0, process.prefiringweight)
+
+    if year == "2016v2":
+        process.load("PhysicsTools.JetMCAlgos.HadronAndPartonSelector_cfi")
+        process.selectedHadronsAndPartonsForGenJetsFlavourInfos.particles = "prunedGenParticles"
+        task.add(process.selectedHadronsAndPartonsForGenJetsFlavourInfos)
+        from PhysicsTools.JetMCAlgos.AK4GenJetFlavourInfos_cfi import ak4GenJetFlavourInfos
+        process.slimmedGenJetsFlavourInfos = ak4GenJetFlavourInfos.clone(jets="slimmedGenJets")
+        task.add(process.slimmedGenJetsFlavourInfos)
+
     process.p.associate(task)
     process.p.associate(process.patAlgosToolsTask)
 

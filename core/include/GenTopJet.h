@@ -9,8 +9,8 @@ public:
     m_tau1 = m_tau2 = m_tau3 = -1;
   }
 
-  const std::vector<Particle> & subjets() const{return m_subjets;}
-  void add_subjet(const Particle & p){m_subjets.push_back(p);}
+  const std::vector<GenJet> & subjets() const{return m_subjets;}
+  void add_subjet(const GenJet & p){m_subjets.push_back(p);}
   float tau1() const{return m_tau1;}
   void  set_tau1(float tau1){m_tau1=tau1;}
   float tau2() const{return m_tau2;}
@@ -19,7 +19,7 @@ public:
   void  set_tau3(float tau3){m_tau3=tau3;}
  
 private:
-  std::vector<Particle> m_subjets;
+  std::vector<GenJet> m_subjets;
   double m_tau1,m_tau2,m_tau3;
 };
 

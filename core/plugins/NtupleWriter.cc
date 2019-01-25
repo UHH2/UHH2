@@ -12,7 +12,7 @@
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 #include "DataFormats/PatCandidates/interface/Photon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
-#include "DataFormats/PatCandidates/interface/Jet.h"
+
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
@@ -21,9 +21,8 @@
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/JetMatching/interface/JetFlavourInfo.h"
 #include "SimDataFormats/JetMatching/interface/JetFlavourInfoMatching.h"
-//#include "DataFormats/HepMCCandidate/interface/GenPartice.h"
-#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
-
+//#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+//#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/Common/interface/EDCollection.h"
 
 
@@ -41,8 +40,7 @@ using namespace std;
 
 namespace{
 
-  
-size_t add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genparts){
+ size_t add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genparts){
    for(size_t j=0; j<genparts.size();j++){
      const GenParticle & sgenpart = genparts[j];
      auto r = fabs(static_cast<float>(jetgenp.eta()-sgenpart.eta()))+fabs(static_cast<float>(jetgenp.phi()-sgenpart.phi()));
@@ -65,17 +63,57 @@ size_t add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genpar
    genp.set_mother2(-1);
    genp.set_daughter1(-1);
    genp.set_daughter2(-1);
-
+   /*  //fill mother and daughter info (assumes they are in the GenParticle list already). Does not look useful at the moment
    int nm=jetgenp.numberOfMothers();
    int nd=jetgenp.numberOfDaughters();
-   //ToDo: what exactly do we want to store here?
-   if (nm>0) genp.set_mother1( jetgenp.mother(0)->status());
-   if (nm>1) genp.set_mother2( jetgenp.mother(1)->status());
-   if (nd>0) genp.set_daughter1( jetgenp.daughter(0)->status());
-   if (nd>1) genp.set_daughter2( jetgenp.daughter(1)->status());
+   if(nm>0 || nd>0){
+     int mother1_i=-1;     int mother2_i=-1;
+     int daughter1_i=-1;     int daughter2_i=-1;
+     for(size_t j=0; j<genparts.size();j++){
+       const GenParticle & sgenpart = genparts[j];
+       if(nm>0){
+	 const reco::Candidate *reco_mother1 = jetgenp.mother(0);
+	 auto r = fabs(static_cast<float>(reco_mother1->eta()-sgenpart.eta()))+fabs(static_cast<float>(reco_mother1->phi()-sgenpart.phi()));
+	 auto dpt = fabs(static_cast<float>(reco_mother1->pt()-sgenpart.pt()));
+	 if (r == 0.0f && dpt == 0.0f){
+	   mother1_i=j;
+	 }
+       }
+       if(nm>1){
+	 const reco::Candidate *reco_mother2 = jetgenp.mother(1);
+	 auto r = fabs(static_cast<float>(reco_mother2->eta()-sgenpart.eta()))+fabs(static_cast<float>(reco_mother2->phi()-sgenpart.phi()));
+	 auto dpt = fabs(static_cast<float>(reco_mother2->pt()-sgenpart.pt()));
+	 if (r == 0.0f && dpt == 0.0f){
+	   mother2_i=j;
+	 }
+       }
+       if(nd>0){
+	 const reco::Candidate *reco_daughter1 = jetgenp.daughter(0);
+	 auto r = fabs(static_cast<float>(reco_daughter1->eta()-sgenpart.eta()))+fabs(static_cast<float>(reco_daughter1->phi()-sgenpart.phi()));
+	 auto dpt = fabs(static_cast<float>(reco_daughter1->pt()-sgenpart.pt()));
+	 if (r == 0.0f && dpt == 0.0f){
+	   daughter1_i=j;
+	 }
+       }
+       if(nd>1){
+	 const reco::Candidate *reco_daughter2 = jetgenp.daughter(1);
+	 auto r = fabs(static_cast<float>(reco_daughter2->eta()-sgenpart.eta()))+fabs(static_cast<float>(reco_daughter2->phi()-sgenpart.phi()));
+	 auto dpt = fabs(static_cast<float>(reco_daughter2->pt()-sgenpart.pt()));
+	 if (r == 0.0f && dpt == 0.0f){
+	   daughter2_i=j;
+	 }
+       }
+     }
+     genp.set_mother1(mother1_i);
+     genp.set_mother1(mother2_i);
+     genp.set_daughter1(daughter1_i);
+     genp.set_daughter1(daughter2_i);
+   }
+   */
    genparts.push_back(genp);
    return genparts.size()-1;
 }
+
 
 template<typename T>
 void branch(TTree * tree, const char * bname, T t){
@@ -454,6 +492,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     gentopjets.resize(gentopjet_sources.size());
     for(size_t j=0; j< gentopjet_sources.size(); ++j){
       gentopjet_tokens.push_back(consumes<edm::View<reco::Jet> >(gentopjet_sources[j]));
+      //      gentopjet_tokens.push_back(consumes<edm::View<reco::GenJet> >(gentopjet_sources[j]));
       //      gentopjet_tokens.push_back(consumes<edm::View<pat::Jet> >(gentopjet_sources[j]));
       branch(tr, gentopjet_sources[j].encode().c_str(), "std::vector<GenTopJet>", &gentopjets[j]);
     }
@@ -791,7 +830,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          int nm=iter->numberOfMothers();
          int nd=iter->numberOfDaughters();
 
-
          if (nm>0) genp.set_mother1( iter->motherRef(0).key());
          if (nm>1) genp.set_mother2( iter->motherRef(1).key());
          if (nd>0) genp.set_daughter1( iter->daughterRef(0).key());
@@ -873,33 +911,17 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	 jet.set_phi(gen_jet.phi());
 	 jet.set_pt(gen_jet.pt());
 	 jet.set_energy(gen_jet.energy());
-	 //Following example:
-	 //https://github.com/cms-sw/cmssw/blob/CMSSW_7_4_12/PhysicsTools/JetExamples/test/printJetFlavourInfo.cc
-	 //ToDo: looping over all matched pairs is not the most elegant way, find better solution?
+
 	 for ( reco::JetFlavourInfoMatchingCollection::const_iterator j  = genjetflavorMatching->begin(); j != genjetflavorMatching->end(); ++j ) {
 	   const reco::Jet *aJet = (*j).first.get();
 	   if(&gen_jet == aJet){
 	   reco::JetFlavourInfo aInfo = (*j).second;
-	     //	   if(fabs(aJet->eta()-gen_jet.eta())<1e-3 && fabs(aJet->phi()-gen_jet.phi())<1e-3 && fabs(aJet->pt()-gen_jet.pt())<1e-3){
 	     jet.set_partonFlavour(aInfo.getPartonFlavour());
 	     jet.set_hadronFlavour(aInfo.getHadronFlavour());
 	   }
-	 }
-
-          // recalculate the jet charge.
-          int jet_charge = 0;
-          size_t nd = gen_jet.numberOfSourceCandidatePtrs();
-          for(size_t i=0; i<nd; ++i){
-            auto constituent = gen_jet.sourceCandidatePtr(i);
-            if(constituent.isNull()){
-               continue;
-            }
-            // use constituent here
-            jet_charge += constituent->charge();
-          }
-          jet.set_charge(jet_charge);
-	  fill_genparticles_jet(gen_jet,jet);
-          genjets[j].push_back(jet);
+	 }        
+	 fill_geninfo_recojet(gen_jet,jet);
+	 genjets[j].push_back(jet);
        }
      }    
    }
@@ -916,6 +938,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      for(size_t j=0; j< gentopjet_tokens.size(); ++j){
        gentopjets[j].clear();
        edm::Handle<edm::View<reco::Jet> > reco_gentopjets;
+       //       edm::Handle<edm::View<reco::GenJet> > reco_gentopjets;
        iEvent.getByToken(gentopjet_tokens[j], reco_gentopjets);
        edm::Handle<edm::ValueMap<float> > reco_gentopjets_tau1;
        if (j<gentopjet_tau1_tokens.size())
@@ -945,26 +968,26 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          if(reco_gentopjets_tau3.isValid())
            gentopjet.set_tau3((*reco_gentopjets_tau3)[ptr]);
 
-         std::vector<const reco::Candidate *> daughters;
-	 if(dynamic_cast<const reco::GenJet *>(&reco_gentopjet)) { // This is a GenJet without subjets
-            for (unsigned int l = 0; l < reco_gentopjet.numberOfDaughters(); l++) {
-              daughters.push_back(reco_gentopjet.daughter(l));
-            }
-         } else { // This is a BasicJet with subjets
+	 // //  std::vector<const reco::Candidate *> daughters;
+	 // if(dynamic_cast<const reco::GenJet *>(&reco_gentopjet)) { // This is a GenJet without subjets
+         //    // for (unsigned int l = 0; l < reco_gentopjet.numberOfDaughters(); l++) {
+         //    //   daughters.push_back(reco_gentopjet.daughter(l));
+         //    // }
+         // } else { // This is a BasicJet with subjets
+	 if(!dynamic_cast<const reco::GenJet *>(&reco_gentopjet)){// This is a BasicJet with subjets
           for (unsigned int k = 0; k < reco_gentopjet.numberOfDaughters(); k++) {
-            Particle subjet_v4;
+            GenJet subjet_v4;
             subjet_v4.set_pt(reco_gentopjet.daughter(k)->p4().pt());
             subjet_v4.set_eta(reco_gentopjet.daughter(k)->p4().eta());
             subjet_v4.set_phi(reco_gentopjet.daughter(k)->p4().phi());
             subjet_v4.set_energy(reco_gentopjet.daughter(k)->p4().E());
             gentopjet.add_subjet(subjet_v4);
-            for (unsigned int l = 0; l < reco_gentopjet.daughter(k)->numberOfDaughters(); l++) {
-              daughters.push_back(reco_gentopjet.daughter(k)->daughter(l));
-            }
+            // for (unsigned int l = 0; l < reco_gentopjet.daughter(k)->numberOfDaughters(); l++) {
+            //   daughters.push_back(reco_gentopjet.daughter(k)->daughter(l));
+            // }
           }
          }
-	 //	 fill_genparticles_jet(*(dynamic_cast<const reco::GenJet *>(&reco_gentopjet)), (GenJet&)gentopjet);
-	 fill_genparticles_jet(reco_gentopjet, (GenJet&)gentopjet);
+	 fill_geninfo_recojet(reco_gentopjet, (GenJet&)gentopjet);
 	 gentopjets[j].push_back(gentopjet);
        }
      }
@@ -1314,15 +1337,20 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         thisJet.set_eta(patJet.p4().eta());
         thisJet.set_phi(patJet.p4().phi());
         thisJet.set_energy(patJet.p4().E());
+	thisJet.set_partonFlavour(patJet.partonFlavour());
+	thisJet.set_hadronFlavour(patJet.hadronFlavour());
+
         for (const auto & subItr : patJet.subjets()) {
-          Particle subjet;
+          GenJet subjet;
           subjet.set_pt(subItr->p4().pt());
           subjet.set_eta(subItr->p4().eta());
           subjet.set_phi(subItr->p4().phi());
           subjet.set_energy(subItr->p4().E());
+          subjet.set_partonFlavour(subItr->partonFlavour());
+          subjet.set_hadronFlavour(subItr->hadronFlavour());
           thisJet.add_subjet(subjet);
         }
-
+	fill_geninfo_patjet(patJet,thisJet);
         genhotvrJets[j].push_back(thisJet);
       }
     }
@@ -1341,16 +1369,20 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         thisJet.set_eta(patJet.p4().eta());
         thisJet.set_phi(patJet.p4().phi());
         thisJet.set_energy(patJet.p4().E());
+	thisJet.set_partonFlavour(patJet.partonFlavour());
+	thisJet.set_hadronFlavour(patJet.hadronFlavour());
 
         for (const auto & subItr : patJet.subjets()) {
-          Particle subjet;
+          GenJet subjet;
           subjet.set_pt(subItr->p4().pt());
           subjet.set_eta(subItr->p4().eta());
           subjet.set_phi(subItr->p4().phi());
           subjet.set_energy(subItr->p4().E());
+          subjet.set_partonFlavour(subItr->partonFlavour());
+          subjet.set_hadronFlavour(subItr->hadronFlavour());
           thisJet.add_subjet(subjet);
         }
-
+	fill_geninfo_patjet(patJet,thisJet);
         genxconeJets[j].push_back(thisJet);
       }
     }
@@ -1418,30 +1450,42 @@ void NtupleWriter::fillDescriptions(edm::ConfigurationDescriptions& descriptions
 }
 
 
-void NtupleWriter::fill_genparticles_jet(const reco::Jet& reco_genjet, GenJet& genjet)
+void NtupleWriter::fill_geninfo_recojet(const reco::Jet& reco_genjet, GenJet& genjet)
 {
-  // loop over all jet constituents, fill into gen_particle collection and PF fractions
- double chf = 0; double cef = 0;
- double nhf = 0; double nef = 0;
- double muf = 0;
+  pat::Jet pat_jet(reco_genjet);
+  fill_geninfo_patjet(pat_jet, genjet);
+}
 
- for(unsigned int l = 0; l<reco_genjet.numberOfDaughters(); ++l){
-   const reco::Candidate* jetgenp =  reco_genjet.daughter(l);
-   size_t genparticles_index = add_genpart(*jetgenp, *event->genparticles);
+void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genjet)
+{
+
+  // recalculate the jet charge.
+  int jet_charge = 0;
+  double chf = 0; double cef = 0;
+  double nhf = 0; double nef = 0;
+  double muf = 0;
+
+  // loop over all jet constituents, fill PF fractions info
+
+ for(unsigned int l = 0; l<pat_genjet.numberOfSourceCandidatePtrs(); ++l){
+   const reco::Candidate* constituent =  pat_genjet.daughter(l);
+   jet_charge += constituent->charge();
+
+   size_t genparticles_index = add_genpart(*constituent, *event->genparticles);
    genjet.add_genparticles_index(genparticles_index);
-   if(abs(jetgenp->pdgId())==11) 
-     cef += jetgenp->energy();
+   if(abs(constituent->pdgId())==11) 
+     cef += constituent->energy();
    else{ 
-     if(abs(jetgenp->pdgId())==22)
-       nef += jetgenp->energy();
+     if(abs(constituent->pdgId())==22)
+       nef += constituent->energy();
      else{ 
-       if(abs(jetgenp->pdgId())==13)
-	 muf += jetgenp->energy();
+       if(abs(constituent->pdgId())==13)
+	 muf += constituent->energy();
        else{
-	 if(abs(jetgenp->charge())>0.1)
-	   chf += jetgenp->energy();
+	 if(abs(constituent->charge())>0.1)
+	   chf += constituent->energy();
 	 else
-	   nhf += jetgenp->energy();
+	   nhf += constituent->energy();
        }
      }
    }
@@ -1456,6 +1500,7 @@ void NtupleWriter::fill_genparticles_jet(const reco::Jet& reco_genjet, GenJet& g
  genjet.set_nhf(nhf);
  genjet.set_nef(nef);
  genjet.set_muf(muf);
+ genjet.set_charge(jet_charge);
 }
 
 
