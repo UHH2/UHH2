@@ -919,8 +919,10 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	     jet.set_partonFlavour(aInfo.getPartonFlavour());
 	     jet.set_hadronFlavour(aInfo.getHadronFlavour());
 	   }
-	 }        
-	 fill_geninfo_recojet(gen_jet,jet);
+	 }
+	 bool add_genparts=false;
+	 if(genjets[j].size()<5) add_genparts=true;
+	 fill_geninfo_recojet(gen_jet,jet,add_genparts);
 	 genjets[j].push_back(jet);
        }
      }    
@@ -987,7 +989,9 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
             // }
           }
          }
-	 fill_geninfo_recojet(reco_gentopjet, (GenJet&)gentopjet);
+	 bool add_genparts=false;
+	 if(gentopjets[j].size()<5) add_genparts=true;
+	 fill_geninfo_recojet(reco_gentopjet, (GenJet&)gentopjet, add_genparts);
 	 gentopjets[j].push_back(gentopjet);
        }
      }
@@ -1338,7 +1342,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         thisJet.set_energy(patJet.p4().E());
 	thisJet.set_partonFlavour(patJet.partonFlavour());
 	thisJet.set_hadronFlavour(patJet.hadronFlavour());
-
+	bool add_genparts=false;
+	if(genhotvrJets[j].size()<5) add_genparts=true;
         for (const auto & subItr : patJet.subjets()) {
           GenJet subjet;
           subjet.set_pt(subItr->p4().pt());
@@ -1347,10 +1352,10 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           subjet.set_energy(subItr->p4().E());
           subjet.set_partonFlavour(subItr->partonFlavour());
           subjet.set_hadronFlavour(subItr->hadronFlavour());
-	  fill_geninfo_patjet(subItr,subjet);
+	  fill_geninfo_patjet(subItr,subjet,add_genparts);
           thisJet.add_subjet(subjet);
         }
-	fill_geninfo_patjet(patJet,thisJet);
+	fill_geninfo_patjet(patJet,thisJet,add_genparts);
         genhotvrJets[j].push_back(thisJet);
       }
     }
@@ -1371,7 +1376,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         thisJet.set_energy(patJet.p4().E());
 	thisJet.set_partonFlavour(patJet.partonFlavour());
 	thisJet.set_hadronFlavour(patJet.hadronFlavour());
-
+	bool add_genparts=false;
+	if(genxconeJets[j].size()<5) add_genparts=true;
         for (const auto & subItr : patJet.subjets()) {
           GenJet subjet;
           subjet.set_pt(subItr->p4().pt());
@@ -1380,10 +1386,10 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           subjet.set_energy(subItr->p4().E());
           subjet.set_partonFlavour(subItr->partonFlavour());
           subjet.set_hadronFlavour(subItr->hadronFlavour());
-	  fill_geninfo_patjet(subItr,subjet);
+	  fill_geninfo_patjet(subItr,subjet,add_genparts);
           thisJet.add_subjet(subjet);
         }
-	fill_geninfo_patjet(patJet,thisJet);
+	fill_geninfo_patjet(patJet,thisJet,add_genparts);
         genxconeJets[j].push_back(thisJet);
       }
     }
@@ -1451,13 +1457,13 @@ void NtupleWriter::fillDescriptions(edm::ConfigurationDescriptions& descriptions
 }
 
 
-void NtupleWriter::fill_geninfo_recojet(const reco::Jet& reco_genjet, GenJet& genjet)
+void NtupleWriter::fill_geninfo_recojet(const reco::Jet& reco_genjet, GenJet& genjet, bool& add_genparts)
 {
   pat::Jet pat_jet(reco_genjet);
-  fill_geninfo_patjet(pat_jet, genjet);
+  fill_geninfo_patjet(pat_jet, genjet, add_genparts);
 }
 
-void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genjet)
+void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genjet, bool& add_genparts)
 {
 
   // recalculate the jet charge.
@@ -1470,9 +1476,11 @@ void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genje
   for(unsigned int l = 0; l<pat_genjet.numberOfSourceCandidatePtrs(); ++l){
    const reco::Candidate* constituent =  pat_genjet.daughter(l);
    jet_charge += constituent->charge();
+   if(add_genparts){
+     size_t genparticles_index = add_genpart(*constituent, *event->genparticles);
+     genjet.add_genparticles_index(genparticles_index);
+   }
 
-   size_t genparticles_index = add_genpart(*constituent, *event->genparticles);
-   genjet.add_genparticles_index(genparticles_index);
    if(abs(constituent->pdgId())==11) 
      cef += constituent->energy();
    else{ 

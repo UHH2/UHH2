@@ -41,9 +41,9 @@ class NtupleWriter : public edm::EDFilter {
       virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
       
       // fill gen particles and other info from a jet (for top)
-      void fill_geninfo_recojet(const reco::Jet& reco_genjet, GenJet& genjet);
+      void fill_geninfo_recojet(const reco::Jet& reco_genjet, GenJet& genjet, bool &add);
       // fill gen particles and other info from a pat-jet (for XCONE, HOTVR, etc)
-      void fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genjet);
+      void fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genjet, bool &add);
 
 
 
