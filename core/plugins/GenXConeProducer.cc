@@ -72,10 +72,6 @@ class GenXConeProducer : public edm::stream::EDProducer<> {
     virtual void endStream() override;
 
     virtual pat::Jet createPatJet(const fastjet::PseudoJet &, const edm::EventSetup&);
-  // void writeSpecific(reco::PFJet  & jet,
-  // 		     reco::Particle::LorentzVector const & p4,
-  // 		     reco::Particle::Point const & point, 
-  // 		     std::vector<reco::CandidatePtr> const & constituents, edm::EventSetup const & c );
 
     virtual void initPlugin(std::unique_ptr<NjettinessPlugin> & ptr, int N, double R0, double beta, bool usePseudoXCone);
 
@@ -170,8 +166,9 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   seeds[0] = std::max(runNum_uint, minSeed_ + 3) + 3 * evNum_uint;
   seeds[1] = std::max(runNum_uint, minSeed_ + 5) + 5 * evNum_uint;
   gas.set_random_status(seeds);
-
-  vertex_=reco::Jet::Point(0,0,0);//dummy value, todo: copy it from pv-collection? see example https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/plugins/VirtualJetProducer.cc#L292
+//dummy value, todo: copy it from pv-collection? see example https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/plugins/VirtualJetProducer.cc#L292
+//ToDo: vertex info is not used in the clustering???
+  vertex_=reco::Jet::Point(0,0,0);
   particles_.clear(); 
   edm::Handle<edm::View<reco::Candidate>> particles;
   iEvent.getByToken(src_token_, particles);
