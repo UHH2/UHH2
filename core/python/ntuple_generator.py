@@ -745,29 +745,21 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                 modify_patjetproducer_for_data(process, producer)
 
 
-    #add_fatjets_subjets(process, 'ca8CHSJets', 'ca8CHSJetsPruned', genjets_name = lambda s: s.replace('CHS', 'Gen'))
-    # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsFiltered', genjets_name=lambda s: s.replace('CHS', 'Gen'))
-    #add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS')
-    #add_fatjets_subjets(process, 'ca8CHSJets', 'cmsTopTagCHS', genjets_name = lambda s: s.replace('CHS', 'Gen'))
     # add_fatjets_subjets(process, 'ca15CHSJets', 'hepTopTagCHS', top_tagging=True,
     #                     jetcorr_label=None, jetcorr_label_subjets=None)  # CA JEC don't exist so use nothing
+    # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsPruned',
+    #                     jetcorr_label=None, jetcorr_label_subjets=None)  # we only use this to make packed collection for pruned mass
+
     add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop',
                         genjets_name=lambda s: s.replace('CHS', 'Gen'))
-    # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsSoftDrop', genjets_name=lambda s: s.replace('CHS', 'Gen'))
-    # add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsSoftDrop', genjets_name=lambda s: s.replace('Puppi', 'Gen'))
-
-    add_fatjets_subjets(process, 'ak8PuppiJetsFat', 'ak8PuppiJetsSoftDrop', genjets_name=lambda s: s.replace(
-        'Puppi', 'Gen'), jetcorr_label="AK8PFPuppi", jetcorr_label_subjets="AK4PFPuppi")
 
     # B-tagging not needed for pruned jets, they are just used to get the mass
     add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsPruned',
                         genjets_name=lambda s: s.replace('CHS', 'Gen'), btagging=False)
-    # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsPruned', jetcorr_label=None, jetcorr_label_subjets=None)  # we only use this to make packed collection for pruned mass
-    #add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsPruned', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
-    #add_fatjets_subjets(process, 'ca15PuppiJets', 'ca15PuppiJetsFiltered', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
-    #add_fatjets_subjets(process, 'ca8PuppiJets', 'cmsTopTagPuppi', genjets_name = lambda s: s.replace('Puppi', 'Gen'))
-    #add_fatjets_subjets(process, 'ca15PuppiJets', 'hepTopTagPuppi')
-    #add_fatjets_subjets(process, 'ca8PuppiJets', 'ca8PuppiJetsSoftDrop')
+
+    add_fatjets_subjets(process, 'ak8PuppiJetsFat', 'ak8PuppiJetsSoftDrop',
+                        genjets_name=lambda s: s.replace('Puppi', 'Gen'),
+                        jetcorr_label="AK8PFPuppi", jetcorr_label_subjets="AK4PFPuppi")
 
 
     # Adapt primary vertex collection
