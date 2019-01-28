@@ -1668,7 +1668,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     # cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")),
                                     # #this can be used to save N-subjettiness for GenJets
 
-                                    doGenJetsWithParts=cms.bool(False),
                                     doAllPFParticles=cms.bool(False),
                                     pf_collection_source=cms.InputTag("packedPFCandidates"),
 
@@ -1704,6 +1703,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     )
     if do_prefire:
         process.p.insert(0, process.prefiringweight)
+
+    if year == "2016v2" and (not useData):
+        process.load("PhysicsTools.JetMCAlgos.HadronAndPartonSelector_cfi")
+        process.selectedHadronsAndPartonsForGenJetsFlavourInfos.particles = "prunedGenParticles"
+        task.add(process.selectedHadronsAndPartonsForGenJetsFlavourInfos)
+        from PhysicsTools.JetMCAlgos.AK4GenJetFlavourInfos_cfi import ak4GenJetFlavourInfos
+        process.slimmedGenJetsFlavourInfos = ak4GenJetFlavourInfos.clone(jets="slimmedGenJets")
+        task.add(process.slimmedGenJetsFlavourInfos)
+
     process.p.associate(task)
     process.p.associate(process.patAlgosToolsTask)
 

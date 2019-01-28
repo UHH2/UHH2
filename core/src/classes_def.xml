@@ -9,12 +9,12 @@
 <class name="std::vector<FlavorParticle>"/>
 <class name="Jet"/>
 <class name="std::vector<Jet>"/>
+<class name="GenJet"/>
+<class name="std::vector<GenJet>"/>
 <class name="JetBTagInfo"/>
 <class name="std::vector<JetBTagInfo>"/>
 <class name="TopJet"/>
 <class name="std::vector<TopJet>"/>
-<class name="GenJetWithParts"/>
-<class name="std::vector<GenJetWithParts>"/>
 <class name="GenTopJet"/>
 <class name="std::vector<GenTopJet>"/>
 <class name="Electron"/>

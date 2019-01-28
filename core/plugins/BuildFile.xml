@@ -32,6 +32,7 @@
 <use name="DataFormats/TrackReco"/>
 <use name="DataFormats/VertexReco"/>
 <use name="DataFormats/BTauReco"/>
+<!-- <use name="DataFormats/HepMCCandidate"/> -->
 <use name="RecoBTag/SecondaryVertex"/> 
 <use  name="fastjet"/>
 <use name="fastjet-contrib"/>

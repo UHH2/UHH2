@@ -10,7 +10,7 @@
 #include "UHH2/core/include/MET.h"
 #include "UHH2/core/include/PrimaryVertex.h"
 #include "UHH2/core/include/TopJet.h"
-#include "UHH2/core/include/GenJetWithParts.h"
+#include "UHH2/core/include/GenJet.h"
 #include "UHH2/core/include/GenTopJet.h"
 #include "UHH2/core/include/GenInfo.h"
 #include "UHH2/core/include/GenParticle.h"
@@ -36,8 +36,8 @@ namespace {
     std::vector<TopJet> topjets;
     TopJet toppuppijet;
     std::vector<TopJet> toppuppijets;
-    GenJetWithParts genjetwithparts;
-    std::vector<GenJetWithParts> genjetswithparts;
+    GenJet genjet;
+    std::vector<GenJet> genjets;
     GenTopJet gentopjet;
     std::vector<GenTopJet> gentopjets;
     Electron ele; 
