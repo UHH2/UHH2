@@ -15,6 +15,13 @@ class Muon : public Particle {
     PF,
     Global,
     Standalone,
+    // 2016v2 selectors:
+    Soft,
+    Loose,
+    Medium,
+    Tight,
+    Highpt,
+    // 2016v3 & 2017 onwards selectors:
     CutBasedIdLoose,
     CutBasedIdMedium, 
     CutBasedIdMediumPrompt, 
@@ -50,6 +57,8 @@ class Muon : public Particle {
      C) classify as "light flavour/decay" (2)
   In any case, if the TP is not preferentially matched back to the same RECO muon,
   label as Ghost (flip the classification)
+
+  Note that this is only available for 2017 datasets and later
   */
   enum SimType{ 
     Unknown                     = 999, 
