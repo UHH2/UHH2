@@ -89,6 +89,7 @@ class GenXConeProducer : public edm::stream::EDProducer<> {
     double DRLeptonJet_ = 999.;
   std::vector<edm::Ptr<reco::Candidate> > particles_;
   reco::Particle::Point vertex_;
+  edm::EDGetTokenT<reco::VertexCollection> input_vertex_token_;
 };
 
 //
@@ -119,6 +120,7 @@ GenXConeProducer::GenXConeProducer(const edm::ParameterSet& iConfig):
   // We make both the fat jets and subjets, and we must store them as separate collections
   produces<pat::JetCollection>();
   produces<pat::JetCollection>(subjetCollName_);
+  input_vertex_token_ = consumes<reco::VertexCollection>(edm::InputTag("offlineSlimmedPrimaryVertices"));
 }
 
 
@@ -166,9 +168,13 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   seeds[0] = std::max(runNum_uint, minSeed_ + 3) + 3 * evNum_uint;
   seeds[1] = std::max(runNum_uint, minSeed_ + 5) + 5 * evNum_uint;
   gas.set_random_status(seeds);
-//dummy value, todo: copy it from pv-collection? see example https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/plugins/VirtualJetProducer.cc#L292
-//ToDo: vertex info is not used in the clustering???
-  vertex_=reco::Jet::Point(0,0,0);
+  //copy vertex from pv-collection, see example https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/plugins/VirtualJetProducer.cc#L292
+  edm::Handle<reco::VertexCollection> pvCollection;
+  iEvent.getByToken(input_vertex_token_ , pvCollection);
+  if (!pvCollection->empty()) vertex_=pvCollection->begin()->position();
+  else  vertex_=reco::Jet::Point(0,0,0);
+  //  cout<<"vertex_ = "<<vertex_.x()<<" "<<vertex_.y()<<" "<<vertex_.z()<<endl;
+
   particles_.clear(); 
   edm::Handle<edm::View<reco::Candidate>> particles;
   iEvent.getByToken(src_token_, particles);
