@@ -1637,6 +1637,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     doAllGenParticles=cms.bool(False),
                                     doAllGenParticlesPythia8=cms.bool(False),
                                     doGenJets=cms.bool(not useData),
+                                    doGenJetConstituents=cms.bool(False), #default
                                     genjet_sources=cms.vstring(
                                        #"slimmedGenJets", "slimmedGenJetsAK8", "ca15GenJets"),
                                     "slimmedGenJets", "slimmedGenJetsAK8"),

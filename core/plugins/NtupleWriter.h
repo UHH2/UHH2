@@ -40,12 +40,14 @@ class NtupleWriter : public edm::EDFilter {
 
       virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
       
-      // fill gen particles and other info from a jet (for top)
+      // fill gen particles and other info from a reco::jet
       void fill_geninfo_recojet(const reco::Jet& reco_genjet, GenJet& genjet, bool &add);
+
       // fill gen particles and other info from a pat-jet (for XCONE, HOTVR, etc)
       void fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genjet, bool &add);
 
-
+      //For clustered reco::GenJet with subjets, which turn out to be reco::Jet with subjets reco::Candidate
+      void fill_geninfo_recocand(const reco::Candidate& constituent, GenJet& genjet);
 
       // ----------member data ---------------------------
       TFile *outfile;
@@ -60,6 +62,7 @@ class NtupleWriter : public edm::EDFilter {
       bool doGenInfo;
       bool doAllGenParticles;
       bool doAllGenParticlesPythia8;
+      bool doGenJetConstituents;
       bool doPV;
       bool doTrigger;
       bool doPrefire;
