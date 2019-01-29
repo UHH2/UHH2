@@ -33,6 +33,9 @@
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+#include "RecoJets/JetProducers/interface/JetSpecific.h"
 
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/ClusterSequenceArea.hh"
@@ -56,14 +59,16 @@ class GenHOTVRProducer : public edm::stream::EDProducer<> {
     explicit GenHOTVRProducer(const edm::ParameterSet&);
     ~GenHOTVRProducer();
 
-    static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
+  static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
+  virtual std::vector<reco::CandidatePtr> getConstituents(const std::vector<fastjet::PseudoJet>&fjConstituents);
 
   private:
     virtual void beginStream(edm::StreamID) override;
     virtual void produce(edm::Event&, const edm::EventSetup&) override;
     virtual void endStream() override;
 
-    virtual pat::Jet createPatJet(const PseudoJet &);
+    virtual pat::Jet createPatJet(const PseudoJet &, const edm::EventSetup&);
+
 
     // ----------member data ---------------------------
     edm::EDGetToken src_token_;
@@ -74,6 +79,9 @@ class GenHOTVRProducer : public edm::stream::EDProducer<> {
       min_r,                   // minimum allowed distance R
       rho,                     // cone shrinking parameter
       hotvr_pt_min;            // minimum pT of subjet
+    std::vector<edm::Ptr<reco::Candidate> > particles_;
+    reco::Particle::Point vertex_;
+  edm::EDGetTokenT<reco::VertexCollection> input_vertex_token_;
 };
 
 //
@@ -91,6 +99,7 @@ GenHOTVRProducer::GenHOTVRProducer(const edm::ParameterSet& iConfig):
 {
   produces<pat::JetCollection>();
   produces<pat::JetCollection>(subjetCollName_);
+  input_vertex_token_ = consumes<reco::VertexCollection>(edm::InputTag("offlineSlimmedPrimaryVertices"));
 }
 
 
@@ -125,12 +134,20 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   seeds[0] = std::max(runNum_uint, minSeed_ + 3) + 3 * evNum_uint;
   seeds[1] = std::max(runNum_uint, minSeed_ + 5) + 5 * evNum_uint;
   gas.set_random_status(seeds);
+  //copy vertex from pv-collection, see example https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/plugins/VirtualJetProducer.cc#L292
+  edm::Handle<reco::VertexCollection> pvCollection;
+  iEvent.getByToken(input_vertex_token_ , pvCollection);
+  if (!pvCollection->empty()) vertex_=pvCollection->begin()->position();
+  else  vertex_=reco::Jet::Point(0,0,0);
+  //  cout<<"vertex_ = "<<vertex_.x()<<" "<<vertex_.y()<<" "<<vertex_.z()<<endl;
+  particles_.clear(); 
 
   edm::Handle<edm::View<reco::Candidate>> particles;
   iEvent.getByToken(src_token_, particles);
 
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
+  int i=0;
   for (const auto & cand: *particles) {
     if (std::isnan(cand.px()) ||
         std::isnan(cand.py()) ||
@@ -141,7 +158,12 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         (cand.pt() == 0))
       continue;
 
-    _psj.push_back(PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy()));
+    //    _psj.push_back(PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy()));
+    PseudoJet tmp_particle = PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy());
+    tmp_particle.set_user_index(i);//important: store index for later linking between clustered jet and constituence
+    _psj.push_back(tmp_particle);
+    particles_.push_back(particles->ptrAt(i));
+    i++;
   }
 
   // Do the clustering, make jets, nsub, store
@@ -162,7 +184,7 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   for (unsigned int i = 0; i < hotvr_jets.size(); ++i) {
     // Convert jet and subjets to pat::Jets
-    auto thisPatJet = createPatJet(hotvr_jets[i]);
+    auto thisPatJet = createPatJet(hotvr_jets[i], iSetup);
     // dummy for now
     thisPatJet.addUserFloat("tau1", 0);
     thisPatJet.addUserFloat("tau2", 0);
@@ -173,7 +195,7 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     std::vector<PseudoJet> subjets = hi.subjets();
     for (uint s=0; s<subjets.size(); s++) {
       indices[i].push_back(subjetCollection->size());
-      auto subjet = createPatJet(subjets[s]);
+      auto subjet = createPatJet(subjets[s], iSetup);
       subjetCollection->push_back(subjet);
     }
 
@@ -198,11 +220,32 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 }
 
 
-pat::Jet GenHOTVRProducer::createPatJet(const PseudoJet & psj)
+pat::Jet GenHOTVRProducer::createPatJet(const PseudoJet & fjJet, const edm::EventSetup& iSetup)
 {
-  pat::Jet newJet;
-  newJet.setP4(math::XYZTLorentzVector(psj.px(), psj.py(), psj.pz(), psj.E()));
-  return newJet;
+
+  pat::Jet patjet;
+  if(fjJet.px()==0 && fjJet.py()==0 && fjJet.pz()==0){//jet or sub-jet was created artificially
+    patjet.setP4(math::XYZTLorentzVector(fjJet.px(), fjJet.py(), fjJet.pz(), fjJet.E()));
+  }
+  else{//jet or sub-jet is real
+    //inspired by https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/plugins/VirtualJetProducer.cc#L687
+    // get the constituents from fastjet
+    std::vector<fastjet::PseudoJet> const & fjConstituents = fastjet::sorted_by_pt(fjJet.constituents());
+    // convert them to CandidatePtr vector
+    std::vector<reco::CandidatePtr> const & constituents = getConstituents(fjConstituents);
+    // write the specifics to the jet (simultaneously sets 4-vector, vertex).
+    // These are overridden functions that will call the appropriate
+    // specific allocator.
+    reco::Particle::LorentzVector jet4v = reco::Particle::LorentzVector(fjJet.px(), fjJet.py(), fjJet.pz(),fjJet.E());  
+    /*    reco::PFJet pfjet;
+	  reco::writeSpecific(pfjet,jet4v,vertex_,constituents, iSetup);// https://github.com/ahlinist/cmssw/blob/master/RecoJets/JetProducers/src/JetSpecific.cc#L91
+	  patjet = pat::Jet(pfjet);
+    */
+    reco::GenJet genjet;
+    reco::writeSpecific(genjet,jet4v,vertex_,constituents, iSetup);
+    patjet = pat::Jet((reco::Jet)genjet);
+  }
+  return patjet;
 }
 
 
@@ -226,6 +269,22 @@ GenHOTVRProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions)
   desc.setUnknown();
   descriptions.addDefault(desc);
 }
+
+// ----------- Copied from 
+// --------- https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoJets/JetProducers/plugins/VirtualJetProducer.cc
+vector<reco::CandidatePtr>
+GenHOTVRProducer::getConstituents(const vector<fastjet::PseudoJet>&fjConstituents)
+{
+  vector<reco::CandidatePtr> result; result.reserve(fjConstituents.size()/2);
+  for (unsigned int i=0;i<fjConstituents.size();i++) {
+    auto index = fjConstituents[i].user_index();
+    if ( index >= 0 && static_cast<unsigned int>(index) < particles_.size() ) {
+      result.emplace_back(particles_[index]);
+    }
+  }
+  return result;
+}
+
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(GenHOTVRProducer);
