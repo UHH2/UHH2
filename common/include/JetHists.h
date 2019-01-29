@@ -36,7 +36,7 @@
 class JetHistsBase: public uhh2::Hists {
 protected:
   struct jetHist{
-      TH1F* pt, *eta, *phi, *mass, *csv, *mvahiggsdiscr, *prunedmass, *subjet_sum_mass; 
+      TH1F* pt, *eta, *phi, *mass, *csv, *mvahiggsdiscr, *subjet_sum_mass;
   };
     
   JetHistsBase(uhh2::Context & ctx, const std::string & dirname);

@@ -365,11 +365,6 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
       src_hepTopTag_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag(cfg.toptagging_src));
     }
 
-    pruned_src = cfg.pruned_src;
-    if(pruned_src.find("Mass")==string::npos){
-      src_pruned_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.pruned_src);
-    }
-
     softdrop_src = cfg.softdrop_src;
     if(softdrop_src.find("Mass")==string::npos){
       src_softdrop_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.softdrop_src);
@@ -750,38 +745,6 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         if (ecf_beta2_src.empty()) {
           topjet.set_ecfN2_beta2(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN2", -1.));
           topjet.set_ecfN3_beta2(getPatJetUserFloat(pat_topjet, "ak8PFJetsPuppiSoftDropValueMap:nb2AK8PuppiSoftDropN3", -1.));
-        }
-        /*---------------------*/
-
-        /*--- pruned mass -----*/
-        if(pruned_src.find("Mass")!=string::npos){
-
-          topjet.set_prunedmass(getPatJetUserFloat(pat_topjet, pruned_src, -1.));
-        }
-        else if(pruned_src!=""){//pruned mass set through matching with pruned-jet collection
-
-          edm::Handle<pat::JetCollection> pruned_pat_topjets;
-          event.getByToken(src_pruned_token, pruned_pat_topjets);
-          const vector<pat::Jet> & pat_prunedjets = *pruned_pat_topjets;
-
-          //match a jet from pruned collection
-          int i_pat_prunedjet = -1;
-          double drmin = numeric_limits<double>::infinity();
-          for (unsigned int ih = 0; ih < pat_prunedjets.size(); ih++) {
-
-            const pat::Jet & pruned_jet = pat_prunedjets[ih];
-            auto dr = reco::deltaR(pruned_jet, pat_topjet);
-            if(dr < drmin){
-              i_pat_prunedjet = ih;
-              drmin = dr;
-            }
-          }
-
-          if(i_pat_prunedjet >= 0 && drmin < 1.0){
-
-            const pat::Jet & pruned_jet = pat_prunedjets[i_pat_prunedjet];
-            topjet.set_prunedmass(pruned_jet.mass());
-          }
         }
         /*---------------------*/
 
