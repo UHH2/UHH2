@@ -15,12 +15,12 @@ def read_xml(xmlFileDir):
     return rootFileStore
     #except:
     #    print "No able to read file Dir", xmlFileDir
-    #    return 
+    #    return
 
 def read_tree(rootDir):
     ntuple = TFile(str(rootDir))
     AnalysisTree = ntuple.Get("AnalysisTree")
-    numberOfweightedEntries = 0 
+    numberOfweightedEntries = 0
     for event in AnalysisTree:
         #numberOfweightedEntries+=event.m_weights[0]
         for value in event.m_weights:
@@ -52,11 +52,11 @@ def main():
         pool.join()
         print "number of events in",arg,sum(result.get())
         xmlFile = open(arg,'a')
-        xmlFile.write('<!-- < NumberEntries="'+str(result_list[i])+'" Method=weights /> -->')
+        xmlFile.write('<!-- < NumberEntries="'+str(sum(result.get()))+'" Method=weights /> -->')
 
     #except:
     #    "usage of script: number of cores, first file, second file, ..."
     #    return
-    
+
 if __name__ == "__main__":
     main()
