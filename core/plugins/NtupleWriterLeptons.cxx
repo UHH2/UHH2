@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "UHH2/core/plugins/NtupleWriterLeptons.h"
 #include "UHH2/core/include/AnalysisModule.h"
 
@@ -69,7 +71,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_dPhiIn(pat_ele.deltaPhiSuperClusterTrackAtVtx());
         ele.set_sigmaIEtaIEta(pat_ele.full5x5_sigmaIetaIeta());
         ele.set_HoverE(pat_ele.hadronicOverEm());
-        ele.set_fbrem(pat_ele.fbrem());
+        ele.set_fbrem(std::max(pat_ele.fbrem(), -100.f)); // this is track frbem. default is -1e-30, making it impossible to validate on plots. -100 should be low enough to see detail around 0
         ele.set_EoverPIn(pat_ele.eSuperClusterOverP());
         ele.set_EcalEnergy(pat_ele.ecalEnergy());
         ele.set_hcalOverEcal    (pat_ele.hcalOverEcal());
