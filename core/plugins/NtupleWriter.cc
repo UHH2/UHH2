@@ -236,7 +236,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
 
   doGenJets = iConfig.getParameter<bool>("doGenJets");
   doGenTopJets = iConfig.getParameter<bool>("doGenTopJets");
-  doGenJetConstituents = iConfig.getParameter<bool>("doGenJetConstituents");
+  doGenJetConstituents = iConfig.getParameter<unsigned>("doGenJetConstituents");
   doPhotons = iConfig.getParameter<bool>("doPhotons");
   doMET = iConfig.getParameter<bool>("doMET");
   doGenMET = iConfig.getParameter<bool>("doGenMET");
@@ -917,7 +917,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	   }
 	 }
 	 bool add_genparts=false;
-	 if(doGenJetConstituents) add_genparts=true;
+	 if(genjets[j].size()<doGenJetConstituents) add_genparts=true;
 	 fill_geninfo_recojet(gen_jet,jet,add_genparts);
 	 genjets[j].push_back(jet);
        }
@@ -972,7 +972,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
             // for (unsigned int l = 0; l < reco_gentopjet.numberOfDaughters(); l++) {
             //   daughters.push_back(reco_gentopjet.daughter(l));
 	   bool add_genparts=false;
-	   if(doGenJetConstituents) add_genparts=true;
+	   if(gentopjets[j].size()<doGenJetConstituents) add_genparts=true;
 	   //	   cout<<"Fill Info for GenTopJet: "<<endl;
 	   fill_geninfo_recojet(reco_gentopjet, (GenJet&)gentopjet, add_genparts);
 	   //	   cout<<"END Fill Info for GenTopJet: "<<endl;
@@ -1367,7 +1367,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	thisJet.set_partonFlavour(patJet.partonFlavour());
 	thisJet.set_hadronFlavour(patJet.hadronFlavour());
 	bool add_genparts=false;
-	if(doGenJetConstituents) add_genparts=true;
+	if(genhotvrJets[j].size()<doGenJetConstituents) add_genparts=true;
         for (const auto & subItr : patJet.subjets()) {
           GenJet subjet;
           subjet.set_pt(subItr->p4().pt());
@@ -1401,7 +1401,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	thisJet.set_partonFlavour(patJet.partonFlavour());
 	thisJet.set_hadronFlavour(patJet.hadronFlavour());
 	bool add_genparts=false;
-	if(doGenJetConstituents) add_genparts=true;
+	if(genxconeJets[j].size()<doGenJetConstituents) add_genparts=true;
         for (const auto & subItr : patJet.subjets()) {
           GenJet subjet;
           subjet.set_pt(subItr->p4().pt());
