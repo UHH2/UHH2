@@ -295,7 +295,7 @@ void BTagMCEfficiencyHists::do_fill(const std::vector<TopJet> & jets, const Even
 {
   for (const auto & topjet : jets) { for (const auto & jet : topjet.subjets()) {
 
-    auto flav = jet.hadronFlavor();
+    auto flav = jet.hadronFlavour();
     bool is_tagged = btag_(jet, event);
     float pt = jet.pt(), eta = jet.eta(), w = event.weight;
 
