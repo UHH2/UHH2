@@ -1611,6 +1611,18 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                         'hltDiPFJetAve160ForHFJEC',
                                         'hltDiPFJetAve220ForHFJEC',
                                         'hltDiPFJetAve300ForHFJEC',
+
+                                        #Z'->ttbar 2017/2018
+                                        'hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q', #HLT_Mu50_v13 (merged with HLT_TkMu50_ in 2017/2018)
+                                        'hltEle50CaloIdVTGsfTrkIdTCentralPFJet165EleCleaned', #HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v18
+                                        'hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter',#HLT_Ele115_CaloIdVT_GsfTrkIdT_v14
+                                        'hltEG200HEFilter',#HLT_Photon200_v13
+                                        'hltPFHT450Jet30',#HLT_Ele50_IsoVVVL_PFHT450_v
+                                        #Z'->ttbar 2016
+                                        #'hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q', #HLT_Mu50_v5
+                                        'hltL3fL1sMu25f0TkFiltered50Q', #HLT_TkMu50_v3
+                                        #'hltEle50CaloIdVTGsfTrkIdTCentralPFJet165EleCleaned', #HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v7
+                                        #'hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter',#HLT_Ele115_CaloIdVT_GsfTrkIdT_v7
                                     ) if useData else cms.vstring()),
 
                                     #  'hltL3fL1sMu16orMu25L1f0L2f10QL3Filtered45e2p1Q',        # HLT_Mu45_eta2p1_v*
