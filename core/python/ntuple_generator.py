@@ -994,7 +994,24 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfMassDecorrelatedDeepBoostedJetTags:probHqqqq',
         'pfMassDecorrelatedDeepBoostedJetTags:probZbb',
         'pfDeepDoubleBJetTags:probH',
-        'pfDeepDoubleBJetTags:probQ'
+        'pfDeepDoubleBJetTags:probQ',
+        'pfDeepBoostedJetTags:probHbb',
+        'pfDeepBoostedJetTags:probQCDc',
+        'pfDeepBoostedJetTags:probQCDbb',
+        'pfDeepBoostedJetTags:probTbqq', 
+        'pfDeepBoostedJetTags:probTbcq',
+        'pfDeepBoostedJetTags:probTbq',
+        'pfDeepBoostedJetTags:probQCDothers',
+        'pfDeepBoostedJetTags:probQCDb',
+        'pfDeepBoostedJetTags:probTbc',
+        'pfDeepBoostedJetTags:probWqq',
+        'pfDeepBoostedJetTags:probQCDcc',
+        'pfDeepBoostedJetTags:probHcc',
+        'pfDeepBoostedJetTags:probWcq',
+        'pfDeepBoostedJetTags:probZcc',
+        'pfDeepBoostedJetTags:probZqq',
+        'pfDeepBoostedJetTags:probHqqqq',
+        'pfDeepBoostedJetTags:probZbb'
         ]
 
     for name in ["slimmedJetsPuppi", "patJetsAK8PFPUPPI", "slimmedJetsAK8"]:
@@ -1048,6 +1065,16 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         btagDiscriminators = ak8btagDiscriminators,
         )
 
+    process.PuppiSlimmedAK8JetsBtagger = cms.EDAlias(
+        selectedUpdatedPatJets = cms.VPSet( cms.PSet(type=cms.string("patJets")) )
+        )
+
+    process.PuppiSlimmedAK4JetsBtagger = cms.EDAlias(
+        selectedUpdatedPatJetsSlimmedJetsPuppiNewDFTraining = cms.VPSet( cms.PSet(type=cms.string("patJets")) )
+        )
+    process.PuppiPatJetsAK8JetsBtagger = cms.EDAlias(
+        selectedUpdatedPatJetsPatJetsAK8PFPUPPINewDFTraining= cms.VPSet( cms.PSet(type=cms.string("patJets")) )
+        )
 
     # Higgs tagging commissioning
 
@@ -1378,7 +1405,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     #jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
                                     jet_sources=cms.vstring(
                                         # "slimmedJets", "slimmedJetsPuppi", ak8puppi_patname, ak8chs_patname),
-                                        "slimmedJets", ak8chs_patname, "selectedUpdatedPatJetsSlimmedJetsPuppiNewDFTraining", "selectedUpdatedPatJetsPatJetsAK8PFPUPPINewDFTraining"),
+                                        "slimmedJets", ak8chs_patname, "selectedUpdatedPatJetsSlimmedJetsPuppiNewDFTraining", "selectedUpdatedPatJetsPatJetsAK8PFPUPPINewDFTraining","PuppiSlimmedAK4JetsBtagger","PuppiPatJetsAK8JetsBtagger"),
                                     jet_ptmin=cms.double(10.0),
                                     jet_etamax=cms.double(999.0),
 
@@ -1404,7 +1431,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 #                                                 "slimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
 #                                                "updatedPatJetsSlimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
 #                                                "selectedUpdatedPatJetsSlimmedJetsAK8NewDFTraining"),  # puppi jets in 2017 MiniAOD
-                                                "selectedUpdatedPatJets"),  # puppi jets in 2017 MiniAOD
+#                                                "selectedUpdatedPatJets"),  # puppi jets in 2017 MiniAOD
+                                                "PuppiSlimmedAK8JetsBtagger"),  # puppi jets in 2017 MiniAOD
                                             # For subjet_source, use label "daughters" if you want to store as
                                             # subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!).
                                             # Otherwise, to store a subjet collection present in miniAOD indicate the
