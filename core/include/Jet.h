@@ -41,7 +41,6 @@ class Jet : public FlavorParticle {
     m_JEC_factor_raw = 0;
     m_JEC_L1factor_raw = 0;
     m_genjet_index = -1; // not default of 0, as 0 is a valid index
-    m_hadronFlavor = 0;
     m_pileupID = -2;
 
     m_lepton_keys.clear();
@@ -76,7 +75,6 @@ class Jet : public FlavorParticle {
   float genjet_index() const{return m_genjet_index;}
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
   JetBTagInfo btaginfo() const{return m_btaginfo;}
-  int hadronFlavor() const { return m_hadronFlavor; }
   float pileupID() const {return m_pileupID;}
 
   const std::vector<long int>& lepton_keys() const { return m_lepton_keys; }
@@ -111,7 +109,6 @@ class Jet : public FlavorParticle {
   void set_genjet_index(int x){m_genjet_index=x;}
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
   void set_btaginfo(JetBTagInfo x){m_btaginfo=x;}
-  void set_hadronFlavor(int x){ m_hadronFlavor = x; }
 
   void set_pileupID(float x){m_pileupID = x;}
 
@@ -147,7 +144,6 @@ class Jet : public FlavorParticle {
   float m_JEC_factor_raw;
   float m_JEC_L1factor_raw;
   int m_genjet_index;
-  int m_hadronFlavor;
 
   float m_pileupID;
 

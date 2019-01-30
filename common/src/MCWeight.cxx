@@ -761,7 +761,7 @@ std::tuple<float, float, float> MCBTagScaleFactor::get_weight_btag(const vector<
   //Here we loop over all selected jets
   for (const auto & topjet : jets) { for (const auto & jet : topjet.subjets()) {
 
-    int hadronFlavor = abs(jet.hadronFlavor());
+    int hadronFlavor = abs(jet.hadronFlavour());
     float abs_eta = fabs(jet.eta());
     float pt = jet.pt();
 

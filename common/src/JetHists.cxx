@@ -130,7 +130,6 @@ void TopJetHists::fill_subjetHist(const TopJet & topjet, subjetHist & subjet_his
 JetHistsBase::jetHist TopJetHists::book_topJetHist(const std::string & axisSuffix, const std::string & histSuffix, double minPt, double maxPt) {
   auto jet_hist = book_jetHist(axisSuffix, histSuffix, minPt, maxPt);
   jet_hist.mvahiggsdiscr = book<TH1F>("mvahiggsdiscr"+histSuffix,"mva-higgs-disriminator "+axisSuffix,50,0,1);
-  jet_hist.prunedmass = book<TH1F>("mass_pruned"+histSuffix,"M^{ "+axisSuffix+"}_{pruned} [GeV/c^{2}]", 100, 0, 300);
   jet_hist.subjet_sum_mass = book<TH1F>("mass_subjet_sum"+histSuffix,"M^{ "+axisSuffix+"}_{subjet sum} [GeV/c^{2}]", 100, 0, 300);
   return jet_hist;
 }
@@ -142,7 +141,6 @@ void TopJetHists::fill_topJetHist(const TopJet & jet, JetHistsBase::jetHist & je
     subjet_sum += s.v4();
   }
   jet_hist.mvahiggsdiscr->Fill(jet.mvahiggsdiscr(), weight);
-  jet_hist.prunedmass->Fill(jet.prunedmass(), weight);
   jet_hist.subjet_sum_mass->Fill(subjet_sum.M(), weight);
 }
 
@@ -295,7 +293,7 @@ void BTagMCEfficiencyHists::do_fill(const std::vector<TopJet> & jets, const Even
 {
   for (const auto & topjet : jets) { for (const auto & jet : topjet.subjets()) {
 
-    auto flav = jet.hadronFlavor();
+    auto flav = jet.hadronFlavour();
     bool is_tagged = btag_(jet, event);
     float pt = jet.pt(), eta = jet.eta(), w = event.weight;
 
