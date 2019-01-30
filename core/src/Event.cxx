@@ -89,15 +89,15 @@ bool Event::lookup_trigger_index(TriggerIndex & ti) const{
             }
         }
     }
-    if(ti.runid == -1){
+    if(ti.runid == -1 || ti.index >= triggerNames_currentrun.size()){
         return false;
     }
-    assert(ti.index < triggerNames_currentrun.size());
+    
     return true;
 }
 
 namespace {
-    
+
 string format_list(const vector<string> & l){
     string result;
     for(const auto & i : l){
@@ -139,7 +139,7 @@ int Event::trigger_prescale(TriggerIndex & ti) const{
 
     //Forgot to add prescales for bit with BX info :(
     //ToDo: add it in the next production and uncomment check below
-    /* 
+    /*
     if(triggerNames_currentrun.size() != triggerPrescales->size()){
         stringstream ss;
 	ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger prescales for current event have size " << triggerPrescales->size()
@@ -160,7 +160,7 @@ int Event::trigger_prescaleL1min(TriggerIndex & ti) const{
     }
     if(!triggerPrescalesL1min){
         throw runtime_error("Event::trigger_prescaleL1min: trigger prescales have not beed read in; perhaps you are running on MC, prescales are only filled for data.");
-    }    
+    }
     if(triggerNames_currentrun.size() != triggerPrescalesL1min->size()){
         stringstream ss;
 	ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger prescales for current event have size " << triggerPrescalesL1min->size()
@@ -178,7 +178,7 @@ int Event::trigger_prescaleL1max(TriggerIndex & ti) const{
     }
     if(!triggerPrescalesL1max){
         throw runtime_error("Event::trigger_prescale: trigger prescales have not beed read in; perhaps you are running on MC, prescales are only filled for data.");
-    }    
+    }
     if(triggerNames_currentrun.size() != triggerPrescalesL1max->size()){
         stringstream ss;
 	ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger prescales for current event have size " << triggerPrescalesL1max->size()
