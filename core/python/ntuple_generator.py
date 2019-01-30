@@ -378,46 +378,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # )
     # task.add(process.ca15CHSJetsSoftDropforsub)
 
-    #################################################
-    # Pruning
-
-    # Note low pt threshold as jets currently not stored but used just to
-    # derived pruned mass
-
-    ak4PFJetsPruned = ak4PFJets.clone(
-        SubJetParameters,
-        usePruning=cms.bool(True),
-        useExplicitGhosts=cms.bool(True),
-        writeCompound=cms.bool(True),
-        jetCollInstanceName=cms.string("SubJets")
-    )
-
-    process.ak8CHSJetsPruned = ak4PFJetsPruned.clone(
-        rParam=0.8,
-        doAreaFastjet=True,
-        src='chs',
-        jetPtMin=70
-    )
-    task.add(process.ak8CHSJetsPruned)
-
-    # process.ca8CHSJetsPruned = ak4PFJetsPruned.clone(
-    #     rParam=0.8,
-    #     jetAlgorithm="CambridgeAachen",
-    #     doAreaFastjet=True,
-    #     src='chs',
-    #     jetPtMin=fatjet_ptmin
-    # )
-    # task.add(process.ca8CHSJetsPruned)
-
-    # process.ca15CHSJetsPruned = ak4PFJetsPruned.clone(
-    #     rParam=1.5,
-    #     jetAlgorithm="CambridgeAachen",
-    #     doAreaFastjet=True,
-    #     src='chs',
-    #     jetPtMin=process.ca15CHSJets.jetPtMin
-    # )
-    # task.add(process.ca15CHSJetsPruned)
-
     ###############################################
     # PUPPI JETS
     process.load('CommonTools/PileupAlgos/Puppi_cff')
@@ -752,10 +712,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop',
                         genjets_name=lambda s: s.replace('CHS', 'Gen'))
-
-    # B-tagging not needed for pruned jets, they are just used to get the mass
-    add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsPruned',
-                        genjets_name=lambda s: s.replace('CHS', 'Gen'), btagging=False)
 
     add_fatjets_subjets(process, 'ak8PuppiJetsFat', 'ak8PuppiJetsSoftDrop',
                         genjets_name=lambda s: s.replace('Puppi', 'Gen'),
@@ -1423,14 +1379,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                                 "NjettinessAk8SoftDropPuppi"),
                                             substructure_groomed_variables_source = cms.string(
                                                 "ak8PuppiJetsSoftDropforsub"),
-                                            # Note: for slimmedJetsAK8 on miniAOD, the pruned mass is
-                                            # available as user float, with label ak8PFJetsCHSPrunedMass.
-                                            # Alternatively it is possible to specify another pruned jet collection
-                                            # (to be produced here), from which to get it by jet-matching.
-                                            # Finally, it is also possible to leave
-                                            # the pruned mass empty with ""
-                                            prunedmass_source=cms.string(
-                                                "ak8PFJetsCHSValueMap:ak8PFJetsCHSPrunedMass"),
                                             softdropmass_source=cms.string(
                                                 "ak8PFJetsPuppiSoftDropMass"),
                                             # switch off qjets for now, as it takes a long time:
@@ -1461,8 +1409,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                                 "NjettinessAk8SoftDropCHS"),
                                             substructure_groomed_variables_source=cms.string(
                                                 "ak8CHSJetsSoftDropforsub"),
-                                            prunedmass_source=cms.string(
-                                                "patJetsAk8CHSJetsPrunedPacked"),
                                             softdropmass_source=cms.string(
                                                 "patJetsAk8CHSJetsSoftDropPacked"),
                                             ecf_beta1_source=cms.string(

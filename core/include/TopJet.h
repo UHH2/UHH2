@@ -81,7 +81,7 @@ public:
    }
 
   TopJet(){
-      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_tau4 = m_mvahiggsdiscr = m_prunedmass = m_softdropmass = m_tau1_groomed = m_tau2_groomed = m_tau3_groomed = m_tau4_groomed = m_ecfN2_beta1 = m_ecfN2_beta2 = m_ecfN3_beta1 = m_ecfN3_beta2 = -1.0f;
+      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_tau4 = m_mvahiggsdiscr = m_softdropmass = m_tau1_groomed = m_tau2_groomed = m_tau3_groomed = m_tau4_groomed = m_ecfN2_beta1 = m_ecfN2_beta2 = m_ecfN3_beta1 = m_ecfN3_beta2 = -1.0f;
   }
 
   // getters
@@ -103,8 +103,6 @@ public:
   float ecfN3_beta2() const {return m_ecfN3_beta2;}
 
   float mvahiggsdiscr() const {return m_mvahiggsdiscr;}
-
-  float prunedmass() const {return m_prunedmass;}
 
   float softdropmass() const {return m_softdropmass;}
 
@@ -131,8 +129,6 @@ public:
   void set_ecfN3_beta2(float x){m_ecfN3_beta2 = x;}
 
   void set_mvahiggsdiscr(float x){m_mvahiggsdiscr = x;}
-
-  void set_prunedmass(float x){m_prunedmass = x;}
 
   void set_softdropmass(float x){m_softdropmass = x;}
 
@@ -162,8 +158,6 @@ private:
   float m_ecfN3_beta2;
 
   float m_mvahiggsdiscr;
-
-  float m_prunedmass;
 
   float m_softdropmass;
 
