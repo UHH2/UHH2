@@ -87,6 +87,7 @@ class GenXConeProducer : public edm::stream::EDProducer<> {
     double RSubJets_ = 0.4;
     double BetaSubJets_ = 2.0;
     double DRLeptonJet_ = 999.;
+
   std::vector<edm::Ptr<reco::Candidate> > particles_;
   reco::Particle::Point vertex_;
   edm::EDGetTokenT<reco::VertexCollection> input_vertex_token_;
@@ -172,7 +173,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<reco::VertexCollection> pvCollection;
   iEvent.getByToken(input_vertex_token_ , pvCollection);
   if (!pvCollection->empty()) vertex_=pvCollection->begin()->position();
-  else  vertex_=reco::Jet::Point(0,0,0);
+  else  vertex_=reco::Particle::Point(0,0,0);
   //  cout<<"vertex_ = "<<vertex_.x()<<" "<<vertex_.y()<<" "<<vertex_.z()<<endl;
 
   particles_.clear(); 
@@ -184,8 +185,9 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
-  int i=0;
+  int i=-1;
   for (const auto & cand: *particles) {
+    i++;
     if (std::isnan(cand.px()) ||
         std::isnan(cand.py()) ||
         std::isnan(cand.pz()) ||
@@ -209,7 +211,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
     }
     particles_.push_back(particles->ptrAt(i));
-    i++;
+    
   }
 
   if (doLeptonSpecific_ && (lepton == nullptr)) {

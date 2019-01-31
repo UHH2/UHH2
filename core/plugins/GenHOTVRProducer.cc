@@ -147,8 +147,9 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
-  int i=0;
+  int i=-1;
   for (const auto & cand: *particles) {
+    i++;
     if (std::isnan(cand.px()) ||
         std::isnan(cand.py()) ||
         std::isnan(cand.pz()) ||
@@ -163,7 +164,6 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     tmp_particle.set_user_index(i);//important: store index for later linking between clustered jet and constituence
     _psj.push_back(tmp_particle);
     particles_.push_back(particles->ptrAt(i));
-    i++;
   }
 
   // Do the clustering, make jets, nsub, store

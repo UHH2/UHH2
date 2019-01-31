@@ -22,7 +22,7 @@
 
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/global/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
@@ -31,8 +31,13 @@
 #include "FWCore/Utilities/interface/StreamID.h"
 
 #include "DataFormats/Candidate/interface/Candidate.h"
+#include "DataFormats/Candidate/interface/CandidateFwd.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
-
+#include "DataFormats/JetReco/interface/PFJet.h"
+#include "DataFormats/Candidate/interface/Particle.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
+#include "RecoJets/JetProducers/interface/JetSpecific.h"
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/ClusterSequenceArea.hh"
 #include "fastjet/contrib/HOTVR.hh"
@@ -50,29 +55,37 @@ using namespace contrib;
 // class declaration
 //
 
-class XConeProducer : public edm::global::EDProducer<> {
+class XConeProducer : public edm::stream::EDProducer<> {
   public:
     explicit XConeProducer(const edm::ParameterSet&);
     ~XConeProducer();
 
-    static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
+  static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
+  // This method copies the constituents from the fjConstituents method to an output of CandidatePtr's. 
+  virtual std::vector<reco::CandidatePtr> getConstituents(const std::vector<fastjet::PseudoJet>&fjConstituents);
 
   private:
-    virtual void produce(edm::StreamID, edm::Event&, const edm::EventSetup&) const override;
-
-    virtual pat::Jet createPatJet(const fastjet::PseudoJet &) const;
-    virtual void initPlugin(std::unique_ptr<NjettinessPlugin> & ptr, int N, double R0, double beta, bool usePseudoXCone) const;
-
-    // ----------member data ---------------------------
-    edm::EDGetToken src_token_;
-    const std::string subjetCollName_;
-    const bool usePseudoXCone_;
-    unsigned int NJets_ = 2;
-    double RJets_ = 1.2;
-    double BetaJets_ = 2.0;
-    unsigned int NSubJets_ = 3;
-    double RSubJets_ = 0.4;
-    double BetaSubJets_ = 2.0;
+  virtual void produce(edm::Event&, const edm::EventSetup&) override;
+  
+  virtual pat::Jet createPatJet(const fastjet::PseudoJet &) const;
+  virtual pat::Jet createPatJet(const fastjet::PseudoJet &, const edm::EventSetup&);
+  
+  virtual void initPlugin(std::unique_ptr<NjettinessPlugin> & ptr, int N, double R0, double beta, bool usePseudoXCone) const;
+  
+  // ----------member data ---------------------------
+  edm::EDGetToken src_token_;
+  const std::string subjetCollName_;
+  const bool usePseudoXCone_;
+  unsigned int NJets_ = 2;
+  double RJets_ = 1.2;
+  double BetaJets_ = 2.0;
+  unsigned int NSubJets_ = 3;
+  double RSubJets_ = 0.4;
+  double BetaSubJets_ = 2.0;
+  
+  reco::Particle::Point  vertex_;
+  std::vector<edm::Ptr<reco::Candidate> > particles_;
+  edm::EDGetTokenT<reco::VertexCollection> input_vertex_token_;
 };
 
 //
@@ -101,6 +114,7 @@ XConeProducer::XConeProducer(const edm::ParameterSet& iConfig):
   // We make both the fat jets and subjets, and we must store them as separate collections
   produces<pat::JetCollection>();
   produces<pat::JetCollection>(subjetCollName_);
+  input_vertex_token_ = consumes<reco::VertexCollection>(edm::InputTag("offlineSlimmedPrimaryVertices"));
 }
 
 
@@ -131,9 +145,9 @@ XConeProducer::initPlugin(std::unique_ptr<NjettinessPlugin> & ptr, int N, double
 
 
 // ------------ method called to produce the data  ------------
-void
-XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSetup& iSetup) const
+void XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
+
   // Set the fastjet random seed to a deterministic function
   // of the run/lumi/event.
   // NOTE!!! The fastjet random number sequence is a global singleton.
@@ -148,13 +162,21 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
   seeds[0] = std::max(runNum_uint, minSeed_ + 3) + 3 * evNum_uint;
   seeds[1] = std::max(runNum_uint, minSeed_ + 5) + 5 * evNum_uint;
   gas.set_random_status(seeds);
+  //copy vertex from pv-collection, see example https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/plugins/VirtualJetProducer.cc#L292
+  edm::Handle<reco::VertexCollection> pvCollection;
+  iEvent.getByToken(input_vertex_token_ , pvCollection);
+  if (!pvCollection->empty()) vertex_=pvCollection->begin()->position();
+  else vertex_ = reco::Particle::Point(0,0,0);  
 
+  particles_.clear(); 
   edm::Handle<edm::View<reco::Candidate>> particles;
   iEvent.getByToken(src_token_, particles);
 
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
+  int i=-1;
   for (const auto & cand: *particles) {
+    i++;
     if (std::isnan(cand.px()) ||
         std::isnan(cand.py()) ||
         std::isnan(cand.pz()) ||
@@ -164,7 +186,12 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
         (cand.pt() == 0))
       continue;
 
-    _psj.push_back(PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy()));
+    //    _psj.push_back(PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy()));
+    PseudoJet tmp_particle = PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy());
+    tmp_particle.set_user_index(i);//important: store index for later linking between clustered jet and constituence
+    _psj.push_back(tmp_particle);
+    particles_.push_back(particles->ptrAt(i));
+    
   }
 
   // make sure to have enough particles with non-zero momentum in event
@@ -186,9 +213,12 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
   std::unique_ptr<NjettinessPlugin> plugin_xcone;
   initPlugin(plugin_xcone, NJets_, RJets_, BetaJets_, usePseudoXCone_);
   double ghost_maxrap = 4.0;      // maxiumum y of ghost particles
-  AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
+  //  AreaDefinition area_def(active_area, GhostedAreaSpec(ghost_maxrap));
+  AreaDefinition area_def(active_area_explicit_ghosts, GhostedAreaSpec(ghost_maxrap, 1, 0.02));
+
   JetDefinition jet_def_xcone(plugin_xcone.get());
-  ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
+  ClusterSequenceArea clust_seq_xcone(_psj, jet_def_xcone, area_def);
+  //  ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
 
   // get SoftDrop Mass for every fat jet
@@ -247,7 +277,17 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
       JetDefinition jet_def_sub(plugin_xcone_sub.get());
       ClusterSequenceArea clust_seq_sub(particle_in_fatjet, jet_def_sub, area_def);
       subjets = sorted_by_pt(clust_seq_sub.inclusive_jets(0));
-      for (unsigned int j = 0; j < subjets.size(); ++j) subjet_area.push_back(subjets[j].area());
+      for (unsigned int j = 0; j < subjets.size(); ++j) {
+	if(subjets[j].has_area())
+	  subjet_area.push_back(subjets[j].area());
+	else subjet_area.push_back(0);
+
+	indices[i].push_back(subjetCollection->size()); // store index of subjet in the whole subjet collection
+	auto subjet = createPatJet(subjets[j], iSetup);
+	//      auto subjet = createPatJet(subjets[s]);//TEST!
+	subjet.setJetArea(subjet_area[j]);
+	subjetCollection->push_back(subjet);
+      }
     }
 
     // Check we got the number of subjets we asked for
@@ -263,20 +303,14 @@ XConeProducer::produce(edm::StreamID id, edm::Event& iEvent, const edm::EventSet
 
     // jet area for fat jet
     double jet_area = 0;
-    // double jet_area = fatjets[i].area();
+    if(fatjets[i].has_area()) 
+      jet_area = fatjets[i].area();
 
     // pat-ify fatjets
-    auto patJet = createPatJet(fatjets[i]);
+    auto patJet = createPatJet(fatjets[i], iSetup);
     patJet.setJetArea(jet_area);
     patJet.addUserFloat("softdropmass", sd_mass[i]);
     jetCollection->push_back(patJet);
-
-    for (uint s=0; s<subjets.size(); s++) {
-      indices[i].push_back(subjetCollection->size()); // store index of subjet in the whole subjet collection
-      auto subjet = createPatJet(subjets[s]);
-      subjet.setJetArea(subjet_area[s]);
-      subjetCollection->push_back(subjet);
-    }
 
   }
 
@@ -306,6 +340,30 @@ pat::Jet XConeProducer::createPatJet(const PseudoJet & psj) const
 }
 
 
+pat::Jet XConeProducer::createPatJet(const PseudoJet & fjJet, const edm::EventSetup& iSetup)
+{
+  pat::Jet patjet;
+  if(fjJet.px()==0 && fjJet.py()==0 && fjJet.pz()==0){//jet or sub-jet was created artificially
+    patjet.setP4(math::XYZTLorentzVector(fjJet.px(), fjJet.py(), fjJet.pz(), fjJet.E()));
+  }
+  else{//jet or sub-jet is real
+    //inspired by https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/plugins/VirtualJetProducer.cc#L687
+    // get the constituents from fastjet
+    std::vector<fastjet::PseudoJet> const & fjConstituents = fastjet::sorted_by_pt(fjJet.constituents());
+    // convert them to CandidatePtr vector
+    std::vector<reco::CandidatePtr> const & constituents = getConstituents(fjConstituents);
+    // write the specifics to the jet (simultaneously sets 4-vector, vertex).
+    // These are overridden functions that will call the appropriate
+    // specific allocator.
+    reco::Particle::LorentzVector jet4v = reco::Particle::LorentzVector(fjJet.px(), fjJet.py(), fjJet.pz(),fjJet.E());  
+    reco::PFJet pfjet;
+    reco::writeSpecific(pfjet,jet4v,vertex_,constituents, iSetup);// https://github.com/ahlinist/cmssw/blob/master/RecoJets/JetProducers/src/JetSpecific.cc#L91
+    patjet = pat::Jet(pfjet);
+   
+  }
+  return patjet;
+}
+
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
 XConeProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
@@ -314,6 +372,22 @@ XConeProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   edm::ParameterSetDescription desc;
   desc.setUnknown();
   descriptions.addDefault(desc);
+}
+
+
+
+// ----------- Copied from 
+// --------- https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_X/RecoJets/JetProducers/plugins/VirtualJetProducer.cc
+vector<reco::CandidatePtr> XConeProducer::getConstituents(const vector<fastjet::PseudoJet>&fjConstituents)
+{
+  vector<reco::CandidatePtr> result; result.reserve(fjConstituents.size()/2);
+  for (unsigned int i=0;i<fjConstituents.size();i++) {
+    auto index = fjConstituents[i].user_index();
+    if ( index >= 0 && static_cast<unsigned int>(index) < particles_.size() ) {
+      result.emplace_back(particles_[index]);
+    }
+  }
+  return result;
 }
 
 //define this as a plug-in

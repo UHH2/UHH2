@@ -1303,6 +1303,25 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         thisJet.set_tau1_groomed(patJet.userFloat("tau1"));
         thisJet.set_tau2_groomed(patJet.userFloat("tau2"));
         thisJet.set_tau3_groomed(patJet.userFloat("tau3"));
+	thisJet.set_numberOfDaughters(patJet.numberOfDaughters());
+	thisJet.set_partonFlavour(patJet.partonFlavour());
+	thisJet.set_hadronFlavour(patJet.hadronFlavour());
+	thisJet.set_charge(patJet.charge());
+	if(patJet.isPFJet()){
+	  thisJet.set_neutralEmEnergyFraction (patJet.neutralEmEnergyFraction());
+	  thisJet.set_neutralHadronEnergyFraction (patJet.neutralHadronEnergyFraction());
+	  thisJet.set_chargedEmEnergyFraction (patJet.chargedEmEnergyFraction());
+	  thisJet.set_chargedHadronEnergyFraction (patJet.chargedHadronEnergyFraction());
+	  thisJet.set_muonEnergyFraction (patJet.muonEnergyFraction());
+	  thisJet.set_photonEnergyFraction (patJet.photonEnergyFraction());
+	  thisJet.set_chargedMultiplicity (patJet.chargedMultiplicity());
+	  thisJet.set_neutralMultiplicity (patJet.neutralMultiplicity());
+	  thisJet.set_muonMultiplicity (patJet.muonMultiplicity());
+	  thisJet.set_electronMultiplicity (patJet.electronMultiplicity());
+	  thisJet.set_photonMultiplicity (patJet.photonMultiplicity());
+	}
+	thisJet.set_JEC_factor_raw(1.);
+	thisJet.set_JEC_L1factor_raw(1.);
         for (const auto & subItr : patJet.subjets()) {
           Jet subjet;
           subjet.set_pt(subItr->p4().pt());
@@ -1310,6 +1329,25 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           subjet.set_phi(subItr->p4().phi());
           subjet.set_energy(subItr->p4().E());
           subjet.set_jetArea(subItr->jetArea());
+	  subjet.set_numberOfDaughters(subItr->numberOfDaughters());
+	  subjet.set_partonFlavour(subItr->partonFlavour());
+	  subjet.set_hadronFlavour(subItr->hadronFlavour());
+	  subjet.set_charge(subItr->charge());
+	  if(subItr->isPFJet()){
+	    subjet.set_neutralEmEnergyFraction (subItr->neutralEmEnergyFraction());
+	    subjet.set_neutralHadronEnergyFraction (subItr->neutralHadronEnergyFraction());
+	    subjet.set_chargedEmEnergyFraction (subItr->chargedEmEnergyFraction());
+	    subjet.set_chargedHadronEnergyFraction (subItr->chargedHadronEnergyFraction());
+	    subjet.set_muonEnergyFraction (subItr->muonEnergyFraction());
+	    subjet.set_photonEnergyFraction (subItr->photonEnergyFraction());
+	    subjet.set_chargedMultiplicity (subItr->chargedMultiplicity());
+	    subjet.set_neutralMultiplicity (subItr->neutralMultiplicity());
+	    subjet.set_muonMultiplicity (subItr->muonMultiplicity());
+	    subjet.set_electronMultiplicity (subItr->electronMultiplicity());
+	    subjet.set_photonMultiplicity (subItr->photonMultiplicity());
+	  }
+	  subjet.set_JEC_factor_raw(1.);
+	  subjet.set_JEC_L1factor_raw(1.);
           thisJet.add_subjet(subjet);
         }
 
@@ -1333,6 +1371,26 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         thisJet.set_energy(patJet.p4().E());
         thisJet.set_jetArea(patJet.jetArea());
         thisJet.set_softdropmass(patJet.userFloat("softdropmass"));
+	thisJet.set_numberOfDaughters(patJet.numberOfDaughters());
+	thisJet.set_partonFlavour(patJet.partonFlavour());
+	thisJet.set_hadronFlavour(patJet.hadronFlavour());
+	thisJet.set_charge(patJet.charge());
+	if(patJet.isPFJet()){
+	  thisJet.set_neutralEmEnergyFraction (patJet.neutralEmEnergyFraction());
+	  thisJet.set_neutralHadronEnergyFraction (patJet.neutralHadronEnergyFraction());
+	  thisJet.set_chargedEmEnergyFraction (patJet.chargedEmEnergyFraction());
+	  thisJet.set_chargedHadronEnergyFraction (patJet.chargedHadronEnergyFraction());
+	  thisJet.set_muonEnergyFraction (patJet.muonEnergyFraction());
+	  thisJet.set_photonEnergyFraction (patJet.photonEnergyFraction());
+	  thisJet.set_chargedMultiplicity (patJet.chargedMultiplicity());
+	  thisJet.set_neutralMultiplicity (patJet.neutralMultiplicity());
+	  thisJet.set_muonMultiplicity (patJet.muonMultiplicity());
+	  thisJet.set_electronMultiplicity (patJet.electronMultiplicity());
+	  thisJet.set_photonMultiplicity (patJet.photonMultiplicity());
+	}
+	thisJet.set_JEC_factor_raw(1.);
+	thisJet.set_JEC_L1factor_raw(1.);
+
 
         for (const auto & subItr : patJet.subjets()) {
           Jet subjet;
@@ -1341,6 +1399,25 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
           subjet.set_phi(subItr->p4().phi());
           subjet.set_energy(subItr->p4().E());
           subjet.set_jetArea(subItr->jetArea());
+	  subjet.set_numberOfDaughters(subItr->numberOfDaughters());
+	  subjet.set_partonFlavour(subItr->partonFlavour());
+	  subjet.set_hadronFlavour(subItr->hadronFlavour());
+	  subjet.set_charge(subItr->charge());
+	  if(subItr->isPFJet()){
+	    subjet.set_neutralEmEnergyFraction (subItr->neutralEmEnergyFraction());
+	    subjet.set_neutralHadronEnergyFraction (subItr->neutralHadronEnergyFraction());
+	    subjet.set_chargedEmEnergyFraction (subItr->chargedEmEnergyFraction());
+	    subjet.set_chargedHadronEnergyFraction (subItr->chargedHadronEnergyFraction());
+	    subjet.set_muonEnergyFraction (subItr->muonEnergyFraction());
+	    subjet.set_photonEnergyFraction (subItr->photonEnergyFraction());
+	    subjet.set_chargedMultiplicity (subItr->chargedMultiplicity());
+	    subjet.set_neutralMultiplicity (subItr->neutralMultiplicity());
+	    subjet.set_muonMultiplicity (subItr->muonMultiplicity());
+	    subjet.set_electronMultiplicity (subItr->electronMultiplicity());
+	    subjet.set_photonMultiplicity (subItr->photonMultiplicity());
+	  }
+	  subjet.set_JEC_factor_raw(1.);
+	  subjet.set_JEC_L1factor_raw(1.);
           thisJet.add_subjet(subjet);
         }
         xconeJets[j].push_back(thisJet);
