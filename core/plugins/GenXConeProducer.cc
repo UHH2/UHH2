@@ -174,7 +174,6 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.getByToken(input_vertex_token_ , pvCollection);
   if (!pvCollection->empty()) vertex_=pvCollection->begin()->position();
   else  vertex_=reco::Particle::Point(0,0,0);
-  //  cout<<"vertex_ = "<<vertex_.x()<<" "<<vertex_.y()<<" "<<vertex_.z()<<endl;
 
   particles_.clear(); 
   edm::Handle<edm::View<reco::Candidate>> particles;
@@ -185,9 +184,10 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
-  int i=-1;
+  int i=0;
+  int i_gl=-1;
   for (const auto & cand: *particles) {
-    i++;
+    i_gl++;
     if (std::isnan(cand.px()) ||
         std::isnan(cand.py()) ||
         std::isnan(cand.pz()) ||
@@ -210,8 +210,8 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         lepton_max_pt = candPt;
       }
     }
-    particles_.push_back(particles->ptrAt(i));
-    
+    particles_.push_back(particles->ptrAt(i_gl));
+    i++; 
   }
 
   if (doLeptonSpecific_ && (lepton == nullptr)) {
@@ -319,11 +319,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     // Check we got the number of subjets we asked for
     if (doSubjets && subjets.size() != thisNSubJets_) {
       edm::LogWarning("GenXConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << thisNSubJets_ << ". "
-          << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"
-          << "Have added in blank subjets to make " << thisNSubJets_ << " subjets." << endl;
-      for (uint iSub=subjets.size(); iSub < thisNSubJets_; iSub++) {
-        subjets.push_back(PseudoJet(0, 0, 0, 0));
-      }
+          << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"<< endl;
     }
     
     // pat-ify fatjets

@@ -147,7 +147,7 @@ XConeProducer::initPlugin(std::unique_ptr<NjettinessPlugin> & ptr, int N, double
 // ------------ method called to produce the data  ------------
 void XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-
+  //  cout<<"--- START event --- "<<endl;
   // Set the fastjet random seed to a deterministic function
   // of the run/lumi/event.
   // NOTE!!! The fastjet random number sequence is a global singleton.
@@ -171,12 +171,12 @@ void XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   particles_.clear(); 
   edm::Handle<edm::View<reco::Candidate>> particles;
   iEvent.getByToken(src_token_, particles);
-
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
-  int i=-1;
+  int i=0;
+  int i_gl=-1;
   for (const auto & cand: *particles) {
-    i++;
+    i_gl++;
     if (std::isnan(cand.px()) ||
         std::isnan(cand.py()) ||
         std::isnan(cand.pz()) ||
@@ -190,8 +190,9 @@ void XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     PseudoJet tmp_particle = PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy());
     tmp_particle.set_user_index(i);//important: store index for later linking between clustered jet and constituence
     _psj.push_back(tmp_particle);
-    particles_.push_back(particles->ptrAt(i));
-    
+    particles_.push_back(particles->ptrAt(i_gl));
+    //    cout<<"Input store index #"<<i<<" with energy = "<<particles->ptrAt(i_gl)->energy()<<" size of particles_ = "<<particles_.size()<<endl;
+    i++;
   }
 
   // make sure to have enough particles with non-zero momentum in event
@@ -261,10 +262,11 @@ void XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     for (unsigned int ipart=0; ipart < _psj.size(); ++ipart) {
       if (list_fat[ipart] < 0) continue;
       else if (abs(list_fat[ipart])==i) {
-        particle_in_fatjet.push_back(_psj.at(ipart));
+	PseudoJet tmp_particle = _psj.at(ipart);
+	tmp_particle.set_user_index(_psj.at(ipart).user_index());//important: store index for later linking between clustered jet and constituence
+        particle_in_fatjet.push_back(tmp_particle);
       }
     }
-
     // check if there are more particles then required subjets
     bool enoughParticles = (particle_in_fatjet.size() > NSubJets_);
 
@@ -283,8 +285,9 @@ void XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 	else subjet_area.push_back(0);
 
 	indices[i].push_back(subjetCollection->size()); // store index of subjet in the whole subjet collection
+	//	cout<<"subjets["<<j<<"] energy = "<<subjets[j].E()<<endl;
 	auto subjet = createPatJet(subjets[j], iSetup);
-	//      auto subjet = createPatJet(subjets[s]);//TEST!
+	//	cout<<"PAT sub-jet is created for sub-jet #"<<j<<" of jet #"<<i<<endl;
 	subjet.setJetArea(subjet_area[j]);
 	subjetCollection->push_back(subjet);
       }
@@ -293,12 +296,12 @@ void XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     // Check we got the number of subjets we asked for
     if (doSubjets && subjets.size() != NSubJets_) {
       edm::LogWarning("XConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << NSubJets_ << ". "
-          << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"
-          << "Have added in blank subjets to make " << NSubJets_ << " subjets." << endl;
-      for (uint iSub=subjets.size(); iSub < NSubJets_; iSub++) {
-        subjets.push_back(PseudoJet(0, 0, 0, 0));
-        subjet_area.push_back(0);
-      }
+					    << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"<<endl;
+      //     << "Have added in blank subjets to make " << NSubJets_ << " subjets." << endl;
+      // for (uint iSub=subjets.size(); iSub < NSubJets_; iSub++) {
+      //   subjets.push_back(PseudoJet(0, 0, 0, 0));
+      //   subjet_area.push_back(0);
+      // }
     }
 
     // jet area for fat jet
@@ -350,8 +353,10 @@ pat::Jet XConeProducer::createPatJet(const PseudoJet & fjJet, const edm::EventSe
     //inspired by https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/plugins/VirtualJetProducer.cc#L687
     // get the constituents from fastjet
     std::vector<fastjet::PseudoJet> const & fjConstituents = fastjet::sorted_by_pt(fjJet.constituents());
+    //    cout<<"Size of fjConstituents = "<<fjConstituents.size()<<endl;
     // convert them to CandidatePtr vector
     std::vector<reco::CandidatePtr> const & constituents = getConstituents(fjConstituents);
+    //    cout<<"Size of constituents = "<<constituents.size()<<endl;
     // write the specifics to the jet (simultaneously sets 4-vector, vertex).
     // These are overridden functions that will call the appropriate
     // specific allocator.
@@ -381,12 +386,16 @@ XConeProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
 vector<reco::CandidatePtr> XConeProducer::getConstituents(const vector<fastjet::PseudoJet>&fjConstituents)
 {
   vector<reco::CandidatePtr> result; result.reserve(fjConstituents.size()/2);
+  //double out_PT = 0;
   for (unsigned int i=0;i<fjConstituents.size();i++) {
     auto index = fjConstituents[i].user_index();
     if ( index >= 0 && static_cast<unsigned int>(index) < particles_.size() ) {
       result.emplace_back(particles_[index]);
+      // out_PT +=particles_[index]->energy();
+      // cout<<"Output index #"<<index<<" with energy = "<<particles_[index]->energy()<<endl;
     }
   }
+  //  cout<<"OUT particles energy = "<<out_PT<<endl;
   return result;
 }
 

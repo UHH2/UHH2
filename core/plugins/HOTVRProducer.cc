@@ -134,9 +134,10 @@ void HOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
-  int i=-1;
+  int i=0;
+  int i_gl=-1;
   for (const auto & cand: *particles) {
-    i++;
+    i_gl++;
     if (std::isnan(cand.px()) ||
         std::isnan(cand.py()) ||
         std::isnan(cand.pz()) ||
@@ -150,7 +151,8 @@ void HOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     PseudoJet tmp_particle = PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy());
     tmp_particle.set_user_index(i);//important: store index for later linking between clustered jet and constituence
     _psj.push_back(tmp_particle);
-    particles_.push_back(particles->ptrAt(i));
+    particles_.push_back(particles->ptrAt(i_gl));
+    i++;
   }
 
   // Do the clustering, make jets, nsub, store
@@ -318,7 +320,6 @@ pat::Jet HOTVRProducer::createPatJet(const PseudoJet & psj) const
 pat::Jet HOTVRProducer::createPatJet(const PseudoJet & fjJet, const edm::EventSetup& iSetup)
 {
   pat::Jet patjet;
-  //  cout<<"Make patJET for jet with px()="<<fjJet.px()<<endl;
   if(fjJet.px()==0 && fjJet.py()==0 && fjJet.pz()==0){//jet or sub-jet was created artificially
     patjet.setP4(math::XYZTLorentzVector(fjJet.px(), fjJet.py(), fjJet.pz(), fjJet.E()));
   }
@@ -326,7 +327,6 @@ pat::Jet HOTVRProducer::createPatJet(const PseudoJet & fjJet, const edm::EventSe
     //inspired by https://github.com/cms-sw/cmssw/blob/master/RecoJets/JetProducers/plugins/VirtualJetProducer.cc#L687
     // get the constituents from fastjet
     std::vector<fastjet::PseudoJet> const & fjConstituents = fastjet::sorted_by_pt(fjJet.constituents());
-    //    cout<<"Obtained fjConstituents"<<endl;
     // convert them to CandidatePtr vector
     std::vector<reco::CandidatePtr> const & constituents = getConstituents(fjConstituents);
     // write the specifics to the jet (simultaneously sets 4-vector, vertex).
