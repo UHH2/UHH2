@@ -139,7 +139,6 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.getByToken(input_vertex_token_ , pvCollection);
   if (!pvCollection->empty()) vertex_=pvCollection->begin()->position();
   else  vertex_=reco::Jet::Point(0,0,0);
-  //  cout<<"vertex_ = "<<vertex_.x()<<" "<<vertex_.y()<<" "<<vertex_.z()<<endl;
   particles_.clear(); 
 
   edm::Handle<edm::View<reco::Candidate>> particles;
@@ -148,7 +147,9 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Convert particles to PseudoJets
   std::vector<PseudoJet> _psj;
   int i=0;
+  int i_gl=-1;
   for (const auto & cand: *particles) {
+    i_gl++;
     if (std::isnan(cand.px()) ||
         std::isnan(cand.py()) ||
         std::isnan(cand.pz()) ||
@@ -162,7 +163,7 @@ GenHOTVRProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     PseudoJet tmp_particle = PseudoJet(cand.px(), cand.py(), cand.pz(), cand.energy());
     tmp_particle.set_user_index(i);//important: store index for later linking between clustered jet and constituence
     _psj.push_back(tmp_particle);
-    particles_.push_back(particles->ptrAt(i));
+    particles_.push_back(particles->ptrAt(i_gl));
     i++;
   }
 
