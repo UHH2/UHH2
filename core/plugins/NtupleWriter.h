@@ -78,6 +78,8 @@ class NtupleWriter : public edm::EDFilter {
       bool doXCone;
       bool doGenHOTVR;
       bool doGenXCone;
+      bool doXCone_dijet;
+      bool doGenXCone_dijet;
 
       // in order of initialization:
       std::unique_ptr<uhh2::GenericEventStructure> ges;
@@ -148,12 +150,17 @@ class NtupleWriter : public edm::EDFilter {
 
       std::vector<edm::EDGetToken> xcone_tokens;
       std::vector<std::vector<TopJet>> xconeJets;
+      std::vector<edm::EDGetToken> xcone_tokens_dijet;
+      std::vector<std::vector<TopJet>> xconeJets_dijet;
 
       std::vector<edm::EDGetToken> genhotvr_tokens;
       std::vector<std::vector<GenTopJet>> genhotvrJets;
 
       std::vector<edm::EDGetToken> genxcone_tokens;
       std::vector<std::vector<GenTopJet>> genxconeJets;
+
+      std::vector<edm::EDGetToken> genxcone_tokens_dijet;
+      std::vector<std::vector<GenTopJet>> genxconeJets_dijet;
 
 };
 
