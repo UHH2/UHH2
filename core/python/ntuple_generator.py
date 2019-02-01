@@ -1060,6 +1060,170 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     )
     task.add(process.genXCone33TopJets)
 
+
+    process.xconeCHS4jets04 = cms.EDProducer("XConeProducer",
+                                             src=cms.InputTag("chs"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(4),          # number of fatjets
+                                             RJets = cms.double(0.4),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.2),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             )
+    task.add(process.xconeCHS4jets04)
+    
+    process.xconeCHS3jets04 = cms.EDProducer("XConeProducer",
+                                             src=cms.InputTag("chs"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(3),          # number of fatjets
+                                             RJets = cms.double(0.4),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.2),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             )
+    task.add(process.xconeCHS3jets04)
+
+    process.xconeCHS2jets04 = cms.EDProducer("XConeProducer",
+                                             src=cms.InputTag("chs"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(2),          # number of fatjets
+                                             RJets = cms.double(0.4),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.2),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             )
+    task.add(process.xconeCHS2jets04)
+
+    process.genXCone4jets04 = cms.EDProducer("GenXConeProducer",
+                                             src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(4),          # number of fatjets
+                                             RJets = cms.double(0.4),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.2),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doLeptonSpecific = cms.bool(False),  # if true, look for gen electron or muon,
+                                             # and whichever jet it is closest do get clustered with NJets-1 instead of NJets
+                                             DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
+                                             )
+    task.add(process.genXCone4jets04)
+    
+    process.genXCone3jets04 = cms.EDProducer("GenXConeProducer",
+                                             src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(3),          # number of fatjets
+                                             RJets = cms.double(0.4),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.2),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doLeptonSpecific = cms.bool(False),  # if true, look for gen electron or muon,
+                                             # and whichever jet it is closest do get clustered with NJets-1 instead of NJets
+                                             DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
+                                             )
+    task.add(process.genXCone3jets04)
+    
+    process.genXCone2jets04 = cms.EDProducer("GenXConeProducer",
+                                             src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(2),          # number of fatjets
+                                             RJets = cms.double(0.4),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.2),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doLeptonSpecific = cms.bool(False),  # if true, look for gen electron or muon,
+                                             # and whichever jet it is closest do get clustered with NJets-1 instead of NJets
+                                             DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
+                                             )
+    task.add(process.genXCone2jets04)
+
+    #XCONE for dijet studies R=0.8 
+    process.xconeCHS4jets08 = cms.EDProducer("XConeProducer",
+                                             src=cms.InputTag("chs"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(4),          # number of fatjets
+                                             RJets = cms.double(0.8),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             )
+    task.add(process.xconeCHS4jets08)
+    
+    process.xconeCHS3jets08 = cms.EDProducer("XConeProducer",
+                                             src=cms.InputTag("chs"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(3),          # number of fatjets
+                                             RJets = cms.double(0.8),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             )
+    task.add(process.xconeCHS3jets08)
+
+    process.xconeCHS2jets08 = cms.EDProducer("XConeProducer",
+                                             src=cms.InputTag("chs"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(2),          # number of fatjets
+                                             RJets = cms.double(0.8),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             )
+    task.add(process.xconeCHS2jets08)
+
+    process.genXCone4jets08 = cms.EDProducer("GenXConeProducer",
+                                             src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(4),          # number of fatjets
+                                             RJets = cms.double(0.8),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doLeptonSpecific = cms.bool(False),  # if true, look for gen electron or muon,
+                                             # and whichever jet it is closest do get clustered with NJets-1 instead of NJets
+                                             DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
+                                             )
+    task.add(process.genXCone4jets08)
+    
+    process.genXCone3jets08 = cms.EDProducer("GenXConeProducer",
+                                             src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(3),          # number of fatjets
+                                             RJets = cms.double(0.8),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doLeptonSpecific = cms.bool(False),  # if true, look for gen electron or muon,
+                                             # and whichever jet it is closest do get clustered with NJets-1 instead of NJets
+                                             DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
+                                             )
+    task.add(process.genXCone3jets08)
+    
+    process.genXCone2jets08 = cms.EDProducer("GenXConeProducer",
+                                             src=cms.InputTag("packedGenParticlesForJetsNoNu"),
+                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
+                                             NJets = cms.uint32(2),          # number of fatjets
+                                             RJets = cms.double(0.8),        # cone radius of fatjets
+                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
+                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
+                                             RSubJets = cms.double(0.4),     # cone radius of subjetSrc
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doLeptonSpecific = cms.bool(False),  # if true, look for gen electron or muon,
+                                             # and whichever jet it is closest do get clustered with NJets-1 instead of NJets
+                                             DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
+                                             )
+    task.add(process.genXCone2jets08)
+
     # LEPTON cfg
 
     # collections for lepton PF-isolation deposits
@@ -1630,8 +1794,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                         cms.InputTag("hotvrPuppi")
                                     ),
                                     XCone_sources=cms.VInputTag(
+                                        cms.InputTag("xconePuppi"),
                                         cms.InputTag("xconeCHS"),
-                                        cms.InputTag("xconePuppi")
                                     ),
 
                                     doGenHOTVR=cms.bool(not useData),
@@ -1641,8 +1805,27 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     ),
                                     GenXCone_sources=cms.VInputTag(
                                         cms.InputTag("genXCone23TopJets"),
-                                        cms.InputTag("genXCone33TopJets")
+                                        cms.InputTag("genXCone33TopJets"),
+                                    ),
+                                    doXCone_dijet=cms.bool(True), #XCone for dijet (JERC) studies, should be stored for QCD MC and JetHT DATA
+                                    XCone_dijet_sources=cms.VInputTag(
+                                        cms.InputTag("xconeCHS2jets04"),
+                                        cms.InputTag("xconeCHS3jets04"),
+                                        cms.InputTag("xconeCHS4jets04"),   
+                                        cms.InputTag("xconeCHS2jets08"),
+                                        cms.InputTag("xconeCHS3jets08"),
+                                        cms.InputTag("xconeCHS4jets08"),   
+                                    ),
+                                    doGenXCone_dijet=cms.bool(not useData),
+                                    GenXCone_dijet_sources=cms.VInputTag(
+                                        cms.InputTag("genXCone2jets04"),
+                                        cms.InputTag("genXCone3jets04"),
+                                        cms.InputTag("genXCone4jets04"),
+                                        cms.InputTag("genXCone2jets08"),
+                                        cms.InputTag("genXCone3jets08"),
+                                        cms.InputTag("genXCone4jets08"),
                                     )
+
     )
 
     #process.content = cms.EDAnalyzer("EventContentAnalyzer")

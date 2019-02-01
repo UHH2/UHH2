@@ -257,6 +257,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenHOTVR = iConfig.getParameter<bool>("doGenHOTVR");
   doGenXCone = iConfig.getParameter<bool>("doGenXCone");
 
+  doXCone_dijet = iConfig.getParameter<bool>("doXCone_dijet");
+  doGenXCone_dijet = iConfig.getParameter<bool>("doGenXCone_dijet");
 
   auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 
@@ -621,6 +623,16 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
   }
 
+  if (doXCone_dijet) {
+    auto xcone_sources_dijet = iConfig.getParameter<std::vector<edm::InputTag> >("XCone_dijet_sources");
+    xconeJets_dijet.resize(xcone_sources_dijet.size());
+    for (size_t j=0; j<xcone_sources_dijet.size(); ++j) {
+      xcone_tokens_dijet.push_back(consumes<pat::JetCollection>(xcone_sources_dijet[j]));
+      branch(tr, xcone_sources_dijet[j].encode().c_str(), "std::vector<TopJet>", &xconeJets_dijet[j]);
+    }
+  }
+
+
   if (doGenHOTVR) {
     auto genhotvr_sources = iConfig.getParameter<std::vector<edm::InputTag> >("GenHOTVR_sources");
     genhotvrJets.resize(genhotvr_sources.size());
@@ -638,7 +650,14 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       branch(tr, genxcone_sources[j].encode().c_str(), "std::vector<GenTopJet>", &genxconeJets[j]);
     }
   }
-
+  if (doGenXCone_dijet) {
+    auto genxcone_sources_dijet = iConfig.getParameter<std::vector<edm::InputTag> >("GenXCone_dijet_sources");
+    genxconeJets_dijet.resize(genxcone_sources_dijet.size());
+    for (size_t j=0; j<genxcone_sources_dijet.size(); ++j) {
+      genxcone_tokens_dijet.push_back(consumes<pat::JetCollection>(genxcone_sources_dijet[j]));
+      branch(tr, genxcone_sources_dijet[j].encode().c_str(), "std::vector<GenTopJet>", &genxconeJets_dijet[j]);
+    }
+  }
   newrun = true;
 }
 
@@ -1425,6 +1444,76 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     }
    }
 
+   //dijet XCONE
+   if (doXCone_dijet) {
+    for (size_t j=0; j < xcone_tokens_dijet.size(); ++j){
+      xconeJets_dijet[j].clear();
+      edm::Handle<pat::JetCollection> xcone_patjets_dijet;
+      iEvent.getByToken(xcone_tokens_dijet[j], xcone_patjets_dijet);
+
+      // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
+      for (const auto & patJet : *xcone_patjets_dijet) {
+        TopJet thisJet;
+        thisJet.set_pt(patJet.p4().pt());
+        thisJet.set_eta(patJet.p4().eta());
+        thisJet.set_phi(patJet.p4().phi());
+        thisJet.set_energy(patJet.p4().E());
+        thisJet.set_jetArea(patJet.jetArea());
+        thisJet.set_softdropmass(patJet.userFloat("softdropmass"));
+	thisJet.set_numberOfDaughters(patJet.numberOfDaughters());
+	thisJet.set_partonFlavour(patJet.partonFlavour());
+	thisJet.set_hadronFlavour(patJet.hadronFlavour());
+	thisJet.set_charge(patJet.charge());
+	if(patJet.isPFJet()){
+	  thisJet.set_neutralEmEnergyFraction (patJet.neutralEmEnergyFraction());
+	  thisJet.set_neutralHadronEnergyFraction (patJet.neutralHadronEnergyFraction());
+	  thisJet.set_chargedEmEnergyFraction (patJet.chargedEmEnergyFraction());
+	  thisJet.set_chargedHadronEnergyFraction (patJet.chargedHadronEnergyFraction());
+	  thisJet.set_muonEnergyFraction (patJet.muonEnergyFraction());
+	  thisJet.set_photonEnergyFraction (patJet.photonEnergyFraction());
+	  thisJet.set_chargedMultiplicity (patJet.chargedMultiplicity());
+	  thisJet.set_neutralMultiplicity (patJet.neutralMultiplicity());
+	  thisJet.set_muonMultiplicity (patJet.muonMultiplicity());
+	  thisJet.set_electronMultiplicity (patJet.electronMultiplicity());
+	  thisJet.set_photonMultiplicity (patJet.photonMultiplicity());
+	}
+	thisJet.set_JEC_factor_raw(1.);
+	thisJet.set_JEC_L1factor_raw(1.);
+
+
+        for (const auto & subItr : patJet.subjets()) {
+          Jet subjet;
+          subjet.set_pt(subItr->p4().pt());
+          subjet.set_eta(subItr->p4().eta());
+          subjet.set_phi(subItr->p4().phi());
+          subjet.set_energy(subItr->p4().E());
+          subjet.set_jetArea(subItr->jetArea());
+	  subjet.set_numberOfDaughters(subItr->numberOfDaughters());
+	  subjet.set_partonFlavour(subItr->partonFlavour());
+	  subjet.set_hadronFlavour(subItr->hadronFlavour());
+	  subjet.set_charge(subItr->charge());
+	  if(subItr->isPFJet()){
+	    subjet.set_neutralEmEnergyFraction (subItr->neutralEmEnergyFraction());
+	    subjet.set_neutralHadronEnergyFraction (subItr->neutralHadronEnergyFraction());
+	    subjet.set_chargedEmEnergyFraction (subItr->chargedEmEnergyFraction());
+	    subjet.set_chargedHadronEnergyFraction (subItr->chargedHadronEnergyFraction());
+	    subjet.set_muonEnergyFraction (subItr->muonEnergyFraction());
+	    subjet.set_photonEnergyFraction (subItr->photonEnergyFraction());
+	    subjet.set_chargedMultiplicity (subItr->chargedMultiplicity());
+	    subjet.set_neutralMultiplicity (subItr->neutralMultiplicity());
+	    subjet.set_muonMultiplicity (subItr->muonMultiplicity());
+	    subjet.set_electronMultiplicity (subItr->electronMultiplicity());
+	    subjet.set_photonMultiplicity (subItr->photonMultiplicity());
+	  }
+	  subjet.set_JEC_factor_raw(1.);
+	  subjet.set_JEC_L1factor_raw(1.);
+          thisJet.add_subjet(subjet);
+        }
+        xconeJets_dijet[j].push_back(thisJet);
+      }
+    }
+   }
+
    if (doGenHOTVR) {
     for (size_t j=0; j < genhotvr_tokens.size(); ++j){
       genhotvrJets[j].clear();
@@ -1489,6 +1578,41 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         }
 	fill_geninfo_patjet(patJet,thisJet,add_genparts);
         genxconeJets[j].push_back(thisJet);
+      }
+    }
+   }
+
+  //XCONE GEN dijet
+  if (doGenXCone_dijet) {
+    for (size_t j=0; j < genxcone_tokens_dijet.size(); ++j){
+      genxconeJets_dijet[j].clear();
+      edm::Handle<pat::JetCollection> genxcone_patjets_dijet;
+      iEvent.getByToken(genxcone_tokens_dijet[j], genxcone_patjets_dijet);
+
+      // Convert from pat::Jet to GenTopJet with subjets
+      for (const auto & patJet : *genxcone_patjets_dijet) {
+        GenTopJet thisJet;
+        thisJet.set_pt(patJet.p4().pt());
+        thisJet.set_eta(patJet.p4().eta());
+        thisJet.set_phi(patJet.p4().phi());
+        thisJet.set_energy(patJet.p4().E());
+	thisJet.set_partonFlavour(patJet.partonFlavour());
+	thisJet.set_hadronFlavour(patJet.hadronFlavour());
+	bool add_genparts=false;
+	if(genxconeJets[j].size()<doGenJetConstituents) add_genparts=true;
+        for (const auto & subItr : patJet.subjets()) {
+          GenJet subjet;
+          subjet.set_pt(subItr->p4().pt());
+          subjet.set_eta(subItr->p4().eta());
+          subjet.set_phi(subItr->p4().phi());
+          subjet.set_energy(subItr->p4().E());
+          subjet.set_partonFlavour(subItr->partonFlavour());
+          subjet.set_hadronFlavour(subItr->hadronFlavour());
+	  fill_geninfo_patjet(subItr,subjet,add_genparts);
+          thisJet.add_subjet(subjet);
+        }
+	fill_geninfo_patjet(patJet,thisJet,add_genparts);
+        genxconeJets_dijet[j].push_back(thisJet);
       }
     }
    }
