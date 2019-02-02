@@ -65,6 +65,7 @@ class NtupleWriter : public edm::EDFilter {
       unsigned doGenJetConstituents;
       bool doPV;
       bool doTrigger;
+      bool doEcalBadCalib;
       bool doPrefire;
       bool runOnMiniAOD;
       bool doRho;
@@ -128,6 +129,8 @@ class NtupleWriter : public edm::EDFilter {
       
       std::vector<std::string> trigger_prefixes;
       std::vector<std::string> triggerNames_outbranch;
+
+      edm::EDGetTokenT<bool> ecalBadCalibFilterUpdate_token;
 
       edm::EDGetTokenT<double> prefweight_token;
       edm::EDGetTokenT<double> prefweightup_token;

@@ -250,6 +250,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
+  doEcalBadCalib = iConfig.getParameter<bool>("doEcalBadCalib");
   doPrefire = iConfig.getParameter<bool>("doPrefire");
 
   doHOTVR = iConfig.getParameter<bool>("doHOTVR");
@@ -588,6 +589,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       branch(tr, name, "std::vector<FlavorParticle>", &triggerObjects_out[j]);
     }
   }
+
+  branch(tr, "passEcalBadCalib", &event->passEcalBadCalib);
+  if(doEcalBadCalib) {
+    ecalBadCalibFilterUpdate_token = consumes<bool>(iConfig.getParameter<edm::InputTag>("ecalBadCalib_source"));
+  }
+
   branch(tr, "prefiringWeight", &event->prefiringWeight);
   branch(tr, "prefiringWeightUp", &event->prefiringWeightUp);
   branch(tr, "prefiringWeightDown", &event->prefiringWeightDown);
@@ -1282,6 +1289,12 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          event->set_triggernames(triggerNames_outbranch);
      }
      newrun=false;
+   }
+
+   if (doEcalBadCalib) {
+     edm::Handle<bool> passEcalBadCalibFilterUpdate;
+     iEvent.getByToken(ecalBadCalibFilterUpdate_token, passEcalBadCalibFilterUpdate);
+     event->passEcalBadCalib = (*passEcalBadCalibFilterUpdate);
    }
 
    if (doPrefire) {
