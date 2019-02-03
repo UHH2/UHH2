@@ -25,6 +25,7 @@ EventHelper::EventHelper(uhh2::Context & ctx_): ctx(ctx_), event(0), pvs(false),
     h_event = declare_in_out<int>("event", "event", ctx);
     h_rho = declare_in_out<float>("rho", "rho", ctx);
     h_isRealData = declare_in_out<bool>("isRealData", "isRealData", ctx);
+    h_passEcalBadCalib = declare_in_out<bool>("passEcalBadCalib", "passEcalBadCalib", ctx);
     h_year = declare_in_out<std::string>("year", "year", ctx);
     h_bsx = declare_in_out<float>("beamspot_x0", "beamspot_x0", ctx);
     h_bsy = declare_in_out<float>("beamspot_y0", "beamspot_y0", ctx);
@@ -87,6 +88,7 @@ void EventHelper::event_read(){
     event->event = event->get(h_event);
     event->rho = event->get(h_rho);
     event->isRealData = event->get(h_isRealData);
+    event->passEcalBadCalib = event->get(h_passEcalBadCalib);
     event->year = event->get(h_year);
     event->beamspot_x0 = event->get(h_bsx);
     event->beamspot_y0 = event->get(h_bsy);
@@ -152,6 +154,7 @@ void EventHelper::event_write(){
     event->set(h_event, event->event);
     event->set(h_rho, event->rho);
     event->set(h_isRealData, event->isRealData);
+    event->set(h_passEcalBadCalib, event->passEcalBadCalib);
     event->set(h_year, event->year);
     event->set(h_bsx, event->beamspot_x0);
     event->set(h_bsy, event->beamspot_y0);

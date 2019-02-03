@@ -24,6 +24,8 @@ public:
 
   bool isRealData;
 
+  bool passEcalBadCalib;
+
   float prefiringWeight;
   float prefiringWeightUp;
   float prefiringWeightDown;
