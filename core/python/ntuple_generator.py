@@ -1461,7 +1461,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
 
     # Run Bad Charged Hadron and Bad Muon filters for 2016v2, since they were
-    # only introduced after samples were produced. Should be in for all newer samples.
+    # only introduced after samples were produced.
+    # Newer samples will already have these.
     do_bad_muon_charged_filters = (year == "2016v2")
     if do_bad_muon_charged_filters:
         process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
