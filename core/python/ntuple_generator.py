@@ -1397,6 +1397,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     task.add(process.egmGsfElectronIDs)
     task.add(process.slimmedElectronsUSER)
 
+    #---------------------------------------------------------------------------
+    # TRIGGER, MET FILTERS
+    #---------------------------------------------------------------------------
+
     # L1 prefiring, only needed for simulation in 2016/7
     prefire_era_dict = {
         '2016v2': '2016BtoH',
@@ -1455,6 +1459,22 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         )
         task.add(process.ecalBadCalibReducedMINIAODFilter)
 
+
+    # Run Bad Charged Hadron and Bad Muon filters for 2016v2, since they were
+    # only introduced after samples were produced. Should be in for all newer samples.
+    do_bad_muon_charged_filters = (year == "2016v2")
+    if do_bad_muon_charged_filters:
+        process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
+        process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
+        process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+        process.BadPFMuonFilter.taggingMode = False  # Run in filter mode to reject events, not store them
+        task.add(process.BadPFMuonFilter)
+
+        process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
+        process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
+        process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+        process.BadChargedCandidateFilter.taggingMode = False
+        task.add(process.BadChargedCandidateFilter)
 
     # NtupleWriter
 
@@ -1878,6 +1898,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     if bad_ecal:
         process.p.insert(0, process.ecalBadCalibReducedMINIAODFilter)
+
+    if do_bad_muon_charged_filters:
+        process.p.insert(0, process.BadPFMuonFilter)
+        process.p.insert(0, process.BadChargedCandidateFilter)
 
     if year == "2016v2" and (not useData):
         process.load("PhysicsTools.JetMCAlgos.HadronAndPartonSelector_cfi")
