@@ -583,7 +583,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
             # add for ungroomed jets if not done yet (maybe never used in case
             # ungroomed are not added, but that's ok ..)
             ungroomed_jetproducer = getattr(process, fatjets_name)
-            assert ungroomed_jetproducer.type_() == 'FastjetJetProducer'
+            assert ungroomed_jetproducer.type_() == 'FastjetJetProducer', "ungroomed_jetproducer is not a FastjetJetProducer"
             ungroomed_genjets_name = genjets_name(fatjets_name)
             if verbose:
                 print "Adding ungroomed genjets", ungroomed_genjets_name
@@ -680,6 +680,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         # add the merged jet collection which contains the links from fat jets to
         # subjets:
         groomed_packed_name = groomed_patname + 'Packed'
+        if verbose:
+            print "adding groomed jets + subjets packer", groomed_packed_name
         setattr(process,
                 groomed_packed_name,
                 cms.EDProducer("BoostedJetMerger",
