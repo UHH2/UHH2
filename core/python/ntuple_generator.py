@@ -71,8 +71,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfDeepCSVJetTags:probb',
         'pfDeepCSVJetTags:probbb',
         'pfBoostedDoubleSecondaryVertexAK8BJetTags',
-        'pfBoostedDoubleSecondaryVertexCA15BJetTags'
+        'pfBoostedDoubleSecondaryVertexCA15BJetTags',
     ]
+
 
 
     bTagInfos = [
@@ -929,26 +930,93 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # Add puppi multiplicity producers
     # For each, we have to add a PATPuppiJetSpecificProducer,
     # then update the relevant pat::Jet collection using updateJetCollection
+    ak4btagDiscriminators = [
+            'pfDeepFlavourJetTags:probb',
+            'pfDeepFlavourJetTags:probbb',
+            'pfDeepFlavourJetTags:problepb',
+            'pfDeepFlavourJetTags:probc',
+            'pfDeepFlavourJetTags:probuds',
+            'pfDeepFlavourJetTags:probg'
+            ]
+
+    ak8btagDiscriminators = [
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:bbvsLight',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ccvsLight',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:TvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHccvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:WvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD',
+        'pfMassDecorrelatedDeepBoostedJetTags:probHbb',
+        'pfMassDecorrelatedDeepBoostedJetTags:probQCDc',
+        'pfMassDecorrelatedDeepBoostedJetTags:probQCDbb',
+        'pfMassDecorrelatedDeepBoostedJetTags:probTbqq', 
+        'pfMassDecorrelatedDeepBoostedJetTags:probTbcq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probTbq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probQCDothers',
+        'pfMassDecorrelatedDeepBoostedJetTags:probQCDb',
+        'pfMassDecorrelatedDeepBoostedJetTags:probTbc',
+        'pfMassDecorrelatedDeepBoostedJetTags:probWqq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probQCDcc',
+        'pfMassDecorrelatedDeepBoostedJetTags:probHcc',
+        'pfMassDecorrelatedDeepBoostedJetTags:probWcq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probZcc',
+        'pfMassDecorrelatedDeepBoostedJetTags:probZqq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probHqqqq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probZbb',
+        'pfDeepDoubleBJetTags:probH',
+        'pfDeepDoubleBJetTags:probQ',
+        'pfDeepBoostedJetTags:probHbb',
+        'pfDeepBoostedJetTags:probQCDc',
+        'pfDeepBoostedJetTags:probQCDbb',
+        'pfDeepBoostedJetTags:probTbqq', 
+        'pfDeepBoostedJetTags:probTbcq',
+        'pfDeepBoostedJetTags:probTbq',
+        'pfDeepBoostedJetTags:probQCDothers',
+        'pfDeepBoostedJetTags:probQCDb',
+        'pfDeepBoostedJetTags:probTbc',
+        'pfDeepBoostedJetTags:probWqq',
+        'pfDeepBoostedJetTags:probQCDcc',
+        'pfDeepBoostedJetTags:probHcc',
+        'pfDeepBoostedJetTags:probWcq',
+        'pfDeepBoostedJetTags:probZcc',
+        'pfDeepBoostedJetTags:probZqq',
+        'pfDeepBoostedJetTags:probHqqqq',
+        'pfDeepBoostedJetTags:probZbb'
+        ]
+
     for name in ["slimmedJetsPuppi", "patJetsAK8PFPUPPI", "slimmedJetsAK8"]:
         suffix = cap(name)
-        update_name = "updatedPatJets"+suffix
+        update_name = "updatedPatJetsTransientCorrected" + suffix + "NewDFTraining"
+
         # This is hard coded into NtupleWriterJets - don't change it!
         # (should get user to properly specify it)
         puppi_mult_name = "patPuppiJetSpecificProducer" + update_name
         setattr(process,
                 puppi_mult_name,
                 cms.EDProducer("PATPuppiJetSpecificProducer",
-                    src = cms.InputTag(name)
+                    src = cms.InputTag("updatedPatJets"+suffix+"NewDFTraining")
                     )
                 )
         task.add(getattr(process, puppi_mult_name))
+
+        if "AK8" in name:
+            correction_tag = "AK8PFPuppi"
+        else:
+            correction_tag = "AK4PFPuppi"
 
         # produces module called "updatedPatJets"+labelName
         updateJetCollection(
             process,
             labelName = suffix,
             jetSource = cms.InputTag(name),
+            pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
+            svSource = cms.InputTag('slimmedSecondaryVertices'),
+            jetCorrections = (correction_tag, cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
+            btagDiscriminators = ak4btagDiscriminators,
+            postfix='NewDFTraining'
         )
+
+
         getattr(process, update_name).userData.userFloats.src = [
             '%s:puppiMultiplicity' % puppi_mult_name,
             '%s:neutralPuppiMultiplicity' % puppi_mult_name,
@@ -958,9 +1026,27 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
             '%s:HFEMPuppiMultiplicity' % puppi_mult_name
         ]
 
+    updateJetCollection(
+        process,
+        jetSource = cms.InputTag( "selectedUpdatedPatJetsSlimmedJetsAK8NewDFTraining"),
+        pvSource = cms.InputTag( 'offlineSlimmedPrimaryVertices' ),
+        svSource = cms.InputTag('slimmedSecondaryVertices' ),
+        jetCorrections = ("AK8PFPuppi", cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
+        btagDiscriminators = ak8btagDiscriminators,
+        )
+
+    process.PuppiSlimmedAK8JetsBtagger = cms.EDAlias(
+        selectedUpdatedPatJets = cms.VPSet( cms.PSet(type=cms.string("patJets")) )
+        )
+
+    process.PuppiSlimmedAK4JetsBtagger = cms.EDAlias(
+        selectedUpdatedPatJetsSlimmedJetsPuppiNewDFTraining = cms.VPSet( cms.PSet(type=cms.string("patJets")) )
+        )
+    process.PuppiPatJetsAK8JetsBtagger = cms.EDAlias(
+        selectedUpdatedPatJetsPatJetsAK8PFPUPPINewDFTraining= cms.VPSet( cms.PSet(type=cms.string("patJets")) )
+        )
 
     # Higgs tagging commissioning
-
 
     process.pfBoostedDoubleSVTagInfos = cms.EDProducer("BoostedDoubleSVProducer",
         trackSelectionBlock,
@@ -1463,6 +1549,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     else:
         metfilterpath = "PAT"
 
+
     process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     # AnalysisModule = cms.PSet(
                                     #    name = cms.string("NoopAnalysisModule"),
@@ -1522,7 +1609,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     #jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
                                     jet_sources=cms.vstring(
                                         # "slimmedJets", "slimmedJetsPuppi", ak8puppi_patname, ak8chs_patname),
-                                        "slimmedJets", "updatedPatJetsSlimmedJetsPuppi", "updatedPatJetsPatJetsAK8PFPUPPI", ak8chs_patname),
+                                        "slimmedJets", ak8chs_patname, "selectedUpdatedPatJetsSlimmedJetsPuppiNewDFTraining", "selectedUpdatedPatJetsPatJetsAK8PFPUPPINewDFTraining","PuppiSlimmedAK4JetsBtagger","PuppiPatJetsAK8JetsBtagger"),
                                     jet_ptmin=cms.double(10.0),
                                     jet_etamax=cms.double(999.0),
 
@@ -1546,8 +1633,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                             # The topjet_source can either be groomed or ungroomed,
                                             # but it determines the pt/eta/phi etc of the TopJet object
                                             topjet_source=cms.string(
-                                                # "slimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
-                                                "updatedPatJetsSlimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
+#                                                 "slimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
+#                                                "updatedPatJetsSlimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
+#                                                "selectedUpdatedPatJetsSlimmedJetsAK8NewDFTraining"),  # puppi jets in 2017 MiniAOD
+#                                                "selectedUpdatedPatJets"),  # puppi jets in 2017 MiniAOD
+                                                "PuppiSlimmedAK8JetsBtagger"),  # puppi jets in 2017 MiniAOD
                                             # For subjet_source, use label "daughters" if you want to store as
                                             # subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!).
                                             # Otherwise, to store a subjet collection present in miniAOD indicate the
@@ -1587,7 +1677,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                             # substructure_groomed_variables_source
                                             # ecf_beta1_source=cms.string(""),
                                             # ecf_beta2_source=cms.string("")
-                                        ),
+                                       ),
                                         cms.PSet(
                                             topjet_source=cms.string(
                                                 "packedPatJetsAk8CHSJets"),  # store ungroomed vars
@@ -1865,13 +1955,14 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     )
 
-    #process.content = cms.EDAnalyzer("EventContentAnalyzer")
+    process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
     # Note: we run in unscheduled mode, i.e. all modules are run as required;
     # just make sure that the electron IDs run before MyNtuple
     process.p = cms.Path(
         process.egmGsfElectronIDSequence *
         process.MyNtuple
+#        * process.content 
     )
     if do_prefire:
         process.p.insert(0, process.prefiringweight)
