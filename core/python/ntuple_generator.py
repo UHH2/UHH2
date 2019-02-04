@@ -721,7 +721,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsPruned',
     #                     jetcorr_label=None, jetcorr_label_subjets=None)  # we only use this to make packed collection for pruned mass
 
-    add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop',
+    add_fatjets_subjets(process, 'ak8CHSJetsFat', 'ak8CHSJetsSoftDrop',
                         genjets_name=lambda s: s.replace('CHS', 'Gen'))
 
     add_fatjets_subjets(process, 'ak8PuppiJetsFat', 'ak8PuppiJetsSoftDrop',
@@ -741,7 +741,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     from RecoJets.JetProducers.nJettinessAdder_cfi import Njettiness
     # AK8 CHS
     process.NjettinessAk8CHS = Njettiness.clone(
-        src=cms.InputTag("ak8CHSJets"),
+        src=cms.InputTag("ak8CHSJetsFat"),
         Njets=cms.vuint32(1, 2, 3, 4),  # compute 1-, 2-, 3-, 4- subjettiness
         # variables for measure definition :
         measureDefinition=cms.uint32(0),  # CMS default is normalized measure
@@ -1060,7 +1060,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         trackPairV0Filter=cms.PSet(
            k0sMassWindow=cms.double(0.03)
         ),
-        svTagInfos=cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8CHSJets")
+        svTagInfos=cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8CHSJetsFat")  # This name is taken from the modules added by addJetcollection in add_fatjets_subjets
     )
     task.add(process.pfBoostedDoubleSVTagInfos)
 
@@ -1068,7 +1068,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     # Add subjets from groomed fat jet to its corresponding ungroomed fatjet
     process.packedPatJetsAk8CHSJets = cms.EDProducer("JetSubstructurePacker",
-        jetSrc = cms.InputTag("patJetsAk8CHSJets"),
+        jetSrc = cms.InputTag("patJetsAk8CHSJetsFat"),
         distMax = cms.double(0.8),
         algoTags = cms.VInputTag(
             cms.InputTag("patJetsAk8CHSJetsSoftDropPacked")
@@ -1687,7 +1687,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                             subjet_source=cms.string("SoftDropCHS"),
                                             do_subjet_taginfo=cms.bool(True),
                                             higgstag_source=cms.string(
-                                                "patJetsAk8CHSJets"),
+                                                "patJetsAk8CHSJetsFat"),
                                             higgstag_name=cms.string(
                                                 "pfBoostedDoubleSecondaryVertexAK8BJetTags"),
                                             higgstaginfo_source=cms.string(
@@ -1695,7 +1695,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                             njettiness_source=cms.string(
                                                 "NjettinessAk8CHS"),
                                             substructure_variables_source=cms.string(
-                                                "ak8CHSJets"),
+                                                "ak8CHSJetsFat"),
                                             njettiness_groomed_source=cms.string(
                                                 "NjettinessAk8SoftDropCHS"),
                                             substructure_groomed_variables_source=cms.string(
