@@ -1649,8 +1649,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                             # If you include "CHS" in this string,
                                             # it will use the matched CHS 4-vector
                                             # for the *main* jet 4-vector.
-                                            subjet_source=cms.string(
-                                                "SoftDropPuppi"),
+                                            subjet_source=cms.string("SoftDropPuppi"),
                                             # Specify if you want to store b-tagging taginfos for subjet collection,
                                             # make sure to have included them with .addTagInfos = True
                                             # addTagInfos = True is currently true by default, however,
@@ -1663,15 +1662,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                             # from ungroomed jets
                                             higgstag_source=cms.string("patJetsAk8PuppiJetsFat"),
                                             higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                            # Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
+                                            # Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source
                                             #njettiness_source = cms.string(""),
                                             #substructure_variables_source = cms.string(""),
-                                            njettiness_groomed_source = cms.string(
-                                                "NjettinessAk8SoftDropPuppi"),
-                                            substructure_groomed_variables_source = cms.string(
-                                                "ak8PuppiJetsSoftDropforsub"),
-                                            softdropmass_source=cms.string(
-                                                "ak8PFJetsPuppiSoftDropMass"),
+                                            njettiness_groomed_source = cms.string("NjettinessAk8SoftDropPuppi"),
+                                            # substructure_groomed_variables_source should be the source as used in the module passed to njettiness_groomed_source
+                                            substructure_groomed_variables_source = cms.string("ak8PuppiJetsSoftDropforsub"),
+                                            softdropmass_source=cms.string("ak8PFJetsPuppiSoftDropMass"),
                                             # switch off qjets for now, as it takes a long time:
                                             #qjets_source = cms.string("QJetsCa8CHS")
                                             # Energy correlation functions, for beta=1 and beta=2
@@ -1682,30 +1679,19 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                             # ecf_beta2_source=cms.string("")
                                        ),
                                         cms.PSet(
-                                            topjet_source=cms.string(
-                                                "packedPatJetsAk8CHSJets"),  # store ungroomed vars
+                                            topjet_source=cms.string("packedPatJetsAk8CHSJets"),  # store ungroomed vars
                                             subjet_source=cms.string("SoftDropCHS"),
                                             do_subjet_taginfo=cms.bool(True),
-                                            higgstag_source=cms.string(
-                                                "patJetsAk8CHSJetsFat"),
-                                            higgstag_name=cms.string(
-                                                "pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                            higgstaginfo_source=cms.string(
-                                                "pfBoostedDoubleSVTagInfos"),
-                                            njettiness_source=cms.string(
-                                                "NjettinessAk8CHS"),
-                                            substructure_variables_source=cms.string(
-                                                "ak8CHSJetsFat"),
-                                            njettiness_groomed_source=cms.string(
-                                                "NjettinessAk8SoftDropCHS"),
-                                            substructure_groomed_variables_source=cms.string(
-                                                "ak8CHSJetsSoftDropforsub"),
-                                            softdropmass_source=cms.string(
-                                                "patJetsAk8CHSJetsSoftDropPacked"),
-                                            ecf_beta1_source=cms.string(
-                                                "ECFNbeta1Ak8SoftDropCHS"),
-                                            ecf_beta2_source=cms.string(
-                                                "ECFNbeta2Ak8SoftDropCHS")
+                                            higgstag_source=cms.string("patJetsAk8CHSJetsFat"),
+                                            higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfos"),
+                                            njettiness_source=cms.string("NjettinessAk8CHS"),
+                                            substructure_variables_source=cms.string("ak8CHSJetsFat"),
+                                            njettiness_groomed_source=cms.string("NjettinessAk8SoftDropCHS"),
+                                            substructure_groomed_variables_source=cms.string("ak8CHSJetsSoftDropforsub"),
+                                            softdropmass_source=cms.string("patJetsAk8CHSJetsSoftDropPacked"),
+                                            ecf_beta1_source=cms.string("ECFNbeta1Ak8SoftDropCHS"),
+                                            ecf_beta2_source=cms.string("ECFNbeta2Ak8SoftDropCHS")
                                         ),
                                         # cms.PSet(
                                         #     # The fat jets that HepTopTag produces are the Top jet candidates,
@@ -1787,8 +1773,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     ),
 
                                     doTrigger=cms.bool(True),
-                                    trigger_bits=cms.InputTag(
-                                        "TriggerResults", "", "HLT"),
+                                    trigger_bits=cms.InputTag("TriggerResults", "", "HLT"),
                                     # MET filters (HBHE noise, CSC, etc.) are stored as trigger Bits in
                                     # MINIAOD produced in path "PAT"/"RECO" with prefix "Flag_"
                                     metfilter_bits=cms.InputTag("TriggerResults", "", metfilterpath),
@@ -1880,10 +1865,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
                                     # *** gen stuff:
                                     doGenInfo=cms.bool(not useData),
-                                    genparticle_source=cms.InputTag(
-                                        "prunedPrunedGenParticles"),
-                                    stablegenparticle_source=cms.InputTag(
-                                        "packedGenParticlesForJetsNoNu"),
+                                    genparticle_source=cms.InputTag("prunedPrunedGenParticles"),
+                                    stablegenparticle_source=cms.InputTag("packedGenParticlesForJetsNoNu"),
                                     # set to true if you want to store all gen particles, otherwise, only
                                     # prunedPrunedGenParticles are stored (see above)
                                     doAllGenParticles=cms.bool(False),
