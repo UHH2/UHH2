@@ -1072,7 +1072,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
     task.add(process.xconeCHS4jets04)
-    
+
     process.xconeCHS3jets04 = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("chs"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
@@ -1111,7 +1111,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                              DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
                                              )
     task.add(process.genXCone4jets04)
-    
+
     process.genXCone3jets04 = cms.EDProducer("GenXConeProducer",
                                              src=cms.InputTag("packedGenParticlesForJetsNoNu"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
@@ -1126,7 +1126,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                              DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
                                              )
     task.add(process.genXCone3jets04)
-    
+
     process.genXCone2jets04 = cms.EDProducer("GenXConeProducer",
                                              src=cms.InputTag("packedGenParticlesForJetsNoNu"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
@@ -1142,7 +1142,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                              )
     task.add(process.genXCone2jets04)
 
-    #XCONE for dijet studies R=0.8 
+    #XCONE for dijet studies R=0.8
     process.xconeCHS4jets08 = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("chs"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
@@ -1154,7 +1154,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
     task.add(process.xconeCHS4jets08)
-    
+
     process.xconeCHS3jets08 = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("chs"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
@@ -1193,7 +1193,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                              DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
                                              )
     task.add(process.genXCone4jets08)
-    
+
     process.genXCone3jets08 = cms.EDProducer("GenXConeProducer",
                                              src=cms.InputTag("packedGenParticlesForJetsNoNu"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
@@ -1208,7 +1208,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                              DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
                                              )
     task.add(process.genXCone3jets08)
-    
+
     process.genXCone2jets08 = cms.EDProducer("GenXConeProducer",
                                              src=cms.InputTag("packedGenParticlesForJetsNoNu"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
@@ -1868,10 +1868,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     XCone_dijet_sources=cms.VInputTag(
                                         cms.InputTag("xconeCHS2jets04"),
                                         cms.InputTag("xconeCHS3jets04"),
-                                        cms.InputTag("xconeCHS4jets04"),   
+                                        cms.InputTag("xconeCHS4jets04"),
                                         cms.InputTag("xconeCHS2jets08"),
                                         cms.InputTag("xconeCHS3jets08"),
-                                        cms.InputTag("xconeCHS4jets08"),   
+                                        cms.InputTag("xconeCHS4jets08"),
                                     ),
                                     doGenXCone_dijet=cms.bool(not useData),
                                     GenXCone_dijet_sources=cms.VInputTag(
