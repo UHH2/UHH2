@@ -599,8 +599,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
         jetcorr_list = ['L1FastJet', 'L2Relative', 'L3Absolute']
         if useData:
-            jetcorr_list = ['L1FastJet', 'L2Relative',
-                            'L3Absolute', 'L2L3Residual']
+            jetcorr_list.append('L2L3Residual')
+        if "puppi" in fatjets_name.lower():
+            jetcorr_list = jetcorr_list[1:]
+
         if jetcorr_label:
             jetcorr_arg = (jetcorr_label, cms.vstring(jetcorr_list), 'None')
         else:
