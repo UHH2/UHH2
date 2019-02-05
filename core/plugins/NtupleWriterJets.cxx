@@ -42,15 +42,8 @@ float getPatJetUserFloat(const pat::Jet & jet, const std::string & key, float de
 
 // Generate the name of the puppiJetSpecificProducer module
 // So ugly, really should get the user to configure this in the NtupleWriter py
-std::string getPuppiJetSpecificProducer(const std::string & name){
+std::string getPuppiJetSpecificProducer(const std::string & name) {
   std::string multiplicity_name = "patPuppiJetSpecificProducer"+name;
-  if(multiplicity_name == "patPuppiJetSpecificProducerselectedUpdatedPatJetsSlimmedJetsPuppiNewDFTraining"){
-    multiplicity_name = "patPuppiJetSpecificProducerupdatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining";
-  }else if(multiplicity_name == "patPuppiJetSpecificProducerselectedUpdatedPatJetsPatJetsAK8PFPUPPINewDFTraining"){
-   multiplicity_name = "patPuppiJetSpecificProducerupdatedPatJetsTransientCorrectedPatJetsAK8PFPUPPINewDFTraining";
-  }else if("selectedUpdatedPatJetsSlimmedJetsAK8NewDFTraining"){
-    multiplicity_name = "patPuppiJetSpecificProducerupdatedPatJetsTransientCorrectedSlimmedJetsAK8NewDFTraining";
-  }
   return multiplicity_name;
 }
 
