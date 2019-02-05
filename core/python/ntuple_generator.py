@@ -834,28 +834,29 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # Add in Energy Correlation Functions for groomed jets only
     # The cut is taken from PhysicsTools/PatAlgos/python/slimming/applySubstructure_cff.py
     from RecoJets.JetProducers.ECF_cff import ecfNbeta1, ecfNbeta2
+    ecf_pt_min = 250
     process.ECFNbeta1Ak8SoftDropCHS = ecfNbeta1.clone(
         src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
-        cuts=cms.vstring('', '', 'pt > 250')
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta1Ak8SoftDropCHS)
 
     process.ECFNbeta2Ak8SoftDropCHS = ecfNbeta2.clone(
         src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
-        cuts=cms.vstring('', '', 'pt > 250')
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta2Ak8SoftDropCHS)
 
 
     process.ECFNbeta1Ak8SoftDropPuppi = ecfNbeta1.clone(
         src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
-        cuts=cms.vstring('', '', 'pt > 250')
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta1Ak8SoftDropPuppi)
 
     process.ECFNbeta2Ak8SoftDropPuppi = ecfNbeta2.clone(
         src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
-        cuts=cms.vstring('', '', 'pt > 250')
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta2Ak8SoftDropPuppi)
 
