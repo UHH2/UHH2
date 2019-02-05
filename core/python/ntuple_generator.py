@@ -563,7 +563,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                                    'CATopJetProducer'), "do not know how to construct genjet collection for %s" % repr(groomed_jetproducer)
             groomed_genjets_name = genjets_name(groomed_jets_name)
             if verbose:
-                print "Adding groomed genjets", groomed_genjets_name
+                print "  Adding groomed genjets:", groomed_genjets_name
             if not hasattr(process, groomed_genjets_name):
                 setattr(process,
                         groomed_genjets_name,
@@ -579,7 +579,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
             assert ungroomed_jetproducer.type_() == 'FastjetJetProducer', "ungroomed_jetproducer is not a FastjetJetProducer"
             ungroomed_genjets_name = genjets_name(fatjets_name)
             if verbose:
-                print "Adding ungroomed genjets", ungroomed_genjets_name
+                print "  Adding ungroomed genjets:", ungroomed_genjets_name
             if not hasattr(process, ungroomed_genjets_name):
                 setattr(process,
                         ungroomed_genjets_name,
@@ -606,7 +606,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         add_ungroomed = not hasattr(process, ungroomed_patname)
         if add_ungroomed:
             if verbose:
-                print "Adding ungroomed jets", ungroomed_patname
+                print "  Adding ungroomed jets:", ungroomed_patname
             addJetCollection(process,
                              labelName=fatjets_name,
                              jetSource=cms.InputTag(fatjets_name),
@@ -623,7 +623,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         # patify groomed fat jets, with b-tagging:
         groomed_patname = "patJets" + cap(groomed_jets_name)
         if verbose:
-            print "adding groomed jets", groomed_patname
+            print "  Adding groomed jets:", groomed_patname
         addJetCollection(process,
                          labelName=groomed_jets_name,
                          jetSource=cms.InputTag(groomed_jets_name),
@@ -646,7 +646,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         # patify subjets, with subjet b-tagging:
         subjets_patname = "patJets" + cap(subjets_name)
         if verbose:
-            print "adding groomed jets' subjets", subjets_patname
+            print "  Adding groomed jets' subjets:", subjets_patname
         if jetcorr_label_subjets:
             jetcorr_arg = (jetcorr_label_subjets,
                            cms.vstring(jetcorr_list), 'None')
@@ -676,7 +676,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         # fat jets to the subjets:
         groomed_packed_name = groomed_patname + 'Packed'
         if verbose:
-            print "adding groomed jets + subjets packer", groomed_packed_name
+            print "  Adding groomed jets + subjets packer:", groomed_packed_name
         setattr(process,
                 groomed_packed_name,
                 cms.EDProducer("BoostedJetMerger",
@@ -1121,7 +1121,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     process.pfBoostedDoubleSVTagInfos.trackSelection.jetDeltaRMax = cms.double(0.8)
 
+    ###############################################
     # HOTVR & XCONE
+    #
     process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
                                         src=cms.InputTag("puppi")
                                         )
@@ -1355,14 +1357,18 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                              )
     task.add(process.genXCone2jets08)
 
-    # LEPTON cfg
+    ###############################################
+    # LEPTON configuration
+    #
 
     # collections for lepton PF-isolation deposits
     process.load('UHH2.core.pfCandidatesByType_cff')
     process.load('CommonTools.ParticleFlow.deltaBetaWeights_cff')
 
-    # MUON # WILL BE IN MINIAOD OF 9_1_0 RELEASE
-
+    ###############################################
+    # MUONS
+    #
+    # mini-isolation
     mu_isovals = []
 
     load_muonPFMiniIso(process, 'muonPFMiniIsoSequenceSTAND', algo='STAND',
@@ -1390,11 +1396,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                               )
     task.add(process.slimmedMuonsUSER)
 
-    # ELECTRON
-
+    ###############################################
+    # ELECTRONS
+    #
     # mini-isolation
     # FIXME: should we use the already existing miniIsolatioin in pat::Lepton?
-
     el_isovals = []
 
     load_elecPFMiniIso(process,
@@ -1437,7 +1443,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
 
     # electron ID from VID
-
     switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
     elecID_mod_ls = [
@@ -1528,7 +1533,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     task.add(process.egmGsfElectronIDs)
     task.add(process.slimmedElectronsUSER)
 
+    ###############################################
     # L1 prefiring, only needed for simulation in 2016/7
+    #
     prefire_era_dict = {
         '2016v2': '2016BtoH',
         '2016v3': '2016BtoH',
@@ -1552,6 +1559,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         )
         task.add(getattr(process, prefire_source))
 
+    ###############################################
     # Deal with bad ECAL endcap crystals
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#How_to_run_ecal_BadCalibReducedM
     bad_ecal = year in ['2017', '2018'] and useData
@@ -1586,8 +1594,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         )
         task.add(process.ecalBadCalibReducedMINIAODFilter)
 
-
+    ###############################################
     # NtupleWriter
+    #
 
     if useData:
         metfilterpath = "RECO"
