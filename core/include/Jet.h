@@ -9,7 +9,19 @@
 class Jet : public FlavorParticle {
 
  public:
-  enum tag { /* for future use (more b-taggers, etc.) */ };
+  enum tag {
+    // Pileup ID working points
+    pileup_loose,
+    pileup_medium,
+    pileup_tight
+  };
+
+  static tag tagname2tag(const std::string & tagname){
+    if(tagname == "pileup_loose") return pileup_loose;
+    if(tagname == "pileup_medium") return pileup_medium;
+    if(tagname == "pileup_tight") return pileup_tight;
+    throw std::runtime_error("unknown Jet::tag '" + tagname + "'");
+  }
 
   Jet(){
 
@@ -173,6 +185,7 @@ class Jet : public FlavorParticle {
   float JEC_L1factor_raw() const{return m_JEC_L1factor_raw;}
   float genjet_index() const{return m_genjet_index;}
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
+  float has_tag(tag t) const { return tags.has_tag(static_cast<int>(t)); }
   JetBTagInfo btaginfo() const{return m_btaginfo;}
   float pileupID() const {return m_pileupID;}
 
