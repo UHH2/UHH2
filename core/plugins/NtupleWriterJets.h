@@ -22,10 +22,10 @@ namespace uhh2 {
 
 class NtupleWriterJets: public NtupleWriterModule {
 public:
-    static void fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer="");
+    static void fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer="", bool fill_pfcand=false);
 
-    explicit NtupleWriterJets(Config & cfg, bool set_jets_member);
-    explicit NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&);
+    explicit NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents);
+    explicit NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&, unsigned int NPFJetwConstituents);
 
     virtual void process(const edm::Event &, uhh2::Event &,  const edm::EventSetup&);
 
@@ -42,6 +42,7 @@ private:
     bool save_lepton_keys_;
     std::vector<Event::Handle<std::vector<Muon>    >> h_muons;
     std::vector<Event::Handle<std::vector<Electron>>> h_elecs;
+    unsigned int NPFJetwConstituents_;
 };
 
 
@@ -69,8 +70,8 @@ public:
         std::string ecf_beta2_src;
     };
 
-    explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member);
-    explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&);
+    explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents);
+    explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&, unsigned int NPFJetwConstituents);
 
     virtual void process(const edm::Event &, uhh2::Event &,  const edm::EventSetup&);
 
@@ -92,6 +93,7 @@ private:
     std::vector<TopJet::tag> id_tags;
 
     bool save_lepton_keys_;
+    unsigned int NPFJetwConstituents_;
     std::vector<Event::Handle<std::vector<Muon>    >> h_muons;
     std::vector<Event::Handle<std::vector<Electron>>> h_elecs;
 };

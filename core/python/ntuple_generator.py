@@ -1906,6 +1906,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     # prunedPrunedGenParticles are stored (see above)
                                     doAllGenParticles=cms.bool(False),
                                     doAllGenParticlesPythia8=cms.bool(False),
+#                                    doPFJetConstituents=cms.uint32(0),
+                                    doPFJetConstituents=cms.uint32(1),
                                     doGenJets=cms.bool(not useData),
                                     doGenJetConstituents=cms.uint32(0), #number of genjets with stored gen.constituents
                                     genjet_sources=cms.vstring(

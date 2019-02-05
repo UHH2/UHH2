@@ -237,6 +237,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenJets = iConfig.getParameter<bool>("doGenJets");
   doGenTopJets = iConfig.getParameter<bool>("doGenTopJets");
   doGenJetConstituents = iConfig.getParameter<unsigned>("doGenJetConstituents");
+  doPFJetConstituents = iConfig.getParameter<unsigned>("doPFJetConstituents");
   doPhotons = iConfig.getParameter<bool>("doPhotons");
   doMET = iConfig.getParameter<bool>("doMET");
   doGenMET = iConfig.getParameter<bool>("doGenMET");
@@ -330,7 +331,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         NtupleWriterJets::Config cfg(*context, consumesCollector(), jet_sources[i], jet_sources[i]);
         cfg.ptmin = jet_ptmin;
         cfg.etamax = jet_etamax;
-        writer_modules.emplace_back(new NtupleWriterJets(cfg, i==0, muon_sources, elec_sources));
+        writer_modules.emplace_back(new NtupleWriterJets(cfg, i==0, muon_sources, elec_sources,doPFJetConstituents));
       }
   }
   if(doTopJets){
@@ -435,7 +436,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         std::string topbranch=topjet_source+"_"+subjet_source;
         cfg.dest_branchname = topbranch;
         cfg.dest = topbranch;
-        writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0, muon_sources, elec_sources));
+        writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0, muon_sources, elec_sources,doPFJetConstituents));
 
       }
     }
