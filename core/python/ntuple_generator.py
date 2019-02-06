@@ -261,13 +261,16 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     ###############################################
     # CHS JETS
     #
-    # configure additional jet collections, based on chs.
+    # configure additional jet collections, based on CHS.
+    # also add in softdrop for CHS jets
     process.chs = cms.EDFilter("CandPtrSelector",
         src=cms.InputTag("packedPFCandidates"),
         cut=cms.string("fromPV(0) > 0")
     )
     task.add(process.chs)
 
+    # This is primarily used for JEC studies.
+    # It has a low pT threshold, and will not get any substructure info.
     process.ak8CHSJets = ak8PFJets.clone(
         src='chs',
         doAreaFastjet=True,
@@ -275,6 +278,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     )
     task.add(process.ak8CHSJets)
 
+    # This is used for TopJets with substructure info.
+    # It has a higher pT threshold, and there will be corresponding groomed versions
+    # While I'd love to avoid reclustering by using a PtMinCandSelector, it
+    # doesn't work well when tring to inherit the same clustering settings in
+    # add_fatjets_subjets()
     process.ak8CHSJetsFat = ak8PFJets.clone(
         src='chs',
         doAreaFastjet=True,
@@ -282,7 +290,26 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     )
     task.add(process.ak8CHSJetsFat)
 
+    # The ak8CHSJetsSoftDrop collection produce the groomed jets as reco::BasicJets,
+    # and the subjets as reco::PFJets, with instance label "SubJets"
+    # It is used for its subjets
+    process.ak8CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(
+        src=cms.InputTag('chs'),
+        jetPtMin=fatjet_ptmin
+    )
+    task.add(process.ak8CHSJetsSoftDrop)
+
+    # The ak8CHSJetsSoftDropforsub produces only the groomed jets as PFJets
+    # It is used for calculating quantities on the groomed fat jet that require
+    # reco::PFJets rather than reco::BasicJets as produced by ak8CHSJetsSoftDrop
+    process.ak8CHSJetsSoftDropforsub = process.ak8CHSJetsSoftDrop.clone()
+    delattr(process.ak8CHSJetsSoftDropforsub, "writeCompound")
+    delattr(process.ak8CHSJetsSoftDropforsub, "jetCollInstanceName")
+    task.add(process.ak8CHSJetsSoftDropforsub)
+
+    ###############################################
     # Add HepTopTagger bits
+    #
     # The HTTTopJetProducer does its own clustering producing a BasicJet of
     # Top candidates (i.e. sum of subjects),
     # as well as producing PFJet (SubJets), and HTTTopJetTagInfo
@@ -334,31 +361,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     #                                       )
     # task.add(process.hepTopTagCHS)
 
-    #################################################
-    # Softdrop
-    #
-    # Note that the *SoftDrop collections produce the groomed jets (as BasicJets),
-    # and the subjets (as PFJets, with instance label "SubJets")
-    # The *SoftDropforsub produce only the groomed jets as PFJets
-    from RecoJets.Configuration.RecoPFJets_cff import ak8PFJetsCHS
-
-    process.ak8CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(
-        src=cms.InputTag('chs'),
-        jetPtMin=fatjet_ptmin
-    )
-    task.add(process.ak8CHSJetsSoftDrop)
-
-    process.ak8CHSJetsSoftDropforsub = process.ak8CHSJetsFat.clone(
-        rParam=0.8,
-        jetPtMin=fatjet_ptmin,
-        zcut=cms.double(0.1),
-        beta=cms.double(0.0),
-        useSoftDrop=cms.bool(True),
-        useExplicitGhosts=cms.bool(True),
-        R0=cms.double(0.8)
-    )
-    task.add(process.ak8CHSJetsSoftDropforsub)
-
     # process.ca15CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(
     #     src=cms.InputTag('chs'),
     #     jetPtMin=process.ca15CHSJets.jetPtMin,
@@ -381,38 +383,39 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     ###############################################
     # PUPPI JETS
+    #
     process.load('CommonTools/PileupAlgos/Puppi_cff')
-    # e.g. to run on miniAOD
+    # recreate PUPPI candidates for MiniAOD
+    # unpack stored weights to save time recalculating it
     process.puppi.candName = cms.InputTag('packedPFCandidates')
     process.puppi.vertexName = cms.InputTag('offlineSlimmedPrimaryVertices')
     process.puppi.clonePackedCands = cms.bool(True)
     process.puppi.useExistingWeights = cms.bool(True)
     task.add(process.puppi)
 
-    process.ak8PuppiJets = ak8PFJets.clone(
-        src='puppi',
-        doAreaFastjet=True,
-        jetPtMin=10.
+    # This is primarily used for JEC studies.
+    # It has a low pT threshold, and will not get any substructure info.
+    process.ak8PuppiJets = process.ak8CHSJets.clone(
+        src=cms.InputTag('puppi')
     )
     task.add(process.ak8PuppiJets)
 
-    process.ak8PuppiJetsFat = process.ak8CHSJets.clone(src='puppi')
+    # This is used for TopJets with substructure info.
+    # It has a higher pT threshold, and there will be corresponding groomed versions
+    process.ak8PuppiJetsFat = process.ak8CHSJetsFat.clone(
+        src=cms.InputTag('puppi')
+    )
     task.add(process.ak8PuppiJetsFat)
 
-    process.ak8PuppiJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(
-        src=cms.InputTag('puppi'),
-        jetPtMin=fatjet_ptmin
+    # Like for CHS, this makes groomed fatjets as reco::BasicJets,
+    # and the subjets as reco::PFJets
+    process.ak8PuppiJetsSoftDrop = process.ak8CHSJetsSoftDrop.clone(
+        src=cms.InputTag('puppi')
     )
     task.add(process.ak8PuppiJetsSoftDrop)
 
-    process.ak8PuppiJetsSoftDropforsub = process.ak8CHSJetsFat.clone(
-        rParam=0.8,
-        jetPtMin=fatjet_ptmin,
-        zcut=cms.double(0.1),
-        beta=cms.double(0.0),
-        useSoftDrop=cms.bool(True),
-        useExplicitGhosts=cms.bool(True),
-        R0=cms.double(0.8),
+    # Like for CHS, this makes only the groomed fatjets as reco::PFJets
+    process.ak8PuppiJetsSoftDropforsub = process.ak8CHSJetsSoftDropforsub.clone(
         src=cms.InputTag('puppi')
     )
     task.add(process.ak8PuppiJetsSoftDropforsub)
@@ -451,8 +454,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     # captitalize string; needed below to construct pat module names.
     def cap(s): return s[0].upper() + s[1:]
-
-
 
     # process.load('PhysicsTools.PatAlgos.slimming.unpackedTracksAndVertices_cfi')
 
@@ -562,7 +563,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                                    'CATopJetProducer'), "do not know how to construct genjet collection for %s" % repr(groomed_jetproducer)
             groomed_genjets_name = genjets_name(groomed_jets_name)
             if verbose:
-                print "Adding groomed genjets", groomed_genjets_name
+                print "  Adding groomed genjets:", groomed_genjets_name
             if not hasattr(process, groomed_genjets_name):
                 setattr(process,
                         groomed_genjets_name,
@@ -575,10 +576,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
             # add for ungroomed jets if not done yet (maybe never used in case
             # ungroomed are not added, but that's ok ..)
             ungroomed_jetproducer = getattr(process, fatjets_name)
-            assert ungroomed_jetproducer.type_() == 'FastjetJetProducer'
+            assert ungroomed_jetproducer.type_() == 'FastjetJetProducer', "ungroomed_jetproducer is not a FastjetJetProducer"
             ungroomed_genjets_name = genjets_name(fatjets_name)
             if verbose:
-                print "Adding ungroomed genjets", ungroomed_genjets_name
+                print "  Adding ungroomed genjets:", ungroomed_genjets_name
             if not hasattr(process, ungroomed_genjets_name):
                 setattr(process,
                         ungroomed_genjets_name,
@@ -591,8 +592,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
         jetcorr_list = ['L1FastJet', 'L2Relative', 'L3Absolute']
         if useData:
-            jetcorr_list = ['L1FastJet', 'L2Relative',
-                            'L3Absolute', 'L2L3Residual']
+            jetcorr_list.append('L2L3Residual')
+        if "puppi" in fatjets_name.lower():
+            jetcorr_list = jetcorr_list[1:]
+
         if jetcorr_label:
             jetcorr_arg = (jetcorr_label, cms.vstring(jetcorr_list), 'None')
         else:
@@ -603,7 +606,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         add_ungroomed = not hasattr(process, ungroomed_patname)
         if add_ungroomed:
             if verbose:
-                print "Adding ungroomed jets", ungroomed_patname
+                print "  Adding ungroomed jets:", ungroomed_patname
             addJetCollection(process,
                              labelName=fatjets_name,
                              jetSource=cms.InputTag(fatjets_name),
@@ -620,7 +623,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         # patify groomed fat jets, with b-tagging:
         groomed_patname = "patJets" + cap(groomed_jets_name)
         if verbose:
-            print "adding groomed jets", groomed_patname
+            print "  Adding groomed jets:", groomed_patname
         addJetCollection(process,
                          labelName=groomed_jets_name,
                          jetSource=cms.InputTag(groomed_jets_name),
@@ -643,7 +646,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         # patify subjets, with subjet b-tagging:
         subjets_patname = "patJets" + cap(subjets_name)
         if verbose:
-            print "adding groomed jets' subjets", subjets_patname
+            print "  Adding groomed jets' subjets:", subjets_patname
         if jetcorr_label_subjets:
             jetcorr_arg = (jetcorr_label_subjets,
                            cms.vstring(jetcorr_list), 'None')
@@ -669,9 +672,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         getattr(process, subjets_patname).addTagInfos = True
         delattr(process, "selectedPatJets"+cap(subjets_name))
 
-        # add the merged jet collection which contains the links from fat jets to
-        # subjets:
+        # add the merged jet collection which contains the links from groomed
+        # fat jets to the subjets:
         groomed_packed_name = groomed_patname + 'Packed'
+        if verbose:
+            print "  Adding groomed jets + subjets packer:", groomed_packed_name
         setattr(process,
                 groomed_packed_name,
                 cms.EDProducer("BoostedJetMerger",
@@ -711,7 +716,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # add_fatjets_subjets(process, 'ca15CHSJets', 'ca15CHSJetsPruned',
     #                     jetcorr_label=None, jetcorr_label_subjets=None)  # we only use this to make packed collection for pruned mass
 
-    add_fatjets_subjets(process, 'ak8CHSJets', 'ak8CHSJetsSoftDrop',
+    add_fatjets_subjets(process, 'ak8CHSJetsFat', 'ak8CHSJetsSoftDrop',
                         genjets_name=lambda s: s.replace('CHS', 'Gen'))
 
     add_fatjets_subjets(process, 'ak8PuppiJetsFat', 'ak8PuppiJetsSoftDrop',
@@ -722,34 +727,27 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # Adapt primary vertex collection
     adaptPVs(process, pvCollection=cms.InputTag('offlineSlimmedPrimaryVertices'))
 
-
+    ###############################################
     # Add subjet variables
-    # For each type of jet, we add ungroomed and groomed quantities
-    from RecoJets.JetProducers.nJettinessAdder_cfi import Njettiness
-    from RecoJets.JetProducers.qjetsadder_cfi import QJetsAdder
+    #
+    # For each type of jet, we normally add both ungroomed and groomed quantities
 
+    # NJettiness
+    # ----------
+    from RecoJets.JetProducers.nJettinessAdder_cfi import Njettiness
     # AK8 CHS
     process.NjettinessAk8CHS = Njettiness.clone(
-        src=cms.InputTag("ak8CHSJets"),
-        cone=cms.double(0.8)
+        src=cms.InputTag("ak8CHSJetsFat"),
+        Njets=cms.vuint32(1, 2, 3, 4),  # compute 1-, 2-, 3-, 4- subjettiness
+        # variables for measure definition :
+        measureDefinition=cms.uint32(0),  # CMS default is normalized measure
+        beta=cms.double(1.0),  # CMS default is 1
+        R0=cms.double(0.8),  # CMS default is jet cone size
     )
     task.add(process.NjettinessAk8CHS)
 
-    process.NjettinessAk8SoftDropCHS = Njettiness.clone(
-        src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
-        Njets=cms.vuint32(1, 2, 3, 4),          # compute 1-, 2-, 3-, 4- subjettiness
-        # variables for measure definition :
-        measureDefinition=cms.uint32(0),  # CMS default is normalized measure
-        beta=cms.double(1.0),              # CMS default is 1
-        R0=cms.double(0.8),                  # CMS default is jet cone size
-        Rcutoff=cms.double(999.0),       # not used by default
-        # variables for axes
-        # definition :
-        axesDefinition=cms.uint32(6),    # CMS default is 1-pass KT axes
-        # not used by default
-        nPass=cms.int32(999),
-        # not used by default
-        akAxesR0=cms.double(999.0)
+    process.NjettinessAk8SoftDropCHS = process.NjettinessAk8CHS.clone(
+        src=cms.InputTag("ak8CHSJetsSoftDropforsub")
     )
     task.add(process.NjettinessAk8SoftDropCHS)
 
@@ -793,11 +791,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # task.add(process.NjettinessCa15SoftDropPuppi)
 
     # AK8 PUPPI
-    # process.NjettinessAk8Puppi = Njettiness.clone(
-    #     src=cms.InputTag("ak8PuppiJetsFat"),
-    #     cone=cms.double(0.8)
-    # )
-    # task.add(process.NjettinessAk8Puppi)
+    process.NjettinessAk8Puppi = process.NjettinessAk8CHS.clone(
+        src=cms.InputTag("ak8PuppiJetsFat")
+    )
+    task.add(process.NjettinessAk8Puppi)
 
     process.NjettinessAk8SoftDropPuppi = process.NjettinessAk8SoftDropCHS.clone(
         src=cms.InputTag("ak8PuppiJetsSoftDropforsub")
@@ -817,47 +814,51 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # )
     # task.add(process.NjettinessAk8SoftDropGen)
 
-    """
-    process.QJetsCa8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa8CHSJets"), jetRad = cms.double(0.8))
-    process.QJetsCa15CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa15CHSJets"), jetRad = cms.double(1.5))
+    # QJetsAdder
+    # ----------
+    # from RecoJets.JetProducers.qjetsadder_cfi import QJetsAdder
+    # process.QJetsCa8CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa8CHSJets"), jetRad = cms.double(0.8))
+    # process.QJetsCa15CHS = QJetsAdder.clone(src = cms.InputTag("patJetsCa15CHSJets"), jetRad = cms.double(1.5))
 
-    process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
-       QJetsCa8CHS = cms.PSet(
-          initialSeed = cms.untracked.uint32(123)
-       ),
-       QJetsCa15CHS = cms.PSet(
-          initialSeed = cms.untracked.uint32(123)
-       )
-    )
-    """
+    # process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
+    #    QJetsCa8CHS = cms.PSet(
+    #       initialSeed = cms.untracked.uint32(123)
+    #    ),
+    #    QJetsCa15CHS = cms.PSet(
+    #       initialSeed = cms.untracked.uint32(123)
+    #    )
+    # )
 
+    # Energy Correlation Functions (ECFs)
+    # -----------------------------------
     # Add in Energy Correlation Functions for groomed jets only
     # The cut is taken from PhysicsTools/PatAlgos/python/slimming/applySubstructure_cff.py
     from RecoJets.JetProducers.ECF_cff import ecfNbeta1, ecfNbeta2
+    ecf_pt_min = 250
     process.ECFNbeta1Ak8SoftDropCHS = ecfNbeta1.clone(
         src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
-        cuts=cms.vstring('', '', 'pt > 250')
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta1Ak8SoftDropCHS)
 
     process.ECFNbeta2Ak8SoftDropCHS = ecfNbeta2.clone(
         src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
-        cuts=cms.vstring('', '', 'pt > 250')
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta2Ak8SoftDropCHS)
 
 
-    # process.ECFNbeta1Ak8SoftDropPuppi = ecfNbeta1.clone(
-    #     src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
-    #     cuts=cms.vstring('', '', 'pt > 250')
-    # )
-    # task.add(process.ECFNbeta1Ak8SoftDropPuppi)
+    process.ECFNbeta1Ak8SoftDropPuppi = ecfNbeta1.clone(
+        src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
+    )
+    task.add(process.ECFNbeta1Ak8SoftDropPuppi)
 
-    # process.ECFNbeta2Ak8SoftDropPuppi = ecfNbeta2.clone(
-    #     src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
-    #     cuts=cms.vstring('', '', 'pt > 250')
-    # )
-    # task.add(process.ECFNbeta2Ak8SoftDropPuppi)
+    process.ECFNbeta2Ak8SoftDropPuppi = ecfNbeta2.clone(
+        src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
+    )
+    task.add(process.ECFNbeta2Ak8SoftDropPuppi)
 
     # Warning, can be very slow
     # process.ECFNbeta1CA15SoftDropCHS = ecfNbeta1.clone(
@@ -872,9 +873,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # )
     # task.add(process.ECFNbeta2CA15SoftDropCHS)
 
-
-    # for JEC purposes, cluster AK8 jets but with lower pt (compared to higher
-    # threshold in miniAOD)
+    ###############################################
+    # JEC-specific jet collections
+    #
+    # for JEC purposes, cluster AK8 jets but with lower pt
+    # (compared to higher threshold in miniAOD)
     ak8_label = "AK8PFPUPPI"
     ak8puppi_patname = 'patJets' + ak8_label
     print 'Adding', ak8puppi_patname
@@ -927,17 +930,47 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         producer = getattr(process, ak8chs_patname)
         modify_patjetproducer_for_data(process, producer)
 
-    # Add puppi multiplicity producers
-    # For each, we have to add a PATPuppiJetSpecificProducer,
-    # then update the relevant pat::Jet collection using updateJetCollection
+    ###############################################
+    # Packing substructure: fat jets + subjets
+    #
+    # Add subjets from groomed fat jet to its corresponding ungroomed fatjet
+    process.packedPatJetsAk8CHSJets = cms.EDProducer("JetSubstructurePacker",
+        jetSrc = cms.InputTag("patJetsAk8CHSJetsFat"),
+        distMax = cms.double(0.8),
+        algoTags = cms.VInputTag(
+            cms.InputTag("patJetsAk8CHSJetsSoftDropPacked")
+        ),
+        algoLabels = cms.vstring(
+            'SoftDropCHS'
+        ),
+        fixDaughters = cms.bool(False)
+    )
+    task.add(process.packedPatJetsAk8CHSJets)
+
+    process.packedPatJetsAk8PuppiJets = cms.EDProducer("JetSubstructurePacker",
+        jetSrc = cms.InputTag("patJetsAk8PuppiJetsFat"),
+        distMax = cms.double(0.8),
+        algoTags = cms.VInputTag(
+            cms.InputTag("patJetsAk8PuppiJetsSoftDropPacked")
+        ),
+        algoLabels = cms.vstring(
+            'SoftDropPuppi'
+        ),
+        fixDaughters = cms.bool(False)
+    )
+    task.add(process.packedPatJetsAk8PuppiJets)
+
+    ###############################################
+    # Add deep flavour/jet/tagging taggers & discriminants
+    #
     ak4btagDiscriminators = [
-            'pfDeepFlavourJetTags:probb',
-            'pfDeepFlavourJetTags:probbb',
-            'pfDeepFlavourJetTags:problepb',
-            'pfDeepFlavourJetTags:probc',
-            'pfDeepFlavourJetTags:probuds',
-            'pfDeepFlavourJetTags:probg'
-            ]
+        'pfDeepFlavourJetTags:probb',
+        'pfDeepFlavourJetTags:probbb',
+        'pfDeepFlavourJetTags:problepb',
+        'pfDeepFlavourJetTags:probc',
+        'pfDeepFlavourJetTags:probuds',
+        'pfDeepFlavourJetTags:probg'
+    ]
 
     ak8btagDiscriminators = [
         'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:bbvsLight',
@@ -946,10 +979,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHccvsQCD',
         'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:WvsQCD',
         'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD',
+
         'pfMassDecorrelatedDeepBoostedJetTags:probHbb',
         'pfMassDecorrelatedDeepBoostedJetTags:probQCDc',
         'pfMassDecorrelatedDeepBoostedJetTags:probQCDbb',
-        'pfMassDecorrelatedDeepBoostedJetTags:probTbqq', 
+        'pfMassDecorrelatedDeepBoostedJetTags:probTbqq',
         'pfMassDecorrelatedDeepBoostedJetTags:probTbcq',
         'pfMassDecorrelatedDeepBoostedJetTags:probTbq',
         'pfMassDecorrelatedDeepBoostedJetTags:probQCDothers',
@@ -963,12 +997,14 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfMassDecorrelatedDeepBoostedJetTags:probZqq',
         'pfMassDecorrelatedDeepBoostedJetTags:probHqqqq',
         'pfMassDecorrelatedDeepBoostedJetTags:probZbb',
+
         'pfDeepDoubleBJetTags:probH',
         'pfDeepDoubleBJetTags:probQ',
+
         'pfDeepBoostedJetTags:probHbb',
         'pfDeepBoostedJetTags:probQCDc',
         'pfDeepBoostedJetTags:probQCDbb',
-        'pfDeepBoostedJetTags:probTbqq', 
+        'pfDeepBoostedJetTags:probTbqq',
         'pfDeepBoostedJetTags:probTbcq',
         'pfDeepBoostedJetTags:probTbq',
         'pfDeepBoostedJetTags:probQCDothers',
@@ -982,42 +1018,85 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfDeepBoostedJetTags:probZqq',
         'pfDeepBoostedJetTags:probHqqqq',
         'pfDeepBoostedJetTags:probZbb'
-        ]
+    ]
 
-    for name in ["slimmedJetsPuppi", "patJetsAK8PFPUPPI", "slimmedJetsAK8"]:
-        suffix = cap(name)
-        update_name = "updatedPatJetsTransientCorrected" + suffix + "NewDFTraining"
+    # Do deep flavours & deep tagging
+    # This MUST be run *After* JetSubstructurePacker, so that the subjets are already there,
+    # otherwise the DeepBoostedJetTagInfoProducer will fail
+    # Also add in PUPPI multiplicities while we're at it.
+    for name in ['slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets']:
+        labelName = cap(name)
+        is_ak8 = "ak8" in name.lower()
+        is_puppi = "puppi" in name.lower()
+        is_reclustered = "slimmed" not in name.lower()
+        is_topjet = "packed" in name.lower()
+        # This postfix is VERY IMPORTANT for reclustered puppi, as the puppi weights
+        # are already applied. If it doesn't have this postfix then it will apply
+        # puppi weights.
+        # See https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_10/PhysicsTools/PatAlgos/python/tools/jetTools.py#L653
+        # Please check in future releases if this is still the case!
+        # It's needed only for pfDeepBoostedJetTagInfos
+        postfix = "WithPuppiDaughters" if is_puppi and is_reclustered else "NewDFTraining"  # NewDFTraining is not special, could just be ''
 
-        # This is hard coded into NtupleWriterJets - don't change it!
-        # (should get user to properly specify it)
-        puppi_mult_name = "patPuppiJetSpecificProducer" + update_name
+        # This call to updateJetCollection adds one PATJetUpdater to only remove the JECs,
+        # then uses that as the input to another PATJetUpdater, which re-applies the JECs,
+        # adds in all b tag stuff, etc.
+        # The 2nd PATJetsUpdater has the extra "TransientCorrected" bit in its name.
+        # It also produces a final similar "selectedUpdatedPatJets"+labelName+postfix collection
+        # which is a PATJetSelector
+        updater_src = "updatedPatJets" + labelName + postfix  # 1st PATJetUpdater, that removes JECs, is src to updater_name
+        updater_name = "updatedPatJetsTransientCorrected" + labelName + postfix  # 2nd PATJetUpdater
+        selector_name = "selectedUpdatedPatJets" + labelName + postfix
+
+        if is_ak8 and is_puppi:
+            correction_tag = "AK8PFPuppi"
+        elif not is_ak8 and is_puppi:
+            correction_tag = "AK4PFPuppi"
+        elif not is_ak8 and not is_puppi:
+            correction_tag = "AK4PFchs"
+        else:
+            raise RuntimeError("No idea which jet correction tag you need here")
+
+        jetcorr_list = ['L1FastJet', 'L2Relative', 'L3Absolute']
+        if is_puppi:
+            jetcorr_list = jetcorr_list[1:]
+        if useData:
+            jetcorr_list.append("L2L3Residual")
+
+        discriminators = ak4btagDiscriminators[:]
+        if is_ak8 and is_puppi and is_topjet:
+            discriminators.extend(ak8btagDiscriminators)
+
+        updateJetCollection(
+            process,
+            labelName=labelName,
+            jetSource=cms.InputTag(name),
+            pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
+            svSource=cms.InputTag('slimmedSecondaryVertices'),
+            jetCorrections=(correction_tag, cms.vstring(jetcorr_list), 'None'),  # Can't use None here as we are doing btagging for some reason.
+            btagDiscriminators=discriminators,
+            postfix=postfix
+        )
+
+        # Add puppi multiplicity producers
+        # For each, we have to add a PATPuppiJetSpecificProducer,
+        # then update the relevant pat::Jet collection using updateJetCollection
+        # using userFloats mechanism
+        # Crucially, the PATPuppiJetSpecificProducer module name MUST be the same
+        # as the final jet collection, with only "patPuppiJetSpecificProducer" prepended
+        # so that NtupleWriterJets can find the stored userFloat
+        puppi_mult_name = "patPuppiJetSpecificProducer" + updater_name
         setattr(process,
                 puppi_mult_name,
                 cms.EDProducer("PATPuppiJetSpecificProducer",
-                    src = cms.InputTag("updatedPatJets"+suffix+"NewDFTraining")
+                    src = cms.InputTag(updater_src)
                     )
                 )
         task.add(getattr(process, puppi_mult_name))
 
-        if "AK8" in name:
-            correction_tag = "AK8PFPuppi"
-        else:
-            correction_tag = "AK4PFPuppi"
-
-        # produces module called "updatedPatJets"+labelName
-        updateJetCollection(
-            process,
-            labelName = suffix,
-            jetSource = cms.InputTag(name),
-            pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
-            svSource = cms.InputTag('slimmedSecondaryVertices'),
-            jetCorrections = (correction_tag, cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
-            btagDiscriminators = ak4btagDiscriminators,
-            postfix='NewDFTraining'
-        )
-
-
-        getattr(process, update_name).userData.userFloats.src = [
+        # We add in the userFloats to the last PATJetUpdater
+        # This is because we use the jet collection name to access the userFloats in NtupleWriterJets
+        getattr(process, updater_name).userData.userFloats.src = [
             '%s:puppiMultiplicity' % puppi_mult_name,
             '%s:neutralPuppiMultiplicity' % puppi_mult_name,
             '%s:neutralHadronPuppiMultiplicity' % puppi_mult_name,
@@ -1025,26 +1104,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
             '%s:HFHadronPuppiMultiplicity' % puppi_mult_name,
             '%s:HFEMPuppiMultiplicity' % puppi_mult_name
         ]
-
-    updateJetCollection(
-        process,
-        jetSource = cms.InputTag( "selectedUpdatedPatJetsSlimmedJetsAK8NewDFTraining"),
-        pvSource = cms.InputTag( 'offlineSlimmedPrimaryVertices' ),
-        svSource = cms.InputTag('slimmedSecondaryVertices' ),
-        jetCorrections = ("AK8PFPuppi", cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
-        btagDiscriminators = ak8btagDiscriminators,
-        )
-
-    process.PuppiSlimmedAK8JetsBtagger = cms.EDAlias(
-        selectedUpdatedPatJets = cms.VPSet( cms.PSet(type=cms.string("patJets")) )
-        )
-
-    process.PuppiSlimmedAK4JetsBtagger = cms.EDAlias(
-        selectedUpdatedPatJetsSlimmedJetsPuppiNewDFTraining = cms.VPSet( cms.PSet(type=cms.string("patJets")) )
-        )
-    process.PuppiPatJetsAK8JetsBtagger = cms.EDAlias(
-        selectedUpdatedPatJetsPatJetsAK8PFPUPPINewDFTraining= cms.VPSet( cms.PSet(type=cms.string("patJets")) )
-        )
 
     # Higgs tagging commissioning
 
@@ -1056,27 +1115,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         trackPairV0Filter=cms.PSet(
            k0sMassWindow=cms.double(0.03)
         ),
-        svTagInfos=cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8CHSJets")
+        svTagInfos=cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8CHSJetsFat")  # This name is taken from the modules added by addJetcollection in add_fatjets_subjets
     )
     task.add(process.pfBoostedDoubleSVTagInfos)
 
     process.pfBoostedDoubleSVTagInfos.trackSelection.jetDeltaRMax = cms.double(0.8)
 
-    # Add subjets from groomed fat jet to its corresponding ungroomed fatjet
-    process.packedPatJetsAk8CHSJets = cms.EDProducer("JetSubstructurePacker",
-        jetSrc = cms.InputTag("patJetsAk8CHSJets"),
-        distMax = cms.double(0.8),
-        algoTags = cms.VInputTag(
-            cms.InputTag("patJetsAk8CHSJetsSoftDropPacked")
-        ),
-        algoLabels = cms.vstring(
-            'SoftDropCHS'
-        ),
-        fixDaughters = cms.bool(False)
-    )
-    task.add(process.packedPatJetsAk8CHSJets)
-
+    ###############################################
     # HOTVR & XCONE
+    #
     process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
                                         src=cms.InputTag("puppi")
                                         )
@@ -1310,14 +1357,18 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                              )
     task.add(process.genXCone2jets08)
 
-    # LEPTON cfg
+    ###############################################
+    # LEPTON configuration
+    #
 
     # collections for lepton PF-isolation deposits
     process.load('UHH2.core.pfCandidatesByType_cff')
     process.load('CommonTools.ParticleFlow.deltaBetaWeights_cff')
 
-    # MUON # WILL BE IN MINIAOD OF 9_1_0 RELEASE
-
+    ###############################################
+    # MUONS
+    #
+    # mini-isolation
     mu_isovals = []
 
     load_muonPFMiniIso(process, 'muonPFMiniIsoSequenceSTAND', algo='STAND',
@@ -1345,11 +1396,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                               )
     task.add(process.slimmedMuonsUSER)
 
-    # ELECTRON
-
+    ###############################################
+    # ELECTRONS
+    #
     # mini-isolation
     # FIXME: should we use the already existing miniIsolatioin in pat::Lepton?
-
     el_isovals = []
 
     load_elecPFMiniIso(process,
@@ -1392,7 +1443,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
 
     # electron ID from VID
-
     switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
     elecID_mod_ls = [
@@ -1483,11 +1533,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     task.add(process.egmGsfElectronIDs)
     task.add(process.slimmedElectronsUSER)
 
-    #---------------------------------------------------------------------------
+    ###############################################
     # TRIGGER, MET FILTERS
-    #---------------------------------------------------------------------------
-
+    #
     # L1 prefiring, only needed for simulation in 2016/7
+    #
     prefire_era_dict = {
         '2016v2': '2016BtoH',
         '2016v3': '2016BtoH',
@@ -1511,6 +1561,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         )
         task.add(getattr(process, prefire_source))
 
+    ###############################################
     # Deal with bad ECAL endcap crystals
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#How_to_run_ecal_BadCalibReducedM
     bad_ecal = year in ['2017', '2018'] and useData
@@ -1545,7 +1596,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         )
         task.add(process.ecalBadCalibReducedMINIAODFilter)
 
-
     # Run Bad Charged Hadron and Bad Muon filters for 2016v2, since they were
     # only introduced after samples were produced.
     # Newer samples will already have these.
@@ -1564,6 +1614,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         task.add(process.BadChargedCandidateFilter)
 
     # NtupleWriter
+    #
 
     if useData:
         metfilterpath = "RECO"
@@ -1627,10 +1678,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     #photon_sources = cms.vstring("selectedPatPhotons"),
 
                                     doJets=cms.bool(True),
-                                    #jet_sources = cms.vstring("patJetsAk4PFCHS", "patJetsAk8PFCHS", "patJetsCa15CHSJets", "patJetsCa8CHSJets", "patJetsCa15PuppiJets", "patJetsCa8PuppiJets"),
                                     jet_sources=cms.vstring(
-                                        # "slimmedJets", "slimmedJetsPuppi", ak8puppi_patname, ak8chs_patname),
-                                        "slimmedJets", ak8chs_patname, "selectedUpdatedPatJetsSlimmedJetsPuppiNewDFTraining", "selectedUpdatedPatJetsPatJetsAK8PFPUPPINewDFTraining","PuppiSlimmedAK4JetsBtagger","PuppiPatJetsAK8JetsBtagger"),
+                                        "slimmedJets",
+                                        ak8chs_patname,
+                                        "updatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining",
+                                        "updatedPatJetsTransientCorrectedPatJetsAK8PFPUPPIWithPuppiDaughters"),
                                     jet_ptmin=cms.double(10.0),
                                     jet_etamax=cms.double(999.0),
 
@@ -1646,85 +1698,102 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     topjet_etamax=cms.double(5.0),
 
                                     TopJets=cms.VPSet(
+                                        # Each PSet outputs a TopJet collection, with name {topjet_source}_{subjet_source}
+                                        # For each, we store the jets in topjet_source as TopJet objects,
+                                        # with its subjets stored depending on subjet_source.
+                                        # Tagging info can also be stored, as well as various substructure variables.
+
                                         cms.PSet(
-                                            # Each PSet outputs a TopJet collection, with name {topjet_source}_{subjet_source}
-                                            # For each, we store the jets in topjet_source as TopJet objects,
-                                            # with its subjets stored depending on subjet_source.
-                                            # Tagging info can also be stored, as well as various substructure variables.
                                             # The topjet_source can either be groomed or ungroomed,
-                                            # but it determines the pt/eta/phi etc of the TopJet object
-                                            topjet_source=cms.string(
-#                                                 "slimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
-#                                                "updatedPatJetsSlimmedJetsAK8"),  # puppi jets in 2017 MiniAOD
-#                                                "selectedUpdatedPatJetsSlimmedJetsAK8NewDFTraining"),  # puppi jets in 2017 MiniAOD
-#                                                "selectedUpdatedPatJets"),  # puppi jets in 2017 MiniAOD
-                                                "PuppiSlimmedAK8JetsBtagger"),  # puppi jets in 2017 MiniAOD
-                                            # For subjet_source, use label "daughters" if you want to store as
-                                            # subjets the linked daughters of the topjets (NOT for slimmedJetsAK8 in miniAOD!).
-                                            # Otherwise, to store a subjet collection present in miniAOD indicate the
-                                            # proper label to be passed to pat::Jet::subjet(...)
-                                            # e.g. SoftDropPuppi or CMSTopTag
-                                            # If you include "CHS" in this string,
-                                            # it will use the matched CHS 4-vector
-                                            # for the *main* jet 4-vector.
-                                            subjet_source=cms.string(
-                                                "SoftDropPuppi"),
+                                            # but note that it determines the pt/eta/phi etc of the TopJet object
+                                            # This can be e.g. slimmedJetsAK8, or a collection derived
+                                            # from a JetSubstructurePacker: the latter makes it easier to handle subjets.
+                                            # It also means we can store ungroomed quantities,
+                                            # and the groomed subjets
+                                            # (from which one can then recover the groomed fatjet 4-vector).
+                                            topjet_source=cms.string("packedPatJetsAk8CHSJets"),
+
+                                            # One should use the algoLabels as used in the relevant JetSubstructurePacker
+                                            # to access the subjets using pat::Jet::subjet(subjet_source).
+                                            # Otherwise use "daughters" here to treat all jet daughters as subjets
+                                            subjet_source=cms.string("SoftDropCHS"),
+
                                             # Specify if you want to store b-tagging taginfos for subjet collection,
                                             # make sure to have included them with .addTagInfos = True
                                             # addTagInfos = True is currently true by default, however,
                                             # only for collections produced and not read directly from miniAOD
                                             # Default is do_subjet_taginfo=False
-                                            do_subjet_taginfo=cms.bool(False),
-                                            # Note: if you want to store the MVA Higgs tagger discriminator, specify the jet collection from which to pick it up and the tagger name
+                                            do_subjet_taginfo=cms.bool(True),
+
+                                            # If you want to store the MVA Higgs tagger discriminator,
+                                            # specify the jet collection from which to pick it up and the tagger name
                                             # currently the discriminator is trained on ungroomed jets, so
-                                            # the discriminator has to be taken
-                                            # from ungroomed jets
-                                            higgstag_source=cms.string("patJetsAk8PuppiJetsFat"),
+                                            # the discriminator has to be taken from ungroomed jets
+                                            higgstag_source=cms.string("patJetsAk8CHSJetsFat"),
                                             higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                            # Note: if empty, njettiness is directly taken from MINIAOD UserFloat and added to jets, otherwise taken from the provided source (for Run II CMSSW_74 ntuples)
-                                            #njettiness_source = cms.string(""),
-                                            #substructure_variables_source = cms.string(""),
-                                            njettiness_groomed_source = cms.string(
-                                                "NjettinessAk8SoftDropPuppi"),
-                                            substructure_groomed_variables_source = cms.string(
-                                                "ak8PuppiJetsSoftDropforsub"),
-                                            softdropmass_source=cms.string(
-                                                "ak8PFJetsPuppiSoftDropMass"),
-                                            # switch off qjets for now, as it takes a long time:
-                                            #qjets_source = cms.string("QJetsCa8CHS")
+                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfos"),
+
+                                            # If empty, njettiness is directly taken from jet UserFloat,
+                                            # otherwise taken from the provided source
+                                            njettiness_source=cms.string("NjettinessAk8CHS"),
+                                            # substructure_variables_source should be the
+                                            # source as used in the module passed to njettiness_source
+                                            substructure_variables_source=cms.string("ak8CHSJetsFat"),
+
+                                            njettiness_groomed_source=cms.string("NjettinessAk8SoftDropCHS"),
+                                            # substructure_groomed_variables_source should be the
+                                            # source as used in the module passed to njettiness_groomed_source
+                                            substructure_groomed_variables_source=cms.string("ak8CHSJetsSoftDropforsub"),
+
+                                            softdropmass_source=cms.string("patJetsAk8CHSJetsSoftDropPacked"),
+
                                             # Energy correlation functions, for beta=1 and beta=2
                                             # If blank, will use the ones in the jet userFloat.
                                             # These are assumed to be calculated from the
                                             # substructure_groomed_variables_source
-                                            # ecf_beta1_source=cms.string(""),
-                                            # ecf_beta2_source=cms.string("")
-                                       ),
-                                        cms.PSet(
-                                            topjet_source=cms.string(
-                                                "packedPatJetsAk8CHSJets"),  # store ungroomed vars
-                                            subjet_source=cms.string("SoftDropCHS"),
-                                            do_subjet_taginfo=cms.bool(True),
-                                            higgstag_source=cms.string(
-                                                "patJetsAk8CHSJets"),
-                                            higgstag_name=cms.string(
-                                                "pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                            higgstaginfo_source=cms.string(
-                                                "pfBoostedDoubleSVTagInfos"),
-                                            njettiness_source=cms.string(
-                                                "NjettinessAk8CHS"),
-                                            substructure_variables_source=cms.string(
-                                                "ak8CHSJets"),
-                                            njettiness_groomed_source=cms.string(
-                                                "NjettinessAk8SoftDropCHS"),
-                                            substructure_groomed_variables_source=cms.string(
-                                                "ak8CHSJetsSoftDropforsub"),
-                                            softdropmass_source=cms.string(
-                                                "patJetsAk8CHSJetsSoftDropPacked"),
-                                            ecf_beta1_source=cms.string(
-                                                "ECFNbeta1Ak8SoftDropCHS"),
-                                            ecf_beta2_source=cms.string(
-                                                "ECFNbeta2Ak8SoftDropCHS")
+                                            ecf_beta1_source=cms.string("ECFNbeta1Ak8SoftDropCHS"),
+                                            ecf_beta2_source=cms.string("ECFNbeta2Ak8SoftDropCHS")
                                         ),
+                                        cms.PSet(
+                                            # Use our reclustered AK8 PUPPI collection instead of slimmedJetsAK8,
+                                            # to become uniform over years, and control the contents
+                                            topjet_source=cms.string("updatedPatJetsTransientCorrectedPackedPatJetsAk8PuppiJetsWithPuppiDaughters"),  # store ungroomed vars
+                                            subjet_source=cms.string("SoftDropPuppi"),
+
+                                            do_subjet_taginfo=cms.bool(True),
+
+                                            higgstag_source=cms.string("patJetsAk8PuppiJetsFat"),
+                                            higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfos"),  # FIXME Does this need replacing?
+
+                                            njettiness_source=cms.string("NjettinessAk8Puppi"),
+                                            substructure_variables_source=cms.string("ak8PuppiJetsFat"),
+
+                                            njettiness_groomed_source=cms.string("NjettinessAk8SoftDropPuppi"),
+                                            substructure_groomed_variables_source=cms.string("ak8PuppiJetsSoftDropforsub"),
+
+                                            softdropmass_source=cms.string("patJetsAk8PuppiJetsSoftDropPacked"),
+
+                                            ecf_beta1_source=cms.string("ECFNbeta1Ak8SoftDropPuppi"),
+                                            ecf_beta2_source=cms.string("ECFNbeta2Ak8SoftDropPuppi")
+                                        ),
+
+                                        # cms.PSet(
+                                        #     topjet_source=cms.string("slimmedJetsAK8"),  # puppijets in 2017 MiniAOD & later
+                                        #     subjet_source=cms.string("SoftDropPuppi"),
+                                        #     do_subjet_taginfo=cms.bool(False),
+                                        #     higgstag_source=cms.string("patJetsAk8PuppiJetsFat"),
+                                        #     higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
+                                        #     #njettiness_source = cms.string(""),
+                                        #     #substructure_variables_source = cms.string(""),
+                                        #     njettiness_groomed_source = cms.string("NjettinessAk8SoftDropPuppi"),
+                                        #     substructure_groomed_variables_source = cms.string("ak8PuppiJetsSoftDropforsub"),
+                                        #     softdropmass_source=cms.string("ak8PFJetsPuppiSoftDropMass"),
+                                        #     # switch off qjets for now, as it takes a long time:
+                                        #     # qjets_source = cms.string("QJetsCa8CHS")
+                                        #     # ecf_beta1_source=cms.string(""),
+                                        #     # ecf_beta2_source=cms.string("")
+                                        # ),
                                         # cms.PSet(
                                         #     # The fat jets that HepTopTag produces are the Top jet candidates,
                                         #     # i.e. the sum of its subjets. Therefore they will NOT have
@@ -1761,52 +1830,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                         #     # ecf_beta2_source=cms.string(
                                         #     #     "ECFNbeta2CA15SoftDropCHS")
                                         # ) ,
-                                        # cms.PSet(
-                                        #    topjet_source = cms.string("patJetsHepTopTagPuppiPacked"),
-                                        #    subjet_source = cms.string("daughters"),
-                                        #    do_subjet_taginfo = cms.bool(True),
-                                        #    higgstag_source = cms.string("patJetsCa15PuppiJets"),
-                                        #    higgstag_name = cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                        #    njettiness_source = cms.string("NjettinessCa15Puppi"),
-                                        #    substructure_variables_source = cms.string("ca15PuppiJets"),
-                                        #    njettiness_groomed_source = cms.string("NjettinessCa15SoftDropPuppi"),
-                                        #    substructure_groomed_variables_source = cms.string("ca15PuppiJetsSoftDropforsub"),
-                                        #    prunedmass_source = cms.string("patJetsCa15CHSJetsPrunedPacked"),
-                                        #    #softdropmass_source  = cms.string(""),
-                                        #) ,
-                                        # cms.PSet(
-                                        #     topjet_source=cms.string(
-                                        #         "patJetsAk8PuppiJetsSoftDropPacked"),
-                                        #     subjet_source=cms.string("daughters"),
-                                        #     do_subjet_taginfo=cms.bool(True),
-                                        #     higgstag_source=cms.string(
-                                        #         "patJetsAk8PuppiJetsFat"),
-                                        #     higgstag_name=cms.string(
-                                        #         "pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                        #     njettiness_source=cms.string(
-                                        #         "NjettinessAk8Puppi"),
-                                        #     substructure_variables_source=cms.string(
-                                        #         "ak8PuppiJetsFat"),
-                                        #     njettiness_groomed_source=cms.string(
-                                        #         "NjettinessAk8SoftDropPuppi"),
-                                        #     substructure_groomed_variables_source=cms.string(
-                                        #         "ak8PuppiJetsSoftDropforsub"),
-                                        #     prunedmass_source=cms.string(
-                                        #         "patJetsAk8CHSJetsPrunedPacked"),
-                                        #     softdropmass_source=cms.string(
-                                        #         "patJetsAk8PuppiJetsSoftDropPacked"),
-                                        #     ecf_beta1_source=cms.string(
-                                        #         "ECFNbeta1Ak8SoftDropPuppi"),
-                                        #     ecf_beta2_source=cms.string(
-                                        #         "ECFNbeta2Ak8SoftDropPuppi")
-
-                                        # ),
-
                                     ),
 
                                     doTrigger=cms.bool(True),
-                                    trigger_bits=cms.InputTag(
-                                        "TriggerResults", "", "HLT"),
+                                    trigger_bits=cms.InputTag("TriggerResults", "", "HLT"),
                                     # MET filters (HBHE noise, CSC, etc.) are stored as trigger Bits in
                                     # MINIAOD produced in path "PAT"/"RECO" with prefix "Flag_"
                                     metfilter_bits=cms.InputTag("TriggerResults", "", metfilterpath),
@@ -1898,10 +1925,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
                                     # *** gen stuff:
                                     doGenInfo=cms.bool(not useData),
-                                    genparticle_source=cms.InputTag(
-                                        "prunedPrunedGenParticles"),
-                                    stablegenparticle_source=cms.InputTag(
-                                        "packedGenParticlesForJetsNoNu"),
+                                    genparticle_source=cms.InputTag("prunedPrunedGenParticles"),
+                                    stablegenparticle_source=cms.InputTag("packedGenParticlesForJetsNoNu"),
                                     # set to true if you want to store all gen particles, otherwise, only
                                     # prunedPrunedGenParticles are stored (see above)
                                     doAllGenParticles=cms.bool(False),
