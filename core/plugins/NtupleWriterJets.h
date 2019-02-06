@@ -38,10 +38,13 @@ private:
     float ptmin, etamax;
     Event::Handle<std::vector<Jet>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Jet>>> jets_handle; // handle of name "jets" in case set_jets_member is true
+    //    boost::optional<Event::Handle<std::vector<PFParticle>>> pfcand_handle;//handle to PF constituences of jets
     std::string jet_puppiSpecificProducer; // hold name of puppiJetSpecificProducer for userFloat access
     bool save_lepton_keys_;
     std::vector<Event::Handle<std::vector<Muon>    >> h_muons;
     std::vector<Event::Handle<std::vector<Electron>>> h_elecs;
+    std::vector<Event::Handle<std::vector<PFParticle>>> h_pfcands;
+
     unsigned int NPFJetwConstituents_;
 };
 
@@ -90,12 +93,14 @@ private:
     std::string njettiness_src, njettiness_groomed_src, qjets_src, ecf_beta1_src, ecf_beta2_src, subjet_src, higgs_src, higgs_name, higgstaginfo_src, softdrop_src, topjet_collection, topjet_puppiSpecificProducer;
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;
+    //    boost::optional<Event::Handle<std::vector<PFParticle>>> pfcand_handle;
     std::vector<TopJet::tag> id_tags;
 
     bool save_lepton_keys_;
     unsigned int NPFJetwConstituents_;
     std::vector<Event::Handle<std::vector<Muon>    >> h_muons;
     std::vector<Event::Handle<std::vector<Electron>>> h_elecs;
+    std::vector<Event::Handle<std::vector<PFParticle>>> h_pfcands;
 };
 
 }

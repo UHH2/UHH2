@@ -63,57 +63,45 @@ namespace{
    genp.set_mother2(-1);
    genp.set_daughter1(-1);
    genp.set_daughter2(-1);
-   /*  //fill mother and daughter info (assumes they are in the GenParticle list already). Does not look useful at the moment
-   int nm=jetgenp.numberOfMothers();
-   int nd=jetgenp.numberOfDaughters();
-   if(nm>0 || nd>0){
-     int mother1_i=-1;     int mother2_i=-1;
-     int daughter1_i=-1;     int daughter2_i=-1;
-     for(size_t j=0; j<genparts.size();j++){
-       const GenParticle & sgenpart = genparts[j];
-       if(nm>0){
-	 const reco::Candidate *reco_mother1 = jetgenp.mother(0);
-	 auto r = fabs(static_cast<float>(reco_mother1->eta()-sgenpart.eta()))+fabs(static_cast<float>(reco_mother1->phi()-sgenpart.phi()));
-	 auto dpt = fabs(static_cast<float>(reco_mother1->pt()-sgenpart.pt()));
-	 if (r == 0.0f && dpt == 0.0f){
-	   mother1_i=j;
-	 }
-       }
-       if(nm>1){
-	 const reco::Candidate *reco_mother2 = jetgenp.mother(1);
-	 auto r = fabs(static_cast<float>(reco_mother2->eta()-sgenpart.eta()))+fabs(static_cast<float>(reco_mother2->phi()-sgenpart.phi()));
-	 auto dpt = fabs(static_cast<float>(reco_mother2->pt()-sgenpart.pt()));
-	 if (r == 0.0f && dpt == 0.0f){
-	   mother2_i=j;
-	 }
-       }
-       if(nd>0){
-	 const reco::Candidate *reco_daughter1 = jetgenp.daughter(0);
-	 auto r = fabs(static_cast<float>(reco_daughter1->eta()-sgenpart.eta()))+fabs(static_cast<float>(reco_daughter1->phi()-sgenpart.phi()));
-	 auto dpt = fabs(static_cast<float>(reco_daughter1->pt()-sgenpart.pt()));
-	 if (r == 0.0f && dpt == 0.0f){
-	   daughter1_i=j;
-	 }
-       }
-       if(nd>1){
-	 const reco::Candidate *reco_daughter2 = jetgenp.daughter(1);
-	 auto r = fabs(static_cast<float>(reco_daughter2->eta()-sgenpart.eta()))+fabs(static_cast<float>(reco_daughter2->phi()-sgenpart.phi()));
-	 auto dpt = fabs(static_cast<float>(reco_daughter2->pt()-sgenpart.pt()));
-	 if (r == 0.0f && dpt == 0.0f){
-	   daughter2_i=j;
-	 }
-       }
-     }
-     genp.set_mother1(mother1_i);
-     genp.set_mother1(mother2_i);
-     genp.set_daughter1(daughter1_i);
-     genp.set_daughter1(daughter2_i);
-   }
-   */
+  
    genparts.push_back(genp);
    return genparts.size()-1;
 }
 
+
+size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
+
+   for(size_t j=0; j<pfparts.size();j++){
+     const PFParticle & spfcandart = pfparts[j];
+     auto r = fabs(static_cast<float>(pf.eta()-spfcandart.eta()))+fabs(static_cast<float>(pf.phi()-spfcandart.phi()));
+     auto dpt = fabs(static_cast<float>(pf.pt()-spfcandart.pt()));
+     if (r == 0.0f && dpt == 0.0f){
+       return j;
+     }
+   }
+   PFParticle part;
+   part.set_pt(pf.pt());
+   part.set_eta(pf.eta());
+   part.set_phi(pf.phi());
+   part.set_energy(pf.energy());
+   part.set_charge(pf.charge());
+   PFParticle::EParticleID id = PFParticle::eX;
+   reco::PFCandidate reco_pf;
+   switch ( reco_pf.translatePdgIdToType(pf.pdgId()) ){
+   case reco::PFCandidate::X : id = PFParticle::eX; break;
+   case reco::PFCandidate::h : id = PFParticle::eH; break;
+   case reco::PFCandidate::e : id = PFParticle::eE; break;
+   case reco::PFCandidate::mu : id = PFParticle::eMu; break;
+   case reco::PFCandidate::gamma : id = PFParticle::eGamma; break;
+   case reco::PFCandidate::h0 : id = PFParticle::eH0; break;
+   case reco::PFCandidate::h_HF : id = PFParticle::eH_HF; break;
+   case reco::PFCandidate::egamma_HF : id = PFParticle::eEgamma_HF; break;
+   }
+   part.set_particleID(id);
+
+   pfparts.push_back(part);
+   return pfparts.size()-1;
+}
 
 template<typename T>
 void branch(TTree * tree, const char * bname, T t){
@@ -570,6 +558,11 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     branch(tr, "genInfo","GenInfo", event->genInfo);
     branch(tr, "GenParticles","std::vector<GenParticle>", event->genparticles);
   }
+  if(doPFJetConstituents>0){
+    event->pfparticles = new vector<PFParticle>();
+    branch(tr, "PFParticles","std::vector<PFParticle>", event->pfparticles);
+  }
+
   if(doTrigger){
     trigger_prefixes = iConfig.getParameter<std::vector<std::string> >("trigger_prefixes");
     event->get_triggerResults() = new vector<bool>();
@@ -606,9 +599,11 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     prefweightdown_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbDown"));
   }
   if(doAllPFParticles){
-    event->pfparticles = new vector<PFParticle>;
     pf_collection_token = consumes<vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("pf_collection_source"));
-    branch(tr, "PFParticles", "std::vector<PFParticle>", &event->pfparticles);
+    if(doPFJetConstituents<1){
+      event->pfparticles = new vector<PFParticle>;
+      branch(tr, "PFParticles", "std::vector<PFParticle>", &event->pfparticles);
+    }
   }
 
   // HOTVR and XCone Jet Cluster - added by Alex and Dennis
@@ -709,6 +704,10 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
 
    print_times(timer, "rho");
+
+   if(doPFJetConstituents>0){
+     event->pfparticles->clear();
+   }
 
    // ------------- primary vertices and beamspot  -------------
 
@@ -1149,9 +1148,9 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    print_times(timer, "met");
 
    // ------------- PF constituents --------------
-
+  
    if(doAllPFParticles){
-     event->pfparticles->clear();
+     if(!doPFJetConstituents) event->pfparticles->clear();
      edm::Handle<vector<pat::PackedCandidate> > pfColl_handle;
      iEvent.getByToken(pf_collection_token, pfColl_handle);
 
@@ -1186,6 +1185,9 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
 
    }
+
+  
+
 
    // ------------- trigger -------------
 
@@ -1355,6 +1357,14 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	}
 	thisJet.set_JEC_factor_raw(1.);
 	thisJet.set_JEC_L1factor_raw(1.);
+	if(hotvrJets[j].size()<doPFJetConstituents){
+	  const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
+	  for(const auto & daughter_p : jet_daughter_ptrs){
+	    size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	    thisJet.add_pfcand_index(pfparticles_index);
+	  }
+	}
+
         for (const auto & subItr : patJet.subjets()) {
           Jet subjet;
           subjet.set_pt(subItr->p4().pt());
@@ -1381,6 +1391,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  }
 	  subjet.set_JEC_factor_raw(1.);
 	  subjet.set_JEC_L1factor_raw(1.);
+	  if(hotvrJets[j].size()<doPFJetConstituents){
+	    const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
+	    for(const auto & daughter_p : jet_daughter_ptrs){
+	      size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	      subjet.add_pfcand_index(pfparticles_index);
+	    }
+	  }
           thisJet.add_subjet(subjet);
         }
 
@@ -1423,7 +1440,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	}
 	thisJet.set_JEC_factor_raw(1.);
 	thisJet.set_JEC_L1factor_raw(1.);
-
+	if(xconeJets[j].size()<doPFJetConstituents){
+	  const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
+	  for(const auto & daughter_p : jet_daughter_ptrs){
+	    size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	    thisJet.add_pfcand_index(pfparticles_index);
+	  }
+	}
 
         for (const auto & subItr : patJet.subjets()) {
           Jet subjet;
@@ -1451,6 +1474,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  }
 	  subjet.set_JEC_factor_raw(1.);
 	  subjet.set_JEC_L1factor_raw(1.);
+	  if(xconeJets[j].size()<doPFJetConstituents){
+	    const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
+	    for(const auto & daughter_p : jet_daughter_ptrs){
+	      size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	      subjet.add_pfcand_index(pfparticles_index);
+	    }
+	  }
           thisJet.add_subjet(subjet);
         }
         xconeJets[j].push_back(thisJet);
@@ -1494,6 +1524,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	thisJet.set_JEC_factor_raw(1.);
 	thisJet.set_JEC_L1factor_raw(1.);
 
+	if(xconeJets_dijet[j].size()<doPFJetConstituents){
+	  const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
+	  for(const auto & daughter_p : jet_daughter_ptrs){
+	    size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	    thisJet.add_pfcand_index(pfparticles_index);
+	  }
+	}
 
         for (const auto & subItr : patJet.subjets()) {
           Jet subjet;
@@ -1521,8 +1558,16 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  }
 	  subjet.set_JEC_factor_raw(1.);
 	  subjet.set_JEC_L1factor_raw(1.);
+	  if(xconeJets_dijet[j].size()<doPFJetConstituents){
+	    const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
+	    for(const auto & daughter_p : jet_daughter_ptrs){
+	      size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	      subjet.add_pfcand_index(pfparticles_index);
+	    }
+	  }
           thisJet.add_subjet(subjet);
         }
+
         xconeJets_dijet[j].push_back(thisJet);
       }
     }
@@ -1794,6 +1839,7 @@ void NtupleWriter::fill_geninfo_recocand(const reco::Candidate& sub_jet, GenJet&
   genjet.set_charge(jet_charge);
   // cout<<"N constituens ="<<pat_genjet.numberOfSourceCandidatePtrs()<<" with charge = "<<jet_charge<<endl;
 }
+
 
 
 //define this as a plug-in

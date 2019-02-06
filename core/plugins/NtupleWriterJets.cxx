@@ -34,10 +34,8 @@ using namespace std;
 
 bool btag_warning;
 
-//size_t add_pfpart(const pat::PackedCandidate & pf, vector<PFParticle> & pfparts){
-//size_t add_pfpart(const reco::PFCandidate & pf, vector<PFParticle> & pfparts){
 size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
-  cout<<"pfparts.size() = "<<pfparts.size()<<endl;
+
    for(size_t j=0; j<pfparts.size();j++){
      const PFParticle & spfcandart = pfparts[j];
      auto r = fabs(static_cast<float>(pf.eta()-spfcandart.eta()))+fabs(static_cast<float>(pf.phi()-spfcandart.phi()));
@@ -52,10 +50,7 @@ size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
    part.set_phi(pf.phi());
    part.set_energy(pf.energy());
    part.set_charge(pf.charge());
-   //   part.set_puppiWeight(pf.puppiWeight());
-   //   part.set_puppiWeightNoLep(pf.puppiWeightNoLep());
-
-   /*   PFParticle::EParticleID id = PFParticle::eX;
+   PFParticle::EParticleID id = PFParticle::eX;
    reco::PFCandidate reco_pf;
    switch ( reco_pf.translatePdgIdToType(pf.pdgId()) ){
    case reco::PFCandidate::X : id = PFParticle::eX; break;
@@ -68,7 +63,7 @@ size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
    case reco::PFCandidate::egamma_HF : id = PFParticle::eEgamma_HF; break;
    }
    part.set_particleID(id);
-   */
+
    pfparts.push_back(part);
    return pfparts.size()-1;
 }
@@ -95,6 +90,7 @@ std::string getPuppiJetSpecificProducer(const std::string & name){
 
 NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents){
     handle = cfg.ctx.declare_event_output<vector<Jet>>(cfg.dest_branchname, cfg.dest);
+    
     ptmin = cfg.ptmin;
     etamax = cfg.etamax;
     if(set_jets_member){
@@ -110,6 +106,7 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned 
     h_muons.clear();
     h_elecs.clear();
     NPFJetwConstituents_ = NPFJetwConstituents;
+    //    auto h_pfcand = cfg.ctx.get_handle<vector<PFParticle>>("PFParticles"); h_pfcands.push_back(h_pfcand);
 }
 
 NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents):
@@ -119,7 +116,9 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, const std
 
     for(const auto& muo_src : muon_sources){ auto h_muon = cfg.ctx.get_handle<std::vector<Muon>    >(muo_src); h_muons.push_back(h_muon); }
     for(const auto& ele_src : elec_sources){ auto h_elec = cfg.ctx.get_handle<std::vector<Electron>>(ele_src); h_elecs.push_back(h_elec); }
+    //    auto h_pfcand = cfg.ctx.get_handle<vector<PFParticle>>("pfparticles"); h_pfcands.push_back(h_pfcand);
     NPFJetwConstituents_ = NPFJetwConstituents;
+
 }
 
 NtupleWriterJets::~NtupleWriterJets(){}
@@ -167,6 +166,8 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
         jets.emplace_back();
 
         Jet& jet = jets.back();
+
+
 	bool storePFcands = false;
 	if(i<NPFJetwConstituents_) storePFcands = true;
         try {
@@ -584,10 +585,8 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
   }
 
   if(fill_pfcand){//fill pf candidates list: add pf-candidate to the event list and store index in the jet container
-    //    const auto& jet_daughter_ptrs = pat_jet.getPFConstituents();
     const auto& jet_daughter_ptrs = pat_jet.daughterPtrVector();
     for(const auto & daughter_p : jet_daughter_ptrs){
-
       size_t pfparticles_index = add_pfpart(*daughter_p, *uevent.pfparticles);
       jet.add_pfcand_index(pfparticles_index);
     }
