@@ -1141,13 +1141,16 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         /*---------------------*/
 
         // loop over subjets to fill some more subjet info:
+	//	bool storePFcands = false;
+	if(i<NPFJetwConstituents_) storePFcands = true;
+
 	if(subjet_src=="daughters"){
 	  for (unsigned int k = 0; k < pat_topjet.numberOfDaughters(); k++) {
             Jet subjet;
             auto patsubjetd = dynamic_cast<const pat::Jet *>(pat_topjet.daughter(k));
             if (patsubjetd) {
 	      try{
-		NtupleWriterJets::fill_jet_info(uevent,*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, "");
+		NtupleWriterJets::fill_jet_info(uevent,*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for daughters in NtupleWriterTopJets with src = " + src.label());
 	      }
@@ -1170,13 +1173,15 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	}//if label daughters
 	//taking subjets from existing miniAOD collection
 	else{
+	bool storePFcands = false;
+	if(i<NPFJetwConstituents_) storePFcands = true;
 	  auto tSubjets = pat_topjet.subjets(subjet_src);
 	  for( int sj = 0; sj < (int)tSubjets.size(); ++sj ){
 	    Jet subjet;
 	    auto tpatsubjet = dynamic_cast<const pat::Jet *>(tSubjets.at(sj).get());
             if (tpatsubjet) {
 	      try{
-		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, "");
+		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " + src.label());
 	      }
