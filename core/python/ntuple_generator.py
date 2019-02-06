@@ -58,10 +58,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     acceptable_years = ["2016v2", "2016v3", "2017", "2018"]
     if year not in acceptable_years:
         raise ValueError("year argument in generate_process() should be one of: %s. You provided: %s" % (acceptable_years, year))
+
+    met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi")
+
     if (year=="2016v2" or year=="2016v3"):
-        met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi","slMETsCHS")
-    else:
-        met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi")
+        met_sources_GL.extend(['slMETsCHS'])
+    
+
 
     bTagDiscriminators = [
         'pfJetProbabilityBJetTags',
