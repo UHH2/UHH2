@@ -163,6 +163,12 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
   jet.set_jetArea(pat_jet.jetArea());
   if(pat_jet.hasUserFloat("pileupJetId:fullDiscriminant")) {
     jet.set_pileupID(pat_jet.userFloat("pileupJetId:fullDiscriminant"));
+    bool loose = bool(pat_jet.userInt("pileupJetId:fullId") & (1 << 2));
+    jet.set_tag(jet.tagname2tag("pileup_loose"), loose);
+    bool medium = bool(pat_jet.userInt("pileupJetId:fullId") & (1 << 1));
+    jet.set_tag(jet.tagname2tag("pileup_medium"), medium);
+    bool tight = bool(pat_jet.userInt("pileupJetId:fullId") & (1 << 0));
+    jet.set_tag(jet.tagname2tag("pileup_tight"), tight);
   }
 
   if(pat_jet.isPFJet()){
