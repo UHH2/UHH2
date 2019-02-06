@@ -1142,7 +1142,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
         // loop over subjets to fill some more subjet info:
 	//	bool storePFcands = false;
-	if(i<NPFJetwConstituents_) storePFcands = true;
+	//	if(i<NPFJetwConstituents_) storePFcands = true;
 
 	if(subjet_src=="daughters"){
 	  for (unsigned int k = 0; k < pat_topjet.numberOfDaughters(); k++) {
@@ -1173,8 +1173,6 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	}//if label daughters
 	//taking subjets from existing miniAOD collection
 	else{
-	bool storePFcands = false;
-	if(i<NPFJetwConstituents_) storePFcands = true;
 	  auto tSubjets = pat_topjet.subjets(subjet_src);
 	  for( int sj = 0; sj < (int)tSubjets.size(); ++sj ){
 	    Jet subjet;
