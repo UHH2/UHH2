@@ -44,12 +44,14 @@ class Jet : public FlavorParticle {
     m_photonPuppiMultiplicity = 0;
     m_HFHadronPuppiMultiplicity = 0;
     m_HFEMPuppiMultiplicity = 0;
-    m_btag_combinedSecondaryVertex = 0;
-    m_btag_combinedSecondaryVertexMVA = 0;
-    m_btag_DeepCSV_probb = 0;
-    m_btag_DeepCSV_probbb = 0;
-    m_btag_BoostedDoubleSecondaryVertexAK8 = 0;
-    m_btag_BoostedDoubleSecondaryVertexCA15 = 0;
+    // Discriminants should have a initial value of something clear "wrong"
+    // -2 is safe as some discrimintants start at -1, some start at 0
+    m_btag_combinedSecondaryVertex = -2;
+    m_btag_combinedSecondaryVertexMVA = -2;
+    m_btag_DeepCSV_probb = -2;
+    m_btag_DeepCSV_probbb = -2;
+    m_btag_BoostedDoubleSecondaryVertexAK8 = -2;
+    m_btag_BoostedDoubleSecondaryVertexCA15 = -2;
     m_btag_DeepFlavour_probbb=-2;
     m_btag_DeepFlavour_probb=-2;
     m_btag_DeepFlavour_problepb=-2;
