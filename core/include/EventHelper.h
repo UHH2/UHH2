@@ -61,6 +61,7 @@ public:
     void setup_genInfo(const std::string & bname);
     void setup_gentopjets(const std::string & bname);
     void setup_genparticles(const std::string & bname);
+    void setup_pfparticles(const std::string & bname);
     void setup_genjets(const std::string & bname);
     
     void setup_trigger();
@@ -85,6 +86,7 @@ private:
     
     bool pvs, electrons, muons, taus, photons, jets, topjets, toppuppijets, met, genmet;
     bool genInfo, gentopjets, genparticles, genjets;
+    bool pfparticles;
     bool trigger;
     bool first_event_read;
     
@@ -113,6 +115,7 @@ private:
     Event::Handle<GenInfo> h_genInfo;
     Event::Handle<std::vector<GenTopJet>> h_gentopjets;
     Event::Handle<std::vector<GenParticle>> h_genparticles;
+    Event::Handle<std::vector<PFParticle>> h_pfparticles;
     Event::Handle<std::vector<GenJet>> h_genjets;
     
     Event::Handle<std::vector<bool>> h_triggerResults;

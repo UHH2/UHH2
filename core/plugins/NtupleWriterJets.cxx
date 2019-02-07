@@ -34,6 +34,40 @@ using namespace std;
 
 bool btag_warning;
 
+size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
+
+   for(size_t j=0; j<pfparts.size();j++){
+     const PFParticle & spfcandart = pfparts[j];
+     auto r = fabs(static_cast<float>(pf.eta()-spfcandart.eta()))+fabs(static_cast<float>(pf.phi()-spfcandart.phi()));
+     auto dpt = fabs(static_cast<float>(pf.pt()-spfcandart.pt()));
+     if (r == 0.0f && dpt == 0.0f){
+       return j;
+     }
+   }
+   PFParticle part;
+   part.set_pt(pf.pt());
+   part.set_eta(pf.eta());
+   part.set_phi(pf.phi());
+   part.set_energy(pf.energy());
+   part.set_charge(pf.charge());
+   PFParticle::EParticleID id = PFParticle::eX;
+   reco::PFCandidate reco_pf;
+   switch ( reco_pf.translatePdgIdToType(pf.pdgId()) ){
+   case reco::PFCandidate::X : id = PFParticle::eX; break;
+   case reco::PFCandidate::h : id = PFParticle::eH; break;
+   case reco::PFCandidate::e : id = PFParticle::eE; break;
+   case reco::PFCandidate::mu : id = PFParticle::eMu; break;
+   case reco::PFCandidate::gamma : id = PFParticle::eGamma; break;
+   case reco::PFCandidate::h0 : id = PFParticle::eH0; break;
+   case reco::PFCandidate::h_HF : id = PFParticle::eH_HF; break;
+   case reco::PFCandidate::egamma_HF : id = PFParticle::eEgamma_HF; break;
+   }
+   part.set_particleID(id);
+
+   pfparts.push_back(part);
+   return pfparts.size()-1;
+}
+
 // Get userFloat entry, with some default return value if it doesn't exist
 // TODO: template this?
 float getPatJetUserFloat(const pat::Jet & jet, const std::string & key, float defaultValue=-9999.){
@@ -42,20 +76,14 @@ float getPatJetUserFloat(const pat::Jet & jet, const std::string & key, float de
 
 // Generate the name of the puppiJetSpecificProducer module
 // So ugly, really should get the user to configure this in the NtupleWriter py
-std::string getPuppiJetSpecificProducer(const std::string & name){
+std::string getPuppiJetSpecificProducer(const std::string & name) {
   std::string multiplicity_name = "patPuppiJetSpecificProducer"+name;
-  if(multiplicity_name == "patPuppiJetSpecificProducerselectedUpdatedPatJetsSlimmedJetsPuppiNewDFTraining"){
-    multiplicity_name = "patPuppiJetSpecificProducerupdatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining";
-  }else if(multiplicity_name == "patPuppiJetSpecificProducerselectedUpdatedPatJetsPatJetsAK8PFPUPPINewDFTraining"){
-   multiplicity_name = "patPuppiJetSpecificProducerupdatedPatJetsTransientCorrectedPatJetsAK8PFPUPPINewDFTraining";
-  }else if("selectedUpdatedPatJetsSlimmedJetsAK8NewDFTraining"){
-    multiplicity_name = "patPuppiJetSpecificProducerupdatedPatJetsTransientCorrectedSlimmedJetsAK8NewDFTraining";
-  }
   return multiplicity_name;
 }
 
-NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member){
+NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents){
     handle = cfg.ctx.declare_event_output<vector<Jet>>(cfg.dest_branchname, cfg.dest);
+    
     ptmin = cfg.ptmin;
     etamax = cfg.etamax;
     if(set_jets_member){
@@ -70,15 +98,20 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member){
 
     h_muons.clear();
     h_elecs.clear();
+    NPFJetwConstituents_ = NPFJetwConstituents;
+    //    auto h_pfcand = cfg.ctx.get_handle<vector<PFParticle>>("PFParticles"); h_pfcands.push_back(h_pfcand);
 }
 
-NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources):
-  NtupleWriterJets::NtupleWriterJets(cfg, set_jets_member) {
+NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents):
+  NtupleWriterJets::NtupleWriterJets(cfg, set_jets_member, NPFJetwConstituents) {
 
     save_lepton_keys_ = true;
 
     for(const auto& muo_src : muon_sources){ auto h_muon = cfg.ctx.get_handle<std::vector<Muon>    >(muo_src); h_muons.push_back(h_muon); }
     for(const auto& ele_src : elec_sources){ auto h_elec = cfg.ctx.get_handle<std::vector<Electron>>(ele_src); h_elecs.push_back(h_elec); }
+    //    auto h_pfcand = cfg.ctx.get_handle<vector<PFParticle>>("pfparticles"); h_pfcands.push_back(h_pfcand);
+    NPFJetwConstituents_ = NPFJetwConstituents;
+
 }
 
 NtupleWriterJets::~NtupleWriterJets(){}
@@ -127,8 +160,11 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 
         Jet& jet = jets.back();
 
+
+	bool storePFcands = false;
+	if(i<NPFJetwConstituents_) storePFcands = true;
         try {
-          fill_jet_info(pat_jet, jet, true, false, jet_puppiSpecificProducer);
+          fill_jet_info(uevent,pat_jet, jet, true, false, jet_puppiSpecificProducer,storePFcands);
         }
         catch(runtime_error & ex){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info NtupleWriterJets::process for jets with src = " + src.label());
@@ -158,7 +194,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 }
 
 
-void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer){
+void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer, bool fill_pfcand){
   jet.set_charge(pat_jet.charge());
   jet.set_pt(pat_jet.pt());
   jet.set_eta(pat_jet.eta());
@@ -235,7 +271,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
     jetbtaginfo.set_TrackDecayLenVal(tvlIP.getList(reco::btau::trackDecayLenVal,false));
     jetbtaginfo.set_TrackChi2(tvlIP.getList(reco::btau::trackChi2,false));
     jetbtaginfo.set_TrackNTotalHits(tvlIP.getList(reco::btau::trackNTotalHits,false));
-    jetbtaginfo.set_TrackNPixelHits(tvlIP.getList(reco::btau::trackNPixelHits,false));     
+    jetbtaginfo.set_TrackNPixelHits(tvlIP.getList(reco::btau::trackNPixelHits,false));
     jetbtaginfo.set_TrackPtRel(tvlIP.getList(reco::btau::trackPtRel,false));
     jetbtaginfo.set_TrackPPar(tvlIP.getList(reco::btau::trackPPar,false));
     jetbtaginfo.set_TrackPtRatio(tvlIP.getList(reco::btau::trackPtRatio,false));
@@ -263,9 +299,9 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
       sizetracks.push_back(sv.numberOfSourceCandidatePtrs());
       ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > p4 = sv.p4();
       vp4.push_back(TLorentzVector(p4.px(),p4.py(),p4.pz(),p4.e()));
-      vchi2.push_back(sv.vertexChi2());  
-      vndof.push_back(sv.vertexNdof());  
-      vchi2ndof.push_back(sv.vertexNormalizedChi2());  
+      vchi2.push_back(sv.vertexChi2());
+      vndof.push_back(sv.vertexNdof());
+      vchi2ndof.push_back(sv.vertexNormalizedChi2());
     }
     jetbtaginfo.set_SecondaryVertex(vp4);
     jetbtaginfo.set_VertexChi2(vchi2);
@@ -282,7 +318,7 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
       {
       std::vector<const reco::BaseTagInfo*>  baseTagInfos;
       baseTagInfos.push_back(pat_jet.tagInfoTrackIP("pfImpactParameter") );
-      baseTagInfos.push_back(pat_jet.tagInfoSecondaryVertex("pfInclusiveSecondaryVertexFinder") );      
+      baseTagInfos.push_back(pat_jet.tagInfoSecondaryVertex("pfInclusiveSecondaryVertexFinder") );
       JetTagComputer::TagInfoHelper helper(baseTagInfos);
       reco::TaggingVariableList vars = computer->taggingVariables(helper);
       jetbtaginfo.set_VertexMassJTC(vars.get(reco::btau::vertexMass,-9999));
@@ -300,234 +336,254 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
       const auto & name = name_value.first;
       const auto & value = name_value.second;
       if(name == "pfCombinedInclusiveSecondaryVertexV2BJetTags"){
-	jet.set_btag_combinedSecondaryVertex(value);
-	csv = true;
+        jet.set_btag_combinedSecondaryVertex(value);
+        csv = true;
       }
-      else if(name == "pfCombinedMVAV2BJetTags"){                                                                                                            
-        jet.set_btag_combinedSecondaryVertexMVA(value);                                                                                                                              
-        csvmva = true;                                                                                                                                                               
-      }   
-      else if(name == "pfDeepCSVJetTags:probb"){                                                                                                            
-        jet.set_btag_DeepCSV_probb(value);                                                                                                                              
-        deepcsv_b = true;                                                                                                                                                               
-      }   
-      else if(name == "pfDeepCSVJetTags:probbb"){                                                                                                            
-        jet.set_btag_DeepCSV_probbb(value);                                                                                                                              
-        deepcsv_bb = true;                                                                                                                                                               
-      }   
+      else if(name == "pfCombinedMVAV2BJetTags"){
+        jet.set_btag_combinedSecondaryVertexMVA(value);
+        csvmva = true;
+      }
+      else if(name == "pfDeepCSVJetTags:probb"){
+        jet.set_btag_DeepCSV_probb(value);
+        deepcsv_b = true;
+      }
+      else if(name == "pfDeepCSVJetTags:probbb"){
+        jet.set_btag_DeepCSV_probbb(value);
+        deepcsv_bb = true;
+      }
       else if(name == "pfBoostedDoubleSecondaryVertexAK8BJetTags"){
-	jet.set_btag_BoostedDoubleSecondaryVertexAK8(value);
-	doubleak8 = true;
+        jet.set_btag_BoostedDoubleSecondaryVertexAK8(value);
+        doubleak8 = true;
       }
       else if(name == "pfBoostedDoubleSecondaryVertexCA15BJetTags"){
-	jet.set_btag_BoostedDoubleSecondaryVertexCA15(value);
-	doubleca15 = true;
+        jet.set_btag_BoostedDoubleSecondaryVertexCA15(value);
+        doubleca15 = true;
       }
       else if(name=="pfDeepFlavourJetTags:probbb"){
-      	jet.set_btag_DeepFlavour_probbb(value);
-      	deepflavour_bb =true;
+        jet.set_btag_DeepFlavour_probbb(value);
+        deepflavour_bb =true;
       }
       else if(name=="pfDeepFlavourJetTags:probb"){
-      	jet.set_btag_DeepFlavour_probb(value);
-      	deepflavour_b =true;
+        jet.set_btag_DeepFlavour_probb(value);
+        deepflavour_b =true;
       }
       else if(name=="pfDeepFlavourJetTags:problepb"){
-      	jet.set_btag_DeepFlavour_problepb(value);
-      	deepflavour_lepb =true;
+        jet.set_btag_DeepFlavour_problepb(value);
+        deepflavour_lepb =true;
       }
       else if(name=="pfDeepFlavourJetTags:probc"){
-      	jet.set_btag_DeepFlavour_probc(value);
-      	deepflavour_c =true;
+        jet.set_btag_DeepFlavour_probc(value);
+        deepflavour_c =true;
       }
       else if(name=="pfDeepFlavourJetTags:probuds"){
-      	jet.set_btag_DeepFlavour_probuds(value);
-      	deepflavour_uds =true;
+        jet.set_btag_DeepFlavour_probuds(value);
+        deepflavour_uds =true;
       }
       else if(name=="pfDeepFlavourJetTags:probg"){
-      	jet.set_btag_DeepFlavour_probg(value);
-      	deepflavour_g =true;
+        jet.set_btag_DeepFlavour_probg(value);
+        deepflavour_g =true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:bbvsLight"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_bbvsLight(value);
-	decorrmass_deepboosted_bbvsLight=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_bbvsLight(value);
+        decorrmass_deepboosted_bbvsLight=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ccvsLight"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_ccvsLight(value);
-	decorrmass_deepboosted_ccvsLight=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_ccvsLight(value);
+        decorrmass_deepboosted_ccvsLight=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:TvsQCD"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_TvsQCD(value);
-	decorrmass_deepboosted_TvsQCD=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_TvsQCD(value);
+        decorrmass_deepboosted_TvsQCD=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHccvsQCD"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_ZHccvsQCD(value);
-	decorrmass_deepboosted_ZHccvsQCD=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_ZHccvsQCD(value);
+        decorrmass_deepboosted_ZHccvsQCD=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:WvsQCD"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_WvsQCD(value);
-	decorrmass_deepboosted_WvsQCD=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_WvsQCD(value);
+        decorrmass_deepboosted_WvsQCD=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_ZHbbvsQCD(value);
-	decorrmass_deepboosted_ZHbbvsQCD=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_ZHbbvsQCD(value);
+        decorrmass_deepboosted_ZHbbvsQCD=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probHbb"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probHbb(value);
-	decorrmass_deepboosted_probHbb=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probHbb(value);
+        decorrmass_deepboosted_probHbb=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probQCD"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probQCD(value);
-	decorrmass_deepboosted_probQCDc=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probQCD(value);
+        decorrmass_deepboosted_probQCDc=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probQCDbb"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probQCDbb(value);
-	decorrmass_deepboosted_probQCDbb=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probQCDbb(value);
+        decorrmass_deepboosted_probQCDbb=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probTbqq"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probTbqq(value);
-	decorrmass_deepboosted_probTbqq=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probTbqq(value);
+        decorrmass_deepboosted_probTbqq=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probTbcq"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probTbcq(value);
-	decorrmass_deepboosted_probTbcq=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probTbcq(value);
+        decorrmass_deepboosted_probTbcq=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probTbq"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probTbq(value);
-	decorrmass_deepboosted_probTbq=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probTbq(value);
+        decorrmass_deepboosted_probTbq=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probQCDothers"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probQCDothers(value);
-	decorrmass_deepboosted_probQCDothers=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probQCDothers(value);
+        decorrmass_deepboosted_probQCDothers=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probQCDb"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probQCDb(value);
-	decorrmass_deepboosted_probQCDb=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probQCDb(value);
+        decorrmass_deepboosted_probQCDb=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probTbc"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probTbc(value);
-	decorrmass_deepboosted_probTbc=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probTbc(value);
+        decorrmass_deepboosted_probTbc=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probWqq"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probWqq(value);
-	decorrmass_deepboosted_probWqq=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probWqq(value);
+        decorrmass_deepboosted_probWqq=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probQCDcc"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probQCDcc(value);
-	decorrmass_deepboosted_probQCDcc=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probQCDcc(value);
+        decorrmass_deepboosted_probQCDcc=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probHbb"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probHbb(value);
-	decorrmass_deepboosted_probHbb=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probHbb(value);
+        decorrmass_deepboosted_probHbb=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probHcc"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probHcc(value);
-	decorrmass_deepboosted_probHcc=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probHcc(value);
+        decorrmass_deepboosted_probHcc=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probWcq"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probWcq(value);
-	decorrmass_deepboosted_probWcq=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probWcq(value);
+        decorrmass_deepboosted_probWcq=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probZcc"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probZcc(value);
-	decorrmass_deepboosted_probZcc=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probZcc(value);
+        decorrmass_deepboosted_probZcc=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probZqq"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probZqq(value);
-	decorrmass_deepboosted_probZqq=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probZqq(value);
+        decorrmass_deepboosted_probZqq=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probHqqqq"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probHqqqq(value);
-	decorrmass_deepboosted_probHqqqq=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probHqqqq(value);
+        decorrmass_deepboosted_probHqqqq=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probZbb"){
-	jet.set_btag_MassDecorrelatedDeepBoosted_probZbb(value);
-	decorrmass_deepboosted_probZbb=true;
+        jet.set_btag_MassDecorrelatedDeepBoosted_probZbb(value);
+        decorrmass_deepboosted_probZbb=true;
       }
       else if(name=="pfDeepDoubleBJetTags:probH"){
-	jet.set_btag_DeepDoubleB_probH(value);
-	deepdouble_H = true;
+        jet.set_btag_DeepDoubleB_probH(value);
+        deepdouble_H = true;
       }
       else if(name=="pfDeepDoubleBJetTags:probQCD"){
-	jet.set_btag_DeepDoubleB_probQCD(value);
-	deepdouble_QCD = true;
+        jet.set_btag_DeepDoubleB_probQCD(value);
+        deepdouble_QCD = true;
       }
       else if(name == "pfDeepBoostedJetTags:probHbb"){
-	jet.set_btag_DeepBoosted_probHbb(value);
-	deepboosted_probHbb=true;
+        jet.set_btag_DeepBoosted_probHbb(value);
+        deepboosted_probHbb=true;
       }
       else if(name == "pfDeepBoostedJetTags:probQCD"){
-	jet.set_btag_DeepBoosted_probQCD(value);
-	deepboosted_probQCDc=true;
+        jet.set_btag_DeepBoosted_probQCD(value);
+        deepboosted_probQCDc=true;
       }
       else if(name == "pfDeepBoostedJetTags:probQCDbb"){
-	jet.set_btag_DeepBoosted_probQCDbb(value);
-	deepboosted_probQCDbb=true;
+        jet.set_btag_DeepBoosted_probQCDbb(value);
+        deepboosted_probQCDbb=true;
       }
       else if(name == "pfDeepBoostedJetTags:probTbqq"){
-	jet.set_btag_DeepBoosted_probTbqq(value);
-	deepboosted_probTbqq=true;
+        jet.set_btag_DeepBoosted_probTbqq(value);
+        deepboosted_probTbqq=true;
       }
       else if(name == "pfDeepBoostedJetTags:probTbcq"){
-	jet.set_btag_DeepBoosted_probTbcq(value);
-	deepboosted_probTbcq=true;
+        jet.set_btag_DeepBoosted_probTbcq(value);
+        deepboosted_probTbcq=true;
       }
       else if(name == "pfDeepBoostedJetTags:probTbq"){
-	jet.set_btag_DeepBoosted_probTbq(value);
-	deepboosted_probTbq=true;
+        jet.set_btag_DeepBoosted_probTbq(value);
+        deepboosted_probTbq=true;
       }
       else if(name == "pfDeepBoostedJetTags:probQCDothers"){
-	jet.set_btag_DeepBoosted_probQCDothers(value);
-	deepboosted_probQCDothers=true;
+        jet.set_btag_DeepBoosted_probQCDothers(value);
+        deepboosted_probQCDothers=true;
       }
       else if(name == "pfDeepBoostedJetTags:probQCDb"){
-	jet.set_btag_DeepBoosted_probQCDb(value);
-	deepboosted_probQCDb=true;
+        jet.set_btag_DeepBoosted_probQCDb(value);
+        deepboosted_probQCDb=true;
       }
       else if(name == "pfDeepBoostedJetTags:probTbc"){
-	jet.set_btag_DeepBoosted_probTbc(value);
-	deepboosted_probTbc=true;
+        jet.set_btag_DeepBoosted_probTbc(value);
+        deepboosted_probTbc=true;
       }
       else if(name == "pfDeepBoostedJetTags:probWqq"){
-	jet.set_btag_DeepBoosted_probWqq(value);
-	deepboosted_probWqq=true;
+        jet.set_btag_DeepBoosted_probWqq(value);
+        deepboosted_probWqq=true;
       }
       else if(name == "pfDeepBoostedJetTags:probQCDcc"){
-	jet.set_btag_DeepBoosted_probQCDcc(value);
-	deepboosted_probQCDcc=true;
+        jet.set_btag_DeepBoosted_probQCDcc(value);
+        deepboosted_probQCDcc=true;
       }
       else if(name == "pfDeepBoostedJetTags:probHbb"){
-	jet.set_btag_DeepBoosted_probHbb(value);
-	deepboosted_probHbb=true;
+        jet.set_btag_DeepBoosted_probHbb(value);
+        deepboosted_probHbb=true;
       }
       else if(name == "pfDeepBoostedJetTags:probHcc"){
-	jet.set_btag_DeepBoosted_probHcc(value);
-	deepboosted_probHcc=true;
+        jet.set_btag_DeepBoosted_probHcc(value);
+        deepboosted_probHcc=true;
       }
       else if(name == "pfDeepBoostedJetTags:probWcq"){
-	jet.set_btag_DeepBoosted_probWcq(value);
-	deepboosted_probWcq=true;
+        jet.set_btag_DeepBoosted_probWcq(value);
+        deepboosted_probWcq=true;
       }
       else if(name == "pfDeepBoostedJetTags:probZcc"){
-	jet.set_btag_DeepBoosted_probZcc(value);
-	deepboosted_probZcc=true;
+        jet.set_btag_DeepBoosted_probZcc(value);
+        deepboosted_probZcc=true;
       }
       else if(name == "pfDeepBoostedJetTags:probZqq"){
-	jet.set_btag_DeepBoosted_probZqq(value);
-	deepboosted_probZqq=true;
+        jet.set_btag_DeepBoosted_probZqq(value);
+        deepboosted_probZqq=true;
       }
       else if(name == "pfDeepBoostedJetTags:probHqqqq"){
-	jet.set_btag_DeepBoosted_probHqqqq(value);
-	deepboosted_probHqqqq=true;
+        jet.set_btag_DeepBoosted_probHqqqq(value);
+        deepboosted_probHqqqq=true;
       }
       else if(name == "pfDeepBoostedJetTags:probZbb"){
-	jet.set_btag_DeepBoosted_probZbb(value);
-	deepboosted_probZbb=true;
+        jet.set_btag_DeepBoosted_probZbb(value);
+        deepboosted_probZbb=true;
       }
 
     }
 
 
-       if(!csv || !csvmva || !doubleak8 || !doubleca15 || !deepcsv_b || !deepcsv_bb || !deepflavour_bb || !deepflavour_b || !deepflavour_lepb || !deepflavour_uds || !deepflavour_c || !deepflavour_g || !decorrmass_deepboosted_bbvsLight || !decorrmass_deepboosted_ccvsLight || !decorrmass_deepboosted_TvsQCD || !decorrmass_deepboosted_ZHccvsQCD || !decorrmass_deepboosted_WvsQCD || !decorrmass_deepboosted_ZHbbvsQCD || !deepboosted_probHbb || !deepboosted_probQCDbb|| !deepboosted_probQCDc|| !deepboosted_probTbqq|| !deepboosted_probTbcq|| !deepboosted_probTbq|| !deepboosted_probQCDothers|| !deepboosted_probQCDb|| !deepboosted_probTbc|| !deepboosted_probWqq|| !deepboosted_probQCDcc|| !deepboosted_probHcc|| !deepboosted_probWcq|| !deepboosted_probZcc|| !deepboosted_probZqq|| !deepboosted_probHqqqq|| !deepboosted_probZbb|| !deepdouble_H|| !deepdouble_QCD|| !decorrmass_deepboosted_probHbb || !decorrmass_deepboosted_probQCDbb|| !decorrmass_deepboosted_probQCDc|| !decorrmass_deepboosted_probTbqq|| !decorrmass_deepboosted_probTbcq|| !decorrmass_deepboosted_probTbq|| !decorrmass_deepboosted_probQCDothers|| !decorrmass_deepboosted_probQCDb|| !decorrmass_deepboosted_probTbc|| !decorrmass_deepboosted_probWqq|| !decorrmass_deepboosted_probQCDcc|| !decorrmass_deepboosted_probHcc|| !decorrmass_deepboosted_probWcq|| !decorrmass_deepboosted_probZcc|| !decorrmass_deepboosted_probZqq|| !decorrmass_deepboosted_probHqqqq|| !decorrmass_deepboosted_probZbb){
+    if(!csv || !csvmva || !doubleak8 || !doubleca15 || !deepcsv_b || !deepcsv_bb
+       || !deepflavour_bb || !deepflavour_b || !deepflavour_lepb
+       || !deepflavour_uds || !deepflavour_c || !deepflavour_g
+       || !decorrmass_deepboosted_bbvsLight || !decorrmass_deepboosted_ccvsLight
+       || !decorrmass_deepboosted_TvsQCD || !decorrmass_deepboosted_ZHccvsQCD
+       || !decorrmass_deepboosted_WvsQCD || !decorrmass_deepboosted_ZHbbvsQCD
+       || !deepboosted_probHbb || !deepboosted_probQCDbb || !deepboosted_probQCDc
+       || !deepboosted_probTbqq || !deepboosted_probTbcq || !deepboosted_probTbq
+       || !deepboosted_probQCDothers || !deepboosted_probQCDb || !deepboosted_probTbc
+       || !deepboosted_probWqq || !deepboosted_probQCDcc || !deepboosted_probHcc
+       || !deepboosted_probWcq || !deepboosted_probZcc || !deepboosted_probZqq
+       || !deepboosted_probHqqqq || !deepboosted_probZbb || !deepdouble_H
+       || !deepdouble_QCD || !decorrmass_deepboosted_probHbb || !decorrmass_deepboosted_probQCDbb
+       || !decorrmass_deepboosted_probQCDc || !decorrmass_deepboosted_probTbqq
+       || !decorrmass_deepboosted_probTbcq || !decorrmass_deepboosted_probTbq
+       || !decorrmass_deepboosted_probQCDothers || !decorrmass_deepboosted_probQCDb
+       || !decorrmass_deepboosted_probTbc || !decorrmass_deepboosted_probWqq
+       || !decorrmass_deepboosted_probQCDcc || !decorrmass_deepboosted_probHcc
+       || !decorrmass_deepboosted_probWcq || !decorrmass_deepboosted_probZcc
+       || !decorrmass_deepboosted_probZqq || !decorrmass_deepboosted_probHqqqq
+       || !decorrmass_deepboosted_probZbb){
       if(btag_warning){
         std::string btag_list = "";
         for(const auto & name_value : bdisc){
@@ -540,22 +596,30 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
       // throw runtime_error("did not find all b-taggers; see output for details");
     }
   }
+
+  if(fill_pfcand){//fill pf candidates list: add pf-candidate to the event list and store index in the jet container
+    const auto& jet_daughter_ptrs = pat_jet.daughterPtrVector();
+    for(const auto & daughter_p : jet_daughter_ptrs){
+      size_t pfparticles_index = add_pfpart(*daughter_p, *uevent.pfparticles);
+      jet.add_pfcand_index(pfparticles_index);
+    }
+  }
 }
 
 
-NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): ptmin(cfg.ptmin), etamax(cfg.etamax) {
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents): ptmin(cfg.ptmin), etamax(cfg.etamax) {
     handle = cfg.ctx.declare_event_output<vector<TopJet>>(cfg.dest_branchname, cfg.dest);
     if(set_jets_member){
         topjets_handle = cfg.ctx.get_handle<vector<TopJet>>("topjets");
     }
     src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
-    njettiness_src = cfg.njettiness_src;    
+    njettiness_src = cfg.njettiness_src;
     src_njettiness1_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau1"));
     src_njettiness2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau2"));
     src_njettiness3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau3"));
     src_njettiness4_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau4"));
 
-    njettiness_groomed_src = cfg.njettiness_groomed_src;    
+    njettiness_groomed_src = cfg.njettiness_groomed_src;
     src_njettiness1_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau1"));
     src_njettiness2_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau2"));
     src_njettiness3_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau3"));
@@ -612,16 +676,17 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
 
     higgstaginfo_src = cfg.higgstaginfo_src;
     src_higgstaginfo_token =  cfg.cc.consumes<std::vector<reco::BoostedDoubleSVTagInfo> >(cfg.higgstaginfo_src);
+    NPFJetwConstituents_ = NPFJetwConstituents;
 }
 
-NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources):
-  NtupleWriterTopJets::NtupleWriterTopJets(cfg, set_jets_member) {
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents):
+  NtupleWriterTopJets::NtupleWriterTopJets(cfg, set_jets_member, NPFJetwConstituents) {
 
     save_lepton_keys_ = true;
 
     for(const auto& muo_src : muon_sources){ auto h_muon = cfg.ctx.get_handle<std::vector<Muon>    >(muo_src); h_muons.push_back(h_muon); }
     for(const auto& ele_src : elec_sources){ auto h_elec = cfg.ctx.get_handle<std::vector<Electron>>(ele_src); h_elecs.push_back(h_elec); }
-
+    NPFJetwConstituents_ = NPFJetwConstituents;
 }
 
 NtupleWriterTopJets::~NtupleWriterTopJets(){}
@@ -646,7 +711,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
     edm::Handle<reco::BasicJetCollection> topjets_groomed_with_cands;
     edm::Handle<reco::PFJetCollection> topjets_groomed_with_cands_reco;
-    
+
     if(!njettiness_src.empty()){
         event.getByToken(src_njettiness1_token, h_njettiness1);
         event.getByToken(src_njettiness2_token, h_njettiness2);
@@ -729,46 +794,18 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
     for (unsigned int i = 0; i < pat_topjets.size(); i++) {
         const pat::Jet & pat_topjet =  pat_topjets[i];
-        //use CHS jet momentum in case of CHS subjet collection (see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2016#Jets)
-        // if(subjet_src.find("CHS")!=string::npos){
-        //   TLorentzVector puppi_v4;
-        //   if (!pat_topjet.hasUserFloat("ak8PFJetsCHSValueMap:pt")) {
-        //     throw cms::Exception("Missing userFloat", "You wanted CHS subjets but no ak8PFJetsCHSValueMap entries in the ValueMap");
-        //   }
-        //   puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
-        //     pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
-        //     pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
-        //     pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
-        //   //skip jets with incredibly high pT (99999 seems to be a default value in MINIAOD if the puppi jet is not defined)
-        //   if(puppi_v4.Pt()>=99999) continue;
-        //   if(puppi_v4.Pt() < ptmin) continue;
-        //   if(fabs(puppi_v4.Eta()) > etamax) continue;
-        // }
-        // else{
-          if(pat_topjet.pt() < ptmin) continue;
-          if(fabs(pat_topjet.eta()) > etamax) continue;
-        // }
-        
+        if(pat_topjet.pt() < ptmin) continue;
+        if(fabs(pat_topjet.eta()) > etamax) continue;
+
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
+	bool storePFcands = false;
+	if(i<NPFJetwConstituents_) storePFcands = true;
         try{
-          uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer);
-          // if(subjet_src.find("CHS")!=string::npos){
-          //   TLorentzVector puppi_v4;
-          //   puppi_v4.SetPtEtaPhiM(pat_topjet.userFloat("ak8PFJetsCHSValueMap:pt"),
-          //                         pat_topjet.userFloat("ak8PFJetsCHSValueMap:eta"),
-          //                         pat_topjet.userFloat("ak8PFJetsCHSValueMap:phi"),
-          //                         pat_topjet.userFloat("ak8PFJetsCHSValueMap:mass"));
-          //   topjet.set_pt(puppi_v4.Pt());
-          //   topjet.set_eta(puppi_v4.Eta());
-          //   topjet.set_phi(puppi_v4.Phi());
-          //   topjet.set_energy(puppi_v4.E());
-          // }
-
+          uhh2::NtupleWriterJets::fill_jet_info(uevent,pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer,storePFcands);
         }catch(runtime_error &){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " + src.label());
         }
-
 
         /*--- lepton keys ---*/
         if(save_lepton_keys_){
@@ -805,7 +842,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 drmin = dr;
               }
             }
-          }         
+          }
           else{
             for (size_t i_wc=0; i_wc < topjets_with_cands->size(); ++i_wc) {
               auto dr = reco::deltaR((*topjets_with_cands)[i_wc], pat_topjet);
@@ -854,7 +891,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
                 drmin = dr;
               }
             }
-          }         
+          }
           else{
             for (size_t i_wc=0; i_wc < topjets_groomed_with_cands->size(); ++i_wc) {
               auto dr = reco::deltaR((*topjets_groomed_with_cands)[i_wc], pat_topjet);
@@ -999,11 +1036,11 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         /*--- Higgs tagging ---*/
 
 	if(higgs_src!=""){
-	  
+
 	  edm::Handle<pat::JetCollection> higgs_pat_topjets;
 	  event.getByToken(src_higgs_token, higgs_pat_topjets);
 	  const vector<pat::Jet> & pat_higgsjets = *higgs_pat_topjets;
-	  
+
 	  //match a jet from "higgs" collection
 	  int i_pat_higgsjet = -1;
 	  double drmin = numeric_limits<double>::infinity();
@@ -1016,7 +1053,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	    }
 	  }
 
-	  
+
 	  if (i_pat_higgsjet >= 0 && drmin < 1.0){
 	    const pat::Jet & higgs_jet = pat_higgsjets[i_pat_higgsjet];
 	    topjet.set_mvahiggsdiscr(higgs_jet.bDiscriminator(higgs_name.c_str()));
@@ -1034,7 +1071,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	if(higgstaginfo_src!=""){
 	  edm::Handle<std::vector<reco::BoostedDoubleSVTagInfo> > svTagInfos;
 	  event.getByToken(src_higgstaginfo_token, svTagInfos);
-	  
+
 	  //find taginfo belonging to a jet closest to the studied jet
 	  int i_svjet = -1;
 	  double drmin = numeric_limits<double>::infinity();
@@ -1047,10 +1084,10 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	      drmin = dr;
 	    }
 	  }
-	  
+
 	  if(i_svjet>=0 && drmin<1.0){
 	    const reco::BoostedDoubleSVTagInfo & svTagInfo = svTagInfos->at(i_svjet);
-	    const reco::JetBaseRef jet = svTagInfo.jet(); 
+	    const reco::JetBaseRef jet = svTagInfo.jet();
 
 	    topjet.set_tag(TopJet::tagname2tag("z_ratio"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::z_ratio));
 	    topjet.set_tag(TopJet::tagname2tag("trackSipdSig_3"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::trackSip3dSig_3));
@@ -1079,21 +1116,24 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	    topjet.set_tag(TopJet::tagname2tag("tau_flightDistance2dSig_1"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::tau2_flightDistance2dSig));
 	    topjet.set_tag(TopJet::tagname2tag("jetNTracks"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::jetNTracks));
 	    topjet.set_tag(TopJet::tagname2tag("nSV"), svTagInfo.taggingVariables().get(reco::btau::TaggingVariableName::jetNSecondaryVertices));
-	    
+
 	  }
 
 	}
-	  
+
         /*---------------------*/
 
         // loop over subjets to fill some more subjet info:
+	//	bool storePFcands = false;
+	//	if(i<NPFJetwConstituents_) storePFcands = true;
+
 	if(subjet_src=="daughters"){
 	  for (unsigned int k = 0; k < pat_topjet.numberOfDaughters(); k++) {
             Jet subjet;
             auto patsubjetd = dynamic_cast<const pat::Jet *>(pat_topjet.daughter(k));
             if (patsubjetd) {
 	      try{
-		NtupleWriterJets::fill_jet_info(*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, "");
+		NtupleWriterJets::fill_jet_info(uevent,*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for daughters in NtupleWriterTopJets with src = " + src.label());
 	      }
@@ -1122,7 +1162,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	    auto tpatsubjet = dynamic_cast<const pat::Jet *>(tSubjets.at(sj).get());
             if (tpatsubjet) {
 	      try{
-		NtupleWriterJets::fill_jet_info(*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, "");
+		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " + src.label());
 	      }

@@ -44,12 +44,14 @@ class Jet : public FlavorParticle {
     m_photonPuppiMultiplicity = 0;
     m_HFHadronPuppiMultiplicity = 0;
     m_HFEMPuppiMultiplicity = 0;
-    m_btag_combinedSecondaryVertex = 0;
-    m_btag_combinedSecondaryVertexMVA = 0;
-    m_btag_DeepCSV_probb = 0;
-    m_btag_DeepCSV_probbb = 0;
-    m_btag_BoostedDoubleSecondaryVertexAK8 = 0;
-    m_btag_BoostedDoubleSecondaryVertexCA15 = 0;
+    // Discriminants should have a initial value of something clear "wrong"
+    // -2 is safe as some discrimintants start at -1, some start at 0
+    m_btag_combinedSecondaryVertex = -2;
+    m_btag_combinedSecondaryVertexMVA = -2;
+    m_btag_DeepCSV_probb = -2;
+    m_btag_DeepCSV_probbb = -2;
+    m_btag_BoostedDoubleSecondaryVertexAK8 = -2;
+    m_btag_BoostedDoubleSecondaryVertexCA15 = -2;
     m_btag_DeepFlavour_probbb=-2;
     m_btag_DeepFlavour_probb=-2;
     m_btag_DeepFlavour_problepb=-2;
@@ -105,6 +107,7 @@ class Jet : public FlavorParticle {
     m_pileupID = -2;
 
     m_lepton_keys.clear();
+    m_pfcand_indexs.clear();
   }
 
   float jetArea() const{return m_jetArea;}
@@ -190,6 +193,7 @@ class Jet : public FlavorParticle {
   float pileupID() const {return m_pileupID;}
 
   const std::vector<long int>& lepton_keys() const { return m_lepton_keys; }
+  const std::vector<long int>& pfcand_indexs() const { return m_pfcand_indexs; }
 
   void set_jetArea(float x){m_jetArea=x;}
   void set_numberOfDaughters(int x){m_numberOfDaughters=x;} 
@@ -277,6 +281,9 @@ class Jet : public FlavorParticle {
   void set_lepton_keys(const std::vector<long int>& vlk){ m_lepton_keys = vlk; }
   void add_lepton_key (const long int k){ m_lepton_keys.push_back(k); }
 
+  void set_pfcand_indexs(const std::vector<long int>& vlk){ m_pfcand_indexs = vlk; }
+  void add_pfcand_index (const long int k){ m_pfcand_indexs.push_back(k); }
+
  private:
   float m_jetArea;
   int m_numberOfDaughters;
@@ -362,6 +369,6 @@ class Jet : public FlavorParticle {
   JetBTagInfo m_btaginfo;
 
   std::vector<long int> m_lepton_keys;
-
+  std::vector<long int> m_pfcand_indexs;
   Tags tags;
 };
