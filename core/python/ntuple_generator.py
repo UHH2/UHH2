@@ -1105,8 +1105,80 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
             '%s:HFEMPuppiMultiplicity' % puppi_mult_name
         ]
 
-    # Higgs tagging commissioning
+    def rename_module(process, task, current_name, new_name, update_userData=True):
+        """Rename a module in a process, with option to also update userData.
+        This clones the existing module at process.current_name into
+        process.new_name. If update_userData = True, it then clones all
+        the userData producers to replace any occurrences of `current_name`
+        with `new_name`, and updates the new module to use these for its userData.
 
+        This is useful for e.g. PATJetUpdater modules that always produce
+        crazy long names.
+
+        Parameters
+        ----------
+        process : cms.Process
+        task : Task
+        current_name : str
+        new_name : str
+        update_userData : bool
+        """
+        updater = getattr(process, current_name)
+        new_updater = updater.clone()
+
+        if update_userData:
+            # Rejig userData. Since we expect the userData to often have same
+            # collection name as this object, we need to rename that module as well
+            user_data = new_updater.userData
+
+            # Get current userData source module names
+            user_data_fields = ['userCands', 'userClasses', 'userFloats', 'userInts']
+            for field_name in user_data_fields:
+                sources = [src.split(":")[0] for src in getattr(user_data, field_name).src]
+                sources = list(l for l in set(sources) if l)  # ignore empty strings that are the default
+
+                for old_src_name in sources:
+                    # Get rid of old src module, clone, add new one
+                    old_src = getattr(process, old_src_name)
+                    new_src_name = old_src_name.replace(current_name, new_name)
+                    new_src = old_src.clone()
+                    setattr(process, new_src_name, new_src)
+                    task.add(getattr(process, new_src_name))
+                    task.remove(getattr(process, old_src_name))
+                    delattr(process, old_src_name)
+
+                # Update our main module with the new producer module
+                new_srcs = [label.replace(current_name, new_name)
+                            for label in getattr(user_data, field_name).src]
+                setattr(getattr(user_data, field_name), "src", cms.VInputTag(new_srcs))  # TODO: check the original type
+
+        # Add the new module to process & task
+        print "Renaming '%s' to '%s'" % (current_name, new_name)
+        setattr(process, new_name, new_updater)
+        task.add(getattr(process, new_name))
+        # Delete old one
+        task.remove(getattr(process, current_name))
+        delattr(process, current_name)
+
+
+    ###############################################
+    # Rename jet collections to something more user-friendly
+    #
+    # Note that using rename_module() is not always the best option: an EDAlias
+    # might be more suitable.
+    # For something pre-made like slimmedJets, probably need to add a PATJetSelector,
+    # with 0 cuts, and rename that
+    #
+    # Jet collections
+    rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining", "jetsAk4Puppi")
+    rename_module(process, task, "updatedPatJetsTransientCorrectedPatJetsAK8PFPUPPIWithPuppiDaughters", "jetsAk8Puppi")
+    rename_module(process, task, ak8chs_patname, "jetsAk8CHS")
+    # TopJet collections
+    rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8PuppiJetsWithPuppiDaughters", "jetsAk8PuppiSubstructure")
+    rename_module(process, task, "packedPatJetsAk8CHSJets", "jetsAk8CHSSubstructure", update_userData=False)  # don't update userData as JetSubstructurePacker
+
+
+    # Higgs tagging commissioning
     process.pfBoostedDoubleSVTagInfos = cms.EDProducer("BoostedDoubleSVProducer",
         trackSelectionBlock,
         beta=cms.double(1.0),
@@ -1680,9 +1752,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     doJets=cms.bool(True),
                                     jet_sources=cms.vstring(
                                         "slimmedJets",
-                                        ak8chs_patname,
-                                        "updatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining",
-                                        "updatedPatJetsTransientCorrectedPatJetsAK8PFPUPPIWithPuppiDaughters"),
+                                        "jetsAk4Puppi",
+                                        "jetsAk8CHS",
+                                        "jetsAk8Puppi"
+                                        ),
                                     jet_ptmin=cms.double(10.0),
                                     jet_etamax=cms.double(999.0),
 
@@ -1711,7 +1784,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                             # It also means we can store ungroomed quantities,
                                             # and the groomed subjets
                                             # (from which one can then recover the groomed fatjet 4-vector).
-                                            topjet_source=cms.string("packedPatJetsAk8CHSJets"),
+                                            topjet_source=cms.string("jetsAk8CHSSubstructure"),
 
                                             # One should use the algoLabels as used in the relevant JetSubstructurePacker
                                             # to access the subjets using pat::Jet::subjet(subjet_source).
@@ -1757,7 +1830,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                         cms.PSet(
                                             # Use our reclustered AK8 PUPPI collection instead of slimmedJetsAK8,
                                             # to become uniform over years, and control the contents
-                                            topjet_source=cms.string("updatedPatJetsTransientCorrectedPackedPatJetsAk8PuppiJetsWithPuppiDaughters"),  # store ungroomed vars
+                                            topjet_source=cms.string("jetsAk8PuppiSubstructure"),  # store ungroomed vars
                                             subjet_source=cms.string("SoftDropPuppi"),
 
                                             do_subjet_taginfo=cms.bool(True),
