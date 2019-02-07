@@ -61,6 +61,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi")
 
+    if (year=="2016v2" or year=="2016v3"):
+        met_sources_GL.extend(['slMETsCHS'])
+    
+
+
     bTagDiscriminators = [
         'pfJetProbabilityBJetTags',
         'pfJetBProbabilityBJetTags',
@@ -1693,6 +1698,43 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     else:
         metfilterpath = "PAT"
 
+
+    if (year == "2016v2" or year == "2016v3"):
+       ## MET CHS (not available as slimmedMET collection)
+       ## copied from https://github.com/cms-jet/JMEValidator/blob/CMSSW_7_6_X/python/FrameworkConfiguration.py
+        def clean_met_(met):
+            del met.t01Variation
+            del met.t1Uncertainties
+            del met.t1SmearedVarsAndUncs
+            del met.tXYUncForRaw
+            del met.tXYUncForT1
+            del met.tXYUncForT01
+            del met.tXYUncForT1Smear
+            del met.tXYUncForT01Smear
+
+        from PhysicsTools.PatAlgos.tools.metTools import addMETCollection
+
+        ## Raw PAT METs
+        process.load('RecoMET.METProducers.PFMET_cfi')
+        process.pfMet.src = cms.InputTag('chs')
+        task.add(process.pfMet)
+        addMETCollection(process, labelName='patPFMetCHS', metSource='pfMet') # RAW MET
+        addMETCollection(process, labelName='patPFMet', metSource='pfMet') # RAW MET
+        process.patPFMet.addGenMET = False
+        process.patPFMetCHS.addGenMET = False
+        ## Slimmed METs
+        from PhysicsTools.PatAlgos.slimming.slimmedMETs_cfi import slimmedMETs
+        #### CaloMET is not available in MiniAOD
+        del slimmedMETs.caloMET
+        # ### CHS
+        process.slMETsCHS = slimmedMETs.clone()
+        process.slMETsCHS.src = cms.InputTag("patPFMetCHS")
+        process.slMETsCHS.rawUncertainties = cms.InputTag("patPFMetCHS") # only central value
+        process.slMETsCHS.chsMET = cms.InputTag("patPFMetCHS")
+        process.slMETsCHS.trkMET = cms.InputTag("patPFMetCHS")
+        task.add(process.slMETsCHS)
+        clean_met_(process.slMETsCHS)
+            
 
     process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     # AnalysisModule = cms.PSet(
