@@ -34,6 +34,40 @@ using namespace std;
 
 bool btag_warning;
 
+size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
+
+   for(size_t j=0; j<pfparts.size();j++){
+     const PFParticle & spfcandart = pfparts[j];
+     auto r = fabs(static_cast<float>(pf.eta()-spfcandart.eta()))+fabs(static_cast<float>(pf.phi()-spfcandart.phi()));
+     auto dpt = fabs(static_cast<float>(pf.pt()-spfcandart.pt()));
+     if (r == 0.0f && dpt == 0.0f){
+       return j;
+     }
+   }
+   PFParticle part;
+   part.set_pt(pf.pt());
+   part.set_eta(pf.eta());
+   part.set_phi(pf.phi());
+   part.set_energy(pf.energy());
+   part.set_charge(pf.charge());
+   PFParticle::EParticleID id = PFParticle::eX;
+   reco::PFCandidate reco_pf;
+   switch ( reco_pf.translatePdgIdToType(pf.pdgId()) ){
+   case reco::PFCandidate::X : id = PFParticle::eX; break;
+   case reco::PFCandidate::h : id = PFParticle::eH; break;
+   case reco::PFCandidate::e : id = PFParticle::eE; break;
+   case reco::PFCandidate::mu : id = PFParticle::eMu; break;
+   case reco::PFCandidate::gamma : id = PFParticle::eGamma; break;
+   case reco::PFCandidate::h0 : id = PFParticle::eH0; break;
+   case reco::PFCandidate::h_HF : id = PFParticle::eH_HF; break;
+   case reco::PFCandidate::egamma_HF : id = PFParticle::eEgamma_HF; break;
+   }
+   part.set_particleID(id);
+
+   pfparts.push_back(part);
+   return pfparts.size()-1;
+}
+
 // Get userFloat entry, with some default return value if it doesn't exist
 // TODO: template this?
 float getPatJetUserFloat(const pat::Jet & jet, const std::string & key, float defaultValue=-9999.){
@@ -47,8 +81,9 @@ std::string getPuppiJetSpecificProducer(const std::string & name) {
   return multiplicity_name;
 }
 
-NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member){
+NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents){
     handle = cfg.ctx.declare_event_output<vector<Jet>>(cfg.dest_branchname, cfg.dest);
+    
     ptmin = cfg.ptmin;
     etamax = cfg.etamax;
     if(set_jets_member){
@@ -63,15 +98,20 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member){
 
     h_muons.clear();
     h_elecs.clear();
+    NPFJetwConstituents_ = NPFJetwConstituents;
+    //    auto h_pfcand = cfg.ctx.get_handle<vector<PFParticle>>("PFParticles"); h_pfcands.push_back(h_pfcand);
 }
 
-NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources):
-  NtupleWriterJets::NtupleWriterJets(cfg, set_jets_member) {
+NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents):
+  NtupleWriterJets::NtupleWriterJets(cfg, set_jets_member, NPFJetwConstituents) {
 
     save_lepton_keys_ = true;
 
     for(const auto& muo_src : muon_sources){ auto h_muon = cfg.ctx.get_handle<std::vector<Muon>    >(muo_src); h_muons.push_back(h_muon); }
     for(const auto& ele_src : elec_sources){ auto h_elec = cfg.ctx.get_handle<std::vector<Electron>>(ele_src); h_elecs.push_back(h_elec); }
+    //    auto h_pfcand = cfg.ctx.get_handle<vector<PFParticle>>("pfparticles"); h_pfcands.push_back(h_pfcand);
+    NPFJetwConstituents_ = NPFJetwConstituents;
+
 }
 
 NtupleWriterJets::~NtupleWriterJets(){}
@@ -120,8 +160,11 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 
         Jet& jet = jets.back();
 
+
+	bool storePFcands = false;
+	if(i<NPFJetwConstituents_) storePFcands = true;
         try {
-          fill_jet_info(pat_jet, jet, true, false, jet_puppiSpecificProducer);
+          fill_jet_info(uevent,pat_jet, jet, true, false, jet_puppiSpecificProducer,storePFcands);
         }
         catch(runtime_error & ex){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info NtupleWriterJets::process for jets with src = " + src.label());
@@ -151,7 +194,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 }
 
 
-void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer){
+void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer, bool fill_pfcand){
   jet.set_charge(pat_jet.charge());
   jet.set_pt(pat_jet.pt());
   jet.set_eta(pat_jet.eta());
@@ -553,10 +596,18 @@ void NtupleWriterJets::fill_jet_info(const pat::Jet & pat_jet, Jet & jet, bool d
       // throw runtime_error("did not find all b-taggers; see output for details");
     }
   }
+
+  if(fill_pfcand){//fill pf candidates list: add pf-candidate to the event list and store index in the jet container
+    const auto& jet_daughter_ptrs = pat_jet.daughterPtrVector();
+    for(const auto & daughter_p : jet_daughter_ptrs){
+      size_t pfparticles_index = add_pfpart(*daughter_p, *uevent.pfparticles);
+      jet.add_pfcand_index(pfparticles_index);
+    }
+  }
 }
 
 
-NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): ptmin(cfg.ptmin), etamax(cfg.etamax) {
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents): ptmin(cfg.ptmin), etamax(cfg.etamax) {
     handle = cfg.ctx.declare_event_output<vector<TopJet>>(cfg.dest_branchname, cfg.dest);
     if(set_jets_member){
         topjets_handle = cfg.ctx.get_handle<vector<TopJet>>("topjets");
@@ -625,16 +676,17 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member): pt
 
     higgstaginfo_src = cfg.higgstaginfo_src;
     src_higgstaginfo_token =  cfg.cc.consumes<std::vector<reco::BoostedDoubleSVTagInfo> >(cfg.higgstaginfo_src);
+    NPFJetwConstituents_ = NPFJetwConstituents;
 }
 
-NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources):
-  NtupleWriterTopJets::NtupleWriterTopJets(cfg, set_jets_member) {
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents):
+  NtupleWriterTopJets::NtupleWriterTopJets(cfg, set_jets_member, NPFJetwConstituents) {
 
     save_lepton_keys_ = true;
 
     for(const auto& muo_src : muon_sources){ auto h_muon = cfg.ctx.get_handle<std::vector<Muon>    >(muo_src); h_muons.push_back(h_muon); }
     for(const auto& ele_src : elec_sources){ auto h_elec = cfg.ctx.get_handle<std::vector<Electron>>(ele_src); h_elecs.push_back(h_elec); }
-
+    NPFJetwConstituents_ = NPFJetwConstituents;
 }
 
 NtupleWriterTopJets::~NtupleWriterTopJets(){}
@@ -747,8 +799,10 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
+	bool storePFcands = false;
+	if(i<NPFJetwConstituents_) storePFcands = true;
         try{
-          uhh2::NtupleWriterJets::fill_jet_info(pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer);
+          uhh2::NtupleWriterJets::fill_jet_info(uevent,pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer,storePFcands);
         }catch(runtime_error &){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " + src.label());
         }
@@ -1070,13 +1124,16 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         /*---------------------*/
 
         // loop over subjets to fill some more subjet info:
+	//	bool storePFcands = false;
+	//	if(i<NPFJetwConstituents_) storePFcands = true;
+
 	if(subjet_src=="daughters"){
 	  for (unsigned int k = 0; k < pat_topjet.numberOfDaughters(); k++) {
             Jet subjet;
             auto patsubjetd = dynamic_cast<const pat::Jet *>(pat_topjet.daughter(k));
             if (patsubjetd) {
 	      try{
-		NtupleWriterJets::fill_jet_info(*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, "");
+		NtupleWriterJets::fill_jet_info(uevent,*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for daughters in NtupleWriterTopJets with src = " + src.label());
 	      }
@@ -1105,7 +1162,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	    auto tpatsubjet = dynamic_cast<const pat::Jet *>(tSubjets.at(sj).get());
             if (tpatsubjet) {
 	      try{
-		NtupleWriterJets::fill_jet_info(*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, "");
+		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " + src.label());
 	      }

@@ -49,6 +49,9 @@ class NtupleWriter : public edm::EDFilter {
       //For clustered reco::GenJet with subjets, which turn out to be reco::Jet with subjets reco::Candidate
       void fill_geninfo_recocand(const reco::Candidate& constituent, GenJet& genjet);
 
+      /* //Add pf candidate to event */
+      /* size_t add_pfpart(const reco::Candidate & pf, std::vector<PFParticle> & pfparts); */
+
       // ----------member data ---------------------------
       TFile *outfile;
       TTree *tr;
@@ -63,6 +66,7 @@ class NtupleWriter : public edm::EDFilter {
       bool doAllGenParticles;
       bool doAllGenParticlesPythia8;
       unsigned doGenJetConstituents;
+      unsigned doPFJetConstituents;
       bool doPV;
       bool doTrigger;
       bool doEcalBadCalib;

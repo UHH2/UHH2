@@ -107,6 +107,7 @@ class Jet : public FlavorParticle {
     m_pileupID = -2;
 
     m_lepton_keys.clear();
+    m_pfcand_indexs.clear();
   }
 
   float jetArea() const{return m_jetArea;}
@@ -192,6 +193,7 @@ class Jet : public FlavorParticle {
   float pileupID() const {return m_pileupID;}
 
   const std::vector<long int>& lepton_keys() const { return m_lepton_keys; }
+  const std::vector<long int>& pfcand_indexs() const { return m_pfcand_indexs; }
 
   void set_jetArea(float x){m_jetArea=x;}
   void set_numberOfDaughters(int x){m_numberOfDaughters=x;} 
@@ -279,6 +281,9 @@ class Jet : public FlavorParticle {
   void set_lepton_keys(const std::vector<long int>& vlk){ m_lepton_keys = vlk; }
   void add_lepton_key (const long int k){ m_lepton_keys.push_back(k); }
 
+  void set_pfcand_indexs(const std::vector<long int>& vlk){ m_pfcand_indexs = vlk; }
+  void add_pfcand_index (const long int k){ m_pfcand_indexs.push_back(k); }
+
  private:
   float m_jetArea;
   int m_numberOfDaughters;
@@ -364,6 +369,6 @@ class Jet : public FlavorParticle {
   JetBTagInfo m_btaginfo;
 
   std::vector<long int> m_lepton_keys;
-
+  std::vector<long int> m_pfcand_indexs;
   Tags tags;
 };
