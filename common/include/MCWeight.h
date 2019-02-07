@@ -257,6 +257,43 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
 };
 
 
+class MCCSVv2ShapeSystematic: public uhh2::AnalysisModule {
+public:
+  explicit MCCSVv2ShapeSystematic(uhh2::Context & ctx,
+                                  const std::string & jets_handle_name="jets",
+                                  const std::string & sysType="central",
+                                  const std::string & measType="iterativefit",
+                                  const std::string & weights_name_postfix="",
+                                  const std::string & xml_calib_name="MCCSVv2ShapeSystematic");
+
+  virtual bool process(uhh2::Event & event) override;
+
+protected:
+
+  std::unique_ptr<BTagCalibrationReader> reader;
+  uhh2::Event::Handle<std::vector<Jet>> h_jets_;
+  std::string sysType_;
+  uhh2::Event::Handle<float> h_weight_csv_central;
+  uhh2::Event::Handle<float> h_weight_csv_jesup;
+  uhh2::Event::Handle<float> h_weight_csv_jesdown;
+  uhh2::Event::Handle<float> h_weight_csv_lfup;
+  uhh2::Event::Handle<float> h_weight_csv_lfdown;
+  uhh2::Event::Handle<float> h_weight_csv_hfup;
+  uhh2::Event::Handle<float> h_weight_csv_hfdown;
+  uhh2::Event::Handle<float> h_weight_csv_hfstats1up;
+  uhh2::Event::Handle<float> h_weight_csv_hfstats1down;
+  uhh2::Event::Handle<float> h_weight_csv_hfstats2up;
+  uhh2::Event::Handle<float> h_weight_csv_hfstats2down;
+  uhh2::Event::Handle<float> h_weight_csv_lfstats1up;
+  uhh2::Event::Handle<float> h_weight_csv_lfstats1down;
+  uhh2::Event::Handle<float> h_weight_csv_lfstats2up;
+  uhh2::Event::Handle<float> h_weight_csv_lfstats2down;
+  uhh2::Event::Handle<float> h_weight_csv_cferr1up;
+  uhh2::Event::Handle<float> h_weight_csv_cferr1down;
+  uhh2::Event::Handle<float> h_weight_csv_cferr2up;
+  uhh2::Event::Handle<float> h_weight_csv_cferr2down;
+};
+
 /** \brief Vary Tau efficiency
  *
  * https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV#Tau_ID_efficiency

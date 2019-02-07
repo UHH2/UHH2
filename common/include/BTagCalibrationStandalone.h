@@ -156,8 +156,11 @@ class BTagCalibrationReader
 {
 public:
   BTagCalibrationReader();
+  // BTagCalibrationReader(BTagEntry::OperatingPoint op,
+  //                       std::string sysType="central");
   BTagCalibrationReader(BTagEntry::OperatingPoint op,
-                        std::string sysType="central");
+                        const std::string & sysType="central",
+                        const std::vector<std::string> & otherSysTypes={});
   ~BTagCalibrationReader();
   void load(const BTagCalibration & c,
             BTagEntry::JetFlavor jf,
@@ -168,8 +171,14 @@ public:
               float pt,
               float discr=0.) const;
 
-  std::pair<float, float> min_max_pt(BTagEntry::JetFlavor jf, 
-                                     float eta, 
+  double eval_auto_bounds(const std::string & sys,
+                          BTagEntry::JetFlavor jf,
+                          float eta,
+                          float pt,
+                          float discr=0.) const;
+
+  std::pair<float, float> min_max_pt(BTagEntry::JetFlavor jf,
+                                     float eta,
                                      float discr=0.) const;
 
 protected:
