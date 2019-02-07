@@ -61,6 +61,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     met_sources_GL = cms.vstring("slimmedMETs", "slimmedMETsPuppi")
 
+
+    if year == "2016v2" and useData:
+        # https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#MET_Recipes
+        met_sources_GL.extend(['slimmedMETsEGClean', 'slimmedMETsMuEGClean', 'slimmedMETsUncorrected'])
     if (year=="2016v2" or year=="2016v3"):
         met_sources_GL.extend(['slMETsCHS'])
     
