@@ -1173,6 +1173,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     ###############################################
     # Rename jet collections to something more user-friendly
     #
+    # This must be the last step before passing to the NtupleWriter
     # Note that using rename_module() is not always the best option: an EDAlias
     # might be more suitable.
     # For something pre-made like slimmedJets, probably need to add a PATJetSelector,
@@ -1185,6 +1186,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # TopJet collections
     rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8PuppiJetsWithPuppiDaughters", "jetsAk8PuppiSubstructure")
     rename_module(process, task, "packedPatJetsAk8CHSJets", "jetsAk8CHSSubstructure", update_userData=False)  # don't update userData as JetSubstructurePacker
+
+    # Dummy module to allow us to rename slimmedJets to something more descriptive
+    process.jetsAk4CHS = cms.EDFilter("PATJetSelector",
+        cut=cms.string(''),
+        cutLoose=cms.string(''),
+        nLoose=cms.uint32(0),
+        src=cms.InputTag("slimmedJets")
+    )
+    task.add(process.jetsAk4CHS)
 
 
     # Higgs tagging commissioning
@@ -1797,7 +1807,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
                                     doJets=cms.bool(True),
                                     jet_sources=cms.vstring(
-                                        "slimmedJets",
+                                        "jetsAk4CHS",
                                         "jetsAk4Puppi",
                                         "jetsAk8CHS",
                                         "jetsAk8Puppi"
