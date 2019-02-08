@@ -331,7 +331,15 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
   }//do taginfos
   if(do_btagging){
     const auto & bdisc = pat_jet.getPairDiscri();
-    bool csv = false, csvmva = false, doubleak8 = false, doubleca15 = false, deepcsv_b = false, deepcsv_bb = false, deepflavour_bb=false, deepflavour_b=false, deepflavour_lepb=false, deepflavour_c=false, deepflavour_uds=false, deepflavour_g=false, decorrmass_deepboosted_bbvsLight=false,decorrmass_deepboosted_ccvsLight=false,decorrmass_deepboosted_TvsQCD=false,decorrmass_deepboosted_ZHccvsQCD=false,decorrmass_deepboosted_WvsQCD=false,decorrmass_deepboosted_ZHbbvsQCD=false,deepboosted_probHbb=false,deepboosted_probQCDbb=false,deepboosted_probQCDc=false,deepboosted_probTbqq=false,deepboosted_probTbcq=false,deepboosted_probTbq=false,deepboosted_probQCDothers=false,deepboosted_probQCDb=false,deepboosted_probTbc=false,deepboosted_probWqq=false,deepboosted_probQCDcc=false,deepboosted_probHcc=false,deepboosted_probWcq=false,deepboosted_probZcc=false,deepboosted_probZqq=false,deepboosted_probHqqqq=false,deepboosted_probZbb=false,deepdouble_H=false,deepdouble_QCD=false,decorrmass_deepboosted_probHbb=false,decorrmass_deepboosted_probQCDbb=false,decorrmass_deepboosted_probQCDc=false,decorrmass_deepboosted_probTbqq=false,decorrmass_deepboosted_probTbcq=false,decorrmass_deepboosted_probTbq=false,decorrmass_deepboosted_probQCDothers=false,decorrmass_deepboosted_probQCDb=false,decorrmass_deepboosted_probTbc=false,decorrmass_deepboosted_probWqq=false,decorrmass_deepboosted_probQCDcc=false,decorrmass_deepboosted_probHcc=false,decorrmass_deepboosted_probWcq=false,decorrmass_deepboosted_probZcc=false,decorrmass_deepboosted_probZqq=false,decorrmass_deepboosted_probHqqqq=false,decorrmass_deepboosted_probZbb=false;
+    bool csv = false, csvmva = false, doubleak8 = false, doubleca15 = false, deepcsv_b = false, deepcsv_bb = false, deepflavour_bb=false, deepflavour_b=false, deepflavour_lepb=false, deepflavour_c=false, deepflavour_uds=false, deepflavour_g=false, 
+decorrmass_deepboosted_bbvsLight=false,decorrmass_deepboosted_ccvsLight=false,decorrmass_deepboosted_TvsQCD=false,decorrmass_deepboosted_ZHccvsQCD=false,decorrmass_deepboosted_WvsQCD=false,decorrmass_deepboosted_ZHbbvsQCD=false,
+decorrmass_deepboosted_ZvsQCD=false,decorrmass_deepboosted_ZbbvsQCD=false,decorrmass_deepboosted_HbbvsQCD=false,decorrmass_deepboosted_H4qvsQCD=false,
+deepboosted_bbvsLight=false,deepboosted_ccvsLight=false,deepboosted_TvsQCD=false,deepboosted_ZHccvsQCD=false,deepboosted_WvsQCD=false,deepboosted_ZHbbvsQCD=false,
+deepboosted_ZvsQCD=false,deepboosted_ZbbvsQCD=false,deepboosted_HbbvsQCD=false,deepboosted_H4qvsQCD=false,
+deepboosted_probHbb=false,deepboosted_probQCDbb=false,deepboosted_probQCDc=false,deepboosted_probTbqq=false,deepboosted_probTbcq=false,deepboosted_probTbq=false,deepboosted_probQCDothers=false,deepboosted_probQCDb=false,deepboosted_probTbc=false,deepboosted_probWqq=false,deepboosted_probQCDcc=false,deepboosted_probHcc=false,deepboosted_probWcq=false,deepboosted_probZcc=false,deepboosted_probZqq=false,deepboosted_probHqqqq=false,deepboosted_probZbb=false,
+deepdouble_H=false,deepdouble_QCD=false, deepdouble_cl_H=false,deepdouble_cl_QCD=false, deepdouble_cb_H=false,deepdouble_cb_QCD=false,
+massinddeepdouble_H=false,massinddeepdouble_QCD=false, massinddeepdouble_cl_H=false,massinddeepdouble_cl_QCD=false, massinddeepdouble_cb_H=false,massinddeepdouble_cb_QCD=false,
+decorrmass_deepboosted_probHbb=false,decorrmass_deepboosted_probQCDbb=false,decorrmass_deepboosted_probQCDc=false,decorrmass_deepboosted_probTbqq=false,decorrmass_deepboosted_probTbcq=false,decorrmass_deepboosted_probTbq=false,decorrmass_deepboosted_probQCDothers=false,decorrmass_deepboosted_probQCDb=false,decorrmass_deepboosted_probTbc=false,decorrmass_deepboosted_probWqq=false,decorrmass_deepboosted_probQCDcc=false,decorrmass_deepboosted_probHcc=false,decorrmass_deepboosted_probWcq=false,decorrmass_deepboosted_probZcc=false,decorrmass_deepboosted_probZqq=false,decorrmass_deepboosted_probHqqqq=false,decorrmass_deepboosted_probZbb=false;
     for(const auto & name_value : bdisc){
       const auto & name = name_value.first;
       const auto & value = name_value.second;
@@ -407,12 +415,28 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
         jet.set_btag_MassDecorrelatedDeepBoosted_ZHbbvsQCD(value);
         decorrmass_deepboosted_ZHbbvsQCD=true;
       }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZvsQCD"){
+        jet.set_btag_MassDecorrelatedDeepBoosted_ZvsQCD(value);
+        decorrmass_deepboosted_ZvsQCD=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZbbvsQCD"){
+        jet.set_btag_MassDecorrelatedDeepBoosted_ZbbvsQCD(value);
+        decorrmass_deepboosted_ZbbvsQCD=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:HbbvsQCD"){
+        jet.set_btag_MassDecorrelatedDeepBoosted_HbbvsQCD(value);
+        decorrmass_deepboosted_HbbvsQCD=true;
+      }
+      else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:H4qvsQCD"){
+        jet.set_btag_MassDecorrelatedDeepBoosted_H4qvsQCD(value);
+        decorrmass_deepboosted_H4qvsQCD=true;
+      }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probHbb"){
         jet.set_btag_MassDecorrelatedDeepBoosted_probHbb(value);
         decorrmass_deepboosted_probHbb=true;
       }
-      else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probQCD"){
-        jet.set_btag_MassDecorrelatedDeepBoosted_probQCD(value);
+      else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probQCDc"){
+        jet.set_btag_MassDecorrelatedDeepBoosted_probQCDc(value);
         decorrmass_deepboosted_probQCDc=true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedJetTags:probQCDbb"){
@@ -479,20 +503,100 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
         jet.set_btag_MassDecorrelatedDeepBoosted_probZbb(value);
         decorrmass_deepboosted_probZbb=true;
       }
-      else if(name=="pfDeepDoubleBJetTags:probH"){
-        jet.set_btag_DeepDoubleB_probH(value);
+      else if(name=="pfDeepDoubleBvLJetTags:probHbb"){
+        jet.set_btag_DeepDoubleBvLJet_probHbb(value);
         deepdouble_H = true;
       }
-      else if(name=="pfDeepDoubleBJetTags:probQCD"){
-        jet.set_btag_DeepDoubleB_probQCD(value);
+      else if(name=="pfDeepDoubleBvLJetTags:probQCD"){
+        jet.set_btag_DeepDoubleBvLJet_probQCD(value);
         deepdouble_QCD = true;
+      }
+      else if(name=="pfDeepDoubleCvBJetTags:probHbb"){
+        jet.set_btag_DeepDoubleCvBJet_probHbb(value);
+        deepdouble_cb_H = true;
+      }
+      else if(name=="pfDeepDoubleCvBJetTags:probHcc"){
+        jet.set_btag_DeepDoubleCvBJet_probHcc(value);
+        deepdouble_cb_QCD = true;
+      }
+      else if(name=="pfDeepDoubleCvLJetTags:probHcc"){
+        jet.set_btag_DeepDoubleCvLJet_probHcc(value);
+        deepdouble_cl_H = true;
+      }
+      else if(name=="pfDeepDoubleCvLJetTags:probQCD"){
+        jet.set_btag_DeepDoubleCvLJet_probQCD(value);
+        deepdouble_cl_QCD = true;
+      }
+      else if(name=="pfMassIndependentDeepDoubleBvLJetTags:probHbb"){
+        jet.set_btag_MassIndependentDeepDoubleBvLJet_probHbb(value);
+        massinddeepdouble_H = true;
+      }
+      else if(name=="pfMassIndependentDeepDoubleBvLJetTags:probQCD"){
+        jet.set_btag_MassIndependentDeepDoubleBvLJet_probQCD(value);
+        massinddeepdouble_QCD = true;
+      }
+      else if(name=="pfMassIndependentDeepDoubleCvBJetTags:probHbb"){
+        jet.set_btag_MassIndependentDeepDoubleCvBJet_probHbb(value);
+        massinddeepdouble_cb_H = true;
+      }
+      else if(name=="pfMassIndependentDeepDoubleCvBJetTags:probHcc"){
+        jet.set_btag_MassIndependentDeepDoubleCvBJet_probHcc(value);
+        massinddeepdouble_cb_QCD = true;
+      }
+      else if(name=="pfMassIndependentDeepDoubleCvLJetTags:probHcc"){
+        jet.set_btag_MassIndependentDeepDoubleCvLJet_probHcc(value);
+        massinddeepdouble_cl_H = true;
+      }
+      else if(name=="pfMassIndependentDeepDoubleCvLJetTags:probQCD"){
+        jet.set_btag_MassIndependentDeepDoubleCvLJet_probQCD(value);
+        massinddeepdouble_cl_QCD = true;
+      }
+      else if(name == "pfDeepBoostedDiscriminatorsJetTags:bbvsLight"){
+        jet.set_btag_DeepBoosted_bbvsLight(value);
+        deepboosted_bbvsLight=true;
+      }
+      else if(name == "pfDeepBoostedDiscriminatorsJetTags:ccvsLight"){
+        jet.set_btag_DeepBoosted_ccvsLight(value);
+        deepboosted_ccvsLight=true;
+      }
+      else if(name == "pfDeepBoostedDiscriminatorsJetTags:TvsQCD"){
+        jet.set_btag_DeepBoosted_TvsQCD(value);
+        deepboosted_TvsQCD=true;
+      }
+      else if(name == "pfDeepBoostedDiscriminatorsJetTags:ZHccvsQCD"){
+        jet.set_btag_DeepBoosted_ZHccvsQCD(value);
+        deepboosted_ZHccvsQCD=true;
+      }
+      else if(name == "pfDeepBoostedDiscriminatorsJetTags:WvsQCD"){
+        jet.set_btag_DeepBoosted_WvsQCD(value);
+        deepboosted_WvsQCD=true;
+      }
+      else if(name == "pfDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD"){
+        jet.set_btag_DeepBoosted_ZHbbvsQCD(value);
+        deepboosted_ZHbbvsQCD=true;
+      }
+      else if(name == "pfDeepBoostedDiscriminatorsJetTags:ZvsQCD"){
+        jet.set_btag_DeepBoosted_ZvsQCD(value);
+        deepboosted_ZvsQCD=true;
+      }
+      else if(name == "pfDeepBoostedDiscriminatorsJetTags:ZbbvsQCD"){
+        jet.set_btag_DeepBoosted_ZbbvsQCD(value);
+        deepboosted_ZbbvsQCD=true;
+      }
+      else if(name == "pfDeepBoostedDiscriminatorsJetTags:HbbvsQCD"){
+        jet.set_btag_DeepBoosted_HbbvsQCD(value);
+        deepboosted_HbbvsQCD=true;
+      }
+      else if(name == "pfDeepBoostedDiscriminatorsJetTags:H4qvsQCD"){
+        jet.set_btag_DeepBoosted_H4qvsQCD(value);
+        deepboosted_H4qvsQCD=true;
       }
       else if(name == "pfDeepBoostedJetTags:probHbb"){
         jet.set_btag_DeepBoosted_probHbb(value);
         deepboosted_probHbb=true;
       }
-      else if(name == "pfDeepBoostedJetTags:probQCD"){
-        jet.set_btag_DeepBoosted_probQCD(value);
+      else if(name == "pfDeepBoostedJetTags:probQCDc"){
+        jet.set_btag_DeepBoosted_probQCDc(value);
         deepboosted_probQCDc=true;
       }
       else if(name == "pfDeepBoostedJetTags:probQCDbb"){
@@ -562,20 +666,26 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
 
     }
 
-
     if(!csv || !csvmva || !doubleak8 || !doubleca15 || !deepcsv_b || !deepcsv_bb
        || !deepflavour_bb || !deepflavour_b || !deepflavour_lepb
        || !deepflavour_uds || !deepflavour_c || !deepflavour_g
        || !decorrmass_deepboosted_bbvsLight || !decorrmass_deepboosted_ccvsLight
        || !decorrmass_deepboosted_TvsQCD || !decorrmass_deepboosted_ZHccvsQCD
        || !decorrmass_deepboosted_WvsQCD || !decorrmass_deepboosted_ZHbbvsQCD
+       || !decorrmass_deepboosted_ZvsQCD || !decorrmass_deepboosted_ZbbvsQCD || !decorrmass_deepboosted_HbbvsQCD || !decorrmass_deepboosted_H4qvsQCD
+       || !deepboosted_bbvsLight || !deepboosted_ccvsLight
+       || !deepboosted_TvsQCD || !deepboosted_ZHccvsQCD
+       || !deepboosted_WvsQCD || !deepboosted_ZHbbvsQCD
+       || !deepboosted_ZvsQCD || !deepboosted_ZbbvsQCD || !deepboosted_HbbvsQCD || !deepboosted_H4qvsQCD
        || !deepboosted_probHbb || !deepboosted_probQCDbb || !deepboosted_probQCDc
        || !deepboosted_probTbqq || !deepboosted_probTbcq || !deepboosted_probTbq
        || !deepboosted_probQCDothers || !deepboosted_probQCDb || !deepboosted_probTbc
        || !deepboosted_probWqq || !deepboosted_probQCDcc || !deepboosted_probHcc
        || !deepboosted_probWcq || !deepboosted_probZcc || !deepboosted_probZqq
-       || !deepboosted_probHqqqq || !deepboosted_probZbb || !deepdouble_H
-       || !deepdouble_QCD || !decorrmass_deepboosted_probHbb || !decorrmass_deepboosted_probQCDbb
+       || !deepboosted_probHqqqq || !deepboosted_probZbb 
+       || !deepdouble_H || !deepdouble_QCD || !deepdouble_cb_H || !deepdouble_cl_H || !deepdouble_cl_QCD  || !deepdouble_cb_QCD
+       || !massinddeepdouble_QCD || !massinddeepdouble_H || !massinddeepdouble_cb_H || !massinddeepdouble_cl_H || !massinddeepdouble_cl_QCD  || !massinddeepdouble_cb_QCD
+       || !decorrmass_deepboosted_probHbb || !decorrmass_deepboosted_probQCDbb
        || !decorrmass_deepboosted_probQCDc || !decorrmass_deepboosted_probTbqq
        || !decorrmass_deepboosted_probTbcq || !decorrmass_deepboosted_probTbq
        || !decorrmass_deepboosted_probQCDothers || !decorrmass_deepboosted_probQCDb
