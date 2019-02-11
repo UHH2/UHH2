@@ -551,30 +551,30 @@ decorrmass_deepboosted_probHbb=false,decorrmass_deepboosted_probQCDbb=false,deco
         jet.set_btag_MassIndependentDeepDoubleCvLJet_probQCD(value);
         massinddeepdouble_cl_QCD = true;
       }
-      else if(name == "pfDeepBoostedDiscriminatorsJetTags:bbvsLight"){
-        jet.set_btag_DeepBoosted_bbvsLight(value);
-        deepboosted_bbvsLight=true;
-      }
-      else if(name == "pfDeepBoostedDiscriminatorsJetTags:ccvsLight"){
-        jet.set_btag_DeepBoosted_ccvsLight(value);
-        deepboosted_ccvsLight=true;
-      }
+      // else if(name == "pfDeepBoostedDiscriminatorsJetTags:bbvsLight"){
+      //   jet.set_btag_DeepBoosted_bbvsLight(value);
+      //   deepboosted_bbvsLight=true;
+      // }
+      // else if(name == "pfDeepBoostedDiscriminatorsJetTags:ccvsLight"){
+      //   jet.set_btag_DeepBoosted_ccvsLight(value);
+      //   deepboosted_ccvsLight=true;
+      // }
       else if(name == "pfDeepBoostedDiscriminatorsJetTags:TvsQCD"){
         jet.set_btag_DeepBoosted_TvsQCD(value);
         deepboosted_TvsQCD=true;
       }
-      else if(name == "pfDeepBoostedDiscriminatorsJetTags:ZHccvsQCD"){
-        jet.set_btag_DeepBoosted_ZHccvsQCD(value);
-        deepboosted_ZHccvsQCD=true;
-      }
+      // else if(name == "pfDeepBoostedDiscriminatorsJetTags:ZHccvsQCD"){
+      //   jet.set_btag_DeepBoosted_ZHccvsQCD(value);
+      //   deepboosted_ZHccvsQCD=true;
+      // }
       else if(name == "pfDeepBoostedDiscriminatorsJetTags:WvsQCD"){
         jet.set_btag_DeepBoosted_WvsQCD(value);
         deepboosted_WvsQCD=true;
       }
-      else if(name == "pfDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD"){
-        jet.set_btag_DeepBoosted_ZHbbvsQCD(value);
-        deepboosted_ZHbbvsQCD=true;
-      }
+      // else if(name == "pfDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD"){
+      //   jet.set_btag_DeepBoosted_ZHbbvsQCD(value);
+      //   deepboosted_ZHbbvsQCD=true;
+      // }
       else if(name == "pfDeepBoostedDiscriminatorsJetTags:ZvsQCD"){
         jet.set_btag_DeepBoosted_ZvsQCD(value);
         deepboosted_ZvsQCD=true;

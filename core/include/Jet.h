@@ -100,12 +100,8 @@ class Jet : public FlavorParticle {
     m_btag_MassIndependentDeepDoubleCvLJet_probHcc=-2;
     m_btag_MassIndependentDeepDoubleCvLJet_probQCD=-2;
 
-    m_btag_DeepBoosted_bbvsLight=-2;
-    m_btag_DeepBoosted_ccvsLight=-2;
     m_btag_DeepBoosted_TvsQCD=-2;
-    m_btag_DeepBoosted_ZHccvsQCD=-2;
     m_btag_DeepBoosted_WvsQCD=-2;
-    m_btag_DeepBoosted_ZHbbvsQCD=-2;
     m_btag_DeepBoosted_ZvsQCD=-2;
     m_btag_DeepBoosted_ZbbvsQCD=-2;
     m_btag_DeepBoosted_HbbvsQCD=-2;
@@ -214,12 +210,8 @@ class Jet : public FlavorParticle {
   float btag_MassIndependentDeepDoubleCvLJet_probQCD() const{return m_btag_MassIndependentDeepDoubleCvLJet_probQCD;}
 
 
-  float btag_DeepBoosted_bbvsLight() const{return m_btag_DeepBoosted_bbvsLight;}
-  float btag_DeepBoosted_ccvsLight() const{return m_btag_DeepBoosted_ccvsLight;}
   float btag_DeepBoosted_TvsQCD() const{return m_btag_DeepBoosted_TvsQCD;}
-  float btag_DeepBoosted_ZHccvsQCD() const{return m_btag_DeepBoosted_ZHccvsQCD;}
   float btag_DeepBoosted_WvsQCD() const{return m_btag_DeepBoosted_WvsQCD;}
-  float btag_DeepBoosted_ZHbbvsQCD() const{return m_btag_DeepBoosted_ZHbbvsQCD;}
   float btag_DeepBoosted_ZvsQCD() const{return m_btag_DeepBoosted_ZvsQCD;}
   float btag_DeepBoosted_ZbbvsQCD() const{return m_btag_DeepBoosted_ZbbvsQCD;}
   float btag_DeepBoosted_HbbvsQCD() const{return m_btag_DeepBoosted_HbbvsQCD;}
@@ -330,12 +322,8 @@ class Jet : public FlavorParticle {
   void set_btag_MassIndependentDeepDoubleCvLJet_probHcc(float x) {  m_btag_MassIndependentDeepDoubleCvLJet_probHcc=x;}
   void set_btag_MassIndependentDeepDoubleCvLJet_probQCD(float x) {  m_btag_MassIndependentDeepDoubleCvLJet_probQCD=x;}
 
-  void set_btag_DeepBoosted_bbvsLight(float x){m_btag_DeepBoosted_bbvsLight=x;}
-  void set_btag_DeepBoosted_ccvsLight(float x){m_btag_DeepBoosted_ccvsLight=x;}
   void set_btag_DeepBoosted_TvsQCD(float x){m_btag_DeepBoosted_TvsQCD=x;}
-  void set_btag_DeepBoosted_ZHccvsQCD(float x){m_btag_DeepBoosted_ZHccvsQCD=x;}
   void set_btag_DeepBoosted_WvsQCD(float x){m_btag_DeepBoosted_WvsQCD=x;}
-  void set_btag_DeepBoosted_ZHbbvsQCD(float x){m_btag_DeepBoosted_ZHbbvsQCD=x;}
   void set_btag_DeepBoosted_ZvsQCD(float x) {m_btag_DeepBoosted_ZvsQCD=x;}
   void set_btag_DeepBoosted_ZbbvsQCD(float x) {m_btag_DeepBoosted_ZbbvsQCD=x;}
   void set_btag_DeepBoosted_HbbvsQCD(float x) {m_btag_DeepBoosted_HbbvsQCD=x;}
@@ -456,12 +444,8 @@ class Jet : public FlavorParticle {
   float m_btag_MassIndependentDeepDoubleCvLJet_probHcc;
   float m_btag_MassIndependentDeepDoubleCvLJet_probQCD;
 
-  float m_btag_DeepBoosted_bbvsLight;
-  float m_btag_DeepBoosted_ccvsLight;
   float m_btag_DeepBoosted_TvsQCD;
-  float m_btag_DeepBoosted_ZHccvsQCD;
   float m_btag_DeepBoosted_WvsQCD;
-  float m_btag_DeepBoosted_ZHbbvsQCD;
   float m_btag_DeepBoosted_probHbb;
   float m_btag_DeepBoosted_probQCDc;
   float m_btag_DeepBoosted_probQCDbb;
