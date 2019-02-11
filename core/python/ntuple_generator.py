@@ -988,6 +988,20 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHccvsQCD',
         'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:WvsQCD',
         'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:H4qvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:HbbvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZbbvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZvsQCD',
+#        'pfDeepBoostedDiscriminatorsJetTags:bbvsLight',
+ #       'pfDeepBoostedDiscriminatorsJetTags:ccvsLight',
+        'pfDeepBoostedDiscriminatorsJetTags:TvsQCD',
+#        'pfDeepBoostedDiscriminatorsJetTags:ZHccvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:WvsQCD',
+#        'pfDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:H4qvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:HbbvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:ZbbvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:ZvsQCD',
 
         'pfMassDecorrelatedDeepBoostedJetTags:probHbb',
         'pfMassDecorrelatedDeepBoostedJetTags:probQCDc',
@@ -1006,10 +1020,18 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfMassDecorrelatedDeepBoostedJetTags:probZqq',
         'pfMassDecorrelatedDeepBoostedJetTags:probHqqqq',
         'pfMassDecorrelatedDeepBoostedJetTags:probZbb',
-
-        'pfDeepDoubleBJetTags:probH',
-        'pfDeepDoubleBJetTags:probQ',
-
+        'pfDeepDoubleBvLJetTags:probHbb',
+        'pfDeepDoubleBvLJetTags:probQCD',
+        'pfDeepDoubleCvBJetTags:probHbb',
+        'pfDeepDoubleCvBJetTags:probHcc',
+        'pfDeepDoubleCvLJetTags:probHcc',
+        'pfDeepDoubleCvLJetTags:probQCD',
+        'pfMassIndependentDeepDoubleBvLJetTags:probHbb',
+        'pfMassIndependentDeepDoubleBvLJetTags:probQCD',
+        'pfMassIndependentDeepDoubleCvBJetTags:probHbb',
+        'pfMassIndependentDeepDoubleCvBJetTags:probHcc',
+        'pfMassIndependentDeepDoubleCvLJetTags:probHcc',
+        'pfMassIndependentDeepDoubleCvLJetTags:probQCD',
         'pfDeepBoostedJetTags:probHbb',
         'pfDeepBoostedJetTags:probQCDc',
         'pfDeepBoostedJetTags:probQCDbb',
@@ -1059,10 +1081,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
         if is_ak8 and is_puppi:
             correction_tag = "AK8PFPuppi"
+        elif is_ak8 and not is_puppi:
+            correction_tag = "AK8PFchs"
         elif not is_ak8 and is_puppi:
             correction_tag = "AK4PFPuppi"
         elif not is_ak8 and not is_puppi:
             correction_tag = "AK4PFchs"
+
         else:
             raise RuntimeError("No idea which jet correction tag you need here")
 
