@@ -1558,6 +1558,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         task.add(getattr(process, m.replace('Value', 'Deposit')))
 
 
+
     # electron ID from VID
     switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
 
@@ -1577,6 +1578,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     for mod in elecID_mod_ls:
         setupAllVIDIdsInModule(process, mod, setupVIDElectronSelection)
+
+
 
     from RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff import isoInputs as ele_iso_16
     from RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff import isoInputs as ele_iso_17
@@ -1643,11 +1646,57 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                                   ),
 
                                                   vmaps_double=cms.vstring(el_isovals),
-
                                                   effAreas_file=cms.FileInPath(iso_input_era_dict[year].isoEffAreas)
                                                   )
     task.add(process.egmGsfElectronIDs)
     task.add(process.slimmedElectronsUSER)
+
+
+    # photon ID from VID
+    switchOnVIDPhotonIdProducer(process, DataFormat.MiniAOD)
+    photonID_mod_ls = [
+        # For 2016
+        'RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Spring16_V2p2_cff',
+        'RecoEgamma.PhotonIdentification.Identification.mvaPhotonID_Spring16_nonTrig_V1_cff',
+        # For 2017 (& 2018 for now)
+        'RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V2_cff',
+        'RecoEgamma.PhotonIdentification.Identification.mvaPhotonID_Fall17_94X_V2_cff',
+    ]
+
+    for mod in photonID_mod_ls:
+        setupAllVIDIdsInModule(process, mod, setupVIDPhotonSelection)
+    process.slimmedPhotonsUSER = cms.EDProducer('PATPhotonUserData',
+                                                  src=cms.InputTag(
+                                                      'slimmedPhotons'),
+
+                                                  vmaps_bool=cms.PSet(
+                                                      # 2016
+                                                      cutBasedPhotonID_Spring16_V2p2_loose=cms.InputTag(
+                                                          'egmPhotonIDs:cutBasedPhotonID-Spring16-V2p2-loose'),
+                                                      cutBasedPhotonID_Spring16_V2p2_medium=cms.InputTag(
+                                                          'egmPhotonIDs:cutBasedPhotonID-Spring16-V2p2-medium'),
+                                                      cutBasedPhotonID_Spring16_V2p2_tight=cms.InputTag(
+                                                          'egmPhotonIDs:cutBasedPhotonID-Spring16-V2p2-tight'),
+                                                      mvaPhoID_Spring16_nonTrig_V1_wp90=cms.InputTag(
+                                                          'egmPhotonIDs:mvaPhoID-Spring16-nonTrig-V1-wp90'),
+                                                      mvaPhoID_Spring16_nonTrig_V1_wp80=cms.InputTag(
+                                                          'egmPhotonIDs:mvaPhoID-Spring16-nonTrig-V1-wp80'),
+
+                                                      # 2017 & 2018
+                                                      cutBasedPhotonID_Fall17_94X_V2_loose=cms.InputTag(
+                                                          'egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V2-loose'),
+                                                      cutBasedPhotonID_Fall17_94X_V2_medium=cms.InputTag(
+                                                          'egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V2-medium'),
+                                                      cutBasedPhotonID_Fall17_94X_V2_tight=cms.InputTag(
+                                                          'egmPhotonIDs:cutBasedPhotonID-Fall17-94X-V2-tight'),
+                                                      mvaPhoID_Fall17_iso_V2_wp90=cms.InputTag(
+                                                          'egmPhotonIDs:mvaPhoID-RunIIFall17-v2-wp90'),
+                                                      mvaPhoID_Fall17_iso_V2_wp80=cms.InputTag(
+                                                          'egmPhotonIDs:mvaPhoID-RunIIFall17-v2-wp80'),
+                                                      ),
+                                                )
+    task.add(process.egmPhotonIDs)
+    task.add(process.slimmedPhotonsUSER)
 
     ###############################################
     # TRIGGER, MET FILTERS
@@ -1827,8 +1876,26 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     tau_ptmin=cms.double(0.0),
                                     tau_etamax=cms.double(999.0),
 
-                                    doPhotons=cms.bool(False),
-                                    #photon_sources = cms.vstring("selectedPatPhotons"),
+                                    doPhotons=cms.bool(True),
+                                    photon_sources = cms.InputTag("slimmedPhotonsUSER"),
+                                    photon_IDtags=cms.vstring(
+                                        # keys to be stored in UHH2 Electron class via the tag mechanism:
+                                        # each string should correspond to a variable saved
+                                        # via the "userInt" method in the pat::Electron collection used 'photon_source'
+                                        # [the configuration of the pat::Electron::userInt variables should be done in PATElectronUserData]
+                                        # 2016
+                                        'cutBasedPhotonID_Spring16_V2p2_loose',
+                                        'cutBasedPhotonID_Spring16_V2p2_medium',
+                                        'cutBasedPhotonID_Spring16_V2p2_tight',
+                                        'mvaPhoID_Spring16_nonTrig_V1_wp90',
+                                        'mvaPhoID_Spring16_nonTrig_V1_wp80',
+                                        # 2017 & 2018
+                                        'cutBasedPhotonID_Fall17_94X_V2_loose',
+                                        'cutBasedPhotonID_Fall17_94X_V2_medium',
+                                        'cutBasedPhotonID_Fall17_94X_V2_tight',
+                                        'mvaPhoID_Fall17_iso_V2_wp80',
+                                        'mvaPhoID_Fall17_iso_V2_wp90',
+                                    ),
 
                                     doJets=cms.bool(True),
                                     jet_sources=cms.vstring(
@@ -2159,10 +2226,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
     process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
-    # Note: we run in unscheduled mode, i.e. all modules are run as required;
+    # Note: we run in uncsheduled mode, i.e. all modules are run as required;
     # just make sure that the electron IDs run before MyNtuple
     process.p = cms.Path(
         process.egmGsfElectronIDSequence *
+        process.egmPhotonIDSequence * 
         process.MyNtuple
 #        * process.content 
     )

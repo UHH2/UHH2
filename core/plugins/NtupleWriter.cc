@@ -269,6 +269,15 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         //}
 
 }
+  if(doPhotons){
+      using uhh2::NtupleWriterPhotons;
+      auto photon_source = iConfig.getParameter<edm::InputTag>("photon_sources");
+      NtupleWriterPhotons::Config cfg(*context, consumesCollector(), photon_source, photon_source.label());
+      cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("photon_IDtags");
+      assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
+      cfg.pv_src = pv_sources[0];
+      writer_modules.emplace_back(new NtupleWriterPhotons(cfg, true, false));
+  }
   if(doMuons){
       using uhh2::NtupleWriterMuons;
       auto muon_sources = iConfig.getParameter<std::vector<std::string> >("muon_sources");
@@ -501,24 +510,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       gentopjet_tau3_tokens.push_back(consumes<edm::ValueMap<float> >(gentopjet_tau3[j]));
     }
   }
-
- 
-  if(doPhotons){
-    auto photon_sources = iConfig.getParameter<std::vector<std::string> >("photon_sources");
-    /*    auto ph_source = iConfig.getParameter<std::vector<std::string> >("photon_sources");
-    std::vector<std::string> photon_sources;
-    photon_sources.push_back(ph_source); */
-
-    phs.resize(photon_sources.size());
-    for(size_t j=0; j< photon_sources.size(); ++j){
-      //      photon_tokens.push_back(consumes<vector<pat::PhotonCollection>>(photon_sources[j]));
-      photon_tokens.push_back(consumes<vector<pat::Photon>>(photon_sources[j]));
-      branch(tr, photon_sources[j].c_str(), "std::vector<Photon>", &phs[j]);
-    }
-    if(!photon_sources.empty()){
-        event->photons = &phs[0];
-    }
-  }
+  
   if(doMET){
      auto met_sources = iConfig.getParameter<std::vector<std::string> >("met_sources");
      met.resize(met_sources.size());
@@ -1041,33 +1033,6 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    print_times(timer, "gentopjets");
 
 
-   // ------------- photons -------------
-   if(doPhotons){
-     for(size_t j=0; j< photon_tokens.size(); ++j){
-       phs[j].clear();
-       edm::Handle< std::vector<pat::Photon> > photon_handle;
-       iEvent.getByToken(photon_tokens[j], photon_handle);
-       const std::vector<pat::Photon>& pat_photons = *photon_handle;
-       for (unsigned int i = 0; i < pat_photons.size(); ++i) {
-         const pat::Photon & pat_photon = pat_photons[i];
-         Photon ph;
-         ph.set_charge(0);
-         ph.set_pt( pat_photon.pt());
-         ph.set_eta( pat_photon.eta());
-         ph.set_phi( pat_photon.phi());
-         ph.set_energy( pat_photon.energy());
-         ph.set_vertex_x(pat_photon.vertex().x());
-         ph.set_vertex_y(pat_photon.vertex().y());
-         ph.set_vertex_z(pat_photon.vertex().z());
-         ph.set_supercluster_eta(pat_photon.superCluster()->eta());
-         ph.set_supercluster_phi(pat_photon.superCluster()->phi());
-         ph.set_trackIso(pat_photon.trackIso());
-         phs[j].push_back(ph);
-       }
-     }
-   }
-
-   print_times(timer, "photons");
 
    // ------------- MET -------------
    if(doMET){

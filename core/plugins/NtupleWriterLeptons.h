@@ -33,6 +33,37 @@ private:
     bool save_source_candidates_;
 };
 
+class NtupleWriterPhotons: public NtupleWriterModule {
+public:
+    
+    struct Config: public NtupleWriterModule::Config {     
+      edm::InputTag pv_src;
+      std::vector<std::string> id_keys;
+
+      // inherit constructor does not work yet :-(
+      Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_,
+             const std::string & dest_, const std::string & dest_branchname_ = ""):
+        NtupleWriterModule::Config(ctx_, std::move(cc_), src_, dest_, dest_branchname_) {}
+    };
+
+    explicit NtupleWriterPhotons(Config & cfg, bool set_electrons_member, const bool save_source_cands=0);
+
+    virtual void process(const edm::Event &, uhh2::Event &, const edm::EventSetup& iSetup);
+
+    virtual ~NtupleWriterPhotons();
+private:
+    edm::EDGetToken src_token;
+    edm::EDGetToken pv_token;
+    std::vector<std::string> IDtag_keys;
+    Event::Handle<std::vector<Photon>> handle; // main handle to write output to
+    boost::optional<Event::Handle<std::vector<Photon>>> photons_handle; // handle of name "electrons" in case set_electrons_member is true
+
+    bool save_source_candidates_;
+};
+
+
+
+
 class NtupleWriterMuons: public NtupleWriterModule {
 public:
     
