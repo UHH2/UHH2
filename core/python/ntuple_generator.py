@@ -74,13 +74,18 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfJetProbabilityBJetTags',
         'pfJetBProbabilityBJetTags',
         'pfSimpleSecondaryVertexHighEffBJetTags',
-        #'pfSimpleSecondaryVertexHighPurBJetTags',
         'pfCombinedInclusiveSecondaryVertexV2BJetTags',
         'pfCombinedMVAV2BJetTags',
         'pfDeepCSVJetTags:probb',
         'pfDeepCSVJetTags:probbb',
         'pfBoostedDoubleSecondaryVertexAK8BJetTags',
         'pfBoostedDoubleSecondaryVertexCA15BJetTags',
+        # 'pfDeepFlavourJetTags:probb',
+        # 'pfDeepFlavourJetTags:probbb',
+        # 'pfDeepFlavourJetTags:problepb',
+        # 'pfDeepFlavourJetTags:probc',
+        # 'pfDeepFlavourJetTags:probuds',
+        # 'pfDeepFlavourJetTags:probg',
     ]
 
 
@@ -992,12 +997,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:HbbvsQCD',
         'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZbbvsQCD',
         'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZvsQCD',
-#        'pfDeepBoostedDiscriminatorsJetTags:bbvsLight',
- #       'pfDeepBoostedDiscriminatorsJetTags:ccvsLight',
         'pfDeepBoostedDiscriminatorsJetTags:TvsQCD',
-#        'pfDeepBoostedDiscriminatorsJetTags:ZHccvsQCD',
         'pfDeepBoostedDiscriminatorsJetTags:WvsQCD',
-#        'pfDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD',
         'pfDeepBoostedDiscriminatorsJetTags:H4qvsQCD',
         'pfDeepBoostedDiscriminatorsJetTags:HbbvsQCD',
         'pfDeepBoostedDiscriminatorsJetTags:ZbbvsQCD',
@@ -1055,7 +1056,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # This MUST be run *After* JetSubstructurePacker, so that the subjets are already there,
     # otherwise the DeepBoostedJetTagInfoProducer will fail
     # Also add in PUPPI multiplicities while we're at it.
-    for name in ['slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets']:
+#    for name in ['slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets']:
+    for name in ['slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
         labelName = cap(name)
         is_ak8 = "ak8" in name.lower()
         is_puppi = "puppi" in name.lower()
@@ -1098,7 +1100,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
             jetcorr_list.append("L2L3Residual")
 
         discriminators = ak4btagDiscriminators[:]
-        if is_ak8 and is_puppi and is_topjet:
+#        if is_ak8 and is_puppi and is_topjet:
+        if is_ak8 and is_topjet:
             discriminators.extend(ak8btagDiscriminators)
 
         updateJetCollection(
@@ -1210,7 +1213,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     rename_module(process, task, ak8chs_patname, "jetsAk8CHS")
     # TopJet collections
     rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8PuppiJetsWithPuppiDaughters", "jetsAk8PuppiSubstructure")
-    rename_module(process, task, "packedPatJetsAk8CHSJets", "jetsAk8CHSSubstructure", update_userData=False)  # don't update userData as JetSubstructurePacker
+    rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8CHSJetsNewDFTraining", "jetsAk8CHSSubstructure")
+#    rename_module(process, task, "packedPatJetsAk8CHSJets", "jetsAk8CHSSubstructure", update_userData=False)  # don't update userData as JetSubstructurePacker
 
     # Dummy module to allow us to rename slimmedJets to something more descriptive
     process.jetsAk4CHS = cms.EDFilter("PATJetSelector",
