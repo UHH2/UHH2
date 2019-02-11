@@ -181,6 +181,18 @@ void NtupleWriterPhotons::process(const edm::Event & event, uhh2::Event & uevent
 	pho.set_puppiPhotonIso(pat_pho.puppiPhotonIso());
         pho.set_supercluster_eta( pat_pho.superCluster()->eta() );
         pho.set_supercluster_phi( pat_pho.superCluster()->phi() );
+
+	pho.set_trackIso(pat_pho.trackIso());
+	pho.set_ecalIso(pat_pho.ecalIso());
+	pho.set_hcalIso(pat_pho.hcalIso());
+	pho.set_caloIso(pat_pho.caloIso());
+
+	//	pho.set_patParticleIso(pat_pho.patParticleIso());
+	pho.set_chargedHadronIso(pat_pho.chargedHadronIso());
+	pho.set_neutralHadronIso(pat_pho.neutralHadronIso());
+	pho.set_photonIso(pat_pho.photonIso());
+	pho.set_puChargedHadronIso(pat_pho.puChargedHadronIso());
+
         for(const auto& tag_str : IDtag_keys){
           if(!pat_pho.hasUserInt(tag_str)) throw cms::Exception("Missing userInt label", "Label for pat::Photon::userInt not found: "+tag_str);
           pho.set_tag(Photon::tagname2tag(tag_str), float(pat_pho.userInt(tag_str)));

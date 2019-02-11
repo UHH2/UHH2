@@ -40,15 +40,25 @@ public:
   }
   
   Photon(){
-    m_vertex_x = 0; 
-    m_vertex_y = 0; 
-    m_vertex_z = 0; 
-    m_supercluster_eta = 0; 
-    m_supercluster_phi = 0; 
-    //    m_trackIso = 0;
-    m_puppiChargedHadronIso = 0;
-    m_puppiNeutralHadronIso = 0;
-    m_puppiPhotonIso = 0;
+    m_vertex_x = -1e4; 
+    m_vertex_y = -1e4; 
+    m_vertex_z = -1e4; 
+    m_supercluster_eta = -1e4; 
+    m_supercluster_phi = -1e4; 
+
+    m_puppiChargedHadronIso = -1;
+    m_puppiNeutralHadronIso = -1;
+    m_puppiPhotonIso = -1;
+    m_trackIso =-1;
+    m_ecalIso =-1;
+    m_hcalIso =-1;
+    m_caloIso =-1;
+    m_patParticleIso =-1;
+    m_chargedHadronIso =-1;
+    m_neutralHadronIso =-1;
+    m_photonIso =-1;
+    m_puChargedHadronIso =-1;
+
     m_source_candidates.clear();
   }
 
@@ -62,6 +72,16 @@ public:
   float puppiNeutralHadronIso() const{return m_puppiNeutralHadronIso;} 
   float puppiPhotonIso() const{return m_puppiPhotonIso;} 
 
+  float trackIso() const{return m_trackIso;}
+  float ecalIso() const{return m_ecalIso;}
+  float hcalIso() const{return m_hcalIso;}
+  float caloIso() const{return m_caloIso;}
+  float patParticleIso() const{return m_patParticleIso;}
+  float chargedHadronIso() const{return m_chargedHadronIso;}
+  float neutralHadronIso() const{return m_neutralHadronIso;}
+  float photonIso() const{return m_photonIso;}
+  float puChargedHadronIso() const{return m_puChargedHadronIso;}
+
   
   //  float get_tag(tag t) const{ return tags.get_tag(static_cast<int>(t));}
 
@@ -70,10 +90,20 @@ public:
   void set_vertex_z(float x){m_vertex_z=x;} 
   void set_supercluster_eta(float x){m_supercluster_eta=x;} 
   void set_supercluster_phi(float x){m_supercluster_phi=x;} 
-  //  void set_trackIso(float x){m_trackIso=x;} 
+
   void set_puppiChargedHadronIso(float x){m_puppiChargedHadronIso=x;} 
   void set_puppiNeutralHadronIso(float x){m_puppiNeutralHadronIso=x;} 
   void set_puppiPhotonIso(float x){m_puppiPhotonIso=x;} 
+
+  void set_trackIso(float x){m_trackIso =x;}
+  void set_ecalIso(float x){m_ecalIso =x;}
+  void set_hcalIso(float x){m_hcalIso =x;}
+  void set_caloIso(float x){m_caloIso =x;}
+  void set_patParticleIso(float x){m_patParticleIso =x;}
+  void set_chargedHadronIso(float x){m_chargedHadronIso =x;}
+  void set_neutralHadronIso(float x){m_neutralHadronIso =x;}
+  void set_photonIso(float x){m_photonIso =x;}
+  void set_puChargedHadronIso(float x){m_puChargedHadronIso =x;}
   
   //  void set_tag(tag t, float value){tags.set_tag(static_cast<int>(t), value);}
 
@@ -96,6 +126,15 @@ private:
   float m_puppiNeutralHadronIso;
   float m_puppiPhotonIso;
 
+  float m_trackIso;
+  float m_ecalIso;
+  float m_hcalIso;
+  float m_caloIso;
+  float m_patParticleIso;
+  float m_chargedHadronIso;
+  float m_neutralHadronIso;
+  float m_photonIso;
+  float m_puChargedHadronIso;
 
   std::vector<source_candidate> m_source_candidates;
 
