@@ -80,12 +80,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfDeepCSVJetTags:probbb',
         'pfBoostedDoubleSecondaryVertexAK8BJetTags',
         'pfBoostedDoubleSecondaryVertexCA15BJetTags',
-        # 'pfDeepFlavourJetTags:probb',
-        # 'pfDeepFlavourJetTags:probbb',
-        # 'pfDeepFlavourJetTags:problepb',
-        # 'pfDeepFlavourJetTags:probc',
-        # 'pfDeepFlavourJetTags:probuds',
-        # 'pfDeepFlavourJetTags:probg',
+        'pfDeepFlavourJetTags:probb',
+        'pfDeepFlavourJetTags:probbb',
+        'pfDeepFlavourJetTags:problepb',
+        'pfDeepFlavourJetTags:probc',
+        'pfDeepFlavourJetTags:probuds',
+        'pfDeepFlavourJetTags:probg',
     ]
 
 
