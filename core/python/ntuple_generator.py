@@ -811,17 +811,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     task.add(process.NjettinessAk8SoftDropPuppi)
 
     # AK8 GenJets
-    # process.NjettinessAk8Gen = Njettiness.clone(
-    #     src=cms.InputTag("ak8GenJets"),
-    #     cone=cms.double(0.8)
-    # )
-    # task.add(process.NjettinessAk8Gen)
+    process.NjettinessAk8Gen = process.NjettinessAk8CHS.clone(
+        src=cms.InputTag("ak8GenJetsFat")
+    )
+    task.add(process.NjettinessAk8Gen)
 
-    # process.NjettinessAk8SoftDropGen = Njettiness.clone(
-    #     src=cms.InputTag("ak8GenJetsSoftDrop"),
-    #     cone=cms.double(0.8)
-    # )
-    # task.add(process.NjettinessAk8SoftDropGen)
+    process.NjettinessAk8SoftDropGen = process.NjettinessAk8SoftDropCHS.clone(
+        src=cms.InputTag("ak8GenJetsSoftDrop")
+    )
+    task.add(process.NjettinessAk8SoftDropGen)
 
     # QJetsAdder
     # ----------
@@ -2163,22 +2161,32 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     genjet_etamax=cms.double(5.0),
 
                                     doGenTopJets=cms.bool(not useData),
+                                    # gentopjet_sources=cms.VInputTag(
+                                    #     cms.InputTag("ak8GenJetsSoftDrop")
+                                    # ),
                                     gentopjet_sources=cms.VInputTag(
+                                        cms.InputTag("ak8GenJetsFat"),
                                         cms.InputTag("ak8GenJetsSoftDrop")
                                     ),
-                                    # gentopjet_sources =
-                                    # cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")),
-                                    # #this can be used to save N-subjettiness for ungroomed GenJets
                                     gentopjet_ptmin=cms.double(150.0),
                                     gentopjet_etamax=cms.double(5.0),
-                                    gentopjet_tau1=cms.VInputTag(),
-                                    gentopjet_tau2=cms.VInputTag(),
-                                    gentopjet_tau3=cms.VInputTag(),
-                                    # gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
-                                    # gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
-                                    # gentopjet_tau3 =
-                                    # cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")),
-                                    # #this can be used to save N-subjettiness for GenJets
+                                    # gentopjet_tau1=cms.VInputTag(),
+                                    # gentopjet_tau2=cms.VInputTag(),
+                                    # gentopjet_tau3=cms.VInputTag(),
+                                    # this can be used to save N-subjettiness for GenJets:
+                                    # need one entry per gentopjet_source
+                                    gentopjet_tau1=cms.VInputTag(
+                                        cms.InputTag("NjettinessAk8Gen","tau1"),
+                                        cms.InputTag("NjettinessAk8SoftDropGen","tau1")
+                                    ),
+                                    gentopjet_tau2=cms.VInputTag(
+                                        cms.InputTag("NjettinessAk8Gen","tau2"),
+                                        cms.InputTag("NjettinessAk8SoftDropGen","tau2")
+                                    ),
+                                    gentopjet_tau3=cms.VInputTag(
+                                        cms.InputTag("NjettinessAk8Gen","tau3"),
+                                        cms.InputTag("NjettinessAk8SoftDropGen","tau3")
+                                    ),
 
                                     doAllPFParticles=cms.bool(False),
                                     pf_collection_source=cms.InputTag("packedPFCandidates"),
