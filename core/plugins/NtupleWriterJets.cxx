@@ -78,6 +78,7 @@ float getPatJetUserFloat(const pat::Jet & jet, const std::string & key, float de
 // So ugly, really should get the user to configure this in the NtupleWriter py
 std::string getPuppiJetSpecificProducer(const std::string & name) {
   std::string multiplicity_name = "patPuppiJetSpecificProducer"+name;
+  //  cout<<"Try to read "<<multiplicity_name<<endl;
   return multiplicity_name;
 }
 
@@ -172,16 +173,11 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 
         /*--- lepton keys ---*/
         if(save_lepton_keys_){
-
           const auto& jet_daughter_ptrs = pat_jet.daughterPtrVector();
           for(const auto & daughter_p : jet_daughter_ptrs){
-
             if(!daughter_p.isAvailable()) continue;
-
             const auto& key = daughter_p.key();
-
             if(std::find(lepton_keys.begin(), lepton_keys.end(), key) == lepton_keys.end()) continue;
-
             jet.add_lepton_key(key);
           }
         }
@@ -947,16 +943,11 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
         /*--- lepton keys ---*/
         if(save_lepton_keys_){
-
           const auto& jet_daughter_ptrs = pat_topjet.daughterPtrVector();
           for(const auto & daughter_p : jet_daughter_ptrs){
-
             if(!daughter_p.isAvailable()) continue;
-
             const auto& key = daughter_p.key();
-
             if(std::find(lepton_keys.begin(), lepton_keys.end(), key) == lepton_keys.end()) continue;
-
             topjet.add_lepton_key(key);
           }
         }
@@ -1275,6 +1266,17 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for daughters in NtupleWriterTopJets with src = " + src.label());
 	      }
+	      /*--- lepton keys ---*/
+	      if(save_lepton_keys_){
+		const auto& jet_daughter_ptrs = patsubjetd->daughterPtrVector();
+		for(const auto & daughter_p : jet_daughter_ptrs){
+		  if(!daughter_p.isAvailable()) continue;
+		  const auto& key = daughter_p.key();
+		  if(std::find(lepton_keys.begin(), lepton_keys.end(), key) == lepton_keys.end()) continue;
+		  subjet.add_lepton_key(key);
+		}
+	      }
+	      /*-------------------*/
             }
             else {
 	      //filling only standard information in case the subjet has not been pat-tified during the pattuples production
@@ -1298,25 +1300,22 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	  for( int sj = 0; sj < (int)tSubjets.size(); ++sj ){
 	    Jet subjet;
 	    auto tpatsubjet = dynamic_cast<const pat::Jet *>(tSubjets.at(sj).get());
+	    //	    topjet_puppiSpecificProducer = getPuppiJetSpecificProducer(subjet_src);//TEST
             if (tpatsubjet) {
 	      try{
 		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
+		//		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, topjet_puppiSpecificProducer, storePFcands);//TEST
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " + src.label());
 	      }
 
               /*--- lepton keys ---*/
               if(save_lepton_keys_){
-
                 const auto& jet_daughter_ptrs = tpatsubjet->daughterPtrVector();
                 for(const auto & daughter_p : jet_daughter_ptrs){
-
                   if(!daughter_p.isAvailable()) continue;
-
                   const auto& key = daughter_p.key();
-
                   if(std::find(lepton_keys.begin(), lepton_keys.end(), key) == lepton_keys.end()) continue;
-
                   subjet.add_lepton_key(key);
                 }
               }
