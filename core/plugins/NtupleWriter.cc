@@ -497,7 +497,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     if(!gentopjet_sources.empty()){
         event->gentopjets = &gentopjets[0];
     }
-    auto gentopjet_tau_src = iConfig.getParameter<std::vector<std::string> >("gentopjet_njettiness_source");
+    auto gentopjet_tau_src = iConfig.getParameter<std::vector<std::string> >("gentopjet_njettiness_sources");
     for (const auto & srcItr : gentopjet_tau_src) {
       gentopjet_tau1_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "tau1")));
       gentopjet_tau2_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "tau2")));

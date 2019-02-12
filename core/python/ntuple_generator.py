@@ -2172,7 +2172,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     gentopjet_etamax=cms.double(5.0),
                                     # this can be used to save N-subjettiness for GenJets:
                                     # need one entry per gentopjet_source
-                                    gentopjet_njettiness_source=cms.vstring(
+                                    gentopjet_njettiness_sources=cms.vstring(
                                         "NjettinessAk8Gen",
                                         "NjettinessAk8SoftDropGen",
                                     ),
