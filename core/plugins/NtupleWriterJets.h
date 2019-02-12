@@ -77,7 +77,7 @@ public:
     explicit NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&, unsigned int NPFJetwConstituents);
 
     virtual void process(const edm::Event &, uhh2::Event &,  const edm::EventSetup&);
-
+    static void fill_btag_info(uhh2::Event & uevent, const pat::Jet & pat_jet, TopJet & jet);
     virtual ~NtupleWriterTopJets();
 
 private:
