@@ -80,14 +80,81 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         'pfDeepCSVJetTags:probbb',
         'pfBoostedDoubleSecondaryVertexAK8BJetTags',
         'pfBoostedDoubleSecondaryVertexCA15BJetTags',
+    ]
+ 
+    ak4btagDiscriminators = [
         'pfDeepFlavourJetTags:probb',
         'pfDeepFlavourJetTags:probbb',
         'pfDeepFlavourJetTags:problepb',
         'pfDeepFlavourJetTags:probc',
         'pfDeepFlavourJetTags:probuds',
-        'pfDeepFlavourJetTags:probg',
+        'pfDeepFlavourJetTags:probg'
     ]
 
+    ak8btagDiscriminators = [
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:bbvsLight',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ccvsLight',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:TvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHccvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:WvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:H4qvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:HbbvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZbbvsQCD',
+        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:TvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:WvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:H4qvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:HbbvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:ZbbvsQCD',
+        'pfDeepBoostedDiscriminatorsJetTags:ZvsQCD',
+        'pfMassDecorrelatedDeepBoostedJetTags:probHbb',
+        'pfMassDecorrelatedDeepBoostedJetTags:probQCDc',
+        'pfMassDecorrelatedDeepBoostedJetTags:probQCDbb',
+        'pfMassDecorrelatedDeepBoostedJetTags:probTbqq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probTbcq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probTbq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probQCDothers',
+        'pfMassDecorrelatedDeepBoostedJetTags:probQCDb',
+        'pfMassDecorrelatedDeepBoostedJetTags:probTbc',
+        'pfMassDecorrelatedDeepBoostedJetTags:probWqq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probQCDcc',
+        'pfMassDecorrelatedDeepBoostedJetTags:probHcc',
+        'pfMassDecorrelatedDeepBoostedJetTags:probWcq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probZcc',
+        'pfMassDecorrelatedDeepBoostedJetTags:probZqq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probHqqqq',
+        'pfMassDecorrelatedDeepBoostedJetTags:probZbb',
+        'pfDeepDoubleBvLJetTags:probHbb',
+        'pfDeepDoubleBvLJetTags:probQCD',
+        'pfDeepDoubleCvBJetTags:probHbb',
+        'pfDeepDoubleCvBJetTags:probHcc',
+        'pfDeepDoubleCvLJetTags:probHcc',
+        'pfDeepDoubleCvLJetTags:probQCD',
+        'pfMassIndependentDeepDoubleBvLJetTags:probHbb',
+        'pfMassIndependentDeepDoubleBvLJetTags:probQCD',
+        'pfMassIndependentDeepDoubleCvBJetTags:probHbb',
+        'pfMassIndependentDeepDoubleCvBJetTags:probHcc',
+        'pfMassIndependentDeepDoubleCvLJetTags:probHcc',
+        'pfMassIndependentDeepDoubleCvLJetTags:probQCD',
+        'pfDeepBoostedJetTags:probHbb',
+        'pfDeepBoostedJetTags:probQCDc',
+        'pfDeepBoostedJetTags:probQCDbb',
+        'pfDeepBoostedJetTags:probTbqq',
+        'pfDeepBoostedJetTags:probTbcq',
+        'pfDeepBoostedJetTags:probTbq',
+        'pfDeepBoostedJetTags:probQCDothers',
+        'pfDeepBoostedJetTags:probQCDb',
+        'pfDeepBoostedJetTags:probTbc',
+        'pfDeepBoostedJetTags:probWqq',
+        'pfDeepBoostedJetTags:probQCDcc',
+        'pfDeepBoostedJetTags:probHcc',
+        'pfDeepBoostedJetTags:probWcq',
+        'pfDeepBoostedJetTags:probZcc',
+        'pfDeepBoostedJetTags:probZqq',
+        'pfDeepBoostedJetTags:probHqqqq',
+        'pfDeepBoostedJetTags:probZbb'
+    ]
 
 
     bTagInfos = [
@@ -483,7 +550,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         btagDiscriminators=bTagDiscriminators
     )
 
-
     process.packedGenParticlesForJetsNoNu = cms.EDFilter("CandPtrSelector",
         src=cms.InputTag("packedGenParticles"),
         cut=cms.string("abs(pdgId) != 12 && abs(pdgId) != 14 && abs(pdgId) != 16")
@@ -537,7 +603,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # * the subjets are available with the same name as the groomed jets with instance label 'SubJets'
     #
     # The method will produce several collections, also following a naming convention:
-    # * a petJets collection for the ungroomed fatjets with name 'patJets' + fatjets_name (unless it already exists)
+    # * a patJets collection for the ungroomed fatjets with name 'patJets' + fatjets_name (unless it already exists)
     # * two pat jet collections (one for fat jets and one for subjets) with names
     #   - 'patJets' + groomed_jets_name for the fat jets and
     #   - 'patJets' + groomed_jets_name + 'Subjets' for the subjets
@@ -563,7 +629,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
             raise RuntimeError, "cannot guess jet algo (ca/ak) from jet producer %s", fatjets_name
 
         if verbose:
-            print '* Adding fatjets_subjets for', fatjets_name
+            print '***  Adding fatjets_subjets for', fatjets_name
 
         subjets_name = groomed_jets_name + 'Subjets'  # e.g. CA8CHSPruned + Subjets
 
@@ -680,11 +746,55 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                              groomed_genjets_name, 'SubJets'),
                          getJetMCFlavour=not useData,
                          **common_btag_parameters
+#                         **common_btag_parameters_subjet
                          )
         # Always add taginfos to subjets, but possible not to store them,
         # configurable with ntuple writer parameter: subjet_taginfos
+        # Attention: Only CVS b-tag info is stored for sub-jets
         getattr(process, subjets_patname).addTagInfos = True
         delattr(process, "selectedPatJets"+cap(subjets_name))
+
+
+        # Add DeepFlavor b-tagging to sub-jets
+        labelName = cap(subjets_patname)
+        is_puppi = "puppi" in labelName.lower()
+
+        # # This call to updateJetCollection adds one PATJetUpdater to only remove the JECs,
+        # # then uses that as the input to another PATJetUpdater, which re-applies the JECs,
+        # # adds in all b tag stuff, etc.
+        # # The 2nd PATJetsUpdater has the extra "TransientCorrected" bit in its name.
+        # # It also produces a final similar "selectedUpdatedPatJets"+labelName+postfix collection
+        # # which is a PATJetSelector
+        postfix = ''
+        updater_src = "updatedPatJets" + labelName + postfix  # 1st PATJetUpdater, that removes JECs, is src to updater_name
+        updater_name = "updatedPatJetsTransientCorrected" + labelName + postfix  # 2nd PATJetUpdater
+        selector_name = "selectedUpdatedPatJets" + labelName + postfix
+        if is_puppi:
+            correction_tag = "AK4PFPuppi"
+        else:
+            correction_tag = "AK4PFchs"
+
+        jetcorr_list = ['L1FastJet', 'L2Relative', 'L3Absolute']
+        if is_puppi:
+            jetcorr_list = jetcorr_list[1:]
+        if useData:
+            jetcorr_list.append("L2L3Residual")
+        discriminators = ak4btagDiscriminators[:]
+
+        updateJetCollection(
+            process,
+            labelName=labelName,
+            jetSource=cms.InputTag(subjets_patname),
+            pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
+            svSource=cms.InputTag('slimmedSecondaryVertices'),
+            jetCorrections=jetcorr_arg,  
+            btagDiscriminators=discriminators,
+            postfix=postfix
+        )
+
+        subjets_patname = "updatedPatJetsTransientCorrected" + cap(subjets_patname)
+
+        # print "btagDiscriminators ", discriminators
 
         # add the merged jet collection which contains the links from groomed
         # fat jets to the subjets:
@@ -975,89 +1085,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     task.add(process.packedPatJetsAk8PuppiJets)
 
     ###############################################
-    # Add deep flavour/jet/tagging taggers & discriminants
-    #
-    ak4btagDiscriminators = [
-        'pfDeepFlavourJetTags:probb',
-        'pfDeepFlavourJetTags:probbb',
-        'pfDeepFlavourJetTags:problepb',
-        'pfDeepFlavourJetTags:probc',
-        'pfDeepFlavourJetTags:probuds',
-        'pfDeepFlavourJetTags:probg'
-    ]
-
-    ak8btagDiscriminators = [
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:bbvsLight',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ccvsLight',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:TvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHccvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:WvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:H4qvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:HbbvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZbbvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:TvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:WvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:H4qvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:HbbvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:ZbbvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:ZvsQCD',
-
-        'pfMassDecorrelatedDeepBoostedJetTags:probHbb',
-        'pfMassDecorrelatedDeepBoostedJetTags:probQCDc',
-        'pfMassDecorrelatedDeepBoostedJetTags:probQCDbb',
-        'pfMassDecorrelatedDeepBoostedJetTags:probTbqq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probTbcq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probTbq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probQCDothers',
-        'pfMassDecorrelatedDeepBoostedJetTags:probQCDb',
-        'pfMassDecorrelatedDeepBoostedJetTags:probTbc',
-        'pfMassDecorrelatedDeepBoostedJetTags:probWqq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probQCDcc',
-        'pfMassDecorrelatedDeepBoostedJetTags:probHcc',
-        'pfMassDecorrelatedDeepBoostedJetTags:probWcq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probZcc',
-        'pfMassDecorrelatedDeepBoostedJetTags:probZqq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probHqqqq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probZbb',
-        'pfDeepDoubleBvLJetTags:probHbb',
-        'pfDeepDoubleBvLJetTags:probQCD',
-        'pfDeepDoubleCvBJetTags:probHbb',
-        'pfDeepDoubleCvBJetTags:probHcc',
-        'pfDeepDoubleCvLJetTags:probHcc',
-        'pfDeepDoubleCvLJetTags:probQCD',
-        'pfMassIndependentDeepDoubleBvLJetTags:probHbb',
-        'pfMassIndependentDeepDoubleBvLJetTags:probQCD',
-        'pfMassIndependentDeepDoubleCvBJetTags:probHbb',
-        'pfMassIndependentDeepDoubleCvBJetTags:probHcc',
-        'pfMassIndependentDeepDoubleCvLJetTags:probHcc',
-        'pfMassIndependentDeepDoubleCvLJetTags:probQCD',
-        'pfDeepBoostedJetTags:probHbb',
-        'pfDeepBoostedJetTags:probQCDc',
-        'pfDeepBoostedJetTags:probQCDbb',
-        'pfDeepBoostedJetTags:probTbqq',
-        'pfDeepBoostedJetTags:probTbcq',
-        'pfDeepBoostedJetTags:probTbq',
-        'pfDeepBoostedJetTags:probQCDothers',
-        'pfDeepBoostedJetTags:probQCDb',
-        'pfDeepBoostedJetTags:probTbc',
-        'pfDeepBoostedJetTags:probWqq',
-        'pfDeepBoostedJetTags:probQCDcc',
-        'pfDeepBoostedJetTags:probHcc',
-        'pfDeepBoostedJetTags:probWcq',
-        'pfDeepBoostedJetTags:probZcc',
-        'pfDeepBoostedJetTags:probZqq',
-        'pfDeepBoostedJetTags:probHqqqq',
-        'pfDeepBoostedJetTags:probZbb'
-    ]
-
     # Do deep flavours & deep tagging
     # This MUST be run *After* JetSubstructurePacker, so that the subjets are already there,
     # otherwise the DeepBoostedJetTagInfoProducer will fail
     # Also add in PUPPI multiplicities while we're at it.
-#    for name in ['slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets']:
-    for name in ['slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
+    for name in ['slimmedJets', 'slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
+        print "name", name
         labelName = cap(name)
         is_ak8 = "ak8" in name.lower()
         is_puppi = "puppi" in name.lower()
@@ -1100,7 +1133,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
             jetcorr_list.append("L2L3Residual")
 
         discriminators = ak4btagDiscriminators[:]
-#        if is_ak8 and is_puppi and is_topjet:
+#        discriminators = bTagDiscriminators[:]
+        discriminators.extend(ak4btagDiscriminators)
         if is_ak8 and is_topjet:
             discriminators.extend(ak8btagDiscriminators)
 
@@ -1209,21 +1243,23 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     #
     # Jet collections
     rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining", "jetsAk4Puppi")
+    rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsNewDFTraining", "jetsAk4CHS")
     rename_module(process, task, "updatedPatJetsTransientCorrectedPatJetsAK8PFPUPPIWithPuppiDaughters", "jetsAk8Puppi")
     rename_module(process, task, ak8chs_patname, "jetsAk8CHS")
     # TopJet collections
     rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8PuppiJetsWithPuppiDaughters", "jetsAk8PuppiSubstructure")
-    rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8CHSJetsNewDFTraining", "jetsAk8CHSSubstructure")
+    rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8CHSJetsNewDFTraining", "jetsAk8CHSSubstructure", update_userData=False)
 #    rename_module(process, task, "packedPatJetsAk8CHSJets", "jetsAk8CHSSubstructure", update_userData=False)  # don't update userData as JetSubstructurePacker
 
-    # Dummy module to allow us to rename slimmedJets to something more descriptive
-    process.jetsAk4CHS = cms.EDFilter("PATJetSelector",
-        cut=cms.string(''),
-        cutLoose=cms.string(''),
-        nLoose=cms.uint32(0),
-        src=cms.InputTag("slimmedJets")
-    )
-    task.add(process.jetsAk4CHS)
+
+    # # Dummy module to allow us to rename slimmedJets to something more descriptive
+    # process.jetsAk4CHS = cms.EDFilter("PATJetSelector",
+    #     cut=cms.string(''),
+    #     cutLoose=cms.string(''),
+    #     nLoose=cms.uint32(0),
+    #     src=cms.InputTag("slimmedJets")
+    # )
+    # task.add(process.jetsAk4CHS)
 
 
     # Higgs tagging commissioning
