@@ -164,7 +164,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 	bool storePFcands = false;
 	if(i<NPFJetwConstituents_) storePFcands = true;
         try {
-          fill_jet_info(uevent,pat_jet, jet, true, false, jet_puppiSpecificProducer,storePFcands,false);
+          fill_jet_info(uevent,pat_jet, jet, true, false, jet_puppiSpecificProducer,storePFcands);
         }
         catch(runtime_error & ex){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info NtupleWriterJets::process for jets with src = " + src.label());
@@ -194,7 +194,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 }
 
 
-void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer, bool fill_pfcand, bool isTopJet){
+void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer, bool fill_pfcand){
   jet.set_charge(pat_jet.charge());
   jet.set_pt(pat_jet.pt());
   jet.set_eta(pat_jet.eta());
@@ -331,43 +331,8 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
   }//do taginfos
   if(do_btagging){
     const auto & bdisc = pat_jet.getPairDiscri();
-    bool csv = false, csvmva = false, doubleak8 = false, doubleca15 = false, deepcsv_b = false, deepcsv_bb = false, deepflavour_bb=false, deepflavour_b=false, deepflavour_lepb=false, deepflavour_c=false, deepflavour_uds=false, deepflavour_g=false, 
-decorrmass_deepboosted_bbvsLight=false,decorrmass_deepboosted_ccvsLight=false,decorrmass_deepboosted_TvsQCD=false,decorrmass_deepboosted_ZHccvsQCD=false,decorrmass_deepboosted_WvsQCD=false,decorrmass_deepboosted_ZHbbvsQCD=false,
-decorrmass_deepboosted_ZvsQCD=false,decorrmass_deepboosted_ZbbvsQCD=false,decorrmass_deepboosted_HbbvsQCD=false,decorrmass_deepboosted_H4qvsQCD=false,
-deepboosted_bbvsLight=false,deepboosted_ccvsLight=false,deepboosted_TvsQCD=false,deepboosted_ZHccvsQCD=false,deepboosted_WvsQCD=false,deepboosted_ZHbbvsQCD=false,
-deepboosted_ZvsQCD=false,deepboosted_ZbbvsQCD=false,deepboosted_HbbvsQCD=false,deepboosted_H4qvsQCD=false,
-deepboosted_probHbb=false,deepboosted_probQCDbb=false,deepboosted_probQCDc=false,deepboosted_probTbqq=false,deepboosted_probTbcq=false,deepboosted_probTbq=false,deepboosted_probQCDothers=false,deepboosted_probQCDb=false,deepboosted_probTbc=false,deepboosted_probWqq=false,deepboosted_probQCDcc=false,deepboosted_probHcc=false,deepboosted_probWcq=false,deepboosted_probZcc=false,deepboosted_probZqq=false,deepboosted_probHqqqq=false,deepboosted_probZbb=false,
-deepdouble_H=false,deepdouble_QCD=false, deepdouble_cl_H=false,deepdouble_cl_QCD=false, deepdouble_cb_H=false,deepdouble_cb_QCD=false,
-massinddeepdouble_H=false,massinddeepdouble_QCD=false, massinddeepdouble_cl_H=false,massinddeepdouble_cl_QCD=false, massinddeepdouble_cb_H=false,massinddeepdouble_cb_QCD=false,
-decorrmass_deepboosted_probHbb=false,decorrmass_deepboosted_probQCDbb=false,decorrmass_deepboosted_probQCDc=false,decorrmass_deepboosted_probTbqq=false,decorrmass_deepboosted_probTbcq=false,decorrmass_deepboosted_probTbq=false,decorrmass_deepboosted_probQCDothers=false,decorrmass_deepboosted_probQCDb=false,decorrmass_deepboosted_probTbc=false,decorrmass_deepboosted_probWqq=false,decorrmass_deepboosted_probQCDcc=false,decorrmass_deepboosted_probHcc=false,decorrmass_deepboosted_probWcq=false,decorrmass_deepboosted_probZcc=false,decorrmass_deepboosted_probZqq=false,decorrmass_deepboosted_probHqqqq=false,decorrmass_deepboosted_probZbb=false;
-    if(!isTopJet){
-      //slim (= not fat) jets don't have DeepBoosted info, etc
-      // set booleans to 'true' to avoid warnings in b-taggers check
-      doubleak8 = true; doubleca15 = true;
-      decorrmass_deepboosted_bbvsLight=true; decorrmass_deepboosted_ccvsLight=true; 
-      decorrmass_deepboosted_TvsQCD=true; decorrmass_deepboosted_ZHccvsQCD=true; 
-      decorrmass_deepboosted_WvsQCD=true; decorrmass_deepboosted_ZHbbvsQCD=true;
-      decorrmass_deepboosted_ZvsQCD=true; decorrmass_deepboosted_ZbbvsQCD=true;
-      decorrmass_deepboosted_HbbvsQCD=true; decorrmass_deepboosted_H4qvsQCD=true;
-      deepboosted_bbvsLight=true; deepboosted_ccvsLight=true; deepboosted_TvsQCD=true;
-      deepboosted_ZHccvsQCD=true; deepboosted_WvsQCD=true; deepboosted_ZHbbvsQCD=true;
-      deepboosted_ZvsQCD=true; deepboosted_ZbbvsQCD=true; deepboosted_HbbvsQCD=true;
-      deepboosted_H4qvsQCD=true; deepboosted_probHbb=true; deepboosted_probQCDbb=true; deepboosted_probQCDc=true;
-      deepboosted_probTbqq=true; deepboosted_probTbcq=true; deepboosted_probTbq=true; deepboosted_probQCDothers=true;
-      deepboosted_probQCDb=true; deepboosted_probTbc=true; deepboosted_probWqq=true; deepboosted_probQCDcc=true;
-      deepboosted_probHcc=true; deepboosted_probWcq=true; deepboosted_probZcc=true; deepboosted_probZqq=true; deepboosted_probHqqqq=true;
-      deepboosted_probZbb=true; deepdouble_H=true; deepdouble_QCD=true; deepdouble_cl_H=true;
-      deepdouble_cl_QCD=true; deepdouble_cb_H=true; deepdouble_cb_QCD=true;
-      massinddeepdouble_H=true; massinddeepdouble_QCD=true; massinddeepdouble_cl_H=true;
-      massinddeepdouble_cl_QCD=true; massinddeepdouble_cb_H=true; massinddeepdouble_cb_QCD=true;
-      decorrmass_deepboosted_probHbb=true; decorrmass_deepboosted_probQCDbb=true; 
-      decorrmass_deepboosted_probQCDc=true; decorrmass_deepboosted_probTbqq=true;
-      decorrmass_deepboosted_probTbcq=true; decorrmass_deepboosted_probTbq=true; decorrmass_deepboosted_probQCDothers=true;
-      decorrmass_deepboosted_probQCDb=true; decorrmass_deepboosted_probTbc=true; decorrmass_deepboosted_probWqq=true;
-      decorrmass_deepboosted_probQCDcc=true; decorrmass_deepboosted_probHcc=true; decorrmass_deepboosted_probWcq=true;
-      decorrmass_deepboosted_probZcc=true; decorrmass_deepboosted_probZqq=true; decorrmass_deepboosted_probHqqqq=true;
-      decorrmass_deepboosted_probZbb=true;
-    }
+    bool csv = false, csvmva = false,  deepcsv_b = false, deepcsv_bb = false;
+    bool deepflavour_bb=false, deepflavour_b=false, deepflavour_lepb=false, deepflavour_c=false, deepflavour_uds=false, deepflavour_g=false;
     for(const auto & name_value : bdisc){
       const auto & name = name_value.first;
       const auto & value = name_value.second;
@@ -386,14 +351,6 @@ decorrmass_deepboosted_probHbb=false,decorrmass_deepboosted_probQCDbb=false,deco
       else if(name == "pfDeepCSVJetTags:probbb"){
         jet.set_btag_DeepCSV_probbb(value);
         deepcsv_bb = true;
-      }
-      else if(name == "pfBoostedDoubleSecondaryVertexAK8BJetTags"){
-        jet.set_btag_BoostedDoubleSecondaryVertexAK8(value);
-        doubleak8 = true;
-      }
-      else if(name == "pfBoostedDoubleSecondaryVertexCA15BJetTags"){
-        jet.set_btag_BoostedDoubleSecondaryVertexCA15(value);
-        doubleca15 = true;
       }
       else if(name=="pfDeepFlavourJetTags:probbb"){
         jet.set_btag_DeepFlavour_probbb(value);
@@ -418,6 +375,156 @@ decorrmass_deepboosted_probHbb=false,decorrmass_deepboosted_probQCDbb=false,deco
       else if(name=="pfDeepFlavourJetTags:probg"){
         jet.set_btag_DeepFlavour_probg(value);
         deepflavour_g =true;
+      }
+    }
+   
+
+
+    if(!csv || !csvmva || !deepcsv_b || !deepcsv_bb
+       || !deepflavour_bb || !deepflavour_b || !deepflavour_lepb
+       || !deepflavour_uds || !deepflavour_c || !deepflavour_g){
+      if(btag_warning){
+        std::string btag_list = "";
+        for(const auto & name_value : bdisc){
+          btag_list += name_value.first;
+          btag_list += " ";
+        }
+        edm::LogWarning("NtupleWriterJets") << "Did not find all b-taggers! Available btaggers: " << btag_list;
+        btag_warning = false;
+      }
+      // throw runtime_error("did not find all b-taggers; see output for details");
+    }
+  }
+
+  if(fill_pfcand){//fill pf candidates list: add pf-candidate to the event list and store index in the jet container
+    const auto& jet_daughter_ptrs = pat_jet.daughterPtrVector();
+    for(const auto & daughter_p : jet_daughter_ptrs){
+      size_t pfparticles_index = add_pfpart(*daughter_p, *uevent.pfparticles);
+      jet.add_pfcand_index(pfparticles_index);
+    }
+  }
+}
+
+
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents): ptmin(cfg.ptmin), etamax(cfg.etamax) {
+    handle = cfg.ctx.declare_event_output<vector<TopJet>>(cfg.dest_branchname, cfg.dest);
+    if(set_jets_member){
+        topjets_handle = cfg.ctx.get_handle<vector<TopJet>>("topjets");
+    }
+    src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
+    njettiness_src = cfg.njettiness_src;
+    src_njettiness1_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau1"));
+    src_njettiness2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau2"));
+    src_njettiness3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau3"));
+    src_njettiness4_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau4"));
+
+    njettiness_groomed_src = cfg.njettiness_groomed_src;
+    src_njettiness1_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau1"));
+    src_njettiness2_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau2"));
+    src_njettiness3_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau3"));
+    src_njettiness4_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau4"));
+
+    qjets_src = cfg.qjets_src;
+    src_qjets_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(qjets_src, "QjetsVolatility"));
+
+    ecf_beta1_src = cfg.ecf_beta1_src;
+    src_ecf_beta1_N2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta1_src, "ecfN2"));
+    src_ecf_beta1_N3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta1_src, "ecfN3"));
+    ecf_beta2_src = cfg.ecf_beta2_src;
+    src_ecf_beta2_N2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta2_src, "ecfN2"));
+    src_ecf_beta2_N3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta2_src, "ecfN3"));
+
+    subjet_src = cfg.subjet_src;
+    higgs_src= cfg.higgs_src;
+
+    if (cfg.toptagging_src == "") {
+      do_toptagging = false;
+    } else {
+      do_toptagging = true;
+      src_hepTopTag_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag(cfg.toptagging_src));
+    }
+
+    softdrop_src = cfg.softdrop_src;
+    if(softdrop_src.find("Mass")==string::npos){
+      src_softdrop_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.softdrop_src);
+    }
+
+    src_higgs_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.higgs_src);
+    higgs_name=cfg.higgs_name;
+    do_taginfo_subjets = cfg.do_taginfo_subjets;
+    src = cfg.src;
+    do_btagging = cfg.do_btagging;
+    do_btagging_subjets = cfg.do_btagging_subjets;
+    if(!njettiness_src.empty() || !qjets_src.empty()){
+        substructure_variables_src_token = cfg.cc.consumes<reco::BasicJetCollection>(cfg.substructure_variables_src);
+	substructure_variables_src_tokenreco = cfg.cc.consumes<reco::PFJetCollection>(cfg.substructure_variables_src);
+    }
+    if(!njettiness_groomed_src.empty()){
+        substructure_groomed_variables_src_token = cfg.cc.consumes<reco::BasicJetCollection>(cfg.substructure_groomed_variables_src);
+	substructure_groomed_variables_src_tokenreco = cfg.cc.consumes<reco::PFJetCollection>(cfg.substructure_groomed_variables_src);
+    }
+    btag_warning=true;
+    topjet_collection = cfg.dest_branchname;
+
+    topjet_puppiSpecificProducer = getPuppiJetSpecificProducer(src.label());
+
+    save_lepton_keys_ = false;
+
+    h_muons.clear();
+    h_elecs.clear();
+
+    higgstaginfo_src = cfg.higgstaginfo_src;
+    src_higgstaginfo_token =  cfg.cc.consumes<std::vector<reco::BoostedDoubleSVTagInfo> >(cfg.higgstaginfo_src);
+    NPFJetwConstituents_ = NPFJetwConstituents;
+}
+
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents):
+  NtupleWriterTopJets::NtupleWriterTopJets(cfg, set_jets_member, NPFJetwConstituents) {
+
+    save_lepton_keys_ = true;
+
+    for(const auto& muo_src : muon_sources){ auto h_muon = cfg.ctx.get_handle<std::vector<Muon>    >(muo_src); h_muons.push_back(h_muon); }
+    for(const auto& ele_src : elec_sources){ auto h_elec = cfg.ctx.get_handle<std::vector<Electron>>(ele_src); h_elecs.push_back(h_elec); }
+    NPFJetwConstituents_ = NPFJetwConstituents;
+}
+
+NtupleWriterTopJets::~NtupleWriterTopJets(){}
+
+
+void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & pat_jet, TopJet & jet){
+  const auto & bdisc = pat_jet.getPairDiscri();
+  bool doubleak8 = false, doubleca15 = false,
+    decorrmass_deepboosted_bbvsLight=false,decorrmass_deepboosted_ccvsLight=false,decorrmass_deepboosted_TvsQCD=false,
+    decorrmass_deepboosted_ZHccvsQCD=false,decorrmass_deepboosted_WvsQCD=false,decorrmass_deepboosted_ZHbbvsQCD=false,
+    decorrmass_deepboosted_ZvsQCD=false,decorrmass_deepboosted_ZbbvsQCD=false,decorrmass_deepboosted_HbbvsQCD=false,
+    decorrmass_deepboosted_H4qvsQCD=false,deepboosted_bbvsLight=false,deepboosted_ccvsLight=false,deepboosted_TvsQCD=false,
+    deepboosted_ZHccvsQCD=false,deepboosted_WvsQCD=false,deepboosted_ZHbbvsQCD=false,
+    deepboosted_ZvsQCD=false,deepboosted_ZbbvsQCD=false,deepboosted_HbbvsQCD=false,deepboosted_H4qvsQCD=false,
+    deepboosted_probHbb=false,deepboosted_probQCDbb=false,deepboosted_probQCDc=false,deepboosted_probTbqq=false,
+    deepboosted_probTbcq=false,deepboosted_probTbq=false,deepboosted_probQCDothers=false,deepboosted_probQCDb=false,
+    deepboosted_probTbc=false,deepboosted_probWqq=false,deepboosted_probQCDcc=false,deepboosted_probHcc=false,
+    deepboosted_probWcq=false,deepboosted_probZcc=false,deepboosted_probZqq=false,deepboosted_probHqqqq=false,
+    deepboosted_probZbb=false, deepdouble_H=false,deepdouble_QCD=false, deepdouble_cl_H=false,deepdouble_cl_QCD=false, 
+    deepdouble_cb_H=false,deepdouble_cb_QCD=false, massinddeepdouble_H=false,massinddeepdouble_QCD=false, 
+    massinddeepdouble_cl_H=false,massinddeepdouble_cl_QCD=false, massinddeepdouble_cb_H=false,massinddeepdouble_cb_QCD=false,
+    decorrmass_deepboosted_probHbb=false,decorrmass_deepboosted_probQCDbb=false,decorrmass_deepboosted_probQCDc=false,
+    decorrmass_deepboosted_probTbqq=false,decorrmass_deepboosted_probTbcq=false,decorrmass_deepboosted_probTbq=false,
+    decorrmass_deepboosted_probQCDothers=false,decorrmass_deepboosted_probQCDb=false,decorrmass_deepboosted_probTbc=false,
+    decorrmass_deepboosted_probWqq=false,decorrmass_deepboosted_probQCDcc=false,decorrmass_deepboosted_probHcc=false,
+    decorrmass_deepboosted_probWcq=false,decorrmass_deepboosted_probZcc=false,decorrmass_deepboosted_probZqq=false,
+    decorrmass_deepboosted_probHqqqq=false,decorrmass_deepboosted_probZbb=false;
+
+   
+    for(const auto & name_value : bdisc){
+      const auto & name = name_value.first;
+      const auto & value = name_value.second;
+      if(name == "pfBoostedDoubleSecondaryVertexAK8BJetTags"){
+        jet.set_btag_BoostedDoubleSecondaryVertexAK8(value);
+        doubleak8 = true;
+      }
+      else if(name == "pfBoostedDoubleSecondaryVertexCA15BJetTags"){
+        jet.set_btag_BoostedDoubleSecondaryVertexCA15(value);
+        doubleca15 = true;
       }
       else if(name == "pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:bbvsLight"){
         jet.set_btag_MassDecorrelatedDeepBoosted_bbvsLight(value);
@@ -678,13 +785,7 @@ decorrmass_deepboosted_probHbb=false,decorrmass_deepboosted_probQCDbb=false,deco
 
     }
    
-
-
-
-    if(!csv || !csvmva || !doubleak8 || !doubleca15 || !deepcsv_b || !deepcsv_bb
-       || !deepflavour_bb || !deepflavour_b || !deepflavour_lepb
-       || !deepflavour_uds || !deepflavour_c || !deepflavour_g
-       || !decorrmass_deepboosted_bbvsLight || !decorrmass_deepboosted_ccvsLight
+    if(!doubleak8 || !doubleca15 || !decorrmass_deepboosted_bbvsLight || !decorrmass_deepboosted_ccvsLight
        || !decorrmass_deepboosted_TvsQCD || !decorrmass_deepboosted_ZHccvsQCD
        || !decorrmass_deepboosted_WvsQCD || !decorrmass_deepboosted_ZHbbvsQCD
        || !decorrmass_deepboosted_ZvsQCD || !decorrmass_deepboosted_ZbbvsQCD || !decorrmass_deepboosted_HbbvsQCD || !decorrmass_deepboosted_H4qvsQCD
@@ -715,152 +816,13 @@ decorrmass_deepboosted_probHbb=false,decorrmass_deepboosted_probQCDbb=false,deco
           btag_list += name_value.first;
           btag_list += " ";
         }
-        edm::LogWarning("NtupleWriterJets") << "Did not find all b-taggers! Available btaggers: " << btag_list;
-	/*	cout<<"Didn't find these: "<<endl;
-	if(!csv) cout<<"!csv"; 
-	if(!doubleak8) cout<<"!doubleak8"; 
-	if(!doubleca15) cout<<"!doubleca15"; if(!deepcsv_b) cout<<"!deepcsv_b";
-	if(!deepcsv_bb) cout<<"!deepcsv_bb"; if(!csvmva) cout<<"!csvmva";
-	if(!deepflavour_bb) cout<<"!deepflavour_bb"; if(!deepflavour_b) cout<<"!deepflavour_b "; if(!deepflavour_lepb) cout<<"!deepflavour_lepb";
-	if(!deepflavour_uds) cout<<"!deepflavour_uds "; if(!deepflavour_c) cout<<"!deepflavour_c "; if(!deepflavour_g) cout<<"!deepflavour_g";
-	if(!decorrmass_deepboosted_bbvsLight) cout<<"!decorrmass_deepboosted_bbvsLight"; if(!decorrmass_deepboosted_ccvsLight) cout<<"!decorrmass_deepboosted_ccvsLight";
-	if(!decorrmass_deepboosted_TvsQCD) cout<<"!decorrmass_deepboosted_TvsQCD"; if(!decorrmass_deepboosted_ZHccvsQCD) cout<<"!decorrmass_deepboosted_ZHccvsQCD";
-	if(!decorrmass_deepboosted_WvsQCD) cout<<"!decorrmass_deepboosted_WvsQCD"; if(!decorrmass_deepboosted_ZHbbvsQCD) cout<<"!decorrmass_deepboosted_ZHbbvsQCD";
-	if(!decorrmass_deepboosted_ZvsQCD) cout<<"!decorrmass_deepboosted_ZvsQCD"; if(!decorrmass_deepboosted_ZbbvsQCD) cout<<"!decorrmass_deepboosted_ZbbvsQCD ";
-	if(!decorrmass_deepboosted_HbbvsQCD) cout<<"!decorrmass_deepboosted_HbbvsQCD"; if(!decorrmass_deepboosted_H4qvsQCD) cout<<"!decorrmass_deepboosted_H4qvsQCD";
-	if(!deepboosted_bbvsLight) cout<<"!deepboosted_bbvsLight";  if(!deepboosted_ccvsLight) cout<<"!deepboosted_ccvsLight";
-	if(!deepboosted_TvsQCD) cout<<"!deepboosted_TvsQCD"; if(!deepboosted_ZHccvsQCD) cout<<"!deepboosted_ZHccvsQCD";
-	if(!deepboosted_WvsQCD) cout<<"!deepboosted_WvsQCD"; if(!deepboosted_ZHbbvsQCD) cout<<"!deepboosted_ZHbbvsQCD";
-	if(!deepboosted_ZvsQCD) cout<<"!deepboosted_ZvsQCD"; if(!deepboosted_ZbbvsQCD) cout<<"!deepboosted_ZbbvsQCD";
-	if(!deepboosted_HbbvsQCD) cout<<"!deepboosted_HbbvsQCD"; if(!deepboosted_H4qvsQCD) cout<<"!deepboosted_H4qvsQCD";
-	if(!deepboosted_probHbb) cout<<"!deepboosted_probHbb";  if(!deepboosted_probQCDbb) cout<<"!deepboosted_probQCDbb";
-	if(!deepboosted_probQCDc) cout<<"!deepboosted_probQCDc";    if(!deepboosted_probTbqq) cout<<"!deepboosted_probTbqq";
-	if(!deepboosted_probTbcq) cout<<"!deepboosted_probTbcq";    if(!deepboosted_probTbq) cout<<"!deepboosted_probTbq";
-	if(!deepboosted_probQCDothers) cout<<"!deepboosted_probQCDothers";    if(!deepboosted_probQCDb) cout<<"!deepboosted_probQCDb";
-	if(!deepboosted_probTbc) cout<<"!deepboosted_probTbc";    if(!deepboosted_probWqq) cout<<"!deepboosted_probWqq";
-	if(!deepboosted_probQCDcc) cout<<"!deepboosted_probQCDcc";     if(!deepboosted_probHcc) cout<<"!deepboosted_probHcc";
-	if(!deepboosted_probWcq) cout<<"!deepboosted_probWcq";    if(!deepboosted_probZcc) cout<<"!deepboosted_probZcc";
-	if(!deepboosted_probZqq) cout<<"!deepboosted_probZqq";    if(!deepboosted_probHqqqq) cout<<"!deepboosted_probHqqqq ";
-	if(!deepboosted_probZbb) cout<<"!deepboosted_probZbb ";    if(!deepdouble_H) cout<<"!deepdouble_H ";
-	if(!deepdouble_QCD) cout<<"!deepdouble_QCD";    if(!deepdouble_cb_H) cout<<"!deepdouble_cb_H";
-	if(!deepdouble_cl_H) cout<<"!deepdouble_cl_H";    if(!deepdouble_cl_QCD) cout<<"!deepdouble_cl_QCD "; if(!deepdouble_cb_QCD) cout<<"!deepdouble_cb_QCD";
-	if(!massinddeepdouble_QCD) cout<<"!massinddeepdouble_QCD";    if(!massinddeepdouble_H) cout<<"!massinddeepdouble_H";
-	if(!massinddeepdouble_cb_H) cout<<"!massinddeepdouble_cb_H ";    if(!massinddeepdouble_cl_H) cout<<"!massinddeepdouble_cl_H";
-	if(!massinddeepdouble_cl_QCD) cout<<"!massinddeepdouble_cl_QCD";    if(!massinddeepdouble_cb_QCD) cout<<"!massinddeepdouble_cb_QCD";
-	if(!decorrmass_deepboosted_probHbb) cout<<"!decorrmass_deepboosted_probHbb";  if(!decorrmass_deepboosted_probQCDbb) cout<<"!decorrmass_deepboosted_probQCDbb";
-	if(!decorrmass_deepboosted_probQCDc) cout<<"!decorrmass_deepboosted_probQCDc";    if(!decorrmass_deepboosted_probTbqq) cout<<"!decorrmass_deepboosted_probTbqq";
-	if(!decorrmass_deepboosted_probTbcq) cout<<"!decorrmass_deepboosted_probTbcq";    if(!decorrmass_deepboosted_probTbq) cout<<"!decorrmass_deepboosted_probTbq";
-	if(!decorrmass_deepboosted_probQCDothers) cout<<"!decorrmass_deepboosted_probQCDothers";    
-	if(!decorrmass_deepboosted_probQCDb) cout<<"!decorrmass_deepboosted_probQCDb";
-	if(!decorrmass_deepboosted_probTbc) cout<<"!decorrmass_deepboosted_probTbc";
-	if(!decorrmass_deepboosted_probWqq) cout<<"!decorrmass_deepboosted_probWqq";
-	if(!decorrmass_deepboosted_probQCDcc) cout<<"!decorrmass_deepboosted_probQCDcc";
-	if(!decorrmass_deepboosted_probHcc) cout<<"!decorrmass_deepboosted_probHcc";
-	if(!decorrmass_deepboosted_probWcq) cout<<"!decorrmass_deepboosted_probWcq ";
-	if(!decorrmass_deepboosted_probZcc) cout<<"!decorrmass_deepboosted_probZcc";
-	if(!decorrmass_deepboosted_probZqq) cout<<"!decorrmass_deepboosted_probZqq";
-	if(!decorrmass_deepboosted_probHqqqq) cout<<"!decorrmass_deepboosted_probHqqqq";
-	if(!decorrmass_deepboosted_probZbb) cout<<"!decorrmass_deepboosted_probZbb";
-	cout<<" "<<endl;*/
+        edm::LogWarning("NtupleWriterTopJets") << "Did not find all b-taggers! Available btaggers: " << btag_list;
         btag_warning = false;
       }
-      // throw runtime_error("did not find all b-taggers; see output for details");
     }
-  }
 
-  if(fill_pfcand){//fill pf candidates list: add pf-candidate to the event list and store index in the jet container
-    const auto& jet_daughter_ptrs = pat_jet.daughterPtrVector();
-    for(const auto & daughter_p : jet_daughter_ptrs){
-      size_t pfparticles_index = add_pfpart(*daughter_p, *uevent.pfparticles);
-      jet.add_pfcand_index(pfparticles_index);
-    }
-  }
 }
 
-
-NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents): ptmin(cfg.ptmin), etamax(cfg.etamax) {
-    handle = cfg.ctx.declare_event_output<vector<TopJet>>(cfg.dest_branchname, cfg.dest);
-    if(set_jets_member){
-        topjets_handle = cfg.ctx.get_handle<vector<TopJet>>("topjets");
-    }
-    src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
-    njettiness_src = cfg.njettiness_src;
-    src_njettiness1_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau1"));
-    src_njettiness2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau2"));
-    src_njettiness3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau3"));
-    src_njettiness4_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau4"));
-
-    njettiness_groomed_src = cfg.njettiness_groomed_src;
-    src_njettiness1_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau1"));
-    src_njettiness2_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau2"));
-    src_njettiness3_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau3"));
-    src_njettiness4_groomed_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_groomed_src, "tau4"));
-
-    qjets_src = cfg.qjets_src;
-    src_qjets_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(qjets_src, "QjetsVolatility"));
-
-    ecf_beta1_src = cfg.ecf_beta1_src;
-    src_ecf_beta1_N2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta1_src, "ecfN2"));
-    src_ecf_beta1_N3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta1_src, "ecfN3"));
-    ecf_beta2_src = cfg.ecf_beta2_src;
-    src_ecf_beta2_N2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta2_src, "ecfN2"));
-    src_ecf_beta2_N3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta2_src, "ecfN3"));
-
-    subjet_src = cfg.subjet_src;
-    higgs_src= cfg.higgs_src;
-
-    if (cfg.toptagging_src == "") {
-      do_toptagging = false;
-    } else {
-      do_toptagging = true;
-      src_hepTopTag_token = cfg.cc.consumes<edm::View<reco::HTTTopJetTagInfo> >(edm::InputTag(cfg.toptagging_src));
-    }
-
-    softdrop_src = cfg.softdrop_src;
-    if(softdrop_src.find("Mass")==string::npos){
-      src_softdrop_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.softdrop_src);
-    }
-
-    src_higgs_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.higgs_src);
-    higgs_name=cfg.higgs_name;
-    do_taginfo_subjets = cfg.do_taginfo_subjets;
-    src = cfg.src;
-    do_btagging = cfg.do_btagging;
-    do_btagging_subjets = cfg.do_btagging_subjets;
-    if(!njettiness_src.empty() || !qjets_src.empty()){
-        substructure_variables_src_token = cfg.cc.consumes<reco::BasicJetCollection>(cfg.substructure_variables_src);
-	substructure_variables_src_tokenreco = cfg.cc.consumes<reco::PFJetCollection>(cfg.substructure_variables_src);
-    }
-    if(!njettiness_groomed_src.empty()){
-        substructure_groomed_variables_src_token = cfg.cc.consumes<reco::BasicJetCollection>(cfg.substructure_groomed_variables_src);
-	substructure_groomed_variables_src_tokenreco = cfg.cc.consumes<reco::PFJetCollection>(cfg.substructure_groomed_variables_src);
-    }
-    btag_warning=true;
-    topjet_collection = cfg.dest_branchname;
-
-    topjet_puppiSpecificProducer = getPuppiJetSpecificProducer(src.label());
-
-    save_lepton_keys_ = false;
-
-    h_muons.clear();
-    h_elecs.clear();
-
-    higgstaginfo_src = cfg.higgstaginfo_src;
-    src_higgstaginfo_token =  cfg.cc.consumes<std::vector<reco::BoostedDoubleSVTagInfo> >(cfg.higgstaginfo_src);
-    NPFJetwConstituents_ = NPFJetwConstituents;
-}
-
-NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents):
-  NtupleWriterTopJets::NtupleWriterTopJets(cfg, set_jets_member, NPFJetwConstituents) {
-
-    save_lepton_keys_ = true;
-
-    for(const auto& muo_src : muon_sources){ auto h_muon = cfg.ctx.get_handle<std::vector<Muon>    >(muo_src); h_muons.push_back(h_muon); }
-    for(const auto& ele_src : elec_sources){ auto h_elec = cfg.ctx.get_handle<std::vector<Electron>>(ele_src); h_elecs.push_back(h_elec); }
-    NPFJetwConstituents_ = NPFJetwConstituents;
-}
-
-NtupleWriterTopJets::~NtupleWriterTopJets(){}
 
 
 void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent, const edm::EventSetup& iSetup){
@@ -973,9 +935,14 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	bool storePFcands = false;
 	if(i<NPFJetwConstituents_) storePFcands = true;
         try{
-          uhh2::NtupleWriterJets::fill_jet_info(uevent,pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer,storePFcands, true);
+          uhh2::NtupleWriterJets::fill_jet_info(uevent,pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer,storePFcands);
         }catch(runtime_error &){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " + src.label());
+        }
+	try{
+	  fill_btag_info(uevent,pat_topjet, topjet);
+        }catch(runtime_error &){
+          throw cms::Exception("fill_btag_info error", "Error in fill_btag_info for topjets in NtupleWriterTopJets with src = " + src.label());
         }
 
         /*--- lepton keys ---*/
@@ -1304,7 +1271,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
             auto patsubjetd = dynamic_cast<const pat::Jet *>(pat_topjet.daughter(k));
             if (patsubjetd) {
 	      try{
-		NtupleWriterJets::fill_jet_info(uevent,*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands, false);
+		NtupleWriterJets::fill_jet_info(uevent,*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for daughters in NtupleWriterTopJets with src = " + src.label());
 	      }
@@ -1333,7 +1300,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	    auto tpatsubjet = dynamic_cast<const pat::Jet *>(tSubjets.at(sj).get());
             if (tpatsubjet) {
 	      try{
-		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands, false);
+		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " + src.label());
 	      }
