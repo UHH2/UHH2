@@ -497,17 +497,11 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     if(!gentopjet_sources.empty()){
         event->gentopjets = &gentopjets[0];
     }
-    auto gentopjet_tau1 = iConfig.getParameter<std::vector<edm::InputTag> >("gentopjet_tau1");
-    for(size_t j=0; j< gentopjet_tau1.size(); ++j){
-      gentopjet_tau1_tokens.push_back(consumes<edm::ValueMap<float> >(gentopjet_tau1[j]));
-    }
-    auto gentopjet_tau2 = iConfig.getParameter<std::vector<edm::InputTag> >("gentopjet_tau2");
-    for(size_t j=0; j< gentopjet_tau2.size(); ++j){
-      gentopjet_tau2_tokens.push_back(consumes<edm::ValueMap<float> >(gentopjet_tau2[j]));
-    }
-    auto gentopjet_tau3 = iConfig.getParameter<std::vector<edm::InputTag> >("gentopjet_tau3");
-    for(size_t j=0; j< gentopjet_tau3.size(); ++j){
-      gentopjet_tau3_tokens.push_back(consumes<edm::ValueMap<float> >(gentopjet_tau3[j]));
+    auto gentopjet_tau_src = iConfig.getParameter<std::vector<std::string> >("gentopjet_njettiness_source");
+    for (const auto & srcItr : gentopjet_tau_src) {
+      gentopjet_tau1_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "tau1")));
+      gentopjet_tau2_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "tau2")));
+      gentopjet_tau3_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "tau3")));
     }
   }
   
@@ -981,17 +975,11 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          if(reco_gentopjets_tau3.isValid())
            gentopjet.set_tau3((*reco_gentopjets_tau3)[ptr]);
 
-	 // //  std::vector<const reco::Candidate *> daughters;
-	 if(dynamic_cast<const reco::GenJet *>(&reco_gentopjet)) { // This is a GenJet without subjets
-	   //	   cout<<" This is a GenJet without subjets"<<endl;
-            // for (unsigned int l = 0; l < reco_gentopjet.numberOfDaughters(); l++) {
-            //   daughters.push_back(reco_gentopjet.daughter(l));
-	   bool add_genparts=false;
-	   if(gentopjets[j].size()<doGenJetConstituents) add_genparts=true;
-	   //	   cout<<"Fill Info for GenTopJet: "<<endl;
-	   fill_geninfo_recojet(reco_gentopjet, (GenJet&)gentopjet, add_genparts);
-	   //	   cout<<"END Fill Info for GenTopJet: "<<endl;
-	 }
+         if(dynamic_cast<const reco::GenJet *>(&reco_gentopjet)) { // This is a GenJet without subjets
+           bool add_genparts=false;
+           if(gentopjets[j].size()<doGenJetConstituents) add_genparts=true;
+           fill_geninfo_recojet(reco_gentopjet, (GenJet&)gentopjet, add_genparts);
+         }
          else { // This is a BasicJet with subjets
 	   //	   cout<<" This is a BasicJet with N subjets = "<<reco_gentopjet.numberOfDaughters()<<" and nConstituents="<<reco_gentopjet.nConstituents()<<endl;
 	 //	 if(!dynamic_cast<const reco::GenJet *>(&reco_gentopjet)){// This is a BasicJet with subjets

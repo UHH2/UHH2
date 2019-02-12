@@ -2170,22 +2170,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     ),
                                     gentopjet_ptmin=cms.double(150.0),
                                     gentopjet_etamax=cms.double(5.0),
-                                    # gentopjet_tau1=cms.VInputTag(),
-                                    # gentopjet_tau2=cms.VInputTag(),
-                                    # gentopjet_tau3=cms.VInputTag(),
                                     # this can be used to save N-subjettiness for GenJets:
                                     # need one entry per gentopjet_source
-                                    gentopjet_tau1=cms.VInputTag(
-                                        cms.InputTag("NjettinessAk8Gen","tau1"),
-                                        cms.InputTag("NjettinessAk8SoftDropGen","tau1")
-                                    ),
-                                    gentopjet_tau2=cms.VInputTag(
-                                        cms.InputTag("NjettinessAk8Gen","tau2"),
-                                        cms.InputTag("NjettinessAk8SoftDropGen","tau2")
-                                    ),
-                                    gentopjet_tau3=cms.VInputTag(
-                                        cms.InputTag("NjettinessAk8Gen","tau3"),
-                                        cms.InputTag("NjettinessAk8SoftDropGen","tau3")
+                                    gentopjet_njettiness_source=cms.vstring(
+                                        "NjettinessAk8Gen",
+                                        "NjettinessAk8SoftDropGen",
                                     ),
 
                                     doAllPFParticles=cms.bool(False),
