@@ -4,6 +4,7 @@
 #include "UHH2/core/include/AnalysisModule.h"
 
 #include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/Photon.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Tau.h"
 
@@ -137,6 +138,89 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     }
 }
 
+
+
+
+// Photons ----------------
+NtupleWriterPhotons::NtupleWriterPhotons(Config & cfg, bool set_photons_member, const bool save_source_cands): save_source_candidates_(save_source_cands){
+  handle = cfg.ctx.declare_event_output<vector<Photon>>(cfg.dest_branchname, cfg.dest);
+  if(set_photons_member) photons_handle = cfg.ctx.get_handle<vector<Photon>>("photons");
+  src_token = cfg.cc.consumes<std::vector<pat::Photon>>(cfg.src);
+  pv_token = cfg.cc.consumes<std::vector<reco::Vertex>>(cfg.pv_src);
+  IDtag_keys = cfg.id_keys;
+}
+
+NtupleWriterPhotons::~NtupleWriterPhotons(){}
+
+void NtupleWriterPhotons::process(const edm::Event & event, uhh2::Event & uevent, const edm::EventSetup& iSetup){
+    edm::Handle< std::vector<pat::Photon> > pho_handle;
+    event.getByToken(src_token, pho_handle);
+
+   //  edm::Handle<std::vector<reco::Vertex>> pv_handle;
+   // event.getByToken(pv_token, pv_handle);
+   // if(pv_handle->empty()){
+   //     edm::LogWarning("NtupleWriterPhotons") << "No PVs found, not writing phoctrons!";
+   //     return;
+   // }
+   // const auto & PV = pv_handle->front();
+
+    std::vector<Photon> phos;
+    for (const pat::Photon & pat_pho : *pho_handle) {
+        phos.emplace_back();
+        Photon & pho = phos.back();
+        pho.set_charge( pat_pho.charge());
+        pho.set_pt( pat_pho.pt());
+        pho.set_eta( pat_pho.eta());
+        pho.set_phi( pat_pho.phi());
+        pho.set_energy( pat_pho.energy());
+	pho.set_vertex_x(pat_pho.vertex().x());
+	pho.set_vertex_y(pat_pho.vertex().y());
+	pho.set_vertex_z(pat_pho.vertex().z());
+	pho.set_puppiChargedHadronIso(pat_pho.puppiChargedHadronIso());
+	pho.set_puppiNeutralHadronIso(pat_pho.puppiNeutralHadronIso());
+	pho.set_puppiPhotonIso(pat_pho.puppiPhotonIso());
+        pho.set_supercluster_eta( pat_pho.superCluster()->eta() );
+        pho.set_supercluster_phi( pat_pho.superCluster()->phi() );
+
+	pho.set_trackIso(pat_pho.trackIso());
+	pho.set_ecalIso(pat_pho.ecalIso());
+	pho.set_hcalIso(pat_pho.hcalIso());
+	pho.set_caloIso(pat_pho.caloIso());
+
+	//	pho.set_patParticleIso(pat_pho.patParticleIso());
+	pho.set_chargedHadronIso(pat_pho.chargedHadronIso());
+	pho.set_neutralHadronIso(pat_pho.neutralHadronIso());
+	pho.set_photonIso(pat_pho.photonIso());
+	pho.set_puChargedHadronIso(pat_pho.puChargedHadronIso());
+
+        for(const auto& tag_str : IDtag_keys){
+          if(!pat_pho.hasUserInt(tag_str)) throw cms::Exception("Missing userInt label", "Label for pat::Photon::userInt not found: "+tag_str);
+          pho.set_tag(Photon::tagname2tag(tag_str), float(pat_pho.userInt(tag_str)));
+        }
+
+        /* source candidates */
+        if(save_source_candidates_){
+          for(unsigned int s=0; s<pat_pho.numberOfSourceCandidatePtrs(); ++s){
+            if(!pat_pho.sourceCandidatePtr(s).isAvailable()) continue;
+            source_candidate sc;
+            sc.key = pat_pho.sourceCandidatePtr(s).key();
+            sc.px  = pat_pho.sourceCandidatePtr(s)->px();
+            sc.py  = pat_pho.sourceCandidatePtr(s)->py();
+            sc.pz  = pat_pho.sourceCandidatePtr(s)->pz();
+            sc.E   = pat_pho.sourceCandidatePtr(s)->energy();
+            pho.add_source_candidate(std::move(sc));
+          }
+        }
+        /*-------------------*/
+    }
+
+    uevent.set(handle, move(phos));
+    if(photons_handle){
+        EventAccess_::set_unmanaged(uevent, *photons_handle, &uevent.get(handle));
+    }
+}
+
+//-------------------------
 
 NtupleWriterMuons::NtupleWriterMuons(Config & cfg, bool set_muons_member, const bool save_source_cands): save_source_candidates_(save_source_cands){
   handle = cfg.ctx.declare_event_output<vector<Muon>>(cfg.dest_branchname, cfg.dest);
