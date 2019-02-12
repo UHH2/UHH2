@@ -22,7 +22,7 @@ namespace uhh2 {
 
 class NtupleWriterJets: public NtupleWriterModule {
 public:
-    static void fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer="", bool fill_pfcand=false);
+    static void fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer="", bool fill_pfcand=false, bool isTopJet=false);
 
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents);
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&, unsigned int NPFJetwConstituents);
