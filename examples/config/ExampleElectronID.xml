@@ -16,6 +16,7 @@
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
             <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
+            <Item Name="PhotonCollection" Value="slimmedPhotonsUSER" />
             
             
             <!-- the class name of the AnalysisModule subclasses to run: -->
