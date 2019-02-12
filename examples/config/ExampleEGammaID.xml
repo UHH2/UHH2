@@ -20,7 +20,7 @@
             
             
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="ExampleModuleElectronID" /> 
+            <Item Name="AnalysisModule" Value="ExampleModuleEGammaID" />
             
             
             <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let

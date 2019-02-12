@@ -119,10 +119,10 @@ void ExamplePhotonIDHists::fill(const Event & event){
 ExamplePhotonIDHists::~ExamplePhotonIDHists(){}
 
 
-class ExampleModuleElectronID: public AnalysisModule {
+class ExampleModuleEGammaID: public AnalysisModule {
 public:
 
-    explicit ExampleModuleElectronID(Context & ctx);
+    explicit ExampleModuleEGammaID(Context & ctx);
     virtual bool process(Event & event) override;
 private:
     vector<string> electronIDs =  {
@@ -162,15 +162,15 @@ private:
 };
 
 
-ExampleModuleElectronID::ExampleModuleElectronID(Context & ctx)
+ExampleModuleEGammaID::ExampleModuleEGammaID(Context & ctx)
 {
-    cout << "Hello World from ExampleModuleElectronID!" << endl;
+    cout << "Hello World from ExampleModuleEGammaID!" << endl;
     eleHists.reset(new ExampleElectronIDHists(ctx, "electronID", electronIDs));
     phoHists.reset(new ExamplePhotonIDHists(ctx, "photonID", photonIDs));
 }
 
 
-bool ExampleModuleElectronID::process(Event & event) {
+bool ExampleModuleEGammaID::process(Event & event) {
     cout << " *** event: " << event.event << endl;
 
     for (const auto & eleItr : *event.electrons) {
@@ -191,7 +191,7 @@ bool ExampleModuleElectronID::process(Event & event) {
 }
 
 // as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,
-// make sure the ExampleModuleElectronID is found by class name. This is ensured by this macro:
-UHH2_REGISTER_ANALYSIS_MODULE(ExampleModuleElectronID)
+// make sure the ExampleModuleEGammaID is found by class name. This is ensured by this macro:
+UHH2_REGISTER_ANALYSIS_MODULE(ExampleModuleEGammaID)
 
 }
