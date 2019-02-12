@@ -116,6 +116,10 @@ class NtupleWriter : public edm::EDFilter {
       std::vector<edm::EDGetToken> gentopjet_tau2_tokens;
       std::vector<edm::EDGetToken> gentopjet_tau3_tokens;
       std::vector<edm::EDGetToken> gentopjet_tau4_tokens;
+      std::vector<edm::EDGetToken> gentopjet_ecf_beta1_N2_tokens;
+      std::vector<edm::EDGetToken> gentopjet_ecf_beta1_N3_tokens;
+      std::vector<edm::EDGetToken> gentopjet_ecf_beta2_N2_tokens;
+      std::vector<edm::EDGetToken> gentopjet_ecf_beta2_N3_tokens;
 
       std::vector<edm::EDGetToken> photon_tokens;
       std::vector<std::vector<Photon>> phs;

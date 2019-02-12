@@ -504,6 +504,16 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       gentopjet_tau3_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "tau3")));
       gentopjet_tau4_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "tau4")));
     }
+    auto gentopjet_ecf_beta1_src = iConfig.getParameter<std::vector<std::string> >("gentopjet_ecf_beta1_sources");
+    for (const auto & srcItr : gentopjet_ecf_beta1_src) {
+      gentopjet_ecf_beta1_N2_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "ecfN2")));
+      gentopjet_ecf_beta1_N3_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "ecfN3")));
+    }
+    auto gentopjet_ecf_beta2_src = iConfig.getParameter<std::vector<std::string> >("gentopjet_ecf_beta2_sources");
+    for (const auto & srcItr : gentopjet_ecf_beta2_src) {
+      gentopjet_ecf_beta2_N2_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "ecfN2")));
+      gentopjet_ecf_beta2_N3_tokens.push_back(consumes<edm::ValueMap<float> >(edm::InputTag(srcItr, "ecfN3")));
+    }
   }
   
   if(doMET){
@@ -960,6 +970,20 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        edm::Handle<edm::ValueMap<float> > reco_gentopjets_tau4;
        if (j<gentopjet_tau4_tokens.size())
          iEvent.getByToken(gentopjet_tau4_tokens[j], reco_gentopjets_tau4);
+
+       edm::Handle<edm::ValueMap<float> > reco_gentopjets_ecf_beta1_N2;
+       if (j<gentopjet_ecf_beta1_N2_tokens.size())
+         iEvent.getByToken(gentopjet_ecf_beta1_N2_tokens[j], reco_gentopjets_ecf_beta1_N2);
+       edm::Handle<edm::ValueMap<float> > reco_gentopjets_ecf_beta1_N3;
+       if (j<gentopjet_ecf_beta1_N3_tokens.size())
+         iEvent.getByToken(gentopjet_ecf_beta1_N3_tokens[j], reco_gentopjets_ecf_beta1_N3);
+       edm::Handle<edm::ValueMap<float> > reco_gentopjets_ecf_beta2_N2;
+       if (j<gentopjet_ecf_beta2_N2_tokens.size())
+         iEvent.getByToken(gentopjet_ecf_beta2_N2_tokens[j], reco_gentopjets_ecf_beta2_N2);
+       edm::Handle<edm::ValueMap<float> > reco_gentopjets_ecf_beta2_N3;
+       if (j<gentopjet_ecf_beta2_N3_tokens.size())
+         iEvent.getByToken(gentopjet_ecf_beta2_N3_tokens[j], reco_gentopjets_ecf_beta2_N3);
+
        for (unsigned int i = 0; i < reco_gentopjets->size(); i++) {
          const reco::Jet & reco_gentopjet =  reco_gentopjets->at(i);
          if(reco_gentopjet.pt() < gentopjet_ptmin) continue;
@@ -980,6 +1004,15 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
            gentopjet.set_tau3((*reco_gentopjets_tau3)[ptr]);
          if(reco_gentopjets_tau4.isValid())
            gentopjet.set_tau4((*reco_gentopjets_tau4)[ptr]);
+
+         if(reco_gentopjets_ecf_beta1_N2.isValid())
+           gentopjet.set_ecfN2_beta1((*reco_gentopjets_ecf_beta1_N2)[ptr]);
+         if(reco_gentopjets_ecf_beta1_N3.isValid())
+           gentopjet.set_ecfN3_beta1((*reco_gentopjets_ecf_beta1_N3)[ptr]);
+         if(reco_gentopjets_ecf_beta2_N2.isValid())
+           gentopjet.set_ecfN2_beta2((*reco_gentopjets_ecf_beta2_N2)[ptr]);
+         if(reco_gentopjets_ecf_beta2_N3.isValid())
+           gentopjet.set_ecfN3_beta2((*reco_gentopjets_ecf_beta2_N3)[ptr]);
 
          if(dynamic_cast<const reco::GenJet *>(&reco_gentopjet)) { // This is a GenJet without subjets
            bool add_genparts=false;

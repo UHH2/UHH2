@@ -6,7 +6,7 @@ class GenTopJet : public GenJet {
 public:
 
   GenTopJet() {
-    m_tau1 = m_tau2 = m_tau3 = m_tau4 = -1;
+    m_tau1 = m_tau2 = m_tau3 = m_tau4 = m_ecfN2_beta1 = m_ecfN2_beta2 = m_ecfN3_beta1 = m_ecfN3_beta2 = -1;
   }
 
   const std::vector<GenJet> & subjets() const{return m_subjets;}
@@ -20,8 +20,20 @@ public:
   float tau4() const{return m_tau4;}
   void  set_tau4(float tau4){m_tau4=tau4;}
  
+  // energy correlation functions, N2 & N3, each with beta=1 or beta=2
+  float ecfN2_beta1() const {return m_ecfN2_beta1;}
+  float ecfN2_beta2() const {return m_ecfN2_beta2;}
+  float ecfN3_beta1() const {return m_ecfN3_beta1;}
+  float ecfN3_beta2() const {return m_ecfN3_beta2;}
+  
+  void set_ecfN2_beta1(float x){m_ecfN2_beta1 = x;}
+  void set_ecfN2_beta2(float x){m_ecfN2_beta2 = x;}
+  void set_ecfN3_beta1(float x){m_ecfN3_beta1 = x;}
+  void set_ecfN3_beta2(float x){m_ecfN3_beta2 = x;}
 private:
   std::vector<GenJet> m_subjets;
   double m_tau1,m_tau2,m_tau3,m_tau4;
+  float m_ecfN2_beta1, m_ecfN2_beta2, m_ecfN3_beta1, m_ecfN3_beta2;
+
 };
 

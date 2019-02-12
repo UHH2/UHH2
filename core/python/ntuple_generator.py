@@ -842,6 +842,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     # The cut is taken from PhysicsTools/PatAlgos/python/slimming/applySubstructure_cff.py
     from RecoJets.JetProducers.ECF_cff import ecfNbeta1, ecfNbeta2
     ecf_pt_min = 250
+
+    # AK8 CHS
     process.ECFNbeta1Ak8SoftDropCHS = ecfNbeta1.clone(
         src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
         cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
@@ -854,7 +856,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
     )
     task.add(process.ECFNbeta2Ak8SoftDropCHS)
 
-
+    # AK8 PUPPI
     process.ECFNbeta1Ak8SoftDropPuppi = ecfNbeta1.clone(
         src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
         cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
@@ -866,6 +868,19 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
         cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta2Ak8SoftDropPuppi)
+
+    # AK8 Gen
+    process.ECFNbeta1Ak8SoftDropGen = ecfNbeta1.clone(
+        src=cms.InputTag("ak8GenJetsSoftDrop"),
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
+    )
+    task.add(process.ECFNbeta1Ak8SoftDropGen)
+
+    process.ECFNbeta2Ak8SoftDropGen = ecfNbeta2.clone(
+        src=cms.InputTag("ak8GenJetsSoftDrop"),
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
+    )
+    task.add(process.ECFNbeta2Ak8SoftDropGen)
 
     # Warning, can be very slow
     # process.ECFNbeta1CA15SoftDropCHS = ecfNbeta1.clone(
@@ -2175,6 +2190,14 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     gentopjet_njettiness_sources=cms.vstring(
                                         "NjettinessAk8Gen",
                                         "NjettinessAk8SoftDropGen",
+                                    ),
+                                    gentopjet_ecf_beta1_sources=cms.vstring(
+                                        "",
+                                        "ECFNbeta1Ak8SoftDropGen"
+                                    ),
+                                    gentopjet_ecf_beta2_sources=cms.vstring(
+                                        "",
+                                        "ECFNbeta2Ak8SoftDropGen"
                                     ),
 
                                     doAllPFParticles=cms.bool(False),
