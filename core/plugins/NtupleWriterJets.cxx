@@ -81,7 +81,7 @@ std::string getPuppiJetSpecificProducer(const std::string & name) {
   return multiplicity_name;
 }
 
-NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents, double MinPtJetwConstituents){
+NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents){
     handle = cfg.ctx.declare_event_output<vector<Jet>>(cfg.dest_branchname, cfg.dest);
     
     ptmin = cfg.ptmin;
@@ -99,19 +99,19 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned 
     h_muons.clear();
     h_elecs.clear();
     NPFJetwConstituents_ = NPFJetwConstituents;
-    MinPtJetwConstituents_ = 2e4;
-    if(MinPtJetwConstituents>0) 
-      MinPtJetwConstituents_ = MinPtJetwConstituents;
     //    auto h_pfcand = cfg.ctx.get_handle<vector<PFParticle>>("PFParticles"); h_pfcands.push_back(h_pfcand);
 }
 
-NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents, double MinPtJetwConstituents):
-  NtupleWriterJets::NtupleWriterJets(cfg, set_jets_member, NPFJetwConstituents, MinPtJetwConstituents) {
+NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents):
+  NtupleWriterJets::NtupleWriterJets(cfg, set_jets_member, NPFJetwConstituents) {
 
     save_lepton_keys_ = true;
 
     for(const auto& muo_src : muon_sources){ auto h_muon = cfg.ctx.get_handle<std::vector<Muon>    >(muo_src); h_muons.push_back(h_muon); }
     for(const auto& ele_src : elec_sources){ auto h_elec = cfg.ctx.get_handle<std::vector<Electron>>(ele_src); h_elecs.push_back(h_elec); }
+    //    auto h_pfcand = cfg.ctx.get_handle<vector<PFParticle>>("pfparticles"); h_pfcands.push_back(h_pfcand);
+    NPFJetwConstituents_ = NPFJetwConstituents;
+
 }
 
 NtupleWriterJets::~NtupleWriterJets(){}
@@ -162,7 +162,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 
 
 	bool storePFcands = false;
-	if(i<NPFJetwConstituents_ || jet.pt()>MinPtJetwConstituents_) storePFcands = true;
+	if(i<NPFJetwConstituents_) storePFcands = true;
         try {
           fill_jet_info(uevent,pat_jet, jet, true, false, jet_puppiSpecificProducer,storePFcands);
         }
@@ -406,7 +406,7 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
 }
 
 
-NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents, double MinPtJetwConstituents): ptmin(cfg.ptmin), etamax(cfg.etamax) {
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents): ptmin(cfg.ptmin), etamax(cfg.etamax) {
     handle = cfg.ctx.declare_event_output<vector<TopJet>>(cfg.dest_branchname, cfg.dest);
     if(set_jets_member){
         topjets_handle = cfg.ctx.get_handle<vector<TopJet>>("topjets");
@@ -476,13 +476,10 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, uns
     higgstaginfo_src = cfg.higgstaginfo_src;
     src_higgstaginfo_token =  cfg.cc.consumes<std::vector<reco::BoostedDoubleSVTagInfo> >(cfg.higgstaginfo_src);
     NPFJetwConstituents_ = NPFJetwConstituents;
-    MinPtJetwConstituents_ = 2e4;
-    if(MinPtJetwConstituents>0) 
-      MinPtJetwConstituents_ = MinPtJetwConstituents;
 }
 
-NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents, double MinPtJetwConstituents):
-  NtupleWriterTopJets::NtupleWriterTopJets(cfg, set_jets_member, NPFJetwConstituents, MinPtJetwConstituents) {
+NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, const std::vector<std::string>& muon_sources, const std::vector<std::string>& elec_sources, unsigned int NPFJetwConstituents):
+  NtupleWriterTopJets::NtupleWriterTopJets(cfg, set_jets_member, NPFJetwConstituents) {
 
     save_lepton_keys_ = true;
 
@@ -936,7 +933,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
 	bool storePFcands = false;
-	if(i<NPFJetwConstituents_ || topjet.pt()>MinPtJetwConstituents_) storePFcands = true;
+	if(i<NPFJetwConstituents_) storePFcands = true;
         try{
           uhh2::NtupleWriterJets::fill_jet_info(uevent,pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer,storePFcands);
         }catch(runtime_error &){

@@ -1401,42 +1401,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
     task.add(process.xconeCHS2jets04)
-    process.xconePUPPI4jets04 = cms.EDProducer("XConeProducer",
-                                             src=cms.InputTag("puppi"),
-                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
-                                             NJets = cms.uint32(4),          # number of fatjets
-                                             RJets = cms.double(0.4),        # cone radius of fatjets
-                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
-                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
-                                             RSubJets = cms.double(0.2),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
-                                             )
-    task.add(process.xconePUPPI4jets04)
-
-    process.xconePUPPI3jets04 = cms.EDProducer("XConeProducer",
-                                             src=cms.InputTag("puppi"),
-                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
-                                             NJets = cms.uint32(3),          # number of fatjets
-                                             RJets = cms.double(0.4),        # cone radius of fatjets
-                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
-                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
-                                             RSubJets = cms.double(0.2),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
-                                             )
-    task.add(process.xconePUPPI3jets04)
-
-    process.xconePUPPI2jets04 = cms.EDProducer("XConeProducer",
-                                             src=cms.InputTag("puppi"),
-                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
-                                             NJets = cms.uint32(2),          # number of fatjets
-                                             RJets = cms.double(0.4),        # cone radius of fatjets
-                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
-                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
-                                             RSubJets = cms.double(0.2),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
-                                             )
-    task.add(process.xconePUPPI2jets04)
-
 
     process.genXCone4jets04 = cms.EDProducer("GenXConeProducer",
                                              src=cms.InputTag("packedGenParticlesForJetsNoNu"),
@@ -1519,42 +1483,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
     task.add(process.xconeCHS2jets08)
-
-    process.xconePUPPI4jets08 = cms.EDProducer("XConeProducer",
-                                             src=cms.InputTag("puppi"),
-                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
-                                             NJets = cms.uint32(4),          # number of fatjets
-                                             RJets = cms.double(0.8),        # cone radius of fatjets
-                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
-                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
-                                             RSubJets = cms.double(0.4),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
-                                             )
-    task.add(process.xconePUPPI4jets08)
-
-    process.xconePUPPI3jets08 = cms.EDProducer("XConeProducer",
-                                             src=cms.InputTag("puppi"),
-                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
-                                             NJets = cms.uint32(3),          # number of fatjets
-                                             RJets = cms.double(0.8),        # cone radius of fatjets
-                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
-                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
-                                             RSubJets = cms.double(0.4),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
-                                             )
-    task.add(process.xconePUPPI3jets08)
-
-    process.xconePUPPI2jets08 = cms.EDProducer("XConeProducer",
-                                             src=cms.InputTag("puppi"),
-                                             usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
-                                             NJets = cms.uint32(2),          # number of fatjets
-                                             RJets = cms.double(0.8),        # cone radius of fatjets
-                                             BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
-                                             NSubJets = cms.uint32(1),       # number of subjets in each fatjet
-                                             RSubJets = cms.double(0.4),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
-                                             )
-    task.add(process.xconePUPPI2jets08)
 
     process.genXCone4jets08 = cms.EDProducer("GenXConeProducer",
                                              src=cms.InputTag("packedGenParticlesForJetsNoNu"),
@@ -2047,9 +1975,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     # be smaller than topjet_ptmin to account for JECs
                                     topjet_ptmin=cms.double(150.0),
                                     topjet_etamax=cms.double(5.0),
-                                    #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFTopJetConstituentsNjets=cms.uint32(1),#store constituents for N leading topjets, where N is parameter
-                                    doPFTopJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all topjets with pt above threshold, set to negative value if not used
 
                                     TopJets=cms.VPSet(
                                         # Each PSet outputs a TopJet collection, with name {topjet_source}_{subjet_source}
@@ -2285,13 +2210,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     # prunedPrunedGenParticles are stored (see above)
                                     doAllGenParticles=cms.bool(False),
                                     doAllGenParticlesPythia8=cms.bool(False),
-                                    #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFJetConstituentsNjets=cms.uint32(1),#store constituents for N leading jets, where N is parameter
-                                    doPFJetConstituentsMinJetPt=cms.double(10.0),#store constituence for all jets with pt above threshold, set to negative value if not used
+#                                    doPFJetConstituents=cms.uint32(0),
+                                    doPFJetConstituents=cms.uint32(1),
                                     doGenJets=cms.bool(not useData),
-                                    #store GEN constituents: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
-                                    doGenJetConstituentsNjets=cms.uint32(1),#store constituents for N leading genjets, where N is parameter
-                                    doGenJetConstituentsMinJetPt=cms.double(20.0),#store constituence for all genjets with pt above threshold, set to negative value if not used
+                                    doGenJetConstituents=cms.uint32(0), #number of genjets with stored gen.constituents
                                     genjet_sources=cms.vstring(
                                        #"slimmedGenJets", "slimmedGenJetsAK8", "ca15GenJets"),
                                     "slimmedGenJets", "slimmedGenJetsAK8"),
@@ -2299,11 +2221,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     genjet_etamax=cms.double(5.0),
 
                                     doGenTopJets=cms.bool(not useData),
-                                    #store GEN constituents: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
-                                    doGenTopJetConstituentsNjets=cms.uint32(1),#store constituents for N leading genjets, where N is parameter
-                                    doGenTopJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all genjets with pt above threshold, set to negative value if not used
-
-
+                                    # gentopjet_sources=cms.VInputTag(
+                                    #     cms.InputTag("ak8GenJetsSoftDrop")
+                                    # ),
                                     gentopjet_sources=cms.VInputTag(
                                         cms.InputTag("ak8GenJetsFat"),
                                         cms.InputTag("ak8GenJetsSoftDrop")
@@ -2329,42 +2249,26 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     pf_collection_source=cms.InputTag("packedPFCandidates"),
 
                                     # *** HOTVR & XCone stuff
+                                    doHOTVR=cms.bool(True),
                                     doXCone=cms.bool(True),
-                                    #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFxconeJetConstituentsNjets=cms.uint32(1),#store constituents for N leading topjets, where N is parameter
-                                    doPFxconeJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all topjets with pt above threshold, set to negative value if not used
+                                    HOTVR_sources=cms.VInputTag(
+                                        cms.InputTag("hotvrPuppi")
+                                    ),
                                     XCone_sources=cms.VInputTag(
                                         cms.InputTag("xconePuppi"),
                                         cms.InputTag("xconeCHS"),
                                     ),
-                                    doHOTVR=cms.bool(True),
-                                    #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFhotvrJetConstituentsNjets=cms.uint32(1),#store constituents for N leading topjets, where N is parameter
-                                    doPFhotvrJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all topjets with pt above threshold, set to negative value if not used
-                                    HOTVR_sources=cms.VInputTag(
-                                        cms.InputTag("hotvrPuppi")
-                                    ),
 
                                     doGenHOTVR=cms.bool(not useData),
-                                    doGenhotvrJetConstituentsNjets=cms.uint32(1),#store constituents for N leading genjets, where N is parameter
-                                    doGenhotvrJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all genjets with pt above threshold, set to negative value if not used
-
                                     doGenXCone=cms.bool(not useData),
-                                    doGenxconeJetConstituentsNjets=cms.uint32(1),#store constituents for N leading genjets, where N is parameter
-                                    doGenxconeJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all genjets with pt above threshold, set to negative value if not used
-
                                     GenHOTVR_sources=cms.VInputTag(
                                         cms.InputTag("hotvrGen")
                                     ),
                                     GenXCone_sources=cms.VInputTag(
-#                                        cms.InputTag("genXCone23TopJets"),
+                                        cms.InputTag("genXCone23TopJets"),
                                         cms.InputTag("genXCone33TopJets"),
                                     ),
                                     doXCone_dijet=cms.bool(True), #XCone for dijet (JERC) studies, should be stored for QCD MC and JetHT DATA
-                                    #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFxconeDijetJetConstituentsNjets=cms.uint32(1),#store constituents for N leading topjets, where N is parameter
-                                    doPFxconeDijetJetConstituentsMinJetPt=cms.double(10.0),#store constituence for all topjets with pt above threshold, set to negative value if not used
-
                                     XCone_dijet_sources=cms.VInputTag(
                                         cms.InputTag("xconeCHS2jets04"),
                                         cms.InputTag("xconeCHS3jets04"),
@@ -2372,18 +2276,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         cms.InputTag("xconeCHS2jets08"),
                                         cms.InputTag("xconeCHS3jets08"),
                                         cms.InputTag("xconeCHS4jets08"),
-                                        cms.InputTag("xconePUPPI2jets04"),
-                                        cms.InputTag("xconePUPPI3jets04"),
-                                        cms.InputTag("xconePUPPI4jets04"),
-                                        cms.InputTag("xconePUPPI2jets08"),
-                                        cms.InputTag("xconePUPPI3jets08"),
-                                        cms.InputTag("xconePUPPI4jets08"),
-
                                     ),
                                     doGenXCone_dijet=cms.bool(not useData),
-                                    #store GEN constituents: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
-                                    doGenxconeDijetJetConstituentsNjets=cms.uint32(1),#store constituents for N leading topjets, where N is parameter
-                                    doGenxconeDijetJetConstituentsMinJetPt=cms.double(10.0),#store constituence for all topjets with pt above threshold, set to negative value if not 
                                     GenXCone_dijet_sources=cms.VInputTag(
                                         cms.InputTag("genXCone2jets04"),
                                         cms.InputTag("genXCone3jets04"),
