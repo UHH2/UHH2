@@ -8,6 +8,7 @@ public:
   GenJet(){
     m_genparticles_indices.clear();
     m_chf = m_cef = m_nhf = m_nef = m_muf = -1.0;
+    m_chargedMultiplicity = m_neutralMultiplicity = m_muonMultiplicity = m_electronMultiplicity = m_photonMultiplicity = 0;
   }
   ~GenJet(){};
 
@@ -26,8 +27,20 @@ public:
   double muf() const{return m_muf;}
   void  set_muf(double muf){m_muf=muf;}
 
+  int chargedMultiplicity() const{return m_chargedMultiplicity;} // All charged particles, including electrons and muons
+  void set_chargedMultiplicity(int x){m_chargedMultiplicity=x;}
+  int neutralMultiplicity() const{return m_neutralMultiplicity;} // All neutrals, including photons
+  void set_neutralMultiplicity(int x){m_neutralMultiplicity=x;}
+  int muonMultiplicity() const{return m_muonMultiplicity;}
+  void set_muonMultiplicity(int x){m_muonMultiplicity=x;}
+  int electronMultiplicity() const{return m_electronMultiplicity;}
+  void set_electronMultiplicity(int x){m_electronMultiplicity=x;}
+  int photonMultiplicity() const{return m_photonMultiplicity;}
+  void set_photonMultiplicity(int x){m_photonMultiplicity=x;}
+
 private:
   std::vector<unsigned int> m_genparticles_indices;
   double m_chf,m_cef,m_nhf,m_nef,m_muf;// jet energy fractions calculated from stable partons used for jet clustering
+  int m_chargedMultiplicity, m_neutralMultiplicity, m_muonMultiplicity, m_electronMultiplicity, m_photonMultiplicity;
 };
 

@@ -1739,7 +1739,13 @@ void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genje
   double nhf = 0; double nef = 0;
   double muf = 0;
 
-  // loop over all jet constituents, fill PF fractions info
+  int chMult = 0;
+  int nMult = 0;
+  int muMult = 0;
+  int elMult = 0;
+  int phMult = 0;
+
+  // loop over all jet constituents, fill PF fractions & multiplicity info
   for(unsigned int l = 0; l<pat_genjet.numberOfSourceCandidatePtrs(); ++l){
    const reco::Candidate* constituent =  pat_genjet.daughter(l);
    jet_charge += constituent->charge();
@@ -1748,19 +1754,28 @@ void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genje
      genjet.add_genparticles_index(genparticles_index);
    }
 
-   if(abs(constituent->pdgId())==11) 
+   if(abs(constituent->pdgId())==11) {
      cef += constituent->energy();
-   else{ 
-     if(abs(constituent->pdgId())==22)
+     elMult++;
+     chMult++;
+   } else{
+     if(abs(constituent->pdgId())==22) {
        nef += constituent->energy();
-     else{ 
-       if(abs(constituent->pdgId())==13)
-	 muf += constituent->energy();
-       else{
-	 if(abs(constituent->charge())>0.1)
-	   chf += constituent->energy();
-	 else
-	   nhf += constituent->energy();
+       phMult++;
+       nMult++;
+     } else{
+       if(abs(constituent->pdgId())==13) {
+         muf += constituent->energy();
+         muMult++;
+         chMult++;
+       } else{
+        if(abs(constituent->charge())>0.1) {
+          chf += constituent->energy();
+          chMult++;
+        } else {
+          nhf += constituent->energy();
+          nMult++;
+        }
        }
      }
    }
@@ -1776,6 +1791,11 @@ void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genje
  genjet.set_nef(nef);
  genjet.set_muf(muf);
  genjet.set_charge(jet_charge);
+ genjet.set_chargedMultiplicity(chMult);
+ genjet.set_neutralMultiplicity(nMult);
+ genjet.set_muonMultiplicity(muMult);
+ genjet.set_electronMultiplicity(elMult);
+ genjet.set_photonMultiplicity(phMult);
  // cout<<"N constituens ="<<pat_genjet.numberOfSourceCandidatePtrs()<<" with charge = "<<jet_charge<<endl;
 }
 
@@ -1788,27 +1808,42 @@ void NtupleWriter::fill_geninfo_recocand(const reco::Candidate& sub_jet, GenJet&
   double nhf = 0; double nef = 0;
   double muf = 0;
 
+  int chMult = 0;
+  int nMult = 0;
+  int muMult = 0;
+  int elMult = 0;
+  int phMult = 0;
+
   for(unsigned int l = 0; l<sub_jet.numberOfSourceCandidatePtrs(); ++l){
    const reco::Candidate* constituent =  sub_jet.daughter(l);
-  jet_charge += constituent->charge();
+   jet_charge += constituent->charge();
  
 
-  if(abs(constituent->pdgId())==11) 
-    cef += constituent->energy();
-  else{ 
-    if(abs(constituent->pdgId())==22)
-      nef += constituent->energy();
-    else{ 
-      if(abs(constituent->pdgId())==13)
-	muf += constituent->energy();
-      else{
-	if(abs(constituent->charge())>0.1)
-	  chf += constituent->energy();
-	else
-	  nhf += constituent->energy();
-      }
-    }
-  }
+   if(abs(constituent->pdgId())==11) {
+     cef += constituent->energy();
+     elMult++;
+     chMult++;
+   } else{
+     if(abs(constituent->pdgId())==22) {
+       nef += constituent->energy();
+       phMult++;
+       nMult++;
+     } else{
+       if(abs(constituent->pdgId())==13) {
+         muf += constituent->energy();
+         muMult++;
+         chMult++;
+       } else{
+        if(abs(constituent->charge())>0.1) {
+          chf += constituent->energy();
+          chMult++;
+        } else {
+          nhf += constituent->energy();
+          nMult++;
+        }
+       }
+     }
+   }
   }
 
   chf /= genjet.energy();
@@ -1822,6 +1857,12 @@ void NtupleWriter::fill_geninfo_recocand(const reco::Candidate& sub_jet, GenJet&
   genjet.set_nef(nef);
   genjet.set_muf(muf);
   genjet.set_charge(jet_charge);
+  genjet.set_chargedMultiplicity(chMult);
+  genjet.set_neutralMultiplicity(nMult);
+  genjet.set_muonMultiplicity(muMult);
+  genjet.set_electronMultiplicity(elMult);
+  genjet.set_photonMultiplicity(phMult);
+
   // cout<<"N constituens ="<<pat_genjet.numberOfSourceCandidatePtrs()<<" with charge = "<<jet_charge<<endl;
 }
 
