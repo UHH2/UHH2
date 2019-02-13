@@ -1024,6 +1024,11 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
            double chf = 0; double cef = 0;
            double nhf = 0; double nef = 0;
            double muf = 0;
+           int chMult = 0;
+           int nMult = 0;
+           int muMult = 0;
+           int elMult = 0;
+           int phMult = 0;
            for (unsigned int k = 0; k < reco_gentopjet.numberOfDaughters(); k++) {
              GenJet subjet_v4;
              subjet_v4.set_pt(reco_gentopjet.daughter(k)->p4().pt());
@@ -1037,13 +1042,26 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
              muf +=subjet_v4.muf();
              chf += subjet_v4.chf();
              nhf += subjet_v4.nhf();
+             chMult += subjet_v4.chargedMultiplicity();
+             nMult += subjet_v4.neutralMultiplicity();
+             muMult += subjet_v4.muonMultiplicity();
+             elMult += subjet_v4.electronMultiplicity();
+             phMult += subjet_v4.photonMultiplicity();
              gentopjet.add_subjet(subjet_v4);
            }
+           // We have to manually update the main fatjet using quantities from the subjets,
+           // since the fatjet is a BasicJet which has no constituent info
            gentopjet.set_chf(chf);
            gentopjet.set_nhf(nhf);
            gentopjet.set_cef(cef);
            gentopjet.set_nef(nef);
            gentopjet.set_muf(muf);
+           gentopjet.set_charge(jet_charge);
+           gentopjet.set_chargedMultiplicity(chMult);
+           gentopjet.set_neutralMultiplicity(nMult);
+           gentopjet.set_muonMultiplicity(muMult);
+           gentopjet.set_electronMultiplicity(elMult);
+           gentopjet.set_photonMultiplicity(phMult);
          }
          gentopjets[j].push_back(gentopjet);
        }
@@ -1739,7 +1757,13 @@ void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genje
   double nhf = 0; double nef = 0;
   double muf = 0;
 
-  // loop over all jet constituents, fill PF fractions info
+  int chMult = 0;
+  int nMult = 0;
+  int muMult = 0;
+  int elMult = 0;
+  int phMult = 0;
+
+  // loop over all jet constituents, fill PF fractions & multiplicity info
   for(unsigned int l = 0; l<pat_genjet.numberOfSourceCandidatePtrs(); ++l){
    const reco::Candidate* constituent =  pat_genjet.daughter(l);
    jet_charge += constituent->charge();
@@ -1748,19 +1772,28 @@ void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genje
      genjet.add_genparticles_index(genparticles_index);
    }
 
-   if(abs(constituent->pdgId())==11) 
+   if(abs(constituent->pdgId())==11) {
      cef += constituent->energy();
-   else{ 
-     if(abs(constituent->pdgId())==22)
+     elMult++;
+     chMult++;
+   } else{
+     if(abs(constituent->pdgId())==22) {
        nef += constituent->energy();
-     else{ 
-       if(abs(constituent->pdgId())==13)
-	 muf += constituent->energy();
-       else{
-	 if(abs(constituent->charge())>0.1)
-	   chf += constituent->energy();
-	 else
-	   nhf += constituent->energy();
+       phMult++;
+       nMult++;
+     } else{
+       if(abs(constituent->pdgId())==13) {
+         muf += constituent->energy();
+         muMult++;
+         chMult++;
+       } else{
+        if(abs(constituent->charge())>0.1) {
+          chf += constituent->energy();
+          chMult++;
+        } else {
+          nhf += constituent->energy();
+          nMult++;
+        }
        }
      }
    }
@@ -1776,6 +1809,11 @@ void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genje
  genjet.set_nef(nef);
  genjet.set_muf(muf);
  genjet.set_charge(jet_charge);
+ genjet.set_chargedMultiplicity(chMult);
+ genjet.set_neutralMultiplicity(nMult);
+ genjet.set_muonMultiplicity(muMult);
+ genjet.set_electronMultiplicity(elMult);
+ genjet.set_photonMultiplicity(phMult);
  // cout<<"N constituens ="<<pat_genjet.numberOfSourceCandidatePtrs()<<" with charge = "<<jet_charge<<endl;
 }
 
@@ -1788,27 +1826,42 @@ void NtupleWriter::fill_geninfo_recocand(const reco::Candidate& sub_jet, GenJet&
   double nhf = 0; double nef = 0;
   double muf = 0;
 
+  int chMult = 0;
+  int nMult = 0;
+  int muMult = 0;
+  int elMult = 0;
+  int phMult = 0;
+
   for(unsigned int l = 0; l<sub_jet.numberOfSourceCandidatePtrs(); ++l){
    const reco::Candidate* constituent =  sub_jet.daughter(l);
-  jet_charge += constituent->charge();
+   jet_charge += constituent->charge();
  
 
-  if(abs(constituent->pdgId())==11) 
-    cef += constituent->energy();
-  else{ 
-    if(abs(constituent->pdgId())==22)
-      nef += constituent->energy();
-    else{ 
-      if(abs(constituent->pdgId())==13)
-	muf += constituent->energy();
-      else{
-	if(abs(constituent->charge())>0.1)
-	  chf += constituent->energy();
-	else
-	  nhf += constituent->energy();
-      }
-    }
-  }
+   if(abs(constituent->pdgId())==11) {
+     cef += constituent->energy();
+     elMult++;
+     chMult++;
+   } else{
+     if(abs(constituent->pdgId())==22) {
+       nef += constituent->energy();
+       phMult++;
+       nMult++;
+     } else{
+       if(abs(constituent->pdgId())==13) {
+         muf += constituent->energy();
+         muMult++;
+         chMult++;
+       } else{
+        if(abs(constituent->charge())>0.1) {
+          chf += constituent->energy();
+          chMult++;
+        } else {
+          nhf += constituent->energy();
+          nMult++;
+        }
+       }
+     }
+   }
   }
 
   chf /= genjet.energy();
@@ -1822,6 +1875,12 @@ void NtupleWriter::fill_geninfo_recocand(const reco::Candidate& sub_jet, GenJet&
   genjet.set_nef(nef);
   genjet.set_muf(muf);
   genjet.set_charge(jet_charge);
+  genjet.set_chargedMultiplicity(chMult);
+  genjet.set_neutralMultiplicity(nMult);
+  genjet.set_muonMultiplicity(muMult);
+  genjet.set_electronMultiplicity(elMult);
+  genjet.set_photonMultiplicity(phMult);
+
   // cout<<"N constituens ="<<pat_genjet.numberOfSourceCandidatePtrs()<<" with charge = "<<jet_charge<<endl;
 }
 
