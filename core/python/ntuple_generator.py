@@ -1162,32 +1162,35 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             postfix=postfix
         )
 
-        # Add puppi multiplicity producers
-        # For each, we have to add a PATPuppiJetSpecificProducer,
-        # then update the relevant pat::Jet collection using updateJetCollection
-        # using userFloats mechanism
-        # Crucially, the PATPuppiJetSpecificProducer module name MUST be the same
-        # as the final jet collection, with only "patPuppiJetSpecificProducer" prepended
-        # so that NtupleWriterJets can find the stored userFloat
-        puppi_mult_name = "patPuppiJetSpecificProducer" + updater_name
-        setattr(process,
-                puppi_mult_name,
-                cms.EDProducer("PATPuppiJetSpecificProducer",
-                    src = cms.InputTag(updater_src)
+        if is_puppi:
+            # Add puppi multiplicity producers
+            # For each, we have to add a PATPuppiJetSpecificProducer,
+            # then update the relevant pat::Jet collection using updateJetCollection
+            # using userFloats mechanism
+            # Crucially, the PATPuppiJetSpecificProducer module name MUST be the same
+            # as the final jet collection, with only "patPuppiJetSpecificProducer" prepended
+            # so that NtupleWriterJets can find the stored userFloat
+            puppi_mult_name = "patPuppiJetSpecificProducer" + updater_name
+            setattr(process,
+                    puppi_mult_name,
+                    cms.EDProducer("PATPuppiJetSpecificProducer",
+                                   src = cms.InputTag(updater_src)
+                                   )
                     )
-                )
-        task.add(getattr(process, puppi_mult_name))
+            task.add(getattr(process, puppi_mult_name))
 
-        # We add in the userFloats to the last PATJetUpdater
-        # This is because we use the jet collection name to access the userFloats in NtupleWriterJets
-        getattr(process, updater_name).userData.userFloats.src = [
-            '%s:puppiMultiplicity' % puppi_mult_name,
-            '%s:neutralPuppiMultiplicity' % puppi_mult_name,
-            '%s:neutralHadronPuppiMultiplicity' % puppi_mult_name,
-            '%s:photonPuppiMultiplicity' % puppi_mult_name,
-            '%s:HFHadronPuppiMultiplicity' % puppi_mult_name,
-            '%s:HFEMPuppiMultiplicity' % puppi_mult_name
-        ]
+
+            # We add in the userFloats to the last PATJetUpdater
+            # This is because we use the jet collection name to access the userFloats in NtupleWriterJets
+            getattr(process, updater_name).userData.userFloats.src = [
+                '%s:puppiMultiplicity' % puppi_mult_name,
+                '%s:neutralPuppiMultiplicity' % puppi_mult_name,
+                '%s:neutralHadronPuppiMultiplicity' % puppi_mult_name,
+                '%s:photonPuppiMultiplicity' % puppi_mult_name,
+                '%s:HFHadronPuppiMultiplicity' % puppi_mult_name,
+                '%s:HFEMPuppiMultiplicity' % puppi_mult_name
+                ]
+
 
     def rename_module(process, task, current_name, new_name, update_userData=True):
         """Rename a module in a process, with option to also update userData.
