@@ -65,39 +65,8 @@ class NtupleWriter : public edm::EDFilter {
       bool doGenInfo;
       bool doAllGenParticles;
       bool doAllGenParticlesPythia8;
-      unsigned doGenJetConstituentsNjets;
-      double doGenJetConstituentsMinJetPt;
-      bool doGenJetConstituents;
-      unsigned doGenTopJetConstituentsNjets;
-      double doGenTopJetConstituentsMinJetPt;
-      bool doGenTopJetConstituents;
-      unsigned doGenxconeJetConstituentsNjets;
-      double doGenxconeJetConstituentsMinJetPt;
-      bool doGenxconeJetConstituents;
-      unsigned doGenxconeDijetJetConstituentsNjets;
-      double doGenxconeDijetJetConstituentsMinJetPt;
-      bool doGenxconeDijetJetConstituents;
-      unsigned doGenhotvrJetConstituentsNjets;
-      double doGenhotvrJetConstituentsMinJetPt;
-      bool doGenhotvrJetConstituents;
-
-      unsigned doPFJetConstituentsNjets;
-      double doPFJetConstituentsMinJetPt;
-      bool doPFJetConstituents;
-      unsigned doPFTopJetConstituentsNjets;
-      double doPFTopJetConstituentsMinJetPt;
-      bool doPFTopJetConstituents;
-      unsigned doPFxconeJetConstituentsNjets;
-      double doPFxconeJetConstituentsMinJetPt;
-      bool doPFxconeJetConstituents;
-      unsigned doPFhotvrJetConstituentsNjets;
-      double doPFhotvrJetConstituentsMinJetPt;
-      bool doPFhotvrJetConstituents;
-      unsigned doPFxconeDijetJetConstituentsNjets;
-      double doPFxconeDijetJetConstituentsMinJetPt;
-      bool doPFxconeDijetJetConstituents;
-
-
+      unsigned doGenJetConstituents;
+      unsigned doPFJetConstituents;
       bool doPV;
       bool doTrigger;
       bool doEcalBadCalib;
