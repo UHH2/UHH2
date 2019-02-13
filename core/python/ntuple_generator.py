@@ -1911,7 +1911,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
                                     doMuons=cms.bool(True),
                                     muon_sources=cms.vstring("slimmedMuonsUSER"),
 
-                                    doTaus=cms.bool(True),
+                                    doTaus=cms.bool(False),
                                     tau_sources=cms.vstring("slimmedTaus"),
                                     tau_ptmin=cms.double(0.0),
                                     tau_etamax=cms.double(999.0),
