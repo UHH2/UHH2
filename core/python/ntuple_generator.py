@@ -30,7 +30,7 @@ from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 # NOTE: all from xxx import * must go here, not inside the function
 
 
-def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
+def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     """Main function to make a cms.Process object to create ntuples.
 
     Parameters
@@ -1955,6 +1955,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=150.):
 
                                     # doTopJets=cms.bool(False),
                                     doTopJets = cms.bool(True),
+                                    # NB fatjet_ptmin arg used for clustering should
+                                    # be smaller than topjet_ptmin to account for JECs
                                     topjet_ptmin=cms.double(150.0),
                                     topjet_etamax=cms.double(5.0),
 
