@@ -926,17 +926,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     task.add(process.NjettinessAk8SoftDropPuppi)
 
     # AK8 GenJets
-    # process.NjettinessAk8Gen = Njettiness.clone(
-    #     src=cms.InputTag("ak8GenJets"),
-    #     cone=cms.double(0.8)
-    # )
-    # task.add(process.NjettinessAk8Gen)
+    process.NjettinessAk8Gen = process.NjettinessAk8CHS.clone(
+        src=cms.InputTag("ak8GenJetsFat")
+    )
+    task.add(process.NjettinessAk8Gen)
 
-    # process.NjettinessAk8SoftDropGen = Njettiness.clone(
-    #     src=cms.InputTag("ak8GenJetsSoftDrop"),
-    #     cone=cms.double(0.8)
-    # )
-    # task.add(process.NjettinessAk8SoftDropGen)
+    process.NjettinessAk8SoftDropGen = process.NjettinessAk8SoftDropCHS.clone(
+        src=cms.InputTag("ak8GenJetsSoftDrop")
+    )
+    task.add(process.NjettinessAk8SoftDropGen)
 
     # QJetsAdder
     # ----------
@@ -959,6 +957,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # The cut is taken from PhysicsTools/PatAlgos/python/slimming/applySubstructure_cff.py
     from RecoJets.JetProducers.ECF_cff import ecfNbeta1, ecfNbeta2
     ecf_pt_min = 250
+
+    # AK8 CHS
     process.ECFNbeta1Ak8SoftDropCHS = ecfNbeta1.clone(
         src=cms.InputTag("ak8CHSJetsSoftDropforsub"),
         cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
@@ -971,7 +971,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     )
     task.add(process.ECFNbeta2Ak8SoftDropCHS)
 
-
+    # AK8 PUPPI
     process.ECFNbeta1Ak8SoftDropPuppi = ecfNbeta1.clone(
         src=cms.InputTag("ak8PuppiJetsSoftDropforsub"),
         cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
@@ -983,6 +983,19 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta2Ak8SoftDropPuppi)
+
+    # AK8 Gen
+    process.ECFNbeta1Ak8SoftDropGen = ecfNbeta1.clone(
+        src=cms.InputTag("ak8GenJetsSoftDrop"),
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
+    )
+    task.add(process.ECFNbeta1Ak8SoftDropGen)
+
+    process.ECFNbeta2Ak8SoftDropGen = ecfNbeta2.clone(
+        src=cms.InputTag("ak8GenJetsSoftDrop"),
+        cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
+    )
+    task.add(process.ECFNbeta2Ak8SoftDropGen)
 
     # Warning, can be very slow
     # process.ECFNbeta1CA15SoftDropCHS = ecfNbeta1.clone(
@@ -2205,22 +2218,29 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     genjet_etamax=cms.double(5.0),
 
                                     doGenTopJets=cms.bool(not useData),
+                                    # gentopjet_sources=cms.VInputTag(
+                                    #     cms.InputTag("ak8GenJetsSoftDrop")
+                                    # ),
                                     gentopjet_sources=cms.VInputTag(
+                                        cms.InputTag("ak8GenJetsFat"),
                                         cms.InputTag("ak8GenJetsSoftDrop")
                                     ),
-                                    # gentopjet_sources =
-                                    # cms.VInputTag(cms.InputTag("ak8GenJets"),cms.InputTag("ak8GenJetsSoftDrop")),
-                                    # #this can be used to save N-subjettiness for ungroomed GenJets
                                     gentopjet_ptmin=cms.double(150.0),
                                     gentopjet_etamax=cms.double(5.0),
-                                    gentopjet_tau1=cms.VInputTag(),
-                                    gentopjet_tau2=cms.VInputTag(),
-                                    gentopjet_tau3=cms.VInputTag(),
-                                    # gentopjet_tau1 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau1"),cms.InputTag("NjettinessAk8SoftDropGen","tau1")), #this can be used to save N-subjettiness for GenJets
-                                    # gentopjet_tau2 = cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau2"),cms.InputTag("NjettinessAk8SoftDropGen","tau2")), #this can be used to save N-subjettiness for GenJets
-                                    # gentopjet_tau3 =
-                                    # cms.VInputTag(cms.InputTag("NjettinessAk8Gen","tau3"),cms.InputTag("NjettinessAk8SoftDropGen","tau3")),
-                                    # #this can be used to save N-subjettiness for GenJets
+                                    # this can be used to save N-subjettiness for GenJets:
+                                    # need one entry per gentopjet_source
+                                    gentopjet_njettiness_sources=cms.vstring(
+                                        "NjettinessAk8Gen",
+                                        "NjettinessAk8SoftDropGen",
+                                    ),
+                                    gentopjet_ecf_beta1_sources=cms.vstring(
+                                        "",
+                                        "ECFNbeta1Ak8SoftDropGen"
+                                    ),
+                                    gentopjet_ecf_beta2_sources=cms.vstring(
+                                        "",
+                                        "ECFNbeta2Ak8SoftDropGen"
+                                    ),
 
                                     doAllPFParticles=cms.bool(False),
                                     pf_collection_source=cms.InputTag("packedPFCandidates"),
