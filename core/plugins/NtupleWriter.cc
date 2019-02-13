@@ -1024,6 +1024,11 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
            double chf = 0; double cef = 0;
            double nhf = 0; double nef = 0;
            double muf = 0;
+           int chMult = 0;
+           int nMult = 0;
+           int muMult = 0;
+           int elMult = 0;
+           int phMult = 0;
            for (unsigned int k = 0; k < reco_gentopjet.numberOfDaughters(); k++) {
              GenJet subjet_v4;
              subjet_v4.set_pt(reco_gentopjet.daughter(k)->p4().pt());
@@ -1037,13 +1042,26 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
              muf +=subjet_v4.muf();
              chf += subjet_v4.chf();
              nhf += subjet_v4.nhf();
+             chMult += subjet_v4.chargedMultiplicity();
+             nMult += subjet_v4.neutralMultiplicity();
+             muMult += subjet_v4.muonMultiplicity();
+             elMult += subjet_v4.electronMultiplicity();
+             phMult += subjet_v4.photonMultiplicity();
              gentopjet.add_subjet(subjet_v4);
            }
+           // We have to manually update the main fatjet using quantities from the subjets,
+           // since the fatjet is a BasicJet which has no constituent info
            gentopjet.set_chf(chf);
            gentopjet.set_nhf(nhf);
            gentopjet.set_cef(cef);
            gentopjet.set_nef(nef);
            gentopjet.set_muf(muf);
+           gentopjet.set_charge(jet_charge);
+           gentopjet.set_chargedMultiplicity(chMult);
+           gentopjet.set_neutralMultiplicity(nMult);
+           gentopjet.set_muonMultiplicity(muMult);
+           gentopjet.set_electronMultiplicity(elMult);
+           gentopjet.set_photonMultiplicity(phMult);
          }
          gentopjets[j].push_back(gentopjet);
        }
