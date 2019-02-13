@@ -223,9 +223,32 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doJets = iConfig.getParameter<bool>("doJets");
 
   doGenJets = iConfig.getParameter<bool>("doGenJets");
+  doGenJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenJetConstituentsNjets");
+  doGenJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenJetConstituentsMinJetPt");
+  if(doGenJetConstituentsMinJetPt<1e-6) doGenJetConstituentsMinJetPt=2e4;
+  doGenJetConstituents = false;
+  if((doGenJetConstituentsNjets>0 || doGenJetConstituentsMinJetPt>0) && doGenJets) 
+    doGenJetConstituents=true;
+
   doGenTopJets = iConfig.getParameter<bool>("doGenTopJets");
-  doGenJetConstituents = iConfig.getParameter<unsigned>("doGenJetConstituents");
-  doPFJetConstituents = iConfig.getParameter<unsigned>("doPFJetConstituents");
+  doGenTopJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenTopJetConstituentsNjets");
+  doGenTopJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenTopJetConstituentsMinJetPt");
+  if(doGenTopJetConstituentsMinJetPt<1e-6) doGenTopJetConstituentsMinJetPt=2e4;
+  doGenTopJetConstituents = false;
+  if((doGenTopJetConstituentsNjets>0 || doGenTopJetConstituentsMinJetPt>0) && doGenTopJets) 
+    doGenTopJetConstituents=true;
+
+  doPFJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFJetConstituentsNjets");
+  doPFJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFJetConstituentsMinJetPt");
+  doPFJetConstituents = false;
+  if(doPFJetConstituentsNjets>0 || doPFJetConstituentsMinJetPt>0) 
+    doPFJetConstituents=true;
+  doPFTopJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFTopJetConstituentsNjets");
+  doPFTopJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFTopJetConstituentsMinJetPt");
+  doPFTopJetConstituents = false;
+  if(doPFTopJetConstituentsNjets>0 || doPFTopJetConstituentsMinJetPt>0) 
+    doPFTopJetConstituents=true;
+
   doPhotons = iConfig.getParameter<bool>("doPhotons");
   doMET = iConfig.getParameter<bool>("doMET");
   doGenMET = iConfig.getParameter<bool>("doGenMET");
@@ -242,13 +265,56 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doEcalBadCalib = iConfig.getParameter<bool>("doEcalBadCalib");
   doPrefire = iConfig.getParameter<bool>("doPrefire");
 
-  doHOTVR = iConfig.getParameter<bool>("doHOTVR");
+
   doXCone = iConfig.getParameter<bool>("doXCone");
-  doGenHOTVR = iConfig.getParameter<bool>("doGenHOTVR");
+  doPFxconeJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFxconeJetConstituentsNjets");
+  doPFxconeJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFxconeJetConstituentsMinJetPt");
+  doPFxconeJetConstituents = false;
+  if((doPFxconeJetConstituentsNjets>0 || doPFxconeJetConstituentsMinJetPt>0) && doXCone) 
+    doPFxconeJetConstituents=true;
+  if(doPFxconeJetConstituentsMinJetPt<1e-6) doPFxconeJetConstituentsMinJetPt=2e4;
+
+  doHOTVR = iConfig.getParameter<bool>("doHOTVR");
+  doPFhotvrJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFhotvrJetConstituentsNjets");
+  doPFhotvrJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFhotvrJetConstituentsMinJetPt");
+  doPFhotvrJetConstituents = false;
+  if((doPFhotvrJetConstituentsNjets>0 || doPFhotvrJetConstituentsMinJetPt>0) && doHOTVR) 
+    doPFhotvrJetConstituents=true;
+  if(doPFhotvrJetConstituentsMinJetPt<1e-6) doPFhotvrJetConstituentsMinJetPt=2e4;
+
+
   doGenXCone = iConfig.getParameter<bool>("doGenXCone");
+  doGenxconeJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenxconeJetConstituentsNjets");
+  doGenxconeJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeJetConstituentsMinJetPt");
+  if(doGenxconeJetConstituentsMinJetPt<1e-6) doGenxconeJetConstituentsMinJetPt=2e4;
+  doGenxconeJetConstituents = false;
+  if((doGenxconeJetConstituentsNjets>0 || doGenxconeJetConstituentsMinJetPt>0) && doGenXCone) 
+    doGenxconeJetConstituents=true;
+
+  doGenHOTVR = iConfig.getParameter<bool>("doGenHOTVR");
+  doGenhotvrJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenhotvrJetConstituentsNjets");
+  doGenhotvrJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenhotvrJetConstituentsMinJetPt");
+  if(doGenhotvrJetConstituentsMinJetPt<1e-6) doGenhotvrJetConstituentsMinJetPt=2e4;
+  doGenhotvrJetConstituents = false;
+  if((doGenhotvrJetConstituentsNjets>0 || doGenhotvrJetConstituentsMinJetPt>0) && doGenHOTVR) 
+    doGenhotvrJetConstituents=true;
+
 
   doXCone_dijet = iConfig.getParameter<bool>("doXCone_dijet");
+  doPFxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFxconeDijetJetConstituentsNjets");
+  doPFxconeDijetJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFxconeDijetJetConstituentsMinJetPt");
+  doPFxconeDijetJetConstituents = false;
+  if((doPFxconeDijetJetConstituentsNjets>0 || doPFxconeDijetJetConstituentsMinJetPt>0) && doXCone_dijet) 
+    doPFxconeDijetJetConstituents=true;
+  if(doPFxconeDijetJetConstituentsMinJetPt<1e-6) doPFxconeDijetJetConstituentsMinJetPt=2e4;
+
   doGenXCone_dijet = iConfig.getParameter<bool>("doGenXCone_dijet");
+  doGenxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenxconeDijetJetConstituentsNjets");
+  doGenxconeDijetJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeDijetJetConstituentsMinJetPt");
+  if(doGenxconeDijetJetConstituentsMinJetPt<1e-6) doGenxconeDijetJetConstituentsMinJetPt=2e4;
+  doGenxconeDijetJetConstituents = false;
+  if((doGenxconeDijetJetConstituentsNjets>0 || doGenxconeDijetJetConstituentsMinJetPt>0) && doGenXCone_dijet) 
+    doGenxconeDijetJetConstituents=true;
 
   auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 
@@ -328,7 +394,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         NtupleWriterJets::Config cfg(*context, consumesCollector(), jet_sources[i], jet_sources[i]);
         cfg.ptmin = jet_ptmin;
         cfg.etamax = jet_etamax;
-        writer_modules.emplace_back(new NtupleWriterJets(cfg, i==0, muon_sources, elec_sources,doPFJetConstituents));
+        writer_modules.emplace_back(new NtupleWriterJets(cfg, i==0, muon_sources, elec_sources,doPFJetConstituentsNjets,doPFJetConstituentsMinJetPt));
       }
   }
   if(doTopJets){
@@ -433,7 +499,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         std::string topbranch=topjet_source+"_"+subjet_source;
         cfg.dest_branchname = topbranch;
         cfg.dest = topbranch;
-        writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0, muon_sources, elec_sources,doPFJetConstituents));
+        writer_modules.emplace_back(new NtupleWriterTopJets(cfg, j==0, muon_sources, elec_sources,doPFTopJetConstituentsNjets,doPFTopJetConstituentsMinJetPt));
 
       }
     }
@@ -555,7 +621,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     branch(tr, "genInfo","GenInfo", event->genInfo);
     branch(tr, "GenParticles","std::vector<GenParticle>", event->genparticles);
   }
-  if(doPFJetConstituents>0){
+  if(doPFJetConstituents || doPFTopJetConstituents || doPFxconeJetConstituents || doPFhotvrJetConstituents || doPFxconeDijetJetConstituents){
     event->pfparticles = new vector<PFParticle>();
     branch(tr, "PFParticles","std::vector<PFParticle>", event->pfparticles);
   }
@@ -597,7 +663,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   }
   if(doAllPFParticles){
     pf_collection_token = consumes<vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("pf_collection_source"));
-    if(doPFJetConstituents<1){
+    if(!doPFJetConstituents && !doPFTopJetConstituents && !doPFxconeJetConstituents && !doPFhotvrJetConstituents && !doPFxconeDijetJetConstituents){
       event->pfparticles = new vector<PFParticle>;
       branch(tr, "PFParticles", "std::vector<PFParticle>", &event->pfparticles);
     }
@@ -702,7 +768,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
    print_times(timer, "rho");
 
-   if(doPFJetConstituents>0){
+   if(doPFJetConstituents || doPFTopJetConstituents || doPFxconeJetConstituents || doPFhotvrJetConstituents || doPFxconeDijetJetConstituents){
      event->pfparticles->clear();
    }
 
@@ -937,7 +1003,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	   }
 	 }
 	 bool add_genparts=false;
-	 if(genjets[j].size()<doGenJetConstituents) add_genparts=true;
+	 if(genjets[j].size()<doGenJetConstituentsNjets || gen_jet.pt()>doGenJetConstituentsMinJetPt) add_genparts=true;
 	 fill_geninfo_recojet(gen_jet,jet,add_genparts);
 	 genjets[j].push_back(jet);
        }
@@ -1064,6 +1130,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
            gentopjet.set_photonMultiplicity(phMult);
          }
          gentopjets[j].push_back(gentopjet);
+
        }
      }
    }
@@ -1153,7 +1220,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    // ------------- PF constituents --------------
   
    if(doAllPFParticles){
-     if(!doPFJetConstituents) event->pfparticles->clear();
+     if(!doPFJetConstituents && !doPFTopJetConstituents && !doPFxconeJetConstituents && !doPFhotvrJetConstituents && !doPFxconeDijetJetConstituents) event->pfparticles->clear();
      edm::Handle<vector<pat::PackedCandidate> > pfColl_handle;
      iEvent.getByToken(pf_collection_token, pfColl_handle);
 
@@ -1360,7 +1427,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	}
 	thisJet.set_JEC_factor_raw(1.);
 	thisJet.set_JEC_L1factor_raw(1.);
-	if(hotvrJets[j].size()<doPFJetConstituents){
+	bool storePFparts = (hotvrJets[j].size()<doPFhotvrJetConstituentsNjets || thisJet.pt()>doPFhotvrJetConstituentsMinJetPt);
+	if(storePFparts){
 	  const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
 	  for(const auto & daughter_p : jet_daughter_ptrs){
 	    size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
@@ -1394,7 +1462,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  }
 	  subjet.set_JEC_factor_raw(1.);
 	  subjet.set_JEC_L1factor_raw(1.);
-	  if(hotvrJets[j].size()<doPFJetConstituents){
+	  if(storePFparts){
 	    const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
 	    for(const auto & daughter_p : jet_daughter_ptrs){
 	      size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
@@ -1443,7 +1511,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	}
 	thisJet.set_JEC_factor_raw(1.);
 	thisJet.set_JEC_L1factor_raw(1.);
-	if(xconeJets[j].size()<doPFJetConstituents){
+	bool storePFparts = (xconeJets[j].size()<doPFxconeJetConstituentsNjets || thisJet.pt()>doPFxconeJetConstituentsMinJetPt);
+	if(storePFparts){
 	  const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
 	  for(const auto & daughter_p : jet_daughter_ptrs){
 	    size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
@@ -1477,7 +1546,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  }
 	  subjet.set_JEC_factor_raw(1.);
 	  subjet.set_JEC_L1factor_raw(1.);
-	  if(xconeJets[j].size()<doPFJetConstituents){
+	  if(storePFparts){
 	    const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
 	    for(const auto & daughter_p : jet_daughter_ptrs){
 	      size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
@@ -1526,8 +1595,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	}
 	thisJet.set_JEC_factor_raw(1.);
 	thisJet.set_JEC_L1factor_raw(1.);
-
-	if(xconeJets_dijet[j].size()<doPFJetConstituents){
+	bool storePFparts = (xconeJets_dijet[j].size()<doPFxconeDijetJetConstituentsNjets || thisJet.pt()>doPFxconeDijetJetConstituentsMinJetPt);
+	if(storePFparts){
 	  const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
 	  for(const auto & daughter_p : jet_daughter_ptrs){
 	    size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
@@ -1561,7 +1630,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  }
 	  subjet.set_JEC_factor_raw(1.);
 	  subjet.set_JEC_L1factor_raw(1.);
-	  if(xconeJets_dijet[j].size()<doPFJetConstituents){
+	  if(storePFparts){
 	    const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
 	    for(const auto & daughter_p : jet_daughter_ptrs){
 	      size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
@@ -1592,7 +1661,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	thisJet.set_partonFlavour(patJet.partonFlavour());
 	thisJet.set_hadronFlavour(patJet.hadronFlavour());
 	bool add_genparts=false;
-	if(genhotvrJets[j].size()<doGenJetConstituents) add_genparts=true;
+	if(genhotvrJets[j].size()<doGenhotvrJetConstituentsNjets || thisJet.pt()>doGenhotvrJetConstituentsMinJetPt) add_genparts=true;
         for (const auto & subItr : patJet.subjets()) {
           GenJet subjet;
           subjet.set_pt(subItr->p4().pt());
@@ -1626,7 +1695,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	thisJet.set_partonFlavour(patJet.partonFlavour());
 	thisJet.set_hadronFlavour(patJet.hadronFlavour());
 	bool add_genparts=false;
-	if(genxconeJets[j].size()<doGenJetConstituents) add_genparts=true;
+	if(genxconeJets[j].size()<doGenxconeJetConstituentsNjets || thisJet.pt()>doGenxconeJetConstituentsMinJetPt) add_genparts=true;
         for (const auto & subItr : patJet.subjets()) {
           GenJet subjet;
           subjet.set_pt(subItr->p4().pt());
@@ -1661,7 +1730,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	thisJet.set_partonFlavour(patJet.partonFlavour());
 	thisJet.set_hadronFlavour(patJet.hadronFlavour());
 	bool add_genparts=false;
-	if(genxconeJets[j].size()<doGenJetConstituents) add_genparts=true;
+	if(genxconeJets_dijet[j].size()<doGenxconeDijetJetConstituentsNjets || thisJet.pt()>doGenxconeDijetJetConstituentsMinJetPt) add_genparts=true;
         for (const auto & subItr : patJet.subjets()) {
           GenJet subjet;
           subjet.set_pt(subItr->p4().pt());
