@@ -16,15 +16,15 @@ public:
   std::vector<unsigned int> genparticles_indices() const{return m_genparticles_indices;}
   void add_genparticles_index(int ind){m_genparticles_indices.push_back(ind);}
 
-  double chf() const{return m_chf;}
+  double chf() const{return m_chf;}  // charged hadron energy fraction
   void  set_chf(double chf){m_chf=chf;}
-  double cef() const{return m_cef;}
+  double cef() const{return m_cef;}  // charged electromagnetic energy fraction AKA electrons
   void  set_cef(double cef){m_cef=cef;}
-  double nhf() const{return m_nhf;}
+  double nhf() const{return m_nhf;}  // neutral hadron energy fraction
   void  set_nhf(double nhf){m_nhf=nhf;}
-  double nef() const{return m_nef;}
+  double nef() const{return m_nef;}  // neutral electromagnetic energy fraction AKA photons
   void  set_nef(double nef){m_nef=nef;}
-  double muf() const{return m_muf;}
+  double muf() const{return m_muf;}  // muon energy fraction
   void  set_muf(double muf){m_muf=muf;}
 
   int chargedMultiplicity() const{return m_chargedMultiplicity;} // All charged particles, including electrons and muons
