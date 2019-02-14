@@ -1145,9 +1145,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         if useData:
             jetcorr_list.append("L2L3Residual")
 
-        discriminators = ak4btagDiscriminators[:]
 #        discriminators = bTagDiscriminators[:]
-        discriminators.extend(ak4btagDiscriminators)
+#        discriminators.extend(ak4btagDiscriminators)
+        discriminators = ak4btagDiscriminators[:]
         if is_ak8 and is_topjet:
             discriminators.extend(ak8btagDiscriminators)
 
