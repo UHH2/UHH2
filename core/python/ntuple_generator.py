@@ -2048,8 +2048,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     topjet_ptmin=cms.double(150.0),
                                     topjet_etamax=cms.double(5.0),
                                     #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFTopJetConstituentsNjets=cms.uint32(1),#store constituents for N leading topjets, where N is parameter
-                                    doPFTopJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all topjets with pt above threshold, set to negative value if not used
+                                    doPFTopJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
+                                    doPFTopJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
 
                                     TopJets=cms.VPSet(
                                         # Each PSet outputs a TopJet collection, with name {topjet_source}_{subjet_source}
@@ -2286,12 +2286,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     doAllGenParticles=cms.bool(False),
                                     doAllGenParticlesPythia8=cms.bool(False),
                                     #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFJetConstituentsNjets=cms.uint32(1),#store constituents for N leading jets, where N is parameter
-                                    doPFJetConstituentsMinJetPt=cms.double(10.0),#store constituence for all jets with pt above threshold, set to negative value if not used
+                                    doPFJetConstituentsNjets=cms.uint32(0),#store constituents for N leading jets, where N is parameter
+                                    doPFJetConstituentsMinJetPt=cms.double(-1),#store constituence for all jets with pt above threshold, set to negative value if not used
                                     doGenJets=cms.bool(not useData),
                                     #store GEN constituents: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
-                                    doGenJetConstituentsNjets=cms.uint32(1),#store constituents for N leading genjets, where N is parameter
-                                    doGenJetConstituentsMinJetPt=cms.double(20.0),#store constituence for all genjets with pt above threshold, set to negative value if not used
+                                    doGenJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
+                                    doGenJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
                                     genjet_sources=cms.vstring(
                                        #"slimmedGenJets", "slimmedGenJetsAK8", "ca15GenJets"),
                                     "slimmedGenJets", "slimmedGenJetsAK8"),
@@ -2300,8 +2300,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
                                     doGenTopJets=cms.bool(not useData),
                                     #store GEN constituents: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
-                                    doGenTopJetConstituentsNjets=cms.uint32(1),#store constituents for N leading genjets, where N is parameter
-                                    doGenTopJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all genjets with pt above threshold, set to negative value if not used
+                                    doGenTopJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
+                                    doGenTopJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
 
 
                                     gentopjet_sources=cms.VInputTag(
@@ -2331,27 +2331,27 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     # *** HOTVR & XCone stuff
                                     doXCone=cms.bool(True),
                                     #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFxconeJetConstituentsNjets=cms.uint32(1),#store constituents for N leading topjets, where N is parameter
-                                    doPFxconeJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all topjets with pt above threshold, set to negative value if not used
+                                    doPFxconeJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
+                                    doPFxconeJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
                                     XCone_sources=cms.VInputTag(
                                         cms.InputTag("xconePuppi"),
                                         cms.InputTag("xconeCHS"),
                                     ),
                                     doHOTVR=cms.bool(True),
                                     #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFhotvrJetConstituentsNjets=cms.uint32(1),#store constituents for N leading topjets, where N is parameter
-                                    doPFhotvrJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all topjets with pt above threshold, set to negative value if not used
+                                    doPFhotvrJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
+                                    doPFhotvrJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
                                     HOTVR_sources=cms.VInputTag(
                                         cms.InputTag("hotvrPuppi")
                                     ),
 
                                     doGenHOTVR=cms.bool(not useData),
-                                    doGenhotvrJetConstituentsNjets=cms.uint32(1),#store constituents for N leading genjets, where N is parameter
-                                    doGenhotvrJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all genjets with pt above threshold, set to negative value if not used
+                                    doGenhotvrJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
+                                    doGenhotvrJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
 
                                     doGenXCone=cms.bool(not useData),
-                                    doGenxconeJetConstituentsNjets=cms.uint32(1),#store constituents for N leading genjets, where N is parameter
-                                    doGenxconeJetConstituentsMinJetPt=cms.double(200.0),#store constituence for all genjets with pt above threshold, set to negative value if not used
+                                    doGenxconeJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
+                                    doGenxconeJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
 
                                     GenHOTVR_sources=cms.VInputTag(
                                         cms.InputTag("hotvrGen")
@@ -2360,10 +2360,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 #                                        cms.InputTag("genXCone23TopJets"),
                                         cms.InputTag("genXCone33TopJets"),
                                     ),
-                                    doXCone_dijet=cms.bool(True), #XCone for dijet (JERC) studies, should be stored for QCD MC and JetHT DATA
+                                    doXCone_dijet=cms.bool(False), #XCone for dijet (JERC) studies, should be stored for QCD MC and JetHT DATA
                                     #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFxconeDijetJetConstituentsNjets=cms.uint32(1),#store constituents for N leading topjets, where N is parameter
-                                    doPFxconeDijetJetConstituentsMinJetPt=cms.double(10.0),#store constituence for all topjets with pt above threshold, set to negative value if not used
+                                    doPFxconeDijetJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
+                                    doPFxconeDijetJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
 
                                     XCone_dijet_sources=cms.VInputTag(
                                         cms.InputTag("xconeCHS2jets04"),
@@ -2380,10 +2380,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         cms.InputTag("xconePUPPI4jets08"),
 
                                     ),
-                                    doGenXCone_dijet=cms.bool(not useData),
+#                                    doGenXCone_dijet=cms.bool(not useData),
+                                    doGenXCone_dijet=cms.bool(False),
                                     #store GEN constituents: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
-                                    doGenxconeDijetJetConstituentsNjets=cms.uint32(1),#store constituents for N leading topjets, where N is parameter
-                                    doGenxconeDijetJetConstituentsMinJetPt=cms.double(10.0),#store constituence for all topjets with pt above threshold, set to negative value if not 
+                                    doGenxconeDijetJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
+                                    doGenxconeDijetJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not 
                                     GenXCone_dijet_sources=cms.VInputTag(
                                         cms.InputTag("genXCone2jets04"),
                                         cms.InputTag("genXCone3jets04"),
