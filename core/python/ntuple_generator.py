@@ -1322,7 +1322,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
         NSubJets = cms.uint32(3),       # number of subjets in each fatjet
         RSubJets = cms.double(0.4),     # cone radius of subjetSrc
-        BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+        BetaSubJets = cms.double(2.0),  # conical mesure for subjets
+        printWarning = cms.bool(False)  # set True if you want warnings about missing jets
     )
     task.add(process.xconePuppi)
 
