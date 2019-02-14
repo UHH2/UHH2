@@ -369,6 +369,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # The ak8CHSJetsSoftDrop collection produce the groomed jets as reco::BasicJets,
     # and the subjets as reco::PFJets, with instance label "SubJets"
     # It is used for its subjets
+    # NB its "daughters/constituents" are ONLY the subjets not actual constituents
     process.ak8CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(
         src=cms.InputTag('chs'),
         jetPtMin=fatjet_ptmin
@@ -378,6 +379,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # The ak8CHSJetsSoftDropforsub produces only the groomed jets as PFJets
     # It is used for calculating quantities on the groomed fat jet that require
     # reco::PFJets rather than reco::BasicJets as produced by ak8CHSJetsSoftDrop
+    # This actually gives you the proper groomed constituents!
     process.ak8CHSJetsSoftDropforsub = process.ak8CHSJetsSoftDrop.clone()
     delattr(process.ak8CHSJetsSoftDropforsub, "writeCompound")
     delattr(process.ak8CHSJetsSoftDropforsub, "jetCollInstanceName")
@@ -944,12 +946,20 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     # AK8 GenJets
     process.NjettinessAk8Gen = process.NjettinessAk8CHS.clone(
-        src=cms.InputTag("ak8GenJetsFat")
+        src=cms.InputTag("ak8GenJetsFat")  # created in add_fatjets_subjets
     )
     task.add(process.NjettinessAk8Gen)
 
+    # ak8GenJetsSoftDrop is created in add_fatjets_subjets
+    # But we need all the groomed constitents, so we need to add another cluster
+    # without the subjets, like we do for CHS & PUPPI
+    process.ak8GenJetsSoftDropforsub = process.ak8GenJetsSoftDrop.clone()
+    delattr(process.ak8GenJetsSoftDropforsub, "writeCompound")
+    delattr(process.ak8GenJetsSoftDropforsub, "jetCollInstanceName")
+    task.add(process.ak8GenJetsSoftDropforsub)
+
     process.NjettinessAk8SoftDropGen = process.NjettinessAk8SoftDropCHS.clone(
-        src=cms.InputTag("ak8GenJetsSoftDrop")
+        src=cms.InputTag("ak8GenJetsSoftDropforsub")
     )
     task.add(process.NjettinessAk8SoftDropGen)
 
@@ -1003,13 +1013,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     # AK8 Gen
     process.ECFNbeta1Ak8SoftDropGen = ecfNbeta1.clone(
-        src=cms.InputTag("ak8GenJetsSoftDrop"),
+        src=cms.InputTag("ak8GenJetsSoftDropforsub"),
         cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta1Ak8SoftDropGen)
 
     process.ECFNbeta2Ak8SoftDropGen = ecfNbeta2.clone(
-        src=cms.InputTag("ak8GenJetsSoftDrop"),
+        src=cms.InputTag("ak8GenJetsSoftDropforsub"),
         cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta2Ak8SoftDropGen)
