@@ -3,6 +3,10 @@
 
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
+#include "UHH2/core/include/Hists.h"
+
+#include "TH1F.h"
+
 #include "UHH2/common/include/TriggerSelection.h"
 
 using namespace std;
@@ -12,7 +16,45 @@ using namespace uhh2;
  *
  * This class is to show how to access trigger results both directly,
  * and in a more convenient manner using a TriggerSelection object.
+ *
+ * It also plots frequency of firing select triggers.
  */
+
+class ExampleTriggerHists: public uhh2::Hists {
+public:
+    ExampleTriggerHists(uhh2::Context & ctx, const std::string & dirname, const vector<string> & triggerNames_);
+
+    virtual void fill(const uhh2::Event & ev) override;
+    virtual ~ExampleTriggerHists();
+private:
+    TH1F * hTriggers;
+    vector<string> triggerNames;
+};
+
+ExampleTriggerHists::ExampleTriggerHists(Context & ctx, const string & dirname, const vector<string> & triggerNames_):
+Hists(ctx, dirname),
+triggerNames(triggerNames_)
+{
+    hTriggers = book<TH1F>("trigs", ";Trigger;N", triggerNames.size(), 0, triggerNames.size());
+    // set custom x axis labels
+    for (uint i=1;i<=triggerNames.size();i++) {
+        hTriggers->GetXaxis()->SetBinLabel(i, triggerNames.at(i-1).c_str());
+    }
+}
+
+
+void ExampleTriggerHists::fill(const Event & event){
+    // Loop over all triggers, store # pass
+    for (uint i=0; i < triggerNames.size(); i++) {
+        auto trigindex = event.get_trigger_index(triggerNames.at(i));
+        if (event.passes_trigger(trigindex)) {
+            hTriggers->Fill(i, event.weight);
+        }
+    }
+}
+
+ExampleTriggerHists::~ExampleTriggerHists(){}
+
 class ExampleModuleTrigger: public AnalysisModule {
 public:
 
@@ -24,6 +66,16 @@ private:
     bool first_event;
     Event::TriggerIndex trigindex;
     std::unique_ptr<Selection> met_filter_selection;
+    std::unique_ptr<ExampleTriggerHists> trigHists;
+
+    // a few select triggers, plus some MET filters
+    vector<string> triggerNames = {
+        "HLT_PFJet200_v*",
+        "HLT_Mu50_v*",
+        "HLT_Ele27_WPTight_Gsf_v*",
+        "Flag_HBHENoiseFilter",
+        "Flag_goodVertices"
+    };
 };
 
 
@@ -33,6 +85,7 @@ ExampleModuleTrigger::ExampleModuleTrigger(Context & ctx):
     triggername = ctx.get("TriggerName");
     metfiltername = ctx.get("MetFilterName");
     met_filter_selection.reset(new TriggerSelection(metfiltername));
+    trigHists.reset(new ExampleTriggerHists(ctx, "triggers", triggerNames));
 }
 
 
@@ -62,7 +115,7 @@ bool ExampleModuleTrigger::process(Event & event) {
     if (event.isRealData) trigPrescale = event.trigger_prescale(trigindex);
     cout << "event " << event.event << passStr << "trigger " << triggername << " with prescale " << trigPrescale << endl;
 
-    // More most analyses, you would use a TriggerSelection object like this:
+    // For most analyses, you would use a TriggerSelection object like this:
     bool passedMetFilter = met_filter_selection->passes(event);
     passStr = passedMetFilter ? " passed " : " did not pass ";
     cout << "event " << event.event << passStr << "met filter " << metfiltername << endl;
@@ -72,6 +125,8 @@ bool ExampleModuleTrigger::process(Event & event) {
         cout << " up: " << event.prefiringWeightUp;
         cout << " down: " << event.prefiringWeightDown << endl;
     }
+
+    trigHists->fill(event);
 
     return true;
 }
