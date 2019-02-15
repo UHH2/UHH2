@@ -180,10 +180,10 @@ JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> &
     direction = 0;
 
     //MET should only be corrected using AK8 jets, iff there is no AK4 collection that could be used for this because the calculation of our raw MET is based on AK4 jets
-    used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
-    used_ak4puppi = ctx.get("JetCollection")=="slimmedJetsPuppi";
-    metprop_possible_ak8chs = ctx.get("JetCollection")=="patJetsAK8PFCHS";
-    metprop_possible_ak8puppi = ctx.get("JetCollection")=="patJetsAK8PFPUPPI";
+    used_ak4chs = ctx.get("JetCollection")=="jetsAk4CHS";
+    used_ak4puppi = ctx.get("JetCollection")=="jetsAk4Puppi";
+    metprop_possible_ak8chs = ctx.get("JetCollection")=="jetsAk8CHS";
+    metprop_possible_ak8puppi = ctx.get("JetCollection")=="jetsAk8Puppi";
 
     //MET is always corrected using the jet collection stated in the "JetCollection" Item in the context and only in case one of the stated jet collections is used.
     //Particularly, only one of these two AK8 collections should be used.
@@ -679,7 +679,7 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   h_recjets_    = ctx.get_handle<std::vector<Jet> >      (recjet_label);
   h_rectopjets_ = ctx.get_handle<std::vector<TopJet> >   (recjet_label);
 
-  h_genjets_    = ctx.get_handle<std::vector<Particle> > (genjet_label);
+  h_genjets_    = ctx.get_handle<std::vector<GenJet> > (genjet_label);
   h_gentopjets_ = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
 
   JER_SFs_ = JER_sf;
@@ -717,7 +717,7 @@ bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
   else if(evt.is_valid(h_rectopjets_)) rec_topjets = &evt.get(h_rectopjets_);
   else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid handle to RECO-jets");
 
-  std::vector<Particle>*  gen_jets(0);
+  std::vector<GenJet>*  gen_jets(0);
   std::vector<GenTopJet>* gen_topjets(0);
 
   if     (evt.is_valid(h_genjets_))    gen_jets    = &evt.get(h_genjets_);
