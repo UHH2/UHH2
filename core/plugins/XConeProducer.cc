@@ -82,7 +82,8 @@ class XConeProducer : public edm::stream::EDProducer<> {
   unsigned int NSubJets_ = 3;
   double RSubJets_ = 0.4;
   double BetaSubJets_ = 2.0;
-  
+  const bool printWarning_;
+
   reco::Particle::Point  vertex_;
   std::vector<edm::Ptr<reco::Candidate> > particles_;
   edm::EDGetTokenT<reco::VertexCollection> input_vertex_token_;
@@ -109,7 +110,8 @@ XConeProducer::XConeProducer(const edm::ParameterSet& iConfig):
   BetaJets_(iConfig.getParameter<double>("BetaJets")),
   NSubJets_(iConfig.getParameter<unsigned int>("NSubJets")),
   RSubJets_(iConfig.getParameter<double>("RSubJets")),
-  BetaSubJets_(iConfig.getParameter<double>("BetaSubJets"))
+  BetaSubJets_(iConfig.getParameter<double>("BetaSubJets")),
+  printWarning_(iConfig.exists("printWarning") ? iConfig.getParameter<bool>("printWarning") : false)
 {
   // We make both the fat jets and subjets, and we must store them as separate collections
   produces<pat::JetCollection>();
@@ -233,8 +235,10 @@ void XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // Check we actually got the number of jets we requested
   if (fatjets.size() != NJets_) {
-    edm::LogWarning("XConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
-        << "Have added in blank jets to make " << NJets_ << " jets." << endl;
+    if (printWarning_) {
+      edm::LogWarning("XConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
+                                         << "Have added in blank jets to make " << NJets_ << " jets." << endl;
+    }
     for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
       fatjets.push_back(PseudoJet(0, 0, 0, 0));
       sd_mass.push_back(0.);
@@ -294,14 +298,9 @@ void XConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     // Check we got the number of subjets we asked for
-    if (doSubjets && subjets.size() != NSubJets_) {
+    if (doSubjets && subjets.size() != NSubJets_ && printWarning_) {
       edm::LogWarning("XConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << NSubJets_ << ". "
-					    << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"<<endl;
-      //     << "Have added in blank subjets to make " << NSubJets_ << " subjets." << endl;
-      // for (uint iSub=subjets.size(); iSub < NSubJets_; iSub++) {
-      //   subjets.push_back(PseudoJet(0, 0, 0, 0));
-      //   subjet_area.push_back(0);
-      // }
+                                            << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"<<endl;
     }
 
     // jet area for fat jet

@@ -789,7 +789,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             svSource=cms.InputTag('slimmedSecondaryVertices'),
             jetCorrections=jetcorr_arg,  
             btagDiscriminators=discriminators,
-            postfix=postfix
+            postfix=postfix,
+            printWarning=False
         )
 
         subjets_patname = "updatedPatJetsTransientCorrected" + cap(subjets_patname)
@@ -1103,7 +1104,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # otherwise the DeepBoostedJetTagInfoProducer will fail
     # Also add in PUPPI multiplicities while we're at it.
     for name in ['slimmedJets', 'slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
-        print "name", name
         labelName = cap(name)
         is_ak8 = "ak8" in name.lower()
         is_puppi = "puppi" in name.lower()
@@ -1159,7 +1159,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             svSource=cms.InputTag('slimmedSecondaryVertices'),
             jetCorrections=(correction_tag, cms.vstring(jetcorr_list), 'None'),  # Can't use None here as we are doing btagging for some reason.
             btagDiscriminators=discriminators,
-            postfix=postfix
+            postfix=postfix,
+            printWarning=False
         )
 
         if is_puppi:
@@ -1321,7 +1322,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
         NSubJets = cms.uint32(3),       # number of subjets in each fatjet
         RSubJets = cms.double(0.4),     # cone radius of subjetSrc
-        BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+        BetaSubJets = cms.double(2.0),  # conical mesure for subjets
+        printWarning = cms.bool(False)  # set True if you want warnings about missing jets
     )
     task.add(process.xconePuppi)
 

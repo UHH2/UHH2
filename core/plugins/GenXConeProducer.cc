@@ -87,6 +87,7 @@ class GenXConeProducer : public edm::stream::EDProducer<> {
     double RSubJets_ = 0.4;
     double BetaSubJets_ = 2.0;
     double DRLeptonJet_ = 999.;
+    const bool printWarning_;
 
   std::vector<edm::Ptr<reco::Candidate> > particles_;
   reco::Particle::Point vertex_;
@@ -116,7 +117,8 @@ GenXConeProducer::GenXConeProducer(const edm::ParameterSet& iConfig):
   NSubJets_(iConfig.getParameter<unsigned int>("NSubJets")),
   RSubJets_(iConfig.getParameter<double>("RSubJets")),
   BetaSubJets_(iConfig.getParameter<double>("BetaSubJets")),
-  DRLeptonJet_(iConfig.exists("DRLeptonJet") ? iConfig.getParameter<double>("DRLeptonJet") : 999.)
+  DRLeptonJet_(iConfig.exists("DRLeptonJet") ? iConfig.getParameter<double>("DRLeptonJet") : 999.),
+  printWarning_(iConfig.exists("printWarning") ? iConfig.getParameter<bool>("printWarning") : false)
 {
   // We make both the fat jets and subjets, and we must store them as separate collections
   produces<pat::JetCollection>();
@@ -214,7 +216,7 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     i++; 
   }
 
-  if (doLeptonSpecific_ && (lepton == nullptr)) {
+  if (doLeptonSpecific_ && (lepton == nullptr) && printWarning_) {
     edm::LogInfo("NoGenXConeLepton") << "No lepton found in GenXConeProducer" << std::endl;
   }
 
@@ -245,8 +247,10 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // Check we got the number of subjets we asked for
   if (fatjets.size() != NJets_) {
-    edm::LogWarning("GenXConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
-        << "Have added in blank jets to make " << NJets_ << " subjets." << endl;
+    if (printWarning_) {
+      edm::LogWarning("GenXConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
+                                            << "Have added in blank jets to make " << NJets_ << " subjets." << endl;
+    }
     for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
       fatjets.push_back(PseudoJet(0, 0, 0, 0));
     }
@@ -317,9 +321,9 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     // Check we got the number of subjets we asked for
-    if (doSubjets && subjets.size() != thisNSubJets_) {
+    if (doSubjets && subjets.size() != thisNSubJets_ && printWarning_) {
       edm::LogWarning("GenXConeTooFewSubjets") << "Only found " << subjets.size() << " subjets but requested " << thisNSubJets_ << ". "
-          << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"<< endl;
+                                               << " Fatjet had " << particle_in_fatjet.size() << " constituents.\n"<< endl;
     }
     
     // pat-ify fatjets
