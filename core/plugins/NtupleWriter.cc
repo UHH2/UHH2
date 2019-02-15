@@ -207,6 +207,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       context.reset(new uhh2::CMSSWContext(*ges, outfile, tr));
   }
 
+  // Keep this early on, since we may need to modify things using it
+  year = iConfig.getParameter<std::string>("year");
 
   // TODO: cleanup the configuration by better grouping which
   // parameters are for which objects. Could even pass
@@ -342,6 +344,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
       cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("photon_IDtags");
       assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
       cfg.pv_src = pv_sources[0];
+      cfg.doPuppiIso = true;
+      if (year == "2016v2") { cfg.doPuppiIso = false; } // PUPPI isolation doens't exist in 80X
       writer_modules.emplace_back(new NtupleWriterPhotons(cfg, true, false));
   }
   if(doMuons){
@@ -512,7 +516,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   branch(tr, "event", &event->event);
   branch(tr, "luminosityBlock", &event->luminosityBlock);
   branch(tr, "isRealData", &event->isRealData);
-  year = iConfig.getParameter<std::string>("year");
   branch(tr, "year", &event->year);
   branch(tr, "rho", &event->rho);
   //always create rho branch, as some SFrame modules rely on it being present; only fill it
