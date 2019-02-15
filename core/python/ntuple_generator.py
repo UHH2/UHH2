@@ -67,7 +67,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         met_sources_GL.extend(['slimmedMETsEGClean', 'slimmedMETsMuEGClean', 'slimmedMETsUncorrected'])
     if (year=="2016v2" or year=="2016v3"):
         met_sources_GL.extend(['slMETsCHS'])
-    
+
 
 
     bTagDiscriminators = [
@@ -81,7 +81,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         'pfBoostedDoubleSecondaryVertexAK8BJetTags',
         'pfBoostedDoubleSecondaryVertexCA15BJetTags',
     ]
- 
+
     ak4btagDiscriminators = [
         'pfDeepFlavourJetTags:probb',
         'pfDeepFlavourJetTags:probbb',
@@ -317,7 +317,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                                       )
     )
     task.add(process.prunedPrunedGenParticles)
-
 
     ###############################################
     # Modified TypeI MET
@@ -557,6 +556,27 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     task.add(process.packedGenParticlesForJetsNoNu)
 
 
+    # Create a list with only muons and photons that where radiated from muons.
+    # This lists will later be used as input for jet clustering.
+    # The resulting jets act as a good lepton definition on particle level when comparing to detektor level.
+    # The same procedure is done for electrons.
+    process.MuonPhotonGenParticles = cms.EDFilter("CandPtrSelector",
+        src=cms.InputTag("packedGenParticles"),
+        cut=cms.string(
+            "(abs(pdgId) == 13) || (abs(pdgId) == 22 && numberOfMothers()==1 && abs(mother().pdgId()) == 13)"
+        )
+    )
+    task.add(process.MuonPhotonGenParticles)
+
+    process.ElectronPhotonGenParticles = cms.EDFilter("CandPtrSelector",
+        src=cms.InputTag("packedGenParticles"),
+        cut=cms.string(
+            "(abs(pdgId) == 11) || (abs(pdgId) == 22 && numberOfMothers()==1 && abs(mother().pdgId()) == 11)"
+        )
+    )
+    task.add(process.ElectronPhotonGenParticles)
+
+
     def del_attr_safely(obj, name):
         if hasattr(obj, name):
             delattr(obj, name)
@@ -787,7 +807,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             jetSource=cms.InputTag(subjets_patname),
             pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
             svSource=cms.InputTag('slimmedSecondaryVertices'),
-            jetCorrections=jetcorr_arg,  
+            jetCorrections=jetcorr_arg,
             btagDiscriminators=discriminators,
             postfix=postfix,
             printWarning=False
@@ -1604,6 +1624,23 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     task.add(process.genXCone2jets08)
 
     ###############################################
+    # LEPTON jets (clustering muons or electrons with radiated photons)
+    #
+    process.muonGenJets = process.ak8GenJetsFat.clone(
+        jetPtMin = cms.double(10.0),
+        rParam = cms.double(0.1),
+        src = cms.InputTag("MuonPhotonGenParticles")
+    )
+    task.add(process.muonGenJets)
+
+    process.electronGenJets = process.ak8GenJetsFat.clone(
+        jetPtMin = cms.double(10.0),
+        rParam = cms.double(0.1),
+        src = cms.InputTag("ElectronPhotonGenParticles")
+    )
+    task.add(process.electronGenJets)
+
+    ###############################################
     # LEPTON configuration
     #
 
@@ -1952,7 +1989,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         process.slMETsCHS.trkMET = cms.InputTag("patPFMetCHS")
         task.add(process.slMETsCHS)
         clean_met_(process.slMETsCHS)
-            
+
 
     process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     # AnalysisModule = cms.PSet(
@@ -2296,7 +2333,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     doGenJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
                                     genjet_sources=cms.vstring(
                                        #"slimmedGenJets", "slimmedGenJetsAK8", "ca15GenJets"),
-                                    "slimmedGenJets", "slimmedGenJetsAK8"),
+                                       "muonGenJets", "electronGenJets", "slimmedGenJets", "slimmedGenJetsAK8"),
                                     genjet_ptmin=cms.double(10.0),
                                     genjet_etamax=cms.double(5.0),
 
@@ -2404,9 +2441,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # just make sure that the electron IDs run before MyNtuple
     process.p = cms.Path(
         process.egmGsfElectronIDSequence *
-        process.egmPhotonIDSequence * 
+        process.egmPhotonIDSequence *
         process.MyNtuple
-#        * process.content 
+#        * process.content
     )
     if do_prefire:
         process.p.insert(0, process.prefiringweight)
@@ -2430,4 +2467,3 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     process.p.associate(process.patAlgosToolsTask)
 
     return process
-
