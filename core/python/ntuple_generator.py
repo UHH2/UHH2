@@ -2332,8 +2332,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     doGenJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
                                     doGenJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
                                     genjet_sources=cms.vstring(
-                                       #"slimmedGenJets", "slimmedGenJetsAK8", "ca15GenJets"),
-                                       "muonGenJets", "electronGenJets", "slimmedGenJets", "slimmedGenJetsAK8"),
+                                        # "muonGenJets", "electronGenJets",
+                                        "slimmedGenJets", "slimmedGenJetsAK8"),
                                     genjet_ptmin=cms.double(10.0),
                                     genjet_etamax=cms.double(5.0),
 
