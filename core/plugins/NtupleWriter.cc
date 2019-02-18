@@ -1083,9 +1083,9 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          if(reco_gentopjets_ecf_beta2_N3.isValid())
            gentopjet.set_ecfN3_beta2((*reco_gentopjets_ecf_beta2_N3)[ptr]);
 
+         bool add_genparts = (gentopjets[j].size()<doGenTopJetConstituentsNjets || gentopjet.pt()>doGenTopJetConstituentsMinJetPt);
+
          if(dynamic_cast<const reco::GenJet *>(&reco_gentopjet)) { // This is a GenJet without subjets
-           bool add_genparts=false;
-           if(gentopjets[j].size()<doGenJetConstituents) add_genparts=true;
            fill_geninfo_recojet(reco_gentopjet, (GenJet&)gentopjet, add_genparts);
          }
          else { // This is a BasicJet with subjets
@@ -1104,7 +1104,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
              subjet_v4.set_eta(reco_gentopjet.daughter(k)->p4().eta());
              subjet_v4.set_phi(reco_gentopjet.daughter(k)->p4().phi());
              subjet_v4.set_energy(reco_gentopjet.daughter(k)->p4().E());
-             fill_geninfo_recocand(*reco_gentopjet.daughter(k), subjet_v4);
+             fill_geninfo_recocand(*reco_gentopjet.daughter(k), subjet_v4, add_genparts);
              jet_charge += subjet_v4.charge();
              cef +=subjet_v4.cef();
              nef +=subjet_v4.nef();
@@ -1117,6 +1117,9 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
              elMult += subjet_v4.electronMultiplicity();
              phMult += subjet_v4.photonMultiplicity();
              gentopjet.add_subjet(subjet_v4);
+             for (auto ind : subjet_v4.genparticles_indices()) {
+               gentopjet.add_genparticles_index(ind);
+             }
            }
            // We have to manually update the main fatjet using quantities from the subjets,
            // since the fatjet is a BasicJet which has no constituent info
@@ -1890,7 +1893,7 @@ void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genje
 }
 
 //For clustered reco::GenJet with subjets, which turn out to be reco::Jet with subjets reco::Candidate
-void NtupleWriter::fill_geninfo_recocand(const reco::Candidate& sub_jet, GenJet& genjet)
+void NtupleWriter::fill_geninfo_recocand(const reco::Candidate& sub_jet, GenJet& genjet, bool& add_genparts)
 {
  // recalculate the jet charge.
   int jet_charge = 0;
@@ -1907,7 +1910,10 @@ void NtupleWriter::fill_geninfo_recocand(const reco::Candidate& sub_jet, GenJet&
   for(unsigned int l = 0; l<sub_jet.numberOfSourceCandidatePtrs(); ++l){
    const reco::Candidate* constituent =  sub_jet.daughter(l);
    jet_charge += constituent->charge();
- 
+    if(add_genparts){
+     size_t genparticles_index = add_genpart(*constituent, *event->genparticles);
+     genjet.add_genparticles_index(genparticles_index);
+   }
 
    if(abs(constituent->pdgId())==11) {
      cef += constituent->energy();

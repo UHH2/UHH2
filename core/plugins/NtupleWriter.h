@@ -47,7 +47,7 @@ class NtupleWriter : public edm::EDFilter {
       void fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genjet, bool &add);
 
       //For clustered reco::GenJet with subjets, which turn out to be reco::Jet with subjets reco::Candidate
-      void fill_geninfo_recocand(const reco::Candidate& constituent, GenJet& genjet);
+      void fill_geninfo_recocand(const reco::Candidate& constituent, GenJet& genjet, bool& add_genparts);
 
       /* //Add pf candidate to event */
       /* size_t add_pfpart(const reco::Candidate & pf, std::vector<PFParticle> & pfparts); */
