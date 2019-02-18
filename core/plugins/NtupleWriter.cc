@@ -228,17 +228,11 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenJetConstituentsNjets");
   doGenJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenJetConstituentsMinJetPt");
   if(doGenJetConstituentsMinJetPt<1e-6) doGenJetConstituentsMinJetPt=2e4;
-  doGenJetConstituents = false;
-  if((doGenJetConstituentsNjets>0 || doGenJetConstituentsMinJetPt>0) && doGenJets) 
-    doGenJetConstituents=true;
 
   doGenTopJets = iConfig.getParameter<bool>("doGenTopJets");
   doGenTopJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenTopJetConstituentsNjets");
   doGenTopJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenTopJetConstituentsMinJetPt");
   if(doGenTopJetConstituentsMinJetPt<1e-6) doGenTopJetConstituentsMinJetPt=2e4;
-  doGenTopJetConstituents = false;
-  if((doGenTopJetConstituentsNjets>0 || doGenTopJetConstituentsMinJetPt>0) && doGenTopJets) 
-    doGenTopJetConstituents=true;
 
   doPFJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFJetConstituentsNjets");
   doPFJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFJetConstituentsMinJetPt");
@@ -289,18 +283,11 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenxconeJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenxconeJetConstituentsNjets");
   doGenxconeJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeJetConstituentsMinJetPt");
   if(doGenxconeJetConstituentsMinJetPt<1e-6) doGenxconeJetConstituentsMinJetPt=2e4;
-  doGenxconeJetConstituents = false;
-  if((doGenxconeJetConstituentsNjets>0 || doGenxconeJetConstituentsMinJetPt>0) && doGenXCone) 
-    doGenxconeJetConstituents=true;
 
   doGenHOTVR = iConfig.getParameter<bool>("doGenHOTVR");
   doGenhotvrJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenhotvrJetConstituentsNjets");
   doGenhotvrJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenhotvrJetConstituentsMinJetPt");
   if(doGenhotvrJetConstituentsMinJetPt<1e-6) doGenhotvrJetConstituentsMinJetPt=2e4;
-  doGenhotvrJetConstituents = false;
-  if((doGenhotvrJetConstituentsNjets>0 || doGenhotvrJetConstituentsMinJetPt>0) && doGenHOTVR) 
-    doGenhotvrJetConstituents=true;
-
 
   doXCone_dijet = iConfig.getParameter<bool>("doXCone_dijet");
   doPFxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFxconeDijetJetConstituentsNjets");
@@ -314,9 +301,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenxconeDijetJetConstituentsNjets");
   doGenxconeDijetJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeDijetJetConstituentsMinJetPt");
   if(doGenxconeDijetJetConstituentsMinJetPt<1e-6) doGenxconeDijetJetConstituentsMinJetPt=2e4;
-  doGenxconeDijetJetConstituents = false;
-  if((doGenxconeDijetJetConstituentsNjets>0 || doGenxconeDijetJetConstituentsMinJetPt>0) && doGenXCone_dijet) 
-    doGenxconeDijetJetConstituents=true;
 
   auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 
