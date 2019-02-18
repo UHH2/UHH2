@@ -43,6 +43,7 @@
                  JetCollection
                  TopJetCollection
                  METName
+                 PFParticleCollection
                  
                  GenInfoName
                  GenJetCollection
