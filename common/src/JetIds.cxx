@@ -198,7 +198,7 @@ bool JetPFID::tightID2018_CHS(const Jet & jet) const{
     return true;
   }
   else if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3
-	  && jet.neutralEmEnergyFraction()>0.99
+	  && jet.neutralEmEnergyFraction()<0.99
 	  && jet.neutralEmEnergyFraction()>0.02
 	  && jet.neutralMultiplicity()>2){
     return true;
