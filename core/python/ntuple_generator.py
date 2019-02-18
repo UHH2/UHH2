@@ -2329,7 +2329,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     # Useful if you want to store final-state genparticles in the event
                                     # If you only want GenJet constituents,
                                     # you should use the appropriate options further down
-                                    doAllGenParticles=cms.bool(False),
+                                    doStableGenParticles=cms.bool(False),
                                     stablegenparticle_source=cms.InputTag("packedGenParticlesForJetsNoNu"),
 
                                     #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
