@@ -434,9 +434,7 @@ std::cerr << "ERROR in BTagCalibration: "
             << ost;
 throw std::exception();
     }
-    otherSysTypeReaders_[ost] = std::auto_ptr<BTagCalibrationReaderImpl>(
-        new BTagCalibrationReaderImpl(op, ost)
-    );
+    otherSysTypeReaders_[ost] = std::make_shared<BTagCalibrationReaderImpl>(op, ost);
   }
 }
 
