@@ -48,7 +48,7 @@ test_JER::test_JER(uhh2::Context& ctx){
   ////
 
   //// OBJ CLEANING
-  const JetId jetID(JetPFID(JetPFID::WP_TIGHT));
+  const JetId jetID(JetPFID(JetPFID::WP_TIGHT_CHS));
 
   std::vector<std::string> JEC_AK4, JEC_AK8;
   if(isMC){
