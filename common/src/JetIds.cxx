@@ -174,6 +174,7 @@ bool JetPFID::tightID2017_PUPPI(const Jet & jet) const{
 }
 
 bool JetPFID::tightLepVetoID2017(const Jet & jet) const{
+  if(fabs(jet.eta())>2.7) return true;
   if(fabs(jet.eta())<=2.7 && !tightID2017_CHS(jet)) return false;
   if(jet.muonEnergyFraction() <0.8
      &&jet.chargedEmEnergyFraction()<0.80)
@@ -197,9 +198,9 @@ bool JetPFID::tightID2018_CHS(const Jet & jet) const{
     return true;
   }
   else if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3
-	  &&jet.neutralEmEnergyFraction()<0.99
-	  &&jet.neutralEmEnergyFraction()>0.02
-	  &&jet.neutralMultiplicity()>2){
+	  && jet.neutralEmEnergyFraction()>0.99
+	  && jet.neutralEmEnergyFraction()>0.02
+	  && jet.neutralMultiplicity()>2){
     return true;
   }
   else if(fabs(jet.eta())>3
@@ -212,6 +213,7 @@ bool JetPFID::tightID2018_CHS(const Jet & jet) const{
 }
 
 bool JetPFID::tightLepVetoID2018(const Jet & jet) const{
+  if(fabs(jet.eta())>2.6) return true;
   if(fabs(jet.eta())<=2.6 && !tightID2018_CHS(jet)) return false;
   if(jet.muonEnergyFraction() <0.8
      &&jet.chargedEmEnergyFraction()<0.80)
@@ -234,8 +236,9 @@ bool JetPFID::looseID2016_CHS(const Jet & jet) const{
       return true;   
   }
   else if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3
-	  &&jet.neutralEmEnergyFraction()<0.90
-	  &&jet.neutralMultiplicity()>2){
+	  && jet.neutralEmEnergyFraction()>0.01
+	  && jet.neutralHadronEnergyFraction()<0.98
+	  && jet.neutralMultiplicity()>2){
     return true;
   }
   else if(fabs(jet.eta())>3
@@ -270,12 +273,11 @@ bool JetPFID::tightID2016_PUPPI(const Jet & jet) const{
 }
 
 
-
 bool JetPFID::tightLepVetoID2016(const Jet & jet) const{
   if(fabs(jet.eta())>2.7) return true;//no requirement for eta>2.7
   if(!tightID2016_CHS(jet)) return false;
   if(jet.muonEnergyFraction()>=0.8) return false;
-  if(fabs(jet.eta())<=2.4 && jet.chargedEmEnergyFraction()<0.90) return false;
+  if(fabs(jet.eta())<=2.4 && jet.chargedEmEnergyFraction()>0.90) return false;
   return true;
 
 }
