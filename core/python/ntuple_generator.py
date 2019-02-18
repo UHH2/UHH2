@@ -1300,7 +1300,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
 
     # Higgs tagging commissioning
-    process.pfBoostedDoubleSVTagInfos = cms.EDProducer("BoostedDoubleSVProducer",
+    process.pfBoostedDoubleSVTagInfosCHS = cms.EDProducer("BoostedDoubleSVProducer",
         trackSelectionBlock,
         beta=cms.double(1.0),
         R0=cms.double(0.8),
@@ -1310,9 +1310,22 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         ),
         svTagInfos=cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8CHSJetsFat")  # This name is taken from the modules added by addJetcollection in add_fatjets_subjets
     )
-    task.add(process.pfBoostedDoubleSVTagInfos)
+    process.pfBoostedDoubleSVTagInfosCHS.trackSelection.jetDeltaRMax = cms.double(0.8)
+    task.add(process.pfBoostedDoubleSVTagInfosCHS)
 
-    process.pfBoostedDoubleSVTagInfos.trackSelection.jetDeltaRMax = cms.double(0.8)
+    process.pfBoostedDoubleSVTagInfosPuppi = cms.EDProducer("BoostedDoubleSVProducer",
+        trackSelectionBlock,
+        beta=cms.double(1.0),
+        R0=cms.double(0.8),
+        maxSVDeltaRToJet=cms.double(0.7),
+        trackPairV0Filter=cms.PSet(
+           k0sMassWindow=cms.double(0.03)
+        ),
+        svTagInfos=cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8PuppiJetsFat")  # This name is taken from the modules added by addJetcollection in add_fatjets_subjets
+    )
+    process.pfBoostedDoubleSVTagInfosPuppi.trackSelection.jetDeltaRMax = cms.double(0.8)
+    task.add(process.pfBoostedDoubleSVTagInfosPuppi)
+
 
     ###############################################
     # HOTVR & XCONE
@@ -2124,7 +2137,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                             # the discriminator has to be taken from ungroomed jets
                                             higgstag_source=cms.string("patJetsAk8CHSJetsFat"),
                                             higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfos"),
+                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfosCHS"),
 
                                             # If empty, njettiness is directly taken from jet UserFloat,
                                             # otherwise taken from the provided source
@@ -2157,7 +2170,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
                                             higgstag_source=cms.string("patJetsAk8PuppiJetsFat"),
                                             higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfos"),  # FIXME Does this need replacing?
+                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfosPuppi"),  # FIXME Does this need replacing?
 
                                             njettiness_source=cms.string("NjettinessAk8Puppi"),
                                             substructure_variables_source=cms.string("ak8PuppiJetsFat"),
