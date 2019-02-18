@@ -2317,16 +2317,25 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     prefire_source=cms.string(prefire_source),
 
                                     # *** gen stuff:
-                                    doGenInfo=cms.bool(not useData),
+                                    doGenInfo=cms.bool(not useData),  # Master switch for geninfo, genparticles, etc
+
+                                    # Source to store (pruned) GenParticles from the genparticle history
+                                    # By default we try to store the Matrix Element genparticles only
+                                    # Note that this doesn't work for Herwig generators due to their
+                                    # weird status codes
                                     genparticle_source=cms.InputTag("prunedPrunedGenParticles"),
-                                    stablegenparticle_source=cms.InputTag("packedGenParticlesForJetsNoNu"),
-                                    # set to true if you want to store all gen particles, otherwise, only
-                                    # prunedPrunedGenParticles are stored (see above)
+
+                                    # Flag & source to store stable (i.e. packed) GenParticles
+                                    # Useful if you want to store final-state genparticles in the event
+                                    # If you only want GenJet constituents,
+                                    # you should use the appropriate options further down
                                     doAllGenParticles=cms.bool(False),
-                                    doAllGenParticlesPythia8=cms.bool(False),
+                                    stablegenparticle_source=cms.InputTag("packedGenParticlesForJetsNoNu"),
+
                                     #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
                                     doPFJetConstituentsNjets=cms.uint32(0),#store constituents for N leading jets, where N is parameter
                                     doPFJetConstituentsMinJetPt=cms.double(-1),#store constituence for all jets with pt above threshold, set to negative value if not used
+
                                     doGenJets=cms.bool(not useData),
                                     #store GEN constituents: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
                                     doGenJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter

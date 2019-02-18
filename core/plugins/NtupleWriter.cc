@@ -256,7 +256,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenMET = iConfig.getParameter<bool>("doGenMET");
   doGenInfo = iConfig.getParameter<bool>("doGenInfo");
   doAllGenParticles = iConfig.getParameter<bool>("doAllGenParticles");
-  doAllGenParticlesPythia8  = iConfig.getParameter<bool>("doAllGenParticlesPythia8");
   
   doAllPFParticles = iConfig.getParameter<bool>("doAllPFParticles");
 
@@ -935,14 +934,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        iEvent.getByToken(stablegenparticle_token,packed);
 
        for(size_t j=0; j<packed->size();j++){
-         bool skip_particle = false;
          const pat::PackedGenParticle* iter = dynamic_cast<const pat::PackedGenParticle*>(&(packed->at(j)));
-         if(doAllGenParticlesPythia8){//for pythia8: store particles with status code, see http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
-           if(iter->status()<2)
-             skip_particle = true;
-         }
-	 //for Herwig++ pruning is already done in the ntuplewriter python script
-         if(skip_particle) continue;
 
          index++;
 
@@ -961,11 +953,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          genp.set_daughter1(-1);
          genp.set_daughter2(-1);
 
-         bool islepton = abs(iter->pdgId())>=11 && abs(iter->pdgId())<=16 ;
-
-         if(!islepton) {
-             event->genparticles->push_back(genp);
-         }
+         event->genparticles->push_back(genp);
        }
      }
 
