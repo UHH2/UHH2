@@ -81,7 +81,8 @@ public:
    }
 
   TopJet(){
-      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_tau4 = m_mvahiggsdiscr = m_softdropmass = m_tau1_groomed = m_tau2_groomed = m_tau3_groomed = m_tau4_groomed = m_ecfN2_beta1 = m_ecfN2_beta2 = m_ecfN3_beta1 = m_ecfN3_beta2 = -1.0f;
+      m_qjets_volatility = m_tau1 = m_tau2 = m_tau3 = m_tau4 = m_softdropmass = m_tau1_groomed = m_tau2_groomed = m_tau3_groomed = m_tau4_groomed = m_ecfN2_beta1 = m_ecfN2_beta2 = m_ecfN3_beta1 = m_ecfN3_beta2 = -1.0f;
+      m_mvahiggsdiscr = -2;
       m_btag_BoostedDoubleSecondaryVertexAK8 = -2;
       m_btag_BoostedDoubleSecondaryVertexCA15 = -2;
       m_btag_MassDecorrelatedDeepBoosted_bbvsLight=-2;
