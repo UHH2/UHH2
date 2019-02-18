@@ -52,7 +52,7 @@ test_JLCkey::test_JLCkey(uhh2::Context& ctx){
   ele_cleaner.reset(new ElectronCleaner(ele));
   //
 
-  const JetId jetID(JetPFID(JetPFID::WP_TIGHT));
+  const JetId jetID(JetPFID(JetPFID::WP_TIGHT_CHS));
 
   std::vector<std::string> JEC_AK4, JEC_AK8;
   if(isMC){
