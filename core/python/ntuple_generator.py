@@ -199,19 +199,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100))
 
     # Grid-control changes:
-    gc_maxevents = '__MAX_EVENTS__'
-    gc_skipevents = '__SKIP_EVENTS__'
     gc_filenames = '__FILE_NAMES__'
 
     import os
     gc_nickname = os.getenv('DATASETNICK')
-
     if gc_nickname is not None:
         useData = not gc_nickname.startswith('MC_')
         process.source.fileNames = map(lambda s: s.strip(' "'), gc_filenames.split(','))
-        process.source.skipEvents = int(gc_skipevents)
-        process.maxEvents.input = int(gc_maxevents)
-
+        process.source.skipEvents = int(os.getenv('SKIP_EVENTS'))
+        process.maxEvents.input = int(os.getenv('MAX_EVENTS'))
 
     ###############################################
     # OUT
