@@ -255,8 +255,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doMET = iConfig.getParameter<bool>("doMET");
   doGenMET = iConfig.getParameter<bool>("doGenMET");
   doGenInfo = iConfig.getParameter<bool>("doGenInfo");
-  doAllGenParticles = iConfig.getParameter<bool>("doAllGenParticles");
-  doAllGenParticlesPythia8  = iConfig.getParameter<bool>("doAllGenParticlesPythia8");
+  doStableGenParticles = iConfig.getParameter<bool>("doStableGenParticles");
   
   doAllPFParticles = iConfig.getParameter<bool>("doAllPFParticles");
 
@@ -618,7 +617,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   }
   if(doGenInfo){
     genparticle_token = consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genparticle_source"));
-    if(doAllGenParticles) stablegenparticle_token = consumes<edm::View<reco::Candidate> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
+    if(doStableGenParticles) stablegenparticle_token = consumes<edm::View<reco::Candidate> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
     event->genInfo = new GenInfo();
     event->genparticles = new vector<GenParticle>();
     branch(tr, "genInfo","GenInfo", event->genInfo);
@@ -892,7 +891,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
      edm::Handle<reco::GenParticleCollection> genPartColl;
      // use genPartColl for the Matrix-Element particles. Also use it for stable leptons
-     // in case doAllGenParticles is false.
+     // in case doStableGenParticles is false.
      iEvent.getByToken(genparticle_token, genPartColl);
      int index=-1;
      for(reco::GenParticleCollection::const_iterator iter = genPartColl->begin(); iter != genPartColl->end(); ++ iter){
@@ -929,20 +928,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      }
 
      //store stable gen particles from packed collection
-     if(doAllGenParticles){
+     if(doStableGenParticles){
        edm::Handle<edm::View<reco::Candidate> > packed;
        // use packed particle collection for all STABLE (status 1) particles
        iEvent.getByToken(stablegenparticle_token,packed);
 
        for(size_t j=0; j<packed->size();j++){
-         bool skip_particle = false;
          const pat::PackedGenParticle* iter = dynamic_cast<const pat::PackedGenParticle*>(&(packed->at(j)));
-         if(doAllGenParticlesPythia8){//for pythia8: store particles with status code, see http://home.thep.lu.se/~torbjorn/pythia81html/ParticleProperties.html
-           if(iter->status()<2)
-             skip_particle = true;
-         }
-	 //for Herwig++ pruning is already done in the ntuplewriter python script
-         if(skip_particle) continue;
 
          index++;
 
@@ -961,11 +953,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          genp.set_daughter1(-1);
          genp.set_daughter2(-1);
 
-         bool islepton = abs(iter->pdgId())>=11 && abs(iter->pdgId())<=16 ;
-
-         if(!islepton) {
-             event->genparticles->push_back(genp);
-         }
+         event->genparticles->push_back(genp);
        }
      }
 

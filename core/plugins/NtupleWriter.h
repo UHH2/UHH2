@@ -63,8 +63,7 @@ class NtupleWriter : public edm::EDFilter {
       bool doGenMET;
       bool doPhotons;
       bool doGenInfo;
-      bool doAllGenParticles;
-      bool doAllGenParticlesPythia8;
+      bool doStableGenParticles;
       unsigned doGenJetConstituentsNjets;
       double doGenJetConstituentsMinJetPt;
       bool doGenJetConstituents;
