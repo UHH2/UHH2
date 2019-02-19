@@ -244,9 +244,12 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
     //L1 factor needed for JEC propagation to MET
     const std::vector< std::string > factors_jet = pat_jet.availableJECLevels();
     bool isL1 = false;
-    for(unsigned int i=0;i<factors_jet.size();i++)
-      if(factors_jet[i]=="L1FastJet")
+    for(unsigned int i=0;i<factors_jet.size();i++) {
+      if(factors_jet[i]=="L1FastJet") {
         isL1 = true;
+        break;
+      }
+    }
     if(isL1) jet.set_JEC_L1factor_raw(pat_jet.jecFactor("L1FastJet"));
     else jet.set_JEC_L1factor_raw(1.);//PUPPI jets don't have L1 factor
 
