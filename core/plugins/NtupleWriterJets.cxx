@@ -250,7 +250,7 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
         break;
       }
     }
-    if(isL1) jet.set_JEC_L1factor_raw(pat_jet.jecFactor("L1FastJet"));
+    if(isL1) jet.set_JEC_L1factor_raw(pat_jet.correctedJet("L1FastJet").pt() / pat_jet.correctedJet("Uncorrected").pt());
     else jet.set_JEC_L1factor_raw(1.);//PUPPI jets don't have L1 factor
 
   } else {
