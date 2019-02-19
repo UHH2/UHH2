@@ -47,12 +47,17 @@ bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const st
   if(ele_.EcalEnergy() <= 0.) return false;
   const float abs_ooEmooP = fabs(1./ele_.EcalEnergy() - ele_.EoverPIn()/ele_.EcalEnergy());
 
-  float C0 = -1.;
+  /*float C0 = -1.;
   const float C0_barrel = ele_.HoverE() - 1.12/ele_.EcalEnergy() - (0.0368*evt_.rho)/ele_.EcalEnergy();
   const float C0_endcap = ele_.HoverE() - 0.5/ele_.EcalEnergy() - (0.201*evt_.rho)/ele_.EcalEnergy();
   if(eleSC_pos_ == "barrel") C0 = C0_barrel;
   else if(eleSC_pos_ == "endcap") C0 = C0_endcap;
   else throw std::runtime_error("Invalid value for variable eleSC_pos_. May be 'barrel' or 'endcap'.");
+  */
+  float C0 = ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("HoverE_C0").at(wp_idx_);
+  float C1 = ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("HoverE_C1").at(wp_idx_);
+  float C2 = ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("HoverE_C2").at(wp_idx_);
+  float HoverE_cut = C0+C1/ele_.EcalEnergy()+C2*evt_.rho/ele_.EcalEnergy();
 
   const int expMissingHits = ele_.gsfTrack_trackerExpectedHitsInner_numberOfLostHits();
 
@@ -61,7 +66,7 @@ bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const st
   if(!( ele_.sigmaIEtaIEta() < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("sigmaIetaIeta").at(wp_idx_)  )) return false;// sigmaIetaIeta
   if(!( fabs(ele_.dEtaIn())  < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|dEtaIn|")     .at(wp_idx_)  )) return false;// |dEtaIn|
   if(!( fabs(ele_.dPhiIn())  < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|dPhiIn|")     .at(wp_idx_)  )) return false;// |dPhiIn|
-  if(!( C0                   > ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("C0")           .at(wp_idx_)  )) return false;// Substitute for HoverE
+  if(!( ele_.HoverE()        < HoverE_cut)) return false;// HoverE
   if(!( abs_ooEmooP          < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|ooEmooP|")    .at(wp_idx_)  )) return false;// |ooEmooP|
   if(!( abs_d0               < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|d0|")         .at(wp_idx_)  )) return false;// |d0|
   if(!( abs_dz               < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("|dz|")         .at(wp_idx_)  )) return false;// |dz|
@@ -69,65 +74,29 @@ bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const st
   if(!( passConvVeto    >= int(ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("passConvVeto") .at(wp_idx_)) )) return false;// conversion veto
 
   if(apply_iso_cut_){
+    float relIso_C0 = ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("relIsoEA_C0").at(wp_idx_);
+    float relIso_C1 = ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("relIsoEA_C1").at(wp_idx_);
+    float relIso_cut = relIso_C0 + relIso_C1/ele_.pt();
 
     const float pfIsoEA = ele_.relIsorho(evt_.rho);
-    if(!( pfIsoEA            < ElectronID::CutBased_LUT.at(tuning_).at(eleSC_pos_).at("relIsoEA")     .at(wp_idx_)  )) return false;// pfIso (PU correction: effective-area)
+    if(!( pfIsoEA            < relIso_cut )) return false;// pfIso (PU correction: effective-area)
   }
 
   return true;
 }
 
-// --- Cut-Based ID: PHYS14 25ns
-bool ElectronID_PHYS14_25ns_veto        (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "PHYS14_25ns", "VETO"  , true) ; }
-bool ElectronID_PHYS14_25ns_veto_noIso  (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "PHYS14_25ns", "VETO"  , false); }
+// --- Cut-Based ID: Summer16
+bool ElectronID_Summer16_veto        (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Summer16", "VETO"  , true) ; }
+bool ElectronID_Summer16_veto_noIso  (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Summer16", "VETO"  , false); }
 
-bool ElectronID_PHYS14_25ns_loose       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "PHYS14_25ns", "LOOSE" , true) ; }
-bool ElectronID_PHYS14_25ns_loose_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "PHYS14_25ns", "LOOSE" , false); }
+bool ElectronID_Summer16_loose       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Summer16", "LOOSE" , true) ; }
+bool ElectronID_Summer16_loose_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Summer16", "LOOSE" , false); }
 
-bool ElectronID_PHYS14_25ns_medium      (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "PHYS14_25ns", "MEDIUM", true) ; }
-bool ElectronID_PHYS14_25ns_medium_noIso(const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "PHYS14_25ns", "MEDIUM", false); }
+bool ElectronID_Summer16_medium      (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Summer16", "MEDIUM", true) ; }
+bool ElectronID_Summer16_medium_noIso(const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Summer16", "MEDIUM", false); }
 
-bool ElectronID_PHYS14_25ns_tight       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "PHYS14_25ns", "TIGHT" , true) ; }
-bool ElectronID_PHYS14_25ns_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "PHYS14_25ns", "TIGHT" , false); }
-
-// --- Cut-Based ID: Spring15 50ns
-bool ElectronID_Spring15_50ns_veto        (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_50ns", "VETO"  , true) ; }
-bool ElectronID_Spring15_50ns_veto_noIso  (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_50ns", "VETO"  , false); }
-
-bool ElectronID_Spring15_50ns_loose       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_50ns", "LOOSE" , true) ; }
-bool ElectronID_Spring15_50ns_loose_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_50ns", "LOOSE" , false); }
-
-bool ElectronID_Spring15_50ns_medium      (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_50ns", "MEDIUM", true) ; }
-bool ElectronID_Spring15_50ns_medium_noIso(const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_50ns", "MEDIUM", false); }
-
-bool ElectronID_Spring15_50ns_tight       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_50ns", "TIGHT" , true) ; }
-bool ElectronID_Spring15_50ns_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_50ns", "TIGHT" , false); }
-
-// --- Cut-Based ID: Spring15 25ns
-bool ElectronID_Spring15_25ns_veto        (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "VETO"  , true) ; }
-bool ElectronID_Spring15_25ns_veto_noIso  (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "VETO"  , false); }
-
-bool ElectronID_Spring15_25ns_loose       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "LOOSE" , true) ; }
-bool ElectronID_Spring15_25ns_loose_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "LOOSE" , false); }
-
-bool ElectronID_Spring15_25ns_medium      (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "MEDIUM", true) ; }
-bool ElectronID_Spring15_25ns_medium_noIso(const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "MEDIUM", false); }
-
-bool ElectronID_Spring15_25ns_tight       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "TIGHT" , true) ; }
-bool ElectronID_Spring15_25ns_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring15_25ns", "TIGHT" , false); }
-
-// --- Cut-Based ID: Spring16
-bool ElectronID_Spring16_veto        (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "VETO"  , true) ; }
-bool ElectronID_Spring16_veto_noIso  (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "VETO"  , false); }
-
-bool ElectronID_Spring16_loose       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "LOOSE" , true) ; }
-bool ElectronID_Spring16_loose_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "LOOSE" , false); }
-
-bool ElectronID_Spring16_medium      (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "MEDIUM", true) ; }
-bool ElectronID_Spring16_medium_noIso(const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "MEDIUM", false); }
-
-bool ElectronID_Spring16_tight       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "TIGHT" , true) ; }
-bool ElectronID_Spring16_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Spring16", "TIGHT" , false); }
+bool ElectronID_Summer16_tight       (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Summer16", "TIGHT" , true) ; }
+bool ElectronID_Summer16_tight_noIso (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Summer16", "TIGHT" , false); }
 
 // --- Cut-Based ID: Fall17
 bool ElectronID_Fall17_veto        (const Electron& ele, const uhh2::Event& evt){ return Electron_CutBasedID(ele, evt, "Fall17", "VETO"  , true) ; }

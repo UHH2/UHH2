@@ -142,7 +142,9 @@ private:
         "mvaEleID_Fall17_noIso_V2_wpLoose",
         "mvaEleID_Fall17_iso_V2_wp90",
         "mvaEleID_Fall17_iso_V2_wp80",
-        "mvaEleID_Fall17_iso_V2_wpLoose"
+        "mvaEleID_Fall17_iso_V2_wpLoose",
+	"mvaEleID_Spring16_GeneralPurpose_V1_wp90",
+	"mvaEleID_Spring16_GeneralPurpose_V1_wp80"
     };
     unique_ptr<ExampleElectronIDHists> eleHists;
 
