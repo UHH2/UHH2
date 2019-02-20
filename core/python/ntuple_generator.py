@@ -2362,7 +2362,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     genjet_etamax=cms.double(5.0),
 
                                     doGenTopJets=cms.bool(not useData),
-                                    #store GEN constituents for topjet_sources: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
+                                    #store GEN constituents for gentopjet_sources: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
                                     doGenTopJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
                                     doGenTopJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
 
