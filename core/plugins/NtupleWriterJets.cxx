@@ -162,7 +162,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 
 
 	bool storePFcands = false;
-	if(i<NPFJetwConstituents_ || jet.pt()>MinPtJetwConstituents_) storePFcands = true;
+	if(i<NPFJetwConstituents_ || pat_jet.pt()>MinPtJetwConstituents_) storePFcands = true;
         try {
           fill_jet_info(uevent,pat_jet, jet, true, false, jet_puppiSpecificProducer,storePFcands);
         }
@@ -939,7 +939,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
 	bool storePFcands = false;
-	if(i<NPFJetwConstituents_ || topjet.pt()>MinPtJetwConstituents_) storePFcands = true;
+	if(i<NPFJetwConstituents_ || pat_topjet.pt()>MinPtJetwConstituents_) storePFcands = true;
         try{
           uhh2::NtupleWriterJets::fill_jet_info(uevent,pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer,storePFcands);
         }catch(runtime_error &){
