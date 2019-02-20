@@ -54,24 +54,7 @@ bool DeepCSVBTag::operator()(const Jet & jet, const Event &) const{
 JetPFID::JetPFID(wp working_point):m_working_point(working_point){}
 
 bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
-  if(ev.year == "2016v2"){
-    switch(m_working_point){
-    case WP_LOOSE_CHS:
-      return looseID2016_CHS(jet);
-    case WP_TIGHT_CHS:
-      return tightID2016_CHS(jet);
-    case WP_LOOSE_PUPPI:
-      return looseID2016_PUPPI(jet);
-    case WP_TIGHT_PUPPI:
-      return tightID2016_PUPPI(jet);
-    case  WP_TIGHT_LEPVETO:
-      return tightLepVetoID2016(jet);
-    default:
-      throw invalid_argument("invalid working point passed to CSVBTag");
-    }
-    return false;
-  }
-  if(ev.year == "2016v3"){
+  if(ev.year == "2016v2" || ev.year == "2016v3"){
     switch(m_working_point){
     case WP_LOOSE_CHS:
       return looseID2016_CHS(jet);

@@ -1785,6 +1785,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                                           'egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight'),
                                                       cutBasedElectronHLTPreselection_Summer16_V1=cms.InputTag(
                                                           'egmGsfElectronIDs:cutBasedElectronHLTPreselection-Summer16-V1'),
+                                                      mvaEleID_Spring16_GeneralPurpose_V1_wp80=cms.InputTag(
+                                                          'egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp80'),
+                                                      mvaEleID_Spring16_GeneralPurpose_V1_wp90=cms.InputTag(
+                                                          'egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90'),
                                                       # 2017 & 2018
                                                       cutBasedElectronID_Fall17_94X_V2_veto=cms.InputTag(
                                                           'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-veto'),
@@ -2030,6 +2034,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         'cutBasedElectronID_Summer16_80X_V1_medium',
                                         'cutBasedElectronID_Summer16_80X_V1_tight',
                                         'cutBasedElectronHLTPreselection_Summer16_V1',
+                                        'mvaEleID_Spring16_GeneralPurpose_V1_wp90',
+                                        'mvaEleID_Spring16_GeneralPurpose_V1_wp80',
                                         # 2017 & 2018
                                         'cutBasedElectronID_Fall17_94X_V2_veto',
                                         'cutBasedElectronID_Fall17_94X_V2_loose',

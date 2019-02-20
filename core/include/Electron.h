@@ -21,6 +21,8 @@ class Electron : public RecParticle {
     cutBasedElectronID_Summer16_80X_V1_medium,
     cutBasedElectronID_Summer16_80X_V1_tight,
     cutBasedElectronHLTPreselection_Summer16_V1,
+    mvaEleID_Spring16_GeneralPurpose_V1_wp90,
+    mvaEleID_Spring16_GeneralPurpose_V1_wp80,
     // 2017 & 2018
     cutBasedElectronID_Fall17_94X_V2_veto,
     cutBasedElectronID_Fall17_94X_V2_loose,
@@ -42,6 +44,9 @@ class Electron : public RecParticle {
     if(tagname == "cutBasedElectronID_Summer16_80X_V1_medium") return cutBasedElectronID_Summer16_80X_V1_medium;
     if(tagname == "cutBasedElectronID_Summer16_80X_V1_tight") return cutBasedElectronID_Summer16_80X_V1_tight;
     if(tagname == "cutBasedElectronHLTPreselection_Summer16_V1") return cutBasedElectronHLTPreselection_Summer16_V1;
+    if(tagname == "mvaEleID_Spring16_GeneralPurpose_V1_wp90") return mvaEleID_Spring16_GeneralPurpose_V1_wp90;
+    if(tagname == "mvaEleID_Spring16_GeneralPurpose_V1_wp80") return mvaEleID_Spring16_GeneralPurpose_V1_wp80;
+
     if(tagname == "cutBasedElectronID_Fall17_94X_V2_veto") return cutBasedElectronID_Fall17_94X_V2_veto;
     if(tagname == "cutBasedElectronID_Fall17_94X_V2_loose") return cutBasedElectronID_Fall17_94X_V2_loose;
     if(tagname == "cutBasedElectronID_Fall17_94X_V2_medium") return cutBasedElectronID_Fall17_94X_V2_medium;
