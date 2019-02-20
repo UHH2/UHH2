@@ -22,7 +22,7 @@ class ExampleJetConstitHists: public uhh2::Hists {
 public:
     ExampleJetConstitHists(uhh2::Context & ctx, const std::string & dirname);
     virtual void fill(const uhh2::Event & ev) override; // need this to override abstract base method
-    virtual void fill(const Event & event, const LorentzVector & lvJet, const LorentzVector & lvSum);
+    virtual void fill(const LorentzVector & lvJet, const LorentzVector & lvSum);
     virtual ~ExampleJetConstitHists();
 private:
     TH1F * hPtCompare, * hEtaCompare, * hPhiCompare;
@@ -65,13 +65,15 @@ Hists(ctx, dirname)
 }
 
 
-void ExampleJetConstitHists::fill(const Event & event, const LorentzVector & lvJet, const LorentzVector & lvSum) {
+void ExampleJetConstitHists::fill(const LorentzVector & lvJet, const LorentzVector & lvSum) {
     hPtCompare->Fill(fabs(lvJet.pt() - lvSum.pt()) / std::max(fabs(lvJet.pt()), fabs(lvSum.pt())));
     hEtaCompare->Fill(fabs(lvJet.eta() - lvSum.eta()) / std::max(fabs(lvJet.eta()), fabs(lvSum.eta())));
     hPhiCompare->Fill(fabs(lvJet.phi() - lvSum.phi()) / std::max(fabs(lvJet.phi()), fabs(lvSum.phi())));
 }
 
-void ExampleJetConstitHists::fill(const Event & event){}
+void ExampleJetConstitHists::fill(const Event & event){
+  (void)event; // unused var
+}
 
 ExampleJetConstitHists::~ExampleJetConstitHists(){}
 
@@ -148,7 +150,7 @@ bool ExampleModuleJetConstituents::process(Event & event) {
             auto sumJet = constructConstituentSum(event.pfparticles, &jetItr);
             LorentzVector rawJet = jetItr.v4() * jetItr.JEC_factor_raw();  // NB need uncorrected jet
             compareLVs(rawJet, sumJet);
-            jetHists->fill(event, rawJet, sumJet);
+            jetHists->fill(rawJet, sumJet);
         }
     }
 
@@ -158,7 +160,7 @@ bool ExampleModuleJetConstituents::process(Event & event) {
             auto sumJet = constructConstituentSum(event.pfparticles, &jetItr);
             LorentzVector rawJet = jetItr.v4() * jetItr.JEC_factor_raw();  // NB need uncorrected jet
             compareLVs(rawJet, sumJet);
-            topjetHists->fill(event, rawJet, sumJet);
+            topjetHists->fill(rawJet, sumJet);
         }
     }
 
@@ -167,7 +169,7 @@ bool ExampleModuleJetConstituents::process(Event & event) {
         for (auto & jetItr : *event.genjets) {
             auto sumJet = constructConstituentSum(event.genparticles, &jetItr);
             compareLVs(jetItr.v4(), sumJet);
-            genjetHists->fill(event, jetItr.v4(), sumJet);
+            genjetHists->fill(jetItr.v4(), sumJet);
         }
     }
 
@@ -176,7 +178,7 @@ bool ExampleModuleJetConstituents::process(Event & event) {
         for (auto & jetItr : *event.gentopjets) {
             auto sumJet = constructConstituentSum(event.genparticles, &jetItr);
             compareLVs(jetItr.v4(), sumJet);
-            gentopjetHists->fill(event, jetItr.v4(), sumJet);
+            gentopjetHists->fill(jetItr.v4(), sumJet);
         }
     }
     return true;
