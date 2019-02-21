@@ -22,7 +22,7 @@
             <!-- <Item Name="GenJetCollection" Value="slimmedGenJets" /> -->
             <Item Name="GenJetCollection" Value="slimmedGenJetsAK8" />
             <!-- <Item Name="GenTopJetCollection" Value="ak8GenJetsFat" /> -->
-            <Item Name="GenTopJetCollection" Value="ak8GenJetsSoftDrop" />
+            <Item Name="GenTopJetCollection" Value="ak8GenJetsSoftDropforsub" />
 
             <Item Name="PFParticleCollection" Value="PFParticles" />
             <Item Name="GenParticleCollection" Value="GenParticles" />
