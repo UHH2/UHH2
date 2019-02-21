@@ -4,6 +4,10 @@
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/Hists.h"
+#include <UHH2/common/include/ObjectIdUtils.h>
+#include <UHH2/common/include/ElectronIds.h>
+#include <UHH2/common/include/CleaningModules.h>
+#include <UHH2/common/include/Utils.h>
 
 #include "TH1F.h"
 #include "TH2F.h"
@@ -19,7 +23,8 @@ using namespace uhh2;
  *
  * This brief example shows how to use a tag,
  * and produces a histogram to show how many electrons passed each ID.
- * The same is done for photons
+ * The same is done for photons.
+ * It also shows you how to "clean" the event.electrons using the tag.
  *
  * For Muons, the approach is similar, but they are called "Selectors"
  */
@@ -161,6 +166,9 @@ private:
         "mvaPhoID_Fall17_iso_V2_wp80"
     };
     unique_ptr<ExamplePhotonIDHists> phoHists;
+
+    std::unique_ptr<ElectronCleaner> ele_cleaner;
+
 };
 
 
@@ -169,11 +177,21 @@ ExampleModuleEGammaID::ExampleModuleEGammaID(Context & ctx)
     cout << "Hello World from ExampleModuleEGammaID!" << endl;
     eleHists.reset(new ExampleElectronIDHists(ctx, "electronID", electronIDs));
     phoHists.reset(new ExamplePhotonIDHists(ctx, "photonID", photonIDs));
+
+    // Example of how to use the Electron tag in an ElectronID cleaner
+    // Here it's combined with a PtEta cut
+    const ElectronId eleID(AndId<Electron>(PtEtaSCCut(50., 2.5), ElectronTagID(Electron::heepElectronID_HEEPV70)));
+    ele_cleaner.reset(new ElectronCleaner(eleID));
 }
 
 
 bool ExampleModuleEGammaID::process(Event & event) {
     cout << " *** event: " << event.event << endl;
+
+    // Comment this back in to actually run the cleaner,
+    // remember to sort again afterwards
+    // ele_cleaner->process(event);
+    // sort_by_pt<Electron>(*event.electrons);
 
     for (const auto & eleItr : *event.electrons) {
         // We can use the enum directly, this is the easiest way
