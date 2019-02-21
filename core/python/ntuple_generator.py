@@ -1296,6 +1296,14 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 #    rename_module(process, task, "packedPatJetsAk8CHSJets", "jetsAk8CHSSubstructure", update_userData=False)  # don't update userData as JetSubstructurePacker
 
 
+    # Rename GenTopJet collections
+    process.genjetsAk8Substructure = cms.EDAlias(
+        ak8GenJetsFat = cms.VPSet( cms.PSet(type=cms.string("recoGenJets")) )
+    )
+    process.genjetsAk8SubstructureSoftDrop = cms.EDAlias(
+        ak8GenJetsSoftDropforsub = cms.VPSet( cms.PSet(type=cms.string("recoGenJets")) )
+    )
+
     # # Dummy module to allow us to rename slimmedJets to something more descriptive
     # process.jetsAk4CHS = cms.EDFilter("PATJetSelector",
     #     cut=cms.string(''),
@@ -2388,12 +2396,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         cms.PSet(
                                             # gentopjet_source can be groomed or ungroomed.
                                             # It determines the main kinematics & constituent properties
-                                            # of the GenTopJet.
+                                            # of the GenTopJet, as well as the output collection name
                                             # If groomed (like here), the FastjetJetProducer module should have
                                             # `writeCompound=False`, otherwise the fatjets will have
                                             # daughters that are subjets, which will ruin the constituent
                                             # calculations e.g. energy fractions, # daughters.
-                                            gentopjet_source=cms.string("ak8GenJetsSoftDropforsub"),
+                                            gentopjet_source=cms.string("genjetsAk8SubstructureSoftDrop"),
 
                                             # If you specify a source here, it will assume its
                                             # daughters are the corresponding subjets for each jet
@@ -2414,7 +2422,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         cms.PSet(
                                             # This is ungroomed AK8 GenJets, so no subjets,
                                             # but we do want Njettiness.
-                                            gentopjet_source=cms.string("ak8GenJetsFat"),
+                                            gentopjet_source=cms.string("genjetsAk8Substructure"),
                                             subjet_source=cms.string(""),
                                             substructure_variables_source=cms.string("ak8GenJetsFat"),
                                             njettiness_source=cms.string("NjettinessAk8Gen"),
