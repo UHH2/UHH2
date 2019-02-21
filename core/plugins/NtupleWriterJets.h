@@ -55,7 +55,7 @@ public:
 
     struct Config: public NtupleWriterModule::Config {
         using NtupleWriterModule::Config::Config;
-        
+
         bool do_btagging = true, do_btagging_subjets = true, do_taginfo_subjets;
 
         edm::InputTag substructure_variables_src;// a jet collection from where to take the subjet variables (after DeltaR-matching)
@@ -103,6 +103,42 @@ private:
     std::vector<Event::Handle<std::vector<Muon>    >> h_muons;
     std::vector<Event::Handle<std::vector<Electron>>> h_elecs;
     std::vector<Event::Handle<std::vector<PFParticle>>> h_pfcands;
+};
+
+class NtupleWriterGenTopJets: public NtupleWriterModule{
+public:
+
+    struct Config: public NtupleWriterModule::Config {
+        using NtupleWriterModule::Config::Config;
+
+        edm::InputTag substructure_variables_src;// a jet collection from where to take the subjet variables (after DeltaR-matching), may or may not be the same as the main jet collection
+        std::string subjet_src;
+        std::string njettiness_src;
+        std::string ecf_beta1_src;
+        std::string ecf_beta2_src;
+    };
+
+    explicit NtupleWriterGenTopJets(Config & cfg, bool set_jets_member, unsigned int NGenJetwConstituents, double MinPtJetwConstituents);
+    static void fill_genjet_info(uhh2::Event & event, const reco::Candidate & reco_genjet, GenJet & jet, bool add_genparts=false);
+    static size_t add_genpart(const reco::Candidate & jetgenp, std::vector<GenParticle> & genparts);
+    virtual void process(const edm::Event &, uhh2::Event &,  const edm::EventSetup&);
+    virtual ~NtupleWriterGenTopJets();
+
+private:
+    edm::InputTag src;
+    float ptmin, etamax;
+    edm::EDGetToken src_token, subjet_src_token;
+    edm::EDGetToken substructure_variables_src_token_basic, substructure_variables_src_token_gen;
+    edm::EDGetToken src_njettiness1_token, src_njettiness2_token, src_njettiness3_token, src_njettiness4_token;
+    edm::EDGetToken src_ecf_beta1_N2_token, src_ecf_beta1_N3_token, src_ecf_beta2_N2_token, src_ecf_beta2_N3_token;
+    std::string subjet_src, njettiness_src, ecf_beta1_src, ecf_beta2_src, gentopjet_collection;
+    bool useSubstructureVar;
+
+    Event::Handle<std::vector<GenTopJet>> handle;
+    boost::optional<Event::Handle<std::vector<GenTopJet>>> gentopjets_handle;
+
+    unsigned int NGenJetwConstituents_;
+    double MinPtJetwConstituents_;
 };
 
 }
