@@ -237,7 +237,7 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
                                                   uhh2::Event & event);
   std::pair<float, float> get_SF_btag(float pt, float abs_eta, int flav);
 
-  const CSVBTag btag_;
+  CSVBTag btag_;
   std::unique_ptr<BTagCalibrationReader> calib_up_;
   std::unique_ptr<BTagCalibrationReader> calib_;
   std::unique_ptr<BTagCalibrationReader> calib_down_;

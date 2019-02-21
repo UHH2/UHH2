@@ -58,8 +58,8 @@ public:
  * The configuration of a module is represented as key/value pairs of strings, to pass small (configuration) data to
  * the modules. A number of dataset-related keys are always present when running via SFrame:
  *  - "dataset_type" is the type as given in the SFrame xml file, should be either "MC" or "DATA"
- *  - "dataset_version" is the 'Version' of the dataset as given in the SFrame xml file
  *  - "dataset_lumi" is the integrated luminosity ('Lumi') of the dataset in pb^-1, as given in the SFrame xml file
+ *  - "dataset_year" is the year of data/MC set as 'Year' parameter in xml file
  *  - "target_lumi" is the target luminosity in pb^-1 for MC reweighting, as specified in the SFrame xml in Cycle in 'TargetLumi'
  * 
  * Also, all the dataset-metadata is added with the prefix "meta_" (refer to the Metadata documentation for details).
