@@ -14,6 +14,11 @@
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
+
+#include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
+#include "DataFormats/L1Trigger/interface/EGamma.h"
+#include "DataFormats/L1Trigger/interface/Jet.h"
+
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
 #include "TTree.h"
@@ -94,6 +99,7 @@ class NtupleWriter : public edm::EDFilter {
 
       bool doPV;
       bool doTrigger;
+      bool doL1seed;
       bool doEcalBadCalib;
       bool doPrefire;
       bool runOnMiniAOD;
@@ -175,6 +181,8 @@ class NtupleWriter : public edm::EDFilter {
       edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
       edm::EDGetTokenT<edm::TriggerResults>  metfilterBits_;
       edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescales_;
+      edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescalesL1min_;
+      edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescalesL1max_;
       edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
 
       std::vector<std::vector<FlavorParticle> > triggerObjects_out;
@@ -198,6 +206,13 @@ class NtupleWriter : public edm::EDFilter {
 
       std::vector<edm::EDGetToken> genxcone_tokens_dijet;
       std::vector<std::vector<GenTopJet>> genxconeJets_dijet;
+
+      edm::EDGetTokenT<BXVector<GlobalAlgBlk>> l1GtToken_;
+      edm::EDGetTokenT<BXVector<l1t::EGamma>> l1EGToken_;
+      edm::EDGetTokenT<BXVector<l1t::Jet>> l1JetToken_;
+
+      std::vector<L1EGamma>  L1EG_seeds;
+      std::vector<L1Jet> L1Jet_seeds;
 
 };
 

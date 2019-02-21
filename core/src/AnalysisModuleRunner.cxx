@@ -604,7 +604,9 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
         eh->setup_toppuppijets(context->get("TopPuppiJetCollection", ""));
         eh->setup_met(context->get("METName", ""));
         eh->setup_pfparticles(context->get("PFParticleCollection", ""));
-       
+        eh->setup_L1EG_seeds(context->get("L1EGseedsCollection", ""));
+	eh->setup_L1J_seeds(context->get("L1JseedsCollection", ""));
+
         bool is_mc = context->get("dataset_type") == "MC";
         if (is_mc) {
 	  try{
