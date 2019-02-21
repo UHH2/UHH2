@@ -51,9 +51,6 @@ class NtupleWriter : public edm::EDFilter {
       // fill gen particles and other info from a pat-jet (for XCONE, HOTVR, etc)
       void fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genjet, bool &add);
 
-      //For clustered reco::GenJet with subjets, which turn out to be reco::Jet with subjets reco::Candidate
-      void fill_geninfo_recocand(const reco::Candidate& constituent, GenJet& genjet, bool& add_genparts);
-
       /* //Add pf candidate to event */
       /* size_t add_pfpart(const reco::Candidate & pf, std::vector<PFParticle> & pfparts); */
 
@@ -138,19 +135,6 @@ class NtupleWriter : public edm::EDFilter {
       double genjet_etamax;
 
       edm::EDGetToken pf_collection_token;
-
-      std::vector<edm::EDGetToken> gentopjet_tokens;
-      std::vector<std::vector<GenTopJet>> gentopjets;
-      double gentopjet_ptmin;
-      double gentopjet_etamax;
-      std::vector<edm::EDGetToken> gentopjet_tau1_tokens;
-      std::vector<edm::EDGetToken> gentopjet_tau2_tokens;
-      std::vector<edm::EDGetToken> gentopjet_tau3_tokens;
-      std::vector<edm::EDGetToken> gentopjet_tau4_tokens;
-      std::vector<edm::EDGetToken> gentopjet_ecf_beta1_N2_tokens;
-      std::vector<edm::EDGetToken> gentopjet_ecf_beta1_N3_tokens;
-      std::vector<edm::EDGetToken> gentopjet_ecf_beta2_N2_tokens;
-      std::vector<edm::EDGetToken> gentopjet_ecf_beta2_N3_tokens;
 
       std::vector<edm::EDGetToken> photon_tokens;
       std::vector<std::vector<Photon>> phs;

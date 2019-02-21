@@ -1124,6 +1124,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     )
     task.add(process.packedPatJetsAk8PuppiJets)
 
+
     ###############################################
     # Do deep flavours & deep tagging
     # This MUST be run *After* JetSubstructurePacker, so that the subjets are already there,
@@ -2378,29 +2379,48 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     genjet_etamax=cms.double(5.0),
 
                                     doGenTopJets=cms.bool(not useData),
-                                    #store GEN constituents for gentopjet_sources: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
+                                    #store GenTopJet constituents: doGenTopJetConstituentsNjets and doGenTopJetConstituentsMinJetPt are combined with OR
                                     doGenTopJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
                                     doGenTopJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
-
-                                    gentopjet_sources=cms.VInputTag(
-                                        cms.InputTag("ak8GenJetsFat"),
-                                        cms.InputTag("ak8GenJetsSoftDrop")
-                                    ),
                                     gentopjet_ptmin=cms.double(150.0),
                                     gentopjet_etamax=cms.double(5.0),
-                                    # this can be used to save N-subjettiness for GenJets:
-                                    # need one entry per gentopjet_source
-                                    gentopjet_njettiness_sources=cms.vstring(
-                                        "NjettinessAk8Gen",
-                                        "NjettinessAk8SoftDropGen",
-                                    ),
-                                    gentopjet_ecf_beta1_sources=cms.vstring(
-                                        "",
-                                        "ECFNbeta1Ak8SoftDropGen"
-                                    ),
-                                    gentopjet_ecf_beta2_sources=cms.vstring(
-                                        "",
-                                        "ECFNbeta2Ak8SoftDropGen"
+                                    GenTopJets=cms.VPSet(
+                                        cms.PSet(
+                                            # gentopjet_source can be groomed or ungroomed.
+                                            # It determines the main kinematics & constituent properties
+                                            # of the GenTopJet.
+                                            # If groomed (like here), the FastjetJetProducer module should have
+                                            # `writeCompound=False`, otherwise the fatjets will have
+                                            # daughters that are subjets, which will ruin the constituent
+                                            # calculations e.g. energy fractions, # daughters.
+                                            gentopjet_source=cms.string("ak8GenJetsSoftDropforsub"),
+
+                                            # If you specify a source here, it will assume its
+                                            # daughters are the corresponding subjets for each jet
+                                            # in gentopjet_source and store them as such.
+                                            # Thus you should set `writeCompound=True`
+                                            # in your FastjetJetProducer
+                                            subjet_source=cms.string("ak8GenJetsSoftDrop"),
+
+                                            # substructure_variables_source should be the same
+                                            # source as used in the njettiness_source & ecf_beta*_sources
+                                            substructure_variables_source=cms.string("ak8GenJetsSoftDropforsub"),
+                                            # Njettiness, internally will look for the various tau*
+                                            njettiness_source=cms.string("NjettinessAk8SoftDropGen"),
+                                            # Energy correlation functions, for beta=1 and beta=2
+                                            ecf_beta1_source=cms.string("ECFNbeta1Ak8SoftDropGen"),
+                                            ecf_beta2_source=cms.string("ECFNbeta2Ak8SoftDropGen")
+                                        ),
+                                        cms.PSet(
+                                            # This is ungroomed AK8 GenJets, so no subjets,
+                                            # but we do want Njettiness.
+                                            gentopjet_source=cms.string("ak8GenJetsFat"),
+                                            subjet_source=cms.string(""),
+                                            substructure_variables_source=cms.string("ak8GenJetsFat"),
+                                            njettiness_source=cms.string("NjettinessAk8Gen"),
+                                            ecf_beta1_source=cms.string(""),
+                                            ecf_beta2_source=cms.string(""),
+                                        ),
                                     ),
 
                                     doAllPFParticles=cms.bool(False),
