@@ -22,10 +22,11 @@ class ExampleJetConstitHists: public uhh2::Hists {
 public:
     ExampleJetConstitHists(uhh2::Context & ctx, const std::string & dirname);
     virtual void fill(const uhh2::Event & ev) override; // need this to override abstract base method
-    virtual void fill(const LorentzVector & lvJet, const LorentzVector & lvSum);
+    virtual void fill(const LorentzVector & lvJet, const LorentzVector & lvSum, uint nConstituents, uint jetInd);
     virtual ~ExampleJetConstitHists();
 private:
     TH1F * hPtCompare, * hEtaCompare, * hPhiCompare;
+    TH2F * hJetPtVsNumConstits, * hJetIndVsNumConstits;
     vector<float> logBins = {
        1.00000000e-10, 1.23026877e-10, 1.51356125e-10, 1.86208714e-10,
        2.29086765e-10, 2.81838293e-10, 3.46736850e-10, 4.26579519e-10,
@@ -62,13 +63,18 @@ Hists(ctx, dirname)
     hPtCompare = book<TH1F>("pt_compare", ";Relative |p_{T}^{Jet} - p_{T}^{#sum Constit}|;N", logBins.size()-1, &logBins[0]);
     hEtaCompare = book<TH1F>("eta_compare", ";Relative |#eta^{Jet} - #eta^{#sum Constit}|;N", logBins.size()-1, &logBins[0]);
     hPhiCompare = book<TH1F>("phi_compare", ";Relative |#phi^{Jet} - #phi^{#sum Constit}|;N", logBins.size()-1, &logBins[0]);
+    int nConstit = 100;
+    hJetPtVsNumConstits = book<TH2F>("jet_pt_vs_num_constits", ";N_{Constituents};p_{T}^{Jet} [GeV]", nConstit, 0, nConstit, 350, 0, 7000);
+    hJetIndVsNumConstits = book<TH2F>("jet_ind_vs_num_constits", ";N_{Constituents};Jet index", nConstit, 0, nConstit, 20, 0, 20);
 }
 
 
-void ExampleJetConstitHists::fill(const LorentzVector & lvJet, const LorentzVector & lvSum) {
+void ExampleJetConstitHists::fill(const LorentzVector & lvJet, const LorentzVector & lvSum, uint nConstituents, uint jetInd) {
     hPtCompare->Fill(fabs(lvJet.pt() - lvSum.pt()) / std::max(fabs(lvJet.pt()), fabs(lvSum.pt())));
     hEtaCompare->Fill(fabs(lvJet.eta() - lvSum.eta()) / std::max(fabs(lvJet.eta()), fabs(lvSum.eta())));
     hPhiCompare->Fill(fabs(lvJet.phi() - lvSum.phi()) / std::max(fabs(lvJet.phi()), fabs(lvSum.phi())));
+    hJetPtVsNumConstits->Fill(nConstituents, lvJet.pt());
+    hJetIndVsNumConstits->Fill(nConstituents, jetInd);
 }
 
 void ExampleJetConstitHists::fill(const Event & event){
@@ -146,39 +152,51 @@ bool ExampleModuleJetConstituents::process(Event & event) {
 
     if (event.jets != nullptr) {
         cout << "--- Jets: " << event.jets->size() << endl;
+        uint jetInd = 0;
         for (auto & jetItr : *event.jets) {
             auto sumJet = constructConstituentSum(event.pfparticles, &jetItr);
             LorentzVector rawJet = jetItr.v4() * jetItr.JEC_factor_raw();  // NB need uncorrected jet
             compareLVs(rawJet, sumJet);
-            jetHists->fill(rawJet, sumJet);
+            uint nConstituents = jetItr.pfcand_indexs().size();
+            jetHists->fill(rawJet, sumJet, nConstituents, jetInd);
+            jetInd++;
         }
     }
 
     if (event.topjets != nullptr) {
         cout << "--- TopJets: " << event.topjets->size() << endl;
+        uint jetInd = 0;
         for (auto & jetItr : *event.topjets) {
             auto sumJet = constructConstituentSum(event.pfparticles, &jetItr);
             LorentzVector rawJet = jetItr.v4() * jetItr.JEC_factor_raw();  // NB need uncorrected jet
             compareLVs(rawJet, sumJet);
-            topjetHists->fill(rawJet, sumJet);
+            uint nConstituents = jetItr.pfcand_indexs().size();
+            topjetHists->fill(rawJet, sumJet, nConstituents, jetInd);
+            jetInd++;
         }
     }
 
     if (event.genjets != nullptr) {
         cout << "--- GenJets: " << event.genjets->size() << endl;
+        uint jetInd = 0;
         for (auto & jetItr : *event.genjets) {
             auto sumJet = constructConstituentSum(event.genparticles, &jetItr);
             compareLVs(jetItr.v4(), sumJet);
-            genjetHists->fill(jetItr.v4(), sumJet);
+            uint nConstituents = jetItr.genparticles_indices().size();
+            genjetHists->fill(jetItr.v4(), sumJet, nConstituents, jetInd);
+            jetInd++;
         }
     }
 
     if (event.gentopjets != nullptr) {
         cout << "--- GenTopJets: " << event.gentopjets->size() << endl;
+        uint jetInd = 0;
         for (auto & jetItr : *event.gentopjets) {
             auto sumJet = constructConstituentSum(event.genparticles, &jetItr);
             compareLVs(jetItr.v4(), sumJet);
-            gentopjetHists->fill(jetItr.v4(), sumJet);
+            uint nConstituents = jetItr.genparticles_indices().size();
+            gentopjetHists->fill(jetItr.v4(), sumJet, nConstituents, jetInd);
+            jetInd++;
         }
     }
     return true;
