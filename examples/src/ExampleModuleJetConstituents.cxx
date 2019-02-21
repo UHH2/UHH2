@@ -89,12 +89,12 @@ public:
 
     explicit ExampleModuleJetConstituents(Context & ctx);
     virtual bool process(Event & event) override;
-    static LorentzVector constructConstituentSum(std::vector<PFParticle> * pfparticles, Jet * jet);
-    static LorentzVector constructConstituentSum(std::vector<GenParticle> * genparticles, GenJet * genjet);
+    static LorentzVector constructConstituentSum(std::vector<PFParticle> * pfparticles, const Jet * jet);
+    static LorentzVector constructConstituentSum(std::vector<GenParticle> * genparticles, const GenJet * genjet);
     static bool isClose(float a, float b, float relDiff=1E-2); // loose tolerance as often packing loses some precision
     static bool compareLVs(const LorentzVector & lv1, const LorentzVector & lv2);
 private:
-    unique_ptr<ExampleJetConstitHists> jetHists, topjetHists, genjetHists, gentopjetHists;
+    unique_ptr<ExampleJetConstitHists> jetHists, topjetHists, topjetSubjetHists, genjetHists, gentopjetHists, gentopjetSubjetHists;
 
 };
 
@@ -104,12 +104,14 @@ ExampleModuleJetConstituents::ExampleModuleJetConstituents(Context & ctx)
     cout << "Hello World from ExampleModuleJetConstituents!" << endl;
     jetHists.reset(new ExampleJetConstitHists(ctx, "jetHists"));
     topjetHists.reset(new ExampleJetConstitHists(ctx, "topjetHists"));
+    topjetSubjetHists.reset(new ExampleJetConstitHists(ctx, "topjetSubjetHists"));
     genjetHists.reset(new ExampleJetConstitHists(ctx, "genjetHists"));
     gentopjetHists.reset(new ExampleJetConstitHists(ctx, "gentopjetHists"));
+    gentopjetSubjetHists.reset(new ExampleJetConstitHists(ctx, "gentopjetSubjetHists"));
 }
 
 
-LorentzVector ExampleModuleJetConstituents::constructConstituentSum(std::vector<PFParticle> * pfparticles, Jet * jet) {
+LorentzVector ExampleModuleJetConstituents::constructConstituentSum(std::vector<PFParticle> * pfparticles, const Jet * jet) {
     if (pfparticles == nullptr) { throw std::runtime_error("pfparticles is nullptr"); }
     if (jet == nullptr) { throw std::runtime_error("Jet is nullptr"); }
 
@@ -120,7 +122,7 @@ LorentzVector ExampleModuleJetConstituents::constructConstituentSum(std::vector<
     return consistSum;
 }
 
-LorentzVector ExampleModuleJetConstituents::constructConstituentSum(std::vector<GenParticle> * genparticles, GenJet * genjet) {
+LorentzVector ExampleModuleJetConstituents::constructConstituentSum(std::vector<GenParticle> * genparticles, const GenJet * genjet) {
     if (genparticles == nullptr) { throw std::runtime_error("genparticles is nullptr"); }
     if (genjet == nullptr) { throw std::runtime_error("genjet is nullptr"); }
 
@@ -173,6 +175,13 @@ bool ExampleModuleJetConstituents::process(Event & event) {
             uint nConstituents = jetItr.pfcand_indexs().size();
             topjetHists->fill(rawJet, sumJet, nConstituents, jetInd);
             jetInd++;
+
+            for (auto & subjetItr : jetItr.subjets()) {
+              auto sumJet = constructConstituentSum(event.pfparticles, &subjetItr);
+              LorentzVector rawJet = subjetItr.v4() * subjetItr.JEC_factor_raw();  // NB need uncorrected jet
+              uint nConstituents = subjetItr.pfcand_indexs().size();
+              topjetSubjetHists->fill(rawJet, sumJet, nConstituents, jetInd);
+            }
         }
     }
 
@@ -197,6 +206,12 @@ bool ExampleModuleJetConstituents::process(Event & event) {
             uint nConstituents = jetItr.genparticles_indices().size();
             gentopjetHists->fill(jetItr.v4(), sumJet, nConstituents, jetInd);
             jetInd++;
+
+            for (auto & subjetItr : jetItr.subjets()) {
+              auto sumJet = constructConstituentSum(event.genparticles, &subjetItr);
+              uint nConstituents = subjetItr.genparticles_indices().size();
+              gentopjetSubjetHists->fill(subjetItr.v4(), sumJet, nConstituents, jetInd);
+            }
         }
     }
     return true;

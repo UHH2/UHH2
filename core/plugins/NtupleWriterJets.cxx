@@ -83,7 +83,7 @@ std::string getPuppiJetSpecificProducer(const std::string & name) {
 
 NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents, double MinPtJetwConstituents){
     handle = cfg.ctx.declare_event_output<vector<Jet>>(cfg.dest_branchname, cfg.dest);
-    
+
     ptmin = cfg.ptmin;
     etamax = cfg.etamax;
     if(set_jets_member){
@@ -100,7 +100,7 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned 
     h_elecs.clear();
     NPFJetwConstituents_ = NPFJetwConstituents;
     MinPtJetwConstituents_ = 2e4;
-    if(MinPtJetwConstituents>0) 
+    if(MinPtJetwConstituents>0)
       MinPtJetwConstituents_ = MinPtJetwConstituents;
     //    auto h_pfcand = cfg.ctx.get_handle<vector<PFParticle>>("PFParticles"); h_pfcands.push_back(h_pfcand);
 }
@@ -380,7 +380,7 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
         deepflavour_g =true;
       }
     }
-   
+
 
 
     if(!csv || !csvmva || !deepcsv_b || !deepcsv_bb
@@ -480,7 +480,7 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, uns
     src_higgstaginfo_token =  cfg.cc.consumes<std::vector<reco::BoostedDoubleSVTagInfo> >(cfg.higgstaginfo_src);
     NPFJetwConstituents_ = NPFJetwConstituents;
     MinPtJetwConstituents_ = 2e4;
-    if(MinPtJetwConstituents>0) 
+    if(MinPtJetwConstituents>0)
       MinPtJetwConstituents_ = MinPtJetwConstituents;
 }
 
@@ -510,8 +510,8 @@ void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & 
     deepboosted_probTbcq=false,deepboosted_probTbq=false,deepboosted_probQCDothers=false,deepboosted_probQCDb=false,
     deepboosted_probTbc=false,deepboosted_probWqq=false,deepboosted_probQCDcc=false,deepboosted_probHcc=false,
     deepboosted_probWcq=false,deepboosted_probZcc=false,deepboosted_probZqq=false,deepboosted_probHqqqq=false,
-    deepboosted_probZbb=false, deepdouble_H=false,deepdouble_QCD=false, deepdouble_cl_H=false,deepdouble_cl_QCD=false, 
-    deepdouble_cb_H=false,deepdouble_cb_QCD=false, massinddeepdouble_H=false,massinddeepdouble_QCD=false, 
+    deepboosted_probZbb=false, deepdouble_H=false,deepdouble_QCD=false, deepdouble_cl_H=false,deepdouble_cl_QCD=false,
+    deepdouble_cb_H=false,deepdouble_cb_QCD=false, massinddeepdouble_H=false,massinddeepdouble_QCD=false,
     massinddeepdouble_cl_H=false,massinddeepdouble_cl_QCD=false, massinddeepdouble_cb_H=false,massinddeepdouble_cb_QCD=false,
     decorrmass_deepboosted_probHbb=false,decorrmass_deepboosted_probQCDbb=false,decorrmass_deepboosted_probQCDc=false,
     decorrmass_deepboosted_probTbqq=false,decorrmass_deepboosted_probTbcq=false,decorrmass_deepboosted_probTbq=false,
@@ -520,7 +520,7 @@ void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & 
     decorrmass_deepboosted_probWcq=false,decorrmass_deepboosted_probZcc=false,decorrmass_deepboosted_probZqq=false,
     decorrmass_deepboosted_probHqqqq=false,decorrmass_deepboosted_probZbb=false;
 
-   
+
     for(const auto & name_value : bdisc){
       const auto & name = name_value.first;
       const auto & value = name_value.second;
@@ -790,7 +790,7 @@ void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & 
       }
 
     }
-   
+
     if(!doubleak8 || !doubleca15 || !decorrmass_deepboosted_bbvsLight || !decorrmass_deepboosted_ccvsLight
        || !decorrmass_deepboosted_TvsQCD || !decorrmass_deepboosted_ZHccvsQCD
        || !decorrmass_deepboosted_WvsQCD || !decorrmass_deepboosted_ZHbbvsQCD
@@ -804,7 +804,7 @@ void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & 
        || !deepboosted_probQCDothers || !deepboosted_probQCDb || !deepboosted_probTbc
        || !deepboosted_probWqq || !deepboosted_probQCDcc || !deepboosted_probHcc
        || !deepboosted_probWcq || !deepboosted_probZcc || !deepboosted_probZqq
-       || !deepboosted_probHqqqq || !deepboosted_probZbb 
+       || !deepboosted_probHqqqq || !deepboosted_probZbb
        || !deepdouble_H || !deepdouble_QCD || !deepdouble_cb_H || !deepdouble_cl_H || !deepdouble_cl_QCD  || !deepdouble_cb_QCD
        || !massinddeepdouble_QCD || !massinddeepdouble_H || !massinddeepdouble_cb_H || !massinddeepdouble_cl_H || !massinddeepdouble_cl_QCD  || !massinddeepdouble_cb_QCD
        || !decorrmass_deepboosted_probHbb || !decorrmass_deepboosted_probQCDbb
@@ -1341,3 +1341,297 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
     }
 }
 
+
+
+NtupleWriterGenTopJets::NtupleWriterGenTopJets(Config & cfg, bool set_jets_member, unsigned int NGenJetwConstituents, double MinPtJetwConstituents):
+ptmin(cfg.ptmin),etamax(cfg.etamax)
+{
+  handle = cfg.ctx.declare_event_output<vector<GenTopJet>>(cfg.dest_branchname, cfg.dest);
+  if(set_jets_member){
+    gentopjets_handle = cfg.ctx.get_handle<vector<GenTopJet>>("gentopjets");
+  }
+  src_token = cfg.cc.consumes<std::vector<reco::GenJet>>(cfg.src);
+
+  subjet_src = cfg.subjet_src;
+  subjet_src_token = cfg.cc.consumes<std::vector<reco::BasicJet>>(cfg.subjet_src);
+
+  njettiness_src = cfg.njettiness_src;
+  src_njettiness1_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau1"));
+  src_njettiness2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau2"));
+  src_njettiness3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau3"));
+  src_njettiness4_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(njettiness_src, "tau4"));
+
+  ecf_beta1_src = cfg.ecf_beta1_src;
+  src_ecf_beta1_N2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta1_src, "ecfN2"));
+  src_ecf_beta1_N3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta1_src, "ecfN3"));
+
+  ecf_beta2_src = cfg.ecf_beta2_src;
+  src_ecf_beta2_N2_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta2_src, "ecfN2"));
+  src_ecf_beta2_N3_token = cfg.cc.consumes<edm::ValueMap<float> >(edm::InputTag(ecf_beta2_src, "ecfN3"));
+
+  useSubstructureVar = false;
+  if(!njettiness_src.empty() || !ecf_beta1_src.empty() || !ecf_beta2_src.empty()){
+    useSubstructureVar = true;
+    substructure_variables_src_token_basic = cfg.cc.consumes<reco::BasicJetCollection>(cfg.substructure_variables_src);
+    substructure_variables_src_token_gen = cfg.cc.consumes<reco::GenJetCollection>(cfg.substructure_variables_src);
+  }
+
+  gentopjet_collection = cfg.dest_branchname;
+
+  NGenJetwConstituents_ = NGenJetwConstituents;
+  MinPtJetwConstituents_ = 2e4;
+  if(MinPtJetwConstituents>0)
+    MinPtJetwConstituents_ = MinPtJetwConstituents;
+}
+
+
+NtupleWriterGenTopJets::~NtupleWriterGenTopJets(){}
+
+void NtupleWriterGenTopJets::process(const edm::Event & event, uhh2::Event & uevent, const edm::EventSetup& iSetup){
+
+
+  edm::Handle<reco::GenJetCollection> h_reco_gentopjets;
+  event.getByToken(src_token, h_reco_gentopjets);
+  const vector<reco::GenJet> & reco_gentopjets = *h_reco_gentopjets;
+
+  edm::Handle<reco::BasicJetCollection> h_reco_basicgenjets;
+  if (!subjet_src.empty()) {
+    event.getByToken(subjet_src_token, h_reco_basicgenjets);
+  }
+
+  edm::Handle<edm::ValueMap<float>> h_njettiness1, h_njettiness2, h_njettiness3, h_njettiness4;
+  edm::Handle<edm::ValueMap<float>> h_ecf_beta1_N2, h_ecf_beta1_N3, h_ecf_beta2_N2, h_ecf_beta2_N3;
+
+  edm::Handle<reco::BasicJetCollection> gentopjets_with_cands_basic;
+  edm::Handle<reco::GenJetCollection> gentopjets_with_cands_gen;
+
+  bool jetTypeIsGenJet = false;
+  if (useSubstructureVar) {
+    jetTypeIsGenJet = event.getByToken(substructure_variables_src_token_gen, gentopjets_with_cands_gen);
+    if (!jetTypeIsGenJet) {
+      event.getByToken(substructure_variables_src_token_basic, gentopjets_with_cands_basic);
+    }
+  }
+
+  if (!njettiness_src.empty()) {
+    event.getByToken(src_njettiness1_token, h_njettiness1);
+    event.getByToken(src_njettiness2_token, h_njettiness2);
+    event.getByToken(src_njettiness3_token, h_njettiness3);
+    event.getByToken(src_njettiness4_token, h_njettiness4);
+  }
+
+  if (!ecf_beta1_src.empty()) {
+    event.getByToken(src_ecf_beta1_N2_token, h_ecf_beta1_N2);
+    event.getByToken(src_ecf_beta1_N3_token, h_ecf_beta1_N3);
+  }
+  if (!ecf_beta2_src.empty()) {
+    event.getByToken(src_ecf_beta2_N2_token, h_ecf_beta2_N2);
+    event.getByToken(src_ecf_beta2_N3_token, h_ecf_beta2_N3);
+  }
+
+  vector<GenTopJet> gentopjets;
+
+  for (unsigned int i = 0; i < reco_gentopjets.size(); i++) {
+    const reco::GenJet & reco_gentopjet = reco_gentopjets[i];
+    if (reco_gentopjet.pt() < ptmin) continue;
+    if (fabs(reco_gentopjet.eta()) > etamax) continue;
+
+    gentopjets.emplace_back();
+    GenTopJet & gentopjet = gentopjets.back();
+
+    bool storeGenParticles = (i<NGenJetwConstituents_ || reco_gentopjet.pt()>MinPtJetwConstituents_);
+    try {
+      uhh2::NtupleWriterGenTopJets::fill_genjet_info(uevent, reco_gentopjet, gentopjet, storeGenParticles);
+    } catch(runtime_error &){
+      throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for gentopjets in NtupleWriterGenTopJets with src = " + src.label());
+    }
+
+    /*--- Njettiness/ECFs/other things from ValueMaps ------*/
+
+    // Take substructure variables (Njettiness/ECFs) from matched jet collection
+    // if respective source is specified.
+    // Since these variables are stored in ValueMaps, we need to figure out the correct
+    // reference Jet to access the value. We do this by deltaR matching
+
+    // match a unpruned jet according to topjets_with_cands:
+    int i_reco_gentopjet_wc = -1;
+    if (useSubstructureVar) {
+      double drmin = numeric_limits<double>::infinity();
+      if (jetTypeIsGenJet) {
+        for (size_t i_wc=0; i_wc < gentopjets_with_cands_gen->size(); ++i_wc) {
+          auto dr = reco::deltaR((*gentopjets_with_cands_gen)[i_wc], reco_gentopjet);
+          if(dr < drmin){
+            i_reco_gentopjet_wc = i_wc;
+            drmin = dr;
+          }
+        }
+      } else {
+        for (size_t i_wc=0; i_wc < gentopjets_with_cands_basic->size(); ++i_wc) {
+          auto dr = reco::deltaR((*gentopjets_with_cands_basic)[i_wc], reco_gentopjet);
+          if(dr < drmin){
+            i_reco_gentopjet_wc = i_wc;
+            drmin = dr;
+          }
+        }
+      }
+
+      if (i_reco_gentopjet_wc >= 0 && drmin < 1.0) { // be genereous: grooming can change jet axis quite a lot (esp. for DR=1.5 jets as in heptoptag)
+        if (jetTypeIsGenJet) {
+          auto ref = edm::Ref<reco::GenJetCollection>(gentopjets_with_cands_gen, i_reco_gentopjet_wc);
+          if (!njettiness_src.empty()) {
+            gentopjet.set_tau1((*h_njettiness1)[ref]);
+            gentopjet.set_tau2((*h_njettiness2)[ref]);
+            gentopjet.set_tau3((*h_njettiness3)[ref]);
+            gentopjet.set_tau4((*h_njettiness4)[ref]);
+          }
+          if (!ecf_beta1_src.empty()) {
+            gentopjet.set_ecfN2_beta1((*h_ecf_beta1_N2)[ref]);
+            gentopjet.set_ecfN3_beta1((*h_ecf_beta1_N3)[ref]);
+          }
+          if (!ecf_beta2_src.empty()) {
+            gentopjet.set_ecfN2_beta2((*h_ecf_beta2_N2)[ref]);
+            gentopjet.set_ecfN3_beta2((*h_ecf_beta2_N3)[ref]);
+          }
+        } else {
+          auto ref = edm::Ref<reco::BasicJetCollection>(gentopjets_with_cands_basic, i_reco_gentopjet_wc);
+          if (!njettiness_src.empty()) {
+            gentopjet.set_tau1((*h_njettiness1)[ref]);
+            gentopjet.set_tau2((*h_njettiness2)[ref]);
+            gentopjet.set_tau3((*h_njettiness3)[ref]);
+            gentopjet.set_tau4((*h_njettiness4)[ref]);
+          }
+          if (!ecf_beta1_src.empty()) {
+            gentopjet.set_ecfN2_beta1((*h_ecf_beta1_N2)[ref]);
+            gentopjet.set_ecfN3_beta1((*h_ecf_beta1_N3)[ref]);
+          }
+          if (!ecf_beta2_src.empty()) {
+            gentopjet.set_ecfN2_beta2((*h_ecf_beta2_N2)[ref]);
+            gentopjet.set_ecfN3_beta2((*h_ecf_beta2_N3)[ref]);
+          }
+        }
+      }
+    } // end storing substructure vars
+
+    /*---- Handle subjets ----*/
+    // we find the corresponding basicjet in the other collection,
+    // and this has daughters that are actually the subjets if the user has set it up correctly
+    if (!subjet_src.empty()) {
+      int i_reco_basic_match = -1;
+      double drmin = numeric_limits<double>::infinity();
+      for (uint i_wc=0; i_wc<h_reco_basicgenjets->size(); i_wc++) {
+        auto dr = reco::deltaR((*h_reco_basicgenjets)[i_wc], reco_gentopjet);
+        if(dr < drmin){
+          i_reco_basic_match = i_wc;
+          drmin = dr;
+        }
+      }
+
+      if (i_reco_basic_match >= 0 && drmin < 0.01) { // should be an almost identical match!
+        const reco::BasicJet & matchBasicJet = h_reco_basicgenjets->at(i_reco_basic_match);
+        for (uint dInd=0; dInd < matchBasicJet.numberOfDaughters(); dInd++) {
+          GenJet subjet;
+          uhh2::NtupleWriterGenTopJets::fill_genjet_info(uevent, *(matchBasicJet.daughter(dInd)), subjet, storeGenParticles);
+          gentopjet.add_subjet(subjet);
+        }
+      }
+    }
+
+  } // end for gentopjets loop
+
+  uevent.set(handle, move(gentopjets));
+  if(gentopjets_handle){
+    EventAccess_::set_unmanaged(uevent, *gentopjets_handle, &uevent.get(handle));
+  }
+}
+
+ size_t NtupleWriterGenTopJets::add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genparts) {
+   for(size_t j=0; j<genparts.size();j++){
+     const GenParticle & sgenpart = genparts[j];
+     auto r = fabs(static_cast<float>(jetgenp.eta()-sgenpart.eta()))+fabs(static_cast<float>(jetgenp.phi()-sgenpart.phi()));
+     auto dpt = fabs(static_cast<float>(jetgenp.pt()-sgenpart.pt()));
+     if (r == 0.0f && dpt == 0.0f){
+       return j;
+     }
+   }
+   GenParticle genp;
+   genp.set_charge(jetgenp.charge());
+   genp.set_pt(jetgenp.p4().pt());
+   genp.set_eta(jetgenp.p4().eta());
+   genp.set_phi(jetgenp.p4().phi());
+   genp.set_energy(jetgenp.p4().E());
+   genp.set_index(genparts.size());
+   genp.set_status(jetgenp.status());
+   genp.set_pdgId(jetgenp.pdgId());
+
+   genp.set_mother1(-1);
+   genp.set_mother2(-1);
+   genp.set_daughter1(-1);
+   genp.set_daughter2(-1);
+
+   genparts.push_back(genp);
+   return genparts.size()-1;
+}
+
+void NtupleWriterGenTopJets::fill_genjet_info(uhh2::Event & event, const reco::Candidate & reco_genjet, GenJet & genjet, bool add_genparts) {
+  genjet.set_pt(reco_genjet.pt());
+  genjet.set_eta(reco_genjet.eta());
+  genjet.set_phi(reco_genjet.phi());
+  genjet.set_energy(reco_genjet.energy());
+
+  int jet_charge = 0;
+  double chf = 0; double cef = 0;
+  double nhf = 0; double nef = 0;
+  double muf = 0;
+
+  int chMult = 0;
+  int nMult = 0;
+  int muMult = 0;
+  int elMult = 0;
+  int phMult = 0;
+  for (unsigned int l = 0; l<reco_genjet.numberOfSourceCandidatePtrs(); ++l) {
+    const reco::Candidate* constituent = reco_genjet.daughter(l);
+    jet_charge += constituent->charge();
+    if(add_genparts){
+      size_t genparticles_index = add_genpart(*constituent, *(event.genparticles));
+      genjet.add_genparticles_index(genparticles_index);
+    }
+
+    if(abs(constituent->pdgId())==11) {
+      cef += constituent->energy();
+      elMult++;
+      chMult++;
+    } else if(abs(constituent->pdgId())==22) {
+      nef += constituent->energy();
+      phMult++;
+      nMult++;
+    } else if(abs(constituent->pdgId())==13) {
+      muf += constituent->energy();
+      muMult++;
+      chMult++;
+    } else {
+      if(abs(constituent->charge())>0.1) {
+        chf += constituent->energy();
+        chMult++;
+      } else {
+        nhf += constituent->energy();
+        nMult++;
+      }
+    }
+  }
+  chf /= genjet.energy();
+  cef /= genjet.energy();
+  nhf /= genjet.energy();
+  nef /= genjet.energy();
+  muf /= genjet.energy();
+  genjet.set_chf(chf);
+  genjet.set_cef(cef);
+  genjet.set_nhf(nhf);
+  genjet.set_nef(nef);
+  genjet.set_muf(muf);
+  genjet.set_charge(jet_charge);
+  genjet.set_chargedMultiplicity(chMult);
+  genjet.set_neutralMultiplicity(nMult);
+  genjet.set_muonMultiplicity(muMult);
+  genjet.set_electronMultiplicity(elMult);
+  genjet.set_photonMultiplicity(phMult);
+}
