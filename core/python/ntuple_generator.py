@@ -2325,6 +2325,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     #),
                                     trigger_objects=cms.InputTag("selectedPatTrigger" if year == "2016v2" else "slimmedPatTrigger"),
 
+                                    #For 2017 data with prefiring issue it might be usefull to store L1 seeds
+                                    doL1seed=cms.bool(True),
+                                    l1GtSrc = cms.InputTag("gtStage2Digis"),
+                                    l1EGSrc = cms.InputTag("caloStage2Digis:EGamma"),
+                                    l1JetSrc = cms.InputTag("caloStage2Digis:Jet"),
+
                                     doEcalBadCalib=cms.bool(bad_ecal),
                                     ecalBadCalib_source=cms.InputTag("ecalBadCalibReducedMINIAODFilter"),
 

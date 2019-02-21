@@ -257,6 +257,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
+  doL1seed = iConfig.getParameter<bool>("doL1seed");
   doEcalBadCalib = iConfig.getParameter<bool>("doEcalBadCalib");
   doPrefire = iConfig.getParameter<bool>("doPrefire");
 
@@ -616,12 +617,20 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     trigger_prefixes = iConfig.getParameter<std::vector<std::string> >("trigger_prefixes");
     event->get_triggerResults() = new vector<bool>();
     event->get_triggerPrescales() = new vector<int>();
+    event->get_triggerPrescalesL1min() = new vector<int>();
+    event->get_triggerPrescalesL1max() = new vector<int>();
     branch(tr, "triggerNames", "std::vector<std::string>", &triggerNames_outbranch);
     branch(tr, "triggerResults", "std::vector<bool>", event->get_triggerResults());
     branch(tr, "triggerPrescales", "std::vector<int>", event->get_triggerPrescales());
+    branch(tr, "triggerPrescalesL1min", "std::vector<int>", event->get_triggerPrescalesL1min());
+    branch(tr, "triggerPrescalesL1max", "std::vector<int>", event->get_triggerPrescalesL1max());
     triggerBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("trigger_bits"));
     edm::InputTag triggerPrescalesTag("patTrigger");
     triggerPrescales_ = consumes<pat::PackedTriggerPrescales>(triggerPrescalesTag);
+    edm::InputTag triggerPrescalesL1minTag("patTrigger:l1min");
+    triggerPrescalesL1min_ = consumes<pat::PackedTriggerPrescales>(triggerPrescalesL1minTag);
+    edm::InputTag triggerPrescalesL1maxTag("patTrigger:l1max");
+    triggerPrescalesL1max_ = consumes<pat::PackedTriggerPrescales>(triggerPrescalesL1maxTag);
     metfilterBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("metfilter_bits"));
     triggerObjects_ = consumes<pat::TriggerObjectStandAloneCollection>(iConfig.getParameter<edm::InputTag>("trigger_objects"));
     triggerObjects_sources = iConfig.getParameter<std::vector<std::string> >("triggerObjects_sources");
@@ -647,6 +656,15 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     prefweightup_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbUp"));
     prefweightdown_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbDown"));
   }
+  if(doL1seed){
+    l1GtToken_ = consumes<BXVector<GlobalAlgBlk>>(iConfig.getParameter<edm::InputTag>("l1GtSrc"));
+    l1EGToken_ = consumes<BXVector<l1t::EGamma>>(iConfig.getParameter<edm::InputTag>("l1EGSrc"));
+    l1JetToken_ = consumes<BXVector<l1t::Jet>>(iConfig.getParameter<edm::InputTag>("l1JetSrc"));
+
+    branch(tr,"L1EGamma_seeds","std::vector<L1EGamma>",&L1EG_seeds);
+    branch(tr,"L1Jet_seeds","std::vector<L1Jet>",&L1Jet_seeds);
+  }
+
   if(doAllPFParticles){
     pf_collection_token = consumes<vector<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("pf_collection_source"));
     if(!doPFJetConstituents && !doPFTopJetConstituents && !doPFxconeJetConstituents && !doPFhotvrJetConstituents && !doPFxconeDijetJetConstituents){
@@ -1243,22 +1261,30 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    if(doTrigger){
      auto & triggerResults = *event->get_triggerResults();
      auto & triggerPrescales = *event->get_triggerPrescales();
+     auto & triggerPrescalesL1min = *event->get_triggerPrescalesL1min();
+     auto & triggerPrescalesL1max = *event->get_triggerPrescalesL1max();
      triggerResults.clear();
      triggerPrescales.clear();
      triggerNames_outbranch.clear();
+     triggerPrescalesL1min.clear();
+     triggerPrescalesL1max.clear();
 
      //read trigger info from triggerBits (k=0) and from metfilterBits (k=1)
      for(int k=0;k<2; k++){
        edm::Handle<edm::TriggerResults> triggerBits;
        edm::Handle<pat::PackedTriggerPrescales> packedTriggerPrescales;
+       edm::Handle<pat::PackedTriggerPrescales> packedTriggerPrescalesL1min;
+       edm::Handle<pat::PackedTriggerPrescales> packedTriggerPrescalesL1max;
        if(k==0)
          iEvent.getByToken(triggerBits_, triggerBits);
        else
          iEvent.getByToken(metfilterBits_, triggerBits);
 
-       if(iEvent.isRealData())
+       if(iEvent.isRealData()){
          iEvent.getByToken(triggerPrescales_, packedTriggerPrescales);
-
+	 iEvent.getByToken(triggerPrescalesL1min_, packedTriggerPrescalesL1min);	 
+	 iEvent.getByToken(triggerPrescalesL1min_, packedTriggerPrescalesL1max);
+       }
        const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
 
        for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) {
@@ -1269,9 +1295,11 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          if(it==trigger_prefixes.end()) continue;
          triggerResults.push_back(triggerBits->accept(i));
 
-         if(iEvent.isRealData())
+         if(iEvent.isRealData()){
            triggerPrescales.push_back(packedTriggerPrescales->getPrescaleForIndex(i));
-
+	   triggerPrescalesL1min.push_back(packedTriggerPrescalesL1min->getPrescaleForIndex(i));
+	   triggerPrescalesL1max.push_back(packedTriggerPrescalesL1max->getPrescaleForIndex(i));
+	 }
          if(newrun){
            triggerNames_outbranch.push_back(names.triggerName(i));
          }
@@ -1367,6 +1395,86 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    }
 
    print_times(timer, "trigger+prefire");
+
+
+   if(doL1seed && iEvent.isRealData()){
+     auto & triggerResults = *event->get_triggerResults();   
+     auto & triggerPrescales = *event->get_triggerPrescales();
+     auto & triggerPrescalesL1min = *event->get_triggerPrescalesL1min();
+     auto & triggerPrescalesL1max = *event->get_triggerPrescalesL1max();
+     
+     //muGT 
+     edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
+     iEvent.getByToken(l1GtToken_, l1GtHandle);
+     bool prefire = l1GtHandle->begin(-1)->getFinalOR();
+     triggerNames_outbranch.push_back("muGT_BX_minus_1__prefire");
+     triggerResults.push_back(prefire);
+     triggerPrescales.push_back(1);
+     triggerPrescalesL1min.push_back(1);
+     triggerPrescalesL1max.push_back(1);
+     
+     bool postfire = l1GtHandle->begin(1)->getFinalOR();
+     triggerNames_outbranch.push_back("muGT_BX_plus_1");
+     triggerResults.push_back(postfire);
+     triggerPrescales.push_back(1);
+     triggerPrescalesL1min.push_back(1);
+     triggerPrescalesL1max.push_back(1);
+     
+     bool fire = l1GtHandle->begin(0)->getFinalOR();
+     triggerNames_outbranch.push_back("muGT_BX_plus_0");
+     triggerResults.push_back(fire);
+     triggerPrescales.push_back(1);
+     triggerPrescalesL1min.push_back(1);
+     triggerPrescalesL1max.push_back(1);
+     //L1EG
+     
+     edm::Handle<BXVector<l1t::EGamma>> l1EGHandle;
+     iEvent.getByToken(l1EGToken_, l1EGHandle);
+     L1EG_seeds.clear();
+     auto readBx = [&] (const BXVector<l1t::EGamma>& egVect, int bx) {
+       for (auto itL1=l1EGHandle->begin(bx); itL1!=l1EGHandle->end(bx); ++itL1) {
+	 L1EGamma l1eg;
+	 l1eg.set_bx(bx);
+	 l1eg.set_pt(itL1->p4().Pt());
+	 l1eg.set_eta(itL1->p4().Eta());
+	 l1eg.set_phi(itL1->p4().Phi());
+	 l1eg.set_energy(itL1->p4().energy());
+	 l1eg.set_Shape(itL1->shape());
+	 l1eg.set_iso(itL1->hwIso());
+	 L1EG_seeds.push_back(l1eg);
+       }
+     };
+     readBx(*l1EGHandle, -2);
+     readBx(*l1EGHandle, -1);
+     readBx(*l1EGHandle, 0);
+     readBx(*l1EGHandle, +1);
+     readBx(*l1EGHandle, +2);
+     
+     //L1Jet
+     edm::Handle<BXVector<l1t::Jet>> l1JetHandle;
+     iEvent.getByToken(l1JetToken_, l1JetHandle);
+     L1Jet_seeds.clear();
+     auto readBxjet = [&] (const BXVector<l1t::Jet>& egVect, int bx) {
+       for (auto itL1=l1JetHandle->begin(bx); itL1!=l1JetHandle->end(bx); ++itL1) {
+	 L1Jet l1jet;
+	 l1jet.set_bx(bx);
+	 l1jet.set_pt(itL1->p4().Pt());
+	 l1jet.set_eta(itL1->p4().Eta());
+	 l1jet.set_phi(itL1->p4().Phi());
+	 l1jet.set_energy(itL1->p4().energy());
+	 l1jet.set_puEt(itL1->puEt());
+	 l1jet.set_seedEt(itL1->seedEt());
+	 l1jet.set_rawEt(itL1->rawEt());
+	 L1Jet_seeds.push_back(l1jet);
+       }
+     };
+     readBxjet(*l1JetHandle, -2);
+     readBxjet(*l1JetHandle, -1);
+     readBxjet(*l1JetHandle, 0);
+     readBxjet(*l1JetHandle, +1);
+     readBxjet(*l1JetHandle, +2);
+   }
+
 
    // ------------- HOTVR and XCone Jets  -------------
    if (doHOTVR) {

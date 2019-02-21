@@ -20,7 +20,7 @@ Event::Handle<T> declare_in_out(const std::string & branch_name, const std::stri
 
 EventHelper::EventHelper(uhh2::Context & ctx_): ctx(ctx_), event(0), pvs(false), electrons(false), muons(false), taus(false), photons(false), jets(false),
 						topjets(false), toppuppijets(false), met(false),  genmet(false), genInfo(false), gentopjets(false), 
-						genparticles(false), genjets(false), pfparticles(false), trigger(false), first_event_read(true){
+						genparticles(false), genjets(false), pfparticles(false), trigger(false),  L1EG_seeds(false), L1J_seeds(false), first_event_read(true){
     h_run = declare_in_out<int>("run", "run", ctx);
     h_lumi = declare_in_out<int>("luminosityBlock", "luminosityBlock", ctx);
     h_event = declare_in_out<int>("event", "event", ctx);
@@ -61,6 +61,8 @@ IMPL_SETUP(genparticles, vector<GenParticle>)
 IMPL_SETUP(pfparticles, vector<PFParticle>)
 IMPL_SETUP(genjets, vector<GenJet>)
 IMPL_SETUP(genmet, MET)
+IMPL_SETUP(L1EG_seeds, vector<L1EGamma>)
+IMPL_SETUP(L1J_seeds, vector<L1Jet>)
 
 
 
@@ -68,6 +70,8 @@ void EventHelper::setup_trigger(){
     trigger = true;
     h_triggerResults = declare_in_out<std::vector<bool>>("triggerResults", "triggerResults", ctx);
     h_triggerPrescales = declare_in_out<std::vector<int>>("triggerPrescales", "triggerPrescales", ctx);
+    h_triggerPrescalesL1min = declare_in_out<std::vector<int>>("triggerPrescalesL1min", "triggerPrescalesL1min", ctx);
+    h_triggerPrescalesL1max = declare_in_out<std::vector<int>>("triggerPrescalesL1max", "triggerPrescalesL1max", ctx);
     h_triggerNames = declare_in_out<std::vector<std::string>>("triggerNames", "triggerNames", ctx);
 }
 
@@ -153,7 +157,15 @@ void EventHelper::event_read(){
         if(trigger){
             event->get_triggerResults() = &event->get(h_triggerResults);
 	    event->get_triggerPrescales() = &event->get(h_triggerPrescales);
+	    event->get_triggerPrescalesL1min() = &event->get(h_triggerPrescalesL1min);
+	    event->get_triggerPrescalesL1max() = &event->get(h_triggerPrescalesL1max);
         }
+	if(L1EG_seeds){
+	  event->L1EG_seeds =  &event->get(h_L1EG_seeds);
+	}
+	if(L1J_seeds){
+	  event->L1J_seeds =  &event->get(h_L1J_seeds);
+	}
     }
 }
 

@@ -13,3 +13,5 @@
 #include "UHH2/core/include/GenTopJet.h"
 #include "UHH2/core/include/source_candidate.h"
 #include "UHH2/core/include/PFParticle.h"
+#include "UHH2/core/include/L1EGamma.h"
+#include "UHH2/core/include/L1Jet.h"

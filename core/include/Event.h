@@ -44,7 +44,9 @@ public:
   std::vector< TopJet >* toppuppijets;
   MET* met;
   MET* genmet;
-    
+  std::vector< L1EGamma>* L1EG_seeds;
+  std::vector< L1Jet>* L1J_seeds;
+
   GenInfo* genInfo;
   std::vector< GenTopJet >* gentopjets;
   std::vector< GenParticle >* genparticles;
@@ -112,6 +114,11 @@ public:
    * if \c lookup_trigger_index returns false.
    */
   int trigger_prescale(TriggerIndex & ti) const;
+
+  //L1 prescales, see for more details:
+  //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2017#Trigger
+  int trigger_prescaleL1min(TriggerIndex & ti) const;
+  int trigger_prescaleL1max(TriggerIndex & ti) const;
   
   /** \brief Test whether a given trigger is available for the current event
    * 
@@ -142,6 +149,14 @@ public:
   std::vector<int>* & get_triggerPrescales(){
       return triggerPrescales;
   }
+
+  std::vector<int>* & get_triggerPrescalesL1min(){
+    return triggerPrescalesL1min;
+  }
+  std::vector<int>* & get_triggerPrescalesL1max(){
+    return triggerPrescalesL1max;
+  }
+
   
   void set_triggernames(std::vector<std::string> names){ // for the current run(!)
       triggerNames_currentrun = move(names);
@@ -160,6 +175,8 @@ public:
 private:
     std::vector<bool>* triggerResults;
     std::vector<int>* triggerPrescales;
+    std::vector<int>* triggerPrescalesL1min;
+    std::vector<int>* triggerPrescalesL1max;
 
     std::vector<std::string> triggerNames_currentrun;
     int triggerNames_currentrun_runid;

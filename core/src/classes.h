@@ -16,6 +16,8 @@
 #include "UHH2/core/include/GenParticle.h"
 #include "UHH2/core/include/PFParticle.h"
 #include "UHH2/core/include/source_candidate.h"
+#include "UHH2/core/include/L1EGamma.h"
+#include "UHH2/core/include/L1Jet.h"
 
 #include <vector>
 #include <map>
@@ -58,5 +60,9 @@ namespace {
     std::vector<PFParticle> pfps;
     source_candidate sc;
     std::vector<source_candidate> scs;
+    L1EGamma L1EG_seed;
+    std::vector<L1EGamma> L1EG_seeds;
+    L1Jet L1Jet_seed;
+    std::vector<L1Jet> L1J_seeds;
   }
 }
