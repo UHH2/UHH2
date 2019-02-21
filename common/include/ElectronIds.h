@@ -33,6 +33,21 @@ class PtEtaSCCut {
   float min_pt, max_etaSC;
 };
 
+// Generic selector for the stored Electron tags
+
+class ElectronTagID{
+ public:
+  ElectronTagID(Electron::tag sel_): sel(sel_) {}
+
+  bool operator()(const Electron & el, const uhh2::Event &) const {
+    return el.get_tag(sel); // no need to check, done in Tag class
+  }
+
+ private:
+  Electron::tag sel;
+
+};
+
 // Electron selector for PF MINI-Isolation ---------------------------
 class Electron_MINIIso {
 
