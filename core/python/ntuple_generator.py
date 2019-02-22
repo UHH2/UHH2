@@ -68,7 +68,14 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     if (year=="2016v2" or year=="2016v3"):
         met_sources_GL.extend(['slMETsCHS'])
 
-
+    #try eras for correct b-tagging
+    from Configuration.StandardSequences.Eras import eras
+    if year == "2018":
+        Process = cms.Process("DUMMY", eras.Run2_2018) 
+    if year == "2017":
+        Process = cms.Process("DUMMY", eras.Run2_2017) 
+    if year == "2016v3" or year =="2016v2":
+        Process = cms.Process("DUMMY", eras.Run2_2016) 
 
     bTagDiscriminators = [
         'pfJetProbabilityBJetTags',
