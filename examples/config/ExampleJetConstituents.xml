@@ -8,8 +8,15 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
 
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="JetConstit" Cacheable="False">
-            <In FileName="../core/python/Ntuple.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="JetConstit" Cacheable="False">
+<!--          <In FileName="../../core/python/Ntuple.root" Lumi="0.0"/> -->
+            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018D/DATA_JetHT_Run2018D_0_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018D/DATA_JetHT_Run2018D_1_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018D/DATA_JetHT_Run2018D_2_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018D/DATA_JetHT_Run2018D_3_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018D/DATA_JetHT_Run2018D_4_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018D/DATA_JetHT_Run2018D_5_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018D/DATA_JetHT_Run2018D_6_Ntuple.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
         </InputData>
 
@@ -25,7 +32,7 @@
             <Item Name="GenTopJetCollection" Value="ak8GenJetsSoftDrop" />
 
             <Item Name="PFParticleCollection" Value="PFParticles" />
-            <Item Name="GenParticleCollection" Value="GenParticles" />
+            <Item Name="GenParticleCollection" Value="GenParticles" /> 
 
 
             <!-- the class name of the AnalysisModule subclasses to run: -->
