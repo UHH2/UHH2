@@ -71,11 +71,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     #try eras for correct b-tagging
     from Configuration.StandardSequences.Eras import eras
     if year == "2018":
-        Process = cms.Process("DUMMY", eras.Run2_2018) 
+        process = cms.Process("USER", eras.Run2_2018) 
     if year == "2017":
-        Process = cms.Process("DUMMY", eras.Run2_2017) 
+        process = cms.Process("USER", eras.Run2_2017) 
     if year == "2016v3" or year =="2016v2":
-        Process = cms.Process("DUMMY", eras.Run2_2016) 
+        process = cms.Process("USER", eras.Run2_2016) 
 
     bTagDiscriminators = [
         'pfJetProbabilityBJetTags',
@@ -168,7 +168,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         'pfImpactParameterTagInfos', 'pfSecondaryVertexTagInfos', 'pfInclusiveSecondaryVertexFinderTagInfos', 'softPFMuonsTagInfos', 'softPFElectronsTagInfos'
     ]
 
-    process = cms.Process("USER")
+#    process = cms.Process("USER")
 
     task = cms.Task()
 
