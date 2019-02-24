@@ -73,12 +73,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     if year == "2018":
         process = cms.Process("USER", eras.Run2_2018) 
     if year == "2017":
-        process = cms.Process("USER", eras.run2_miniAOD_94XFall17) 
-#        process = cms.Process("USER", eras.Run2_2017, eras.run2_miniAOD_94XFall17) 
+        process = cms.Process("USER", eras.Run2_2017, eras.run2_miniAOD_94XFall17)  #v2
+#       process = cms.Process("USER", eras.Run2_2017)  #v1
     if year == "2016v2":
         process = cms.Process("USER", eras.Run2_2016) 
     if year == "2016v3":
-        process = cms.Process("USER", eras.run2_miniAOD_80XLegacy) 
+        process = cms.Process("USER", eras.Run2_2016, eras.run2_miniAOD_80XLegacy) 
 
     bTagDiscriminators = [
         'pfJetProbabilityBJetTags',
