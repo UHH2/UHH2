@@ -21,9 +21,10 @@ public:
     explicit CSVBTag(wp working_point);
     explicit CSVBTag(float float_point);
 
-    bool operator()(const Jet & jet, const uhh2::Event & event) const;
+    bool operator()(const Jet & jet, const uhh2::Event & event);
 private:
     float csv_threshold;
+    wp m_working_point;
 };
 
 class DeepCSVBTag {
@@ -33,10 +34,26 @@ public:
     explicit DeepCSVBTag(wp working_point);
     explicit DeepCSVBTag(float float_point);
 
-    bool operator()(const Jet & jet, const uhh2::Event & event) const;
+    bool operator()(const Jet & jet, const uhh2::Event & event);
 private:
     float deepcsv_threshold;
+    wp m_working_point;
 };
+
+class DeepJetBTag {
+public:
+    enum wp {WP_LOOSE, WP_MEDIUM, WP_TIGHT };
+    
+    explicit DeepJetBTag(wp working_point);
+    explicit DeepJetBTag(float float_point);
+
+    bool operator()(const Jet & jet, const uhh2::Event & event);
+private:
+    float deepjet_threshold;
+    wp m_working_point;
+};
+
+
 
 /**
  * Jet Id following recomendations from JetMET for RunII

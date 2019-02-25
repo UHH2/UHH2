@@ -4,51 +4,185 @@ using namespace std;
 using namespace uhh2;
 
 CSVBTag::CSVBTag(wp working_point) {
-    switch(working_point){
-        case WP_LOOSE:
-            csv_threshold = 0.5426f;
-            break;
-        case WP_MEDIUM:
-            csv_threshold = 0.8484f;
-            break;
-        case WP_TIGHT:
-            csv_threshold = 0.9535f;
-            break;
-        default:
-            throw invalid_argument("invalid working point passed to CSVBTag");
-    }
+  m_working_point = working_point;
 }
 
 CSVBTag::CSVBTag(float float_point):csv_threshold(float_point) {}
 
 
-bool CSVBTag::operator()(const Jet & jet, const Event &) const{
-    return jet.btag_combinedSecondaryVertex() > csv_threshold;
+bool CSVBTag::operator()(const Jet & jet, const Event & ev){
+  if(ev.year == "2016v2" || ev.year == "2016v3"){
+    //  https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
+    switch(m_working_point){
+    case WP_LOOSE:
+      csv_threshold = 0.5426;
+      break;
+    case WP_MEDIUM:
+      csv_threshold = 0.8484;
+      break;
+    case WP_TIGHT:
+      csv_threshold = 0.9535;
+      break;
+    default:
+      throw invalid_argument("invalid working point passed to CSVBTag");
+    }
+  }
+  if(ev.year == "2017" || ev.year == "2018"){
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+    //Note: CSV is not supported for 2018 analyses
+    switch(m_working_point){
+    case WP_LOOSE:
+      csv_threshold = 0.5803;
+      break;
+    case WP_MEDIUM:
+      csv_threshold = 0.8838;
+      break;
+    case WP_TIGHT:
+      csv_threshold = 0.9693;
+      break;
+    default:
+      throw invalid_argument("invalid working point passed to CSVBTag");
+    }
+  }
+  return jet.btag_combinedSecondaryVertex() > csv_threshold;
 }
+
 ///
 DeepCSVBTag::DeepCSVBTag(wp working_point) {
-    switch(working_point){
-        case WP_LOOSE:
-            deepcsv_threshold = 0.1522f;
-            break;
-        case WP_MEDIUM:
-            deepcsv_threshold = 0.4941f;
-            break;
-        case WP_TIGHT:
-            deepcsv_threshold = 0.8001f;
-            break;
-        default:
-            throw invalid_argument("invalid working point passed to DeepCSVBTag");
-    }
+   m_working_point = working_point;
 }
 
 DeepCSVBTag::DeepCSVBTag(float float_point):deepcsv_threshold(float_point) {}
 
 
-bool DeepCSVBTag::operator()(const Jet & jet, const Event &) const{
-    return jet.btag_DeepCSV() > deepcsv_threshold;
+bool DeepCSVBTag::operator()(const Jet & jet, const Event &ev){
+  if(ev.year == "2016v2"){
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
+    switch(m_working_point){
+    case WP_LOOSE:
+      deepcsv_threshold = 0.2219;
+      break;
+    case WP_MEDIUM:
+      deepcsv_threshold = 0.6324;
+      break;
+    case WP_TIGHT:
+      deepcsv_threshold = 0.8958;
+      break;
+    default:
+      throw invalid_argument("invalid working point passed to DeepCSVBTag");
+    }
+  }
+  if(ev.year == "2016v3"){
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
+    switch(m_working_point){
+    case WP_LOOSE:
+      deepcsv_threshold = 0.2217;
+      break;
+    case WP_MEDIUM:
+      deepcsv_threshold = 0.6321;
+      break;
+    case WP_TIGHT:
+      deepcsv_threshold = 0.8953;
+      break;
+    default:
+      throw invalid_argument("invalid working point passed to DeepCSVBTag");
+    }
+  }
+
+  if(ev.year == "2017"){
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+    switch(m_working_point){
+    case WP_LOOSE:
+      deepcsv_threshold = 0.1522;
+      break;
+    case WP_MEDIUM:
+      deepcsv_threshold = 0.4941;
+      break;
+    case WP_TIGHT:
+      deepcsv_threshold = 0.8001;
+      break;
+    default:
+      throw invalid_argument("invalid working point passed to DeepCSVBTag");
+    }
+  }
+  if(ev.year == "2018"){
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
+    switch(m_working_point){
+    case WP_LOOSE:
+      deepcsv_threshold = 0.1241;
+      break;
+    case WP_MEDIUM:
+      deepcsv_threshold = 0.4184;
+      break;
+    case WP_TIGHT:
+      deepcsv_threshold = 0.7527;
+      break;
+    default:
+      throw invalid_argument("invalid working point passed to DeepCSVBTag");
+    }
+  }
+  return jet.btag_DeepCSV() > deepcsv_threshold;
 }
 
+//DeepJet (=DeepFlavor)
+DeepJetBTag::DeepJetBTag(wp working_point) {
+  m_working_point = working_point;
+}
+
+DeepJetBTag::DeepJetBTag(float float_point):deepjet_threshold(float_point) {}
+
+bool DeepJetBTag::operator()(const Jet & jet, const Event &ev){
+  if(ev.year == "2016v2" || ev.year == "2016v3"){
+  //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
+  //Note: wp are provided for 2016 legacy only, i.e 2016v3
+    switch(m_working_point){
+        case WP_LOOSE:
+            deepjet_threshold = 0.0614;
+            break;
+        case WP_MEDIUM:
+            deepjet_threshold = 0.3093;
+            break;
+        case WP_TIGHT:
+            deepjet_threshold = 0.7221;
+            break;
+        default:
+            throw invalid_argument("invalid working point passed to DeepJetBTag");
+    }
+  }
+  if(ev.year == "2017"){
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+    switch(m_working_point){
+        case WP_LOOSE:
+            deepjet_threshold = 0.0521;
+            break;
+        case WP_MEDIUM:
+            deepjet_threshold = 0.3033;
+            break;
+        case WP_TIGHT:
+            deepjet_threshold = 0.7489;
+            break;
+        default:
+            throw invalid_argument("invalid working point passed to DeepJetBTag");
+    }
+  }
+  if(ev.year == "2018"){
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
+    switch(m_working_point){
+        case WP_LOOSE:
+            deepjet_threshold = 0.0494;
+            break;
+        case WP_MEDIUM:
+            deepjet_threshold = 0.2770;
+            break;
+        case WP_TIGHT:
+            deepjet_threshold = 0.7264;
+            break;
+        default:
+            throw invalid_argument("invalid working point passed to DeepJetBTag");
+    }
+  }
+  return jet.btag_DeepJet() > deepjet_threshold;
+}
 
 ///
 JetPFID::JetPFID(wp working_point):m_working_point(working_point){}
