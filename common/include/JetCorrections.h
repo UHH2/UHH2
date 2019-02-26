@@ -229,6 +229,7 @@ namespace JERSmearing {
 
   extern const SFtype1 SF_13TeV_Fall17;
   extern const SFtype1 SF_13TeV_Fall17_V3;
+  extern const SFtype1 SF_13TeV_Fall17_V3_RunBCDEF_Madgraph;// for JERC people only
 }
 
 
