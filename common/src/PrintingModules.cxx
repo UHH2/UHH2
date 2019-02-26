@@ -110,3 +110,43 @@ bool JetPrinter::process(uhh2::Event & event) {
     }
     return true;
 }
+
+bool GenJetPrinter::process(uhh2::Event & event) {
+    if(!name.empty()){
+        cout << "GenJetPrinter(" << name << "): ";
+    }
+    cout << "event has " << event.genjets->size() << " genjets" << endl;
+    for(size_t i=0; i< event.genjets->size(); ++i){
+        const auto & jet = (*event.genjets)[i];
+        if(jet.pt() < ptmin) continue;
+        cout << " jet[" << i << "]: pt=" << jet.pt() << "; eta=" << jet.eta() << "; phi=" << jet.phi() << endl;
+    }
+    return true;
+}
+
+
+bool TopJetPrinter::process(uhh2::Event & event) {
+    if(!name.empty()){
+        cout << "TopJetPrinter(" << name << "): ";
+    }
+    cout << "event has " << event.topjets->size() << " genjets" << endl;
+    for(size_t i=0; i< event.topjets->size(); ++i){
+        const auto & jet = (*event.topjets)[i];
+        if(jet.pt() < ptmin) continue;
+        cout << " jet[" << i << "]: pt=" << jet.pt() << "; eta=" << jet.eta() << "; phi=" << jet.phi() << endl;
+    }
+    return true;
+}
+
+bool GenTopJetPrinter::process(uhh2::Event & event) {
+    if(!name.empty()){
+        cout << "GenTopJetPrinter(" << name << "): ";
+    }
+    cout << "event has " << event.gentopjets->size() << " genjets" << endl;
+    for(size_t i=0; i< event.gentopjets->size(); ++i){
+        const auto & jet = (*event.gentopjets)[i];
+        if(jet.pt() < ptmin) continue;
+        cout << " jet[" << i << "]: pt=" << jet.pt() << "; eta=" << jet.eta() << "; phi=" << jet.phi() << endl;
+    }
+    return true;
+}

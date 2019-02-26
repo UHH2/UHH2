@@ -22,6 +22,17 @@ private:
     uhh2::Event::Handle<std::vector<Jet>> hndl;
 };
 
+/// Keep only jets with a minimum pt and maximum |eta|
+class GenJetCleaner: public uhh2::AnalysisModule {
+public:
+    
+    explicit GenJetCleaner(uhh2::Context & ctx, float minpt, float maxeta, std::string const & label_ = "jets");
+    virtual bool process(uhh2::Event & event) override;
+    
+private:
+    GenJetId genjet_id;
+};
+
 
 /** \brief Keep only primary vertices fulfilling an id.
  * 
