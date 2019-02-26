@@ -15,15 +15,13 @@ using namespace uhh2;
 
 namespace uhh2examples {
 
-/** \brief Basic analysis example of an AnalysisModule (formerly 'cycle') in UHH2
- *  
- * This is the central class which calls other AnalysisModules, Hists or Selection classes.
- * This AnalysisModule, in turn, is called (via AnalysisModuleRunner) by SFrame.
+/** \brief Example module to test jet composition 
+ * and plot it for few PU bins
  */
-class ExampleJetComposition: public AnalysisModule {
+class ExampleModuleJetComposition: public AnalysisModule {
 public:
     
-    explicit ExampleJetComposition(Context & ctx);
+    explicit ExampleModuleJetComposition(Context & ctx);
     virtual bool process(Event & event) override;
 
 private:
@@ -41,13 +39,13 @@ private:
 };
 
 
-ExampleJetComposition::ExampleJetComposition(Context & ctx){
+ExampleModuleJetComposition::ExampleModuleJetComposition(Context & ctx){
     // In the constructor, the typical tasks are to initialize the
     // member variables, in particular the AnalysisModules such as
     // CommonModules or some cleaner module, Selections and Hists.
     // But you can do more and e.g. access the configuration, as shown below.
     
-    cout << "Hello World from ExampleJetComposition!" << endl;
+    cout << "Hello World from ExampleModuleJetComposition!" << endl;
     
     // If needed, access the configuration of the module here, e.g.:
     string testvalue = ctx.get("TestKey", "<not set>");
@@ -89,7 +87,7 @@ ExampleJetComposition::ExampleJetComposition(Context & ctx){
 }
 
 
-bool ExampleJetComposition::process(Event & event) {
+bool ExampleModuleJetComposition::process(Event & event) {
     // This is the main procedure, called for each event. Typically,
     // do some pre-processing by calling the modules' process method
     // of the modules constructed in the constructor (1).
@@ -100,7 +98,7 @@ bool ExampleJetComposition::process(Event & event) {
     // returns true, the event is kept; if it returns false, the event
     // is thrown away.
     
-  //    cout << "ExampleJetComposition: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
+  //    cout << "ExampleModuleJetComposition: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
     
     // 1. run all modules other modules.
     //    common->process(event);
@@ -115,6 +113,8 @@ bool ExampleJetComposition::process(Event & event) {
     h_njet->fill(event);
     int nPU = 0;
     if(!event.isRealData)  nPU =event.genInfo->pileup_TrueNumInteractions();
+    else nPU = event.pvs->size();
+
     if(nPU<10)
       h_lowPU->fill(event);
     if(nPU>10 && nPU<30)
@@ -127,7 +127,7 @@ bool ExampleJetComposition::process(Event & event) {
 }
 
 // as we want to run the ExampleCycleNew directly with AnalysisModuleRunner,
-// make sure the ExampleJetComposition is found by class name. This is ensured by this macro:
-UHH2_REGISTER_ANALYSIS_MODULE(ExampleJetComposition)
+// make sure the ExampleModuleJetComposition is found by class name. This is ensured by this macro:
+UHH2_REGISTER_ANALYSIS_MODULE(ExampleModuleJetComposition)
 
 }

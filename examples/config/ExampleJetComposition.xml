@@ -8,8 +8,11 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" >  -->
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="QCD_FlatPU" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/karavdia/CMSSW_10_2_10/src/UHH2/core/python/Ntuple_QCDAutumn2018_FlatPU.root" Lumi="0.0"/> 
+<!--        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="QCD_FlatPU" Cacheable="False"> -->
+            <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="JetComposition" Cacheable="False">
+<!--            <In FileName="/nfs/dust/cms/user/karavdia/CMSSW_10_2_10/src/UHH2/core/python/Ntuple_QCDAutumn2018_FlatPU.root" Lumi="0.0"/>  -->
+	    <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_4399_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_7091_Ntuple.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" /> 
             <!-- uncomment to write tree of selected events, i.e. of those events for which the AnalysisModule::process method  returns true
                 If no OutputTree is given, no events will be written. Please do use "AnalysisTree" as Name. -->
@@ -23,7 +26,7 @@
             <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
             <Item Name="MuonCollection" Value="slimmedMuonsUSER" /> 
 <!--            <Item Name="TauCollection" Value="slimmedTaus" /> -->
-            <Item Name="JetCollection" Value="slimmedJets" />
+            <Item Name="JetCollection" Value="jetsAk4CHS" />
             <Item Name="GenJetCollection" Value="slimmedGenJets" />
             <Item Name="METName" Value="slimmedMETs" />
             
@@ -53,7 +56,7 @@
             -->
             
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="ExampleJetComposition" /> 
+            <Item Name="AnalysisModule" Value="ExampleModuleJetComposition" /> 
             
             <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
                  MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC

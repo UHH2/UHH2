@@ -116,7 +116,9 @@ LorentzVector ExampleModuleJetConstituents::constructConstituentSum(std::vector<
     if (jet == nullptr) { throw std::runtime_error("Jet is nullptr"); }
 
     LorentzVector consistSum;
+    //    cout<<"SIZE pfcand_indexs() = "<<jet->pfcand_indexs().size()<<endl;
     for (const auto candInd : jet->pfcand_indexs()) {
+      //      cout<<"TEST! "<<candInd<<endl;
         consistSum += pfparticles->at(candInd).v4();
     }
     return consistSum;
@@ -141,7 +143,7 @@ bool ExampleModuleJetConstituents::compareLVs(const LorentzVector & lv1, const L
     if (!(   isClose(lv1.pt(), lv2.pt())
           && isClose(lv1.eta(), lv2.eta())
           && isClose(lv1.phi(), lv2.phi()))) {
-        cout << "Sum jet constituents != jet" << endl;
+      cout << "Sum jet constituents != jet, (jet pt - sum PF pt)/jet pt = "<<  100*(lv1.pt() - lv2.pt())/lv1.pt() <<" %"<< endl;
         cout << "  - Jet: pt: " << lv1.pt() << " eta: " << lv1.eta() << " phi: " << lv1.phi() << endl;
         cout << "  - Sum: pt: " << lv2.pt() << " eta: " << lv2.eta() << " phi: " << lv2.phi() << endl;
         return false;
@@ -158,7 +160,8 @@ bool ExampleModuleJetConstituents::process(Event & event) {
         for (auto & jetItr : *event.jets) {
             auto sumJet = constructConstituentSum(event.pfparticles, &jetItr);
             LorentzVector rawJet = jetItr.v4() * jetItr.JEC_factor_raw();  // NB need uncorrected jet
-            compareLVs(rawJet, sumJet);
+            bool comp_jet = compareLVs(rawJet, sumJet);
+	    if(!comp_jet) 	cout<<"  -- size of pfcand_indexs() = "<<jetItr.pfcand_indexs().size()<<" for jet#"<<jetInd<<endl;
             uint nConstituents = jetItr.pfcand_indexs().size();
             jetHists->fill(rawJet, sumJet, nConstituents, jetInd);
             jetInd++;
