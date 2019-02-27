@@ -13,7 +13,9 @@ process = generate_process(year="2018", useData=True)
 
 # Please do not commit changes to source filenames - used for consistency testing
 process.source.fileNames = cms.untracked.vstring([
+    # RunD is PromptReco, Runs A-C are ReReco
     '/store/data/Run2018D/JetHT/MINIAOD/PromptReco-v2/000/325/170/00000/9494B803-292B-F343-9BCC-6CAD47CB0C8B.root'
+    # '/store/data/Run2018B/SingleMuon/MINIAOD/17Sep2018-v1/1010000/CDBE64B8-6D1D-5F47-A4C8-6722D7D385A1.root'
     # '/store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/321/233/00000/6C7B6F79-24A3-E811-A7BF-FA163EC61E98.root'
     # '/store/data/Run2018D/EGamma/MINIAOD/PromptReco-v2/000/325/175/00000/9D0F9360-DD60-314A-BB24-33D62A3CD6BD.root'
 ])
