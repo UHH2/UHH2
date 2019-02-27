@@ -55,7 +55,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         If the year argument is not one of the allowable options
     """
     year = str(year)  # sanitise string
-    acceptable_years = ["2016v2", "2016v3", "2017", "2018"]
+    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018"]
     if year not in acceptable_years:
         raise ValueError("year argument in generate_process() should be one of: %s. You provided: %s" % (acceptable_years, year))
 
@@ -68,17 +68,21 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     if (year=="2016v2" or year=="2016v3"):
         met_sources_GL.extend(['slMETsCHS'])
 
-    #try eras for correct b-tagging
+    # define our Process object
+    # eras are needed for correct b-tagging
     from Configuration.StandardSequences.Eras import eras
     if year == "2018":
-        process = cms.Process("USER", eras.Run2_2018) 
-    if year == "2017":
-        process = cms.Process("USER", eras.Run2_2017, eras.run2_miniAOD_94XFall17)  #v2
-#       process = cms.Process("USER", eras.Run2_2017)  #v1
-    if year == "2016v2":
-        process = cms.Process("USER", eras.Run2_2016) 
-    if year == "2016v3":
+        process = cms.Process("USER", eras.Run2_2018)
+    elif year == "2017v2":
+        process = cms.Process("USER", eras.Run2_2017, eras.run2_miniAOD_94XFall17)
+    elif year == "2017v1":
+        process = cms.Process("USER", eras.Run2_2017)
+    elif year == "2016v3":
         process = cms.Process("USER", eras.Run2_2016, eras.run2_miniAOD_80XLegacy) 
+    elif year == "2016v2":
+        process = cms.Process("USER", eras.Run2_2016)
+    else:
+        raise RuntimeError("Cannot setup process for this year, may need to add a new entry.")
 
     bTagDiscriminators = [
         'pfJetProbabilityBJetTags',
@@ -171,8 +175,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         'pfImpactParameterTagInfos', 'pfSecondaryVertexTagInfos', 'pfInclusiveSecondaryVertexFinderTagInfos', 'softPFMuonsTagInfos', 'softPFElectronsTagInfos'
     ]
 
-#    process = cms.Process("USER")
-
     task = cms.Task()
 
     process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -261,7 +263,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
     # There should be 1 key:value entry per entry in acceptable_years, and each
-    # should have a dictionary of "data" and "mc" with their respsective global tags
+    # should have a dictionary of "data" and "mc" with their respective global tags
     global_tags = {
         "2016v2": {
             "data": "80X_dataRun2_2016SeptRepro_v7",
@@ -272,9 +274,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             "data": "94X_dataRun2_v10",
             "mc": "94X_mcRun2_asymptotic_v3",
         },
-        "2017": {
-            "data": "94X_dataRun2_v6",
-            "mc": "94X_mc2017_realistic_v14"
+        "2017v1": {
+            "data": "92X_dataRun2_Prompt_v11", # don't really use, so possibly wrong
+            "mc": "94X_mc2017_realistic_v12"
+        },
+        "2017v2": {
+            "data": "94X_dataRun2_v11",
+            "mc": "94X_mc2017_realistic_v17"
         },
         "2018": {
             "data": "102X_dataRun2_Prompt_v6",
@@ -331,7 +337,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETUncertaintyPrescription?rev=89#Instructions_for_9_4_X_X_9_or_10
     # To be used with 17Nov2017 and 31Mar2018 rereco of 2017 data, and MC events.
     # The more accurate and long-term solution will come incorporated in planed "Ultra-Legacy" recreco
-    if year in ['2017']:
+    if "2017" in year:
         from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 
         runMetCorAndUncFromMiniAOD(
@@ -1791,7 +1797,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     iso_input_era_dict = {
         "2016v2": ele_iso_16,
         "2016v3": ele_iso_16,
-        "2017": ele_iso_17,
+        "2017v1": ele_iso_17,
+        "2017v2": ele_iso_17,
         "2018": ele_iso_17,
     }
 
@@ -1915,7 +1922,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     prefire_era_dict = {
         '2016v2': '2016BtoH',
         '2016v3': '2016BtoH',
-        '2017': '2017BtoF'
+        '2017v1': '2017BtoF',
+        '2017v2': '2017BtoF',
     }
     prefire_era = None if useData else prefire_era_dict.get(year, None)
     do_prefire = prefire_era is not None
@@ -1938,7 +1946,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     ###############################################
     # Deal with bad ECAL endcap crystals
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#How_to_run_ecal_BadCalibReducedM
-    bad_ecal = year in ['2017', '2018'] and useData
+    bad_ecal = useData and ("2017" in year or "2018" in year)
     if bad_ecal:
         process.load('RecoMET.METFilters.ecalBadCalibFilter_cfi')
 
