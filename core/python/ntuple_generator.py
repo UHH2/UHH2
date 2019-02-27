@@ -1146,7 +1146,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # This MUST be run *After* JetSubstructurePacker, so that the subjets are already there,
     # otherwise the DeepBoostedJetTagInfoProducer will fail
     # Also add in PUPPI multiplicities while we're at it.
-    for name in ['slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
+    for name in ['slimmedJets', 'slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
         labelName = cap(name)
         is_ak8 = "ak8" in name.lower()
         is_puppi = "puppi" in name.lower()
@@ -1158,7 +1158,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         # See https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_10/PhysicsTools/PatAlgos/python/tools/jetTools.py#L653
         # Please check in future releases if this is still the case!
         # It's needed only for pfDeepBoostedJetTagInfos
-        postfix = "WithPuppiDaughters" if is_puppi and is_reclustered else "NewDFTraining"  # NewDFTraining is not special, could just be ''
+        postfix = "WithPuppiDaughters" if (is_puppi and is_reclustered) else "NewDFTraining"  # NewDFTraining is not special, could just be ''
 
         # This call to updateJetCollection adds one PATJetUpdater to only remove the JECs,
         # then uses that as the input to another PATJetUpdater, which re-applies the JECs,
@@ -1194,7 +1194,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         if is_ak8 and is_topjet:
             discriminators.extend(ak8btagDiscriminators)
 
-        if name == "slimmedJetsPuppi":
+        if name == "slimmedJetsPuppi" or name == "slimmedJets":
             discriminators = None
             updater_name = updater_src
             updater_src = name
@@ -1310,6 +1310,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining", "jetsAk4Puppi")
     rename_module(process, task, "updatedPatJetsSlimmedJetsPuppiNewDFTraining", "jetsAk4Puppi")
     # rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsNewDFTraining", "jetsAk4CHS")
+    rename_module(process, task, "updatedPatJetsSlimmedJetsNewDFTraining", "jetsAk4CHS")
     rename_module(process, task, "updatedPatJetsTransientCorrectedPatJetsAK8PFPUPPIWithPuppiDaughters", "jetsAk8Puppi")
     rename_module(process, task, ak8chs_patname, "jetsAk8CHS")
     # TopJet collections
@@ -1327,13 +1328,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     )
 
     # # Dummy module to allow us to rename slimmedJets to something more descriptive
-    process.jetsAk4CHS = cms.EDFilter("PATJetSelector",
-        cut=cms.string(''),
-        cutLoose=cms.string(''),
-        nLoose=cms.uint32(0),
-        src=cms.InputTag("slimmedJets")
-    )
-    task.add(process.jetsAk4CHS)
+    # process.jetsAk4CHS = cms.EDFilter("PATJetSelector",
+    #     cut=cms.string(''),
+    #     cutLoose=cms.string(''),
+    #     nLoose=cms.uint32(0),
+    #     src=cms.InputTag("slimmedJets")
+    # )
+    # task.add(process.jetsAk4CHS)
 
 
     # Higgs tagging commissioning
