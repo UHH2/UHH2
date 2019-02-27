@@ -72,7 +72,7 @@ bool DeepCSVBTag::operator()(const Jet & jet, const Event &ev){
       throw invalid_argument("invalid working point passed to DeepCSVBTag");
     }
   }
-  if(ev.year == "2016v3"){
+  else if(ev.year == "2016v3"){
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
     switch(m_working_point){
     case WP_LOOSE:
@@ -88,8 +88,7 @@ bool DeepCSVBTag::operator()(const Jet & jet, const Event &ev){
       throw invalid_argument("invalid working point passed to DeepCSVBTag");
     }
   }
-
-  if(ev.year == "2017"){
+  else if(ev.year.find("2017") != std::string::npos){
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
     switch(m_working_point){
     case WP_LOOSE:
@@ -105,7 +104,7 @@ bool DeepCSVBTag::operator()(const Jet & jet, const Event &ev){
       throw invalid_argument("invalid working point passed to DeepCSVBTag");
     }
   }
-  if(ev.year == "2018"){
+  else if(ev.year == "2018"){
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
     switch(m_working_point){
     case WP_LOOSE:
@@ -120,6 +119,9 @@ bool DeepCSVBTag::operator()(const Jet & jet, const Event &ev){
     default:
       throw invalid_argument("invalid working point passed to DeepCSVBTag");
     }
+  } else {
+    cout << "Invalid year, DeepCSVBTag returning false" << endl;
+    return false;
   }
   return jet.btag_DeepCSV() > deepcsv_threshold;
 }
