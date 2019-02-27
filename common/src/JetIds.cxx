@@ -188,7 +188,7 @@ bool DeepJetBTag::operator()(const Jet & jet, const Event &ev){
 JetPFID::JetPFID(wp working_point):m_working_point(working_point){}
 
 bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
-  if(ev.year == "2016v2" || ev.year == "2016v3"){
+  if (ev.year.find("2016") != std::string::npos){
     switch(m_working_point){
     case WP_LOOSE_CHS:
       return looseID2016_CHS(jet);
@@ -201,11 +201,11 @@ bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
     case  WP_TIGHT_LEPVETO:
       return tightLepVetoID2016(jet);
     default:
-      throw invalid_argument("invalid working point passed to CSVBTag");
+      throw invalid_argument("invalid working point passed to JetPFID");
     }
     return false;
   }
-  if(ev.year == "2017"){
+  else if (ev.year.find("2017") != std::string::npos){
    switch(m_working_point){
     case WP_TIGHT_CHS:
       return tightID2017_CHS(jet);
@@ -217,20 +217,20 @@ bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
       throw invalid_argument("invalid working point passed to JetPFID");
     }
   }
- if(ev.year == "2018"){
-   switch(m_working_point){
-   case WP_TIGHT_CHS:
-     return tightID2018_CHS(jet);
-   case WP_TIGHT_PUPPI:
-     return tightID2018_CHS(jet);//placeholder
-   case  WP_TIGHT_LEPVETO:
-     return tightLepVetoID2018(jet);
-   default:
-     throw invalid_argument("invalid working point passed to JetPFID");
-   }
- }
- if(ev.year!= "2018" && ev.year!= "2017" && ev.year!= "2016v3" && ev.year!= "2016v2")
-   cout<<"Invalid year, JetID set to False"<<endl;
+  else if (ev.year.find("2018") != std::string::npos){
+    switch(m_working_point){
+    case WP_TIGHT_CHS:
+      return tightID2018_CHS(jet);
+    case WP_TIGHT_PUPPI:
+      return tightID2018_CHS(jet);//placeholder
+    case  WP_TIGHT_LEPVETO:
+      return tightLepVetoID2018(jet);
+    default:
+      throw invalid_argument("invalid working point passed to JetPFID");
+    }
+  } else {
+    cout<<"Invalid year, JetID set to False"<<endl;
+  }
   return false;
 }
 
