@@ -283,7 +283,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             "mc": "94X_mc2017_realistic_v17"
         },
         "2018": {
-            "data": "102X_dataRun2_Prompt_v6",
+            "data": "102X_dataRun2_Sep2018Rereco_v1",
             "mc": "102X_upgrade2018_realistic_v15",
         },
     }
