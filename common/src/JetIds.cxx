@@ -27,7 +27,7 @@ bool CSVBTag::operator()(const Jet & jet, const Event & ev){
       throw invalid_argument("invalid working point passed to CSVBTag");
     }
   }
-  if(ev.year == "2017" || ev.year == "2018"){
+  if(ev.year.find("2017") != std::string::npos || ev.year.find("2018") != std::string::npos){
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
     //Note: CSV is not supported for 2018 analyses
     switch(m_working_point){
@@ -151,7 +151,7 @@ bool DeepJetBTag::operator()(const Jet & jet, const Event &ev){
             throw invalid_argument("invalid working point passed to DeepJetBTag");
     }
   }
-  if(ev.year == "2017"){
+  else if(ev.year.find("2017") != std::string::npos){
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
     switch(m_working_point){
         case WP_LOOSE:
@@ -167,7 +167,7 @@ bool DeepJetBTag::operator()(const Jet & jet, const Event &ev){
             throw invalid_argument("invalid working point passed to DeepJetBTag");
     }
   }
-  if(ev.year == "2018"){
+  else if(ev.year == "2018"){
     //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
     switch(m_working_point){
         case WP_LOOSE:
@@ -182,6 +182,9 @@ bool DeepJetBTag::operator()(const Jet & jet, const Event &ev){
         default:
             throw invalid_argument("invalid working point passed to DeepJetBTag");
     }
+  } else {
+    cout << "Invalid year, DeepJetBTag returning false" << endl;
+    return false;
   }
   return jet.btag_DeepJet() > deepjet_threshold;
 }
