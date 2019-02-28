@@ -15,6 +15,7 @@ The user should update THESE_BRANCHES as appropriate
 
 from __future__ import print_function
 import os
+import re
 import sys
 import subprocess
 import uuid
@@ -90,6 +91,16 @@ def get_root_files_from_xml(xml_filename):
     return root_filenames
 
 
+def remove_crab_dir(dirname):
+    """If dir path ends with e.g. 0001 added by crab, remove it"""
+    dirname = dirname.rstrip("/")  # a trailing / will screw up basename
+    last_dir = os.path.basename(dirname)
+    if re.match(r'^\d\d\d\d$', last_dir):
+        return os.path.dirname(dirname)
+    else:
+        return dirname
+
+
 def save_list_to_file(this_list, output_filename):
     with open(output_filename, "w") as f:
         f.write("\n".join(this_list))
@@ -126,7 +137,7 @@ def main():
         save_list_to_file(all_root_files, "../"+file_log_filename)  # use .. as we're in the UHH repo
         print("Found", len(all_root_files), "ntuples, list saved to", file_log_filename)
 
-        all_root_files_dirs = sorted(list(set([os.path.dirname(f) for f in all_root_files])))
+        all_root_files_dirs = sorted(list(set([remove_crab_dir(os.path.dirname(f)) for f in all_root_files])))
         dir_log_filename = "ntuple_dirnames_"+remote_branch+".txt"
         save_list_to_file(all_root_files_dirs, "../"+dir_log_filename)  # use .. as we're in the UHH repo
         print("Found", len(all_root_files_dirs), "ntuple dirs, list saved to", dir_log_filename)
