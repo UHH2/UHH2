@@ -10,11 +10,8 @@ More details in UHH2/common/include/JetCorrectionsSets.h
 #define SET_NEWSTRING_DATA(tag,ver,jetCollection,sample,runName,Correction)                                                                                   \
 std::string("JECDatabase/textFiles/")+#tag+#runName+"_V"+#ver+"_"+#sample+"/"+#tag+#runName+"_V"+#ver+"_"+#sample+"_"+#Correction+"_"+#jetCollection+".txt",  \
 
-#define SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,sample,runName,Correction)                                                                                   \
+#define SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,sample,runName,Correction)                                                                                            \
 std::string("JECDatabase/textFiles/")+#tag+"_Run"+#runName+"_V"+#ver+"_"+#sample+"/"+#tag+"_Run"+#runName+"_V"+#ver+"_"+#sample+"_"+#Correction+"_"+#jetCollection+".txt",  \
-
-#define SET_NEWSTRING_DATA(tag,ver,jetCollection,sample,runName,Correction)                                                                                   \
-std::string("JECDatabase/textFiles/")+#tag+#runName+"_V"+#ver+"_"+#sample+"/"+#tag+#runName+"_V"+#ver+"_"+#sample+"_"+#Correction+"_"+#jetCollection+".txt",  \
 
 #define SET_NEWSTRING_MC(tag,ver,jetCollection,sample,Correction)                                                                           \
 std::string("JECDatabase/textFiles/")+#tag+"_V"+#ver+"_"+#sample+"/"+#tag+"_V"+#ver+"_"+#sample+"_"+#Correction+"_"+#jetCollection+".txt",  \
@@ -51,17 +48,18 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L1FastJet_##
   SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                                  \
 };                                                                                                        \
 
-#define SET_CORRECTION_DATA_2018(tag,ver,jetCollection,runName,runCorrection)                                  \
+
+#define SET_CORRECTION_DATA_2018(tag,ver,jetCollection,runName,runCorrection)                             \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L123_##jetCollection##_DATA = {       \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                                  \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L2Relative)                                 \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L3Absolute)                                 \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L2L3Residual)                               \
+  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                             \
+  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L2Relative)                            \
+  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L3Absolute)                            \
+  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L2L3Residual)                          \
 };                                                                                                        \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L123_noRes_##jetCollection##_DATA = { \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                                  \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L2Relative)                                 \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L3Absolute)                                 \
+  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                             \
+  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L2Relative)                            \
+  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L3Absolute)                            \
 };                                                                                                        \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L1RC_##jetCollection##_DATA = {       \
   SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1RC)                                       \
@@ -70,28 +68,28 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L1FastJet_##
   SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                                  \
 };                                                                                                        \
 
-#define SET_JECFILES_DATA_2016(tag,ver,jetCollection)  \
-SET_CORRECTION_DATA(tag,ver,jetCollection,B,BCD)    \
-SET_CORRECTION_DATA(tag,ver,jetCollection,C,BCD)    \
-SET_CORRECTION_DATA(tag,ver,jetCollection,D,BCD)    \
-SET_CORRECTION_DATA(tag,ver,jetCollection,E,EF)    \
-SET_CORRECTION_DATA(tag,ver,jetCollection,F,EF)    \
-SET_CORRECTION_DATA(tag,ver,jetCollection,G,GH)    \
-SET_CORRECTION_DATA(tag,ver,jetCollection,H,GH)    \
+#define SET_JECFILES_DATA_2016(tag,ver,jetCollection) \
+SET_CORRECTION_DATA(tag,ver,jetCollection,B,BCD)      \
+SET_CORRECTION_DATA(tag,ver,jetCollection,C,BCD)      \
+SET_CORRECTION_DATA(tag,ver,jetCollection,D,BCD)      \
+SET_CORRECTION_DATA(tag,ver,jetCollection,E,EF)       \
+SET_CORRECTION_DATA(tag,ver,jetCollection,F,EF)       \
+SET_CORRECTION_DATA(tag,ver,jetCollection,G,GH)       \
+SET_CORRECTION_DATA(tag,ver,jetCollection,H,GH)       \
 
 
 #define SET_JECFILES_DATA_2017(tag,ver,jetCollection) \
-SET_CORRECTION_DATA(tag,ver,jetCollection,B,B)                  \
-SET_CORRECTION_DATA(tag,ver,jetCollection,C,C)                  \
-SET_CORRECTION_DATA(tag,ver,jetCollection,D,DE)                 \
-SET_CORRECTION_DATA(tag,ver,jetCollection,E,DE)                 \
-SET_CORRECTION_DATA(tag,ver,jetCollection,F,F)                  \
+SET_CORRECTION_DATA(tag,ver,jetCollection,B,B)        \
+SET_CORRECTION_DATA(tag,ver,jetCollection,C,C)        \
+SET_CORRECTION_DATA(tag,ver,jetCollection,D,DE)       \
+SET_CORRECTION_DATA(tag,ver,jetCollection,E,DE)       \
+SET_CORRECTION_DATA(tag,ver,jetCollection,F,F)        \
 
 #define SET_JECFILES_DATA_2018(tag,ver,jetCollection) \
-SET_CORRECTION_DATA_2018(tag,ver,jetCollection,A,A)                  \
-SET_CORRECTION_DATA_2018(tag,ver,jetCollection,B,B)                  \
-SET_CORRECTION_DATA_2018(tag,ver,jetCollection,C,C)                  \
-SET_CORRECTION_DATA_2018(tag,ver,jetCollection,D,D)                 \
+SET_CORRECTION_DATA_2018(tag,ver,jetCollection,A,A)   \
+SET_CORRECTION_DATA_2018(tag,ver,jetCollection,B,B)   \
+SET_CORRECTION_DATA_2018(tag,ver,jetCollection,C,C)   \
+SET_CORRECTION_DATA_2018(tag,ver,jetCollection,D,D)   \
 
 
 
