@@ -8,12 +8,19 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
 
-        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="JetConstit" Cacheable="False">
 <!--          <In FileName="../../core/python/Ntuple.root" Lumi="0.0"/> -->
+<!--        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="JetConstit" Cacheable="False">
             <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_4399_Ntuple.root" Lumi="0.0"/>
-            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_7091_Ntuple.root" Lumi="0.0"/>
+            <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_7091_Ntuple.root" Lumi="0.0"/> 
             <InputTree Name="AnalysisTree" />
         </InputData>
+-->
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="JetConstit" Cacheable="False">
+            <In FileName="/nfs/dust/cms/user/karavdia/CMSSW_10_2_10/src/UHH2/core/python/Ntuple_2018_dijet.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+        </InputData>
+
+
 
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
@@ -22,9 +29,9 @@
             <Item Name="TopJetCollection" Value="jetsAk8PuppiSubstructure_SoftDropPuppi" />
             <!-- <Item Name="TopJetCollection" Value="jetsAk8CHSSubstructure_SoftDropCHS" /> -->
             <!-- <Item Name="GenJetCollection" Value="slimmedGenJets" /> -->
-            <Item Name="GenJetCollection" Value="slimmedGenJetsAK8" />
+            <Item Name="GenJetCollection" Value="slimmedGenJets" />
             <!-- <Item Name="GenTopJetCollection" Value="ak8GenJetsFat" /> -->
-            <Item Name="GenTopJetCollection" Value="ak8GenJetsSoftDropforsub" />
+            <Item Name="GenTopJetCollection" Value="genjetsAk8SubstructureSoftDrop" />
 
             <Item Name="PFParticleCollection" Value="PFParticles" />
             <Item Name="GenParticleCollection" Value="GenParticles" /> 

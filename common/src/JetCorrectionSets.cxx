@@ -64,10 +64,10 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L123_noRes_#
   SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L3Absolute)                                 \
 };                                                                                                        \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L1RC_##jetCollection##_DATA = {       \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L1RC)                                       \
+  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1RC)                                       \
 };                                                                                                        \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L1FastJet_##jetCollection##_DATA = {  \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                                  \
+  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                                  \
 };                                                                                                        \
 
 #define SET_JECFILES_DATA_2016(tag,ver,jetCollection)  \
