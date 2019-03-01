@@ -484,7 +484,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     process.puppi.candName = cms.InputTag('packedPFCandidates')
     process.puppi.vertexName = cms.InputTag('offlineSlimmedPrimaryVertices')
     process.puppi.clonePackedCands = cms.bool(True)
-    process.puppi.useExistingWeights = cms.bool(True)
+    process.puppi.useExistingWeights = cms.bool(False)
     task.add(process.puppi)
 
     # This is primarily used for JEC studies.
