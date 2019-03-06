@@ -8,13 +8,13 @@ More details in UHH2/common/include/JetCorrectionsSets.h
 */
 
 #define SET_NEWSTRING_DATA(tag,ver,jetCollection,sample,runName,Correction)                                                                                   \
-std::string("JECDatabase/textFiles/")+#tag+#runName+"_V"+#ver+"_"+#sample+"/"+#tag+#runName+"_V"+#ver+"_"+#sample+"_"+#Correction+"_"+#jetCollection+".txt",  \
+"JECDatabase/textFiles/" #tag #runName "_V" #ver "_" #sample "/" #tag #runName "_V" #ver "_" #sample "_" #Correction "_" #jetCollection ".txt",  \
 
 #define SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,sample,runName,Correction)                                                                                            \
-std::string("JECDatabase/textFiles/")+#tag+"_Run"+#runName+"_V"+#ver+"_"+#sample+"/"+#tag+"_Run"+#runName+"_V"+#ver+"_"+#sample+"_"+#Correction+"_"+#jetCollection+".txt",  \
+"JECDatabase/textFiles/" #tag "_Run" #runName "_V" #ver "_" #sample "/" #tag "_Run" #runName "_V" #ver "_" #sample "_" #Correction "_" #jetCollection ".txt",  \
 
 #define SET_NEWSTRING_MC(tag,ver,jetCollection,sample,Correction)                                                                           \
-std::string("JECDatabase/textFiles/")+#tag+"_V"+#ver+"_"+#sample+"/"+#tag+"_V"+#ver+"_"+#sample+"_"+#Correction+"_"+#jetCollection+".txt",  \
+"JECDatabase/textFiles/" #tag "_V" #ver "_" #sample "/" #tag "_V" #ver "_" #sample "_" #Correction "_" #jetCollection ".txt",  \
 
 #define SET_JECFILES_MC(tag,ver,jetCollection)					                                    \
 const std::vector<std::string> JERFiles::tag##_V##ver##_L123_##jetCollection##_MC = {       \
@@ -95,7 +95,7 @@ SET_CORRECTION_DATA_2018(tag,ver,jetCollection,D,D)   \
 
 
 #define SET_NEWSTRING_MC2016(tag,ver,jetCollection,sample,Correction)                                                                     \
-std::string("JECDatabase/textFiles/")+#tag+"V"+#ver+"_"+#sample+"/"+#tag+"V"+#ver+"_"+#sample+"_"+#Correction+"_"+#jetCollection+".txt",  \
+"JECDatabase/textFiles/" #tag "V" #ver "_" #sample "/" #tag "V" #ver "_" #sample "_" #Correction "_" #jetCollection ".txt",  \
 
 #define SET_JECFILES_MC2016(tag,ver,jetCollection)					                                \
 const std::vector<std::string> JERFiles::tag##_V##ver##_L123_##jetCollection##_MC = {       \
