@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 
-#include "UHH2/HiggsToWWTagger/include/NeuralNetworkBase.hpp"
+#include "UHH2/common/include/NeuralNetworkBase.hpp"
 
 using namespace std;
 
