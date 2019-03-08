@@ -2333,12 +2333,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         'hltDiPFJetAve260',
                                         'hltDiPFJetAve320',
                                         'hltDiPFJetAve400',
-                                        'hltDiPFJetAve450',
                                         'hltDiPFJetAve500',
 
-                                        'hltDiPFJetAve15ForHFJEC',
-                                        'hltDiPFJetAve25ForHFJEC',
-                                        'hltDiPFJetAve35ForHFJEC',
                                         'hltDiPFJetAve60ForHFJEC',
                                         'hltDiPFJetAve80ForHFJEC',
                                         'hltDiPFJetAve100ForHFJEC',
