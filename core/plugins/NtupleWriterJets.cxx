@@ -1,5 +1,6 @@
 #include "UHH2/core/plugins/NtupleWriterJets.h"
 #include "UHH2/core/include/AnalysisModule.h"
+#include "UHH2/core/include/Utils.h"
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
@@ -29,18 +30,18 @@
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
 #include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
 #include "DataFormats/BTauReco/interface/BoostedDoubleSVTagInfo.h"
+#include "DataFormats/Math/interface/deltaR.h"
+
 using namespace uhh2;
 using namespace std;
 
 bool btag_warning;
 
 size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
-
    for(size_t j=0; j<pfparts.size();j++){
      const PFParticle & spfcandart = pfparts[j];
-     auto r = fabs(static_cast<float>(pf.eta()-spfcandart.eta()))+fabs(static_cast<float>(pf.phi()-spfcandart.phi()));
-     auto dpt = fabs(static_cast<float>(pf.pt()-spfcandart.pt()));
-     if (r == 0.0f && dpt == 0.0f){
+     auto r = reco::deltaR(pf.eta(), pf.phi(), spfcandart.eta(), spfcandart.phi());
+     if (closeFloat(r, 0.0f) && closeFloat(pf.pt(), spfcandart.pt())){
        return j;
      }
    }
@@ -1547,9 +1548,8 @@ void NtupleWriterGenTopJets::process(const edm::Event & event, uhh2::Event & uev
  size_t NtupleWriterGenTopJets::add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genparts) {
    for(size_t j=0; j<genparts.size();j++){
      const GenParticle & sgenpart = genparts[j];
-     auto r = fabs(static_cast<float>(jetgenp.eta()-sgenpart.eta()))+fabs(static_cast<float>(jetgenp.phi()-sgenpart.phi()));
-     auto dpt = fabs(static_cast<float>(jetgenp.pt()-sgenpart.pt()));
-     if (r == 0.0f && dpt == 0.0f){
+     auto r = reco::deltaR(jetgenp.eta(), jetgenp.phi(), sgenpart.eta(), sgenpart.phi());
+     if (closeFloat(r, 0.0f) && closeFloat(jetgenp.pt(), sgenpart.pt())){
        return j;
      }
    }
