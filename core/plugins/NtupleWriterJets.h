@@ -16,9 +16,14 @@
 #include "TrackingTools/IPTools/interface/IPTools.h"
 #include "fastjet/PseudoJet.hh"
 #include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
+
+
 class GenericMVAJetTagComputer;
 
 namespace uhh2 {
+
+size_t add_genpart(const reco::Candidate & jetgenp, std::vector<GenParticle> & genparts);
+size_t add_pfpart(const reco::Candidate & pf, std::vector<PFParticle> & pfparts);
 
 class NtupleWriterJets: public NtupleWriterModule {
 public:
@@ -120,7 +125,6 @@ public:
 
     explicit NtupleWriterGenTopJets(Config & cfg, bool set_jets_member, unsigned int NGenJetwConstituents, double MinPtJetwConstituents);
     static void fill_genjet_info(uhh2::Event & event, const reco::Candidate & reco_genjet, GenJet & jet, bool add_genparts=false);
-    static size_t add_genpart(const reco::Candidate & jetgenp, std::vector<GenParticle> & genparts);
     virtual void process(const edm::Event &, uhh2::Event &,  const edm::EventSetup&);
     virtual ~NtupleWriterGenTopJets();
 
