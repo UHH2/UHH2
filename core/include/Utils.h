@@ -85,4 +85,7 @@ private:
     std::vector<std::vector<std::string> > rows;
 };
 
+/// Compare 2 floats - better than == does to floating-point issues
+bool closeFloat(float a, float b, float maxRelDiff=1E-6);
+
 }

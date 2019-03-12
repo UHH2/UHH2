@@ -3,6 +3,7 @@
 #include "FWCore/Common/interface/TriggerNames.h"
 
 #include "UHH2/core/include/root-utils.h"
+#include "UHH2/core/include/Utils.h"
 #include "UHH2/core/plugins/NtupleWriter.h"
 #include "UHH2/core/plugins/NtupleWriterJets.h"
 #include "UHH2/core/plugins/NtupleWriterLeptons.h"
@@ -12,6 +13,7 @@
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 #include "DataFormats/PatCandidates/interface/Photon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/Math/interface/deltaR.h"
 
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
@@ -21,8 +23,6 @@
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/JetMatching/interface/JetFlavourInfo.h"
 #include "SimDataFormats/JetMatching/interface/JetFlavourInfoMatching.h"
-//#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-//#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/Common/interface/EDCollection.h"
 
 
@@ -43,9 +43,8 @@ namespace{
  size_t add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genparts){
    for(size_t j=0; j<genparts.size();j++){
      const GenParticle & sgenpart = genparts[j];
-     auto r = fabs(static_cast<float>(jetgenp.eta()-sgenpart.eta()))+fabs(static_cast<float>(jetgenp.phi()-sgenpart.phi()));
-     auto dpt = fabs(static_cast<float>(jetgenp.pt()-sgenpart.pt()));
-     if (r == 0.0f && dpt == 0.0f){
+     auto r = reco::deltaR(jetgenp.eta(), jetgenp.phi(), sgenpart.eta(), sgenpart.phi());
+     if (uhh2::closeFloat(r, 0.0f) && uhh2::closeFloat(jetgenp.pt(), sgenpart.pt())){
        return j;
      }
    }
@@ -73,9 +72,8 @@ size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
 
    for(size_t j=0; j<pfparts.size();j++){
      const PFParticle & spfcandart = pfparts[j];
-     auto r = fabs(static_cast<float>(pf.eta()-spfcandart.eta()))+fabs(static_cast<float>(pf.phi()-spfcandart.phi()));
-     auto dpt = fabs(static_cast<float>(pf.pt()-spfcandart.pt()));
-     if (r == 0.0f && dpt == 0.0f){
+     auto r = reco::deltaR(pf.eta(), pf.phi(), spfcandart.eta(), spfcandart.phi());
+     if (uhh2::closeFloat(r, 0.0f) && uhh2::closeFloat(pf.pt(), spfcandart.pt())){
        return j;
      }
    }
