@@ -3,7 +3,6 @@
 #include "FWCore/Common/interface/TriggerNames.h"
 
 #include "UHH2/core/include/root-utils.h"
-#include "UHH2/core/include/Utils.h"
 #include "UHH2/core/plugins/NtupleWriter.h"
 #include "UHH2/core/plugins/NtupleWriterJets.h"
 #include "UHH2/core/plugins/NtupleWriterLeptons.h"
@@ -13,7 +12,6 @@
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 #include "DataFormats/PatCandidates/interface/Photon.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
-#include "DataFormats/Math/interface/deltaR.h"
 
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
