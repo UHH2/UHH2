@@ -37,7 +37,34 @@ using namespace std;
 
 bool btag_warning;
 
-size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
+size_t uhh2::add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genparts) {
+   for(size_t j=0; j<genparts.size();j++){
+     const GenParticle & sgenpart = genparts[j];
+     auto r = reco::deltaR(jetgenp.eta(), jetgenp.phi(), sgenpart.eta(), sgenpart.phi());
+     if (closeFloat(r, 0.0f) && closeFloat(jetgenp.pt(), sgenpart.pt())){
+       return j;
+     }
+   }
+   GenParticle genp;
+   genp.set_charge(jetgenp.charge());
+   genp.set_pt(jetgenp.p4().pt());
+   genp.set_eta(jetgenp.p4().eta());
+   genp.set_phi(jetgenp.p4().phi());
+   genp.set_energy(jetgenp.p4().E());
+   genp.set_index(genparts.size());
+   genp.set_status(jetgenp.status());
+   genp.set_pdgId(jetgenp.pdgId());
+
+   genp.set_mother1(-1);
+   genp.set_mother2(-1);
+   genp.set_daughter1(-1);
+   genp.set_daughter2(-1);
+
+   genparts.push_back(genp);
+   return genparts.size()-1;
+}
+
+size_t uhh2::add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
    for(size_t j=0; j<pfparts.size();j++){
      const PFParticle & spfcandart = pfparts[j];
      auto r = reco::deltaR(pf.eta(), pf.phi(), spfcandart.eta(), spfcandart.phi());
@@ -1546,33 +1573,6 @@ void NtupleWriterGenTopJets::process(const edm::Event & event, uhh2::Event & uev
   if(gentopjets_handle){
     EventAccess_::set_unmanaged(uevent, *gentopjets_handle, &uevent.get(handle));
   }
-}
-
- size_t NtupleWriterGenTopJets::add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genparts) {
-   for(size_t j=0; j<genparts.size();j++){
-     const GenParticle & sgenpart = genparts[j];
-     auto r = reco::deltaR(jetgenp.eta(), jetgenp.phi(), sgenpart.eta(), sgenpart.phi());
-     if (closeFloat(r, 0.0f) && closeFloat(jetgenp.pt(), sgenpart.pt())){
-       return j;
-     }
-   }
-   GenParticle genp;
-   genp.set_charge(jetgenp.charge());
-   genp.set_pt(jetgenp.p4().pt());
-   genp.set_eta(jetgenp.p4().eta());
-   genp.set_phi(jetgenp.p4().phi());
-   genp.set_energy(jetgenp.p4().E());
-   genp.set_index(genparts.size());
-   genp.set_status(jetgenp.status());
-   genp.set_pdgId(jetgenp.pdgId());
-
-   genp.set_mother1(-1);
-   genp.set_mother2(-1);
-   genp.set_daughter1(-1);
-   genp.set_daughter2(-1);
-
-   genparts.push_back(genp);
-   return genparts.size()-1;
 }
 
 void NtupleWriterGenTopJets::fill_genjet_info(uhh2::Event & event, const reco::Candidate & reco_genjet, GenJet & genjet, bool add_genparts) {
