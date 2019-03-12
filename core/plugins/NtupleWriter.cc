@@ -77,12 +77,15 @@ size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
        return j;
      }
    }
+   const pat::PackedCandidate* iter = dynamic_cast<const pat::PackedCandidate*>(&pf);
    PFParticle part;
    part.set_pt(pf.pt());
    part.set_eta(pf.eta());
    part.set_phi(pf.phi());
    part.set_energy(pf.energy());
    part.set_charge(pf.charge());
+   part.set_puppiWeight(iter->puppiWeight());
+   part.set_puppiWeightNoLep(iter->puppiWeightNoLep());
    PFParticle::EParticleID id = PFParticle::eX;
    reco::PFCandidate reco_pf;
    switch ( reco_pf.translatePdgIdToType(pf.pdgId()) ){
