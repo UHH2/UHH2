@@ -86,6 +86,6 @@ private:
 };
 
 /// Compare 2 floats - better than == does to floating-point issues
-bool closeFloat(float a, float b, float maxRelDiff=1E-6);
+bool closeFloat(float a, float b, float maxRelDiff=1E-6, float maxAbsDiff=1E-6);
 
 }
