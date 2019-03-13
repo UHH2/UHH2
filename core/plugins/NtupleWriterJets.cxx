@@ -1,5 +1,6 @@
 #include "UHH2/core/plugins/NtupleWriterJets.h"
 #include "UHH2/core/include/AnalysisModule.h"
+#include "UHH2/core/include/Utils.h"
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
@@ -29,27 +30,57 @@
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
 #include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
 #include "DataFormats/BTauReco/interface/BoostedDoubleSVTagInfo.h"
+#include "DataFormats/Math/interface/deltaR.h"
+
 using namespace uhh2;
 using namespace std;
 
 bool btag_warning;
 
-size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
-
-   for(size_t j=0; j<pfparts.size();j++){
-     const PFParticle & spfcandart = pfparts[j];
-     auto r = fabs(static_cast<float>(pf.eta()-spfcandart.eta()))+fabs(static_cast<float>(pf.phi()-spfcandart.phi()));
-     auto dpt = fabs(static_cast<float>(pf.pt()-spfcandart.pt()));
-     if (r == 0.0f && dpt == 0.0f){
+size_t uhh2::add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genparts) {
+   for(size_t j=0; j<genparts.size();j++){
+     const GenParticle & sgenpart = genparts[j];
+     auto r = reco::deltaR(jetgenp.eta(), jetgenp.phi(), sgenpart.eta(), sgenpart.phi());
+     if (closeFloat(r, 0.0f) && closeFloat(jetgenp.pt(), sgenpart.pt())){
        return j;
      }
    }
+   GenParticle genp;
+   genp.set_charge(jetgenp.charge());
+   genp.set_pt(jetgenp.p4().pt());
+   genp.set_eta(jetgenp.p4().eta());
+   genp.set_phi(jetgenp.p4().phi());
+   genp.set_energy(jetgenp.p4().E());
+   genp.set_index(genparts.size());
+   genp.set_status(jetgenp.status());
+   genp.set_pdgId(jetgenp.pdgId());
+
+   genp.set_mother1(-1);
+   genp.set_mother2(-1);
+   genp.set_daughter1(-1);
+   genp.set_daughter2(-1);
+
+   genparts.push_back(genp);
+   return genparts.size()-1;
+}
+
+size_t uhh2::add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
+   for(size_t j=0; j<pfparts.size();j++){
+     const PFParticle & spfcandart = pfparts[j];
+     auto r = reco::deltaR(pf.eta(), pf.phi(), spfcandart.eta(), spfcandart.phi());
+     if (closeFloat(r, 0.0f) && closeFloat(pf.pt(), spfcandart.pt())){
+       return j;
+     }
+   }
+   const pat::PackedCandidate* iter = dynamic_cast<const pat::PackedCandidate*>(&pf);
    PFParticle part;
    part.set_pt(pf.pt());
    part.set_eta(pf.eta());
    part.set_phi(pf.phi());
    part.set_energy(pf.energy());
    part.set_charge(pf.charge());
+   part.set_puppiWeight(iter->puppiWeight());
+   part.set_puppiWeightNoLep(iter->puppiWeightNoLep());
    PFParticle::EParticleID id = PFParticle::eX;
    reco::PFCandidate reco_pf;
    switch ( reco_pf.translatePdgIdToType(pf.pdgId()) ){
@@ -1542,34 +1573,6 @@ void NtupleWriterGenTopJets::process(const edm::Event & event, uhh2::Event & uev
   if(gentopjets_handle){
     EventAccess_::set_unmanaged(uevent, *gentopjets_handle, &uevent.get(handle));
   }
-}
-
- size_t NtupleWriterGenTopJets::add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genparts) {
-   for(size_t j=0; j<genparts.size();j++){
-     const GenParticle & sgenpart = genparts[j];
-     auto r = fabs(static_cast<float>(jetgenp.eta()-sgenpart.eta()))+fabs(static_cast<float>(jetgenp.phi()-sgenpart.phi()));
-     auto dpt = fabs(static_cast<float>(jetgenp.pt()-sgenpart.pt()));
-     if (r == 0.0f && dpt == 0.0f){
-       return j;
-     }
-   }
-   GenParticle genp;
-   genp.set_charge(jetgenp.charge());
-   genp.set_pt(jetgenp.p4().pt());
-   genp.set_eta(jetgenp.p4().eta());
-   genp.set_phi(jetgenp.p4().phi());
-   genp.set_energy(jetgenp.p4().E());
-   genp.set_index(genparts.size());
-   genp.set_status(jetgenp.status());
-   genp.set_pdgId(jetgenp.pdgId());
-
-   genp.set_mother1(-1);
-   genp.set_mother2(-1);
-   genp.set_daughter1(-1);
-   genp.set_daughter2(-1);
-
-   genparts.push_back(genp);
-   return genparts.size()-1;
 }
 
 void NtupleWriterGenTopJets::fill_genjet_info(uhh2::Event & event, const reco::Candidate & reco_genjet, GenJet & genjet, bool add_genparts) {

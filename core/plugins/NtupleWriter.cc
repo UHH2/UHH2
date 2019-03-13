@@ -21,8 +21,6 @@
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/JetMatching/interface/JetFlavourInfo.h"
 #include "SimDataFormats/JetMatching/interface/JetFlavourInfoMatching.h"
-//#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-//#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/Common/interface/EDCollection.h"
 
 
@@ -40,68 +38,6 @@ using namespace std;
 
 namespace{
 
- size_t add_genpart(const reco::Candidate & jetgenp, vector<GenParticle> & genparts){
-   for(size_t j=0; j<genparts.size();j++){
-     const GenParticle & sgenpart = genparts[j];
-     auto r = fabs(static_cast<float>(jetgenp.eta()-sgenpart.eta()))+fabs(static_cast<float>(jetgenp.phi()-sgenpart.phi()));
-     auto dpt = fabs(static_cast<float>(jetgenp.pt()-sgenpart.pt()));
-     if (r == 0.0f && dpt == 0.0f){
-       return j;
-     }
-   }
-   GenParticle genp;
-   genp.set_charge(jetgenp.charge());
-   genp.set_pt(jetgenp.p4().pt());
-   genp.set_eta(jetgenp.p4().eta());
-   genp.set_phi(jetgenp.p4().phi());
-   genp.set_energy(jetgenp.p4().E());
-   genp.set_index(genparts.size());
-   genp.set_status(jetgenp.status());
-   genp.set_pdgId(jetgenp.pdgId());
-
-   genp.set_mother1(-1);
-   genp.set_mother2(-1);
-   genp.set_daughter1(-1);
-   genp.set_daughter2(-1);
-  
-   genparts.push_back(genp);
-   return genparts.size()-1;
-}
-
-
-size_t add_pfpart(const reco::Candidate & pf, vector<PFParticle> & pfparts){
-
-   for(size_t j=0; j<pfparts.size();j++){
-     const PFParticle & spfcandart = pfparts[j];
-     auto r = fabs(static_cast<float>(pf.eta()-spfcandart.eta()))+fabs(static_cast<float>(pf.phi()-spfcandart.phi()));
-     auto dpt = fabs(static_cast<float>(pf.pt()-spfcandart.pt()));
-     if (r == 0.0f && dpt == 0.0f){
-       return j;
-     }
-   }
-   PFParticle part;
-   part.set_pt(pf.pt());
-   part.set_eta(pf.eta());
-   part.set_phi(pf.phi());
-   part.set_energy(pf.energy());
-   part.set_charge(pf.charge());
-   PFParticle::EParticleID id = PFParticle::eX;
-   reco::PFCandidate reco_pf;
-   switch ( reco_pf.translatePdgIdToType(pf.pdgId()) ){
-   case reco::PFCandidate::X : id = PFParticle::eX; break;
-   case reco::PFCandidate::h : id = PFParticle::eH; break;
-   case reco::PFCandidate::e : id = PFParticle::eE; break;
-   case reco::PFCandidate::mu : id = PFParticle::eMu; break;
-   case reco::PFCandidate::gamma : id = PFParticle::eGamma; break;
-   case reco::PFCandidate::h0 : id = PFParticle::eH0; break;
-   case reco::PFCandidate::h_HF : id = PFParticle::eH_HF; break;
-   case reco::PFCandidate::egamma_HF : id = PFParticle::eEgamma_HF; break;
-   }
-   part.set_particleID(id);
-
-   pfparts.push_back(part);
-   return pfparts.size()-1;
-}
 
 template<typename T>
 void branch(TTree * tree, const char * bname, T t){
@@ -1415,7 +1351,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	if(storePFparts){
 	  const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
 	  for(const auto & daughter_p : jet_daughter_ptrs){
-	    size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	    size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
 	    thisJet.add_pfcand_index(pfparticles_index);
 	  }
 	}
@@ -1449,7 +1385,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  if(storePFparts){
 	    const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
 	    for(const auto & daughter_p : jet_daughter_ptrs){
-	      size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	      size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
 	      subjet.add_pfcand_index(pfparticles_index);
 	    }
 	  }
@@ -1499,7 +1435,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	if(storePFparts){
 	  const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
 	  for(const auto & daughter_p : jet_daughter_ptrs){
-	    size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	    size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
 	    thisJet.add_pfcand_index(pfparticles_index);
 	  }
 	}
@@ -1533,7 +1469,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  if(storePFparts){
 	    const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
 	    for(const auto & daughter_p : jet_daughter_ptrs){
-	      size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	      size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
 	      subjet.add_pfcand_index(pfparticles_index);
 	    }
 	  }
@@ -1583,7 +1519,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	if(storePFparts){
 	  const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
 	  for(const auto & daughter_p : jet_daughter_ptrs){
-	    size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	    size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
 	    thisJet.add_pfcand_index(pfparticles_index);
 	  }
 	}
@@ -1617,7 +1553,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	  if(storePFparts){
 	    const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
 	    for(const auto & daughter_p : jet_daughter_ptrs){
-	      size_t pfparticles_index = add_pfpart(*daughter_p,*event->pfparticles);
+	      size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
 	      subjet.add_pfcand_index(pfparticles_index);
 	    }
 	  }
@@ -1821,7 +1757,7 @@ void NtupleWriter::fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genje
    const reco::Candidate* constituent =  pat_genjet.daughter(l);
    jet_charge += constituent->charge();
    if(add_genparts){
-     size_t genparticles_index = add_genpart(*constituent, *event->genparticles);
+     size_t genparticles_index = uhh2::add_genpart(*constituent, *event->genparticles);
      genjet.add_genparticles_index(genparticles_index);
    }
 
