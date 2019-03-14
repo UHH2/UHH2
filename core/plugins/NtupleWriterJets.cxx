@@ -32,6 +32,8 @@
 #include "DataFormats/BTauReco/interface/BoostedDoubleSVTagInfo.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
+#include <algorithm>
+
 using namespace uhh2;
 using namespace std;
 
@@ -105,11 +107,24 @@ float getPatJetUserFloat(const pat::Jet & jet, const std::string & key, float de
   return (jet.hasUserFloat(key) ? jet.userFloat(key) : defaultValue);
 }
 
-// Generate the name of the puppiJetSpecificProducer module
-// So ugly, really should get the user to configure this in the NtupleWriter py
-std::string getPuppiJetSpecificProducer(const std::string & name) {
-  std::string multiplicity_name = "patPuppiJetSpecificProducer"+name;
-  return multiplicity_name;
+// Get userfloat by iterating through in reverse order until a label is found containing the desired key
+// Returns default value otherwise
+float getPatJetUserFloatMatching(const pat::Jet & jet, const std::string & key, float defaultValue=-9999.) {
+  // Go reverse, as the latter entry is the latest one
+  for (auto nitr=jet.userFloatNames().rbegin(); nitr != jet.userFloatNames().rend(); nitr++) {
+    if (nitr->find(key) != std::string::npos) {
+      return jet.userFloat(*nitr);
+    }
+  }
+  return defaultValue;
+}
+
+// Figure out if "puppi" in name, case-independent
+// Really hope the collection name doesn't have non-ASCII characters in it
+bool isPuppiCollection(const std::string & name) {
+  std::string nameLower = name;
+  std::transform(nameLower.begin(), nameLower.end(), nameLower.begin(), ::tolower);
+  return (nameLower.find("puppi") != std::string::npos);
 }
 
 NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents, double MinPtJetwConstituents){
@@ -125,7 +140,7 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned 
     btag_warning=true;
     save_lepton_keys_ = false;
 
-    jet_puppiSpecificProducer = getPuppiJetSpecificProducer(src.label());
+    doPuppiSpecific = isPuppiCollection(src.label());
 
     h_muons.clear();
     h_elecs.clear();
@@ -192,10 +207,10 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
         Jet& jet = jets.back();
 
 
-	bool storePFcands = false;
-	if(i<NPFJetwConstituents_ || pat_jet.pt()>MinPtJetwConstituents_) storePFcands = true;
+        bool storePFcands = false;
+        if(i<NPFJetwConstituents_ || pat_jet.pt()>MinPtJetwConstituents_) storePFcands = true;
         try {
-          fill_jet_info(uevent,pat_jet, jet, true, false, jet_puppiSpecificProducer,storePFcands);
+          fill_jet_info(uevent,pat_jet, jet, true, false, doPuppiSpecific, storePFcands);
         }
         catch(runtime_error & ex){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info NtupleWriterJets::process for jets with src = " + src.label());
@@ -225,7 +240,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 }
 
 
-void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer, bool fill_pfcand){
+void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, bool doPuppiSpecific, bool fill_pfcand){
   jet.set_charge(pat_jet.charge());
   jet.set_pt(pat_jet.pt());
   jet.set_eta(pat_jet.eta());
@@ -257,14 +272,16 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
     jet.set_muonMultiplicity (pat_jet.muonMultiplicity());
     jet.set_electronMultiplicity (pat_jet.electronMultiplicity());
     jet.set_photonMultiplicity (pat_jet.photonMultiplicity());
-    if (!puppiJetSpecificProducer.empty()) {
-      // the getPatJetUserFloat will ignore any misnamed puppiJetSpecificProducer
-      jet.set_puppiMultiplicity(getPatJetUserFloat(pat_jet, puppiJetSpecificProducer+":puppiMultiplicity", -1.));
-      jet.set_neutralPuppiMultiplicity(getPatJetUserFloat(pat_jet, puppiJetSpecificProducer+":neutralPuppiMultiplicity", -1.));
-      jet.set_neutralHadronPuppiMultiplicity(getPatJetUserFloat(pat_jet, puppiJetSpecificProducer+":neutralHadronPuppiMultiplicity", -1.));
-      jet.set_photonPuppiMultiplicity(getPatJetUserFloat(pat_jet, puppiJetSpecificProducer+":photonPuppiMultiplicity", -1.));
-      jet.set_HFHadronPuppiMultiplicity(getPatJetUserFloat(pat_jet, puppiJetSpecificProducer+":HFHadronPuppiMultiplicity", -1.));
-      jet.set_HFEMPuppiMultiplicity(getPatJetUserFloat(pat_jet, puppiJetSpecificProducer+":HFEMPuppiMultiplicity", -1.));
+    if (doPuppiSpecific) {
+      // Do PUPPI specifics
+      // We do not know the name of the producer that gets enters into the userFloat name,
+      // so we look for the last entry that ends with the desired string
+      jet.set_puppiMultiplicity(getPatJetUserFloatMatching(pat_jet, ":puppiMultiplicity", -1.));
+      jet.set_neutralPuppiMultiplicity(getPatJetUserFloatMatching(pat_jet, ":neutralPuppiMultiplicity", -1.));
+      jet.set_neutralHadronPuppiMultiplicity(getPatJetUserFloatMatching(pat_jet, ":neutralHadronPuppiMultiplicity", -1.));
+      jet.set_photonPuppiMultiplicity(getPatJetUserFloatMatching(pat_jet, ":photonPuppiMultiplicity", -1.));
+      jet.set_HFHadronPuppiMultiplicity(getPatJetUserFloatMatching(pat_jet, ":HFHadronPuppiMultiplicity", -1.));
+      jet.set_HFEMPuppiMultiplicity(getPatJetUserFloatMatching(pat_jet, ":HFEMPuppiMultiplicity", -1.));
     }
   }
 
@@ -491,16 +508,16 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, uns
     do_btagging_subjets = cfg.do_btagging_subjets;
     if(!njettiness_src.empty() || !qjets_src.empty()){
         substructure_variables_src_token = cfg.cc.consumes<reco::BasicJetCollection>(cfg.substructure_variables_src);
-	substructure_variables_src_tokenreco = cfg.cc.consumes<reco::PFJetCollection>(cfg.substructure_variables_src);
+        substructure_variables_src_tokenreco = cfg.cc.consumes<reco::PFJetCollection>(cfg.substructure_variables_src);
     }
     if(!njettiness_groomed_src.empty()){
         substructure_groomed_variables_src_token = cfg.cc.consumes<reco::BasicJetCollection>(cfg.substructure_groomed_variables_src);
-	substructure_groomed_variables_src_tokenreco = cfg.cc.consumes<reco::PFJetCollection>(cfg.substructure_groomed_variables_src);
+        substructure_groomed_variables_src_tokenreco = cfg.cc.consumes<reco::PFJetCollection>(cfg.substructure_groomed_variables_src);
     }
     btag_warning=true;
     topjet_collection = cfg.dest_branchname;
 
-    topjet_puppiSpecificProducer = getPuppiJetSpecificProducer(src.label());
+    doPuppiSpecific = isPuppiCollection(src.label());
 
     save_lepton_keys_ = false;
 
@@ -969,15 +986,15 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 
         topjets.emplace_back();
         TopJet & topjet = topjets.back();
-	bool storePFcands = false;
-	if(i<NPFJetwConstituents_ || pat_topjet.pt()>MinPtJetwConstituents_) storePFcands = true;
+        bool storePFcands = false;
+        if(i<NPFJetwConstituents_ || pat_topjet.pt()>MinPtJetwConstituents_) storePFcands = true;
         try{
-          uhh2::NtupleWriterJets::fill_jet_info(uevent,pat_topjet, topjet, do_btagging, false, topjet_puppiSpecificProducer,storePFcands);
+          uhh2::NtupleWriterJets::fill_jet_info(uevent,pat_topjet, topjet, do_btagging, false, doPuppiSpecific, storePFcands);
         }catch(runtime_error &){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " + src.label());
         }
-	try{
-	  fill_btag_info(uevent,pat_topjet, topjet);
+        try{
+          fill_btag_info(uevent,pat_topjet, topjet);
         }catch(runtime_error &){
           throw cms::Exception("fill_btag_info error", "Error in fill_btag_info for topjets in NtupleWriterTopJets with src = " + src.label());
         }
@@ -1308,7 +1325,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
             auto patsubjetd = dynamic_cast<const pat::Jet *>(pat_topjet.daughter(k));
             if (patsubjetd) {
 	      try{
-		NtupleWriterJets::fill_jet_info(uevent,*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
+		NtupleWriterJets::fill_jet_info(uevent,*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, doPuppiSpecific, storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for daughters in NtupleWriterTopJets with src = " + src.label());
 	      }
@@ -1337,7 +1354,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	    auto tpatsubjet = dynamic_cast<const pat::Jet *>(tSubjets.at(sj).get());
             if (tpatsubjet) {
 	      try{
-		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, "", storePFcands);
+		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, doPuppiSpecific, storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " + src.label());
 	      }
@@ -1474,7 +1491,7 @@ void NtupleWriterGenTopJets::process(const edm::Event & event, uhh2::Event & uev
     try {
       uhh2::NtupleWriterGenTopJets::fill_genjet_info(uevent, reco_gentopjet, gentopjet, storeGenParticles);
     } catch(runtime_error &){
-      throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for gentopjets in NtupleWriterGenTopJets with src = " + src.label());
+      throw cms::Exception("fill_jgenet_info error", "Error in fill_genjet_info for gentopjets in NtupleWriterGenTopJets with src = " + src.label());
     }
 
     /*--- Njettiness/ECFs/other things from ValueMaps ------*/

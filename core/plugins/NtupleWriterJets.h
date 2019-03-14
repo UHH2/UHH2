@@ -27,7 +27,7 @@ size_t add_pfpart(const reco::Candidate & pf, std::vector<PFParticle> & pfparts)
 
 class NtupleWriterJets: public NtupleWriterModule {
 public:
-    static void fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer="", bool fill_pfcand=false);
+    static void fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, bool doPuppiSpecific, bool fill_pfcand=false);
 
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents, double MinPtJetwConstituents);
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&, unsigned int NPFJetwConstituents, double MinPtJetwConstituents);
@@ -44,7 +44,7 @@ private:
     Event::Handle<std::vector<Jet>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Jet>>> jets_handle; // handle of name "jets" in case set_jets_member is true
     //    boost::optional<Event::Handle<std::vector<PFParticle>>> pfcand_handle;//handle to PF constituences of jets
-    std::string jet_puppiSpecificProducer; // hold name of puppiJetSpecificProducer for userFloat access
+    bool doPuppiSpecific; // get puppi specifics from userFloats
     bool save_lepton_keys_;
     std::vector<Event::Handle<std::vector<Muon>    >> h_muons;
     std::vector<Event::Handle<std::vector<Electron>>> h_elecs;
@@ -96,7 +96,8 @@ private:
     edm::EDGetToken src_ecf_beta1_N2_token, src_ecf_beta1_N3_token, src_ecf_beta2_N2_token, src_ecf_beta2_N3_token;
     edm::EDGetToken src_hepTopTag_token;
     edm::EDGetToken src_higgstaginfo_token;
-    std::string njettiness_src, njettiness_groomed_src, qjets_src, ecf_beta1_src, ecf_beta2_src, subjet_src, higgs_src, higgs_name, higgstaginfo_src, softdrop_src, topjet_collection, topjet_puppiSpecificProducer;
+    std::string njettiness_src, njettiness_groomed_src, qjets_src, ecf_beta1_src, ecf_beta2_src, subjet_src, higgs_src, higgs_name, higgstaginfo_src, softdrop_src, topjet_collection;
+    bool doPuppiSpecific;
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;
     //    boost::optional<Event::Handle<std::vector<PFParticle>>> pfcand_handle;
