@@ -41,8 +41,6 @@
 
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/ClusterSequenceArea.hh"
-#include "fastjet/contrib/HOTVR.hh"
-#include "fastjet/contrib/HOTVRinfo.hh"
 #include "fastjet/contrib/Nsubjettiness.hh"
 #include "fastjet/contrib/XConePlugin.hh"
 
@@ -50,6 +48,7 @@
 
 using namespace fastjet;
 using namespace contrib;
+using namespace std;
 
 //
 // class declaration
