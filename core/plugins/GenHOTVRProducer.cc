@@ -49,6 +49,7 @@
 
 using namespace fastjet;
 using namespace contrib;
+using namespace std;
 
 //
 // class declaration
