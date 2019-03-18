@@ -1393,7 +1393,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     task.add(process.hotvrGen)
 
     usePseudoXCone = cms.bool(True)
-    process.xconePuppi = cms.EDProducer("XConeProducer",
+    process.xconePuppiOrigDau = cms.EDProducer("XConeProducer",
         src=cms.InputTag("puppi"),
         usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
         NJets = cms.uint32(2),          # number of fatjets
@@ -1403,6 +1403,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         RSubJets = cms.double(0.4),     # cone radius of subjetSrc
         BetaSubJets = cms.double(2.0),  # conical mesure for subjets
         printWarning = cms.bool(False)  # set True if you want warnings about missing jets
+    )
+    task.add(process.xconePuppiOrigDau)
+
+    process.xconePuppi = cms.EDProducer("RekeyJets",
+        jetSrc=cms.InputTag("xconePuppiOrigDau"),
+        candidateSrc=cms.InputTag("packedPFCandidates")
     )
     task.add(process.xconePuppi)
 
