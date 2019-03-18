@@ -1376,9 +1376,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     ###############################################
     # HOTVR & XCONE
     #
-    process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
+    process.hotvrPuppiOrigDau = cms.EDProducer("HOTVRProducer",
                                         src=cms.InputTag("puppi")
                                         )
+    task.add(process.hotvrPuppiOrigDau)
+
+    process.hotvrPuppi = cms.EDProducer("RekeyJets",
+        jetSrc=cms.InputTag("hotvrPuppiOrigDau"),
+        candidateSrc=cms.InputTag("packedPFCandidates")
+    )
     task.add(process.hotvrPuppi)
 
     process.hotvrGen = cms.EDProducer("GenHOTVRProducer",
