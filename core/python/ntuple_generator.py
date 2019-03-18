@@ -1085,6 +1085,16 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         producer = getattr(process, ak8puppi_patname)
         modify_patjetproducer_for_data(process, producer)
 
+    # Rekey daughters, i.e. point to the objects in packedPfCandidates
+    # instead of in puppi (you then need to multiply constituents by puppiWeight)
+    # Do this to save space in ntuple if storing jet constituents -
+    # no duplicates across CHS & PUPPI
+    process.rekeyPatJetsAK8PFPUPPI = cms.EDProducer("RekeyJets",
+        jetSrc=cms.InputTag("patJetsAK8PFPUPPI"),
+        candidateSrc=cms.InputTag("packedPFCandidates"),
+        )
+    task.add(process.rekeyPatJetsAK8PFPUPPI)
+
     ak8_label = "AK8PFCHS"
     ak8chs_patname = 'patJets' + ak8_label
     print 'Adding', ak8chs_patname
@@ -1146,15 +1156,17 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # This MUST be run *After* JetSubstructurePacker, so that the subjets are already there,
     # otherwise the DeepBoostedJetTagInfoProducer will fail
     # Also add in PUPPI multiplicities while we're at it.
-    for name in ['slimmedJets', 'slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
+    for name in ['slimmedJets', 'slimmedJetsPuppi', 'rekeyPatJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
         labelName = cap(name)
-        is_ak8 = "ak8" in name.lower()
-        is_puppi = "puppi" in name.lower()
-        is_reclustered = "slimmed" not in name.lower()
-        is_topjet = "packed" in name.lower()
+        name_lower = name.lower()
+        is_ak8 = "ak8" in name_lower
+        is_puppi = "puppi" in name_lower
+        is_reclustered = "slimmed" not in name_lower and 'rekey' not in name_lower
+        is_topjet = "packed" in name_lower
         # This postfix is VERY IMPORTANT for reclustered puppi, as the puppi weights
         # are already applied. If it doesn't have this postfix then it will apply
-        # puppi weights.
+        # puppi weights - necessary for slimmedCollections & rekeyed ones
+        # (i.e. they have the packedPFCandidates as daughters - require puppi weights to be applied)
         # See https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_10/PhysicsTools/PatAlgos/python/tools/jetTools.py#L653
         # Please check in future releases if this is still the case!
         # It's needed only for pfDeepBoostedJetTagInfos
@@ -1307,7 +1319,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # Jet collections
     rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining", "jetsAk4Puppi")
     rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsNewDFTraining", "jetsAk4CHS")
-    rename_module(process, task, "updatedPatJetsTransientCorrectedPatJetsAK8PFPUPPIWithPuppiDaughters", "jetsAk8Puppi")
+    rename_module(process, task, "updatedPatJetsTransientCorrectedRekeyPatJetsAK8PFPUPPINewDFTraining", "jetsAk8Puppi")
     rename_module(process, task, ak8chs_patname, "jetsAk8CHS")
     # TopJet collections
     rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8PuppiJetsWithPuppiDaughters", "jetsAk8PuppiSubstructure")
