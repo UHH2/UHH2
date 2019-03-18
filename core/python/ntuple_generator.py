@@ -829,7 +829,19 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
         subjets_patname = "updatedPatJetsTransientCorrected" + cap(subjets_patname)
 
-        # print "btagDiscriminators ", discriminators
+        # Rekey subjets so constituents point to packedPFCandidates not PUPPI
+        # do before BoostedJetMerger otherwise painful afterwards
+        # Don't rekey groomed fatjet as we don't care about it - the
+        # BoostedJetMerger will replace its daughters with subjets anyway
+        subjets_rekey_name = "rekey"+cap(subjets_patname)
+        setattr(process,
+                subjets_rekey_name,
+                cms.EDProducer("RekeyJets",
+                                jetSrc=cms.InputTag(subjets_patname),
+                                candidateSrc=cms.InputTag("packedPFCandidates"),
+                                )
+                )
+        task.add(getattr(process, subjets_rekey_name))
 
         # add the merged jet collection which contains the links from groomed
         # fat jets to the subjets:
@@ -840,7 +852,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                 groomed_packed_name,
                 cms.EDProducer("BoostedJetMerger",
                                 jetSrc=cms.InputTag(groomed_patname),
-                                subjetSrc=cms.InputTag(subjets_patname)
+                                subjetSrc=cms.InputTag(subjets_rekey_name)
                               )
                 )
         task.add(getattr(process, groomed_packed_name))
@@ -1137,8 +1149,17 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     )
     task.add(process.packedPatJetsAk8CHSJets)
 
-    process.packedPatJetsAk8PuppiJets = cms.EDProducer("JetSubstructurePacker",
-        jetSrc = cms.InputTag("patJetsAk8PuppiJetsFat"),
+    # Rekey jets so ungroomed constituents point to packedPFCandidates not PUPPI.
+    # Easiet here after all btagging etc calculations done that involve constituents
+    # to avoid incorrect calculations
+    process.rekeyPatJetsAk8PuppiJetsFat = cms.EDProducer("RekeyJets",
+        jetSrc=cms.InputTag("patJetsAk8PuppiJetsFat"),
+        candidateSrc=cms.InputTag("packedPFCandidates"),
+        )
+    task.add(process.rekeyPatJetsAk8PuppiJetsFat)
+
+    process.rekeyPackedPatJetsAk8PuppiJets = cms.EDProducer("JetSubstructurePacker",
+        jetSrc = cms.InputTag("rekeyPatJetsAk8PuppiJetsFat"),
         distMax = cms.double(0.8),
         algoTags = cms.VInputTag(
             cms.InputTag("patJetsAk8PuppiJetsSoftDropPacked")
@@ -1148,7 +1169,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         ),
         fixDaughters = cms.bool(False)
     )
-    task.add(process.packedPatJetsAk8PuppiJets)
+    task.add(process.rekeyPackedPatJetsAk8PuppiJets)
 
 
     ###############################################
@@ -1156,7 +1177,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # This MUST be run *After* JetSubstructurePacker, so that the subjets are already there,
     # otherwise the DeepBoostedJetTagInfoProducer will fail
     # Also add in PUPPI multiplicities while we're at it.
-    for name in ['slimmedJets', 'slimmedJetsPuppi', 'rekeyPatJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
+    for name in ['slimmedJets', 'slimmedJetsPuppi', 'rekeyPatJetsAK8PFPUPPI', 'rekeyPackedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
         labelName = cap(name)
         name_lower = name.lower()
         is_ak8 = "ak8" in name_lower
@@ -1322,7 +1343,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     rename_module(process, task, "updatedPatJetsTransientCorrectedRekeyPatJetsAK8PFPUPPINewDFTraining", "jetsAk8Puppi")
     rename_module(process, task, ak8chs_patname, "jetsAk8CHS")
     # TopJet collections
-    rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8PuppiJetsWithPuppiDaughters", "jetsAk8PuppiSubstructure")
+    rename_module(process, task, "updatedPatJetsTransientCorrectedRekeyPackedPatJetsAk8PuppiJetsNewDFTraining", "jetsAk8PuppiSubstructure", update_userData=False)
     rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8CHSJetsNewDFTraining", "jetsAk8CHSSubstructure", update_userData=False)
 #    rename_module(process, task, "packedPatJetsAk8CHSJets", "jetsAk8CHSSubstructure", update_userData=False)  # don't update userData as JetSubstructurePacker
 
