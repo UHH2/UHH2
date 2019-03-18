@@ -216,7 +216,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     import os
     gc_nickname = os.getenv('DATASETNICK')
     if gc_nickname is not None:
-        useData = not gc_nickname.startswith('MC_')
+        #useData = not gc_nickname.startswith('MC_')
         process.source.fileNames = map(lambda s: s.strip(' "'), gc_filenames.split(','))
         process.source.skipEvents = int(os.getenv('SKIP_EVENTS'))
         process.maxEvents.input = int(os.getenv('MAX_EVENTS'))
