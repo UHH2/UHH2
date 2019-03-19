@@ -4,6 +4,7 @@
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/Hists.h"
+#include "UHH2/core/include/Utils.h"
 
 #include "TH1F.h"
 #include "TH2F.h"
@@ -89,37 +90,41 @@ public:
 
     explicit ExampleModuleJetConstituents(Context & ctx);
     virtual bool process(Event & event) override;
-    static LorentzVector constructConstituentSum(std::vector<PFParticle> * pfparticles, const Jet * jet);
+    static LorentzVector constructConstituentSum(std::vector<PFParticle> * pfparticles, const Jet * jet, bool usePuppiWeight);
     static LorentzVector constructConstituentSum(std::vector<GenParticle> * genparticles, const GenJet * genjet);
     static bool isClose(float a, float b, float relDiff=1E-2); // loose tolerance as often packing loses some precision
     static bool compareLVs(const LorentzVector & lv1, const LorentzVector & lv2);
 private:
     unique_ptr<ExampleJetConstitHists> jetHists, topjetHists, topjetSubjetHists, genjetHists, gentopjetHists, gentopjetSubjetHists;
-
+    bool usePuppiWeightJets, usePuppiWeightTopJets;
 };
 
 
 ExampleModuleJetConstituents::ExampleModuleJetConstituents(Context & ctx)
 {
     cout << "Hello World from ExampleModuleJetConstituents!" << endl;
+    usePuppiWeightJets = string2bool(ctx.get("usePuppiWeightJets"));
     jetHists.reset(new ExampleJetConstitHists(ctx, "jetHists"));
+
+    usePuppiWeightTopJets = string2bool(ctx.get("usePuppiWeightTopJets"));
     topjetHists.reset(new ExampleJetConstitHists(ctx, "topjetHists"));
     topjetSubjetHists.reset(new ExampleJetConstitHists(ctx, "topjetSubjetHists"));
+
     genjetHists.reset(new ExampleJetConstitHists(ctx, "genjetHists"));
     gentopjetHists.reset(new ExampleJetConstitHists(ctx, "gentopjetHists"));
+
     gentopjetSubjetHists.reset(new ExampleJetConstitHists(ctx, "gentopjetSubjetHists"));
 }
 
 
-LorentzVector ExampleModuleJetConstituents::constructConstituentSum(std::vector<PFParticle> * pfparticles, const Jet * jet) {
+LorentzVector ExampleModuleJetConstituents::constructConstituentSum(std::vector<PFParticle> * pfparticles, const Jet * jet, bool usePuppiWeight) {
     if (pfparticles == nullptr) { throw std::runtime_error("pfparticles is nullptr"); }
     if (jet == nullptr) { throw std::runtime_error("Jet is nullptr"); }
 
     LorentzVector consistSum;
-    //    cout<<"SIZE pfcand_indexs() = "<<jet->pfcand_indexs().size()<<endl;
     for (const auto candInd : jet->pfcand_indexs()) {
-      //      cout<<"TEST! "<<candInd<<endl;
-        consistSum += pfparticles->at(candInd).v4();
+        float puppiWeight = (usePuppiWeight) ? pfparticles->at(candInd).puppiWeight() : 1.;
+        consistSum += pfparticles->at(candInd).v4() * puppiWeight;
     }
     return consistSum;
 }
@@ -158,7 +163,7 @@ bool ExampleModuleJetConstituents::process(Event & event) {
         cout << "--- Jets: " << event.jets->size() << endl;
         uint jetInd = 0;
         for (auto & jetItr : *event.jets) {
-            auto sumJet = constructConstituentSum(event.pfparticles, &jetItr);
+            auto sumJet = constructConstituentSum(event.pfparticles, &jetItr, usePuppiWeightJets);
             LorentzVector rawJet = jetItr.v4() * jetItr.JEC_factor_raw();  // NB need uncorrected jet
             bool comp_jet = compareLVs(rawJet, sumJet);
 	    if(!comp_jet) 	cout<<"  -- size of pfcand_indexs() = "<<jetItr.pfcand_indexs().size()<<" for jet#"<<jetInd<<endl;
@@ -172,7 +177,7 @@ bool ExampleModuleJetConstituents::process(Event & event) {
         cout << "--- TopJets: " << event.topjets->size() << endl;
         uint jetInd = 0;
         for (auto & jetItr : *event.topjets) {
-            auto sumJet = constructConstituentSum(event.pfparticles, &jetItr);
+            auto sumJet = constructConstituentSum(event.pfparticles, &jetItr, usePuppiWeightTopJets);
             LorentzVector rawJet = jetItr.v4() * jetItr.JEC_factor_raw();  // NB need uncorrected jet
             compareLVs(rawJet, sumJet);
             uint nConstituents = jetItr.pfcand_indexs().size();
@@ -180,7 +185,7 @@ bool ExampleModuleJetConstituents::process(Event & event) {
             jetInd++;
 
             for (auto & subjetItr : jetItr.subjets()) {
-              auto sumJet = constructConstituentSum(event.pfparticles, &subjetItr);
+              auto sumJet = constructConstituentSum(event.pfparticles, &subjetItr, usePuppiWeightTopJets);
               LorentzVector rawJet = subjetItr.v4() * subjetItr.JEC_factor_raw();  // NB need uncorrected jet
               uint nConstituents = subjetItr.pfcand_indexs().size();
               topjetSubjetHists->fill(rawJet, sumJet, nConstituents, jetInd);
