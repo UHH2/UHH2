@@ -168,3 +168,6 @@ void TableOutput::add_row(const vector<string> & row){
 }
 
 
+bool uhh2::closeFloat(float a, float b, float maxRelDiff, float maxAbsDiff) {
+  return fabs(a-b) <= max(maxRelDiff * max(fabs(a), fabs(b)), maxAbsDiff);
+}

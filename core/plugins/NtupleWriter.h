@@ -14,6 +14,11 @@
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
+
+#include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
+#include "DataFormats/L1Trigger/interface/EGamma.h"
+#include "DataFormats/L1Trigger/interface/Jet.h"
+
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
 #include "TTree.h"
@@ -46,9 +51,6 @@ class NtupleWriter : public edm::EDFilter {
       // fill gen particles and other info from a pat-jet (for XCONE, HOTVR, etc)
       void fill_geninfo_patjet(const pat::Jet& pat_genjet, GenJet& genjet, bool &add);
 
-      //For clustered reco::GenJet with subjets, which turn out to be reco::Jet with subjets reco::Candidate
-      void fill_geninfo_recocand(const reco::Candidate& constituent, GenJet& genjet);
-
       /* //Add pf candidate to event */
       /* size_t add_pfpart(const reco::Candidate & pf, std::vector<PFParticle> & pfparts); */
 
@@ -63,23 +65,17 @@ class NtupleWriter : public edm::EDFilter {
       bool doGenMET;
       bool doPhotons;
       bool doGenInfo;
-      bool doAllGenParticles;
-      bool doAllGenParticlesPythia8;
+      bool doStableGenParticles;
       unsigned doGenJetConstituentsNjets;
       double doGenJetConstituentsMinJetPt;
-      bool doGenJetConstituents;
       unsigned doGenTopJetConstituentsNjets;
       double doGenTopJetConstituentsMinJetPt;
-      bool doGenTopJetConstituents;
       unsigned doGenxconeJetConstituentsNjets;
       double doGenxconeJetConstituentsMinJetPt;
-      bool doGenxconeJetConstituents;
       unsigned doGenxconeDijetJetConstituentsNjets;
       double doGenxconeDijetJetConstituentsMinJetPt;
-      bool doGenxconeDijetJetConstituents;
       unsigned doGenhotvrJetConstituentsNjets;
       double doGenhotvrJetConstituentsMinJetPt;
-      bool doGenhotvrJetConstituents;
 
       unsigned doPFJetConstituentsNjets;
       double doPFJetConstituentsMinJetPt;
@@ -100,6 +96,7 @@ class NtupleWriter : public edm::EDFilter {
 
       bool doPV;
       bool doTrigger;
+      bool doL1seed;
       bool doEcalBadCalib;
       bool doPrefire;
       bool runOnMiniAOD;
@@ -139,19 +136,6 @@ class NtupleWriter : public edm::EDFilter {
 
       edm::EDGetToken pf_collection_token;
 
-      std::vector<edm::EDGetToken> gentopjet_tokens;
-      std::vector<std::vector<GenTopJet>> gentopjets;
-      double gentopjet_ptmin;
-      double gentopjet_etamax;
-      std::vector<edm::EDGetToken> gentopjet_tau1_tokens;
-      std::vector<edm::EDGetToken> gentopjet_tau2_tokens;
-      std::vector<edm::EDGetToken> gentopjet_tau3_tokens;
-      std::vector<edm::EDGetToken> gentopjet_tau4_tokens;
-      std::vector<edm::EDGetToken> gentopjet_ecf_beta1_N2_tokens;
-      std::vector<edm::EDGetToken> gentopjet_ecf_beta1_N3_tokens;
-      std::vector<edm::EDGetToken> gentopjet_ecf_beta2_N2_tokens;
-      std::vector<edm::EDGetToken> gentopjet_ecf_beta2_N3_tokens;
-
       std::vector<edm::EDGetToken> photon_tokens;
       std::vector<std::vector<Photon>> phs;
 
@@ -181,6 +165,8 @@ class NtupleWriter : public edm::EDFilter {
       edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
       edm::EDGetTokenT<edm::TriggerResults>  metfilterBits_;
       edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescales_;
+      edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescalesL1min_;
+      edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescalesL1max_;
       edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
 
       std::vector<std::vector<FlavorParticle> > triggerObjects_out;
@@ -204,6 +190,13 @@ class NtupleWriter : public edm::EDFilter {
 
       std::vector<edm::EDGetToken> genxcone_tokens_dijet;
       std::vector<std::vector<GenTopJet>> genxconeJets_dijet;
+
+      edm::EDGetTokenT<BXVector<GlobalAlgBlk>> l1GtToken_;
+      edm::EDGetTokenT<BXVector<l1t::EGamma>> l1EGToken_;
+      edm::EDGetTokenT<BXVector<l1t::Jet>> l1JetToken_;
+
+      std::vector<L1EGamma>  L1EG_seeds;
+      std::vector<L1Jet> L1Jet_seeds;
 
 };
 

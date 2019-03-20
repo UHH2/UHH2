@@ -15,7 +15,8 @@
 
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
-            <Item Name="JetCollection" Value="slimmedJets" />
+            <Item Name="JetCollection" Value="jetsAk4CHS" />
+            <Item Name="TopJetCollection" Value="jetsAk8PuppiSubstructure_SoftDropPuppi" />
 
 
             <!-- the class name of the AnalysisModule subclasses to run: -->

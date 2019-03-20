@@ -148,6 +148,7 @@ NtupleWriterPhotons::NtupleWriterPhotons(Config & cfg, bool set_photons_member, 
   src_token = cfg.cc.consumes<std::vector<pat::Photon>>(cfg.src);
   pv_token = cfg.cc.consumes<std::vector<reco::Vertex>>(cfg.pv_src);
   IDtag_keys = cfg.id_keys;
+  doPuppiIso_ = cfg.doPuppiIso;
 }
 
 NtupleWriterPhotons::~NtupleWriterPhotons(){}
@@ -173,25 +174,27 @@ void NtupleWriterPhotons::process(const edm::Event & event, uhh2::Event & uevent
         pho.set_eta( pat_pho.eta());
         pho.set_phi( pat_pho.phi());
         pho.set_energy( pat_pho.energy());
-	pho.set_vertex_x(pat_pho.vertex().x());
-	pho.set_vertex_y(pat_pho.vertex().y());
-	pho.set_vertex_z(pat_pho.vertex().z());
-	pho.set_puppiChargedHadronIso(pat_pho.puppiChargedHadronIso());
-	pho.set_puppiNeutralHadronIso(pat_pho.puppiNeutralHadronIso());
-	pho.set_puppiPhotonIso(pat_pho.puppiPhotonIso());
+        pho.set_vertex_x(pat_pho.vertex().x());
+        pho.set_vertex_y(pat_pho.vertex().y());
+        pho.set_vertex_z(pat_pho.vertex().z());
+        if (doPuppiIso_){
+          pho.set_puppiChargedHadronIso(pat_pho.puppiChargedHadronIso());
+          pho.set_puppiNeutralHadronIso(pat_pho.puppiNeutralHadronIso());
+          pho.set_puppiPhotonIso(pat_pho.puppiPhotonIso());
+        }
         pho.set_supercluster_eta( pat_pho.superCluster()->eta() );
         pho.set_supercluster_phi( pat_pho.superCluster()->phi() );
 
-	pho.set_trackIso(pat_pho.trackIso());
-	pho.set_ecalIso(pat_pho.ecalIso());
-	pho.set_hcalIso(pat_pho.hcalIso());
-	pho.set_caloIso(pat_pho.caloIso());
+        pho.set_trackIso(pat_pho.trackIso());
+        pho.set_ecalIso(pat_pho.ecalIso());
+        pho.set_hcalIso(pat_pho.hcalIso());
+        pho.set_caloIso(pat_pho.caloIso());
 
-	//	pho.set_patParticleIso(pat_pho.patParticleIso());
-	pho.set_chargedHadronIso(pat_pho.chargedHadronIso());
-	pho.set_neutralHadronIso(pat_pho.neutralHadronIso());
-	pho.set_photonIso(pat_pho.photonIso());
-	pho.set_puChargedHadronIso(pat_pho.puChargedHadronIso());
+        //	pho.set_patParticleIso(pat_pho.patParticleIso());
+        pho.set_chargedHadronIso(pat_pho.chargedHadronIso());
+        pho.set_neutralHadronIso(pat_pho.neutralHadronIso());
+        pho.set_photonIso(pat_pho.photonIso());
+        pho.set_puChargedHadronIso(pat_pho.puChargedHadronIso());
 
         for(const auto& tag_str : IDtag_keys){
           if(!pat_pho.hasUserInt(tag_str)) throw cms::Exception("Missing userInt label", "Label for pat::Photon::userInt not found: "+tag_str);

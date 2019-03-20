@@ -39,6 +39,7 @@ public:
     struct Config: public NtupleWriterModule::Config {     
       edm::InputTag pv_src;
       std::vector<std::string> id_keys;
+      bool doPuppiIso;
 
       // inherit constructor does not work yet :-(
       Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_,
@@ -58,7 +59,7 @@ private:
     Event::Handle<std::vector<Photon>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Photon>>> photons_handle; // handle of name "electrons" in case set_electrons_member is true
 
-    bool save_source_candidates_;
+    bool save_source_candidates_, doPuppiIso_;
 };
 
 

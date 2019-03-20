@@ -16,13 +16,18 @@
 #include "TrackingTools/IPTools/interface/IPTools.h"
 #include "fastjet/PseudoJet.hh"
 #include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
+
+
 class GenericMVAJetTagComputer;
 
 namespace uhh2 {
 
+size_t add_genpart(const reco::Candidate & jetgenp, std::vector<GenParticle> & genparts);
+size_t add_pfpart(const reco::Candidate & pf, std::vector<PFParticle> & pfparts);
+
 class NtupleWriterJets: public NtupleWriterModule {
 public:
-    static void fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, const std::string & puppiJetSpecificProducer="", bool fill_pfcand=false);
+    static void fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, bool doPuppiSpecific, bool fill_pfcand=false);
 
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents, double MinPtJetwConstituents);
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&, unsigned int NPFJetwConstituents, double MinPtJetwConstituents);
@@ -39,7 +44,7 @@ private:
     Event::Handle<std::vector<Jet>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Jet>>> jets_handle; // handle of name "jets" in case set_jets_member is true
     //    boost::optional<Event::Handle<std::vector<PFParticle>>> pfcand_handle;//handle to PF constituences of jets
-    std::string jet_puppiSpecificProducer; // hold name of puppiJetSpecificProducer for userFloat access
+    bool doPuppiSpecific; // get puppi specifics from userFloats
     bool save_lepton_keys_;
     std::vector<Event::Handle<std::vector<Muon>    >> h_muons;
     std::vector<Event::Handle<std::vector<Electron>>> h_elecs;
@@ -55,7 +60,7 @@ public:
 
     struct Config: public NtupleWriterModule::Config {
         using NtupleWriterModule::Config::Config;
-        
+
         bool do_btagging = true, do_btagging_subjets = true, do_taginfo_subjets;
 
         edm::InputTag substructure_variables_src;// a jet collection from where to take the subjet variables (after DeltaR-matching)
@@ -91,7 +96,8 @@ private:
     edm::EDGetToken src_ecf_beta1_N2_token, src_ecf_beta1_N3_token, src_ecf_beta2_N2_token, src_ecf_beta2_N3_token;
     edm::EDGetToken src_hepTopTag_token;
     edm::EDGetToken src_higgstaginfo_token;
-    std::string njettiness_src, njettiness_groomed_src, qjets_src, ecf_beta1_src, ecf_beta2_src, subjet_src, higgs_src, higgs_name, higgstaginfo_src, softdrop_src, topjet_collection, topjet_puppiSpecificProducer;
+    std::string njettiness_src, njettiness_groomed_src, qjets_src, ecf_beta1_src, ecf_beta2_src, subjet_src, higgs_src, higgs_name, higgstaginfo_src, softdrop_src, topjet_collection;
+    bool doPuppiSpecific;
     Event::Handle<std::vector<TopJet>> handle;
     boost::optional<Event::Handle<std::vector<TopJet>>> topjets_handle;
     //    boost::optional<Event::Handle<std::vector<PFParticle>>> pfcand_handle;
@@ -103,6 +109,41 @@ private:
     std::vector<Event::Handle<std::vector<Muon>    >> h_muons;
     std::vector<Event::Handle<std::vector<Electron>>> h_elecs;
     std::vector<Event::Handle<std::vector<PFParticle>>> h_pfcands;
+};
+
+class NtupleWriterGenTopJets: public NtupleWriterModule{
+public:
+
+    struct Config: public NtupleWriterModule::Config {
+        using NtupleWriterModule::Config::Config;
+
+        edm::InputTag substructure_variables_src;// a jet collection from where to take the subjet variables (after DeltaR-matching), may or may not be the same as the main jet collection
+        std::string subjet_src;
+        std::string njettiness_src;
+        std::string ecf_beta1_src;
+        std::string ecf_beta2_src;
+    };
+
+    explicit NtupleWriterGenTopJets(Config & cfg, bool set_jets_member, unsigned int NGenJetwConstituents, double MinPtJetwConstituents);
+    static void fill_genjet_info(uhh2::Event & event, const reco::Candidate & reco_genjet, GenJet & jet, bool add_genparts=false);
+    virtual void process(const edm::Event &, uhh2::Event &,  const edm::EventSetup&);
+    virtual ~NtupleWriterGenTopJets();
+
+private:
+    edm::InputTag src;
+    float ptmin, etamax;
+    edm::EDGetToken src_token, subjet_src_token;
+    edm::EDGetToken substructure_variables_src_token_basic, substructure_variables_src_token_gen;
+    edm::EDGetToken src_njettiness1_token, src_njettiness2_token, src_njettiness3_token, src_njettiness4_token;
+    edm::EDGetToken src_ecf_beta1_N2_token, src_ecf_beta1_N3_token, src_ecf_beta2_N2_token, src_ecf_beta2_N3_token;
+    std::string subjet_src, njettiness_src, ecf_beta1_src, ecf_beta2_src, gentopjet_collection;
+    bool useSubstructureVar;
+
+    Event::Handle<std::vector<GenTopJet>> handle;
+    boost::optional<Event::Handle<std::vector<GenTopJet>>> gentopjets_handle;
+
+    unsigned int NGenJetwConstituents_;
+    double MinPtJetwConstituents_;
 };
 
 }

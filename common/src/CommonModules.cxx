@@ -20,7 +20,7 @@ void CommonModules::fail_if_init() const{
 
 
 CommonModules::CommonModules(){
-  working_point = JetPFID::WP_TIGHT;
+  working_point = JetPFID::WP_TIGHT_CHS;
 }
 
 
@@ -46,7 +46,8 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
        if(jec){
 	 jet_corrector_B.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_B_L123_AK4PFchs_DATA));
 	 jet_corrector_C.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_C_L123_AK4PFchs_DATA));
-	 jet_corrector_DE.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_DE_L123_AK4PFchs_DATA));
+	 jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_D_L123_AK4PFchs_DATA));
+	 jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_E_L123_AK4PFchs_DATA));
 	 jet_corrector_F.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_F_L123_AK4PFchs_DATA));
        }
     }
@@ -75,7 +76,8 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
       else{
 	JLC_B.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_B_L123_AK4PFchs_DATA));
 	JLC_C.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_C_L123_AK4PFchs_DATA));
-	JLC_DE.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_DE_L123_AK4PFchs_DATA));
+	JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_D_L123_AK4PFchs_DATA));
+	JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_E_L123_AK4PFchs_DATA));
 	JLC_F.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_F_L123_AK4PFchs_DATA));
       }
     }
@@ -102,7 +104,8 @@ bool CommonModules::process(uhh2::Event & event){
       else{
 	if(event.run <= runnr_B)      JLC_B->process(event);
 	else if(event.run <= runnr_C) JLC_C->process(event);
-	else if(event.run <= runnr_DE) JLC_DE->process(event);
+	else if(event.run <= runnr_D) JLC_D->process(event);
+	else if(event.run <= runnr_E) JLC_E->process(event);
         else if(event.run <= runnr_F) JLC_F->process(event);
 	else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
       }
@@ -113,7 +116,8 @@ bool CommonModules::process(uhh2::Event & event){
       else{
 	if(event.run <= runnr_B)      jet_corrector_B->process(event);
 	else if(event.run <= runnr_C) jet_corrector_C->process(event);
-	else if(event.run <= runnr_DE) jet_corrector_DE->process(event);
+	else if(event.run <= runnr_D) jet_corrector_D->process(event);
+	else if(event.run <= runnr_E) jet_corrector_E->process(event);
 	else if(event.run <= runnr_F) jet_corrector_F->process(event);
 	else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
       }
@@ -127,7 +131,8 @@ bool CommonModules::process(uhh2::Event & event){
       else{
 	if(event.run <= runnr_B)      jet_corrector_B->correct_met(event);
 	else if(event.run <= runnr_C) jet_corrector_C->correct_met(event);
-	else if(event.run <= runnr_DE) jet_corrector_DE->correct_met(event);
+	else if(event.run <= runnr_D) jet_corrector_D->correct_met(event);
+	else if(event.run <= runnr_E) jet_corrector_E->correct_met(event);
 	else if(event.run <= runnr_F) jet_corrector_F->correct_met(event);
 	else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
       }

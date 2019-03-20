@@ -132,7 +132,7 @@ public:
 protected:
   void do_fill(const std::vector<TopJet> & jets, const uhh2::Event & event);
 
-  const CSVBTag btag_;
+  CSVBTag btag_;
   TH2F * hist_b_passing_;
   TH2F * hist_b_total_;
   TH2F * hist_c_passing_;

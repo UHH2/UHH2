@@ -229,6 +229,11 @@ namespace JERSmearing {
 
   extern const SFtype1 SF_13TeV_Fall17;
   extern const SFtype1 SF_13TeV_Fall17_V3;
+  extern const SFtype1 SF_13TeV_Fall17_V3_RunBCDEF_Madgraph;// for JERC people only
+
+  extern const SFtype1 SF_13TeV_Autumn18_V1;
+  extern const SFtype1 SF_13TeV_Autumn18_RunABC_V1;
+  extern const SFtype1 SF_13TeV_Autumn18_RunD_V1;
 }
 
 
@@ -255,7 +260,7 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
  private:
   uhh2::Event::Handle<std::vector<Jet> >       h_recjets_;
-  uhh2::Event::Handle<std::vector<Particle> >  h_genjets_;
+  uhh2::Event::Handle<std::vector<GenJet> >    h_genjets_;
   uhh2::Event::Handle<std::vector<TopJet> >    h_rectopjets_;
   uhh2::Event::Handle<std::vector<GenTopJet> > h_gentopjets_;
 

@@ -94,11 +94,11 @@ class Jet : public FlavorParticle {
   float btag_DeepFlavour_uds() const{return m_btag_DeepFlavour_probuds;}
   float btag_DeepFlavour_g() const{return m_btag_DeepFlavour_probg;}
   float btag_DeepFlavour_c() const{return m_btag_DeepFlavour_probc;}
-  float btag_DeepFlavour() const{return m_btag_DeepFlavour_probbb+m_btag_DeepFlavour_probb+m_btag_DeepFlavour_problepb;}
+  float btag_DeepJet() const{return m_btag_DeepFlavour_probbb+m_btag_DeepFlavour_probb+m_btag_DeepFlavour_problepb;}
  
 
-  float JEC_factor_raw() const{return m_JEC_factor_raw;}
-  float JEC_L1factor_raw() const{return m_JEC_L1factor_raw;}
+  float JEC_factor_raw() const{return m_JEC_factor_raw;} // This takes you from corrected -> uncorrected
+  float JEC_L1factor_raw() const{return m_JEC_L1factor_raw;} // This takes you from uncorrected -> L1 corrected
   float genjet_index() const{return m_genjet_index;}
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
   float has_tag(tag t) const { return tags.has_tag(static_cast<int>(t)); }

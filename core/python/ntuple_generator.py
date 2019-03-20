@@ -55,7 +55,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         If the year argument is not one of the allowable options
     """
     year = str(year)  # sanitise string
-    acceptable_years = ["2016v2", "2016v3", "2017", "2018"]
+    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018"]
     if year not in acceptable_years:
         raise ValueError("year argument in generate_process() should be one of: %s. You provided: %s" % (acceptable_years, year))
 
@@ -67,8 +67,22 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         met_sources_GL.extend(['slimmedMETsEGClean', 'slimmedMETsMuEGClean', 'slimmedMETsUncorrected'])
     if (year=="2016v2" or year=="2016v3"):
         met_sources_GL.extend(['slMETsCHS'])
-    
 
+    # define our Process object
+    # eras are needed for correct b-tagging
+    from Configuration.StandardSequences.Eras import eras
+    if year == "2018":
+        process = cms.Process("USER", eras.Run2_2018)
+    elif year == "2017v2":
+        process = cms.Process("USER", eras.Run2_2017, eras.run2_miniAOD_94XFall17)
+    elif year == "2017v1":
+        process = cms.Process("USER", eras.Run2_2017)
+    elif year == "2016v3":
+        process = cms.Process("USER", eras.Run2_2016, eras.run2_miniAOD_80XLegacy) 
+    elif year == "2016v2":
+        process = cms.Process("USER", eras.Run2_2016)
+    else:
+        raise RuntimeError("Cannot setup process for this year, may need to add a new entry.")
 
     bTagDiscriminators = [
         'pfJetProbabilityBJetTags',
@@ -81,7 +95,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         'pfBoostedDoubleSecondaryVertexAK8BJetTags',
         'pfBoostedDoubleSecondaryVertexCA15BJetTags',
     ]
- 
+
     ak4btagDiscriminators = [
         'pfDeepFlavourJetTags:probb',
         'pfDeepFlavourJetTags:probbb',
@@ -161,8 +175,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         'pfImpactParameterTagInfos', 'pfSecondaryVertexTagInfos', 'pfInclusiveSecondaryVertexFinderTagInfos', 'softPFMuonsTagInfos', 'softPFElectronsTagInfos'
     ]
 
-    process = cms.Process("USER")
-
     task = cms.Task()
 
     process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -199,19 +211,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100))
 
     # Grid-control changes:
-    gc_maxevents = '__MAX_EVENTS__'
-    gc_skipevents = '__SKIP_EVENTS__'
     gc_filenames = '__FILE_NAMES__'
 
     import os
     gc_nickname = os.getenv('DATASETNICK')
-
     if gc_nickname is not None:
-        useData = not gc_nickname.startswith('MC_')
+        #useData = not gc_nickname.startswith('MC_')
         process.source.fileNames = map(lambda s: s.strip(' "'), gc_filenames.split(','))
-        process.source.skipEvents = int(gc_skipevents)
-        process.maxEvents.input = int(gc_maxevents)
-
+        process.source.skipEvents = int(os.getenv('SKIP_EVENTS'))
+        process.maxEvents.input = int(os.getenv('MAX_EVENTS'))
 
     ###############################################
     # OUT
@@ -255,7 +263,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
     # There should be 1 key:value entry per entry in acceptable_years, and each
-    # should have a dictionary of "data" and "mc" with their respsective global tags
+    # should have a dictionary of "data" and "mc" with their respective global tags
     global_tags = {
         "2016v2": {
             "data": "80X_dataRun2_2016SeptRepro_v7",
@@ -266,9 +274,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             "data": "94X_dataRun2_v10",
             "mc": "94X_mcRun2_asymptotic_v3",
         },
-        "2017": {
-            "data": "94X_dataRun2_v6",
-            "mc": "94X_mc2017_realistic_v14"
+        "2017v1": {
+            "data": "92X_dataRun2_Prompt_v11", # don't really use, so possibly wrong
+            "mc": "94X_mc2017_realistic_v12"
+        },
+        "2017v2": {
+            "data": "94X_dataRun2_v11",
+            "mc": "94X_mc2017_realistic_v17"
         },
         "2018": {
             "data": "102X_dataRun2_Prompt_v6",
@@ -318,7 +330,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     )
     task.add(process.prunedPrunedGenParticles)
 
-
     ###############################################
     # Modified TypeI MET
     #
@@ -326,7 +337,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETUncertaintyPrescription?rev=89#Instructions_for_9_4_X_X_9_or_10
     # To be used with 17Nov2017 and 31Mar2018 rereco of 2017 data, and MC events.
     # The more accurate and long-term solution will come incorporated in planed "Ultra-Legacy" recreco
-    if year in ['2017']:
+    if "2017" in year:
         from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 
         runMetCorAndUncFromMiniAOD(
@@ -374,6 +385,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # The ak8CHSJetsSoftDrop collection produce the groomed jets as reco::BasicJets,
     # and the subjets as reco::PFJets, with instance label "SubJets"
     # It is used for its subjets
+    # NB its "daughters/constituents" are ONLY the subjets not actual constituents
     process.ak8CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(
         src=cms.InputTag('chs'),
         jetPtMin=fatjet_ptmin
@@ -383,6 +395,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # The ak8CHSJetsSoftDropforsub produces only the groomed jets as PFJets
     # It is used for calculating quantities on the groomed fat jet that require
     # reco::PFJets rather than reco::BasicJets as produced by ak8CHSJetsSoftDrop
+    # This actually gives you the proper groomed constituents!
     process.ak8CHSJetsSoftDropforsub = process.ak8CHSJetsSoftDrop.clone()
     delattr(process.ak8CHSJetsSoftDropforsub, "writeCompound")
     delattr(process.ak8CHSJetsSoftDropforsub, "jetCollInstanceName")
@@ -555,6 +568,27 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         cut=cms.string("abs(pdgId) != 12 && abs(pdgId) != 14 && abs(pdgId) != 16")
     )
     task.add(process.packedGenParticlesForJetsNoNu)
+
+
+    # Create a list with only muons and photons that where radiated from muons.
+    # This lists will later be used as input for jet clustering.
+    # The resulting jets act as a good lepton definition on particle level when comparing to detektor level.
+    # The same procedure is done for electrons.
+    process.MuonPhotonGenParticles = cms.EDFilter("CandPtrSelector",
+        src=cms.InputTag("packedGenParticles"),
+        cut=cms.string(
+            "(abs(pdgId) == 13) || (abs(pdgId) == 22 && numberOfMothers()==1 && abs(mother().pdgId()) == 13)"
+        )
+    )
+    task.add(process.MuonPhotonGenParticles)
+
+    process.ElectronPhotonGenParticles = cms.EDFilter("CandPtrSelector",
+        src=cms.InputTag("packedGenParticles"),
+        cut=cms.string(
+            "(abs(pdgId) == 11) || (abs(pdgId) == 22 && numberOfMothers()==1 && abs(mother().pdgId()) == 11)"
+        )
+    )
+    task.add(process.ElectronPhotonGenParticles)
 
 
     def del_attr_safely(obj, name):
@@ -787,7 +821,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             jetSource=cms.InputTag(subjets_patname),
             pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
             svSource=cms.InputTag('slimmedSecondaryVertices'),
-            jetCorrections=jetcorr_arg,  
+            jetCorrections=jetcorr_arg,
             btagDiscriminators=discriminators,
             postfix=postfix,
             printWarning=False
@@ -795,7 +829,19 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
         subjets_patname = "updatedPatJetsTransientCorrected" + cap(subjets_patname)
 
-        # print "btagDiscriminators ", discriminators
+        # Rekey subjets so constituents point to packedPFCandidates not PUPPI
+        # do before BoostedJetMerger otherwise painful afterwards
+        # Don't rekey groomed fatjet as we don't care about it - the
+        # BoostedJetMerger will replace its daughters with subjets anyway
+        subjets_rekey_name = "rekey"+cap(subjets_patname)
+        setattr(process,
+                subjets_rekey_name,
+                cms.EDProducer("RekeyJets",
+                                jetSrc=cms.InputTag(subjets_patname),
+                                candidateSrc=cms.InputTag("packedPFCandidates"),
+                                )
+                )
+        task.add(getattr(process, subjets_rekey_name))
 
         # add the merged jet collection which contains the links from groomed
         # fat jets to the subjets:
@@ -806,7 +852,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                 groomed_packed_name,
                 cms.EDProducer("BoostedJetMerger",
                                 jetSrc=cms.InputTag(groomed_patname),
-                                subjetSrc=cms.InputTag(subjets_patname)
+                                subjetSrc=cms.InputTag(subjets_rekey_name)
                               )
                 )
         task.add(getattr(process, groomed_packed_name))
@@ -928,12 +974,20 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     # AK8 GenJets
     process.NjettinessAk8Gen = process.NjettinessAk8CHS.clone(
-        src=cms.InputTag("ak8GenJetsFat")
+        src=cms.InputTag("ak8GenJetsFat")  # created in add_fatjets_subjets
     )
     task.add(process.NjettinessAk8Gen)
 
+    # ak8GenJetsSoftDrop is created in add_fatjets_subjets
+    # But we need all the groomed constitents, so we need to add another cluster
+    # without the subjets, like we do for CHS & PUPPI
+    process.ak8GenJetsSoftDropforsub = process.ak8GenJetsSoftDrop.clone()
+    delattr(process.ak8GenJetsSoftDropforsub, "writeCompound")
+    delattr(process.ak8GenJetsSoftDropforsub, "jetCollInstanceName")
+    task.add(process.ak8GenJetsSoftDropforsub)
+
     process.NjettinessAk8SoftDropGen = process.NjettinessAk8SoftDropCHS.clone(
-        src=cms.InputTag("ak8GenJetsSoftDrop")
+        src=cms.InputTag("ak8GenJetsSoftDropforsub")
     )
     task.add(process.NjettinessAk8SoftDropGen)
 
@@ -987,13 +1041,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     # AK8 Gen
     process.ECFNbeta1Ak8SoftDropGen = ecfNbeta1.clone(
-        src=cms.InputTag("ak8GenJetsSoftDrop"),
+        src=cms.InputTag("ak8GenJetsSoftDropforsub"),
         cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta1Ak8SoftDropGen)
 
     process.ECFNbeta2Ak8SoftDropGen = ecfNbeta2.clone(
-        src=cms.InputTag("ak8GenJetsSoftDrop"),
+        src=cms.InputTag("ak8GenJetsSoftDropforsub"),
         cuts=cms.vstring('', '', 'pt > %f' % (ecf_pt_min))
     )
     task.add(process.ECFNbeta2Ak8SoftDropGen)
@@ -1043,6 +1097,16 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         producer = getattr(process, ak8puppi_patname)
         modify_patjetproducer_for_data(process, producer)
 
+    # Rekey daughters, i.e. point to the objects in packedPfCandidates
+    # instead of in puppi (you then need to multiply constituents by puppiWeight)
+    # Do this to save space in ntuple if storing jet constituents -
+    # no duplicates across CHS & PUPPI
+    process.rekeyPatJetsAK8PFPUPPI = cms.EDProducer("RekeyJets",
+        jetSrc=cms.InputTag("patJetsAK8PFPUPPI"),
+        candidateSrc=cms.InputTag("packedPFCandidates"),
+        )
+    task.add(process.rekeyPatJetsAK8PFPUPPI)
+
     ak8_label = "AK8PFCHS"
     ak8chs_patname = 'patJets' + ak8_label
     print 'Adding', ak8chs_patname
@@ -1085,8 +1149,17 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     )
     task.add(process.packedPatJetsAk8CHSJets)
 
-    process.packedPatJetsAk8PuppiJets = cms.EDProducer("JetSubstructurePacker",
-        jetSrc = cms.InputTag("patJetsAk8PuppiJetsFat"),
+    # Rekey jets so ungroomed constituents point to packedPFCandidates not PUPPI.
+    # Easiet here after all btagging etc calculations done that involve constituents
+    # to avoid incorrect calculations
+    process.rekeyPatJetsAk8PuppiJetsFat = cms.EDProducer("RekeyJets",
+        jetSrc=cms.InputTag("patJetsAk8PuppiJetsFat"),
+        candidateSrc=cms.InputTag("packedPFCandidates"),
+        )
+    task.add(process.rekeyPatJetsAk8PuppiJetsFat)
+
+    process.rekeyPackedPatJetsAk8PuppiJets = cms.EDProducer("JetSubstructurePacker",
+        jetSrc = cms.InputTag("rekeyPatJetsAk8PuppiJetsFat"),
         distMax = cms.double(0.8),
         algoTags = cms.VInputTag(
             cms.InputTag("patJetsAk8PuppiJetsSoftDropPacked")
@@ -1096,22 +1169,25 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         ),
         fixDaughters = cms.bool(False)
     )
-    task.add(process.packedPatJetsAk8PuppiJets)
+    task.add(process.rekeyPackedPatJetsAk8PuppiJets)
+
 
     ###############################################
     # Do deep flavours & deep tagging
     # This MUST be run *After* JetSubstructurePacker, so that the subjets are already there,
     # otherwise the DeepBoostedJetTagInfoProducer will fail
     # Also add in PUPPI multiplicities while we're at it.
-    for name in ['slimmedJets', 'slimmedJetsPuppi', 'patJetsAK8PFPUPPI', 'packedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
+    for name in ['slimmedJets', 'slimmedJetsPuppi', 'rekeyPatJetsAK8PFPUPPI', 'rekeyPackedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
         labelName = cap(name)
-        is_ak8 = "ak8" in name.lower()
-        is_puppi = "puppi" in name.lower()
-        is_reclustered = "slimmed" not in name.lower()
-        is_topjet = "packed" in name.lower()
+        name_lower = name.lower()
+        is_ak8 = "ak8" in name_lower
+        is_puppi = "puppi" in name_lower
+        is_reclustered = "slimmed" not in name_lower and 'rekey' not in name_lower
+        is_topjet = "packed" in name_lower
         # This postfix is VERY IMPORTANT for reclustered puppi, as the puppi weights
         # are already applied. If it doesn't have this postfix then it will apply
-        # puppi weights.
+        # puppi weights - necessary for slimmedCollections & rekeyed ones
+        # (i.e. they have the packedPFCandidates as daughters - require puppi weights to be applied)
         # See https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_10/PhysicsTools/PatAlgos/python/tools/jetTools.py#L653
         # Please check in future releases if this is still the case!
         # It's needed only for pfDeepBoostedJetTagInfos
@@ -1145,9 +1221,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         if useData:
             jetcorr_list.append("L2L3Residual")
 
-#        discriminators = bTagDiscriminators[:]
-#        discriminators.extend(ak4btagDiscriminators)
-        discriminators = ak4btagDiscriminators[:]
+        if year == "2016v2":
+            discriminators = bTagDiscriminators[:]
+            discriminators.extend(ak4btagDiscriminators)
+        else:
+            discriminators = ak4btagDiscriminators[:]
+
         if is_ak8 and is_topjet:
             discriminators.extend(ak8btagDiscriminators)
 
@@ -1261,13 +1340,21 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # Jet collections
     rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining", "jetsAk4Puppi")
     rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsNewDFTraining", "jetsAk4CHS")
-    rename_module(process, task, "updatedPatJetsTransientCorrectedPatJetsAK8PFPUPPIWithPuppiDaughters", "jetsAk8Puppi")
+    rename_module(process, task, "updatedPatJetsTransientCorrectedRekeyPatJetsAK8PFPUPPINewDFTraining", "jetsAk8Puppi")
     rename_module(process, task, ak8chs_patname, "jetsAk8CHS")
     # TopJet collections
-    rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8PuppiJetsWithPuppiDaughters", "jetsAk8PuppiSubstructure")
+    rename_module(process, task, "updatedPatJetsTransientCorrectedRekeyPackedPatJetsAk8PuppiJetsNewDFTraining", "jetsAk8PuppiSubstructure", update_userData=False)
     rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8CHSJetsNewDFTraining", "jetsAk8CHSSubstructure", update_userData=False)
 #    rename_module(process, task, "packedPatJetsAk8CHSJets", "jetsAk8CHSSubstructure", update_userData=False)  # don't update userData as JetSubstructurePacker
 
+
+    # Rename GenTopJet collections
+    process.genjetsAk8Substructure = cms.EDAlias(
+        ak8GenJetsFat = cms.VPSet( cms.PSet(type=cms.string("recoGenJets")) )
+    )
+    process.genjetsAk8SubstructureSoftDrop = cms.EDAlias(
+        ak8GenJetsSoftDropforsub = cms.VPSet( cms.PSet(type=cms.string("recoGenJets")) )
+    )
 
     # # Dummy module to allow us to rename slimmedJets to something more descriptive
     # process.jetsAk4CHS = cms.EDFilter("PATJetSelector",
@@ -1280,7 +1367,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
 
     # Higgs tagging commissioning
-    process.pfBoostedDoubleSVTagInfos = cms.EDProducer("BoostedDoubleSVProducer",
+    process.pfBoostedDoubleSVTagInfosCHS = cms.EDProducer("BoostedDoubleSVProducer",
         trackSelectionBlock,
         beta=cms.double(1.0),
         R0=cms.double(0.8),
@@ -1290,16 +1377,35 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         ),
         svTagInfos=cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8CHSJetsFat")  # This name is taken from the modules added by addJetcollection in add_fatjets_subjets
     )
-    task.add(process.pfBoostedDoubleSVTagInfos)
+    process.pfBoostedDoubleSVTagInfosCHS.trackSelection.jetDeltaRMax = cms.double(0.8)
+    task.add(process.pfBoostedDoubleSVTagInfosCHS)
 
-    process.pfBoostedDoubleSVTagInfos.trackSelection.jetDeltaRMax = cms.double(0.8)
+    process.pfBoostedDoubleSVTagInfosPuppi = cms.EDProducer("BoostedDoubleSVProducer",
+        trackSelectionBlock,
+        beta=cms.double(1.0),
+        R0=cms.double(0.8),
+        maxSVDeltaRToJet=cms.double(0.7),
+        trackPairV0Filter=cms.PSet(
+           k0sMassWindow=cms.double(0.03)
+        ),
+        svTagInfos=cms.InputTag("pfInclusiveSecondaryVertexFinderTagInfosAk8PuppiJetsFat")  # This name is taken from the modules added by addJetcollection in add_fatjets_subjets
+    )
+    process.pfBoostedDoubleSVTagInfosPuppi.trackSelection.jetDeltaRMax = cms.double(0.8)
+    task.add(process.pfBoostedDoubleSVTagInfosPuppi)
+
 
     ###############################################
     # HOTVR & XCONE
     #
-    process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
+    process.hotvrPuppiOrigDau = cms.EDProducer("HOTVRProducer",
                                         src=cms.InputTag("puppi")
                                         )
+    task.add(process.hotvrPuppiOrigDau)
+
+    process.hotvrPuppi = cms.EDProducer("RekeyJets",
+        jetSrc=cms.InputTag("hotvrPuppiOrigDau"),
+        candidateSrc=cms.InputTag("packedPFCandidates")
+    )
     task.add(process.hotvrPuppi)
 
     process.hotvrGen = cms.EDProducer("GenHOTVRProducer",
@@ -1314,7 +1420,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     task.add(process.hotvrGen)
 
     usePseudoXCone = cms.bool(True)
-    process.xconePuppi = cms.EDProducer("XConeProducer",
+    process.xconePuppiOrigDau = cms.EDProducer("XConeProducer",
         src=cms.InputTag("puppi"),
         usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
         NJets = cms.uint32(2),          # number of fatjets
@@ -1324,6 +1430,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         RSubJets = cms.double(0.4),     # cone radius of subjetSrc
         BetaSubJets = cms.double(2.0),  # conical mesure for subjets
         printWarning = cms.bool(False)  # set True if you want warnings about missing jets
+    )
+    task.add(process.xconePuppiOrigDau)
+
+    process.xconePuppi = cms.EDProducer("RekeyJets",
+        jetSrc=cms.InputTag("xconePuppiOrigDau"),
+        candidateSrc=cms.InputTag("packedPFCandidates")
     )
     task.add(process.xconePuppi)
 
@@ -1403,7 +1515,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
     task.add(process.xconeCHS2jets04)
-    process.xconePUPPI4jets04 = cms.EDProducer("XConeProducer",
+    process.xconePUPPI4jets04OrigDau = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(4),          # number of fatjets
@@ -1413,9 +1525,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              RSubJets = cms.double(0.2),     # cone radius of subjetSrc
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
-    task.add(process.xconePUPPI4jets04)
+    task.add(process.xconePUPPI4jets04OrigDau)
 
-    process.xconePUPPI3jets04 = cms.EDProducer("XConeProducer",
+    process.xconePUPPI3jets04OrigDau = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(3),          # number of fatjets
@@ -1425,9 +1537,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              RSubJets = cms.double(0.2),     # cone radius of subjetSrc
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
-    task.add(process.xconePUPPI3jets04)
+    task.add(process.xconePUPPI3jets04OrigDau)
 
-    process.xconePUPPI2jets04 = cms.EDProducer("XConeProducer",
+    process.xconePUPPI2jets04OrigDau = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(2),          # number of fatjets
@@ -1437,7 +1549,17 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              RSubJets = cms.double(0.2),     # cone radius of subjetSrc
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
-    task.add(process.xconePUPPI2jets04)
+    task.add(process.xconePUPPI2jets04OrigDau)
+
+    # Rekey XCONE R=0.4 puppi jets to replace daughters
+    for njets in [2, 3, 4]:
+        new_module = cms.EDProducer("RekeyJets",
+            jetSrc=cms.InputTag("xconePUPPI%djets04OrigDau" % (njets)),
+            candidateSrc=cms.InputTag("packedPFCandidates")
+        )
+        new_name = "xconePUPPI%djets04" % (njets)
+        setattr(process, new_name, new_module)
+        task.add(getattr(process, new_name))
 
 
     process.genXCone4jets04 = cms.EDProducer("GenXConeProducer",
@@ -1522,7 +1644,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              )
     task.add(process.xconeCHS2jets08)
 
-    process.xconePUPPI4jets08 = cms.EDProducer("XConeProducer",
+    process.xconePUPPI4jets08OrigDau = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(4),          # number of fatjets
@@ -1532,9 +1654,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              RSubJets = cms.double(0.4),     # cone radius of subjetSrc
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
-    task.add(process.xconePUPPI4jets08)
+    task.add(process.xconePUPPI4jets08OrigDau)
 
-    process.xconePUPPI3jets08 = cms.EDProducer("XConeProducer",
+    process.xconePUPPI3jets08OrigDau = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(3),          # number of fatjets
@@ -1544,9 +1666,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              RSubJets = cms.double(0.4),     # cone radius of subjetSrc
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
-    task.add(process.xconePUPPI3jets08)
+    task.add(process.xconePUPPI3jets08OrigDau)
 
-    process.xconePUPPI2jets08 = cms.EDProducer("XConeProducer",
+    process.xconePUPPI2jets08OrigDau = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(2),          # number of fatjets
@@ -1556,7 +1678,17 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              RSubJets = cms.double(0.4),     # cone radius of subjetSrc
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
-    task.add(process.xconePUPPI2jets08)
+    task.add(process.xconePUPPI2jets08OrigDau)
+
+    # Rekey XCONE R=0.8 puppi jets to replace daughters
+    for njets in [2, 3, 4]:
+        new_module = cms.EDProducer("RekeyJets",
+            jetSrc=cms.InputTag("xconePUPPI%djets08OrigDau" % (njets)),
+            candidateSrc=cms.InputTag("packedPFCandidates")
+        )
+        new_name = "xconePUPPI%djets08" % (njets)
+        setattr(process, new_name, new_module)
+        task.add(getattr(process, new_name))
 
     process.genXCone4jets08 = cms.EDProducer("GenXConeProducer",
                                              src=cms.InputTag("packedGenParticlesForJetsNoNu"),
@@ -1602,6 +1734,23 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              DRLeptonJet = cms.double(999),  # here you can specify the maximum distance for a lepton-jet match
                                              )
     task.add(process.genXCone2jets08)
+
+    ###############################################
+    # LEPTON jets (clustering muons or electrons with radiated photons)
+    #
+    process.muonGenJets = process.ak8GenJetsFat.clone(
+        jetPtMin = cms.double(10.0),
+        rParam = cms.double(0.1),
+        src = cms.InputTag("MuonPhotonGenParticles")
+    )
+    task.add(process.muonGenJets)
+
+    process.electronGenJets = process.ak8GenJetsFat.clone(
+        jetPtMin = cms.double(10.0),
+        rParam = cms.double(0.1),
+        src = cms.InputTag("ElectronPhotonGenParticles")
+    )
+    task.add(process.electronGenJets)
 
     ###############################################
     # LEPTON configuration
@@ -1716,7 +1865,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     iso_input_era_dict = {
         "2016v2": ele_iso_16,
         "2016v3": ele_iso_16,
-        "2017": ele_iso_17,
+        "2017v1": ele_iso_17,
+        "2017v2": ele_iso_17,
         "2018": ele_iso_17,
     }
 
@@ -1739,6 +1889,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                                           'egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight'),
                                                       cutBasedElectronHLTPreselection_Summer16_V1=cms.InputTag(
                                                           'egmGsfElectronIDs:cutBasedElectronHLTPreselection-Summer16-V1'),
+                                                      mvaEleID_Spring16_GeneralPurpose_V1_wp80=cms.InputTag(
+                                                          'egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp80'),
+                                                      mvaEleID_Spring16_GeneralPurpose_V1_wp90=cms.InputTag(
+                                                          'egmGsfElectronIDs:mvaEleID-Spring16-GeneralPurpose-V1-wp90'),
                                                       # 2017 & 2018
                                                       cutBasedElectronID_Fall17_94X_V2_veto=cms.InputTag(
                                                           'egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-veto'),
@@ -1836,7 +1990,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     prefire_era_dict = {
         '2016v2': '2016BtoH',
         '2016v3': '2016BtoH',
-        '2017': '2017BtoF'
+        '2017v1': '2017BtoF',
+        '2017v2': '2017BtoF',
     }
     prefire_era = None if useData else prefire_era_dict.get(year, None)
     do_prefire = prefire_era is not None
@@ -1859,7 +2014,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     ###############################################
     # Deal with bad ECAL endcap crystals
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#How_to_run_ecal_BadCalibReducedM
-    bad_ecal = year in ['2017', '2018'] and useData
+    bad_ecal = useData and ("2017" in year or "2018" in year)
     if bad_ecal:
         process.load('RecoMET.METFilters.ecalBadCalibFilter_cfi')
 
@@ -1952,7 +2107,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         process.slMETsCHS.trkMET = cms.InputTag("patPFMetCHS")
         task.add(process.slMETsCHS)
         clean_met_(process.slMETsCHS)
-            
+
 
     process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     # AnalysisModule = cms.PSet(
@@ -1984,6 +2139,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         'cutBasedElectronID_Summer16_80X_V1_medium',
                                         'cutBasedElectronID_Summer16_80X_V1_tight',
                                         'cutBasedElectronHLTPreselection_Summer16_V1',
+                                        'mvaEleID_Spring16_GeneralPurpose_V1_wp90',
+                                        'mvaEleID_Spring16_GeneralPurpose_V1_wp80',
                                         # 2017 & 2018
                                         'cutBasedElectronID_Fall17_94X_V2_veto',
                                         'cutBasedElectronID_Fall17_94X_V2_loose',
@@ -2037,6 +2194,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     jet_ptmin=cms.double(10.0),
                                     jet_etamax=cms.double(999.0),
 
+                                    #store PF constituents for jet_sources: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
+                                    doPFJetConstituentsNjets=cms.uint32(0),#store constituents for N leading jets, where N is parameter
+                                    doPFJetConstituentsMinJetPt=cms.double(-1),#store constituence for all jets with pt above threshold, set to negative value if not used
+
                                     doMET=cms.bool(True),
                                     met_sources=met_sources_GL,
 
@@ -2049,7 +2210,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     # be smaller than topjet_ptmin to account for JECs
                                     topjet_ptmin=cms.double(150.0),
                                     topjet_etamax=cms.double(5.0),
-                                    #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
+                                    #store PF constituents for TopJets: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
                                     doPFTopJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
                                     doPFTopJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
 
@@ -2087,7 +2248,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                             # the discriminator has to be taken from ungroomed jets
                                             higgstag_source=cms.string("patJetsAk8CHSJetsFat"),
                                             higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfos"),
+                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfosCHS"),
 
                                             # If empty, njettiness is directly taken from jet UserFloat,
                                             # otherwise taken from the provided source
@@ -2120,7 +2281,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
                                             higgstag_source=cms.string("patJetsAk8PuppiJetsFat"),
                                             higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
-                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfos"),  # FIXME Does this need replacing?
+                                            higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfosPuppi"),  # FIXME Does this need replacing?
 
                                             njettiness_source=cms.string("NjettinessAk8Puppi"),
                                             substructure_variables_source=cms.string("ak8PuppiJetsFat"),
@@ -2237,12 +2398,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         'hltDiPFJetAve260',
                                         'hltDiPFJetAve320',
                                         'hltDiPFJetAve400',
-                                        'hltDiPFJetAve450',
                                         'hltDiPFJetAve500',
 
-                                        'hltDiPFJetAve15ForHFJEC',
-                                        'hltDiPFJetAve25ForHFJEC',
-                                        'hltDiPFJetAve35ForHFJEC',
                                         'hltDiPFJetAve60ForHFJEC',
                                         'hltDiPFJetAve80ForHFJEC',
                                         'hltDiPFJetAve100ForHFJEC',
@@ -2273,6 +2430,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     #),
                                     trigger_objects=cms.InputTag("selectedPatTrigger" if year == "2016v2" else "slimmedPatTrigger"),
 
+                                    #For 2017 data with prefiring issue it might be usefull to store L1 seeds
+                                    doL1seed=cms.bool(True),
+                                    l1GtSrc = cms.InputTag("gtStage2Digis"),
+                                    l1EGSrc = cms.InputTag("caloStage2Digis:EGamma"),
+                                    l1JetSrc = cms.InputTag("caloStage2Digis:Jet"),
+
                                     doEcalBadCalib=cms.bool(bad_ecal),
                                     ecalBadCalib_source=cms.InputTag("ecalBadCalibReducedMINIAODFilter"),
 
@@ -2280,51 +2443,74 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     prefire_source=cms.string(prefire_source),
 
                                     # *** gen stuff:
-                                    doGenInfo=cms.bool(not useData),
+                                    doGenInfo=cms.bool(not useData),  # Master switch for geninfo, genparticles, etc
+
+                                    # Source to store (pruned) GenParticles from the genparticle history
+                                    # By default we try to store the Matrix Element genparticles only
+                                    # Note that this doesn't work for Herwig generators due to their
+                                    # weird status codes
                                     genparticle_source=cms.InputTag("prunedPrunedGenParticles"),
+
+                                    # Flag & source to store stable (i.e. packed) GenParticles
+                                    # Useful if you want to store final-state genparticles in the event
+                                    # If you only want GenJet constituents,
+                                    # you should use the appropriate options further down
+                                    doStableGenParticles=cms.bool(False),
                                     stablegenparticle_source=cms.InputTag("packedGenParticlesForJetsNoNu"),
-                                    # set to true if you want to store all gen particles, otherwise, only
-                                    # prunedPrunedGenParticles are stored (see above)
-                                    doAllGenParticles=cms.bool(False),
-                                    doAllGenParticlesPythia8=cms.bool(False),
-                                    #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFJetConstituentsNjets=cms.uint32(0),#store constituents for N leading jets, where N is parameter
-                                    doPFJetConstituentsMinJetPt=cms.double(-1),#store constituence for all jets with pt above threshold, set to negative value if not used
+
                                     doGenJets=cms.bool(not useData),
-                                    #store GEN constituents: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
+                                    #store GEN constituents for genjet_sources: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
                                     doGenJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
                                     doGenJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
                                     genjet_sources=cms.vstring(
-                                       #"slimmedGenJets", "slimmedGenJetsAK8", "ca15GenJets"),
-                                    "slimmedGenJets", "slimmedGenJetsAK8"),
+                                        # "muonGenJets", "electronGenJets",
+                                        "slimmedGenJets", "slimmedGenJetsAK8"),
                                     genjet_ptmin=cms.double(10.0),
                                     genjet_etamax=cms.double(5.0),
 
                                     doGenTopJets=cms.bool(not useData),
-                                    #store GEN constituents: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
+                                    #store GenTopJet constituents: doGenTopJetConstituentsNjets and doGenTopJetConstituentsMinJetPt are combined with OR
                                     doGenTopJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
                                     doGenTopJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
-
-
-                                    gentopjet_sources=cms.VInputTag(
-                                        cms.InputTag("ak8GenJetsFat"),
-                                        cms.InputTag("ak8GenJetsSoftDrop")
-                                    ),
                                     gentopjet_ptmin=cms.double(150.0),
                                     gentopjet_etamax=cms.double(5.0),
-                                    # this can be used to save N-subjettiness for GenJets:
-                                    # need one entry per gentopjet_source
-                                    gentopjet_njettiness_sources=cms.vstring(
-                                        "NjettinessAk8Gen",
-                                        "NjettinessAk8SoftDropGen",
-                                    ),
-                                    gentopjet_ecf_beta1_sources=cms.vstring(
-                                        "",
-                                        "ECFNbeta1Ak8SoftDropGen"
-                                    ),
-                                    gentopjet_ecf_beta2_sources=cms.vstring(
-                                        "",
-                                        "ECFNbeta2Ak8SoftDropGen"
+                                    GenTopJets=cms.VPSet(
+                                        cms.PSet(
+                                            # gentopjet_source can be groomed or ungroomed.
+                                            # It determines the main kinematics & constituent properties
+                                            # of the GenTopJet, as well as the output collection name
+                                            # If groomed (like here), the FastjetJetProducer module should have
+                                            # `writeCompound=False`, otherwise the fatjets will have
+                                            # daughters that are subjets, which will ruin the constituent
+                                            # calculations e.g. energy fractions, # daughters.
+                                            gentopjet_source=cms.string("genjetsAk8SubstructureSoftDrop"),
+
+                                            # If you specify a source here, it will assume its
+                                            # daughters are the corresponding subjets for each jet
+                                            # in gentopjet_source and store them as such.
+                                            # Thus you should set `writeCompound=True`
+                                            # in your FastjetJetProducer
+                                            subjet_source=cms.string("ak8GenJetsSoftDrop"),
+
+                                            # substructure_variables_source should be the same
+                                            # source as used in the njettiness_source & ecf_beta*_sources
+                                            substructure_variables_source=cms.string("ak8GenJetsSoftDropforsub"),
+                                            # Njettiness, internally will look for the various tau*
+                                            njettiness_source=cms.string("NjettinessAk8SoftDropGen"),
+                                            # Energy correlation functions, for beta=1 and beta=2
+                                            ecf_beta1_source=cms.string("ECFNbeta1Ak8SoftDropGen"),
+                                            ecf_beta2_source=cms.string("ECFNbeta2Ak8SoftDropGen")
+                                        ),
+                                        cms.PSet(
+                                            # This is ungroomed AK8 GenJets, so no subjets,
+                                            # but we do want Njettiness.
+                                            gentopjet_source=cms.string("genjetsAk8Substructure"),
+                                            subjet_source=cms.string(""),
+                                            substructure_variables_source=cms.string("ak8GenJetsFat"),
+                                            njettiness_source=cms.string("NjettinessAk8Gen"),
+                                            ecf_beta1_source=cms.string(""),
+                                            ecf_beta2_source=cms.string(""),
+                                        ),
                                     ),
 
                                     doAllPFParticles=cms.bool(False),
@@ -2332,7 +2518,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
                                     # *** HOTVR & XCone stuff
                                     doXCone=cms.bool(True),
-                                    #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
+                                    #store PF constituents for XCone_sources: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
                                     doPFxconeJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
                                     doPFxconeJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
                                     XCone_sources=cms.VInputTag(
@@ -2340,7 +2526,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         cms.InputTag("xconeCHS"),
                                     ),
                                     doHOTVR=cms.bool(True),
-                                    #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
+                                    #store PF constituents for HOTVR_sources: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
                                     doPFhotvrJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
                                     doPFhotvrJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
                                     HOTVR_sources=cms.VInputTag(
@@ -2363,7 +2549,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         cms.InputTag("genXCone33TopJets"),
                                     ),
                                     doXCone_dijet=cms.bool(False), #XCone for dijet (JERC) studies, should be stored for QCD MC and JetHT DATA
-                                    #store PF constituents: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
+                                    #store PF constituents for XCone_dijet_sources: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
                                     doPFxconeDijetJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
                                     doPFxconeDijetJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
 
@@ -2384,7 +2570,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     ),
 #                                    doGenXCone_dijet=cms.bool(not useData),
                                     doGenXCone_dijet=cms.bool(False),
-                                    #store GEN constituents: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
+                                    #store GEN constituents for GenXCone_dijet_sources: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
                                     doGenxconeDijetJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
                                     doGenxconeDijetJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not 
                                     GenXCone_dijet_sources=cms.VInputTag(
@@ -2404,9 +2590,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # just make sure that the electron IDs run before MyNtuple
     process.p = cms.Path(
         process.egmGsfElectronIDSequence *
-        process.egmPhotonIDSequence * 
+        process.egmPhotonIDSequence *
         process.MyNtuple
-#        * process.content 
+#        * process.content
     )
     if do_prefire:
         process.p.insert(0, process.prefiringweight)
@@ -2430,4 +2616,3 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     process.p.associate(process.patAlgosToolsTask)
 
     return process
-

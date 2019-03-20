@@ -46,24 +46,24 @@ test_JLCkey::test_JLCkey(uhh2::Context& ctx){
 
   //// OBJ CLEANING
   const     MuonId muo(AndId<Muon>    (PtEtaCut  (50., 2.1), MuonID(Muon::CutBasedIdMedium)));
-  const ElectronId ele(AndId<Electron>(PtEtaSCCut(50., 2.5), ElectronID_Spring15_25ns_tight_noIso));
+  const ElectronId ele(AndId<Electron>(PtEtaSCCut(50., 2.5), ElectronID_Summer16_tight_noIso));
 
   muo_cleaner.reset(new     MuonCleaner(muo));
   ele_cleaner.reset(new ElectronCleaner(ele));
   //
 
-  const JetId jetID(JetPFID(JetPFID::WP_TIGHT));
+  const JetId jetID(JetPFID(JetPFID::WP_TIGHT_CHS));
 
   std::vector<std::string> JEC_AK4, JEC_AK8;
   if(isMC){
 
-    JEC_AK4 = JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC;
-    JEC_AK8 = JERFiles::Summer16_23Sep2016_V4_L123_AK4PFchs_MC;
+    JEC_AK4 = JERFiles::Summer16_07Aug2017_V11_L123_AK4PFchs_MC;
+    JEC_AK8 = JERFiles::Summer16_07Aug2017_V11_L123_AK4PFchs_MC;
   }
   else {
 
-    JEC_AK4 = JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA;
-    JEC_AK8 = JERFiles::Summer16_23Sep2016_V4_BCD_L123_AK4PFchs_DATA;
+    JEC_AK4 = JERFiles::Summer16_07Aug2017_V11_B_L123_AK4PFchs_DATA;
+    JEC_AK8 = JERFiles::Summer16_07Aug2017_V11_B_L123_AK4PFchs_DATA;
   }
 
   jet_IDcleaner.reset(new JetCleaner(ctx, jetID));

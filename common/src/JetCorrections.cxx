@@ -180,10 +180,10 @@ JetCorrector::JetCorrector(uhh2::Context & ctx, const std::vector<std::string> &
     direction = 0;
 
     //MET should only be corrected using AK8 jets, iff there is no AK4 collection that could be used for this because the calculation of our raw MET is based on AK4 jets
-    used_ak4chs = ctx.get("JetCollection")=="slimmedJets";
-    used_ak4puppi = ctx.get("JetCollection")=="slimmedJetsPuppi";
-    metprop_possible_ak8chs = ctx.get("JetCollection")=="patJetsAK8PFCHS";
-    metprop_possible_ak8puppi = ctx.get("JetCollection")=="patJetsAK8PFPUPPI";
+    used_ak4chs = ctx.get("JetCollection")=="jetsAk4CHS";
+    used_ak4puppi = ctx.get("JetCollection")=="jetsAk4Puppi";
+    metprop_possible_ak8chs = ctx.get("JetCollection")=="jetsAk8CHS";
+    metprop_possible_ak8puppi = ctx.get("JetCollection")=="jetsAk8Puppi";
 
     //MET is always corrected using the jet collection stated in the "JetCollection" Item in the context and only in case one of the stated jet collections is used.
     //Particularly, only one of these two AK8 collections should be used.
@@ -649,6 +649,95 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17_V3 = {
 
 };
 
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17_V3_RunBCDEF_Madgraph = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.522, 1.11931, 1.15247, 1.08615}},
+  {{0.783, 1.12502, 1.1584, 1.09164}},
+  {{1.131, 1.09921, 1.13388, 1.06454}},
+  {{1.305, 1.09461, 1.18637, 1.00285}},
+  {{1.74, 1.10174, 1.14909, 1.05439}},
+  {{1.93, 1.13043, 1.26472, 0.99613}},
+  {{2.043, 1.15272, 1.24681, 1.05864}},
+  {{2.322, 1.16604, 1.30741, 1.02468}},
+  {{2.5, 1.33917, 1.48519, 1.19315}},
+  {{2.853, 1.77981, 2.20226, 1.35736}},
+  {{2.964, 2.36411, 2.67408, 2.05414}},
+  {{3.139, 1.25818, 1.35299, 1.16337}},
+  {{5.191, 1.10801, 1.22069, 0.995326}},
+};
+
+
+// 2018 -> to be used with combined dataset
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_V1 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.522, 1.15, 1.193, 1.107}},
+  {{0.783, 1.134, 1.214, 1.054}},
+  {{1.131, 1.102, 1.154, 1.05}},
+  {{1.305, 1.134, 1.246, 1.022}},
+  {{1.740, 1.104, 1.315, 0.893}},
+  {{1.930, 1.149, 1.308, 0.99}},
+  {{2.043, 1.148, 1.357, 0.939}},
+  {{2.322, 1.114, 1.305, 0.923}},
+  {{2.500, 1.347, 1.621, 1.073}},
+  {{2.853, 2.137, 2.661, 1.613}},
+  {{2.964, 1.65,  2.591, 0.709}},
+  {{3.139, 1.225, 1.419, 1.031}},
+  {{5.191, 1.082, 1.28, 0.884}},
+
+};
+
+// 2018 -> to be used with RunABC
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunABC_V1 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  
+  {{0.522, 1.1609, 1.2161, 1.1057}},
+  {{0.783, 1.1309, 1.1919, 1.0699}},
+  {{1.131, 1.0918, 1.127, 1.0566}},
+  {{1.305, 1.1064, 1.2195, 0.9933}},
+  {{1.740, 1.1097, 1.2303, 0.9891}},
+  {{1.930, 1.1554, 1.2374, 1.0734}},
+  {{2.043, 1.1843, 1.3794, 0.9892}},
+  {{2.322, 1.1401, 1.307, 0.9732}},
+  {{2.500, 1.1818, 1.4145, 0.9491}},
+  {{2.853, 1.7778, 2.2437, 1.3119}},
+  {{2.964, 1.3718, 2.3225, 0.4211}},
+  {{3.139, 1.2725, 1.4535, 1.0915}},
+  {{5.191, 1.1255, 1.3156, 0.9354}},
+
+};
+
+// 2018 -> to be used with RunD
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunD_V1 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+
+  {{0.522, 1.1401, 1.1724, 1.1078}},
+  {{0.783, 1.1370, 1.2339, 1.0401}},
+  {{1.131, 1.1109, 1.1785, 1.0433}},
+  {{1.305, 1.1585, 1.2696, 1.0474}},
+  {{1.740, 1.0997, 1.3894, 0.81}},
+  {{1.930, 1.1428, 1.3692, 0.9164}},
+  {{2.043, 1.1157, 1.3373, 0.8941}},
+  {{2.322, 1.0903, 1.3034, 0.8772}},
+  {{2.500, 1.4930, 1.8036, 1.1824}},
+  {{2.853, 2.4518, 3.0275, 1.8761}},
+  {{2.964, 1.8935, 2.8254, 0.9616}},
+  {{3.139, 1.1826, 1.3884, 0.9768}},
+  {{5.191, 1.0439, 1.2479, 0.8399}},
+
+};
+
 ////
 
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf){
@@ -679,7 +768,7 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   h_recjets_    = ctx.get_handle<std::vector<Jet> >      (recjet_label);
   h_rectopjets_ = ctx.get_handle<std::vector<TopJet> >   (recjet_label);
 
-  h_genjets_    = ctx.get_handle<std::vector<Particle> > (genjet_label);
+  h_genjets_    = ctx.get_handle<std::vector<GenJet> > (genjet_label);
   h_gentopjets_ = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
 
   JER_SFs_ = JER_sf;
@@ -717,7 +806,7 @@ bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
   else if(evt.is_valid(h_rectopjets_)) rec_topjets = &evt.get(h_rectopjets_);
   else throw std::runtime_error("GenericJetResolutionSmearer::process -- invalid handle to RECO-jets");
 
-  std::vector<Particle>*  gen_jets(0);
+  std::vector<GenJet>*  gen_jets(0);
   std::vector<GenTopJet>* gen_topjets(0);
 
   if     (evt.is_valid(h_genjets_))    gen_jets    = &evt.get(h_genjets_);
