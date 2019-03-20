@@ -183,10 +183,11 @@ bool ExampleModuleJetConstituents::process(Event & event) {
             uint nConstituents = jetItr.pfcand_indexs().size();
             topjetHists->fill(rawJet, sumJet, nConstituents, jetInd);
             jetInd++;
-
+            cout << "--- Subjets (this TopJet): " << jetItr.subjets().size() << endl;
             for (auto & subjetItr : jetItr.subjets()) {
               auto sumJet = constructConstituentSum(event.pfparticles, &subjetItr, usePuppiWeightTopJets);
               LorentzVector rawJet = subjetItr.v4() * subjetItr.JEC_factor_raw();  // NB need uncorrected jet
+              compareLVs(rawJet, sumJet);
               uint nConstituents = subjetItr.pfcand_indexs().size();
               topjetSubjetHists->fill(rawJet, sumJet, nConstituents, jetInd);
             }
@@ -214,10 +215,11 @@ bool ExampleModuleJetConstituents::process(Event & event) {
             uint nConstituents = jetItr.genparticles_indices().size();
             gentopjetHists->fill(jetItr.v4(), sumJet, nConstituents, jetInd);
             jetInd++;
-
+            cout << "--- Subjets (this GenTopJet): " << jetItr.subjets().size() << endl;
             for (auto & subjetItr : jetItr.subjets()) {
               auto sumJet = constructConstituentSum(event.genparticles, &subjetItr);
               uint nConstituents = subjetItr.genparticles_indices().size();
+              compareLVs(subjetItr.v4(), sumJet);
               gentopjetSubjetHists->fill(subjetItr.v4(), sumJet, nConstituents, jetInd);
             }
         }

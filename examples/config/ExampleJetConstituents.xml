@@ -20,16 +20,16 @@
             <!-- <Item Name="JetCollection" Value="jetsAk4CHS" /> -->
             <Item Name="JetCollection" Value="jetsAk4Puppi" />
             <!-- <Item Name="JetCollection" Value="jetsAk8Puppi" /> -->
-            <Item Name="usePuppiWeightJets" Value="false" />
+            <Item Name="usePuppiWeightJets" Value="true" />
 
             <Item Name="TopJetCollection" Value="jetsAk8PuppiSubstructure_SoftDropPuppi" />
             <!-- <Item Name="TopJetCollection" Value="jetsAk8CHSSubstructure_SoftDropCHS" /> -->
-            <Item Name="usePuppiWeightTopJets" Value="true" />
+            <!-- <Item Name="TopJetCollection" Value="xconePuppi" /> -->
+            <Item Name="usePuppiWeightTopJets" Value="false" />
 
-            <!-- <Item Name="GenJetCollection" Value="slimmedGenJets" /> -->
-            <!-- <Item Name="GenJetCollection" Value="slimmedGenJets" /> -->
+            <Item Name="GenJetCollection" Value="slimmedGenJets" />
 
-            <!-- <Item Name="GenTopJetCollection" Value="genjetsAk8SubstructureSoftDrop" /> -->
+            <Item Name="GenTopJetCollection" Value="genjetsAk8SubstructureSoftDrop" />
 
             <Item Name="PFParticleCollection" Value="PFParticles" />
             <Item Name="GenParticleCollection" Value="GenParticles" /> 
