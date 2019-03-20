@@ -196,6 +196,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
         process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",
                                                 ignoreTotal=cms.untracked.int32(2),
+                                                oncePerEventMode=cms.untracked.bool(True),
                                                 moduleMemorySummary=cms.untracked.bool(True)
                                                 )
 
