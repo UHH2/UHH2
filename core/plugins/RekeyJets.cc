@@ -5,8 +5,12 @@
 //
 /**\class RekeyJets RekeyJets.cc UHH2/RekeyJets/plugins/RekeyJets.cc
 
- Description: Replace duaghters of jet with those matched by key from another collection
+ Description: Replace daughters of jet with those matched by key from another collection
   e.g. replace puppi jet daughters with equivalent particles from packedPFCandidates
+
+  NB do not attempt to do this to the subjets - you will get into difficulty,
+  because in 10_2_10 there is no way to "remove" the old subjets, only append
+  new ones. So you have to change subjet label, which may not be optimal.
 
 */
 //

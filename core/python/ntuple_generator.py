@@ -196,6 +196,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
         process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",
                                                 ignoreTotal=cms.untracked.int32(2),
+                                                oncePerEventMode=cms.untracked.bool(True),
                                                 moduleMemorySummary=cms.untracked.bool(True)
                                                 )
 
@@ -1397,14 +1398,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     ###############################################
     # HOTVR & XCONE
     #
-    process.hotvrPuppiOrigDau = cms.EDProducer("HOTVRProducer",
-                                        src=cms.InputTag("puppi")
-                                        )
-    task.add(process.hotvrPuppiOrigDau)
-
-    process.hotvrPuppi = cms.EDProducer("RekeyJets",
-        jetSrc=cms.InputTag("hotvrPuppiOrigDau"),
-        candidateSrc=cms.InputTag("packedPFCandidates")
+    process.hotvrPuppi = cms.EDProducer("HOTVRProducer",
+        src=cms.InputTag("puppi"),
+        doRekey = cms.bool(True),       # set True if you want to rekey jet & subjets so that
+        rekeyCandidateSrc = cms.InputTag("packedPFCandidates") # constituents point to rekeyCandidateSrc
     )
     task.add(process.hotvrPuppi)
 
@@ -1420,7 +1417,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     task.add(process.hotvrGen)
 
     usePseudoXCone = cms.bool(True)
-    process.xconePuppiOrigDau = cms.EDProducer("XConeProducer",
+    process.xconePuppi = cms.EDProducer("XConeProducer",
         src=cms.InputTag("puppi"),
         usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
         NJets = cms.uint32(2),          # number of fatjets
@@ -1429,13 +1426,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         NSubJets = cms.uint32(3),       # number of subjets in each fatjet
         RSubJets = cms.double(0.4),     # cone radius of subjetSrc
         BetaSubJets = cms.double(2.0),  # conical mesure for subjets
-        printWarning = cms.bool(False)  # set True if you want warnings about missing jets
-    )
-    task.add(process.xconePuppiOrigDau)
-
-    process.xconePuppi = cms.EDProducer("RekeyJets",
-        jetSrc=cms.InputTag("xconePuppiOrigDau"),
-        candidateSrc=cms.InputTag("packedPFCandidates")
+        printWarning = cms.bool(False), # set True if you want warnings about missing jets
+        doRekey = cms.bool(True),       # set True if you want to rekey jet & subjets so that
+        rekeyCandidateSrc = cms.InputTag("packedPFCandidates") # constituents point to rekeyCandidateSrc
     )
     task.add(process.xconePuppi)
 
@@ -1515,7 +1508,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              BetaSubJets = cms.double(2.0)   # conical mesure for subjets
                                              )
     task.add(process.xconeCHS2jets04)
-    process.xconePUPPI4jets04OrigDau = cms.EDProducer("XConeProducer",
+    process.xconePUPPI4jets04 = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(4),          # number of fatjets
@@ -1523,11 +1516,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
                                              NSubJets = cms.uint32(1),       # number of subjets in each fatjet
                                              RSubJets = cms.double(0.2),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doRekey = cms.bool(True),       # set True if you want to rekey jet & subjets so that
+                                             rekeyCandidateSrc = cms.InputTag("packedPFCandidates") # constituents point to rekeyCandidateSrc
                                              )
-    task.add(process.xconePUPPI4jets04OrigDau)
+    task.add(process.xconePUPPI4jets04)
 
-    process.xconePUPPI3jets04OrigDau = cms.EDProducer("XConeProducer",
+    process.xconePUPPI3jets04 = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(3),          # number of fatjets
@@ -1535,11 +1530,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
                                              NSubJets = cms.uint32(1),       # number of subjets in each fatjet
                                              RSubJets = cms.double(0.2),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doRekey = cms.bool(True),       # set True if you want to rekey jet & subjets so that
+                                             rekeyCandidateSrc = cms.InputTag("packedPFCandidates") # constituents point to rekeyCandidateSrc
                                              )
-    task.add(process.xconePUPPI3jets04OrigDau)
+    task.add(process.xconePUPPI3jets04)
 
-    process.xconePUPPI2jets04OrigDau = cms.EDProducer("XConeProducer",
+    process.xconePUPPI2jets04 = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(2),          # number of fatjets
@@ -1547,20 +1544,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
                                              NSubJets = cms.uint32(1),       # number of subjets in each fatjet
                                              RSubJets = cms.double(0.2),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doRekey = cms.bool(True),       # set True if you want to rekey jet & subjets so that
+                                             rekeyCandidateSrc = cms.InputTag("packedPFCandidates") # constituents point to rekeyCandidateSrc
                                              )
-    task.add(process.xconePUPPI2jets04OrigDau)
-
-    # Rekey XCONE R=0.4 puppi jets to replace daughters
-    for njets in [2, 3, 4]:
-        new_module = cms.EDProducer("RekeyJets",
-            jetSrc=cms.InputTag("xconePUPPI%djets04OrigDau" % (njets)),
-            candidateSrc=cms.InputTag("packedPFCandidates")
-        )
-        new_name = "xconePUPPI%djets04" % (njets)
-        setattr(process, new_name, new_module)
-        task.add(getattr(process, new_name))
-
+    task.add(process.xconePUPPI2jets04)
 
     process.genXCone4jets04 = cms.EDProducer("GenXConeProducer",
                                              src=cms.InputTag("packedGenParticlesForJetsNoNu"),
@@ -1644,7 +1632,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              )
     task.add(process.xconeCHS2jets08)
 
-    process.xconePUPPI4jets08OrigDau = cms.EDProducer("XConeProducer",
+    process.xconePUPPI4jets08 = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(4),          # number of fatjets
@@ -1652,11 +1640,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
                                              NSubJets = cms.uint32(1),       # number of subjets in each fatjet
                                              RSubJets = cms.double(0.4),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doRekey = cms.bool(True),       # set True if you want to rekey jet & subjets so that
+                                             rekeyCandidateSrc = cms.InputTag("packedPFCandidates") # constituents point to rekeyCandidateSrc
                                              )
-    task.add(process.xconePUPPI4jets08OrigDau)
+    task.add(process.xconePUPPI4jets08)
 
-    process.xconePUPPI3jets08OrigDau = cms.EDProducer("XConeProducer",
+    process.xconePUPPI3jets08 = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(3),          # number of fatjets
@@ -1664,11 +1654,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
                                              NSubJets = cms.uint32(1),       # number of subjets in each fatjet
                                              RSubJets = cms.double(0.4),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doRekey = cms.bool(True),       # set True if you want to rekey jet & subjets so that
+                                             rekeyCandidateSrc = cms.InputTag("packedPFCandidates") # constituents point to rekeyCandidateSrc
                                              )
-    task.add(process.xconePUPPI3jets08OrigDau)
+    task.add(process.xconePUPPI3jets08)
 
-    process.xconePUPPI2jets08OrigDau = cms.EDProducer("XConeProducer",
+    process.xconePUPPI2jets08 = cms.EDProducer("XConeProducer",
                                              src=cms.InputTag("puppi"),
                                              usePseudoXCone=usePseudoXCone,  # use PseudoXCone (faster) or XCone
                                              NJets = cms.uint32(2),          # number of fatjets
@@ -1676,19 +1668,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                              BetaJets = cms.double(2.0),     # conical mesure (beta = 2.0 is XCone default)
                                              NSubJets = cms.uint32(1),       # number of subjets in each fatjet
                                              RSubJets = cms.double(0.4),     # cone radius of subjetSrc
-                                             BetaSubJets = cms.double(2.0)   # conical mesure for subjets
+                                             BetaSubJets = cms.double(2.0),   # conical mesure for subjets
+                                             doRekey = cms.bool(True),       # set True if you want to rekey jet & subjets so that
+                                             rekeyCandidateSrc = cms.InputTag("packedPFCandidates") # constituents point to rekeyCandidateSrc
                                              )
-    task.add(process.xconePUPPI2jets08OrigDau)
-
-    # Rekey XCONE R=0.8 puppi jets to replace daughters
-    for njets in [2, 3, 4]:
-        new_module = cms.EDProducer("RekeyJets",
-            jetSrc=cms.InputTag("xconePUPPI%djets08OrigDau" % (njets)),
-            candidateSrc=cms.InputTag("packedPFCandidates")
-        )
-        new_name = "xconePUPPI%djets08" % (njets)
-        setattr(process, new_name, new_module)
-        task.add(getattr(process, new_name))
+    task.add(process.xconePUPPI2jets08)
 
     process.genXCone4jets08 = cms.EDProducer("GenXConeProducer",
                                              src=cms.InputTag("packedGenParticlesForJetsNoNu"),
