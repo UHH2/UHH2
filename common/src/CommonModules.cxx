@@ -62,7 +62,8 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
        metfilters_selection->add<TriggerSelection>("BadChargedCandidateFilter", "Flag_BadChargedCandidateFilter");
        metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
        metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
-       metfilters_selection->add<TriggerSelection>("ecalBadCalibFilter", "Flag_ecalBadCalibFilter");
+       metfilters_selection->add<TriggerSelection>("ecalBadCalibFilter", "Flag_ecalBadCalibFilter"); // for 2017 and 2018 is always 1. need a EcalBadCalibSelection for the recalculated value.
+       metfilters_selection->add<EcalBadCalibSelection>("EcalBadCalibSelection");
        if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
     }
     if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
