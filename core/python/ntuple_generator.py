@@ -302,11 +302,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # GEN PARTICLES
     #
     # The 13TeV samples mainly use Pythia8 for showering, which stores information in another way compared to Pythia6; in particular,
-    # many intermediate particles are stored such as top quarks or W bosons, which are not required for the analyses and makle the code more complicated.
+    # many intermediate particles are stored such as top quarks or W bosons, which are not required for the analyses and make the code more complicated.
     # Therefore, the 'prunedGenParticles' collection is pruned again; see UHH2/core/python/testgenparticles.py for a test for this pruning
     # and more comments.
-
-    process.prunedTmp = cms.EDProducer("GenParticlePruner",
+    # Note that separate instances of GenParticlePruner should be avoided - each contributes to more RSS memory overhead
+    process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
                                        src=cms.InputTag("prunedGenParticles"),
                                        select=cms.vstring(
                                            'drop *',
@@ -314,20 +314,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                            'keep 20 <= status <= 30',
                                            'keep 11 <= abs(pdgId) <= 16 && numberOfMothers()==1 && abs(mother().pdgId()) >= 23 && abs(mother().pdgId()) <= 25',
                                            'keep 11 <= abs(pdgId) <= 16 && numberOfMothers()==1 && abs(mother().pdgId()) == 6',
-                                           'keep 11 <= abs(pdgId) <= 16 && numberOfMothers()==1 && abs(mother().pdgId()) == 42'
+                                           'keep 11 <= abs(pdgId) <= 16 && numberOfMothers()==1 && abs(mother().pdgId()) == 42',
+                                           'drop 11 <= abs(pdgId) <= 16 && numberOfMothers() == 1 && abs(mother().pdgId())==6',
+                                           'keep 11 <= abs(pdgId) <= 16 && numberOfMothers() == 1 && abs(mother().pdgId())==6 ' \
+                                           '&& mother().numberOfDaughters() > 2 && abs(mother().daughter(0).pdgId()) != 24 ' \
+                                           '&& abs(mother().daughter(1).pdgId()) != 24 && abs(mother().daughter(2).pdgId()) != 24',
                                        )
-    )
-    task.add(process.prunedTmp)
-
-    process.prunedPrunedGenParticles = cms.EDProducer("GenParticlePruner",
-                                                      src=cms.InputTag("prunedTmp"),
-                                                      select=cms.vstring(
-                                                          'keep *',
-                                                          'drop 11 <= abs(pdgId) <= 16 && numberOfMothers() == 1 && abs(mother().pdgId())==6',
-                                                          'keep 11 <= abs(pdgId) <= 16 && numberOfMothers() == 1 && abs(mother().pdgId())==6 ' \
-                                                          '&& mother().numberOfDaughters() > 2 && abs(mother().daughter(0).pdgId()) != 24 ' \
-                                                          '&& abs(mother().daughter(1).pdgId()) != 24 && abs(mother().daughter(2).pdgId()) != 24',
-                                                      )
     )
     task.add(process.prunedPrunedGenParticles)
 
