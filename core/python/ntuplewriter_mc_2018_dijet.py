@@ -36,4 +36,4 @@ parse_apply_opts(process, options)
 with open('pydump_mc_2018.py', 'w') as f:
     f.write(process.dumpPython())
 
-process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(10000)) 
+#process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(10000)) 
