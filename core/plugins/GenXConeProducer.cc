@@ -310,12 +310,12 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     // Run second clustering step (subjets) for each fat jet
     vector<PseudoJet> subjets;
-    //ClusterSequence * clust_seq_sub;
+    std::unique_ptr<ClusterSequence> clust_seq_sub;
     if (enoughParticles && doSubjets) {
       std::unique_ptr<NjettinessPlugin> plugin_xcone_sub;
       initPlugin(plugin_xcone_sub, thisNSubJets_, RSubJets_, BetaSubJets_, usePseudoXCone_);
       JetDefinition jet_def_sub(plugin_xcone_sub.get());
-      ClusterSequence * clust_seq_sub = new ClusterSequence(particle_in_fatjet, jet_def_sub);
+      clust_seq_sub.reset(new ClusterSequence(particle_in_fatjet, jet_def_sub));
       // subjets = sorted_by_pt(clust_seq_sub->inclusive_jets());
       subjets = clust_seq_sub->inclusive_jets();
     }
