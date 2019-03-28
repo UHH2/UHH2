@@ -43,7 +43,7 @@ config.General.transferLogs = True
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/ntuplewriter_mc_2016v2.py')
 config.JobType.outputFiles = ["Ntuple.root"]
-config.JobType.maxMemoryMB = 2500
+config.JobType.maxMemoryMB = 3000
         
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'
