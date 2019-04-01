@@ -47,7 +47,7 @@ config.JobType.maxMemoryMB = 2500
         
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'
-config.Data.unitsPerJob = 16000
+config.Data.unitsPerJob = 24000
 try:
     config.Data.outLFNDirBase = '/store/user/%s/RunII_102X_v1/' % (getUsernameFromSiteDB())
 except ProxyException as e:
