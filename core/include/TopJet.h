@@ -183,8 +183,27 @@ public:
   //b-taggers for fat jets
   float btag_BoostedDoubleSecondaryVertexAK8() const{return m_btag_BoostedDoubleSecondaryVertexAK8;}
   float btag_BoostedDoubleSecondaryVertexCA15() const{return m_btag_BoostedDoubleSecondaryVertexCA15;}
-  float btag_MassDecorrelatedDeepBoosted_bbvsLight() const{return m_btag_MassDecorrelatedDeepBoosted_bbvsLight;}
-  float btag_MassDecorrelatedDeepBoosted_ccvsLight() const{return m_btag_MassDecorrelatedDeepBoosted_ccvsLight;}
+  float btag_DeepDoubleBvLJet_probHbb() const{return m_btag_DeepDoubleBvLJet_probHbb;}
+  float btag_DeepDoubleBvLJet_probQCD() const{return m_btag_DeepDoubleBvLJet_probQCD;}
+  float btag_DeepDoubleCvBJet_probHbb() const{return m_btag_DeepDoubleCvBJet_probHbb;}
+  float btag_DeepDoubleCvBJet_probHcc() const{return m_btag_DeepDoubleCvBJet_probHcc;}
+  float btag_DeepDoubleCvLJet_probHcc() const{return m_btag_DeepDoubleCvLJet_probHcc;}
+  float btag_DeepDoubleCvLJet_probQCD() const{return m_btag_DeepDoubleCvLJet_probQCD;}
+  float btag_MassIndependentDeepDoubleBvLJet_probHbb() const{return m_btag_MassIndependentDeepDoubleBvLJet_probHbb;}
+  float btag_MassIndependentDeepDoubleBvLJet_probQCD() const{return m_btag_MassIndependentDeepDoubleBvLJet_probQCD;}
+  float btag_MassIndependentDeepDoubleCvBJet_probHbb() const{return m_btag_MassIndependentDeepDoubleCvBJet_probHbb;}
+  float btag_MassIndependentDeepDoubleCvBJet_probHcc() const{return m_btag_MassIndependentDeepDoubleCvBJet_probHcc;}
+  float btag_MassIndependentDeepDoubleCvLJet_probHcc() const{return m_btag_MassIndependentDeepDoubleCvLJet_probHcc;}
+  float btag_MassIndependentDeepDoubleCvLJet_probQCD() const{return m_btag_MassIndependentDeepDoubleCvLJet_probQCD;}
+
+  //binary scores, see https://gitlab.cern.ch/DeepAK8/NNKit/tree/for94X
+  float btag_DeepBoosted_TvsQCD() const{return m_btag_DeepBoosted_TvsQCD;}
+  float btag_DeepBoosted_WvsQCD() const{return m_btag_DeepBoosted_WvsQCD;}
+  float btag_DeepBoosted_ZvsQCD() const{return m_btag_DeepBoosted_ZvsQCD;}
+  float btag_DeepBoosted_ZbbvsQCD() const{return m_btag_DeepBoosted_ZbbvsQCD;}
+  float btag_DeepBoosted_HbbvsQCD() const{return m_btag_DeepBoosted_HbbvsQCD;}
+  float btag_DeepBoosted_H4qvsQCD() const{return m_btag_DeepBoosted_H4qvsQCD;}
+
   float btag_MassDecorrelatedDeepBoosted_TvsQCD() const{return m_btag_MassDecorrelatedDeepBoosted_TvsQCD;}
   float btag_MassDecorrelatedDeepBoosted_ZHccvsQCD() const{return m_btag_MassDecorrelatedDeepBoosted_ZHccvsQCD;}
   float btag_MassDecorrelatedDeepBoosted_WvsQCD() const{return m_btag_MassDecorrelatedDeepBoosted_WvsQCD;}
@@ -193,6 +212,42 @@ public:
   float btag_MassDecorrelatedDeepBoosted_ZbbvsQCD() const{return m_btag_MassDecorrelatedDeepBoosted_ZbbvsQCD;}
   float btag_MassDecorrelatedDeepBoosted_HbbvsQCD() const{return m_btag_MassDecorrelatedDeepBoosted_HbbvsQCD;}
   float btag_MassDecorrelatedDeepBoosted_H4qvsQCD() const{return m_btag_MassDecorrelatedDeepBoosted_H4qvsQCD;}
+
+  //raw scores for each sub-category
+  float btag_DeepBoosted_probQCDb() const{return m_btag_DeepBoosted_probQCDb;}
+  float btag_DeepBoosted_probQCDbb() const{return m_btag_DeepBoosted_probQCDbb;}
+  float btag_DeepBoosted_probQCDc() const{return m_btag_DeepBoosted_probQCDc;}
+  float btag_DeepBoosted_probQCDcc() const{return m_btag_DeepBoosted_probQCDcc;}
+  float btag_DeepBoosted_probQCDothers() const{return m_btag_DeepBoosted_probQCDothers;}
+
+  float btag_DeepBoosted_probTbqq() const{return m_btag_DeepBoosted_probTbqq;}
+  float btag_DeepBoosted_probTbcq() const{return m_btag_DeepBoosted_probTbcq;}
+  float btag_DeepBoosted_probTbq() const{return m_btag_DeepBoosted_probTbq;}
+  float btag_DeepBoosted_probTbc() const{return m_btag_DeepBoosted_probTbc;}
+
+  float btag_DeepBoosted_probWqq() const{return m_btag_DeepBoosted_probWqq;}
+  float btag_DeepBoosted_proWcq() const{return m_btag_DeepBoosted_probWcq;}
+
+  float btag_DeepBoosted_probZcc() const{return m_btag_DeepBoosted_probZcc;}
+  float btag_DeepBoosted_probZqq() const{return m_btag_DeepBoosted_probZqq;}
+  float btag_DeepBoosted_probZbb() const{return m_btag_DeepBoosted_probZbb;}
+
+  float btag_DeepBoosted_probHbb() const{return m_btag_DeepBoosted_probHbb;}
+  float btag_DeepBoosted_probHcc() const{return m_btag_DeepBoosted_probHcc;}
+  float btag_DeepBoosted_probHqqqq() const{return m_btag_DeepBoosted_probHqqqq;}
+
+
+  //raw scores, following https://gitlab.cern.ch/DeepAK8/NNKit/blob/for94X/FatJetNN/interface/FatJetNNHelper.h#L75
+  float btag_DeepBoosted_raw_score_qcd() const{return m_btag_DeepBoosted_probQCDb+m_btag_DeepBoosted_probQCDbb+m_btag_DeepBoosted_probQCDc+m_btag_DeepBoosted_probQCDcc+m_btag_DeepBoosted_probQCDothers;}
+  float btag_DeepBoosted_raw_score_top() const{return m_btag_DeepBoosted_probTbq+m_btag_DeepBoosted_probTbc+m_btag_DeepBoosted_probTbqq+m_btag_DeepBoosted_probTbcq;}
+  float btag_DeepBoosted_raw_score_w() const{return m_btag_DeepBoosted_probWqq+m_btag_DeepBoosted_probWcq;}
+  float btag_DeepBoosted_raw_score_z() const{return m_btag_DeepBoosted_probZcc+m_btag_DeepBoosted_probZbb+m_btag_DeepBoosted_probZqq;}
+  float btag_DeepBoosted_raw_score_h() const{return m_btag_DeepBoosted_probHbb+m_btag_DeepBoosted_probHcc+m_btag_DeepBoosted_probHqqqq;}
+
+
+  //raw score for each sub-category of mass decorrelated DeepAK8 tagger
+  float btag_MassDecorrelatedDeepBoosted_bbvsLight() const{return m_btag_MassDecorrelatedDeepBoosted_bbvsLight;}
+  float btag_MassDecorrelatedDeepBoosted_ccvsLight() const{return m_btag_MassDecorrelatedDeepBoosted_ccvsLight;}
   float btag_MassDecorrelatedDeepBoosted_probHbb() const{return m_btag_MassDecorrelatedDeepBoosted_probHbb;}
   float btag_MassDecorrelatedDeepBoosted_probQCDc() const{return m_btag_MassDecorrelatedDeepBoosted_probQCDc;}
   float btag_MassDecorrelatedDeepBoosted_probQCDbb() const{return m_btag_MassDecorrelatedDeepBoosted_probQCDbb;}
@@ -210,41 +265,19 @@ public:
   float btag_MassDecorrelatedDeepBoosted_probZqq() const{return m_btag_MassDecorrelatedDeepBoosted_probZqq;}
   float btag_MassDecorrelatedDeepBoosted_probHqqqq() const{return m_btag_MassDecorrelatedDeepBoosted_probHqqqq;}
   float btag_MassDecorrelatedDeepBoosted_probZbb() const{return m_btag_MassDecorrelatedDeepBoosted_probZbb;}
-  float btag_DeepDoubleBvLJet_probHbb() const{return m_btag_DeepDoubleBvLJet_probHbb;}
-  float btag_DeepDoubleBvLJet_probQCD() const{return m_btag_DeepDoubleBvLJet_probQCD;}
-  float btag_DeepDoubleCvBJet_probHbb() const{return m_btag_DeepDoubleCvBJet_probHbb;}
-  float btag_DeepDoubleCvBJet_probHcc() const{return m_btag_DeepDoubleCvBJet_probHcc;}
-  float btag_DeepDoubleCvLJet_probHcc() const{return m_btag_DeepDoubleCvLJet_probHcc;}
-  float btag_DeepDoubleCvLJet_probQCD() const{return m_btag_DeepDoubleCvLJet_probQCD;}
-  float btag_MassIndependentDeepDoubleBvLJet_probHbb() const{return m_btag_MassIndependentDeepDoubleBvLJet_probHbb;}
-  float btag_MassIndependentDeepDoubleBvLJet_probQCD() const{return m_btag_MassIndependentDeepDoubleBvLJet_probQCD;}
-  float btag_MassIndependentDeepDoubleCvBJet_probHbb() const{return m_btag_MassIndependentDeepDoubleCvBJet_probHbb;}
-  float btag_MassIndependentDeepDoubleCvBJet_probHcc() const{return m_btag_MassIndependentDeepDoubleCvBJet_probHcc;}
-  float btag_MassIndependentDeepDoubleCvLJet_probHcc() const{return m_btag_MassIndependentDeepDoubleCvLJet_probHcc;}
-  float btag_MassIndependentDeepDoubleCvLJet_probQCD() const{return m_btag_MassIndependentDeepDoubleCvLJet_probQCD;}
-  float btag_DeepBoosted_TvsQCD() const{return m_btag_DeepBoosted_TvsQCD;}
-  float btag_DeepBoosted_WvsQCD() const{return m_btag_DeepBoosted_WvsQCD;}
-  float btag_DeepBoosted_ZvsQCD() const{return m_btag_DeepBoosted_ZvsQCD;}
-  float btag_DeepBoosted_ZbbvsQCD() const{return m_btag_DeepBoosted_ZbbvsQCD;}
-  float btag_DeepBoosted_HbbvsQCD() const{return m_btag_DeepBoosted_HbbvsQCD;}
-  float btag_DeepBoosted_H4qvsQCD() const{return m_btag_DeepBoosted_H4qvsQCD;}
-  float btag_DeepBoosted_probHbb() const{return m_btag_DeepBoosted_probHbb;}
-  float btag_DeepBoosted_probQCDc() const{return m_btag_DeepBoosted_probQCDc;}
-  float btag_DeepBoosted_probQCDbb() const{return m_btag_DeepBoosted_probQCDbb;}
-  float btag_DeepBoosted_probTbqq() const{return m_btag_DeepBoosted_probTbqq;}
-  float btag_DeepBoosted_probTbcq() const{return m_btag_DeepBoosted_probTbcq;}
-  float btag_DeepBoosted_probTbq() const{return m_btag_DeepBoosted_probTbq;}
-  float btag_DeepBoosted_probQCDothers() const{return m_btag_DeepBoosted_probQCDothers;}
-  float btag_DeepBoosted_probQCDb() const{return m_btag_DeepBoosted_probQCDb;}
-  float btag_DeepBoosted_probTbc() const{return m_btag_DeepBoosted_probTbc;}
-  float btag_DeepBoosted_probWqq() const{return m_btag_DeepBoosted_probWqq;}
-  float btag_DeepBoosted_probQCDcc() const{return m_btag_DeepBoosted_probQCDcc;}
-  float btag_DeepBoosted_probHcc() const{return m_btag_DeepBoosted_probHcc;}
-  float btag_DeepBoosted_probZcc() const{return m_btag_DeepBoosted_probZcc;}
-  float btag_DeepBoosted_proWcq() const{return m_btag_DeepBoosted_probWcq;}
-  float btag_DeepBoosted_probZqq() const{return m_btag_DeepBoosted_probZqq;}
-  float btag_DeepBoosted_probHqqqq() const{return m_btag_DeepBoosted_probHqqqq;}
-  float btag_DeepBoosted_probZbb() const{return m_btag_DeepBoosted_probZbb;}
+
+  //raw scores of mass decorrelated DeepAK8 tagger, following https://gitlab.cern.ch/DeepAK8/NNKit/blob/for94X/FatJetNN/interface/FatJetNNHelper.h#L75
+  float btag_MassDecorrelatedDeepBoosted_raw_score_qcd() const{return m_btag_MassDecorrelatedDeepBoosted_probQCDb+m_btag_MassDecorrelatedDeepBoosted_probQCDbb+m_btag_MassDecorrelatedDeepBoosted_probQCDc+m_btag_MassDecorrelatedDeepBoosted_probQCDcc+m_btag_MassDecorrelatedDeepBoosted_probQCDothers;}
+  float btag_MassDecorrelatedDeepBoosted_raw_score_top()const{return m_btag_MassDecorrelatedDeepBoosted_probTbq+m_btag_MassDecorrelatedDeepBoosted_probTbc+m_btag_MassDecorrelatedDeepBoosted_probTbqq+m_btag_MassDecorrelatedDeepBoosted_probTbcq;}
+  float btag_MassDecorrelatedDeepBoosted_raw_score_w()const{return m_btag_MassDecorrelatedDeepBoosted_probWqq+m_btag_MassDecorrelatedDeepBoosted_probWcq;}
+  float btag_MassDecorrelatedDeepBoosted_raw_score_z()const{return m_btag_MassDecorrelatedDeepBoosted_probZcc+m_btag_MassDecorrelatedDeepBoosted_probZbb+m_btag_MassDecorrelatedDeepBoosted_probZqq;}
+  float btag_MassDecorrelatedDeepBoosted_raw_score_h()const{return m_btag_MassDecorrelatedDeepBoosted_probHbb+m_btag_MassDecorrelatedDeepBoosted_probHcc+m_btag_MassDecorrelatedDeepBoosted_probHqqqq;}
+
+
+
+
+  
+
 
   // setters
   void set_qjets_volatility(float x){m_qjets_volatility = x;}

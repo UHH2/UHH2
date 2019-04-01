@@ -244,17 +244,18 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   ClusterSequence clust_seq_xcone(_psj, jet_def_xcone);
   fatjets = sorted_by_pt(clust_seq_xcone.inclusive_jets(0));
 
-  // Check we got the number of subjets we asked for
-  if (fatjets.size() != NJets_) {
-    if (printWarning_) {
-      edm::LogWarning("GenXConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
-                                            << "Have added in blank jets to make " << NJets_ << " subjets." << endl;
-    }
-    for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
-      fatjets.push_back(PseudoJet(0, 0, 0, 0));
-    }
+  // // Check we got the number of subjets we asked for
+  // if (fatjets.size() != NJets_) {
+  //   if (printWarning_) {
+  //     edm::LogWarning("GenXConeTooFewJets") << "Only found " << fatjets.size() << " jets but requested " << NJets_ << ".\n"
+  //                                           << "Have added in blank jets to make " << NJets_ << " jets." << endl;
+  //   }
+  //   for (uint iJet=fatjets.size(); iJet < NJets_; iJet++) {
+  //     fatjets.push_back(PseudoJet(0, 0, 0, 0));
+  //   }
 
-  }
+  // }
+
   // Note to future dev: if you want to add SoftDrop, you must use the full
   // constructor, otherwise your fatjet will only have 1 constitutent,
   // making it useless for subjets. It will also ensure that the proper
@@ -309,12 +310,12 @@ GenXConeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     // Run second clustering step (subjets) for each fat jet
     vector<PseudoJet> subjets;
-    //ClusterSequence * clust_seq_sub;
+    std::unique_ptr<ClusterSequence> clust_seq_sub;
     if (enoughParticles && doSubjets) {
       std::unique_ptr<NjettinessPlugin> plugin_xcone_sub;
       initPlugin(plugin_xcone_sub, thisNSubJets_, RSubJets_, BetaSubJets_, usePseudoXCone_);
       JetDefinition jet_def_sub(plugin_xcone_sub.get());
-      ClusterSequence * clust_seq_sub = new ClusterSequence(particle_in_fatjet, jet_def_sub);
+      clust_seq_sub.reset(new ClusterSequence(particle_in_fatjet, jet_def_sub));
       // subjets = sorted_by_pt(clust_seq_sub->inclusive_jets());
       subjets = clust_seq_sub->inclusive_jets();
     }

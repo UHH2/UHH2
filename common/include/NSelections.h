@@ -12,7 +12,7 @@
 //
 // The modules allow two modes of operation:
 //  * no id criterion is applied, so all currently available objects are counted.
-//    In this mode, you might want to run an appropriate CleaningModule first to make sure only 
+//    In this mode, you might want to run an appropriate CleaningModule first to make sure only
 //    objects passing proper id / kinematic cuts are counted
 //  * an id is used as argument (see ObjectIdUtils for the type of the id). In this case, only objects passing the id are counted.
 //
@@ -80,4 +80,11 @@ public:
 private:
     int nmin, nmax;
     boost::optional<PrimaryVertexId> pvid;
+};
+
+
+class EcalBadCalibSelection: public uhh2::Selection {
+public:
+    explicit EcalBadCalibSelection() {};
+    virtual bool passes(const uhh2::Event & event) {return event.passEcalBadCalib;};
 };

@@ -41,13 +41,13 @@ config.General.transferOutputs = True
 config.General.transferLogs = True
         
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/ntuplewriter_mc_2016v2.py')
+config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/ntuplewriter_mc_2018.py')
 config.JobType.outputFiles = ["Ntuple.root"]
 config.JobType.maxMemoryMB = 2500
         
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'
-config.Data.unitsPerJob = 7500
+config.Data.unitsPerJob = 24000
 try:
     config.Data.outLFNDirBase = '/store/user/%s/RunII_102X_v1/' % (getUsernameFromSiteDB())
 except ProxyException as e:
