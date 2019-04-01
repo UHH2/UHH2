@@ -33,7 +33,7 @@ autoreconf -f -i  # needed to avoid 'aclocal-1.15' is missing on your system
 make $MAKEFLAGS
 # make check  # fails for siscone
 make install
-cd ..
+cd ../..
 
 # Add fastjet-config to PATH
 setenv PATH "${FJINSTALLDIR}/bin":${PATH}
