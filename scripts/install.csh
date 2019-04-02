@@ -1,3 +1,5 @@
+#!/usr/bin/env tcsh -e
+
 # Create default make args for parallel jobs
 set maxcores=12
 set cores=`grep processor /proc/cpuinfo | wc -l`
