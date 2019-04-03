@@ -34,6 +34,8 @@ for x in inputDatasets:
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
 from CRABClient.ClientExceptions import ProxyException
 import os
+import re
+
 
 config = config()
 config.General.workArea = 'crab_Test'
@@ -49,7 +51,13 @@ config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'
 config.Data.unitsPerJob = 24000
 try:
-    config.Data.outLFNDirBase = '/store/user/%s/RunII_102X_v1/' % (getUsernameFromSiteDB())
+    # Add subdirectory using year from config filename
+    pset = os.path.basename(config.JobType.psetName)
+    result = re.search(r'201[\d](v\d)?', pset)
+    if not result:
+        raise RuntimeError("Cannot extract year from psetName! Does your psetName have 201* in it?")
+    year = result.group()
+    config.Data.outLFNDirBase = '/store/user/%s/RunII_102X_v1/%s/' % (getUsernameFromSiteDB(), year)
 except ProxyException as e:
     print "Encountered ProxyException:"
     print e.message
