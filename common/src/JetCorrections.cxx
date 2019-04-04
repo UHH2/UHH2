@@ -741,7 +741,18 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunD_V1 = {
 ////
 
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf){
-  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JER_sf);
+  const Year & year = extract_year(ctx);
+  std::string resFilename = "";
+  if (year == Year::is2016v2 || year == Year::is2016v3) {
+    resFilename = "2016/Summer16_25nsV1_MC_PtResolution_AK4PFchs.txt";
+  } else if (year == Year::is2017v1 || year == Year::is2017v2) {
+    resFilename = "2017/Fall17_V3_MC_PtResolution_AK4PFchs.txt";
+  } else if (year == Year::is2018) {
+    resFilename = "2018/Autumn18_V1_MC_PtResolution_AK4PFchs.txt";
+  } else {
+    throw runtime_error("Cannot find suitable jet resolution file for this year");
+  }
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JER_sf, resFilename);
 }
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
