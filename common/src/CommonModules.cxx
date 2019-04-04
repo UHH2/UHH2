@@ -31,6 +31,8 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
   init_done = true;
 
   is_mc = ctx.get("dataset_type") == "MC";
+  year = extract_year(ctx);
+
   //set default PV id;
   PrimaryVertexId pvid=StandardPrimaryVertexId();
   if(pvfilter) modules.emplace_back(new PrimaryVertexCleaner(pvid));
@@ -61,10 +63,9 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
     if(!is_mc) metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");  // Not recommended for MC, but do check
     // metfilters_selection->add<TriggerSelection>("BadChargedCandidateFilter", "Flag_BadChargedCandidateFilter"); // Not recommended, under review. Already applied in 2016v2
-    metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
+    if (year != Year::is2016v2) metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter"); // Already filter BadPFMuon events in ntuple production
     metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
-    metfilters_selection->add<TriggerSelection>("ecalBadCalibFilter", "Flag_ecalBadCalibFilter"); // for 2017 and 2018 is always 1. need a EcalBadCalibSelection for the recalculated value.
-    metfilters_selection->add<EcalBadCalibSelection>("EcalBadCalibSelection");
+    metfilters_selection->add<EcalBadCalibSelection>("EcalBadCalibSelection"); // Use this instead of Flag_ecalBadCalibFilter
     if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
   }
   if(eleid) modules.emplace_back(new ElectronCleaner(eleid));

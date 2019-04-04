@@ -9,6 +9,7 @@
 #include "UHH2/common/include/JetCorrections.h"
 #include "UHH2/common/include/CleaningModules.h"
 
+
 /** \brief Run a configurable list commonly used modules
  *
  * This is a convenience class which runs a number of commonly-used
@@ -115,10 +116,11 @@ private:
     const int runnr_F = 306462;
 
     bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, topjetlepcleaner =false, jetptsort = false, metfilters = true, pvfilter = true, jetpfidcleaner=true, do_metcorrection = false;
-
     double topjetcleanerDR;
     bool is_mc;
     bool init_done = false;
+
+    Year year;
 
     std::unique_ptr<Selection> lumi_selection;
     std::unique_ptr<AndSelection> metfilters_selection;
