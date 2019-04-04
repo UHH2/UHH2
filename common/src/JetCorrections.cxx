@@ -780,6 +780,9 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   filename += "/src/UHH2/common/data/";
   filename += ResolutionFileName;
   m_resfile.open(filename);
+  if (!m_resfile) {
+    throw runtime_error("Resolution file " + filename + " does not exist");
+  }
 
   //get the formula from the header
   TString dummy;
