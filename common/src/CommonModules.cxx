@@ -61,7 +61,7 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
     metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter", "Flag_globalSuperTightHalo2016Filter");
     metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
-    if(!is_mc) metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");  // Not recommended for MC, but do check
+    // metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");  // Not recommended
     // metfilters_selection->add<TriggerSelection>("BadChargedCandidateFilter", "Flag_BadChargedCandidateFilter"); // Not recommended, under review. Already applied in 2016v2
     if (year != Year::is2016v2) metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter"); // Already filter BadPFMuon events in ntuple production
     metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
