@@ -19,7 +19,7 @@ bool file_exists(const std::string & path){
         return S_ISREG(s.st_mode);
     }
 }
-    
+
 }
 
 const Jet * nextJet(const Particle  & p, const std::vector<Jet> & jets){
@@ -85,4 +85,19 @@ std::string locate_file(const std::string & fname){
         }
     }
     throw runtime_error("Could not locate file '" + fname + "' in $CMSSW_BASE/src/{UHH2,} or $SFRAME_DIR/{UHH2,}.");
+}
+
+
+Year extract_year(const uhh2::Context & ctx) {
+    const std::string datasetVer = ctx.get("dataset_version");
+    for (auto const & [year, str] : year_str_map) {
+        if (datasetVer.find(str) != std::string::npos) {
+            return year;
+        }
+    }
+    std::string yearStr = "";
+    for (auto const & iter : year_str_map) {
+        yearStr += iter.second + ",";
+    }
+    throw std::runtime_error("Cannot figure out year from dataset_version. Should include one of: " + yearStr);
 }

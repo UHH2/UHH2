@@ -1,5 +1,6 @@
 #pragma once
 
+#include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
 #include <limits>
 
@@ -25,30 +26,30 @@ const T * closestParticle(const Particle  & p, const std::vector<T> & particles)
 const Jet * nextJet(const Particle  & p, const std::vector<Jet> & jets);
 
 /** Relative transverse momentum of the particle p with respect to reference_axis
- * 
+ *
  * note: can use reference_axis = nextJet(p, *event.jets) for the 'usual' ptrel, assuming that the
  * jets have the correct filter(!).
- * 
+ *
  * In case reference_axis is NULL or the 0-three-vector, 0.0 is returned.
  */
 double pTrel(const Particle  & p, const Particle * reference_axis);
 
 
 /** return a pair of (Delta R, pt_rel) values for Particle p w.r.t. the next jet in jets.
- * 
+ *
  * Returns (infinity, infinity) if jets is empty.
  */
 std::pair<double, double> drmin_pTrel(const Particle & p, const std::vector<Jet> & jets);
 
 
 /** Locate a file, searching in several standard locations.
- * 
+ *
  * If the file is not found, a runtime_error is thrown with a detailed error
  * message.
- * 
+ *
  * If fname is an absolute name (=starting with '/'), no file resolution is done, just the check
  * whether the file exists (and exception throwing if not).
- * 
+ *
  * If fname is a relative path, these directories are tried and the first wins:
  *  1. $CMSSW_BASE/src/UHH2/
  *  2. $CMSSW_BASE/src/
@@ -59,7 +60,7 @@ std::string locate_file(const std::string & fname);
 
 
 
-/** Sort vector of Particles descndeing in pT 
+/** Sort vector of Particles descndeing in pT
  *
  */
 template<typename P>
@@ -90,3 +91,27 @@ inline void clean_collection(std::vector<T> & objects, const uhh2::Event & event
  *
  */
 float inv_mass_safe(const LorentzVector&);
+
+/**
+ * Year enum to handle generic switching of year-specific bits of code
+ */
+enum class Year {
+    is2016v2,
+    is2016v3,
+    is2017v1,
+    is2017v2,
+    is2018
+};
+
+/* Map from Year to string */
+const std::map<Year, std::string> year_str_map = {
+    {Year::is2016v2, "2016v2"},
+    {Year::is2016v3, "2016v3"},
+    {Year::is2017v1, "2017v1"},
+    {Year::is2017v2, "2017v2"},
+    {Year::is2018,   "2018"},
+};
+// TODO: inverse map?
+
+/* Get Year enum from dataset_version in XML config */
+Year extract_year(const uhh2::Context & ctx);
