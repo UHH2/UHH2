@@ -698,7 +698,7 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunABC_V1 = {
   // 1 = JER SF
   // 2 = JER SF + 1sigma
   // 3 = JER SF - 1sigma
-  
+
   {{0.522, 1.1609, 1.2161, 1.1057}},
   {{0.783, 1.1309, 1.1919, 1.0699}},
   {{1.131, 1.0918, 1.127, 1.0566}},
@@ -740,8 +740,8 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunD_V1 = {
 
 ////
 
-JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf){
-  // Auto-determine correct resolution txt file from year + jet & PU algorithms
+JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
+  // Auto-determine correct resolution txt file & SFs from year + jet & PU algorithms
   std::string jetstr = uhh2::string2lowercase(ctx.get("JetCollection"));
 
   std::string jetAlgoRadius;
@@ -763,16 +763,26 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearin
   }
 
   const Year & year = extract_year(ctx);
+  JERSmearing::SFtype1 JER_sf;
   std::string resFilename = "";
   if (year == Year::is2016v2 || year == Year::is2016v3) {
+    JER_sf = JERSmearing::SF_13TeV_Summer16_25nsV1;
     resFilename = "2016/Summer16_25nsV1_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
   } else if (year == Year::is2017v1 || year == Year::is2017v2) {
+    JER_sf = JERSmearing::SF_13TeV_Fall17_V3;
     resFilename = "2017/Fall17_V3_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
   } else if (year == Year::is2018) {
+    JER_sf = JERSmearing::SF_13TeV_Autumn18_V1;
     resFilename = "2018/Autumn18_V1_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
   } else {
-    throw runtime_error("Cannot find suitable jet resolution file for this year for JetResolutionSmearer");
+    throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }
+
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JER_sf, resFilename);
+}
+
+
+JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf, const std::string& resFilename){
   m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JER_sf, resFilename);
 }
 
