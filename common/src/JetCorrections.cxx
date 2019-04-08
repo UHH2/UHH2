@@ -777,7 +777,7 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearin
 }
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
-
+  if(event.isRealData) return true;
   m_gjrs->process(event);
   return true;
 }
