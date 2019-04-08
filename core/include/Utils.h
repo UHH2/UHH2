@@ -40,6 +40,10 @@ std::string int2string(int i) DEPRECATED("use std::to_string instead");
 /// Convert a string to a double
 double string2double(const std::string & s);
 
+/// Convert a string to all lowercase (better for substring matching)
+/// NB Not good with non-ASCII letters e.g. ß !
+std::string string2lowercase(const std::string & s);
+
 /// Make a C++-mangled typename human-readable
 std::string demangle(const std::string & mangled_typename);
 
