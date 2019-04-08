@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <limits>
+#include <algorithm>
 #include <strings.h>
 
 #include <boost/lexical_cast.hpp>
@@ -56,6 +57,12 @@ std::string uhh2::int2string(int i){
 
 double uhh2::string2double(const std::string & s){
     return boost::lexical_cast<double>(s);
+}
+
+std::string uhh2::string2lowercase(const std::string & s){
+    std::string outS(s);
+    std::transform(outS.begin(), outS.end(), outS.begin(), ::tolower);
+    return outS;
 }
 
 std::string uhh2::demangle(const std::string & mangled_typename){
