@@ -145,7 +145,7 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned 
     h_muons.clear();
     h_elecs.clear();
     NPFJetwConstituents_ = NPFJetwConstituents;
-    MinPtJetwConstituents_ = 2e4;
+    MinPtJetwConstituents_ = 2e6;
     if(MinPtJetwConstituents>0)
       MinPtJetwConstituents_ = MinPtJetwConstituents;
     //    auto h_pfcand = cfg.ctx.get_handle<vector<PFParticle>>("PFParticles"); h_pfcands.push_back(h_pfcand);
@@ -527,7 +527,7 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, uns
     higgstaginfo_src = cfg.higgstaginfo_src;
     src_higgstaginfo_token =  cfg.cc.consumes<std::vector<reco::BoostedDoubleSVTagInfo> >(cfg.higgstaginfo_src);
     NPFJetwConstituents_ = NPFJetwConstituents;
-    MinPtJetwConstituents_ = 2e4;
+    MinPtJetwConstituents_ = 2e6;
     if(MinPtJetwConstituents>0)
       MinPtJetwConstituents_ = MinPtJetwConstituents;
 }
