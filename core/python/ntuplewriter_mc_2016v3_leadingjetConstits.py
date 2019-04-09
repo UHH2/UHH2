@@ -18,26 +18,23 @@ process.source.fileNames = cms.untracked.vstring([
     # '/store/mc/RunIIAutumn18MiniAOD/QCD_Pt-15to7000_TuneCP5_Flat2018_13TeV_pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15_ext1-v1/110000/5A494E5A-1A3B-B947-9F85-AF4588ACBBBA.root'
 ])
 
-# Turn on jet constituent storing for all jet collections in this ntuple
+# Turn on jet constituent storing for leading three AK4 jets
 process.MyNtuple.doPFJetConstituentsNjets=3
-process.MyNtuple.doPFTopJetConstituentsNjets=3
 process.MyNtuple.doGenJetConstituentsNjets=3
-process.MyNtuple.doGenTopJetConstituentsNjets=3
-#process.MyNtuple.doPFhotvrJetConstituentsNjets=3
-#process.MyNtuple.doXCone_dijet=True
-#process.MyNtuple.doPFxconeJetConstituentsNjets=2
-#process.MyNtuple.doGenXCone_dijet=True
-#process.MyNtuple.doGenhotvrJetConstituentsNjets=3
-#process.MyNtuple.doGenxconeJetConstituentsNjets=2
-#process.MyNtuple.doPFxconeDijetJetConstituentsNjets=3
-#process.MyNtuple.doGenxconeDijetJetConstituentsNjets=3
 
+# Turn on jet constituent storing for leading three AK8 jets
+process.MyNtuple.doPFTopJetConstituentsNjets=3
+process.MyNtuple.doGenTopJetConstituentsNjets=3
+
+# Turn on jet constituent storing for all AK8 jets with pT > 300 GeV
 process.MyNtuple.doPFTopJetConstituentsMinJetPt=300
 process.MyNtuple.doGenTopJetConstituentsMinJetPt=300
 
+# Turn on jet constituent storing for the two exclusive XCone jets
 process.MyNtuple.doPFxconeJetConstituentsNjets=2
 process.MyNtuple.doGenxconeJetConstituentsNjets=2
 
+# Store leptons with photons in a small cone around them to add up collinear radiation, only needed for TT (switch off for other samples)
 process.MyNtuple.genjet_sources.extend(["muonGenJets", "electronGenJets"])
 
 # Do this after setting process.source.fileNames, since we want the ability to override it on the commandline
