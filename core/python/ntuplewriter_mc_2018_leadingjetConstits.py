@@ -3,13 +3,13 @@ from UHH2.core.ntuple_generator import generate_process  # use CMSSW type path f
 from UHH2.core.optionsParse import setup_opts, parse_apply_opts
 
 
-"""NTuple config for 2016 MC datasets.
+"""NTuple config for 2018 MC datasets.
 
 You should try and put any centralised changes in generate_process(), not here.
 """
 
 
-process = generate_process(year="2016v3", useData=False)
+process = generate_process(year="2018", useData=False)
 
 # Please do not commit changes to source filenames - used for consistency testing
 process.source.fileNames = cms.untracked.vstring([
@@ -37,9 +37,10 @@ process.MyNtuple.doGenxconeJetConstituentsNjets=2
 # Store leptons with photons in a small cone around them to add up collinear radiation, only needed for TT (switch off for other samples)
 process.MyNtuple.genjet_sources.extend(["muonGenJets", "electronGenJets"])
 
+
 # Do this after setting process.source.fileNames, since we want the ability to override it on the commandline
 options = setup_opts()
 parse_apply_opts(process, options)
 
-with open('pydump_mc_2016v3.py', 'w') as f:
+with open('pydump_mc_2018.py', 'w') as f:
     f.write(process.dumpPython())
