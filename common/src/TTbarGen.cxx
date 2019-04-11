@@ -15,24 +15,54 @@ TTbarGen::TTbarGen(const vector<GenParticle> & genparticles, bool throw_on_failu
             auto w = genp.daughter(&genparticles, 1);
             auto b = genp.daughter(&genparticles, 2);
             if(!w || !b){
-	      //if(throw_on_failure) throw runtime_error("TTbarGen: top has not ==2 daughters");
-                continue;
+	      if(throw_on_failure) throw runtime_error("TTbarGen: top has not ==2 daughters");
+              return;
             }
             if(abs(w->pdgId()) != 24){
-                std::swap(w, b);
+	      std::swap(w, b);
             }
+	    /* It rarely happens that the list of genparticles contains 4 or more (instead of 2) particles which reckon the same top
+	       as their mother although each particle including the tops can just have two daughters. E.g. if the top emits a photon
+	       before decaying into b and W, this photon may split up into two leptons which reckon the top as their mother, too.
+	       Therefore, it may happen that those leptons are considered as the top daughters whereas b and W are "ignored" and cannot
+	       be found. This workaround fixes that issue: */
+	    if(abs(w->pdgId()) != 24) {
+	      for(unsigned int j = 0; j < genparticles.size(); ++j) {
+		const GenParticle & gp = genparticles[j];
+		auto m1 = gp.mother(&genparticles, 1);
+		auto m2 = gp.mother(&genparticles, 2);
+		bool has_top_mother = ((m1 && m1->index() == genp.index()) || (m2 && m2->index() == genp.index()));
+		if(has_top_mother && (abs(gp.pdgId()) == 24)) {
+		  w = &gp;
+		  break;
+		}
+	      }
+	    }
             if(abs(w->pdgId()) != 24){
-	      //if(throw_on_failure) throw runtime_error("TTbarGen: top has no W daughter");
-                continue;
+	        if(throw_on_failure) throw runtime_error("TTbarGen: top has no W daughter");
+                return;
             }
             
             // NOTE: here, we could skip over intermediate W bosons. However,
             // this Pythia8-related problem is now fixed when creating ntuples already,
             // so this should not be necessary.
             
+	    /* Do a similar workaround as above if the expected b daughter has not been found yet */
+	    if(abs(b->pdgId()) != 5 && abs(b->pdgId()) != 3 && abs(b->pdgId()) != 1) {
+	      for(unsigned int j = 0; j < genparticles.size(); ++j) {
+		const GenParticle & gp = genparticles[j];
+		auto m1 = gp.mother(&genparticles, 1);
+		auto m2 = gp.mother(&genparticles, 2);
+		bool has_top_mother = ((m1 && m1->index() == genp.index()) || (m2 && m2->index() == genp.index()));
+		if(has_top_mother && (abs(gp.pdgId()) == 5 || abs(gp.pdgId()) == 3 || abs(gp.pdgId()) == 1)) {
+		  b = &gp;
+		  break;
+		}
+	      }
+	    }
             if(abs(b->pdgId()) != 5 && abs(b->pdgId()) != 3   && abs(b->pdgId()) != 1){
-                if(throw_on_failure) throw runtime_error("TTbarGen: top has no b daughter");
-                return;
+	      if(throw_on_failure) throw runtime_error("TTbarGen: top has no b daughter");
+	      return;
             }
             // now get W daughters:
 
