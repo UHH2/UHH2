@@ -226,7 +226,7 @@ public:
   float btag_DeepBoosted_probTbc() const{return m_btag_DeepBoosted_probTbc;}
 
   float btag_DeepBoosted_probWqq() const{return m_btag_DeepBoosted_probWqq;}
-  float btag_DeepBoosted_proWcq() const{return m_btag_DeepBoosted_probWcq;}
+  float btag_DeepBoosted_probWcq() const{return m_btag_DeepBoosted_probWcq;}
 
   float btag_DeepBoosted_probZcc() const{return m_btag_DeepBoosted_probZcc;}
   float btag_DeepBoosted_probZqq() const{return m_btag_DeepBoosted_probZqq;}
