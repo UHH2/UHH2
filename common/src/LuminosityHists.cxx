@@ -1,6 +1,7 @@
 #include "UHH2/core/include/Utils.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/LuminosityHists.h"
+#include "UHH2/common/include/Utils.h"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -33,7 +34,7 @@ LuminosityHists::LuminosityHists(uhh2::Context & ctx,
         throw runtime_error("lumihists_lumi_per_bin is <= 0.0; this is not allowed");
     }
     
-    string lumifile = ctx.get("lumi_file");
+    string lumifile = locate_file(ctx.get("lumi_file"));
     std::unique_ptr<TFile> file(TFile::Open(lumifile.c_str(), "read"));
     TTree * tree = dynamic_cast<TTree*>(file->Get("AnalysisTree"));
     if(!tree){

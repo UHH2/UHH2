@@ -96,6 +96,8 @@ public:
     virtual bool process(uhh2::Event & event) override;
     void init(uhh2::Context & ctx, const std::string & SysType_PU = "central");
 
+    void print_setup() const;
+
 private:
     void fail_if_init() const;
 

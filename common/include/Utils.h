@@ -50,7 +50,8 @@ std::pair<double, double> drmin_pTrel(const Particle & p, const std::vector<Jet>
  * If fname is an absolute name (=starting with '/'), no file resolution is done, just the check
  * whether the file exists (and exception throwing if not).
  *
- * If fname is a relative path, these directories are tried and the first wins:
+ * If fname is a relative path, it first checks if the relative path exists.
+ * If it doesn't, then these directories are tried and the first wins:
  *  1. $CMSSW_BASE/src/UHH2/
  *  2. $CMSSW_BASE/src/
  *  3. $SFRAME_DIR/UHH2/

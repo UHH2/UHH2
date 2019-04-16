@@ -61,6 +61,10 @@ std::string locate_file(const std::string & fname){
         }
         return fname;
     }
+    // try the current relative string first, e.g. ../x/y.root
+    if (file_exists(fname)) {
+        return fname;
+    }
     // relative: try the various locations ...
     auto cmssw_base = getenv("CMSSW_BASE");
     if(cmssw_base != NULL){
