@@ -2,6 +2,7 @@
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/Utils.h"
+#include "UHH2/common/include/Utils.h"
 
 #include "Riostream.h"
 #include "TFile.h"
@@ -56,12 +57,12 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
     h_pu_weight_ = ctx.declare_event_output<float>("weight_pu");
 
     // backward compatibility: (((no tag) is chosen over 25ns) is chosen over 50ns)
-    TString pileup_directory           = ctx.get("pileup_directory",
+    std::string pileup_directory           = ctx.get("pileup_directory",
                                              ctx.get("pileup_directory_25ns",
                                                  ctx.get("pileup_directory_50ns", "")));
-    TString pileup_directory_data      = ctx.get("pileup_directory_data");
-    TString pileup_directory_data_up   = ctx.get("pileup_directory_data_up", "");
-    TString pileup_directory_data_down = ctx.get("pileup_directory_data_down", "");
+    std::string pileup_directory_data      = ctx.get("pileup_directory_data");
+    std::string pileup_directory_data_up   = ctx.get("pileup_directory_data_up", "");
+    std::string pileup_directory_data_down = ctx.get("pileup_directory_data_down", "");
 
     if(pileup_directory_data == ""){
        throw runtime_error("MCPileupReweight: pileup_directory_data is needed!");
@@ -69,22 +70,22 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
     if(pileup_directory == ""){
        throw runtime_error("MCPileupReweight: pileup_directory is needed!");
     }
-    if (sysType == "up" && !pileup_directory_data_up.Length()) {
+    if (sysType == "up" && !pileup_directory_data_up.length()) {
         throw runtime_error("MCPileupReweight: pileup_directory_data_up is needed!");
     }
-    if (sysType == "down" && !pileup_directory_data_down.Length()) {
+    if (sysType == "down" && !pileup_directory_data_down.length()) {
         throw runtime_error("MCPileupReweight: pileup_directory_data_down is needed!");
     }
     if (sysType != "up" && sysType != "down") {
         sysType_ = "";  // this is checked first in the process function
     }
 
-    TFile file_mc(pileup_directory);
+    TFile file_mc(locate_file(pileup_directory).c_str());
     h_npu_mc   = (TH1F*) file_mc.Get("input_Event/N_TrueInteractions");
     h_npu_mc->SetDirectory(0);
     h_npu_mc->Scale(1./h_npu_mc->Integral());
 
-    TFile file_data(pileup_directory_data);
+    TFile file_data(locate_file(pileup_directory_data).c_str());
     h_npu_data = (TH1F*) file_data.Get("pileup");
     h_npu_data->SetDirectory(0);
     h_npu_data->Scale(1./h_npu_data->Integral());
@@ -98,8 +99,8 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
         throw runtime_error("MCPileupReweight: pile-up histograms for data and MC have different axis ranges");
     }
 
-    if (pileup_directory_data_up.Length()) {
-        TFile file_data_up(pileup_directory_data_up);
+    if (pileup_directory_data_up.length()) {
+        TFile file_data_up(locate_file(pileup_directory_data_up).c_str());
         h_npu_data_up = (TH1F*) file_data_up.Get("pileup");
         h_npu_data_up->SetDirectory(0);
         h_npu_data_up->Scale(1./h_npu_data_up->Integral());
@@ -113,8 +114,8 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
         }
         h_pu_weight_up_ = ctx.declare_event_output<float>("weight_pu_up");
     }
-    if (pileup_directory_data_down.Length()) {
-        TFile file_data_down(pileup_directory_data_down);
+    if (pileup_directory_data_down.length()) {
+        TFile file_data_down(locate_file(pileup_directory_data_down).c_str());
         h_npu_data_down = (TH1F*) file_data_down.Get("pileup");
         h_npu_data_down->SetDirectory(0);
         h_npu_data_down->Scale(1./h_npu_data_down->Integral());
@@ -271,7 +272,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
   }
 
 
-  TFile sf_file(sf_file_path.c_str());
+  TFile sf_file(locate_file(sf_file_path).c_str());
   if (sf_file.IsZombie()) {
     throw runtime_error("Scale factor file for muons not found: " + sf_file_path);
   }
@@ -551,7 +552,7 @@ MCElecScaleFactor::MCElecScaleFactor(uhh2::Context & ctx,
     return;
   }
 
-  TFile sf_file(sf_file_path.c_str());
+  TFile sf_file(locate_file(sf_file_path).c_str());
   if (sf_file.IsZombie()) {
     throw runtime_error("Scale factor file for electrons not found: " + sf_file_path);
   }
@@ -658,7 +659,7 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
     return;
   }
 
-  TFile eff_file(ctx.get(xml_param_name).c_str());
+  TFile eff_file(locate_file(ctx.get(xml_param_name)).c_str());
   if (eff_file.IsZombie()) {
     cout << "Warning: MCBTagScaleFactor will not have an effect because the root-file "
          << "with MC-efficiencies not found: " << ctx.get(xml_param_name) << endl;
