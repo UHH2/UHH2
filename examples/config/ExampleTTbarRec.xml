@@ -8,29 +8,29 @@
     <Package Name="SUHH2examples.par" />
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="/nfs/dust/cms/user/peiffer/Analysis72X/" PostFix="" TargetLumi="1" >
-        <InputData Lumi="1" NEventsMax="10000" Type="MC" Version="MC_TTJets_MSDecaysCKM_central_20x25" Cacheable="False">
+        <InputData Lumi="1" NEventsMax="10000" Type="MC" Version="MC_TTJets_MSDecaysCKM_central_20x25_2018" Cacheable="False">
 	    &MC_TTJets_MSDecaysCKM_central_20x25;
-            <InputTree Name="AnalysisTree" /> 
-            <OutputTree Name="AnalysisTree" /> 
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="1" NEventsMax="10000" Type="MC" Version="MC_TTJets_MSDecaysCKM_central_40x50" Cacheable="False">
-	    &MC_TTJets_MSDecaysCKM_central_40x50; 
-            <InputTree Name="AnalysisTree" /> 
-            <OutputTree Name="AnalysisTree" /> 
+        <InputData Lumi="1" NEventsMax="10000" Type="MC" Version="MC_TTJets_MSDecaysCKM_central_40x50_2018" Cacheable="False">
+	    &MC_TTJets_MSDecaysCKM_central_40x50;
+            <InputTree Name="AnalysisTree" />
+            <OutputTree Name="AnalysisTree" />
         </InputData>
-            
+
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
-            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" /> 
-            <Item Name="MuonCollection" Value="slimmedMuons" /> 
-            <Item Name="JetCollection" Value="slimmedJets" />
-            <Item Name="TopJetCollection" Value="patJetsCMSTopTagCHSPacked" />
-            <Item Name="METName" Value="slimmedMETs" />  
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
+            <Item Name="MuonCollection" Value="slimmedMuonsUSER" />
+            <Item Name="JetCollection" Value="jetsAk4CHS" />
+            <Item Name="TopJetCollection" Value="jetsAk8CHSSubstructure_SoftDropCHS" />
+            <Item Name="METName" Value="slimmedMETs" />
             <Item Name="GenParticleCollection" Value="GenParticles" />
-                   
+
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="ExampleTTbarRec" /> 
+            <Item Name="AnalysisModule" Value="ExampleTTbarRec" />
         </UserConfig>
     </Cycle>
 </JobConfiguration>

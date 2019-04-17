@@ -6,35 +6,28 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="BpJ_TW_800" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_BpJ_TW_M800_20x25_14_Ntuple.root" Lumi="0.0"/> 
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_BpJ_TW_M800_20x25_15_Ntuple.root" Lumi="0.0"/> 
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_BpJ_TW_M800_20x25_16_Ntuple.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" /> 
+
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="Example2_2018" Cacheable="False">
+            <In FileName="Ntuple.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
             <!-- uncomment to write tree of selected events, i.e. of those events for which the AnalysisModule::process method  returns true -->
             <OutputTree Name="AnalysisTree" />
         </InputData>
-        
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="BpJ_TW_1200" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/ottjoc/gc-output/PHYS14v1/signals/MC_BpJ_TW_M1200_20x25_19_Ntuple.root" Lumi="0.0"/> 
-            <InputTree Name="AnalysisTree" /> 
-            <OutputTree Name="AnalysisTree" /> 
-        </InputData>
-            
+
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
-            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" /> 
-            <Item Name="ElectronCollection" Value="slimmedElectrons" />
-            <Item Name="MuonCollection" Value="slimmedMuons" /> 
-            <Item Name="JetCollection" Value="slimmedJets" />
-            <Item Name="METName" Value="slimmedMETs" />  
-            
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
+            <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
+            <Item Name="MuonCollection" Value="slimmedMuonsUSER" />
+            <Item Name="JetCollection" Value="jetsAk4CHS" />
+            <Item Name="METName" Value="slimmedMETs" />
+
             <!-- <Item Name="TopJetCollection" Value="patJetsCMSTopTagCHSPacked" />
-            <Item Name="GenParticleCollection" Value="GenParticles" /> 
+            <Item Name="GenParticleCollection" Value="GenParticles" />
             <Item Name="GenJetCollection" Value="slimmedGenJets" /> -->
-            
+
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="ExampleModule2" /> 
+            <Item Name="AnalysisModule" Value="ExampleModule2" />
         </UserConfig>
     </Cycle>
 </JobConfiguration>
