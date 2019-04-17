@@ -2030,11 +2030,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         process.BadPFMuonFilter.taggingMode = False  # Run in filter mode to reject events, not store them
         task.add(process.BadPFMuonFilter)
 
-        process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
-        process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
-        process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
-        process.BadChargedCandidateFilter.taggingMode = False
-        task.add(process.BadChargedCandidateFilter)
+        # DISABLE Bad Charged Hadron Filter for now as some inefficiency for TeV jets
+        # Under review, update when necessary
+        # process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
+        # process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
+        # process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+        # process.BadChargedCandidateFilter.taggingMode = False
+        # task.add(process.BadChargedCandidateFilter)
 
     # NtupleWriter
     #
@@ -2575,7 +2577,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     if do_bad_muon_charged_filters:
         process.p.insert(0, process.BadPFMuonFilter)
-        process.p.insert(0, process.BadChargedCandidateFilter)
+        # process.p.insert(0, process.BadChargedCandidateFilter)
 
     if year == "2016v2" and (not useData):
         process.load("PhysicsTools.JetMCAlgos.HadronAndPartonSelector_cfi")
