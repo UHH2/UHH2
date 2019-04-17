@@ -1,4 +1,5 @@
 #include "UHH2/common/include/LumiSelection.h"
+#include "UHH2/common/include/Utils.h"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -9,7 +10,7 @@ using namespace std;
 
 LumiSelection::LumiSelection(uhh2::Context & ctx){
 
-  string lumifile = ctx.get("lumi_file");
+  string lumifile = locate_file(ctx.get("lumi_file"));
   std::unique_ptr<TFile> file(TFile::Open(lumifile.c_str(), "read"));
   TTree * tree = dynamic_cast<TTree*>(file->Get("AnalysisTree"));
   if(!tree){

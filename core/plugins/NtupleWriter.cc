@@ -163,12 +163,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenJets = iConfig.getParameter<bool>("doGenJets");
   doGenJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenJetConstituentsNjets");
   doGenJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenJetConstituentsMinJetPt");
-  if(doGenJetConstituentsMinJetPt<1e-6) doGenJetConstituentsMinJetPt=2e4;
+  if(doGenJetConstituentsMinJetPt<1e-6) doGenJetConstituentsMinJetPt=2e6;
 
   doGenTopJets = iConfig.getParameter<bool>("doGenTopJets");
   doGenTopJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenTopJetConstituentsNjets");
   doGenTopJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenTopJetConstituentsMinJetPt");
-  if(doGenTopJetConstituentsMinJetPt<1e-6) doGenTopJetConstituentsMinJetPt=2e4;
+  if(doGenTopJetConstituentsMinJetPt<1e-6) doGenTopJetConstituentsMinJetPt=2e6;
 
   doPFJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFJetConstituentsNjets");
   doPFJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFJetConstituentsMinJetPt");
@@ -204,7 +204,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doPFxconeJetConstituents = false;
   if((doPFxconeJetConstituentsNjets>0 || doPFxconeJetConstituentsMinJetPt>0) && doXCone) 
     doPFxconeJetConstituents=true;
-  if(doPFxconeJetConstituentsMinJetPt<1e-6) doPFxconeJetConstituentsMinJetPt=2e4;
+  if(doPFxconeJetConstituentsMinJetPt<1e-6) doPFxconeJetConstituentsMinJetPt=2e6;
 
   doHOTVR = iConfig.getParameter<bool>("doHOTVR");
   doPFhotvrJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFhotvrJetConstituentsNjets");
@@ -212,18 +212,18 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doPFhotvrJetConstituents = false;
   if((doPFhotvrJetConstituentsNjets>0 || doPFhotvrJetConstituentsMinJetPt>0) && doHOTVR) 
     doPFhotvrJetConstituents=true;
-  if(doPFhotvrJetConstituentsMinJetPt<1e-6) doPFhotvrJetConstituentsMinJetPt=2e4;
+  if(doPFhotvrJetConstituentsMinJetPt<1e-6) doPFhotvrJetConstituentsMinJetPt=2e6;
 
 
   doGenXCone = iConfig.getParameter<bool>("doGenXCone");
   doGenxconeJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenxconeJetConstituentsNjets");
   doGenxconeJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeJetConstituentsMinJetPt");
-  if(doGenxconeJetConstituentsMinJetPt<1e-6) doGenxconeJetConstituentsMinJetPt=2e4;
+  if(doGenxconeJetConstituentsMinJetPt<1e-6) doGenxconeJetConstituentsMinJetPt=2e6;
 
   doGenHOTVR = iConfig.getParameter<bool>("doGenHOTVR");
   doGenhotvrJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenhotvrJetConstituentsNjets");
   doGenhotvrJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenhotvrJetConstituentsMinJetPt");
-  if(doGenhotvrJetConstituentsMinJetPt<1e-6) doGenhotvrJetConstituentsMinJetPt=2e4;
+  if(doGenhotvrJetConstituentsMinJetPt<1e-6) doGenhotvrJetConstituentsMinJetPt=2e6;
 
   doXCone_dijet = iConfig.getParameter<bool>("doXCone_dijet");
   doPFxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFxconeDijetJetConstituentsNjets");
@@ -231,12 +231,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doPFxconeDijetJetConstituents = false;
   if((doPFxconeDijetJetConstituentsNjets>0 || doPFxconeDijetJetConstituentsMinJetPt>0) && doXCone_dijet) 
     doPFxconeDijetJetConstituents=true;
-  if(doPFxconeDijetJetConstituentsMinJetPt<1e-6) doPFxconeDijetJetConstituentsMinJetPt=2e4;
+  if(doPFxconeDijetJetConstituentsMinJetPt<1e-6) doPFxconeDijetJetConstituentsMinJetPt=2e6;
 
   doGenXCone_dijet = iConfig.getParameter<bool>("doGenXCone_dijet");
   doGenxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenxconeDijetJetConstituentsNjets");
   doGenxconeDijetJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeDijetJetConstituentsMinJetPt");
-  if(doGenxconeDijetJetConstituentsMinJetPt<1e-6) doGenxconeDijetJetConstituentsMinJetPt=2e4;
+  if(doGenxconeDijetJetConstituentsMinJetPt<1e-6) doGenxconeDijetJetConstituentsMinJetPt=2e6;
 
   auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
 

@@ -61,11 +61,11 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
     metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter", "Flag_globalSuperTightHalo2016Filter");
     metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
-    // metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");  // Not recommended
-    // metfilters_selection->add<TriggerSelection>("BadChargedCandidateFilter", "Flag_BadChargedCandidateFilter"); // Not recommended, under review. Already applied in 2016v2
+    if (!is_mc) metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
+    // metfilters_selection->add<TriggerSelection>("BadChargedCandidateFilter", "Flag_BadChargedCandidateFilter"); // Not recommended, under review. Separate module in ntuple_generator for 2016v2
     if (year != Year::is2016v2) metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter"); // Already filter BadPFMuon events in ntuple production
     metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
-    metfilters_selection->add<EcalBadCalibSelection>("EcalBadCalibSelection"); // Use this instead of Flag_ecalBadCalibFilter
+    metfilters_selection->add<EcalBadCalibSelection>("EcalBadCalibSelection"); // Use this instead of Flag_ecalBadCalibFilter, uses ecalBadCalibReducedMINIAODFilter in ntuple_generator
     if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
   }
   if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
@@ -86,6 +86,7 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
   }
   modules.emplace_back(new HTCalculator(ctx,HT_jetid));
   if(jetid) jet_cleaner.reset(new JetCleaner(ctx, jetid));
+  print_setup();
 }
 
 bool CommonModules::process(uhh2::Event & event){
@@ -140,7 +141,7 @@ bool CommonModules::process(uhh2::Event & event){
       else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
     }
   }
-  else if(jec || jetlepcleaner) cout <<"WARNING: You used CommonModules for either JEC or jet-lepton-cleaning but MET is not corrected. Please be aware of this." << endl;
+  // else if(jec || jetlepcleaner) cout <<"WARNING: You used CommonModules for either JEC or jet-lepton-cleaning but MET is not corrected. Please be aware of this." << endl;
 
   if(jetid) jet_cleaner->process(event);
 
@@ -184,6 +185,44 @@ void CommonModules::disable_metfilters(){
 void CommonModules::disable_pvfilter(){
   fail_if_init();
   pvfilter = false;
+}
+
+void CommonModules::print_setup() const {
+  std::map<std::string, bool> settings_map = {
+    {"MC luminosity reweighting", mclumiweight},
+    {"MC pileup reweighting", mcpileupreweight},
+    {"Golden Lumi", lumisel},
+    {"JECs", jec},
+    {"JER smearing", jersmear},
+    {"Jet-Lepton cleaning", jetlepcleaner},
+    {"MET Type-1 corrections", do_metcorrection},
+    {"MET filters", metfilters},
+    {"PV filter", pvfilter},
+    {"Jet pT sorting", jetptsort},
+    {"Jet PF ID cleaner", jetpfidcleaner},
+    {"Jet ID", (bool) jetid},
+    {"Electron ID", (bool) eleid},
+    {"Muon ID", (bool) muid},
+    {"Tau ID", (bool) tauid},
+  };
+
+  cout << "----------------------------------------------------------------------------------------------------" << endl;
+  cout << "CommonModules setup:" << endl;
+  cout << "----------------------------------------------------------------------------------------------------" << endl;
+  cout << "is MC? = " << (is_mc ? "TRUE" : "FALSE") << endl;
+  cout << "Year = " << year_str_map.at(year) << endl; // can't use [] accessor as not const
+  cout << endl;
+  for (auto const & [name, flag] : settings_map) {
+    cout << name << " = " << (flag ? "ON" : "OFF") << endl;
+  }
+  cout << endl;
+
+  // Now some special messages
+  // coopy logic from process()
+  if (!((jetlepcleaner && jec) || (do_metcorrection && jec)) && (jec || jetlepcleaner)) {
+    cout << "WARNING: You used CommonModules for either JEC or jet-lepton-cleaning but MET is not corrected." << endl;
+  }
+  cout << "----------------------------------------------------------------------------------------------------" << endl;
 }
 
 class TestCommonModules: public AnalysisModule {

@@ -278,27 +278,32 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
 
 
-/** \brief Smear the jet four-momenta in MC to match the resolution in data
+/** \brief Smear the Jets' (specified in event.jets / JetCollection) four-momenta in MC to match the resolution in data.
+ * It will have no effect on data events.
  *
- * The corrections applied correspond to the values listed here:
- * https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution
- * for 8TeV data (r36 from 2014-08-28) using the method to scale
- * the genjet pt - reco pt difference.
+ * There are 2 constructors to either automatically choose resolution txt file
+ * & scale factors based on year & jet algorithm,
+ * or allow the user to specify them exactly.
+ *
+ * See https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution for details
+ * We use the hybrid method, depending on if a matching genjet was found.
  *
  * Run this *after* the jet energy corrections.
  *
  * IMPORTANT: do NOT run the module twice, as then, the jets will be smeared twice, which
  * is too much.
  *
- * Options parsed from the given Context:
- *  - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing resp.
+ * Options parsed from the given Context in the XML file:
+ *  - "jersmear_direction": either "nominal", "up", or "down" to apply
+ *    nominal, +1sigma, -1sigma smearing respectively
  *
  * Please note that the JetResolutionSmearer does not sort the (re-)corrected jets by pt;
  * you might want to do that before running algorithms / plotting which assume that.
  */
 class JetResolutionSmearer: public uhh2::AnalysisModule{
 public:
-    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_Fall17_V3);
+    explicit JetResolutionSmearer(uhh2::Context & ctx);
+    explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf, const std::string& resFilename);
 
     virtual bool process(uhh2::Event & event) override;
 
