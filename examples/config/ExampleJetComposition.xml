@@ -8,64 +8,37 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" >  -->
-<!--        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="QCD_FlatPU" Cacheable="False"> -->
-            <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="JetComposition" Cacheable="False">
-<!--            <In FileName="/nfs/dust/cms/user/karavdia/CMSSW_10_2_10/src/UHH2/core/python/Ntuple_QCDAutumn2018_FlatPU.root" Lumi="0.0"/>  -->
-	    <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_4399_Ntuple.root" Lumi="0.0"/>
+
+        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="JetComposition_2018" Cacheable="False">
+    	    <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_4399_Ntuple.root" Lumi="0.0"/>
             <In FileName="/nfs/dust/cms/user/karavdia/RunII_102X_v1_TEST/JetHT2018/Run2018A_all/DATA_JetHT_Run2018A_7091_Ntuple.root" Lumi="0.0"/>
-            <InputTree Name="AnalysisTree" /> 
+            <InputTree Name="AnalysisTree" />
             <!-- uncomment to write tree of selected events, i.e. of those events for which the AnalysisModule::process method  returns true
                 If no OutputTree is given, no events will be written. Please do use "AnalysisTree" as Name. -->
             <OutputTree Name="AnalysisTree" />
         </InputData>
-        
-            
+
+
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
-            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" /> 
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
             <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
-            <Item Name="MuonCollection" Value="slimmedMuonsUSER" /> 
-<!--            <Item Name="TauCollection" Value="slimmedTaus" /> -->
+            <Item Name="MuonCollection" Value="slimmedMuonsUSER" />
             <Item Name="JetCollection" Value="jetsAk4CHS" />
             <Item Name="GenJetCollection" Value="slimmedGenJets" />
             <Item Name="METName" Value="slimmedMETs" />
-            
-            <!-- The list of available collections to read in corresponds to the pointer members in event. The 'Name's to use here in the configuration are:
-            
-                 PrimaryVertexCollection
-                 ElectronCollection
-                 MuonCollection
-                 TauCollection
-                 PhotonCollection
-                 JetCollection
-                 TopJetCollection
-                 METName
-                 
-                 GenInfoName
-                 GenJetCollection
-                 GenTopJetCollection
-                 GenParticleCollection
-                 
-                 Note that the last four are only read in for MC (InputData Type="MC"), so it is save to specify
-                 them for real data, although those branches do not exist.
-                 
-                 As 'Value', always use the branch name (if in doubt, open the input file in ROOT).
-                 
-                 By default, triggers are read. To explicitly disable reading triggers, use:
-                 <Item Name="readTrigger" Value="false" />
-            -->
-            
+
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="ExampleModuleJetComposition" /> 
-            
+            <Item Name="AnalysisModule" Value="ExampleModuleJetComposition" />
+
             <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
                  MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
                  event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
             <Item Name="use_sframe_weight" Value="false" />
-            
+
             <!-- configuration for MCPileupReweight (run as part of CommonModules): -->
 <!--            <Item Name="pileup_directory" Value="" /> -->
-            
+
             <!-- Some test configuration; see ExampleJetComposition.cxx for how to access it: -->
             <Item Name="TestKey" Value="TestKeyValue" />
         </UserConfig>

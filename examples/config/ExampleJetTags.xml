@@ -8,7 +8,7 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
 
-        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="JetID" Cacheable="False">
+        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="JetTags_2018" Cacheable="False">
             <In FileName="../core/python/Ntuple.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
         </InputData>

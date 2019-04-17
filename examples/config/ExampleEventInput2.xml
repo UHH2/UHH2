@@ -7,18 +7,18 @@
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./tmp/" PostFix="" TargetLumi="1" >
    <!-- <Cycle Name="uhh2::AnalysisModuleRunner"  RunMode="PROOF" ProofServer="lite://"  ProofWorkDir="/nfs/dust/cms/user/ottjoc/proof-wd/" ProofNodes="2" OutputDirectory="./" PostFix="" TargetLumi="1" > -->
                 <InputData Lumi="92270" NEventsMax="10000" Type="MC" Version="TTbarIn" Cacheable="False">
-                    <In FileName="./uhh2.AnalysisModuleRunner.MC.TTbar.root" Lumi="0.0"/> 
-                    <InputTree Name="AnalysisTree" /> 
+                    <In FileName="./uhh2.AnalysisModuleRunner.MC.TTbar.root" Lumi="0.0"/>
+                    <InputTree Name="AnalysisTree" />
                     <OutputTree Name="AnalysisTree" />
-                </InputData>                
-                
+                </InputData>
+
             <UserConfig>
-                
+
                 <!-- the class name of the AnalysisModule subclasses to run: -->
-                <Item Name="AnalysisModule" Value="ExampleModuleEventInput2" /> 
-                
-                <Item Name="additionalBranches" Value="myjets" /> 
-                
+                <Item Name="AnalysisModule" Value="ExampleModuleEventInput2" />
+
+                <Item Name="additionalBranches" Value="myjets" />
+
                 <!-- the name of the branch to use for the test int event output. See ExampleEventOutput module for details. -->
                 <Item Name="int_branchname" Value="testbranchname" />
             </UserConfig>
