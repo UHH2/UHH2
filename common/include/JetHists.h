@@ -23,11 +23,11 @@
  *
  * This class was extended to also host the TopJet Hists since many histograms are similar.
  * A shared parent class exist now with a common function to book and fill histograms for plain jets.
- * In the constructor the number of however ordered jets can be specified. Also multiple single jets 
- * can be addresed by their ordering (add_iJetHists/add_iTopJetHists). 
+ * In the constructor the number of however ordered jets can be specified. Also multiple single jets
+ * can be addresed by their ordering (add_iJetHists/add_iTopJetHists).
  *
- * Since subjets need some additional histograms the TopJet Hist class has additional book and fill  
- * routines for them. Subjets are connected to their respective TopJet and with it to the sorting of 
+ * Since subjets need some additional histograms the TopJet Hist class has additional book and fill
+ * routines for them. Subjets are connected to their respective TopJet and with it to the sorting of
  * the topjets.
  */
 
@@ -38,7 +38,7 @@ protected:
   struct jetHist{
       TH1F* pt, *eta, *phi, *mass, *csv, *mvahiggsdiscr, *subjet_sum_mass;
   };
-    
+
   JetHistsBase(uhh2::Context & ctx, const std::string & dirname);
 
   jetHist book_jetHist(const std::string & axisSuffix, const std::string & histSuffix, double minPt, double maxPt);
@@ -76,16 +76,16 @@ public:
 
 
 class TopJetHists: public JetHistsBase{
- public: 
+ public:
   TopJetHists(uhh2::Context & ctx,
 	      const std::string & dirname,
 	      const unsigned int NumberOfPlottedJets=4,
 	      const std::string & collection = "");
-  
+
   virtual void fill(const uhh2::Event & ev) override;
   //set id which topjets should be looked at
   void set_TopJetId(TopJetId my_jetId){topjetid = my_jetId;}
-  //UserJet defines the i-th Jet to be plotted. The other variables are needed for plotting and to have different histogram names/axis. For each TopJet all its SubJets are also plotted. 
+  //UserJet defines the i-th Jet to be plotted. The other variables are needed for plotting and to have different histogram names/axis. For each TopJet all its SubJets are also plotted.
   void add_iTopJetHists(unsigned int UserJet, double minPt=0, double maxPt=800, double minPt_sub=0, double maxPt_sub=500, const std::string & axisSuffix="userjet", const std::string & histSuffix="userjet");
  protected:
   JetHistsBase::jetHist book_topJetHist(const std::string & axisSuffix, const std::string & histSuffix, double minPt, double maxPt);
@@ -120,11 +120,12 @@ static const std::vector<float> BTagMCEffBinsPt = {20., 30., 50., 70., 100., 140
  * jets_handle_name should point to a handle of type vector<Jet> _or_
  * vector<TopJet>, were in the latter case all of the subjets are used.
  */
+template<typename btagger>
 class BTagMCEfficiencyHists: public uhh2::Hists {
 public:
   BTagMCEfficiencyHists(uhh2::Context & ctx,
                         const std::string & dirname,
-                        const CSVBTag::wp & working_point,
+                        const typename btagger::wp & working_point,
                         const std::string & jets_handle_name="jets");
 
   virtual void fill(const uhh2::Event & ev) override;
@@ -132,7 +133,7 @@ public:
 protected:
   void do_fill(const std::vector<TopJet> & jets, const uhh2::Event & event);
 
-  CSVBTag btag_;
+  btagger btag_;
   TH2F * hist_b_passing_;
   TH2F * hist_b_total_;
   TH2F * hist_c_passing_;
