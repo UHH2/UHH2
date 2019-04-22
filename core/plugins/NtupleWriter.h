@@ -171,6 +171,8 @@ class NtupleWriter : public edm::EDFilter {
 
       std::vector<std::vector<FlavorParticle> > triggerObjects_out;
       std::vector<std::string> triggerObjects_sources;
+      std::vector<edm::EDGetTokenT<bool>> extraTriggers_tokens;
+      std::vector<std::string> extraTriggers_names;
 
       std::vector<bool> skipMETUncertainties;
 
