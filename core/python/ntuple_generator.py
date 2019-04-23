@@ -2023,20 +2023,23 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # only introduced after samples were produced.
     # Newer samples will already have these.
     do_bad_muon_charged_filters = (year == "2016v2")
+    extra_trigger_bits = cms.VInputTag()
     if do_bad_muon_charged_filters:
         process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
         process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
         process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
-        process.BadPFMuonFilter.taggingMode = False  # Run in filter mode to reject events, not store them
+        process.BadPFMuonFilter.taggingMode = True  # Don't veto, store bit in ntuple
         task.add(process.BadPFMuonFilter)
+        extra_trigger_bits.append(process.BadPFMuonFilter.label())
 
         # DISABLE Bad Charged Hadron Filter for now as some inefficiency for TeV jets
         # Under review, update when necessary
         # process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
         # process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
         # process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
-        # process.BadChargedCandidateFilter.taggingMode = False
+        # process.BadChargedCandidateFilter.taggingMode = True
         # task.add(process.BadChargedCandidateFilter)
+        # extra_trigger_bits.append(process.BadChargedCandidateFilter.label())
 
     # NtupleWriter
     #
@@ -2404,6 +2407,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     #  'hltEle27WPLooseGsfTrackIsoFilter',                      # HLT_Ele27_eta2p1_WPLoose_Gsf_v*
                                     #),
                                     trigger_objects=cms.InputTag("selectedPatTrigger" if year == "2016v2" else "slimmedPatTrigger"),
+
+                                    # Extra trigger bits to store
+                                    # Each gets stored as "Extra_<name>"
+                                    # In theory one could also store the EcalBadCalib bit here as well,
+                                    # but that might screw up existing workflows,
+                                    # and removing the branch might screw up existing trees
+                                    extra_trigger_bits=extra_trigger_bits,
 
                                     #For 2017 data with prefiring issue it might be usefull to store L1 seeds
                                     doL1seed=cms.bool(True),
