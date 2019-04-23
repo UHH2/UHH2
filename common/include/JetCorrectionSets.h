@@ -13,6 +13,12 @@ namespace JERFiles{
   Files for Data are created for each run separately.
   */
 
+  const std::string JECPathStringMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction);
+  const std::vector<std::string> JECFiles_MC(const std::string & tag, const std::string & ver, const std::string & jetCollection);
+
+  const std::string JECPathStringMC2016(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction);
+  const std::vector<std::string> JECFiles_MC2016(const std::string & tag, const std::string & ver, const std::string & jetCollection);
+
   #define DEFINE_CORRECTION_MC(tag,ver,jetCollection,Correction)                            \
   extern const std::vector<std::string> tag##_V##ver##_##Correction##_##jetCollection##_MC; \
 
@@ -67,17 +73,17 @@ namespace JERFiles{
   */
 
   //2016, official Moriond19
-  DEFINE_JECFILES_MC(Summer16_07Aug2017,11,AK4PFchs) 
-  DEFINE_JECFILES_MC(Summer16_07Aug2017,11,AK4PFPuppi) 
-  DEFINE_JECFILES_MC(Summer16_07Aug2017,11,AK8PFchs) 
-  DEFINE_JECFILES_MC(Summer16_07Aug2017,11,AK8PFPuppi) 
-  DEFINE_JECFILES_DATA2016(Summer16_07Aug2017,11,AK4PFchs) 
-  DEFINE_JECFILES_DATA2016(Summer16_07Aug2017,11,AK4PFPuppi) 
-  DEFINE_JECFILES_DATA2016(Summer16_07Aug2017,11,AK8PFchs) 
-  DEFINE_JECFILES_DATA2016(Summer16_07Aug2017,11,AK8PFPuppi) 
+  DEFINE_JECFILES_MC(Summer16_07Aug2017,11,AK4PFchs)
+  DEFINE_JECFILES_MC(Summer16_07Aug2017,11,AK4PFPuppi)
+  DEFINE_JECFILES_MC(Summer16_07Aug2017,11,AK8PFchs)
+  DEFINE_JECFILES_MC(Summer16_07Aug2017,11,AK8PFPuppi)
+  DEFINE_JECFILES_DATA2016(Summer16_07Aug2017,11,AK4PFchs)
+  DEFINE_JECFILES_DATA2016(Summer16_07Aug2017,11,AK4PFPuppi)
+  DEFINE_JECFILES_DATA2016(Summer16_07Aug2017,11,AK8PFchs)
+  DEFINE_JECFILES_DATA2016(Summer16_07Aug2017,11,AK8PFPuppi)
   //2016, JERC legacy studies
-  DEFINE_JECFILES_MC(Summer16_07Aug2017,20,AK4PFchs) 
-  DEFINE_JECFILES_DATA2016(Summer16_07Aug2017,20,AK4PFchs) 
+  DEFINE_JECFILES_MC(Summer16_07Aug2017,20,AK4PFchs)
+  DEFINE_JECFILES_DATA2016(Summer16_07Aug2017,20,AK4PFchs)
 
   //2017, official Moriond19
   DEFINE_JECFILES_MC(Fall17_17Nov2017,32,AK4PFchs)
