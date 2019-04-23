@@ -13,6 +13,12 @@ namespace JERFiles{
   Files for Data are created for each run separately.
   */
 
+  const std::string JECPathStringData(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & Correction);
+  const std::vector<std::string> JECFiles_DATA(const std::string & tag, const std::string & ver, const std::string & runName, const std::string & jetCollection);
+
+  const std::string JECPathStringData2018(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & Correction);
+  const std::vector<std::string> JECFiles_DATA2018(const std::string & tag, const std::string & ver, const std::string & runName, const std::string & jetCollection);
+
   const std::string JECPathStringMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction);
   const std::vector<std::string> JECFiles_MC(const std::string & tag, const std::string & ver, const std::string & jetCollection);
 

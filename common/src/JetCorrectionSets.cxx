@@ -3,21 +3,7 @@
 
 //see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyCorrections#GetTxtFiles how to get the txt files with jet energy corrections from the database
 
-/* The idea of the following preprocessor directives is to simplify the creation of new JEC input files.
-More details in UHH2/common/include/JetCorrectionsSets.h
-*/
-
-#define SET_NEWSTRING_DATA(tag,ver,jetCollection,sample,runName,Correction)                                                                                   \
-"JECDatabase/textFiles/" #tag #runName "_V" #ver "_" #sample "/" #tag #runName "_V" #ver "_" #sample "_" #Correction "_" #jetCollection ".txt",  \
-
-#define SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,sample,runName,Correction)                                                                                            \
-"JECDatabase/textFiles/" #tag "_Run" #runName "_V" #ver "_" #sample "/" #tag "_Run" #runName "_V" #ver "_" #sample "_" #Correction "_" #jetCollection ".txt",  \
-
-// have to use these, cannot use #tag, etc as it is inside another directive and will fail to compile
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-
-
+// The idea of the following methods is to simplify the creation of new JEC input files.
 const std::string JERFiles::JECPathStringMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction) {
   return "JECDatabase/textFiles/"+tag+"_V"+ver+"_MC/"+tag+"_V"+ver+"_MC_"+Correction+"_"+jetCollection+".txt";
 }
@@ -30,6 +16,37 @@ const std::vector<std::string> JERFiles::JECFiles_MC(const std::string & tag, co
   };
 }
 
+const std::string JERFiles::JECPathStringData(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & Correction) {
+  return "JECDatabase/textFiles/"+tag+runName+"_V"+ver+"_"+"DATA/"+tag+runName+"_V"+ver+"_DATA_"+Correction+"_"+jetCollection+".txt";
+}
+
+const std::string JERFiles::JECPathStringData2018(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & Correction) {
+  return "JECDatabase/textFiles/"+tag+"_Run"+runName+"_V"+ver+"_"+"DATA/"+tag+"_Run"+runName+"_V"+ver+"_DATA_"+Correction+"_"+jetCollection+".txt";
+}
+
+const std::vector<std::string> JERFiles::JECFiles_DATA(const std::string & tag, const std::string & ver, const std::string & runName, const std::string & jetCollection) {
+  return {
+    JERFiles::JECPathStringData(tag, ver, jetCollection, runName, "L1FastJet"),
+    JERFiles::JECPathStringData(tag, ver, jetCollection, runName, "L2Relative"),
+    JERFiles::JECPathStringData(tag, ver, jetCollection, runName, "L3Absolute"),
+    JERFiles::JECPathStringData(tag, ver, jetCollection, runName, "L2L3Residual")
+  };
+}
+
+const std::vector<std::string> JERFiles::JECFiles_DATA2018(const std::string & tag, const std::string & ver, const std::string & runName, const std::string & jetCollection) {
+  return {
+    JERFiles::JECPathStringData2018(tag, ver, jetCollection, runName, "L1FastJet"),
+    JERFiles::JECPathStringData2018(tag, ver, jetCollection, runName, "L2Relative"),
+    JERFiles::JECPathStringData2018(tag, ver, jetCollection, runName, "L3Absolute"),
+    JERFiles::JECPathStringData2018(tag, ver, jetCollection, runName, "L2L3Residual")
+  };
+}
+
+
+// have to use these, cannot use #tag, etc as it is inside another directive and will fail to compile
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
 #define SET_JECFILES_MC(tag,ver,jetCollection)					                                          \
 const std::vector<std::string> JERFiles::tag##_V##ver##_L123_##jetCollection##_MC =               \
   JERFiles::JECFiles_MC(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection));                   \
@@ -40,43 +57,35 @@ const std::vector<std::string> JERFiles::tag##_V##ver##_L1FastJet_##jetCollectio
   JERFiles::JECPathStringMC(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), "L1FastJet")   \
 };                                                                                                \
 
-#define SET_CORRECTION_DATA(tag,ver,jetCollection,runName,runCorrection)                                  \
-const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L123_##jetCollection##_DATA = {       \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                                  \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L2Relative)                                 \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L3Absolute)                                 \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L2L3Residual)                               \
-};                                                                                                        \
+#define SET_CORRECTION_DATA(tag,ver,jetCollection,runName,runCorrection)                                   \
+const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L123_##jetCollection##_DATA =          \
+  JERFiles::JECFiles_DATA(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection)); \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L123_noRes_##jetCollection##_DATA = { \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                                  \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L2Relative)                                 \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L3Absolute)                                 \
+  JERFiles::JECPathStringData(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection), "L1FastJet"), \
+  JERFiles::JECPathStringData(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection), "L2Relative"), \
+  JERFiles::JECPathStringData(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection), "L3Absolute") \
 };                                                                                                        \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L1RC_##jetCollection##_DATA = {       \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L1RC)                                       \
+  JERFiles::JECPathStringData(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection), "L1RC") \
 };                                                                                                        \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L1FastJet_##jetCollection##_DATA = {  \
-  SET_NEWSTRING_DATA(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                                  \
+  JERFiles::JECPathStringData(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection), "L1FastJet") \
 };                                                                                                        \
 
 
 #define SET_CORRECTION_DATA_2018(tag,ver,jetCollection,runName,runCorrection)                             \
-const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L123_##jetCollection##_DATA = {       \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                             \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L2Relative)                            \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L3Absolute)                            \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L2L3Residual)                          \
-};                                                                                                        \
+const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L123_##jetCollection##_DATA =       \
+  JERFiles::JECFiles_DATA2018(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection)); \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L123_noRes_##jetCollection##_DATA = { \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                             \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L2Relative)                            \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L3Absolute)                            \
+  JERFiles::JECPathStringData2018(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection), "L1FastJet"), \
+  JERFiles::JECPathStringData2018(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection), "L2Relative"), \
+  JERFiles::JECPathStringData2018(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection), "L3Absolute") \
 };                                                                                                        \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L1RC_##jetCollection##_DATA = {       \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1RC)                                       \
+  JERFiles::JECPathStringData2018(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection), "L1RC") \
 };                                                                                                        \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L1FastJet_##jetCollection##_DATA = {  \
-  SET_NEWSTRING_DATA_2018(tag,ver,jetCollection,DATA,runCorrection,L1FastJet)                                  \
+  JERFiles::JECPathStringData(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), TOSTRING(runCorrection), "L1FastJet") \
 };                                                                                                        \
 
 #define SET_JECFILES_DATA_2016(tag,ver,jetCollection) \
