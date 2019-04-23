@@ -5,7 +5,20 @@
 
 // The idea of the following methods is to simplify the creation of new JEC input files.
 const std::string JERFiles::JECPathStringMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction) {
-  return "JECDatabase/textFiles/"+tag+"_V"+ver+"_MC/"+tag+"_V"+ver+"_MC_"+Correction+"_"+jetCollection+".txt";
+  std::string result="JECDatabase/textFiles/";
+  result += tag;
+  result += "_V";
+  result += ver;
+  result += "_MC/";
+  result += tag;
+  result += "_V";
+  result += ver;
+  result += "_MC_";
+  result += Correction;
+  result += "_";
+  result += jetCollection;
+  result += ".txt";
+  return result;
 }
 
 const std::vector<std::string> JERFiles::JECFiles_MC(const std::string & tag, const std::string & ver, const std::string & jetCollection) {
@@ -17,11 +30,45 @@ const std::vector<std::string> JERFiles::JECFiles_MC(const std::string & tag, co
 }
 
 const std::string JERFiles::JECPathStringData(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & Correction) {
-  return "JECDatabase/textFiles/"+tag+runName+"_V"+ver+"_"+"DATA/"+tag+runName+"_V"+ver+"_DATA_"+Correction+"_"+jetCollection+".txt";
+  std::string result = "JECDatabase/textFiles/";
+  result += tag;
+  result += runName;
+  result += "_V";
+  result += ver;
+  result += "_";
+  result += "DATA/";
+  result += tag;
+  result += runName;
+  result += "_V";
+  result += ver;
+  result += "_DATA_";
+  result += Correction;
+  result += "_";
+  result += jetCollection;
+  result += ".txt";
+  return result;
 }
 
 const std::string JERFiles::JECPathStringData2018(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & Correction) {
-  return "JECDatabase/textFiles/"+tag+"_Run"+runName+"_V"+ver+"_"+"DATA/"+tag+"_Run"+runName+"_V"+ver+"_DATA_"+Correction+"_"+jetCollection+".txt";
+  std::string result = "JECDatabase/textFiles/";
+  result += tag;
+  result += "_Run";
+  result += runName;
+  result += "_V";
+  result += ver;
+  result += "_";
+  result += "DATA/";
+  result += tag;
+  result += "_Run";
+  result += runName;
+  result += "_V";
+  result += ver;
+  result += "_DATA_";
+  result += Correction;
+  result += "_";
+  result += jetCollection;
+  result += ".txt";
+  return result;
 }
 
 const std::vector<std::string> JERFiles::JECFiles_DATA(const std::string & tag, const std::string & ver, const std::string & runName, const std::string & jetCollection) {
@@ -113,7 +160,20 @@ SET_CORRECTION_DATA_2018(tag,ver,jetCollection,D,D)   \
 
 
 const std::string JERFiles::JECPathStringMC2016(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction) {
-  return "JECDatabase/textFiles/"+tag+"V"+ver+"_MC/"+tag+"V"+ver+"_MC_"+Correction+"_"+jetCollection+".txt";
+  std::string result = "JECDatabase/textFiles/";
+  result += tag;
+  result += "V";
+  result += ver;
+  result += "_MC/";
+  result += tag;
+  result += "V";
+  result += ver;
+  result += "_MC_";
+  result += Correction;
+  result += "_";
+  result += jetCollection;
+  result += ".txt";
+  return result;
 }
 
 const std::vector<std::string> JERFiles::JECFiles_MC2016(const std::string & tag, const std::string & ver, const std::string & jetCollection) {
