@@ -13,42 +13,36 @@ namespace JERFiles{
   Files for Data are created for each run separately.
   */
 
-  const std::string JECPathStringData(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & Correction);
-  const std::vector<std::string> JECFiles_DATA(const std::string & tag, const std::string & ver, const std::string & runName, const std::string & jetCollection);
+  static std::string JECPathStringData(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & Correction);
+  static std::vector<std::string> JECFiles_DATA(const std::string & tag, const std::string & ver, const std::string & runName, const std::string & jetCollection);
 
-  const std::string JECPathStringData2018(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & Correction);
-  const std::vector<std::string> JECFiles_DATA2018(const std::string & tag, const std::string & ver, const std::string & runName, const std::string & jetCollection);
-
-  const std::string JECPathStringMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction);
-  const std::vector<std::string> JECFiles_MC(const std::string & tag, const std::string & ver, const std::string & jetCollection);
-
-  const std::string JECPathStringMC2016(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction);
-  const std::vector<std::string> JECFiles_MC2016(const std::string & tag, const std::string & ver, const std::string & jetCollection);
+  static std::string JECPathStringMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction);
+  static std::vector<std::string> JECFiles_MC(const std::string & tag, const std::string & ver, const std::string & jetCollection);
 
   #define DEFINE_CORRECTION_MC(tag,ver,jetCollection,Correction)                            \
-  extern const std::vector<std::string> tag##_V##ver##_##Correction##_##jetCollection##_MC; \
+  extern const static std::vector<std::string> tag##_V##ver##_##Correction##_##jetCollection##_MC; \
 
-#define DEFINE_CORRECTION_DATA2016(tag,ver,jetCollection,Correction)	\
-  extern const std::vector<std::string> tag##_V##ver##_B_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_C_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_D_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_E_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_F_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_G_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_H_##Correction##_##jetCollection##_DATA;   \
+  #define DEFINE_CORRECTION_DATA2016(tag,ver,jetCollection,Correction)	\
+  extern const static std::vector<std::string> tag##_V##ver##_B_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_C_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_D_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_E_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_F_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_G_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_H_##Correction##_##jetCollection##_DATA;   \
 
-#define DEFINE_CORRECTION_DATA2017(tag,ver,jetCollection,Correction)	\
-  extern const std::vector<std::string> tag##_V##ver##_B_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_C_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_D_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_E_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_F_##Correction##_##jetCollection##_DATA;   \
+  #define DEFINE_CORRECTION_DATA2017(tag,ver,jetCollection,Correction)	\
+  extern const static std::vector<std::string> tag##_V##ver##_B_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_C_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_D_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_E_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_F_##Correction##_##jetCollection##_DATA;   \
 
-#define DEFINE_CORRECTION_DATA2018(tag,ver,jetCollection,Correction)	\
-  extern const std::vector<std::string> tag##_V##ver##_A_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_B_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_C_##Correction##_##jetCollection##_DATA;   \
-  extern const std::vector<std::string> tag##_V##ver##_D_##Correction##_##jetCollection##_DATA;   \
+  #define DEFINE_CORRECTION_DATA2018(tag,ver,jetCollection,Correction)	\
+  extern const static std::vector<std::string> tag##_V##ver##_A_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_B_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_C_##Correction##_##jetCollection##_DATA;   \
+  extern const static std::vector<std::string> tag##_V##ver##_D_##Correction##_##jetCollection##_DATA;   \
 
 
   #define DEFINE_JECFILES_MC(tag,ver,jetCollection)     \
