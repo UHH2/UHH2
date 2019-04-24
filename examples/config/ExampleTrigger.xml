@@ -4,11 +4,11 @@
     <Library Name="libSUHH2examples"/>
     <Package Name="SUHH2examples.par" />
     <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
-        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="Trigger" Cacheable="False">
-            <In FileName="../core/python/Ntuple.root" Lumi="0.0"/>
+        <InputData Lumi="1" NEventsMax="-1" Type="DATA" Version="Trigger_2018" Cacheable="False">
+            <In FileName="Ntuple.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
         </InputData>
-            
+
         <UserConfig>
             <Item Name="AnalysisModule" Value="ExampleModuleTrigger" />
             <Item Name="TriggerName" Value="HLT_PFJet80_v*" />

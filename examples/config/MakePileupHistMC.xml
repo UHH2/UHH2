@@ -8,29 +8,28 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
 
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="MyMC" Cacheable="False">
-            <In FileName="/nfs/dust/cms/user/aggleton/UHH_Dev/94X_3/CMSSW_9_4_1/src/UHH2/core/python/Ntuple.root" Lumi="0.0"/> 
-            <InputTree Name="AnalysisTree" /> 
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="Pileup_2018" Cacheable="False">
+            <In FileName="Ntuple.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
         </InputData>
-            
+
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
-            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" /> 
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
             <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
-            <Item Name="MuonCollection" Value="slimmedMuonsUSER" /> 
-            <Item Name="TauCollection" Value="slimmedTaus" />
-            <Item Name="JetCollection" Value="slimmedJets" />
+            <Item Name="MuonCollection" Value="slimmedMuonsUSER" />
+            <Item Name="JetCollection" Value="jetsAk4CHS" />
             <Item Name="GenJetCollection" Value="slimmedGenJets" />
             <Item Name="METName" Value="slimmedMETs" />
-            
+
             <!-- the class name of the AnalysisModule subclasses to run: -->
-            <Item Name="AnalysisModule" Value="MakePileupHistModule" /> 
-            
+            <Item Name="AnalysisModule" Value="MakePileupHistModule" />
+
             <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
                  MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
                  event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
             <Item Name="use_sframe_weight" Value="false" />
-            
+
         </UserConfig>
     </Cycle>
 </JobConfiguration>

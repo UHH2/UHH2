@@ -7,27 +7,27 @@
 <JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
     <Library Name="libSUHH2examples"/>
     <Package Name="SUHH2examples.par" />
-   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
 
-        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="TTbar" Cacheable="True">
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="TTbar_2018" Cacheable="True">
               &MC_TTbar;
-            <InputTree Name="AnalysisTree" /> 
+            <InputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="Zprime" Cacheable="True">
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="Zprime_2018" Cacheable="True">
               &MC_Zprime;
-            <InputTree Name="AnalysisTree" /> 
+            <InputTree Name="AnalysisTree" />
         </InputData>
 
-        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="RSG" Cacheable="True">
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="RSG_2018" Cacheable="True">
               &MC_RSG;
-            <InputTree Name="AnalysisTree" /> 
+            <InputTree Name="AnalysisTree" />
         </InputData>
         <UserConfig>
             <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
-            <Item Name="GenParticleCollection" Value="GenParticles" /> 
-	    <Item Name="readTrigger" Value="False" />
-            <Item Name="AnalysisModule" Value="ExampleModuleTTbarGen" /> 
+            <Item Name="GenParticleCollection" Value="GenParticles" />
+            <Item Name="readTrigger" Value="False" />
+            <Item Name="AnalysisModule" Value="ExampleModuleTTbarGen" />
         </UserConfig>
     </Cycle>
 </JobConfiguration>

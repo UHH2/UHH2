@@ -57,7 +57,7 @@ JetHists::JetHists(Context & ctx,
 }
 
 void JetHists::add_iJetHists(unsigned int UserJet, double minPt, double maxPt, const std::string & axisSuffix, const std::string & histSuffix ){
-  m_userjet.push_back(UserJet); 
+  m_userjet.push_back(UserJet);
   userjets.push_back(book_jetHist(axisSuffix, histSuffix, minPt, maxPt));
 }
 
@@ -101,7 +101,7 @@ TopJetHists::subjetHist TopJetHists::book_subjetHist(const std::string & axisSuf
   subjetHist subjet_hist;
 
   subjet_hist.number = book<TH1F>("number"+histSuffix,"number "+axisSuffix,7, -.5, 6.5);
-    
+
   subjet_hist.pt = book<TH1F>("pt"+histSuffix,"p_{T} "+axisSuffix,50,minPt,maxPt);
   subjet_hist.eta = book<TH1F>("eta"+histSuffix,"#eta "+axisSuffix,100,-5,5);
   subjet_hist.phi = book<TH1F>("phi"+histSuffix,"#phi "+axisSuffix,50,-M_PI,M_PI);
@@ -175,7 +175,7 @@ TopJetHists::TopJetHists(Context & ctx,
   invmass_topjetak4jet = book<TH1F>("invmass_topjetak4jet", "invariant mass(jet,ak4 jet)", 100, 0, 1000);
   deltaR_lepton= book<TH1F>("deltaR_lepton", "#Delta R(jet,lepton)", 40, 0, 8.0);
   HTT_mass = book<TH1F>("HTT_mass", "HTT mass", 100, 0, 1000);
-  fRec = book<TH1F>("fRec", "fRec", 50,0,1); 
+  fRec = book<TH1F>("fRec", "fRec", 50,0,1);
 
   if(!collection.empty()){
     h_topjets = ctx.get_handle<std::vector<TopJet> >(collection);
@@ -183,7 +183,7 @@ TopJetHists::TopJetHists(Context & ctx,
 }
 
 void TopJetHists::add_iTopJetHists(unsigned int UserJet, double minPt, double maxPt, double minPt_sub, double maxPt_sub, const std::string & axisSuffix, const std::string & histSuffix ){
-  m_usertopjet.push_back(UserJet); 
+  m_usertopjet.push_back(UserJet);
   usertopjets.push_back(book_topJetHist(axisSuffix,histSuffix, minPt, maxPt));
   usersubjets.push_back(book_subjetHist(axisSuffix+"_sub", histSuffix+"_sub", minPt_sub, maxPt_sub));
 }
@@ -208,15 +208,15 @@ void TopJetHists::fill(const Event & event){
       fill_subjetHist(jet,allsubjets,w);
       tau32->Fill(jet.tau3()/jet.tau2(),w);
       tau21->Fill(jet.tau2()/jet.tau1(),w);
-      for (unsigned int m =0; m<m_usertopjet.size(); ++m){ 
-        if(m_usertopjet[m] == i){  
+      for (unsigned int m =0; m<m_usertopjet.size(); ++m){
+        if(m_usertopjet[m] == i){
           fill_topJetHist(jet,usertopjets[m],w);
-          fill_subjetHist(jet,usersubjets[m],w);  
+          fill_subjetHist(jet,usersubjets[m],w);
         }
       }
       if(i < single_jetHists.size()){
-          fill_topJetHist(jet,single_jetHists[i],w);  
-          fill_subjetHist(jet,subjets[i],w);  
+          fill_topJetHist(jet,single_jetHists[i],w);
+          fill_subjetHist(jet,subjets[i],w);
       }
       if(i<2){
         auto next_jet = closestParticle(jet, jets);
@@ -224,7 +224,7 @@ void TopJetHists::fill(const Event & event){
         if(i==0)deltaRmin_1->Fill(drmin, w);
         else deltaRmin_2->Fill(drmin, w);
       }
-    
+
       for (unsigned int j = 0; j <ak4jets.size(); j++)
          {
             const auto & ak4jet = ak4jets[i];
@@ -234,7 +234,7 @@ void TopJetHists::fill(const Event & event){
          }
       if (jet.has_tag(jet.tagname2tag("mass"))) HTT_mass ->Fill(jet.get_tag(jet.tagname2tag("mass")),w);
       if (jet.has_tag(jet.tagname2tag("fRec"))) fRec ->Fill(jet.get_tag(jet.tagname2tag("fRec")),w);
-  
+
       vector<Muon> muons = *event.muons;
       for (unsigned int j = 0; j <muons.size(); j++){
          double deltaRtjlepton = deltaR(jet, muons[j]);
@@ -245,9 +245,9 @@ void TopJetHists::fill(const Event & event){
          double deltaRtjlepton = deltaR(jet, electrons[j]);
          deltaR_lepton->Fill(deltaRtjlepton, w);
       }
-      
+
     }
-  
+
 }
 
 template<typename T>
@@ -258,15 +258,15 @@ template<typename T>
 }
 
 //Btag stuff
-
-BTagMCEfficiencyHists::BTagMCEfficiencyHists(
+template<typename btagger>
+BTagMCEfficiencyHists<btagger>::BTagMCEfficiencyHists(
   uhh2::Context & ctx,
   const std::string & dirname,
-  const CSVBTag::wp & working_point,
+  const typename btagger::wp & working_point,
   const std::string & jets_handle_name
 ):
   Hists(ctx, dirname),
-  btag_(CSVBTag(working_point)),
+  btag_(btagger(working_point)),
   hist_b_passing_(   book<TH2F>("BTagMCEffFlavBPassing",    ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
   hist_b_total_(     book<TH2F>("BTagMCEffFlavBTotal",      ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
   hist_c_passing_(   book<TH2F>("BTagMCEffFlavCPassing",    ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
@@ -277,7 +277,8 @@ BTagMCEfficiencyHists::BTagMCEfficiencyHists(
   h_jets_(   ctx.get_handle<vector<Jet>>(   jets_handle_name))
 {}
 
-void BTagMCEfficiencyHists::fill(const Event & event)
+template<typename btagger>
+void BTagMCEfficiencyHists<btagger>::fill(const Event & event)
 {
   if (event.is_valid(h_topjets_)) {
     do_fill(event.get(h_topjets_), event);
@@ -289,7 +290,8 @@ void BTagMCEfficiencyHists::fill(const Event & event)
   }
 }
 
-void BTagMCEfficiencyHists::do_fill(const std::vector<TopJet> & jets, const Event & event)
+template<typename btagger>
+void BTagMCEfficiencyHists<btagger>::do_fill(const std::vector<TopJet> & jets, const Event & event)
 {
   for (const auto & topjet : jets) { for (const auto & jet : topjet.subjets()) {
 
@@ -316,3 +318,22 @@ void BTagMCEfficiencyHists::do_fill(const std::vector<TopJet> & jets, const Even
 
   }}
 }
+
+template BTagMCEfficiencyHists<CSVBTag>::BTagMCEfficiencyHists(
+  uhh2::Context & ctx,
+  const std::string & dirname,
+  const CSVBTag::wp & working_point,
+  const std::string & jets_handle_name
+);
+template BTagMCEfficiencyHists<DeepCSVBTag>::BTagMCEfficiencyHists(
+  uhh2::Context & ctx,
+  const std::string & dirname,
+  const DeepCSVBTag::wp & working_point,
+  const std::string & jets_handle_name
+);
+template BTagMCEfficiencyHists<DeepJetBTag>::BTagMCEfficiencyHists(
+  uhh2::Context & ctx,
+  const std::string & dirname,
+  const DeepJetBTag::wp & working_point,
+  const std::string & jets_handle_name
+);

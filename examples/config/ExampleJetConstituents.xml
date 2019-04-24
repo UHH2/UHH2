@@ -8,12 +8,10 @@
 
    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
 
-        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="JetConstit" Cacheable="False">
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="JetConstit_2018" Cacheable="False">
             <In FileName="Ntuple.root" Lumi="0.0"/>
             <InputTree Name="AnalysisTree" />
         </InputData>
-
-
 
         <UserConfig>
             <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
@@ -31,8 +29,9 @@
 
             <Item Name="GenTopJetCollection" Value="genjetsAk8SubstructureSoftDrop" />
 
+            <!-- Requires your Ntuple to have jet constituents stored -->
             <Item Name="PFParticleCollection" Value="PFParticles" />
-            <Item Name="GenParticleCollection" Value="GenParticles" /> 
+            <Item Name="GenParticleCollection" Value="GenParticles" />
 
 
             <!-- the class name of the AnalysisModule subclasses to run: -->

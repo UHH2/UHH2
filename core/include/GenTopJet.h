@@ -10,6 +10,7 @@ public:
   }
 
   const std::vector<GenJet> & subjets() const{return m_subjets;}
+  float softdropmass() const {Particle v; for(unsigned int j=0; j<m_subjets.size(); ++j) v.v4()+=m_subjets[j].v4(); return v.v4().M(); }
   void add_subjet(const GenJet & p){m_subjets.push_back(p);}
 
   float tau1() const{return m_tau1;}
