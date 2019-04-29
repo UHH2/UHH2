@@ -50,9 +50,9 @@ def get_request_name(dataset_name):
     elif 'ext' in dataset_name:
         modified_name += '_ext'
 
-    if "v1" in dataset_name:
+    if "-v1" in dataset_name:
         modified_name += "_v1"
-    elif "v2" in dataset_name:
+    elif "-v2" in dataset_name:
         modified_name += "_v2"
 
     modified_name += "_" + strftime('%H%M_%d_%b_%y')
