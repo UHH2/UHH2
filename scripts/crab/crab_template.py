@@ -9,23 +9,51 @@
 # Take care here to make the request names *nice*
 # 
 # autocomplete_Datasets(ListOfDatasets) works also for several entries with *
-#
+
+
+import re
+from time import strftime
 from DasQuery import autocomplete_Datasets
 
-inputDatasets = ['/DYJetsToLL_M-50_HT-*to*_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_*/MINIAODSIM']
-inputDatasets = autocomplete_Datasets(inputDatasets)
-requestNames = []
-for x in inputDatasets:
-    name = x.split('/')[1]
-    modified_name =name.replace('_TuneCUETP8M1_13TeV-madgraphMLM-pythia8','')
+
+def get_request_name(dataset_name):
+    """Generate short string to use for request name from full dataset name"""
+    modified_name = dataset_name.split('/')[1]
+    modified_name = modified_name.replace('_TuneCUETP8M1_13TeV-madgraphMLM-pythia8', '_P8M1')
+    modified_name = modified_name.replace('_TuneCP5_13TeV-madgraphMLM-pythia8', '_CP5')
+    modified_name = modified_name.replace('_TuneCUETP8M1_13TeV_pythia8', '_P8M1')
+
+    # request name can only be 100 characters maximum
+    # at this point we need to chop it down to allow for ext2, v2, time, date
+    max_len = 100-25
+    if len(modified_name) > max_len:
+        modified_name = modified_name[:max_len]
+
+    # Add run year+period for data
+    year_match = re.search(r'201[678][A-Z]', x)
+    if year_match:
+        modified_name += '_'
+        modified_name += year_match.group(0)
+
     if 'ext1' in x:
         modified_name += '_ext1'
     elif 'ext2' in x:
         modified_name += '_ext2'
     elif 'ext' in x:
         modified_name += '_ext'
-    requestNames.append(modified_name)
 
+    if "v1" in x:
+        modified_name += "_v1"
+    elif "v2" in x:
+        modified_name += "_v2"
+
+    modified_name += "_" + strftime('%H%M_%d_%b_%y')
+    return modified_name
+
+
+inputDatasets = ['/DYJetsToLL_M-50_HT-*to*_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_*/MINIAODSIM']
+inputDatasets = autocomplete_Datasets(inputDatasets)
+requestNames = [get_request_name(x) for x in inputDatasets]
 
 # ===============================================================================
 # Classical part of crab, after resolving the * it uses in the example below just the first entry
