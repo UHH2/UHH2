@@ -1,13 +1,13 @@
 # This is a small example how the crab api can easily be used to create something like multi crab.
-# It has some additional features like also creating the xml files for you. 
-# For it to work you need inputDatasets & requestNames apart from the classical part 
+# It has some additional features like also creating the xml files for you.
+# For it to work you need inputDatasets & requestNames apart from the classical part
 #
 # Make sure to have a unique directory where your joboutput is saved, otherwise the script gets confused and you too!!
 #
 # Usage ./CrabConfig ConfigFile [options]
 #
 # Take care here to make the request names *nice*
-# 
+#
 # autocomplete_Datasets(ListOfDatasets) works also for several entries with *
 
 
@@ -50,6 +50,12 @@ def get_request_name(dataset_name):
     elif 'ext' in dataset_name:
         modified_name += '_ext'
 
+    # For e.g. Run2016B which is split into 2
+    if "ver1" in dataset_name:
+        modified_name += "_ver1"
+    elif "ver2" in dataset_name:
+        modified_name += "_ver2"
+
     if "-v1" in dataset_name:
         modified_name += "_v1"
     elif "-v2" in dataset_name:
@@ -77,12 +83,12 @@ config = config()
 config.General.workArea = 'crab_Test'
 config.General.transferOutputs = True
 config.General.transferLogs = True
-        
+
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/ntuplewriter_mc_2018.py')
 config.JobType.outputFiles = ["Ntuple.root"]
 config.JobType.maxMemoryMB = 2500
-        
+
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'
 config.Data.unitsPerJob = 24000
@@ -100,7 +106,7 @@ except ProxyException as e:
     print "Not setting config.Data.outLFNDirBase, will use default"
 
 config.Data.publication = False
-config.JobType.sendExternalFolder = True 
+config.JobType.sendExternalFolder = True
 #config.Data.allowNonValidInputDataset = True
 #config.Data.publishDataName = 'CRAB3_tutorial_May2015_MC_analysis'
 
