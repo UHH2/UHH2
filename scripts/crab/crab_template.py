@@ -30,21 +30,21 @@ def get_request_name(dataset_name):
         modified_name = modified_name[:max_len]
 
     # Add run year+period for data
-    year_match = re.search(r'201[678][A-Z]', x)
+    year_match = re.search(r'201[678][A-Z]', dataset_name)
     if year_match:
         modified_name += '_'
         modified_name += year_match.group(0)
 
-    if 'ext1' in x:
+    if 'ext1' in dataset_name:
         modified_name += '_ext1'
-    elif 'ext2' in x:
+    elif 'ext2' in dataset_name:
         modified_name += '_ext2'
-    elif 'ext' in x:
+    elif 'ext' in dataset_name:
         modified_name += '_ext'
 
-    if "v1" in x:
+    if "v1" in dataset_name:
         modified_name += "_v1"
-    elif "v2" in x:
+    elif "v2" in dataset_name:
         modified_name += "_v2"
 
     modified_name += "_" + strftime('%H%M_%d_%b_%y')
