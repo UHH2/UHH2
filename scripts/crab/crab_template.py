@@ -24,8 +24,8 @@ def get_request_name(dataset_name):
     modified_name = modified_name.replace('_TuneCUETP8M1_13TeV_pythia8', '_P8M1')
 
     # request name can only be 100 characters maximum
-    # at this point we need to chop it down to allow for ext2, v2, time, date
-    max_len = 100-25
+    # at this point we need to chop it down, to allow for campaign, time, date, ext2, v2
+    max_len = 100-34
     if len(modified_name) > max_len:
         modified_name = modified_name[:max_len]
 
@@ -34,6 +34,14 @@ def get_request_name(dataset_name):
     if year_match:
         modified_name += '_'
         modified_name += year_match.group(0)
+
+    # Add MC campaign
+    if "Summer16" in dataset_name:
+        modified_name += "_Summer16"
+    elif "Fall17" in dataset_name:
+        modified_name += "_Fall17"
+    elif "Autumn18" in dataset_name:
+        modified_name += "_Autumn18"
 
     if 'ext1' in dataset_name:
         modified_name += '_ext1'
