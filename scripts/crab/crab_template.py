@@ -12,7 +12,6 @@
 
 
 import re
-from time import strftime
 from DasQuery import autocomplete_Datasets
 
 
@@ -61,7 +60,6 @@ def get_request_name(dataset_name):
     elif "-v2" in dataset_name:
         modified_name += "_v2"
 
-    modified_name += "_" + strftime('%H%M_%d_%b_%y')
     return modified_name
 
 
