@@ -63,7 +63,11 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
     if (!is_mc) metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
     // metfilters_selection->add<TriggerSelection>("BadChargedCandidateFilter", "Flag_BadChargedCandidateFilter"); // Not recommended, under review. Separate module in ntuple_generator for 2016v2
-    if (year != Year::is2016v2) metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter"); // Already filter BadPFMuon events in ntuple production
+    if (year != Year::is2016v2) {
+      metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
+    } else {
+      metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Extra_BadPFMuonFilter");
+    }
     metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
     metfilters_selection->add<EcalBadCalibSelection>("EcalBadCalibSelection"); // Use this instead of Flag_ecalBadCalibFilter, uses ecalBadCalibReducedMINIAODFilter in ntuple_generator
     if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
