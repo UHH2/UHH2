@@ -40,18 +40,18 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
     if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx,SysType_PU));
     if(jec){
-      jet_corrector_MC.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_L123_AK4PFchs_MC));
+      jet_corrector_MC.reset(new JetCorrector(ctx, JERFiles::JECFilesMC("Fall17_17Nov2017", "32", "AK4PFchs")));
     }
     if(jersmear) jet_resolution_smearer.reset(new JetResolutionSmearer(ctx));
   }
   else{
     if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
     if(jec){
-      jet_corrector_B.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_B_L123_AK4PFchs_DATA));
-      jet_corrector_C.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_C_L123_AK4PFchs_DATA));
-      jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_D_L123_AK4PFchs_DATA));
-      jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_E_L123_AK4PFchs_DATA));
-      jet_corrector_F.reset(new JetCorrector(ctx, JERFiles::Fall17_17Nov2017_V32_F_L123_AK4PFchs_DATA));
+      jet_corrector_B.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "B")));
+      jet_corrector_C.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "C")));
+      jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "D")));
+      jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "E")));
+      jet_corrector_F.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "F")));
     }
   }
   if(metfilters){
@@ -79,13 +79,13 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
   }
   if(jetlepcleaner) {
-    if(is_mc) JLC_MC.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_L123_AK4PFchs_MC));
+    if(is_mc) JLC_MC.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesMC("Fall17_17Nov2017", "32", "AK4PFchs")));
     else{
-      JLC_B.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_B_L123_AK4PFchs_DATA));
-      JLC_C.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_C_L123_AK4PFchs_DATA));
-      JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_D_L123_AK4PFchs_DATA));
-      JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_E_L123_AK4PFchs_DATA));
-      JLC_F.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::Fall17_17Nov2017_V32_F_L123_AK4PFchs_DATA));
+      JLC_B.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "B")));
+      JLC_C.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "C")));
+      JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "D")));
+      JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "E")));
+      JLC_F.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "F")));
     }
   }
   modules.emplace_back(new HTCalculator(ctx,HT_jetid));
