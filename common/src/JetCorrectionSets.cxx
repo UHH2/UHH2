@@ -4,16 +4,19 @@
 //see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyCorrections#GetTxtFiles how to get the txt files with jet energy corrections from the database
 
 // The idea of the following methods is to simplify the creation of new JEC input files.
-const std::string JERFiles::JECPathStringMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & correction) {
+const std::string JERFiles::JECPathStringMC(const std::string & tag,
+                                            const std::string & ver,
+                                            const std::string & jetCollection,
+                                            const std::string & correction) {
+  std::string newVer = (tag.find("Summer16_23Sep2016") != std::string::npos) ? "V" : "_V"; // because someone decided to remove the underscore in Summer16_23Sep2016
+  newVer += ver;
+
   std::string result = "JECDatabase/textFiles/";
   result += tag;
-  std::string verPrefix = (tag.find("Summer16_23Sep2016") != std::string::npos) ? "V" : "_V"; // because someone decided to remove the underscore in Summer16_23Sep2016
-  result += verPrefix;
-  result += ver;
+  result += newVer;
   result += "_MC/";
   result += tag;
-  result += verPrefix;
-  result += ver;
+  result += newVer;
   result += "_MC_";
   result += correction;
   result += "_";
@@ -22,22 +25,28 @@ const std::string JERFiles::JECPathStringMC(const std::string & tag, const std::
   return result;
 }
 
-const std::string JERFiles::JECPathStringDATA(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & correction) {
+const std::string JERFiles::JECPathStringDATA(const std::string & tag,
+                                              const std::string & ver,
+                                              const std::string & jetCollection,
+                                              const std::string & runName,
+                                              const std::string & correction) {
+  std::string newVer = (tag.find("Summer16_23Sep2016") != std::string::npos) ? "V" : "_V"; // because someone decided to remove the underscore in Summer16_23Sep2016
+  newVer += ver;
+
   std::string newRunName = runName;
   // in 2018 they use "_RunA" instead of just "A"
   if (tag.find("18") != std::string::npos) {
     newRunName = "_Run" + runName;
   }
+
   std::string result = "JECDatabase/textFiles/";
   result += tag;
   result += newRunName;
-  std::string verPrefix = (tag.find("Summer16_23Sep2016") != std::string::npos) ? "V" : "_V"; // because someone decided to remove the underscore in Summer16_23Sep2016
-  result += verPrefix;
-  result += ver;
+  result += newVer;
   result += "_DATA/";
   result += tag;
   result += newRunName;
-  result += verPrefix;
+  result += newVer;
   result += "_DATA_";
   result += correction;
   result += "_";
@@ -50,7 +59,10 @@ const std::vector<std::string> JERFiles::L1L2L3 = {"L1FastJet", "L2Relative", "L
 
 const std::vector<std::string> JERFiles::L1L2L3Residual = {"L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"};
 
-const std::vector<std::string> JERFiles::JECFilesMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::vector<std::string> levels) {
+const std::vector<std::string> JERFiles::JECFilesMC(const std::string & tag,
+                                                    const std::string & ver,
+                                                    const std::string & jetCollection,
+                                                    const std::vector<std::string> levels) {
   std::vector<std::string> result;
   for (const auto & level : levels){
     result.push_back(JERFiles::JECPathStringMC(tag, ver, jetCollection, level));
@@ -58,7 +70,11 @@ const std::vector<std::string> JERFiles::JECFilesMC(const std::string & tag, con
   return result;
 }
 
-const std::vector<std::string> JERFiles::JECFilesDATA(const std::string & tag, const std::string & ver, const std::string & runName, const std::string & jetCollection, const std::vector<std::string> levels) {
+const std::vector<std::string> JERFiles::JECFilesDATA(const std::string & tag,
+                                                      const std::string & ver,
+                                                      const std::string & jetCollection,
+                                                      const std::string & runName,
+                                                      const std::vector<std::string> levels) {
   std::vector<std::string> result;
   for (const auto & level : levels){
     result.push_back(JERFiles::JECPathStringDATA(tag, ver, jetCollection, runName, level));

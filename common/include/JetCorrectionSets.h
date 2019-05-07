@@ -20,17 +20,33 @@ namespace JERFiles{
    */
 
   // JECPathString returns a single JEC filepath for given tag, ver, etc
-  const std::string JECPathStringMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & correction);
-  const std::string JECPathStringDATA(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & runName, const std::string & correction);
+  const std::string JECPathStringMC(const std::string & tag,
+                                    const std::string & ver,
+                                    const std::string & jetCollection,
+                                    const std::string & correction);
+
+  const std::string JECPathStringDATA(const std::string & tag,
+                                      const std::string & ver,
+                                      const std::string & jetCollection,
+                                      const std::string & runName,
+                                      const std::string & correction);
 
   // Some common variable to replace long vector strings
   extern const std::vector<std::string> L1L2L3;
   extern const std::vector<std::string> L1L2L3Residual;
 
   // These are the methods returning the total list of JEC files for a set of levels
-  // Version with runName is for data
-  const std::vector<std::string> JECFilesMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::vector<std::string> levels=JERFiles::L1L2L3);
-  const std::vector<std::string> JECFilesDATA(const std::string & tag, const std::string & ver, const std::string & runName, const std::string & jetCollection, const std::vector<std::string> levels=JERFiles::L1L2L3Residual);
+  // This can be passed to e.g. `JetCorrector` class
+  const std::vector<std::string> JECFilesMC(const std::string & tag,
+                                            const std::string & ver,
+                                            const std::string & jetCollection,
+                                            const std::vector<std::string> levels=JERFiles::L1L2L3);
+
+  const std::vector<std::string> JECFilesDATA(const std::string & tag,
+                                              const std::string & ver,
+                                              const std::string & jetCollection,
+                                              const std::string & runName,
+                                              const std::vector<std::string> levels=JERFiles::L1L2L3Residual);
 
   #define DEFINE_CORRECTION_MC(tag,ver,jetCollection,Correction)                            \
   extern const std::vector<std::string> tag##_V##ver##_##Correction##_##jetCollection##_MC; \
