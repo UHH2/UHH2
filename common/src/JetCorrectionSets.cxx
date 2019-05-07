@@ -7,7 +7,7 @@
 const std::string JERFiles::JECPathStringMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction) {
   std::string result = "JECDatabase/textFiles/";
   result += tag;
-  std::string verPrefix = (tag.find("Summer16_23Sep2016") != std::string::npos) ? "V" : "_V"; // because someone decided to remove the underscore
+  std::string verPrefix = (tag.find("Summer16_23Sep2016") != std::string::npos) ? "V" : "_V"; // because someone decided to remove the underscore in Summer16_23Sep2016
   result += verPrefix;
   result += ver;
   result += "_MC/";
@@ -39,14 +39,13 @@ const std::string JERFiles::JECPathStringData(const std::string & tag, const std
   std::string result = "JECDatabase/textFiles/";
   result += tag;
   result += newRunName;
-  result += "_V";
+  std::string verPrefix = (tag.find("Summer16_23Sep2016") != std::string::npos) ? "V" : "_V"; // because someone decided to remove the underscore in Summer16_23Sep2016
+  result += verPrefix;
   result += ver;
-  result += "_";
-  result += "DATA/";
+  result += "_DATA/";
   result += tag;
   result += newRunName;
-  result += "_V";
-  result += ver;
+  result += verPrefix;
   result += "_DATA_";
   result += Correction;
   result += "_";
