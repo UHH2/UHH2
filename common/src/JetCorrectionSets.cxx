@@ -25,6 +25,35 @@ const std::string JERFiles::JECPathStringMC(const std::string & tag,
   return result;
 }
 
+const std::map<std::string, std::map<std::string, std::string> > JERFiles::jecRunMap = {
+  {"2016", {
+    {"B", "BCD"},
+    {"C", "BCD"},
+    {"D", "BCD"},
+    {"BCD", "BCD"}, // include the combined version as well incase
+    {"E", "EF"},
+    {"F", "EF"},
+    {"EF", "EF"},
+    {"G", "GH"},
+    {"H", "GH"},
+    {"GH", "GH"}
+  }},
+  {"2017", {
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "DE"},
+    {"E", "DE"},
+    {"DE", "DE"},
+    {"F", "F"}
+  }},
+  {"2018", {
+    {"A", "A"},
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"}
+  }}
+};
+
 const std::string JERFiles::JECPathStringDATA(const std::string & tag,
                                               const std::string & ver,
                                               const std::string & jetCollection,
@@ -33,7 +62,18 @@ const std::string JERFiles::JECPathStringDATA(const std::string & tag,
   std::string newVer = (tag.find("Summer16_23Sep2016") != std::string::npos) ? "V" : "_V"; // because someone decided to remove the underscore in Summer16_23Sep2016
   newVer += ver;
 
-  std::string newRunName = runName;
+  std::string year = "";
+  if (tag.find("Summer16") != std::string::npos) {
+    year = "2016";
+  } else if (tag.find("Fall17") != std::string::npos) {
+    year = "2017";
+  } else if (tag.find("Autumn18") != std::string::npos) {
+    year = "2018";
+  } else {
+    throw std::runtime_error("Cannot determine year from tag");
+  }
+
+  std::string newRunName = JERFiles::jecRunMap.at(year).at(runName);
   // in 2018 they use "_RunA" instead of just "A"
   if (tag.find("18") != std::string::npos) {
     newRunName = "_Run" + runName;
