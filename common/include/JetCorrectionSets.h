@@ -24,6 +24,10 @@ namespace JERFiles{
   const std::string JECPathStringMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::string & Correction);
   const std::vector<std::string> JECFiles_MC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::vector<std::string> levels);
 
+  // Some common variable to replace long vector strings
+  extern const std::vector<std::string> L1L2L3;
+  extern const std::vector<std::string> L1L2L3Residual;
+
   #define DEFINE_CORRECTION_MC(tag,ver,jetCollection,Correction)                            \
   extern const std::vector<std::string> tag##_V##ver##_##Correction##_##jetCollection##_MC; \
 
