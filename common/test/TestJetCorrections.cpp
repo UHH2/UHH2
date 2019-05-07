@@ -9,8 +9,8 @@ using namespace std;
 class TestJetCorrections: public uhh2::AnalysisModule {
 public:
     explicit TestJetCorrections(Context &ctx ) {
-        jec_mc.reset(new JetCorrector(ctx, JERFiles::Summer16_07Aug2017_V11_L123_AK4PFchs_MC));
-	jec_data.reset(new JetCorrector(ctx, JERFiles::Summer16_07Aug2017_V11_B_L123_AK4PFchs_DATA));
+        jec_mc.reset(new JetCorrector(ctx, JERFiles::JECFilesMC("Summer16_07Aug2017", "11", "AK4PFchs")));
+        jec_data.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Summer16_07Aug2017", "11", "AK4PFchs", "B")));
         printer_before.reset(new JetPrinter("before", 20.0));
         printer_after.reset(new JetPrinter("after", 20.0));
     }
