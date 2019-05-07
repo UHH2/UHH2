@@ -46,6 +46,10 @@ const std::string JERFiles::JECPathStringDATA(const std::string & tag, const std
   return result;
 }
 
+const std::vector<std::string> JERFiles::L1L2L3 = {"L1FastJet", "L2Relative", "L3Absolute"};
+
+const std::vector<std::string> JERFiles::L1L2L3Residual = {"L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"};
+
 const std::vector<std::string> JERFiles::JECFilesMC(const std::string & tag, const std::string & ver, const std::string & jetCollection, const std::vector<std::string> levels) {
   std::vector<std::string> result;
   for (const auto & level : levels){
@@ -61,9 +65,6 @@ const std::vector<std::string> JERFiles::JECFilesDATA(const std::string & tag, c
   }
   return result;
 }
-
-const std::vector<std::string> JERFiles::L1L2L3 = {"L1FastJet", "L2Relative", "L3Absolute"};
-const std::vector<std::string> JERFiles::L1L2L3Residual = {"L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"};
 
 
 // have to use these, cannot use #tag, etc as it is inside another directive and will fail to compile
