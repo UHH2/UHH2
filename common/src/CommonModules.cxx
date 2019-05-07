@@ -49,8 +49,8 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     if(jec){
       jet_corrector_B.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "B")));
       jet_corrector_C.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "C")));
-      jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "D")));
-      jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "E")));
+      jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "DE")));
+      jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "DE")));
       jet_corrector_F.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "F")));
     }
   }
@@ -83,8 +83,8 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     else{
       JLC_B.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "B")));
       JLC_C.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "C")));
-      JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "D")));
-      JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "E")));
+      JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "DE")));
+      JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "DE")));
       JLC_F.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "F")));
     }
   }
