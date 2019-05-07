@@ -21,6 +21,9 @@ void CommonModules::fail_if_init() const{
 
 CommonModules::CommonModules(){
   working_point = JetPFID::WP_TIGHT_CHS;
+  jec_tag = "Fall17_17Nov2017";
+  jec_ver = "32";
+  jec_jet_coll = "AK4PFchs";
 }
 
 
@@ -40,18 +43,18 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
     if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx,SysType_PU));
     if(jec){
-      jet_corrector_MC.reset(new JetCorrector(ctx, JERFiles::JECFilesMC("Fall17_17Nov2017", "32", "AK4PFchs")));
+      jet_corrector_MC.reset(new JetCorrector(ctx, JERFiles::JECFilesMC(jec_tag, jec_ver, jec_jet_coll)));
     }
     if(jersmear) jet_resolution_smearer.reset(new JetResolutionSmearer(ctx));
   }
   else{
     if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
     if(jec){
-      jet_corrector_B.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "B")));
-      jet_corrector_C.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "C")));
-      jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "DE")));
-      jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "DE")));
-      jet_corrector_F.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "F")));
+      jet_corrector_B.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "B")));
+      jet_corrector_C.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "C")));
+      jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "DE")));
+      jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "DE")));
+      jet_corrector_F.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "F")));
     }
   }
   if(metfilters){
@@ -79,13 +82,13 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
   }
   if(jetlepcleaner) {
-    if(is_mc) JLC_MC.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesMC("Fall17_17Nov2017", "32", "AK4PFchs")));
+    if(is_mc) JLC_MC.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesMC(jec_tag, jec_ver, jec_jet_coll)));
     else{
-      JLC_B.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "B")));
-      JLC_C.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "C")));
-      JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "DE")));
-      JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "DE")));
-      JLC_F.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA("Fall17_17Nov2017", "32", "AK4PFchs", "F")));
+      JLC_B.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "B")));
+      JLC_C.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "C")));
+      JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "DE")));
+      JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "DE")));
+      JLC_F.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "F")));
     }
   }
   modules.emplace_back(new HTCalculator(ctx,HT_jetid));
@@ -218,6 +221,10 @@ void CommonModules::print_setup() const {
   cout << endl;
   for (auto const & [name, flag] : settings_map) {
     cout << name << " = " << (flag ? "ON" : "OFF") << endl;
+  }
+  cout << endl;
+  if (jec || jetlepcleaner || do_metcorrection) {
+    cout << "JECs: " << jec_tag << " V" << jec_ver << " for " << jec_jet_coll << endl;
   }
   cout << endl;
 

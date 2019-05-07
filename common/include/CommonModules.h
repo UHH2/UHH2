@@ -124,6 +124,9 @@ private:
 
     Year year;
 
+    // Parameters for JEC & JLC sets
+    std::string jec_tag, jec_ver, jec_jet_coll;
+
     std::unique_ptr<Selection> lumi_selection;
     std::unique_ptr<AndSelection> metfilters_selection;
 
