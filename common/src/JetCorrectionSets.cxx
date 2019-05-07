@@ -89,11 +89,11 @@ const std::vector<std::string> JERFiles::JECFilesDATA(const std::string & tag,
 
 #define SET_JECFILES_MC(tag,ver,jetCollection)					                                          \
 const std::vector<std::string> JERFiles::tag##_V##ver##_L123_##jetCollection##_MC =               \
-  JERFiles::JECFilesMC(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), JERFiles::L1L2L3);                   \
+  JERFiles::JECFilesMC(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), JERFiles::L1L2L3);  \
 const std::vector<std::string> JERFiles::tag##_V##ver##_L1RC_##jetCollection##_MC =               \
-  JERFiles::JECFilesMC(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), {"L1RC"});                   \
+  JERFiles::JECFilesMC(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), {"L1RC"});          \
 const std::vector<std::string> JERFiles::tag##_V##ver##_L1FastJet_##jetCollection##_MC =          \
-  JERFiles::JECFilesMC(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), {"L1FastJet"});                   \
+  JERFiles::JECFilesMC(TOSTRING(tag), TOSTRING(ver), TOSTRING(jetCollection), {"L1FastJet"});     \
 
 #define SET_CORRECTION_DATA(tag,ver,jetCollection,runName,runCorrection)                                  \
 const std::vector<std::string> JERFiles::tag##_V##ver##_##runName##_L123_##jetCollection##_DATA =         \
