@@ -96,6 +96,8 @@ RunSwitcher::RunSwitcher(const std::string & year)
 }
 
 bool RunSwitcher::process(uhh2::Event & event) {
+  if (!event.isRealData) return true; // this class only makes sense for data
+
   // find which run period we are in using event.run
   // then use that to call the relevant module
   for (const auto & [key, val] : runNumberMap_) {
