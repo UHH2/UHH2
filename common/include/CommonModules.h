@@ -8,6 +8,7 @@
 #include "UHH2/common/include/JetIds.h"
 #include "UHH2/common/include/JetCorrections.h"
 #include "UHH2/common/include/CleaningModules.h"
+#include "UHH2/common/include/YearRunSwitchers.h"
 
 
 /** \brief Run a configurable list commonly used modules
@@ -107,15 +108,12 @@ private:
     MuonId muid;
     TauId tauid;
     JetPFID::wp working_point;
-    std::unique_ptr<JetCorrector> jet_corrector_MC, jet_corrector_B, jet_corrector_C, jet_corrector_D, jet_corrector_E, jet_corrector_F;
-    std::unique_ptr<JetLeptonCleaner_by_KEYmatching> JLC_MC, JLC_B, JLC_C, JLC_D, JLC_E, JLC_F;
+    std::unique_ptr<YearSwitcher> jet_corrector_MC, jet_corrector_data;
+    std::shared_ptr<RunSwitcher> jec_switcher_16, jec_switcher_17, jec_switcher_18;
+    std::unique_ptr<YearSwitcher> JLC_MC, JLC_data;
+    std::shared_ptr<RunSwitcher> JLC_switcher_16, JLC_switcher_17, JLC_switcher_18;
     std::unique_ptr<JetResolutionSmearer> jet_resolution_smearer;
     std::unique_ptr<JetCleaner> jet_cleaner;
-    const int runnr_B = 299329;
-    const int runnr_C = 302029;
-    const int runnr_D = 303434;
-    const int runnr_E = 304826;
-    const int runnr_F = 306462;
 
     bool mclumiweight = true, mcpileupreweight = true, jersmear = true, jec = true, lumisel=true, jetlepcleaner = false, topjetlepcleaner =false, jetptsort = false, metfilters = true, pvfilter = true, jetpfidcleaner=true, do_metcorrection = false;
     double topjetcleanerDR;
@@ -125,7 +123,10 @@ private:
     Year year;
 
     // Parameters for JEC & JLC sets
-    std::string jec_tag, jec_ver, jec_jet_coll;
+    std::string jec_tag_2016, jec_ver_2016;
+    std::string jec_tag_2017, jec_ver_2017;
+    std::string jec_tag_2018, jec_ver_2018;
+    std::string jec_jet_coll;
 
     std::unique_ptr<Selection> lumi_selection;
     std::unique_ptr<AndSelection> metfilters_selection;
