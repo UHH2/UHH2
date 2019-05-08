@@ -25,20 +25,20 @@ bool YearSwitcher::process(uhh2::Event & event) {
 
   else if (isYear(event, "2017v1") && module2017v1_) {
     return module2017v1_->process(event);
-  } 
+  }
   else if (isYear(event, "2017v2") && module2017v2_) {
     return module2017v2_->process(event);
   }
   else if (isYear(event, "2017") && module2017_) {
     return module2017_->process(event);
   }
-  
+
   else if (isYear(event, "2018") && module2018_) {
     return module2018_->process(event);
   }
-  
+
   else {
-    throw std::runtime_error("YearSwitcher cannot handle event.year = " + event.year 
+    throw std::runtime_error("YearSwitcher cannot handle event.year = " + event.year
                              + ", you must use the relevant setup*() method");
   }
 }
@@ -72,8 +72,45 @@ void YearSwitcher::setup2018(uhh2::AnalysisModule * module) {
   module2018_.reset(module);
 }
 
-
 bool YearSwitcher::isYear(const uhh2::Event & event, const std::string & year) {
   return event.year.find(year) != std::string::npos;
 }
 
+
+
+RunSwitcher::RunSwitcher(const std::string & year)
+{
+  // sanitise year, first chop off any v*
+  year_ = year.substr(0, year.find("v"));
+  auto foundYear = run_number_map.find(year_);
+  if (foundYear == run_number_map.end()) {
+    std::string valid = "";
+    for (const auto & itr : run_number_map) {
+      valid += itr.first;
+      valid += ", ";
+    }
+    throw std::runtime_error("year for RunSwitcher must be one of: " + valid);
+  }
+  // store run name <> run numbers for this year
+  runNumberMap_ = foundYear->second;
+}
+
+bool RunSwitcher::process(uhh2::Event & event) {
+  // find which run period we are in using event.run
+  // then use that to call the relevant module
+  for (const auto & [key, val] : runNumberMap_) {
+    if (event.run >= val.first && event.run <= val.second) {
+      auto foundRun = runModuleMap_.find(key);
+      if (foundRun != runModuleMap_.end()) {
+        return foundRun->second->process(event);
+      } else {
+        throw std::runtime_error("RunSwitcher cannot handle run period " + key + " for year " + year_);
+      }
+    }
+  }
+  return false;
+}
+
+void RunSwitcher::setupRun(const std::string & runPeriod, uhh2::AnalysisModule * module) {
+  runModuleMap_[runPeriod].reset(module);
+}
