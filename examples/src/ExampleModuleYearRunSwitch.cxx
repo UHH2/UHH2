@@ -61,7 +61,7 @@ ExampleModuleYearRunSwitch::ExampleModuleYearRunSwitch(Context & ctx){
 
     // Setup and instance of DummyModule module to be run for each year
     // Note that e.g. the 2016 one will be run for both 2016v2 & 2016v3 ntuples
-    dummyTextYearSwitcher.reset(new YearSwitcher());
+    dummyTextYearSwitcher.reset(new YearSwitcher(ctx));
     dummyTextYearSwitcher->setup2016(new DummyModule("I am 2016"));
     dummyTextYearSwitcher->setup2017(new DummyModule("I am 2017"));
     dummyTextYearSwitcher->setup2018(new DummyModule("I am 2018"));
@@ -73,7 +73,7 @@ ExampleModuleYearRunSwitch::ExampleModuleYearRunSwitch(Context & ctx){
 
     // Here is a more realistic example - we apply some jet cuts,
     // but only for 2017 we decide to exclude HF jets and raise the pT cut as well
-    jetCleanerYearSwitcher.reset(new YearSwitcher());
+    jetCleanerYearSwitcher.reset(new YearSwitcher(ctx));
     jetCleanerYearSwitcher->setup2016(new JetCleaner(ctx, 30.0, 5.));
     jetCleanerYearSwitcher->setup2017(new JetCleaner(ctx, 50.0, 3));
     jetCleanerYearSwitcher->setup2018(new JetCleaner(ctx, 30.0, 5));
@@ -109,7 +109,7 @@ ExampleModuleYearRunSwitch::ExampleModuleYearRunSwitch(Context & ctx){
         megaRunSwitcher18->setupRun(runItr, new DummyModule("Ausgezeichnet! 2018 + Run " + runItr));
     }
 
-    megaYearSwitcher.reset(new YearSwitcher());
+    megaYearSwitcher.reset(new YearSwitcher(ctx));
     megaYearSwitcher->setup2016(megaRunSwitcher16);
     megaYearSwitcher->setup2017(megaRunSwitcher17);
     megaYearSwitcher->setup2018(megaRunSwitcher18);
