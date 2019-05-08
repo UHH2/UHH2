@@ -23,6 +23,12 @@ public:
   // If there isn't a matching one, just return true
   virtual bool process(uhh2::Event & event) override;
 
+  // Get the relevant module, incase you need to access its other methods
+  // You will need to cast it to the specific derived type,
+  // e.g. RunSwitcher * rs = dynamic_cast<RunSwitcher*>(myYearSwitcher->module());
+  // Returns raw pointer as RunSwitcher has shared_ptr to it already
+  uhh2::AnalysisModule * module();
+
   // Methods to assign module for each year
   // Note that the setup<year>v* are more specific, and if set,
   // will take preference over the module passed to setup<year>
@@ -69,6 +75,12 @@ public:
   // Run the module corresponding to this year in the relevant run period
   // If none found, return true
   virtual bool process(uhh2::Event & event) override;
+
+  // Get the relevant module, incase you need to access its other methods
+  // You will need to cast it to the specific derived type,
+  // e.g. JetCorrector * jc = dynamic_cast<JetCorrector*>(myYearSwitcher->module());
+  // Returns raw pointer as RunSwitcher has shared_ptr to it already
+  uhh2::AnalysisModule * module(const uhh2::Event & event);
 
   // Method to assign a module to a particular run period
   void setupRun(const std::string & runPeriod, uhh2::AnalysisModule * module);

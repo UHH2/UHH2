@@ -55,6 +55,10 @@ bool YearSwitcher::process(uhh2::Event & event) {
   return true;
 }
 
+uhh2::AnalysisModule * YearSwitcher::module() {
+  return theModule_.get();
+}
+
 // have to accept pointer as AnalysisModule is an abstract base class
 void YearSwitcher::setup2016(uhh2::AnalysisModule * module) {
   module2016_.reset(module);
@@ -106,19 +110,25 @@ RunSwitcher::RunSwitcher(const std::string & year)
 bool RunSwitcher::process(uhh2::Event & event) {
   if (!event.isRealData) return true; // this class only makes sense for data
 
+  uhh2::AnalysisModule * mod = module(event);
+  if (mod != nullptr) return mod->process(event);
+  return true;
+}
+
+uhh2::AnalysisModule * RunSwitcher::module(const uhh2::Event & event) {
   // find which run period we are in using event.run
   // then use that to call the relevant module
   for (const auto & [key, val] : runNumberMap_) {
     if (event.run >= val.first && event.run <= val.second) {
       auto foundRun = runModuleMap_.find(key);
       if (foundRun != runModuleMap_.end()) {
-        return foundRun->second->process(event);
+        return foundRun->second.get();
       } else {
         throw std::runtime_error("RunSwitcher cannot handle run period " + key + " for year " + year_);
       }
     }
   }
-  return true;
+  throw std::runtime_error("RunSwitcher cannot handle run number for this year");
 }
 
 void RunSwitcher::setupRun(const std::string & runPeriod, uhh2::AnalysisModule * module) {
