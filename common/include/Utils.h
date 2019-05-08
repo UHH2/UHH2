@@ -121,9 +121,9 @@ Year extract_year(const uhh2::Context & ctx);
 /**
  * Map run periods to run numbers for each year
  *
- * All pairs for a run period are up to and including the last number
+ * All pairs for a run period are inclusive of both lower & upper numbers
  */
-const std::unordered_map<std::string, std::unordered_map<std::string, std::pair<int, int>>>
+const std::unordered_map<std::string, std::map<std::string, std::pair<int, int>>>
   run_number_map = {
     // taken from https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2016Analysis
     { "2016", {
