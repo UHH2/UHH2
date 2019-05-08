@@ -49,6 +49,14 @@ private:
 };
 
 
+/**
+ * Class to handle different AnalysisModules for different run periods in data
+ *
+ * User should setup a module for each run period (e.g. "A") with the `setupRun()`
+ * method.
+ * Calling `process()` will then automatically figure out which one to use based
+ * on the event run number.
+ */
 class RunSwitcher: public uhh2::AnalysisModule {
 public:
   RunSwitcher(const std::string & year);
