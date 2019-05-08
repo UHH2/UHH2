@@ -25,6 +25,37 @@ const std::string JERFiles::JECPathStringMC(const std::string & tag,
   return result;
 }
 
+// translate individual runs into the merged ones
+// e.g. B -> BCD for Summer16
+const std::map<std::string, std::map<std::string, std::string> > JERFiles::jecRunMap = {
+  {"Summer16", {
+    {"B", "BCD"},
+    {"C", "BCD"},
+    {"D", "BCD"},
+    {"BCD", "BCD"}, // include the combined version as well incase
+    {"E", "EF"},
+    {"F", "EF"},
+    {"EF", "EF"},
+    {"G", "GH"},
+    {"H", "GH"},
+    {"GH", "GH"}
+  }},
+  {"Fall17", {
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "DE"},
+    {"E", "DE"},
+    {"DE", "DE"},
+    {"F", "F"}
+  }},
+  {"Autumn18", {
+    {"A", "A"},
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"}
+  }}
+};
+
 const std::string JERFiles::JECPathStringDATA(const std::string & tag,
                                               const std::string & ver,
                                               const std::string & jetCollection,
@@ -33,7 +64,8 @@ const std::string JERFiles::JECPathStringDATA(const std::string & tag,
   std::string newVer = (tag.find("Summer16_23Sep2016") != std::string::npos) ? "V" : "_V"; // because someone decided to remove the underscore in Summer16_23Sep2016
   newVer += ver;
 
-  std::string newRunName = runName;
+  std::string campaign = tag.substr(0, tag.find("_"));
+  std::string newRunName = JERFiles::jecRunMap.at(campaign).at(runName);
   // in 2018 they use "_RunA" instead of just "A"
   if (tag.find("18") != std::string::npos) {
     newRunName = "_Run" + runName;

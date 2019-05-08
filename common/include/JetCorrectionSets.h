@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 /* namespace to define useful filename constants & functions to be used for jet energy corrections */
 
@@ -25,9 +26,14 @@ namespace JERFiles{
                                     const std::string & jetCollection,
                                     const std::string & correction);
 
+  extern const std::map<std::string, std::map<std::string, std::string> > jecRunMap;
+
+
   const std::string JECPathStringDATA(const std::string & tag,
                                       const std::string & ver,
                                       const std::string & jetCollection,
+                                      // runName can accept individual run (B) or combined (BCD)
+                                      // - it will auto handle combined run periods
                                       const std::string & runName,
                                       const std::string & correction);
 
