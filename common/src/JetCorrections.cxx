@@ -740,6 +740,74 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunD_V1 = {
 
 ////
 
+// 2018 -> to be used with combined dataset
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_V4 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.522, 1.1545, 1.1853, 1.1236}},
+  {{0.783, 1.1481, 1.1996, 1.0966}},
+  {{1.131, 1.0998, 1.1384, 1.0613}},
+  {{1.305, 1.0929, 1.1785, 1.0072}},
+  {{1.740, 1.1093, 1.1811, 1.0375}},
+  {{1.930, 1.1005, 1.1520, 1.0490}},
+  {{2.043, 1.0603, 1.1904, 0.9302}},
+  {{2.322, 1.1287, 1.1818, 1.0756}},
+  {{2.500, 1.3397, 1.4544, 1.2250}},
+  {{2.853, 2.0325, 2.5686, 1.4964}},
+  {{2.964, 2.0567, 2.3627, 1.7507}},
+  {{3.139, 1.1868, 1.2244, 1.1492}},
+  {{5.191, 1.0922, 1.1411, 1.0433}},
+
+};
+
+// 2018 -> to be used with RunABC
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunABC_V4 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.522, 1.1677, 1.2154, 1.1200}},
+  {{0.783, 1.1475, 1.1995, 1.0954}},
+  {{1.131, 1.1029, 1.1339, 1.0719}},
+  {{1.305, 1.0781, 1.1731, 0.9830}},
+  {{1.740, 1.1006, 1.1852, 1.0161}},
+  {{1.930, 1.1019, 1.1405, 1.0633}},
+  {{2.043, 1.0459, 1.2036, 0.8881}},
+  {{2.322, 1.1612, 1.2258, 1.0966}},
+  {{2.500, 1.2299, 1.3386, 1.1212}},
+  {{2.853, 1.6736, 2.0528, 1.2944}},
+  {{2.964, 1.7292, 1.9300, 1.5285}},
+  {{3.139, 1.2257, 1.2709, 1.1805}},
+  {{5.191, 1.0733, 1.1409, 1.0057}},
+
+};
+
+// 2018 -> to be used with RunD
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunD_V4 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+  {{0.522, 1.1588, 1.1980, 1.1196}},
+  {{0.783, 1.1504, 1.2231, 1.0776}},
+  {{1.131, 1.1253, 1.1596, 1.0910}},
+  {{1.305, 1.1217, 1.2043, 1.0390}},
+  {{1.740, 1.1069, 1.1959, 1.0179}},
+  {{1.930, 1.0916, 1.1346, 1.0486}},
+  {{2.043, 1.0977, 1.1927, 1.0026}},
+  {{2.322, 1.1177, 1.1898, 1.0456}},
+  {{2.500, 1.4494, 1.5997, 1.2992}},
+  {{2.853, 2.3588, 2.9999, 1.7177}},
+  {{2.964, 2.2520, 2.6062, 1.8978}},
+  {{3.139, 1.1759, 1.2298, 1.1219}},
+  {{5.191, 1.0777, 1.1319, 1.0235}},
+
+};
+
+////
+
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
   // Auto-determine correct resolution txt file & SFs from year + jet & PU algorithms
   std::string jetstr = uhh2::string2lowercase(ctx.get("JetCollection"));
@@ -772,8 +840,8 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     JER_sf = JERSmearing::SF_13TeV_Fall17_V3;
     resFilename = "2017/Fall17_V3_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
   } else if (year == Year::is2018) {
-    JER_sf = JERSmearing::SF_13TeV_Autumn18_V1;
-    resFilename = "2018/Autumn18_V1_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
+    JER_sf = JERSmearing::SF_13TeV_Autumn18_V4;
+    resFilename = "2018/Autumn18_V4_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
   } else {
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }
