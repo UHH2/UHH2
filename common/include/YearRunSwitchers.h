@@ -56,8 +56,9 @@ private:
 /**
  * Class to handle different AnalysisModules for different run periods in data
  *
- * User should setup a module for each run period (e.g. "A") with the `setupRun()`
- * method.
+ * One instance of this class is designed to handle a specific year's data.
+ * User should then setup a module for each run period (e.g. "A")
+ * with the `setupRun()` method.
  * Calling `process()` will then automatically figure out which one to use based
  * on the event run number.
  */
@@ -75,5 +76,6 @@ public:
 private:
   std::string year_;
   std::map<std::string, std::pair<int, int>> runNumberMap_;
+  //shared_ptr usage: see comments in YearSwitcher
   std::map<std::string, std::shared_ptr<uhh2::AnalysisModule>> runModuleMap_;
 };
