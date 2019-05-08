@@ -1,46 +1,58 @@
 #include "UHH2/common/include/YearRunSwitchers.h"
-#include "UHH2/common/include/Utils.h"
 
 
-YearSwitcher::YearSwitcher():
+YearSwitcher::YearSwitcher(uhh2::Context & ctx):
+  year_(extract_year(ctx)),
+  doneInit_(false),
   module2016_(nullptr),
   module2016v2_(nullptr),
   module2016v3_(nullptr),
   module2017_(nullptr),
   module2017v1_(nullptr),
   module2017v2_(nullptr),
-  module2018_(nullptr)
+  module2018_(nullptr),
+  theModule_(nullptr)
 {}
 
 bool YearSwitcher::process(uhh2::Event & event) {
-  if (isYear(event, "2016v2") && module2016v2_) {
-    return module2016v2_->process(event);
-  }
-  else if (isYear(event, "2016v3") && module2016v3_) {
-    return module2016v3_->process(event);
-  }
-  else if (isYear(event, "2016") && module2016_) {
-    return module2016_->process(event);
+  if (!doneInit_) {
+    // First time process() is called, figure out which module is needed
+    // based on year from Context. This way we don't have to check each event.
+    // Also check to see if it matches the one in the event
+    if (event.year != year_str_map.at(year_)) {
+      throw std::runtime_error("event.year in ntuple doesn't match with dataset Version");
+    }
+
+    if ((year_ == Year::is2016v2) && module2016v2_) {
+      theModule_ = module2016v2_;
+    }
+    else if ((year_ == Year::is2016v3) && module2016v3_) {
+      theModule_ = module2016v3_;
+    }
+    else if ((year_ == Year::is2016v2 || year_ == Year::is2016v3) && module2016_) {
+      theModule_ = module2016_;
+    }
+
+    else if ((year_ == Year::is2017v1) && module2017v1_) {
+      theModule_ = module2017v1_;
+    }
+    else if ((year_ == Year::is2017v2) && module2017v2_) {
+      theModule_ = module2017v2_;
+    }
+    else if ((year_ == Year::is2017v1 || year_ == Year::is2017v2) && module2017_) {
+      theModule_ = module2017_;
+    }
+
+    else if ((year_ == Year::is2018) && module2018_) {
+      theModule_ = module2018_;
+    }
+    doneInit_ = true;
   }
 
-  else if (isYear(event, "2017v1") && module2017v1_) {
-    return module2017v1_->process(event);
+  if (theModule_ != nullptr) {
+    return theModule_->process(event);
   }
-  else if (isYear(event, "2017v2") && module2017v2_) {
-    return module2017v2_->process(event);
-  }
-  else if (isYear(event, "2017") && module2017_) {
-    return module2017_->process(event);
-  }
-
-  else if (isYear(event, "2018") && module2018_) {
-    return module2018_->process(event);
-  }
-
-  else {
-    throw std::runtime_error("YearSwitcher cannot handle event.year = " + event.year
-                             + ", you must use the relevant setup*() method");
-  }
+  return true;
 }
 
 // have to accept pointer as AnalysisModule is an abstract base class
@@ -70,10 +82,6 @@ void YearSwitcher::setup2017v2(uhh2::AnalysisModule * module) {
 
 void YearSwitcher::setup2018(uhh2::AnalysisModule * module) {
   module2018_.reset(module);
-}
-
-bool YearSwitcher::isYear(const uhh2::Event & event, const std::string & year) {
-  return event.year.find(year) != std::string::npos;
 }
 
 

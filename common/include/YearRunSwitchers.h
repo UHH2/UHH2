@@ -2,6 +2,7 @@
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/Utils.h"
+#include "UHH2/common/include/Utils.h"
 
 #include <map>
 
@@ -16,9 +17,10 @@
 
 class YearSwitcher: public uhh2::AnalysisModule {
 public:
-  // FIXME: Would it be faster though to ask context for the year i.e. get it from the dataset Version?
-  // Doesn't make use of event.year, so avoids slow string matching potentially
-  YearSwitcher();
+  YearSwitcher(uhh2::Context & ctx);
+
+  // Automatically run the appropriate module.
+  // If there isn't a matching one, just return true
   virtual bool process(uhh2::Event & event) override;
 
   // Methods to assign module for each year
@@ -35,17 +37,19 @@ public:
   void setup2018(uhh2::AnalysisModule * module);
 
 private:
-  // check if event.year matches year string
-  bool isYear(const uhh2::Event & event, const std::string & year);
+  Year year_;
+  bool doneInit_;
 
-  // have modules for each year, plus the specific versions of each year
+  // have modules for each year, plus for the specific versions of each year
   // shared_ptr, because the user might already own it, and we want to ensure
   // it is kept alive, or deleted as necessary if this is the only owner
 
-  // FIXME: broken as this will create a new copy, not extend lifetime of original
+  // FIXME: broken as this will create a new copy, not extend lifetime of original?!
   std::shared_ptr<uhh2::AnalysisModule> module2016_, module2016v2_, module2016v3_;
   std::shared_ptr<uhh2::AnalysisModule> module2017_, module2017v1_, module2017v2_;
   std::shared_ptr<uhh2::AnalysisModule> module2018_;
+  std::shared_ptr<uhh2::AnalysisModule> theModule_;
+
 };
 
 
@@ -60,6 +64,9 @@ private:
 class RunSwitcher: public uhh2::AnalysisModule {
 public:
   RunSwitcher(const std::string & year);
+
+  // Run the module corresponding to this year in the relevant run period
+  // If none found, return true
   virtual bool process(uhh2::Event & event) override;
 
   // Method to assign a module to a particular run period
