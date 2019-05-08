@@ -108,7 +108,7 @@ bool RunSwitcher::process(uhh2::Event & event) {
       }
     }
   }
-  return false;
+  return true;
 }
 
 void RunSwitcher::setupRun(const std::string & runPeriod, uhh2::AnalysisModule * module) {

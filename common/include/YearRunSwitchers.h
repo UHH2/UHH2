@@ -53,6 +53,8 @@ class RunSwitcher: public uhh2::AnalysisModule {
 public:
   RunSwitcher(const std::string & year);
   virtual bool process(uhh2::Event & event) override;
+
+  // Method to assign a module to a particular run period
   void setupRun(const std::string & runPeriod, uhh2::AnalysisModule * module);
 
 private:

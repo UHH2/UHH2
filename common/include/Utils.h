@@ -119,6 +119,15 @@ Year extract_year(const uhh2::Context & ctx);
 
 
 /**
+ * Run period names for each year
+ */
+const std::vector<std::string> runPeriods2016 = {"B", "C", "D", "E", "F", "G", "H"};
+
+const std::vector<std::string> runPeriods2017 = {"B", "C", "D", "E", "F"};
+
+const std::vector<std::string> runPeriods2018 = {"A", "B", "C", "D"};
+
+/**
  * Map run periods to run numbers for each year
  *
  * All pairs for a run period are inclusive of both lower & upper numbers
