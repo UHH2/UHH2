@@ -84,3 +84,16 @@ class JetPFID {
   bool tightLepVetoID2018(const Jet & jet) const;
 
 };
+
+/**
+ * Jet PU Id following recomendations from JetMET for RunII
+ */
+
+class JetPUid {
+ public:
+  enum wp {WP_LOOSE, WP_TIGHT, WP_MEDIUM};
+  explicit JetPUid(wp working_point);
+  bool operator()(const Jet&, const uhh2::Event&) const;
+ private:
+  wp m_working_point;
+};
