@@ -15,9 +15,16 @@
  */
 
 
+/**
+ * Class to handle different AnalysisModules for different years
+ *
+ * The user can setup a module for each year using the `setup*()` methods,
+ * and it will automatically run the correct one for a given dataset
+ * when `process()` is called.
+ */
 class YearSwitcher: public uhh2::AnalysisModule {
 public:
-  YearSwitcher(uhh2::Context & ctx);
+  YearSwitcher(const uhh2::Context & ctx);
 
   // Automatically run the appropriate module.
   // If there isn't a matching one, just return true
@@ -27,20 +34,20 @@ public:
   // You will need to cast it to the specific derived type,
   // e.g. RunSwitcher * rs = dynamic_cast<RunSwitcher*>(myYearSwitcher->module());
   // Returns raw pointer as RunSwitcher has shared_ptr to it already
-  uhh2::AnalysisModule * module();
+  std::shared_ptr<uhh2::AnalysisModule> module();
 
   // Methods to assign module for each year
   // Note that the setup<year>v* are more specific, and if set,
   // will take preference over the module passed to setup<year>
-  void setup2016(uhh2::AnalysisModule * module);
-  void setup2016v2(uhh2::AnalysisModule * module);
-  void setup2016v3(uhh2::AnalysisModule * module);
+  void setup2016(std::shared_ptr<uhh2::AnalysisModule> module);
+  void setup2016v2(std::shared_ptr<uhh2::AnalysisModule> module);
+  void setup2016v3(std::shared_ptr<uhh2::AnalysisModule> module);
 
-  void setup2017(uhh2::AnalysisModule * module);
-  void setup2017v1(uhh2::AnalysisModule * module);
-  void setup2017v2(uhh2::AnalysisModule * module);
+  void setup2017(std::shared_ptr<uhh2::AnalysisModule> module);
+  void setup2017v1(std::shared_ptr<uhh2::AnalysisModule> module);
+  void setup2017v2(std::shared_ptr<uhh2::AnalysisModule> module);
 
-  void setup2018(uhh2::AnalysisModule * module);
+  void setup2018(std::shared_ptr<uhh2::AnalysisModule> module);
 
 private:
   Year year_;
@@ -49,8 +56,6 @@ private:
   // have modules for each year, plus for the specific versions of each year
   // shared_ptr, because the user might already own it, and we want to ensure
   // it is kept alive, or deleted as necessary if this is the only owner
-
-  // FIXME: broken as this will create a new copy, not extend lifetime of original?!
   std::shared_ptr<uhh2::AnalysisModule> module2016_, module2016v2_, module2016v3_;
   std::shared_ptr<uhh2::AnalysisModule> module2017_, module2017v1_, module2017v2_;
   std::shared_ptr<uhh2::AnalysisModule> module2018_;
@@ -78,14 +83,16 @@ public:
 
   // Get the relevant module, incase you need to access its other methods
   // You will need to cast it to the specific derived type,
-  // e.g. JetCorrector * jc = dynamic_cast<JetCorrector*>(myYearSwitcher->module());
-  // Returns raw pointer as RunSwitcher has shared_ptr to it already
-  uhh2::AnalysisModule * module(const uhh2::Event & event);
+  // e.g. std::shared_ptr<JetCorrector> jc = std::dynamic_pointer_cast<JetCorrector*>(myYearSwitcher->module());
+  std::shared_ptr<uhh2::AnalysisModule> module(const uhh2::Event & event);
 
   // Method to assign a module to a particular run period
-  void setupRun(const std::string & runPeriod, uhh2::AnalysisModule * module);
+  void setupRun(const std::string & runPeriod, std::shared_ptr<uhh2::AnalysisModule> module);
 
 private:
+  // convert e.g. 2016v2 -> 2016
+  std::string shortYear(const std::string & year);
+
   std::string year_;
   std::map<std::string, std::pair<int, int>> runNumberMap_;
   //shared_ptr usage: see comments in YearSwitcher

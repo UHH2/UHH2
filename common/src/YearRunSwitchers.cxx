@@ -1,7 +1,7 @@
 #include "UHH2/common/include/YearRunSwitchers.h"
 
 
-YearSwitcher::YearSwitcher(uhh2::Context & ctx):
+YearSwitcher::YearSwitcher(const uhh2::Context & ctx):
   year_(extract_year(ctx)),
   doneInit_(false),
   module2016_(nullptr),
@@ -18,6 +18,7 @@ bool YearSwitcher::process(uhh2::Event & event) {
   if (!doneInit_) {
     // First time process() is called, figure out which module is needed
     // based on year from Context. This way we don't have to check each event.
+    // We can only do this here, since the user might call setup*() after the ctor.
     // Also check to see if it matches the one in the event
     if (event.year != year_str_map.at(year_)) {
       throw std::runtime_error("event.year in ntuple doesn't match with dataset Version");
@@ -55,37 +56,36 @@ bool YearSwitcher::process(uhh2::Event & event) {
   return true;
 }
 
-uhh2::AnalysisModule * YearSwitcher::module() {
-  return theModule_.get();
+std::shared_ptr<uhh2::AnalysisModule> YearSwitcher::module() {
+  return theModule_;
 }
 
-// have to accept pointer as AnalysisModule is an abstract base class
-void YearSwitcher::setup2016(uhh2::AnalysisModule * module) {
-  module2016_.reset(module);
+void YearSwitcher::setup2016(std::shared_ptr<uhh2::AnalysisModule> module) {
+  module2016_ = module;
 }
 
-void YearSwitcher::setup2016v2(uhh2::AnalysisModule * module) {
-  module2016v2_.reset(module);
+void YearSwitcher::setup2016v2(std::shared_ptr<uhh2::AnalysisModule> module) {
+  module2016v2_ = module;
 }
 
-void YearSwitcher::setup2016v3(uhh2::AnalysisModule * module) {
-  module2016v3_.reset(module);
+void YearSwitcher::setup2016v3(std::shared_ptr<uhh2::AnalysisModule> module) {
+  module2016v3_ = module;
 }
 
-void YearSwitcher::setup2017(uhh2::AnalysisModule * module) {
-  module2017_.reset(module);
+void YearSwitcher::setup2017(std::shared_ptr<uhh2::AnalysisModule> module) {
+  module2017_ = module;
 }
 
-void YearSwitcher::setup2017v1(uhh2::AnalysisModule * module) {
-  module2017v1_.reset(module);
+void YearSwitcher::setup2017v1(std::shared_ptr<uhh2::AnalysisModule> module) {
+  module2017v1_ = module;
 }
 
-void YearSwitcher::setup2017v2(uhh2::AnalysisModule * module) {
-  module2017v2_.reset(module);
+void YearSwitcher::setup2017v2(std::shared_ptr<uhh2::AnalysisModule> module) {
+  module2017v2_ = module;
 }
 
-void YearSwitcher::setup2018(uhh2::AnalysisModule * module) {
-  module2018_.reset(module);
+void YearSwitcher::setup2018(std::shared_ptr<uhh2::AnalysisModule> module) {
+  module2018_ = module;
 }
 
 
@@ -110,27 +110,33 @@ RunSwitcher::RunSwitcher(const std::string & year)
 bool RunSwitcher::process(uhh2::Event & event) {
   if (!event.isRealData) return true; // this class only makes sense for data
 
-  uhh2::AnalysisModule * mod = module(event);
+  std::shared_ptr<uhh2::AnalysisModule> mod = module(event);
   if (mod != nullptr) return mod->process(event);
   return true;
 }
 
-uhh2::AnalysisModule * RunSwitcher::module(const uhh2::Event & event) {
+std::shared_ptr<uhh2::AnalysisModule> RunSwitcher::module(const uhh2::Event & event) {
   // find which run period we are in using event.run
-  // then use that to call the relevant module
+  // then use that to get the relevant module
+  if (runNumberMap_.size() == 0) return nullptr;
   for (const auto & [key, val] : runNumberMap_) {
     if (event.run >= val.first && event.run <= val.second) {
       auto foundRun = runModuleMap_.find(key);
       if (foundRun != runModuleMap_.end()) {
-        return foundRun->second.get();
+        return foundRun->second;
       } else {
-        throw std::runtime_error("RunSwitcher cannot handle run period " + key + " for year " + year_);
+        throw std::runtime_error("RunSwitcher module mapping cannot handle run period " + key + " for year " + year_);
       }
     }
   }
-  throw std::runtime_error("RunSwitcher cannot handle run number for this year");
+  throw std::runtime_error("RunSwitcher cannot handle run number " + std::to_string(event.run) + " for year " + year_);
 }
 
-void RunSwitcher::setupRun(const std::string & runPeriod, uhh2::AnalysisModule * module) {
-  runModuleMap_[runPeriod].reset(module);
+void RunSwitcher::setupRun(const std::string & runPeriod, std::shared_ptr<uhh2::AnalysisModule> module) {
+  runModuleMap_[runPeriod] = module;
+}
+
+std::string RunSwitcher::shortYear(const std::string & year) {
+  // sanitise year, chop off any v*
+  return year.substr(0, year.find("v"));
 }
