@@ -90,10 +90,10 @@ void YearSwitcher::setup2018(std::shared_ptr<uhh2::AnalysisModule> module) {
 
 
 
-RunSwitcher::RunSwitcher(const std::string & year)
+RunSwitcher::RunSwitcher(const uhh2::Context & ctx, const std::string & year):
+  year_(shortYear(year)),
+  skip_(false)
 {
-  // sanitise year, first chop off any v*
-  year_ = year.substr(0, year.find("v"));
   auto foundYear = run_number_map.find(year_);
   if (foundYear == run_number_map.end()) {
     std::string valid = "";
@@ -103,12 +103,19 @@ RunSwitcher::RunSwitcher(const std::string & year)
     }
     throw std::runtime_error("year for RunSwitcher must be one of: " + valid);
   }
+
+  // Determine if thise module can be skipped in process(),
+  // because it is not applicable to this dataset's year
+  skip_ = (shortYear(year_str_map.at(extract_year(ctx))) != year_);
+
   // store run name <> run numbers for this year
   runNumberMap_ = foundYear->second;
 }
 
 bool RunSwitcher::process(uhh2::Event & event) {
-  if (!event.isRealData) return true; // this class only makes sense for data
+  // this class only makes sense for data, or the applicable year
+  if (!event.isRealData or skip_) return true;
+
 
   std::shared_ptr<uhh2::AnalysisModule> mod = module(event);
   if (mod != nullptr) return mod->process(event);

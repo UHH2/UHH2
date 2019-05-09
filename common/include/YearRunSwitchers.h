@@ -75,7 +75,7 @@ private:
  */
 class RunSwitcher: public uhh2::AnalysisModule {
 public:
-  RunSwitcher(const std::string & year);
+  RunSwitcher(const uhh2::Context & ctx, const std::string & year);
 
   // Run the module corresponding to this year in the relevant run period
   // If none found, return true
@@ -94,6 +94,7 @@ private:
   std::string shortYear(const std::string & year);
 
   std::string year_;
+  bool skip_;
   std::map<std::string, std::pair<int, int>> runNumberMap_;
   //shared_ptr usage: see comments in YearSwitcher
   std::map<std::string, std::shared_ptr<uhh2::AnalysisModule>> runModuleMap_;
