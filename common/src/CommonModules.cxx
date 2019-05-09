@@ -52,28 +52,28 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx,SysType_PU));
     if(jec){
       jet_corrector_MC.reset(new YearSwitcher(ctx));
-      jet_corrector_MC->setup2016(new JetCorrector(ctx, JERFiles::JECFilesMC(jec_tag_2016, jec_ver_2016, jec_jet_coll)));
-      jet_corrector_MC->setup2017(new JetCorrector(ctx, JERFiles::JECFilesMC(jec_tag_2017, jec_ver_2017, jec_jet_coll)));
-      jet_corrector_MC->setup2018(new JetCorrector(ctx, JERFiles::JECFilesMC(jec_tag_2018, jec_ver_2018, jec_jet_coll)));
+      jet_corrector_MC->setup2016(std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesMC(jec_tag_2016, jec_ver_2016, jec_jet_coll)));
+      jet_corrector_MC->setup2017(std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesMC(jec_tag_2017, jec_ver_2017, jec_jet_coll)));
+      jet_corrector_MC->setup2018(std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesMC(jec_tag_2018, jec_ver_2018, jec_jet_coll)));
     }
     if(jersmear) jet_resolution_smearer.reset(new JetResolutionSmearer(ctx));
   }
   else{
     if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
     if(jec){
-      jec_switcher_16 = new RunSwitcher("2016");
+      jec_switcher_16.reset(new RunSwitcher(ctx, "2016"));
       for (const auto & runItr : runPeriods2016) { // runPeriods defined in common/include/Utils.h
-        jec_switcher_16->setupRun(runItr, new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag_2016, jec_ver_2016, jec_jet_coll, runItr)));
+        jec_switcher_16->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(jec_tag_2016, jec_ver_2016, jec_jet_coll, runItr)));
       }
 
-      jec_switcher_17 = new RunSwitcher("2017");
+      jec_switcher_17.reset(new RunSwitcher(ctx, "2017"));
       for (const auto & runItr : runPeriods2017) {
-        jec_switcher_17->setupRun(runItr, new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag_2017, jec_ver_2017, jec_jet_coll, runItr)));
+        jec_switcher_17->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(jec_tag_2017, jec_ver_2017, jec_jet_coll, runItr)));
       }
 
-      jec_switcher_18 = new RunSwitcher("2018");
+      jec_switcher_18.reset(new RunSwitcher(ctx, "2018"));
       for (const auto & runItr : runPeriods2018) {
-        jec_switcher_18->setupRun(runItr, new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag_2018, jec_ver_2018, jec_jet_coll, runItr)));
+        jec_switcher_18->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(jec_tag_2018, jec_ver_2018, jec_jet_coll, runItr)));
       }
 
       jet_corrector_data.reset(new YearSwitcher(ctx));
@@ -109,24 +109,24 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
   if(jetlepcleaner) {
     if(is_mc) {
       JLC_MC.reset(new YearSwitcher(ctx));
-      JLC_MC->setup2016(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesMC(jec_tag_2016, jec_ver_2016, jec_jet_coll)));
-      JLC_MC->setup2017(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesMC(jec_tag_2017, jec_ver_2017, jec_jet_coll)));
-      JLC_MC->setup2018(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesMC(jec_tag_2018, jec_ver_2018, jec_jet_coll)));
+      JLC_MC->setup2016(std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesMC(jec_tag_2016, jec_ver_2016, jec_jet_coll)));
+      JLC_MC->setup2017(std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesMC(jec_tag_2017, jec_ver_2017, jec_jet_coll)));
+      JLC_MC->setup2018(std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesMC(jec_tag_2018, jec_ver_2018, jec_jet_coll)));
     }
     else{
-      JLC_switcher_16 = new RunSwitcher("2016");
+      JLC_switcher_16.reset(new RunSwitcher(ctx, "2016"));
       for (const auto & runItr : runPeriods2016) {
-        JLC_switcher_16->setupRun(runItr, new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag_2016, jec_ver_2016, jec_jet_coll, runItr)));
+        JLC_switcher_16->setupRun(runItr, std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesDATA(jec_tag_2016, jec_ver_2016, jec_jet_coll, runItr)));
       }
 
-      JLC_switcher_17 = new RunSwitcher("2017");
+      JLC_switcher_17.reset(new RunSwitcher(ctx, "2017"));
       for (const auto & runItr : runPeriods2017) {
-        JLC_switcher_17->setupRun(runItr, new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag_2017, jec_ver_2017, jec_jet_coll, runItr)));
+        JLC_switcher_17->setupRun(runItr, std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesDATA(jec_tag_2017, jec_ver_2017, jec_jet_coll, runItr)));
       }
 
-      JLC_switcher_18 = new RunSwitcher("2018");
+      JLC_switcher_18.reset(new RunSwitcher(ctx, "2018"));
       for (const auto & runItr : runPeriods2018) {
-        JLC_switcher_18->setupRun(runItr, new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag_2018, jec_ver_2018, jec_jet_coll, runItr)));
+        JLC_switcher_18->setupRun(runItr, std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesDATA(jec_tag_2018, jec_ver_2018, jec_jet_coll, runItr)));
       }
 
       JLC_data.reset(new YearSwitcher(ctx));
@@ -175,13 +175,12 @@ bool CommonModules::process(uhh2::Event & event){
   //set do_metcorrection = true in case you applied jet lepton cleaning by yourself and before calling common modules
   if((jetlepcleaner && jec) || (do_metcorrection && jec)){
     if (is_mc) {
-      // raw pointer OK as the YearSwitcher owns it...
       // some casting needed to get back to derived type
-      JetCorrector * jc = dynamic_cast<JetCorrector*>(jet_corrector_MC->module());
+      std::shared_ptr<JetCorrector> jc = std::dynamic_pointer_cast<JetCorrector>(jet_corrector_MC->module());
       jc->correct_met(event);
     } else {
-      RunSwitcher * rs = dynamic_cast<RunSwitcher*>(jet_corrector_data->module());
-      JetCorrector * jc = dynamic_cast<JetCorrector*>(rs->module(event));
+      std::shared_ptr<RunSwitcher> rs = std::dynamic_pointer_cast<RunSwitcher>(jet_corrector_data->module());
+      std::shared_ptr<JetCorrector> jc = std::dynamic_pointer_cast<JetCorrector>(rs->module(event));
       jc->correct_met(event);
     }
   }
