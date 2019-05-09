@@ -49,9 +49,9 @@ private:
     std::unique_ptr<YearSwitcher> dummyTextYearSwitcher, jetCleanerYearSwitcher, megaYearSwitcher;
     std::unique_ptr<RunSwitcher> dummyTextRun18, dummyTextRun17;
 
-    // Note that these are raw pointers
-    // FIXME: surely there must be a better way? Do these leak?
-    RunSwitcher *megaRunSwitcher16, *megaRunSwitcher17, *megaRunSwitcher18;
+    // Note that these must be shared pointers,
+    // since we store them in a YearSwitcher
+    std::shared_ptr<RunSwitcher> megaRunSwitcher16, megaRunSwitcher17, megaRunSwitcher18;
 
 };
 
@@ -62,51 +62,51 @@ ExampleModuleYearRunSwitch::ExampleModuleYearRunSwitch(Context & ctx){
     // Setup and instance of DummyModule module to be run for each year
     // Note that e.g. the 2016 one will be run for both 2016v2 & 2016v3 ntuples
     dummyTextYearSwitcher.reset(new YearSwitcher(ctx));
-    dummyTextYearSwitcher->setup2016(new DummyModule("I am 2016"));
-    dummyTextYearSwitcher->setup2017(new DummyModule("I am 2017"));
-    dummyTextYearSwitcher->setup2018(new DummyModule("I am 2018"));
+    dummyTextYearSwitcher->setup2016(std::make_shared<DummyModule>("I am 2016"));
+    dummyTextYearSwitcher->setup2017(std::make_shared<DummyModule>("I am 2017"));
+    dummyTextYearSwitcher->setup2018(std::make_shared<DummyModule>("I am 2018"));
 
     // Here we specify a particular module for 2017v2 ntuples. This will be run
     // instead of the one created in setup2017() above.
     // 2017v1 ntuples will still use that one though.
-    dummyTextYearSwitcher->setup2017v2(new DummyModule("I am 2017v2"));
+    dummyTextYearSwitcher->setup2017v2(std::make_shared<DummyModule>("I am 2017v2"));
 
     // Here is a more realistic example - we apply some jet cuts,
     // but only for 2017 we decide to exclude HF jets and raise the pT cut as well
     jetCleanerYearSwitcher.reset(new YearSwitcher(ctx));
-    jetCleanerYearSwitcher->setup2016(new JetCleaner(ctx, 30.0, 5.));
-    jetCleanerYearSwitcher->setup2017(new JetCleaner(ctx, 50.0, 3));
-    jetCleanerYearSwitcher->setup2018(new JetCleaner(ctx, 30.0, 5));
+    jetCleanerYearSwitcher->setup2016(std::make_shared<JetCleaner>(ctx, 30.0, 5.));
+    jetCleanerYearSwitcher->setup2017(std::make_shared<JetCleaner>(ctx, 50.0, 3));
+    jetCleanerYearSwitcher->setup2018(std::make_shared<JetCleaner>(ctx, 30.0, 5));
 
 
-    // Here we setup modules for specific run periods in a given year
-    dummyTextRun18.reset(new RunSwitcher("2018"));
-    dummyTextRun18->setupRun("A", new DummyModule("2018 Run A"));
-    dummyTextRun18->setupRun("B", new DummyModule("2018 Run B"));
-    dummyTextRun18->setupRun("C", new DummyModule("2018 Run C"));
-    dummyTextRun18->setupRun("D", new DummyModule("2018 Run D"));
+    // // Here we setup modules for specific run periods in a given year
+    dummyTextRun18.reset(new RunSwitcher(ctx, "2018"));
+    dummyTextRun18->setupRun("A", std::make_shared<DummyModule>("2018 Run A"));
+    dummyTextRun18->setupRun("B", std::make_shared<DummyModule>("2018 Run B"));
+    dummyTextRun18->setupRun("C", std::make_shared<DummyModule>("2018 Run C"));
+    dummyTextRun18->setupRun("D", std::make_shared<DummyModule>("2018 Run D"));
 
-    // much easier way to iterate over all Run periods:
-    dummyTextRun17.reset(new RunSwitcher("2017"));
+    // // much easier way to iterate over all Run periods:
+    dummyTextRun17.reset(new RunSwitcher(ctx, "2017"));
     for (const auto & itr : {"B", "C", "D", "E", "F"}) {
-        dummyTextRun17->setupRun(itr, new DummyModule("2017 Run " + std::string(itr)));
+        dummyTextRun17->setupRun(itr, std::make_shared<DummyModule>("2017 Run " + std::string(itr)));
     }
 
     // Finally, we can also combine these both
     // Good for e.g. JECs
-    megaRunSwitcher16 = new RunSwitcher("2016");
+    megaRunSwitcher16.reset(new RunSwitcher(ctx, "2016"));
     for (const auto & runItr : runPeriods2016) { // runPeriods defined in common/include/Utils.h
-        megaRunSwitcher16->setupRun(runItr, new DummyModule("Super! 2016 + Run " + runItr));
+        megaRunSwitcher16->setupRun(runItr, std::make_shared<DummyModule>("Super! 2016 + Run " + runItr));
     }
 
-    megaRunSwitcher17 = new RunSwitcher("2017");
+    megaRunSwitcher17.reset(new RunSwitcher(ctx, "2017"));
     for (const auto & runItr : runPeriods2017) {
-        megaRunSwitcher17->setupRun(runItr, new DummyModule("Mega! 2017 + Run " + runItr));
+        megaRunSwitcher17->setupRun(runItr, std::make_shared<DummyModule>("Mega! 2017 + Run " + runItr));
     }
 
-    megaRunSwitcher18 = new RunSwitcher("2018");
+    megaRunSwitcher18.reset(new RunSwitcher(ctx, "2018"));
     for (const auto & runItr : runPeriods2018) {
-        megaRunSwitcher18->setupRun(runItr, new DummyModule("Ausgezeichnet! 2018 + Run " + runItr));
+        megaRunSwitcher18->setupRun(runItr, std::make_shared<DummyModule>("Ausgezeichnet! 2018 + Run " + runItr));
     }
 
     megaYearSwitcher.reset(new YearSwitcher(ctx));
