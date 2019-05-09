@@ -79,7 +79,7 @@ ExampleModuleYearRunSwitch::ExampleModuleYearRunSwitch(Context & ctx){
     jetCleanerYearSwitcher->setup2018(std::make_shared<JetCleaner>(ctx, 30.0, 5));
 
 
-    // // Here we setup modules for specific run periods in a given year
+    // Here we setup modules for specific run periods in a given year
     dummyTextRun18.reset(new RunSwitcher(ctx, "2018"));
     dummyTextRun18->setupRun("A", std::make_shared<DummyModule>("2018 Run A"));
     dummyTextRun18->setupRun("B", std::make_shared<DummyModule>("2018 Run B"));
@@ -121,8 +121,6 @@ bool ExampleModuleYearRunSwitch::process(Event & event) {
 
     cout << "ExampleModuleYearRunSwitch: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
 
-    // the YearSwitcher uses the event.year stored in the ntuple,
-    // ignoring whatver is specified in the dataset Version
     dummyTextYearSwitcher->process(event);
     jetCleanerYearSwitcher->process(event);
 

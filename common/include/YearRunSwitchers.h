@@ -32,8 +32,7 @@ public:
 
   // Get the relevant module, incase you need to access its other methods
   // You will need to cast it to the specific derived type,
-  // e.g. RunSwitcher * rs = dynamic_cast<RunSwitcher*>(myYearSwitcher->module());
-  // Returns raw pointer as RunSwitcher has shared_ptr to it already
+  // e.g. std::shared_ptr<RunSwitcher> rs = std::dynamic_pointer_cast<RunSwitcher>(myYearSwitcher->module());
   std::shared_ptr<uhh2::AnalysisModule> module();
 
   // Methods to assign module for each year
@@ -83,7 +82,7 @@ public:
 
   // Get the relevant module, incase you need to access its other methods
   // You will need to cast it to the specific derived type,
-  // e.g. std::shared_ptr<JetCorrector> jc = std::dynamic_pointer_cast<JetCorrector*>(myYearSwitcher->module());
+  // e.g. std::shared_ptr<JetCorrector> jc = std::dynamic_pointer_cast<JetCorrector>(myRunSwitcher->module());
   std::shared_ptr<uhh2::AnalysisModule> module(const uhh2::Event & event);
 
   // Method to assign a module to a particular run period
