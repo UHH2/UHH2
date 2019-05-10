@@ -404,3 +404,34 @@ bool JetPFID::tightLepVetoID2016(const Jet & jet) const{
   return true;
 
 }
+
+//////// Jet PU id
+JetPUid::JetPUid(wp working_point):m_working_point(working_point){}
+
+// JetPUid::JetPUid(wp working_point) {
+//   m_working_point = working_point;
+// }
+
+
+bool JetPUid::operator()(const Jet & jet, const Event &ev) const{
+  TString wp_str;
+  //  int wp_id;
+  switch(m_working_point){
+  case WP_LOOSE:
+    wp_str = "pileup_loose";
+    // wp_id = 0;
+    break;
+  case WP_MEDIUM:
+    //wp_id = 1;
+    wp_str = "pileup_medium";
+    break;
+  case WP_TIGHT:
+    //wp_id = 2;
+    wp_str = "pileup_tight";
+    break;
+  default:
+    throw invalid_argument("invalid working point passed to JetPUid");
+    }
+  return jet.get_tag(jet.tagname2tag(wp_str.Data()))>0;
+  //return jet.get_tag(wp_id)>0;
+}
