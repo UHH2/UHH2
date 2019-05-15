@@ -2095,6 +2095,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     #    TestKey = cms.string("TestValue")
                                     #),
                                     fileName=cms.string("Ntuple.root"),
+                                    compressionAlgorithm=cms.string('Global'),
+                                    compressionLevel=cms.int32(1),  # Global1 is the default setting - not very compressed
                                     year=cms.string(year),
                                     doPV=cms.bool(True),
                                     pv_sources=cms.vstring("offlineSlimmedPrimaryVertices"),
