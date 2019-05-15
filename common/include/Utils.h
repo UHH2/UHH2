@@ -116,3 +116,55 @@ const std::map<Year, std::string> year_str_map = {
 
 /* Get Year enum from dataset_version in XML config */
 Year extract_year(const uhh2::Context & ctx);
+
+
+/**
+ * Run period names for each year
+ */
+const std::vector<std::string> runPeriods2016 = {"B", "C", "D", "E", "F", "G", "H"};
+
+const std::vector<std::string> runPeriods2017 = {"B", "C", "D", "E", "F"};
+
+const std::vector<std::string> runPeriods2018 = {"A", "B", "C", "D"};
+
+/**
+ * Map run periods to run numbers for each year
+ *
+ * All pairs for a run period are inclusive of both lower & upper numbers
+ */
+const std::unordered_map<std::string, std::map<std::string, std::pair<int, int>>>
+  run_number_map = {
+    // taken from https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2016Analysis
+    { "2016", {
+        { "A", std::pair(-1, -1) }, // dummy ones for consistency
+        { "B", std::pair(272007, 275376) },
+        { "C", std::pair(275657, 276283) },
+        { "D", std::pair(276315, 276811) },
+        { "E", std::pair(276831, 277420) },
+        { "F", std::pair(277772, 278808) },
+        { "G", std::pair(278820, 280385) },
+        { "H", std::pair(280919, 284044) },
+    }},
+    // taken from https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2017Analysis
+    { "2017", {
+        { "A", std::pair(-1, -1) },
+        { "B", std::pair(297020, 299329) },
+        { "C", std::pair(299337, 302029) },
+        { "D", std::pair(302030, 303434) },
+        { "E", std::pair(303435, 304826) },
+        { "F", std::pair(304911, 306462) },
+        { "G", std::pair(-1, -1) },
+        { "H", std::pair(-1, -1) },
+    }},
+    // taken from https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2018Analysis
+    { "2018", {
+        { "A", std::pair(315252, 316995) },
+        { "B", std::pair(316998, 319312) },
+        { "C", std::pair(319313, 320393) },
+        { "D", std::pair(320394, 325273) },
+        { "E", std::pair(-1, -1) },
+        { "F", std::pair(-1, -1) },
+        { "G", std::pair(-1, -1) },
+        { "H", std::pair(-1, -1) },
+    }},
+};
