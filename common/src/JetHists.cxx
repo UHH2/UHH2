@@ -258,15 +258,14 @@ template<typename T>
 }
 
 //Btag stuff
-template<typename btagger>
-BTagMCEfficiencyHists<btagger>::BTagMCEfficiencyHists(
+BTagMCEfficiencyHists::BTagMCEfficiencyHists(
   uhh2::Context & ctx,
   const std::string & dirname,
-  const typename btagger::wp & working_point,
+  const JetId & jet_id,
   const std::string & jets_handle_name
 ):
   Hists(ctx, dirname),
-  btag_(btagger(working_point)),
+  btag_(jet_id),
   hist_b_passing_(   book<TH2F>("BTagMCEffFlavBPassing",    ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
   hist_b_total_(     book<TH2F>("BTagMCEffFlavBTotal",      ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
   hist_c_passing_(   book<TH2F>("BTagMCEffFlavCPassing",    ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
@@ -277,8 +276,7 @@ BTagMCEfficiencyHists<btagger>::BTagMCEfficiencyHists(
   h_jets_(   ctx.get_handle<vector<Jet>>(   jets_handle_name))
 {}
 
-template<typename btagger>
-void BTagMCEfficiencyHists<btagger>::fill(const Event & event)
+void BTagMCEfficiencyHists::fill(const Event & event)
 {
   if (event.is_valid(h_topjets_)) {
     do_fill(event.get(h_topjets_), event);
@@ -290,8 +288,7 @@ void BTagMCEfficiencyHists<btagger>::fill(const Event & event)
   }
 }
 
-template<typename btagger>
-void BTagMCEfficiencyHists<btagger>::do_fill(const std::vector<TopJet> & jets, const Event & event)
+void BTagMCEfficiencyHists::do_fill(const std::vector<TopJet> & jets, const Event & event)
 {
   for (const auto & topjet : jets) { for (const auto & jet : topjet.subjets()) {
 
@@ -318,22 +315,3 @@ void BTagMCEfficiencyHists<btagger>::do_fill(const std::vector<TopJet> & jets, c
 
   }}
 }
-
-template BTagMCEfficiencyHists<CSVBTag>::BTagMCEfficiencyHists(
-  uhh2::Context & ctx,
-  const std::string & dirname,
-  const CSVBTag::wp & working_point,
-  const std::string & jets_handle_name
-);
-template BTagMCEfficiencyHists<DeepCSVBTag>::BTagMCEfficiencyHists(
-  uhh2::Context & ctx,
-  const std::string & dirname,
-  const DeepCSVBTag::wp & working_point,
-  const std::string & jets_handle_name
-);
-template BTagMCEfficiencyHists<DeepJetBTag>::BTagMCEfficiencyHists(
-  uhh2::Context & ctx,
-  const std::string & dirname,
-  const DeepJetBTag::wp & working_point,
-  const std::string & jets_handle_name
-);
