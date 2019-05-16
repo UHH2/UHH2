@@ -220,7 +220,8 @@ class BTagCalibrationReader;  // forward declaration
 class MCBTagScaleFactor: public uhh2::AnalysisModule {
  public:
   explicit MCBTagScaleFactor(uhh2::Context & ctx,
-                             const CSVBTag::wp & working_point,
+			     BTag::algo tagger,
+			     BTag::wp wp,
                              const std::string & jets_handle_name="jets",
                              const std::string & sysType="central",
                              const std::string & measType_bc="mujets",
@@ -237,7 +238,7 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
                                                   uhh2::Event & event);
   std::pair<float, float> get_SF_btag(float pt, float abs_eta, int flav);
 
-  CSVBTag btag_;
+  BTag btag_;
   std::unique_ptr<BTagCalibrationReader> calib_up_;
   std::unique_ptr<BTagCalibrationReader> calib_;
   std::unique_ptr<BTagCalibrationReader> calib_down_;
