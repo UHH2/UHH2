@@ -239,7 +239,7 @@ namespace JERSmearing {
   extern const SFtype1 SF_13TeV_Autumn18_RunD_V1;
 
   //LHCP19
-  extern const SFtype1 SF_13TeV_Autumn18_V4;
+  extern const SFtype1 SF_13TeV_Autumn18_RunABCD_V4;
   extern const SFtype1 SF_13TeV_Autumn18_RunABC_V4;
   extern const SFtype1 SF_13TeV_Autumn18_RunD_V4;
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+
+<!-- OutputLevel controls which messages are printed; set to VERBOSE or DEBUG for more verbosity, to WARNING or ERROR for less -->
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+    <Library Name="libSUHH2examples"/>
+    <Package Name="SUHH2examples.par" />
+
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+
+        <InputData Lumi="1" NEventsMax="5" Type="DATA" Version="Data_2018" Cacheable="False">
+            <In FileName="data2018.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="1" NEventsMax="5" Type="DATA" Version="Data_2016v3" Cacheable="False">
+            <In FileName="data2016v3.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+        </InputData>
+
+        <InputData Lumi="1" NEventsMax="5" Type="DATA" Version="Data_2017v2" Cacheable="False">
+            <In FileName="data2017v2.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+        </InputData>
+
+        <UserConfig>
+            <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
+            <Item Name="JetCollection" Value="jetsAk4CHS" />
+            <Item Name="GenJetCollection" Value="slimmedGenJets" />
+            <Item Name="METName" Value="slimmedMETs" />
+
+            <Item Name="AnalysisModule" Value="ExampleModuleYearRunSwitch" />
+
+            <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
+                 MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
+                 event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
+            <Item Name="use_sframe_weight" Value="false" />
+
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>

@@ -33,6 +33,7 @@
 #include "TSystem.h"
 #include "TFile.h"
 #include "TH1.h"
+#include "Compression.h"
 
 using namespace std;
 
@@ -121,7 +122,22 @@ private:
 NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0), setup_output_branches_done(false) {
   fileName = iConfig.getParameter<std::string>("fileName");
   if(!fileName.empty()){
-    outfile = new TFile(fileName.c_str(), "RECREATE");
+    int compLevel = iConfig.getParameter<int>("compressionLevel");
+    outfile = new TFile(fileName.c_str(), "RECREATE", "", compLevel);
+    std::string compAlgo = iConfig.getParameter<std::string>("compressionAlgorithm");
+    if (compAlgo == std::string("ZLIB")) {
+      outfile->SetCompressionAlgorithm(ROOT::kZLIB);
+    } else if (compAlgo == std::string("LZMA")) {
+      outfile->SetCompressionAlgorithm(ROOT::kLZMA);
+    } else if (compAlgo == std::string("Global")) {
+      outfile->SetCompressionAlgorithm(0); // cos the enum ROOT::kUseGlobal doens't work for some reason
+    } else if (compAlgo == std::string("LZ4")) {
+      outfile->SetCompressionAlgorithm(ROOT::kLZ4);
+    } else {
+      throw cms::Exception("NtupleWriter")
+          << "NtupleWriter configured with unknown compression algorithm '" << compAlgo << "'\n"
+          << "Allowed compression algorithms are ZLIB, LZMA, Global, LZ4\n";
+    }
     outfile->cd();
     tr = new TTree("AnalysisTree","AnalysisTree");
   }
