@@ -24,10 +24,15 @@ bool JetCleaner::process(Event & event){
 }
 
 GenJetCleaner::GenJetCleaner(Context & ctx, float minpt, float maxeta, string const & label_):
-  genjet_id(PtEtaCut(minpt, maxeta)){}
+    genjet_id(PtEtaCut(minpt, maxeta)), hndl(ctx.get_handle<vector<GenJet>>(label_)){}
 
 bool GenJetCleaner::process(Event & event){
-    clean_collection(*event.genjets, event, genjet_id);
+    if (!event.is_valid(hndl)) {
+        cerr << "In GenJetCleaner: Handle not valid!\n";
+        assert(false);
+    }
+    vector<GenJet> & genjet_collection = event.get(hndl);
+    clean_collection(genjet_collection, event, genjet_id);
     return true;
 }
 
