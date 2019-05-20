@@ -434,6 +434,7 @@ JetPUid::JetPUid(wp working_point):m_working_point(working_point){}
 
 
 bool JetPUid::operator()(const Jet & jet, const Event &ev) const{
+  (void) ev;
   TString wp_str;
   //  int wp_id;
   switch(m_working_point){

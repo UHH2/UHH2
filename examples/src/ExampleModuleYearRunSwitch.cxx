@@ -27,6 +27,7 @@ public:
     {}
 
     virtual bool process(Event & event){
+        (void) event;
         cout << note_ << endl;
         return true;
     }
