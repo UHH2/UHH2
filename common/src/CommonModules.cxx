@@ -21,8 +21,16 @@ void CommonModules::fail_if_init() const{
 
 CommonModules::CommonModules(){
   working_point = JetPFID::WP_TIGHT_CHS;
-  jec_tag = "Fall17_17Nov2017";
-  jec_ver = "32";
+
+  jec_tag_2016 = "Summer16_07Aug2017";
+  jec_ver_2016 = "11";
+
+  jec_tag_2017 = "Fall17_17Nov2017";
+  jec_ver_2017 = "32";
+
+  jec_tag_2018 = "Autumn18";
+  jec_ver_2018 = "7";
+
   jec_jet_coll = "AK4PFchs";
 }
 
@@ -43,18 +51,35 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     if(mclumiweight)  modules.emplace_back(new MCLumiWeight(ctx));
     if(mcpileupreweight) modules.emplace_back(new MCPileupReweight(ctx,SysType_PU));
     if(jec){
-      jet_corrector_MC.reset(new JetCorrector(ctx, JERFiles::JECFilesMC(jec_tag, jec_ver, jec_jet_coll)));
+      jet_corrector_MC.reset(new YearSwitcher(ctx));
+      jet_corrector_MC->setup2016(std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesMC(jec_tag_2016, jec_ver_2016, jec_jet_coll)));
+      jet_corrector_MC->setup2017(std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesMC(jec_tag_2017, jec_ver_2017, jec_jet_coll)));
+      jet_corrector_MC->setup2018(std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesMC(jec_tag_2018, jec_ver_2018, jec_jet_coll)));
     }
     if(jersmear) jet_resolution_smearer.reset(new JetResolutionSmearer(ctx));
   }
   else{
     if(lumisel) lumi_selection.reset(new LumiSelection(ctx));
     if(jec){
-      jet_corrector_B.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "B")));
-      jet_corrector_C.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "C")));
-      jet_corrector_D.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "D")));
-      jet_corrector_E.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "E")));
-      jet_corrector_F.reset(new JetCorrector(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "F")));
+      jec_switcher_16.reset(new RunSwitcher(ctx, "2016"));
+      for (const auto & runItr : runPeriods2016) { // runPeriods defined in common/include/Utils.h
+        jec_switcher_16->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(jec_tag_2016, jec_ver_2016, jec_jet_coll, runItr)));
+      }
+
+      jec_switcher_17.reset(new RunSwitcher(ctx, "2017"));
+      for (const auto & runItr : runPeriods2017) {
+        jec_switcher_17->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(jec_tag_2017, jec_ver_2017, jec_jet_coll, runItr)));
+      }
+
+      jec_switcher_18.reset(new RunSwitcher(ctx, "2018"));
+      for (const auto & runItr : runPeriods2018) {
+        jec_switcher_18->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(jec_tag_2018, jec_ver_2018, jec_jet_coll, runItr)));
+      }
+
+      jet_corrector_data.reset(new YearSwitcher(ctx));
+      jet_corrector_data->setup2016(jec_switcher_16);
+      jet_corrector_data->setup2017(jec_switcher_17);
+      jet_corrector_data->setup2018(jec_switcher_18);
     }
   }
   if(metfilters){
@@ -82,13 +107,32 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
   }
   if(jetlepcleaner) {
-    if(is_mc) JLC_MC.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesMC(jec_tag, jec_ver, jec_jet_coll)));
+    if(is_mc) {
+      JLC_MC.reset(new YearSwitcher(ctx));
+      JLC_MC->setup2016(std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesMC(jec_tag_2016, jec_ver_2016, jec_jet_coll)));
+      JLC_MC->setup2017(std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesMC(jec_tag_2017, jec_ver_2017, jec_jet_coll)));
+      JLC_MC->setup2018(std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesMC(jec_tag_2018, jec_ver_2018, jec_jet_coll)));
+    }
     else{
-      JLC_B.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "B")));
-      JLC_C.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "C")));
-      JLC_D.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "DE")));
-      JLC_E.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "DE")));
-      JLC_F.reset(new JetLeptonCleaner_by_KEYmatching(ctx, JERFiles::JECFilesDATA(jec_tag, jec_ver, jec_jet_coll, "F")));
+      JLC_switcher_16.reset(new RunSwitcher(ctx, "2016"));
+      for (const auto & runItr : runPeriods2016) {
+        JLC_switcher_16->setupRun(runItr, std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesDATA(jec_tag_2016, jec_ver_2016, jec_jet_coll, runItr)));
+      }
+
+      JLC_switcher_17.reset(new RunSwitcher(ctx, "2017"));
+      for (const auto & runItr : runPeriods2017) {
+        JLC_switcher_17->setupRun(runItr, std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesDATA(jec_tag_2017, jec_ver_2017, jec_jet_coll, runItr)));
+      }
+
+      JLC_switcher_18.reset(new RunSwitcher(ctx, "2018"));
+      for (const auto & runItr : runPeriods2018) {
+        JLC_switcher_18->setupRun(runItr, std::make_shared<JetLeptonCleaner_by_KEYmatching>(ctx, JERFiles::JECFilesDATA(jec_tag_2018, jec_ver_2018, jec_jet_coll, runItr)));
+      }
+
+      JLC_data.reset(new YearSwitcher(ctx));
+      JLC_data->setup2016(JLC_switcher_16);
+      JLC_data->setup2017(JLC_switcher_17);
+      JLC_data->setup2018(JLC_switcher_18);
     }
   }
   modules.emplace_back(new HTCalculator(ctx,HT_jetid));
@@ -111,26 +155,18 @@ bool CommonModules::process(uhh2::Event & event){
   }
 
   if(jetlepcleaner){
-    if(is_mc) JLC_MC->process(event);
-    else{
-      if(event.run <= runnr_B)      JLC_B->process(event);
-      else if(event.run <= runnr_C) JLC_C->process(event);
-      else if(event.run <= runnr_D) JLC_D->process(event);
-      else if(event.run <= runnr_E) JLC_E->process(event);
-      else if(event.run <= runnr_F) JLC_F->process(event);
-      else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
+    if (is_mc) {
+      JLC_MC->process(event);
+    } else {
+      JLC_data->process(event);
     }
   }
 
   if(jec){
-    if(is_mc)jet_corrector_MC->process(event);
-    else{
-      if(event.run <= runnr_B)      jet_corrector_B->process(event);
-      else if(event.run <= runnr_C) jet_corrector_C->process(event);
-      else if(event.run <= runnr_D) jet_corrector_D->process(event);
-      else if(event.run <= runnr_E) jet_corrector_E->process(event);
-      else if(event.run <= runnr_F) jet_corrector_F->process(event);
-      else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
+    if (is_mc) {
+      jet_corrector_MC->process(event);
+    } else {
+      jet_corrector_data->process(event);
     }
   }
 
@@ -138,14 +174,14 @@ bool CommonModules::process(uhh2::Event & event){
 
   //set do_metcorrection = true in case you applied jet lepton cleaning by yourself and before calling common modules
   if((jetlepcleaner && jec) || (do_metcorrection && jec)){
-    if(is_mc) jet_corrector_MC->correct_met(event);
-    else{
-      if(event.run <= runnr_B)      jet_corrector_B->correct_met(event);
-      else if(event.run <= runnr_C) jet_corrector_C->correct_met(event);
-      else if(event.run <= runnr_D) jet_corrector_D->correct_met(event);
-      else if(event.run <= runnr_E) jet_corrector_E->correct_met(event);
-      else if(event.run <= runnr_F) jet_corrector_F->correct_met(event);
-      else throw runtime_error("CommonModules.cxx: run number not covered by if-statements in process-routine.");
+    if (is_mc) {
+      // some casting needed to get back to derived type
+      std::shared_ptr<JetCorrector> jc = std::dynamic_pointer_cast<JetCorrector>(jet_corrector_MC->module());
+      jc->correct_met(event);
+    } else {
+      std::shared_ptr<RunSwitcher> rs = std::dynamic_pointer_cast<RunSwitcher>(jet_corrector_data->module());
+      std::shared_ptr<JetCorrector> jc = std::dynamic_pointer_cast<JetCorrector>(rs->module(event));
+      jc->correct_met(event);
     }
   }
   // else if(jec || jetlepcleaner) cout <<"WARNING: You used CommonModules for either JEC or jet-lepton-cleaning but MET is not corrected. Please be aware of this." << endl;
@@ -224,7 +260,9 @@ void CommonModules::print_setup() const {
   }
   cout << endl;
   if (jec || jetlepcleaner || do_metcorrection) {
-    cout << "JECs: " << jec_tag << " V" << jec_ver << " for " << jec_jet_coll << endl;
+    cout << "2016 JECs: " << jec_tag_2016 << " V" << jec_ver_2016 << " for " << jec_jet_coll << endl;
+    cout << "2017 JECs: " << jec_tag_2017 << " V" << jec_ver_2017 << " for " << jec_jet_coll << endl;
+    cout << "2018 JECs: " << jec_tag_2018 << " V" << jec_ver_2018 << " for " << jec_jet_coll << endl;
   }
   cout << endl;
 
