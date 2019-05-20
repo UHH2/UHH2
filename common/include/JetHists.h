@@ -120,12 +120,11 @@ static const std::vector<float> BTagMCEffBinsPt = {20., 30., 50., 70., 100., 140
  * jets_handle_name should point to a handle of type vector<Jet> _or_
  * vector<TopJet>, were in the latter case all of the subjets are used.
  */
-template<typename btagger>
 class BTagMCEfficiencyHists: public uhh2::Hists {
 public:
   BTagMCEfficiencyHists(uhh2::Context & ctx,
                         const std::string & dirname,
-                        const typename btagger::wp & working_point,
+			const JetId & jet_id,
                         const std::string & jets_handle_name="jets");
 
   virtual void fill(const uhh2::Event & ev) override;
@@ -133,7 +132,7 @@ public:
 protected:
   void do_fill(const std::vector<TopJet> & jets, const uhh2::Event & event);
 
-  btagger btag_;
+  JetId btag_;
   TH2F * hist_b_passing_;
   TH2F * hist_b_total_;
   TH2F * hist_c_passing_;

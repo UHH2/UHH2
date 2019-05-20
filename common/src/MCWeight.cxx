@@ -631,15 +631,16 @@ bool MCElecScaleFactor::process(uhh2::Event & event) {
 
 
 MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
-                                     const CSVBTag::wp & working_point,
-                                     const std::string & jets_handle_name,
+				     BTag::algo tagger,
+				     BTag::wp wp,
+				     const std::string & jets_handle_name,
                                      const std::string & sysType,
                                      const std::string & measType_bc,
                                      const std::string & measType_udsg,
                                      const std::string & xml_param_name,
 				     const std::string & weights_name_postfix,
 				     const std::string & xml_calib_name):
-  btag_(CSVBTag(working_point)),
+  btag_(BTag(tagger, wp)),
   h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
   h_topjets_(ctx.get_handle<std::vector<TopJet>>(jets_handle_name)),
   sysType_(sysType),
@@ -675,10 +676,8 @@ MCBTagScaleFactor::MCBTagScaleFactor(uhh2::Context & ctx,
   eff_file.Close();
 
   // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagCalibration
-  BTagCalibration calib_data("CSVv2", ctx.get(xml_calib_name));
-  auto op = working_point == CSVBTag::WP_LOOSE ? BTagEntry::OP_LOOSE : (
-                working_point == CSVBTag::WP_MEDIUM ? BTagEntry::OP_MEDIUM :
-                    BTagEntry::OP_TIGHT);
+  BTagCalibration calib_data(btag_.GetTagger(), ctx.get(xml_calib_name));
+  BTagEntry::OperatingPoint op = (BTagEntry::OperatingPoint) btag_.GetWorkingPoint();
 
   calib_up_.reset(new BTagCalibrationReader(op, "up"));
   calib_.reset(new BTagCalibrationReader(op, "central"));
