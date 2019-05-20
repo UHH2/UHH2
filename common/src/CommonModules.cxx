@@ -44,6 +44,28 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
   is_mc = ctx.get("dataset_type") == "MC";
   year = extract_year(ctx);
 
+  // setup correction jet type for JECs
+  if (jec || jetlepcleaner) {
+    std::string userJetColl = string2lowercase(ctx.get("JetCollection"));
+
+    std::string algo = "AK4";
+    // algo size
+    if (userJetColl.find("ak8") != std::string::npos) {
+      algo = "AK8";
+    } else if (userJetColl.find("ak4") == std::string::npos) {
+      std::cout << "Cannot determine jet cone + radius (neither AK4 nor AK8) - going to assume it is AK4 for JECs" << std::endl;
+    }
+
+    std::string pus = "PFchs";
+    // Pileup subtraction
+    if (userJetColl.find("puppi") != std::string::npos) {
+      pus = "PFPuppi";
+    } else if (userJetColl.find("chs") == std::string::npos) {
+      std::cout << "Cannot determine pileup subtraction (neither CHS nor PUPPI) - going to assume it is CHS for JECs" << std::endl;
+    }
+    jec_jet_coll = algo + pus;
+  }
+
   //set default PV id;
   PrimaryVertexId pvid=StandardPrimaryVertexId();
   if(pvfilter) modules.emplace_back(new PrimaryVertexCleaner(pvid));
