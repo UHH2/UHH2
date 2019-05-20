@@ -741,26 +741,29 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunD_V1 = {
 ////
 
 // 2018 -> to be used with combined dataset
-const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_V4 = {
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunABCD_V4 = {
   // 0 = upper jet-eta limit
   // 1 = JER SF
   // 2 = JER SF + 1sigma
   // 3 = JER SF - 1sigma
-  {{0.522, 1.1545, 1.1853, 1.1236}},
-  {{0.783, 1.1481, 1.1996, 1.0966}},
-  {{1.131, 1.0998, 1.1384, 1.0613}},
-  {{1.305, 1.0929, 1.1785, 1.0072}},
-  {{1.740, 1.1093, 1.1811, 1.0375}},
-  {{1.930, 1.1005, 1.1520, 1.0490}},
-  {{2.043, 1.0603, 1.1904, 0.9302}},
-  {{2.322, 1.1287, 1.1818, 1.0756}},
-  {{2.500, 1.3397, 1.4544, 1.2250}},
-  {{2.853, 2.0325, 2.5686, 1.4964}},
-  {{2.964, 2.0567, 2.3627, 1.7507}},
-  {{3.139, 1.1868, 1.2244, 1.1492}},
-  {{5.191, 1.0922, 1.1411, 1.0433}},
+
+  {{0.522, 1.15448, 1.18531, 1.123650}},
+  {{0.783, 1.14808, 1.19957, 1.096590}},
+  {{1.131, 1.09985, 1.13844, 1.061260}},
+  {{1.305, 1.09287, 1.17851, 1.007230}},
+  {{1.740, 1.10930, 1.18108, 1.037530}},
+  {{1.930, 1.10049, 1.15198, 1.049000}},
+  {{2.043, 1.06031, 1.19040, 0.930216}},
+  {{2.322, 1.12870, 1.18184, 1.075560}},
+  {{2.500, 1.33970, 1.45443, 1.224970}},
+  {{2.853, 2.03250, 2.56856, 1.496440}},
+  {{2.964, 2.05671, 2.36272, 1.750700}},
+  {{3.139, 1.18680, 1.22439, 1.149210}},
+  {{5.191, 1.09220, 1.14111, 1.043290}},
 
 };
+
+////
 
 // 2018 -> to be used with RunABC
 const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunABC_V4 = {
@@ -840,7 +843,7 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     JER_sf = JERSmearing::SF_13TeV_Fall17_V3;
     resFilename = "2017/Fall17_V3_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
   } else if (year == Year::is2018) {
-    JER_sf = JERSmearing::SF_13TeV_Autumn18_V4;
+    JER_sf = JERSmearing::SF_13TeV_Autumn18_RunABCD_V4;
     resFilename = "2018/Autumn18_V4_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
   } else {
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
@@ -989,6 +992,27 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
       else{
 	c = JER_SFs_.at(ieta).at(3);
       }
+      /*
+      if(abseta>2.5 && abseta<3.139){
+	  TF1 *f3 = new TF1("SFnew3","sqrt(pow([0],2)/(x*x)+pow(sqrt([3])*[1],2)/x+pow([3]*[2],2)) / sqrt(pow([3]*[0],2)/(x*x)+pow([3]*[1],2)/x+pow([3]*[2],2)) * [3]",10,3000);
+	  
+	  if(abseta>=2.5 && abseta<2.853)
+	    f3->SetParameters(0.00052, 0.95257, 0.03180, c);
+	  
+	  if(abseta>=2.853 && abseta<2.965)
+	     f3->SetParameters(0.00299, 1.119685, 0.08168, c);
+	  
+	  if(abseta>=2.965 && abseta<3.139)
+	     f3->SetParameters(0.00548, 1.86809, 0.07888, c);
+	  // if(genpt>0)
+	  //   c = f3->Eval(genpt);
+	  // else 
+	  //   c = c;
+	  c = f3->Eval(recopt);
+	  //cout<<"c = "<<c<<" abseta = "<<abseta<<" recopt = "<<recopt<<endl;
+      }	     	  
+      */
+
       float new_pt = -1.;
       //use smearing method in case a matching generator jet was found
       if(genpt>0){
