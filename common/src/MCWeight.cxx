@@ -283,7 +283,10 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
     if (!sf_hist_.get()) {
       sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/abseta_pair_newTuneP_probe_pt").c_str()));
       if (!sf_hist_.get()) {
-	throw runtime_error("Scale factor directory not found in file: " + sf_name);
+	sf_hist_.reset((TH2*) sf_file.Get((sf_name).c_str()));      
+	if (!sf_hist_.get()) {
+	  throw runtime_error("Scale factor directory not found in file: " + sf_name);
+	}
       }
     }
   }
