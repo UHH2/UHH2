@@ -316,3 +316,4 @@
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/drberry/SFrameNtuples/RunII_102X_v1/2016/QCD_Pt-300to470_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8/QCD_Pt-300to470_MuEnrichedPt5/190425_192717/0000/Ntuple_97.root" Lumi="0.0"/>
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/drberry/SFrameNtuples/RunII_102X_v1/2016/QCD_Pt-300to470_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8/QCD_Pt-300to470_MuEnrichedPt5/190425_192717/0000/Ntuple_98.root" Lumi="0.0"/>
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/drberry/SFrameNtuples/RunII_102X_v1/2016/QCD_Pt-300to470_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8/QCD_Pt-300to470_MuEnrichedPt5/190425_192717/0000/Ntuple_99.root" Lumi="0.0"/>
+<!-- < NumberEntries="7937590.0" Method=weights /> -->
