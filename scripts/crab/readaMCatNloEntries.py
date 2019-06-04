@@ -10,23 +10,25 @@ import sys, multiprocessing, time
 from ROOT import *
 
 def read_xml(xmlFileDir):
-    #try:
     xmlFile = open(str(xmlFileDir))
     rootFileStore = []
-    comment =False
-    for line in xmlFile:
-        if '<!--' in line and not '-->': 
-            comment = True
-            continue
-        if '-->' in line: 
-            comment=False
-            continue
-        rootFileStore.append(line.split('"')[1])
+    comment = False                      # Think this code through via this example:
+    for line in xmlFile:                 #
+        if '<!--' in line:               # asdfasdfasdfasdfasdf
+            if '-->' in line:            # asdfasdfasdfasdfasdf
+                continue                 # <!-- asfdasdfasdfasdfasdf -->
+            else:                        # asdfasdfasdfasdfasdf
+                comment = True           # <!-- asdfasdfasfdasdfasdf
+                continue                 # asdfasdfasdfasdfasdf
+        if comment == True:              # asdfasdfasdfasdfasdf -->
+            if not '-->' in line:        # asdfasdfasdfasdfasdf
+                continue                 # 
+            else:                        # Not waterproof if comment starts mid-line (or violates this scheme in another
+                comment = False          # way) but mid-line comments should not exist in these files in the first place
+                continue
+        if comment == False:
+            rootFileStore.append(line.split('"')[1])
     return rootFileStore
-    #except:
-    #    print "No able to read file Dir", xmlFileDir
-    #    return 
-
 
 def write_xml_entry_tag(xmlFile,result,fast):
     xmlFile = open(str(xmlFile),'a')
