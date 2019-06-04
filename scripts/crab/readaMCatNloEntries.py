@@ -6,7 +6,7 @@
 
 
 
-import sys, multiprocessing, time
+import sys, multiprocessing, time, os
 from ROOT import *
 
 def read_xml(xmlFileDir):
@@ -101,7 +101,8 @@ def commentOutEmptyRootFiles(xmlfile, entries_per_rootfile):
         if entries_per_rootfile[i] == 0:
             empty_root_files.append(root_files[i])
     xml = open(str(xmlfile))
-    xml_temporary = open(str(xmlfile)+".tmp","w+")
+    temp_filename = str(xmlfile)+".tmp"
+    xml_temporary = open(temp_filename,"w+")
     for line in xml:
         newline = line
         for rf in empty_root_files:
@@ -110,6 +111,7 @@ def commentOutEmptyRootFiles(xmlfile, entries_per_rootfile):
         xml_temporary.write(newline)
     xml.close()
     xml_temporary.close()
+    os.rename(temp_filename,xmlfile)
     return empty_root_files
 
 if __name__ == "__main__":
