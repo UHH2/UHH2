@@ -89,13 +89,38 @@ def readEntries(worker, xmlfiles, fast=False):
         pool.join()
         xml_result = sum(result.get())
         print "number of events in",xml,xml_result
-        sum_list.append(xml_result)
+        sum_list.append([r for r in result.get()])
         write_xml_entry_tag(xml,xml_result, fast)
     return sum_list
-        
+
+def commentOutEmptyRootFiles(xmlfile, entries_per_rootfile):
+    root_files = read_xml(xmlfile)
+    if len(root_files) != len(entries_per_rootfile): print "Something's really wrong."
+    empty_root_files = []
+    for i in range(len(root_files)):
+        if entries_per_rootfile[i] == 0:
+            empty_root_files.append(root_files[i])
+    xml = open(str(xmlfile))
+    xml_temporary = open(str(xmlfile)+".tmp","w+")
+    for line in xml:
+        newline = line
+        for rf in empty_root_files:
+            if str(rf) in line:
+                newline = "<!--EMPTY "+line.strip("\n")+"-->\n"
+        xml_temporary.write(newline)
+    xml.close()
+    xml_temporary.close()
+    return empty_root_files
 
 if __name__ == "__main__":
     xmllist = sys.argv[2:-1]
     meth = eval(sys.argv[-1])
-    readEntries(sys.argv[1],xmllist,meth)
-    
+    sum_list = readEntries(sys.argv[1],xmllist,meth)
+
+    print "Searching for NTuples which are empty as a consequence of a relatively common crab error which has been around for a long time now..."
+    for i in range(len(xmllist)):
+        empty_files = commentOutEmptyRootFiles(xmllist[i], sum_list[i])
+        if len(empty_files) > 0:
+            print str(xmllist[i])+":    Found and commented out empty root files:"
+            for ef in empty_files: print str(ef)
+        else: print "\033[0;40;32m"+"No empty root files detected. Yay!\033[0m" # green color
