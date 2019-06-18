@@ -456,3 +456,20 @@ bool JetPUid::operator()(const Jet & jet, const Event &ev) const{
   return jet.get_tag(jet.tagname2tag(wp_str.Data()))>0;
   //return jet.get_tag(wp_id)>0;
 }
+
+JetEtaPhiCleaningId::JetEtaPhiCleaningId(TH2D* h_map_):h_map(h_map_){}
+
+bool JetEtaPhiCleaningId::operator()(const Jet &jet, const Event &ev) const{
+	(void) ev;
+	double xMin = h_map->GetXaxis()->GetXmin();
+	double xWidth = h_map->GetXaxis()->GetBinWidth(1); 
+	double yMin = h_map->GetYaxis()->GetXmin();
+	double yWidth = h_map->GetYaxis()->GetBinWidth(1);
+	double cutValue=0;
+	int idx_x = 0;
+	int idx_y = 0;
+	while(jet.eta() > xMin+xWidth + idx_x * xWidth) idx_x++;
+	while(jet.phi() > yMin+yWidth + idx_y * yWidth) idx_y++;
+	cutValue = h_map->GetBinContent(idx_x+1, idx_y+1);
+	return cutValue == 0;
+}
