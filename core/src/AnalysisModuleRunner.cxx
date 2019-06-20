@@ -852,11 +852,6 @@ void AnalysisModuleRunner::EndMasterInputData(const SInputData &) {
     }
 }
 
-void AnalysisModuleRunner::EndCycle() {
-    // Allow analysis module to finish up
-    pimpl->analysis->endCycle();
-}
-
 ClassImp(uhh2::AnalysisModuleRunner);
 
 #endif

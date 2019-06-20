@@ -50,14 +50,13 @@ public:
     /**
      * \brief Method to call after finishing last event in a given InputData block
      *
+     * e.g. Printing statistics, finalizing a histogram contents
+     *
+     * Note that AnalysisModules only last for a given InputData block,
+     * after which they are destroyed, and a new object created for the next InputData.
+     * Hence it doesn't make sense to also have an equivalent "endCycle" at the end of each Cycle.
      */
     virtual void endInputData();
-
-    /**
-     * \brief Method to call after finishing last event in a given Cycle
-     *
-     */
-    virtual void endCycle();
 
     virtual ~AnalysisModule();
 };

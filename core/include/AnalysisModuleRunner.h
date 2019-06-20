@@ -39,7 +39,7 @@ public:
 
     // called at the beginning of the cycle, but for proof only in one process!
     void BeginCycle() override {}
-    void EndCycle() override;
+    void EndCycle() override {}
 
     // called at the beginning of the input data, on all proof nodes:
     void BeginInputData( const SInputData& ) override;

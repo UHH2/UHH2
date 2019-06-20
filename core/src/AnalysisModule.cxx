@@ -7,8 +7,6 @@ AnalysisModule::~AnalysisModule(){}
 
 void AnalysisModule::endInputData(){}
 
-void AnalysisModule::endCycle(){}
-
 
 Context::Context(GenericEventStructure & ges_): ges(ges_) {}
 
@@ -56,7 +54,6 @@ public:
         return true;
     }
     virtual void endInputData(){}
-    virtual void endCycle(){}
 };
 
 UHH2_REGISTER_ANALYSIS_MODULE(NoopAnalysisModule)
