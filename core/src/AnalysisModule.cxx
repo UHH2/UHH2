@@ -46,7 +46,7 @@ void Context::set_metadata(const std::string & name, const std::string & value, 
 }
 
 /** \brief AnalysisModule which does nothing and lets all events pass
- * 
+ *
  * Only useful for testing.
  */
 class NoopAnalysisModule: public AnalysisModule {
