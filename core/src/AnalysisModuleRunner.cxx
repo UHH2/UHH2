@@ -787,6 +787,9 @@ void AnalysisModuleRunner::CloseOutputFile(){
 }
 
 void AnalysisModuleRunner::EndMasterInputData(const SInputData &) {
+    // Allow analysis module to finish up
+    pimpl->analysis->endInputData();
+
     TList * l = GetHistOutput();
     TIter next(l);
     TObject * obj;
@@ -847,6 +850,11 @@ void AnalysisModuleRunner::EndMasterInputData(const SInputData &) {
         }
         out.print(cout);
     }
+}
+
+void AnalysisModuleRunner::EndCycle() {
+    // Allow analysis module to finish up
+    pimpl->analysis->endCycle();
 }
 
 ClassImp(uhh2::AnalysisModuleRunner);

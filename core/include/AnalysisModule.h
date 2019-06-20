@@ -47,6 +47,18 @@ public:
      */
     virtual bool process(Event & event) = 0;
 
+    /**
+     * \brief Method to call after finishing last event in a given InputData block
+     *
+     */
+    virtual void endInputData();
+
+    /**
+     * \brief Method to call after finishing last event in a given Cycle
+     *
+     */
+    virtual void endCycle();
+
     virtual ~AnalysisModule();
 };
 
