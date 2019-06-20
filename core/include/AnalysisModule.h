@@ -14,7 +14,7 @@
 namespace uhh2 {
 
 /**  \brief Abstract base class for all analysis modules, independent of SFrame
- * 
+ *
  * To implement an analysis, derive from this class and override the 'process' method, which
  * will be called for each event.
  *
@@ -47,6 +47,17 @@ public:
      */
     virtual bool process(Event & event) = 0;
 
+    /**
+     * \brief Method to call after finishing last event in a given InputData block
+     *
+     * e.g. Printing statistics, finalizing a histogram contents
+     *
+     * Note that AnalysisModules only last for a given InputData block,
+     * after which they are destroyed, and a new object created for the next InputData.
+     * Hence it doesn't make sense to also have an equivalent "endCycle" at the end of each Cycle.
+     */
+    virtual void endInputData();
+
     virtual ~AnalysisModule();
 };
 
@@ -61,11 +72,11 @@ public:
  *  - "dataset_lumi" is the integrated luminosity ('Lumi') of the dataset in pb^-1, as given in the SFrame xml file
  *  - "dataset_year" is the year of data/MC set as 'Year' parameter in xml file
  *  - "target_lumi" is the target luminosity in pb^-1 for MC reweighting, as specified in the SFrame xml in Cycle in 'TargetLumi'
- * 
+ *
  * Also, all the dataset-metadata is added with the prefix "meta_" (refer to the Metadata documentation for details).
  * Other keys can either be specified in the SFrame xml configuration file (see ExampleModule), or set
  * by other classes, in particular by the top-level AnalysisModule before constructing other AnalysisModules.
- * 
+ *
  * When running in CMSSW, none of the above keys is set by the framework, but all of them can be set explicitly
  * as cms.string in the 'AnalysisModule' PSet in the EDFilter configuration of NtuplerWriter.
  *
@@ -125,16 +136,16 @@ public:
     void set(const std::string & key, const std::string & value) {
         settings[key] = value;
     }
-    
+
     /** \brief Set sample metadata
-     * 
+     *
      * The metadata will be available via 'get' with the key "meta_" + name. Unlike other
      * settings, it will be written to the output root file, and read in from the root file.
-     * 
+     *
      * A metadata name must not contain the sequence "===" or end with "=". The value must not contain any of "\r\n\0".
      * (This ensures that all metadata can be stored in a simple format name1===value1\nname2====value2\n...
      * in a single string).
-     * 
+     *
      * In general, metadata is sample-wide immutable data, so *changing* a metadata value is something
      * delicate and is generally not recommended. If it has to be done anyway (e.g. because a wrong value
      * has been written which should now be corrected), make sure to do it *very* early in the processing,
