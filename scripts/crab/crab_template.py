@@ -48,6 +48,8 @@ def get_request_name(dataset_name):
         modified_name += '_ext2'
     elif 'ext' in dataset_name:
         modified_name += '_ext'
+    elif 'backup' in dataset_name:
+        modified_name += '_backup'
 
     # For e.g. Run2016B which is split into 2
     if "ver1" in dataset_name:
