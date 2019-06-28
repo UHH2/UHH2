@@ -78,7 +78,7 @@ void connect_input_branch(TBranch * branch, const std::type_info & ti, void ** a
     if (res > 0) {
         throw runtime_error("input branch '" + string(branch->GetName()) + "': error reading type information");
     }
-    
+
     // get address type:
     TClass * address_class = TBuffer::GetClass(ti);
     EDataType address_dtype = kNoType_t;
@@ -88,7 +88,7 @@ void connect_input_branch(TBranch * branch, const std::type_info & ti, void ** a
     }
     if(branch_dtype == kLong64_t && address_dtype==kInt_t)
       address_dtype=kLong64_t;
-    
+
     // compare if they match; note that it's an error if the class or data type has not been found:
     if ((branch_class && address_class) && ((branch_class == address_class) || (branch_class->GetTypeInfo() == address_class->GetTypeInfo()))) {
         if (addr == 0) {
@@ -134,9 +134,9 @@ void connect_input_branch(TBranch * branch, const std::type_info & ti, void ** a
 namespace uhh2 {
 
 /** \brief The SFrame specific implementation for the Context
- * 
+ *
  * See the Context class for a description of the methods.
- * 
+ *
  * This class is intended to be used from a SCycle; see AnalysisModuleRunner for
  * an example use:
  *  - create a new instance of SFrameContext in SCycle::BeginInputData and set the dataset_type and dataset_version
@@ -145,7 +145,7 @@ namespace uhh2 {
  */
 class SFrameContext: public uhh2::Context {
 public:
-    
+
     SFrameContext(AnalysisModuleRunner & base, const SInputData& sin, GenericEventStructure & es);
 
     virtual void put(const std::string & path, TH1 * t) override;
@@ -158,14 +158,14 @@ public:
     void begin_event(Event & event);
     void setup_output(Event & event); // should be called after processing the first event which is written to the output
     void check_output(Event & event); // checks if all objetcs written to the output have been assigned a correct value during the process routine; called at the end of each event
-    
+
     void write_metadata_tree();
     void first_input_file(); // called for the first input file of the dataset, in addition to begin_input_file, but with no event (yet)
 
     std::string event_treename;
-    
+
     TTree * outtree = nullptr; // output tree. Can be 0 in case no output should be written.
-    
+
     void do_declare_event_input_handle(const std::type_info & ti, const std::string & bname, const GenericEvent::RawHandle & handle);
     void do_declare_event_output_handle(const std::type_info & ti, const std::string & bname, const GenericEvent::RawHandle & handle);
 
@@ -379,7 +379,7 @@ void SFrameContext::begin_input_file(Event & event) {
         EventAccess_::set_unmanaged(event, bi.ti, bi.handle, bi.addr);
         bi.branch = branch;
     }
-    
+
     // check consistency of file metadata with previous metadata.
     auto dir = input_tree->GetDirectory();
     assert(dir);
@@ -499,9 +499,9 @@ private:
     bool m_userEventFormat;
 
     bool setup_output_done;
-    
+
     bool use_sframe_weight;
-    
+
     std::vector<std::string> additional_branches;
     bool first_file = true;
 
@@ -586,12 +586,12 @@ void AnalysisModuleRunner::SetConfig(const SCycleConfig& config) {
 void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisModuleRunner & base, const SInputData& in) {
     ges.reset(new GenericEventStructure);
     context.reset(new SFrameContext(base, in, *ges));
-    
+
     // 1. setup common event data members / branches:
     m_userEventFormat = string2bool(context->get("userEventFormat", "false"));
-    
+
     if(!m_userEventFormat){
-    
+
         eh.reset(new EventHelper(*context));
 
         eh->setup_pvs(context->get("PrimaryVertexCollection", ""));
@@ -627,7 +627,7 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
 	  catch(const std::runtime_error& error){
 	    std::cout<<"Problem with genParticleCollection in AnalysisModuleRunner.cxx"<<std::endl;
 	    std::cout<<error.what();
-	  }	  
+	  }
 	    eh->setup_genmet(context->get("genMETName", ""));
         }
 
@@ -635,14 +635,14 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
         if (m_readTrigger) {
             eh->setup_trigger();
         }
-        
+
         use_sframe_weight = string2bool(context->get("use_sframe_weight", "true"));
     }
-    
+
     else{
         m_readTrigger = false;
     }
-    
+
     // 2. prepare reading additional branches from input:
     additional_branches = split(context->get("additionalBranches", ""));
     first_file = true;
@@ -691,7 +691,7 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) {
         tnb->SetAddress(oldaddr_tnb);
         pimpl->eh->set_infile_triggernames(move(run2triggernames));
     }
-    
+
     // setup additional branches, if not done yet:
     if(pimpl->first_file && !pimpl->additional_branches.empty()){
         TTree* intree = GetInputTree(pimpl->context->event_treename.c_str());
@@ -713,7 +713,7 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) {
             pimpl->context->do_declare_event_output_handle(ti, bname, handle);
         }
     }
-    
+
     // In case this is the first file in the dataset: construct AnalysisModule now.
     // This is done now (and not earlier, e.g. in BeginInputData) because only now we know
     // the metadata and the additional branches (the latter is needed to fix the event structure).
@@ -727,7 +727,7 @@ void AnalysisModuleRunner::BeginInputFile(const SInputData&) {
         }
         pimpl->first_file = false;
     }
-    
+
     pimpl->context->begin_input_file(*pimpl->event);
 }
 
@@ -740,7 +740,7 @@ void AnalysisModuleRunner::ExecuteEvent(const SInputData&, Double_t w) {
     }
 
     uhh2::Event & event = *pimpl->event;
-    
+
     // setup weight depending on the "use_sframe_weight" configuration option:
     if(pimpl->use_sframe_weight && !event.isRealData){
         event.weight = w;
@@ -787,6 +787,9 @@ void AnalysisModuleRunner::CloseOutputFile(){
 }
 
 void AnalysisModuleRunner::EndMasterInputData(const SInputData &) {
+    // Allow analysis module to finish up
+    pimpl->analysis->endInputData();
+
     TList * l = GetHistOutput();
     TIter next(l);
     TObject * obj;
