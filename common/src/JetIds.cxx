@@ -1,5 +1,7 @@
 #include "UHH2/common/include/JetIds.h"
 
+#include "UHH2/common/include/Utils.h"
+
 using namespace std;
 using namespace uhh2;
 
@@ -457,19 +459,26 @@ bool JetPUid::operator()(const Jet & jet, const Event &ev) const{
   //return jet.get_tag(wp_id)>0;
 }
 
-JetEtaPhiCleaningId::JetEtaPhiCleaningId(TH2D* h_map_):h_map(h_map_){}
+JetEtaPhiCleaningId::JetEtaPhiCleaningId(const std::string & mapFilename, const std::string & mapHistname){
+	TFile map_file(locate_file(mapFilename).c_str());
+  if (map_file.IsZombie()) {
+    throw runtime_error("2D map file not found: " + mapFilename);
+  }
+  
+	h_map.reset((TH2*) map_file.Get(mapHistname.c_str()));
+  if (!h_map.get()) {
+    throw runtime_error("2D map histogram not found in file");
+  }
+  h_map->SetDirectory(0);	
+}
 
 bool JetEtaPhiCleaningId::operator()(const Jet &jet, const Event &ev) const{
 	(void) ev;
-	double xMin = h_map->GetXaxis()->GetXmin();
-	double xWidth = h_map->GetXaxis()->GetBinWidth(1); 
-	double yMin = h_map->GetYaxis()->GetXmin();
-	double yWidth = h_map->GetYaxis()->GetBinWidth(1);
+	TAxis *xaxis = h_map->GetXaxis();
+	TAxis *yaxis = h_map->GetYaxis();
+	Int_t binx = xaxis->FindBin(jet.eta());
+	Int_t biny = yaxis->FindBin(jet.phi());
 	double cutValue=0;
-	int idx_x = 0;
-	int idx_y = 0;
-	while(jet.eta() > xMin+xWidth + idx_x * xWidth) idx_x++;
-	while(jet.phi() > yMin+yWidth + idx_y * yWidth) idx_y++;
-	cutValue = h_map->GetBinContent(idx_x+1, idx_y+1);
+	cutValue = h_map->GetBinContent(binx,biny);
 	return cutValue == 0;
 }
