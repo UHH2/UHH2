@@ -335,4 +335,6 @@
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/anmalara/RunII_102X_v1/2016v3/WW_TuneCUETP8M1_13TeV-pythia8/crab_WW_TuneCUETP8M1_13TeV-pythia8_Summer16_ext1_v2/190625_101230/0000/Ntuple_98.root" Lumi="0.0"/>
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/anmalara/RunII_102X_v1/2016v3/WW_TuneCUETP8M1_13TeV-pythia8/crab_WW_TuneCUETP8M1_13TeV-pythia8_Summer16_ext1_v2/190625_101230/0000/Ntuple_99.root" Lumi="0.0"/>
 <!-- < NumberEntries="994012" Method=fast /> -->
+<!-- < NumberEntries="994032.181009" Method=weights /> -->
 <!-- < NumberEntries="6988168" Method=fast /> -->
+<!-- < NumberEntries="6988278.14267" Method=weights /> -->
