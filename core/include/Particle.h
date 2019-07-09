@@ -5,7 +5,7 @@
 
 class Particle{
 public:
-     
+
    Particle(): m_charge(0), m_pt(0), m_eta(0), m_phi(0), m_energy(0){
    }
 
@@ -18,7 +18,7 @@ public:
     v4.SetE(m_energy);
     return v4;
   }
-  
+
   /// charge
   short charge() const{return m_charge;}
   /// transverse momentum
@@ -33,7 +33,7 @@ public:
   /// set charge
   void set_charge(short charge){m_charge=charge;}
   /// set transverse momentum
-  void set_pt(float pt){m_pt=pt;}  
+  void set_pt(float pt){m_pt=pt;}
   /// set pseudo-rapidity
   void set_eta(float eta){m_eta=eta;}
   /// set phi
@@ -58,3 +58,6 @@ private:
   float m_energy;
 };
 
+inline bool operator==(const Particle& lhs, const Particle& rhs) {
+  return (lhs.v4() == rhs.v4());
+}

@@ -43,6 +43,7 @@ bool MCLumiWeight::process(uhh2::Event & event){
 
 
 MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
+    h_pu_weight_(ctx.declare_event_output<float>("weight_pu")),
     h_npu_data_up(0),
     h_npu_data_down(0),
     sysType_(sysType)
@@ -54,7 +55,7 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
         return;
     }
 
-    h_pu_weight_ = ctx.declare_event_output<float>("weight_pu");
+    //    h_pu_weight_ = ctx.declare_event_output<float>("weight_pu");
 
     // backward compatibility: (((no tag) is chosen over 25ns) is chosen over 50ns)
     std::string pileup_directory           = ctx.get("pileup_directory",
@@ -132,11 +133,10 @@ MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
 }
 
 bool MCPileupReweight::process(Event &event){
-
-    if (event.isRealData) {
-        event.set(h_pu_weight_, 1.f);
-        return true;
-    }
+  if (event.isRealData) {
+    event.set(h_pu_weight_, 1.f);
+    return true;
+  }
 
     double weight = 0., weight_up = 0., weight_down = 0., trueNumInteractions = 0.;
     // handle scenarios where events fall outside of our histograms

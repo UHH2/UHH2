@@ -5,6 +5,9 @@ using namespace uhh2;
 
 AnalysisModule::~AnalysisModule(){}
 
+void AnalysisModule::endInputData(){}
+
+
 Context::Context(GenericEventStructure & ges_): ges(ges_) {}
 
 Context::~Context(){}
@@ -41,7 +44,7 @@ void Context::set_metadata(const std::string & name, const std::string & value, 
 }
 
 /** \brief AnalysisModule which does nothing and lets all events pass
- * 
+ *
  * Only useful for testing.
  */
 class NoopAnalysisModule: public AnalysisModule {
@@ -50,6 +53,7 @@ public:
     virtual bool process(Event &){
         return true;
     }
+    virtual void endInputData(){}
 };
 
 UHH2_REGISTER_ANALYSIS_MODULE(NoopAnalysisModule)
