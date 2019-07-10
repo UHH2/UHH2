@@ -1,5 +1,7 @@
 #include "UHH2/common/include/JetIds.h"
 
+#include "UHH2/common/include/Utils.h"
+
 using namespace std;
 using namespace uhh2;
 
@@ -455,4 +457,28 @@ bool JetPUid::operator()(const Jet & jet, const Event &ev) const{
     }
   return jet.get_tag(jet.tagname2tag(wp_str.Data()))>0;
   //return jet.get_tag(wp_id)>0;
+}
+
+JetEtaPhiCleaningId::JetEtaPhiCleaningId(const std::string & mapFilename, const std::string & mapHistname){
+	TFile map_file(locate_file(mapFilename).c_str());
+  if (map_file.IsZombie()) {
+    throw runtime_error("2D map file not found: " + mapFilename);
+  }
+  if (!map_file.GetListOfKeys()->Contains(mapHistname.c_str())) {
+    throw runtime_error("2D map histogram not found in file");
+  }
+  h_map=*((TH2D*) map_file.Get(mapHistname.c_str()));
+  h_map.SetDirectory(0);
+	map_file.Close();
+}
+
+bool JetEtaPhiCleaningId::operator()(const Jet &jet, const Event &ev) const{
+	(void) ev;
+	const TAxis *xaxis = h_map.GetXaxis();
+	const TAxis *yaxis = h_map.GetYaxis();
+	Int_t binx = xaxis->FindBin(jet.eta());
+	Int_t biny = yaxis->FindBin(jet.phi());
+	double cutValue=0;
+	cutValue = h_map.GetBinContent(binx,biny);
+	return cutValue == 0;
 }

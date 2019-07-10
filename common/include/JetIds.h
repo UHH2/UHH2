@@ -2,6 +2,9 @@
 
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
+#include "TH2.h"
+#include "TFile.h"
+
 // see comments in ElectronIds.h for general comments on IDs.
 
 /** \brief The CSV V2 b-tag as jet id
@@ -119,4 +122,16 @@ class JetPUid {
   bool operator()(const Jet&, const uhh2::Event&) const;
  private:
   wp m_working_point;
+};
+
+/**
+ * Jet EtaPhiaCut Id rejects jets, selected according to etaphi map
+ */
+class JetEtaPhiCleaningId{
+ public:
+	explicit JetEtaPhiCleaningId(const std::string & mapFilename, const std::string & mapHistname="h2hotfilter");
+  ~JetEtaPhiCleaningId()=default;
+	bool operator()(const Jet&,const uhh2::Event&) const;
+ private:
+	TH2D h_map;
 };
