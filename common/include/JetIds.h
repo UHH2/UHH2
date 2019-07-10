@@ -133,5 +133,5 @@ class JetEtaPhiCleaningId{
   ~JetEtaPhiCleaningId()=default;
 	bool operator()(const Jet&,const uhh2::Event&) const;
  private:
-  std::unique_ptr<TH2> h_map;
+	TH2D h_map;
 };

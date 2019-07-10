@@ -464,21 +464,21 @@ JetEtaPhiCleaningId::JetEtaPhiCleaningId(const std::string & mapFilename, const 
   if (map_file.IsZombie()) {
     throw runtime_error("2D map file not found: " + mapFilename);
   }
-  
-	h_map.reset((TH2*) map_file.Get(mapHistname.c_str()));
-  if (!h_map.get()) {
+  if (!map_file.GetListOfKeys()->Contains(mapHistname.c_str())) {
     throw runtime_error("2D map histogram not found in file");
   }
-  h_map->SetDirectory(0);	
+  h_map=*((TH2D*) map_file.Get(mapHistname.c_str()));
+  h_map.SetDirectory(0);
+	map_file.Close();
 }
 
 bool JetEtaPhiCleaningId::operator()(const Jet &jet, const Event &ev) const{
 	(void) ev;
-	TAxis *xaxis = h_map->GetXaxis();
-	TAxis *yaxis = h_map->GetYaxis();
+	const TAxis *xaxis = h_map.GetXaxis();
+	const TAxis *yaxis = h_map.GetYaxis();
 	Int_t binx = xaxis->FindBin(jet.eta());
 	Int_t biny = yaxis->FindBin(jet.phi());
 	double cutValue=0;
-	cutValue = h_map->GetBinContent(binx,biny);
+	cutValue = h_map.GetBinContent(binx,biny);
 	return cutValue == 0;
 }
