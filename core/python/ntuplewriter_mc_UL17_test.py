@@ -9,7 +9,7 @@ You should try and put any centralised changes in generate_process(), not here.
 """
 
 
-process = generate_process(year="2018UL17", useData=True)
+process = generate_process(year="2018UL17", useData=False)
 
 # Please do not commit changes to source filenames - used for consistency testing
 process.source.fileNames = cms.untracked.vstring([
@@ -20,7 +20,7 @@ process.source.fileNames = cms.untracked.vstring([
 # Do this after setting process.source.fileNames, since we want the ability to override it on the commandline
 options = setup_opts()
 parse_apply_opts(process, options)
-with open('pydump_data_2018UL17.py', 'w') as f:
+with open('pydump_mc_2018UL17.py', 'w') as f:
     f.write(process.dumpPython())
 
 
