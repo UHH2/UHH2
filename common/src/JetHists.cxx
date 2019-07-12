@@ -227,7 +227,7 @@ void TopJetHists::fill(const Event & event){
 
       for (unsigned int j = 0; j <ak4jets.size(); j++)
          {
-            const auto & ak4jet = ak4jets[i];
+            const auto & ak4jet = ak4jets[j];
             double deltaRtopjetak4jet = deltaR(jet, ak4jet);
             deltaR_ak4jet->Fill(deltaRtopjetak4jet,w);
             invmass_topjetak4jet->Fill((jet.v4()+ak4jet.v4()).M(),w);
