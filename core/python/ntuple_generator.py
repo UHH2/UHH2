@@ -55,7 +55,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         If the year argument is not one of the allowable options
     """
     year = str(year)  # sanitise string
-    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018"]
+    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018","2018UL17"]
     if year not in acceptable_years:
         raise ValueError("year argument in generate_process() should be one of: %s. You provided: %s" % (acceptable_years, year))
 
@@ -81,6 +81,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         process = cms.Process("USER", eras.Run2_2016, eras.run2_miniAOD_80XLegacy) 
     elif year == "2016v2":
         process = cms.Process("USER", eras.Run2_2016)
+    elif year == "2018UL17":
+        process = cms.Process("USER", eras.Run2_2018)
     else:
         raise RuntimeError("Cannot setup process for this year, may need to add a new entry.")
 
@@ -283,6 +285,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         "2018": {
             "data": "102X_dataRun2_Prompt_v6",
             "mc": "102X_upgrade2018_realistic_v15",
+        },
+        "2018UL17": {
+            "data": "106X_dataRun2_v15",
+            "mc": "106X_mc2017_realistic_v6",
         },
     }
     if set(global_tags.keys()) != set(acceptable_years):
@@ -1841,6 +1847,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         "2017v1": ele_iso_17,
         "2017v2": ele_iso_17,
         "2018": ele_iso_17,
+        "2018UL17": ele_iso_17,
     }
 
     # slimmedElectronsUSER ( = slimmedElectrons + USER variables)
@@ -2097,7 +2104,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     fileName=cms.string("Ntuple.root"),
                                     compressionAlgorithm=cms.string('LZMA'),
                                     compressionLevel=cms.int32(9),  # LZMA9 is the highest compressions, for a slight increase in CPU/RAM usage
-                                    year=cms.string(year),
+                                    year=cms.string(year) if 'UL17' not in year else cms.string("2017v2"),
                                     doPV=cms.bool(True),
                                     pv_sources=cms.vstring("offlineSlimmedPrimaryVertices"),
                                     doRho=cms.untracked.bool(True),
@@ -2418,7 +2425,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     extra_trigger_bits=extra_trigger_bits,
 
                                     #For 2017 data with prefiring issue it might be usefull to store L1 seeds
-                                    doL1seed=cms.bool(True),
+                                    doL1seed=cms.bool(True) if 'UL17' not in year else cms.bool(False),
                                     l1GtSrc = cms.InputTag("gtStage2Digis"),
                                     l1EGSrc = cms.InputTag("caloStage2Digis:EGamma"),
                                     l1JetSrc = cms.InputTag("caloStage2Digis:Jet"),
