@@ -95,7 +95,7 @@ KERNEL=$(uname -r)
 if [[ "$KERNEL" == *el7* ]]; then
 	export SCRAM_ARCH=slc7_amd64_gcc700
 fi
-CMSREL=CMSSW_10_2_16
+CMSREL=CMSSW_10_6_5
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
