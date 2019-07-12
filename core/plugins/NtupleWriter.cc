@@ -1119,7 +1119,8 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      triggerPrescalesL1max.clear();
 
      //read trigger info from triggerBits (k=0) and from metfilterBits (k=1)
-     for(int k=0;k<2; k++){
+		 //not reading metfilterBits, as those seem not to be stored in UL17 106X Samples
+     for(int k=0;k<1; k++){
        edm::Handle<edm::TriggerResults> triggerBits;
        edm::Handle<pat::PackedTriggerPrescales> packedTriggerPrescales;
        edm::Handle<pat::PackedTriggerPrescales> packedTriggerPrescalesL1min;
@@ -1144,11 +1145,12 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
          if(it==trigger_prefixes.end()) continue;
          triggerResults.push_back(triggerBits->accept(i));
 
-         if(iEvent.isRealData()){
-           triggerPrescales.push_back(packedTriggerPrescales->getPrescaleForIndex(i));
-           triggerPrescalesL1min.push_back(packedTriggerPrescalesL1min->getPrescaleForIndex(i));
-           triggerPrescalesL1max.push_back(packedTriggerPrescalesL1max->getPrescaleForIndex(i));
-         }
+				 // disabled because in UL17 106X Samples these are not stored completely
+         // if(iEvent.isRealData()){
+         //   triggerPrescales.push_back(packedTriggerPrescales->getPrescaleForIndex(i));
+         //   triggerPrescalesL1min.push_back(packedTriggerPrescalesL1min->getPrescaleForIndex(i));
+         //   triggerPrescalesL1max.push_back(packedTriggerPrescalesL1max->getPrescaleForIndex(i));
+         // }
          if(newrun){
            triggerNames_outbranch.push_back(names.triggerName(i));
          }
