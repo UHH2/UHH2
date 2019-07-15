@@ -4,7 +4,7 @@
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/ESHandle.h"
-#include "CommonTools/Utils/interface/TMVAEvaluator.h"
+#include "CommonTools/MVAUtils/interface/TMVAEvaluator.h"
 #include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"
 #include "DataFormats/JetReco/interface/JetCollection.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"

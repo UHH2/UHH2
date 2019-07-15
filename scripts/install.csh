@@ -11,8 +11,8 @@ set MAKEFLAGS="-j${cores}"
 
 # Get CMSSW
 source /cvmfs/cms.cern.ch/cmsset_default.csh
-setenv SCRAM_ARCH slc6_amd64_gcc700
-set CMSREL=CMSSW_10_2_10
+setenv SCRAM_ARCH=slc7_amd64_gcc700
+set CMSREL=CMSSW_10_6_1
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -csh`
