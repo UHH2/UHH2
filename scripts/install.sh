@@ -90,6 +90,11 @@ time git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
 export SCRAM_ARCH=slc6_amd64_gcc700
+KERNEL=$(uname -r)
+# Update for EL7 (i.e. CC7/SL7) - should work for lxplus and NAF EL7 machines
+if [[ "$KERNEL" == *el7* ]]; then
+	export SCRAM_ARCH=slc7_amd64_gcc700
+fi
 CMSREL=CMSSW_10_2_10
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
