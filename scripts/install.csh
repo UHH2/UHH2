@@ -12,6 +12,8 @@ set MAKEFLAGS="-j${cores}"
 # Get CMSSW
 source /cvmfs/cms.cern.ch/cmsset_default.csh
 setenv SCRAM_ARCH slc6_amd64_gcc700
+set kernel=`uname -r`
+if ( "$kernel" =~ *el7* ) setenv SCRAM_ARCH slc7_amd64_gcc700
 set CMSREL=CMSSW_10_2_10
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
