@@ -121,12 +121,15 @@ LorentzVector ExampleModuleJetConstituents::constructConstituentSum(std::vector<
     if (pfparticles == nullptr) { throw std::runtime_error("pfparticles is nullptr"); }
     if (jet == nullptr) { throw std::runtime_error("Jet is nullptr"); }
 
-    LorentzVector consistSum;
+    LorentzVectorXYZE consistSum;
     for (const auto candInd : jet->pfcand_indexs()) {
         float puppiWeight = (usePuppiWeight) ? pfparticles->at(candInd).puppiWeight() : 1.;
-        consistSum += pfparticles->at(candInd).v4() * puppiWeight;
+        // Need to use XYZ representation instead of PtEtaPhi, since if the
+        // Puppi weight = 0, it will not scale correctly but instead be added.
+        LorentzVectorXYZE v4XYZ = toXYZ(pfparticles->at(candInd).v4());
+        consistSum += (v4XYZ * puppiWeight);
     }
-    return consistSum;
+    return toPtEtaPhi(consistSum);
 }
 
 LorentzVector ExampleModuleJetConstituents::constructConstituentSum(std::vector<GenParticle> * genparticles, const GenJet * genjet) {
