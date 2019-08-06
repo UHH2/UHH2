@@ -22,7 +22,8 @@
             <Item Name="GenTopJetCollection" Value="genjetsAk8SubstructureSoftDrop" />
             <Item Name="METName" Value="slimmedMETs" />
             <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
-
+            <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
+            <Item Name="MuonCollection" Value="slimmedMuonsUSER" />
 
             <!--
                 Here is the magic: many modules that do e.g. corrections read settings from your XML
@@ -76,6 +77,10 @@
             <!-- <Item Name="ScaleVariationMuF" Value="up"/> -->
 
 
+            <!-- This one is one we have set up ourselves - see analysis code -->
+            <!-- <Item Name="muon_id_sf_direction" Value="nominal"/> -->
+            <Item Name="muon_id_sf_direction" Value="down"/>
+            <!-- <Item Name="muon_id_sf_direction" Value="up"/> -->
 
 
 

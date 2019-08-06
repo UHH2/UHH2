@@ -30,6 +30,7 @@ private:
   std::unique_ptr<MCScaleVariation> scaleVar;
   std::unique_ptr<YearSwitcher> topjet_corrector_MC;
   std::unique_ptr<GenericJetResolutionSmearer> topjet_resolution_smearer;
+  std::unique_ptr<MCMuonScaleFactor> muon_id_sf;
 };
 
 
@@ -43,7 +44,8 @@ ExampleModuleSystematics::ExampleModuleSystematics(Context & ctx)
   // These will automatically read from the XML file (via the ctx object),
   // and use "jecsmear_direction", "jersmear_direction", "pileup_direction"
   common.reset(new CommonModules());
-  // annoyingly we have to handle PU variation ourselves
+  // annoyingly we have to handle PU variation ourselves -
+  // we manually link up the option in XML to the init() argument
   const std::string & SysType_PU = ctx.get("pileup_direction", "nominal");
   common->init(ctx, SysType_PU);
 
@@ -55,11 +57,28 @@ ExampleModuleSystematics::ExampleModuleSystematics(Context & ctx)
   topjet_corrector_MC->setup2017(std::make_shared<TopJetCorrector>(ctx, JERFiles::JECFilesMC("Fall17_17Nov2017", "32", "AK8PFchs")));
   topjet_corrector_MC->setup2018(std::make_shared<TopJetCorrector>(ctx, JERFiles::JECFilesMC("Autumn18", "7", "AK8PFchs")));
   // This should really be set up for different years as well, but to keep life simple it's only for 2018
-  topjet_resolution_smearer.reset(new GenericJetResolutionSmearer(ctx, "topjets", "gentopjets", JERSmearing::SF_13TeV_Autumn18_RunABCD_V4, "2018/Autumn18_V4_MC_PtResolution_AK8PFPuppi.txt"));
+  topjet_resolution_smearer.reset(new GenericJetResolutionSmearer(ctx,
+                                                                  "topjets",
+                                                                  "gentopjets",
+                                                                  JERSmearing::SF_13TeV_Autumn18_RunABCD_V4,
+                                                                  "2018/Autumn18_V4_MC_PtResolution_AK8PFPuppi.txt"));
 
 
   // Setup Scale (muF, muR) reweighting
   scaleVar.reset(new MCScaleVariation(ctx));
+
+  // Setup muon ID SF weights (similar for ISO SF, and electron SFs)
+  // Only makes sense for MC
+  // TODO: MuonPOG have better systematics files now - use those instead?
+  float muonPtSystPercentage = 0.1; // this is an additionaly uncertainity of 0.1% of the muon pT, that gets added in quadrature to the error from the SF
+  muon_id_sf.reset(new MCMuonScaleFactor(ctx,
+                                         "common/data/2018/Muon_ID_SF_RunABCD.root",
+                                         "NUM_LooseID_DEN_TrackerMuons_pt_abseta",
+                                         muonPtSystPercentage,
+                                         "",
+                                         true,
+                                         ctx.get("muon_id_sf_direction", "nominal"),  // here we link up the option in XML to the class constructor argument
+                                         "muons"));
 }
 
 
@@ -93,6 +112,10 @@ bool ExampleModuleSystematics::process(Event & event) {
     scaleVar->process(event);
     cout << "  +++ Event weight after MCScaleVariation: " << event.weight << endl;
   }
+
+  if (event.muons->size() > 0) { cout << "  --- event.weight before muon ID SF: " << event.weight << endl; }
+  muon_id_sf->process(event);
+  if (event.muons->size() > 0) { cout << "  +++ event.weight after muon ID SF: " << event.weight << endl; }
 
   return true;
 }
