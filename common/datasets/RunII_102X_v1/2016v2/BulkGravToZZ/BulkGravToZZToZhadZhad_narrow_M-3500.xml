@@ -1,2 +1,3 @@
-<In FileName="/pnfs/desy.de/cms/tier2/store/user/izoi/RunII_102X_v1/2016v2/BulkGravToZZToZhadZhad_narrow_M-3500_13TeV-madgraph/crab_BulkGravToZZToZhadZhad_narrow_M-3500_13TeV-madgraph/190502_135130/0000/Ntuple_2.root" Lumi="0.0"/>
-<!-- < NumberEntries="6000.0" Method=weights /> -->
+<In FileName="/pnfs/desy.de/cms/tier2/store/user/izoi/RunII_102X_v1/2016v2/BulkGravToZZToZhadZhad_narrow_M-3500_13TeV-madgraph/crab_BulkGravToZZToZhadZhad_narrow_M-3500_13TeV-madgraph/190607_151447/0000/Ntuple_1.root" Lumi="0.0"/>
+<In FileName="/pnfs/desy.de/cms/tier2/store/user/izoi/RunII_102X_v1/2016v2/BulkGravToZZToZhadZhad_narrow_M-3500_13TeV-madgraph/crab_BulkGravToZZToZhadZhad_narrow_M-3500_13TeV-madgraph/190607_151447/0000/Ntuple_2.root" Lumi="0.0"/>
+<!-- < NumberEntries="30000.0" Method=weights /> -->
