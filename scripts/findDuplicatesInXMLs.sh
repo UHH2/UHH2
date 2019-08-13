@@ -20,47 +20,29 @@ fi
 
 OFFSET="   "
 
-# Store filename pairs already processed so no need to do both comparisons (A vs B & B vs A)
-declare -a ALREADYDONE;
+# Store filenames in advance, so easier to loop through unique combinations
+declare -a FILELIST
+for f in $INDIR/*.xml; do
+    FILELIST+=("$f")
+done
 
+NFILES=${#FILELIST[@]}
+echo "Checking $NFILES files..."
 
-function storedPair() {
-    local search=$1
-    for elem in "${ALREADYDONE[@]}"
-    do
-        if [ $search == $elem ]; then
-            return 0
-        fi
-    done
-    return 1
-}
-
-
-for xf in $INDIR/*.xml; do
+for (( i=0;i<$NFILES;i++ )); do
+    xf=${FILELIST[$i]}
     echo "Checking $xf"
+
     # Go through all pairwise matches (obviously not with itself though)
-    for cf in $INDIR/*.xml; do
-        if [[ "$cf" == "$xf" ]]; then
-            continue
-        fi
-
-        # Speed up things by checking for already done pairs
-        # Store as A:B, so check for B:A
-        storedPair "$cf:$xf"
-        HASPAIR=$?
-
-        if (( $HASPAIR == 0 )); then
-            continue
-        fi
-
-        ALREADYDONE+=("$xf:$cf")  # Store this pair of files
+    for (( j=i+1; j<$NFILES;j++ )); do
+        cf=${FILELIST[$j]}
 
         # Get number of lines in common between the two files
         # (comm is magic, but requires sorted input files)
         NUMCOMMON=$(comm -12 <(sort "$xf") <(sort "$cf") | wc -l)
 
         if (( $NUMCOMMON > 0 )); then
-            echo "$OFFSET**** $cf has common lines"
+            echo "$OFFSET!!!! $cf has common lines"
 
             # Check existence of NumberEntries
             # Note that 0 means it does have it, 1 means it does not
