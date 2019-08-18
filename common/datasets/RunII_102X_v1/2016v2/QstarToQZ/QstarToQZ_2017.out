@@ -1,0 +1,66 @@
+2017v2
+5
+QstarToQZ
+1200
+QstarToQZ_M-1200
+/pnfs/desy.de/cms/tier2/store/user/izoi/RunII_102X_v1/2017v2/QstarToQZ_M-1200_TuneCP2_13TeV-pythia8/crab_QstarToQZ_M-1200_TuneCP2_13TeV-pythia8*//*/*/Ntuple_*.root
+Found 3 files matching pattern
+[?1034hnumber of workers 20
+open XML file: QstarToQZ_M-1200.xml
+3 3 1
+[FMissing [%] 100.0
+[FMissing [%] 67.0
+[FMissing [%] 67.0
+[FMissing [%] 67.0
+number of events in QstarToQZ_M-1200.xml 50000.0
+2500
+QstarToQZ_M-2500
+/pnfs/desy.de/cms/tier2/store/user/izoi/RunII_102X_v1/2017v2/QstarToQZ_M-2500_TuneCP2_13TeV-pythia8/crab_QstarToQZ_M-2500_TuneCP2_13TeV-pythia8*//*/*/Ntuple_*.root
+Found 2 files matching pattern
+[?1034hnumber of workers 20
+open XML file: QstarToQZ_M-2500.xml
+2 2 1
+[FMissing [%] 100.0
+[FMissing [%] 100.0
+[FMissing [%] 100.0
+[FMissing [%] 100.0
+number of events in QstarToQZ_M-2500.xml 47000.0
+3000
+QstarToQZ_M-3000
+/pnfs/desy.de/cms/tier2/store/user/izoi/RunII_102X_v1/2017v2/QstarToQZ_M-3000_TuneCP2_13TeV-pythia8/crab_QstarToQZ_M-3000_TuneCP2_13TeV-pythia8*//*/*/Ntuple_*.root
+Found 2 files matching pattern
+[?1034hnumber of workers 20
+open XML file: QstarToQZ_M-3000.xml
+2 2 1
+[FMissing [%] 100.0
+[FMissing [%] 100.0
+[FMissing [%] 100.0
+[FMissing [%] 100.0
+[FMissing [%] 50.0
+number of events in QstarToQZ_M-3000.xml 48000.0
+5500
+QstarToQZ_M-5500
+/pnfs/desy.de/cms/tier2/store/user/izoi/RunII_102X_v1/2017v2/QstarToQZ_M-5500_TuneCP2_13TeV-pythia8/crab_QstarToQZ_M-5500_TuneCP2_13TeV-pythia8*//*/*/Ntuple_*.root
+Found 3 files matching pattern
+[?1034hnumber of workers 20
+open XML file: QstarToQZ_M-5500.xml
+3 3 1
+[FMissing [%] 100.0
+[FMissing [%] 67.0
+[FMissing [%] 67.0
+[FMissing [%] 67.0
+[FMissing [%] 33.0
+number of events in QstarToQZ_M-5500.xml 50000.0
+7000
+QstarToQZ_M-7000
+/pnfs/desy.de/cms/tier2/store/user/izoi/RunII_102X_v1/2017v2/QstarToQZ_M-7000_TuneCP2_13TeV-pythia8/crab_QstarToQZ_M-7000_TuneCP2_13TeV-pythia8*//*/*/Ntuple_*.root
+Found 3 files matching pattern
+[?1034hnumber of workers 20
+open XML file: QstarToQZ_M-7000.xml
+3 3 1
+[FMissing [%] 100.0
+[FMissing [%] 67.0
+[FMissing [%] 67.0
+[FMissing [%] 67.0
+[FMissing [%] 33.0
+number of events in QstarToQZ_M-7000.xml 50000.0
