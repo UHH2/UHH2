@@ -9,12 +9,15 @@
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/common/include/JetCorrections.h"
 #include "UHH2/common/include/YearRunSwitchers.h"
+#include "UHH2/common/include/JetIds.h"
+
 
 using namespace std;
 using namespace uhh2;
 
 /** \brief Example module to run some common modules, and show how systematics
-can be evaluated. More details in the XML file, examples/config/ExampleSystematics.xml
+can be evaluated. Some more details in the XML file, examples/config/ExampleSystematics.xml,
+since the "master" switch for many systematics is set there.
  */
 
 namespace uhh2examples {
@@ -31,6 +34,7 @@ private:
   std::unique_ptr<YearSwitcher> topjet_corrector_MC;
   std::unique_ptr<GenericJetResolutionSmearer> topjet_resolution_smearer;
   std::unique_ptr<MCMuonScaleFactor> muon_id_sf;
+  std::unique_ptr<MCBTagScaleFactor> btag_sf;
 };
 
 
@@ -49,7 +53,7 @@ ExampleModuleSystematics::ExampleModuleSystematics(Context & ctx)
   const std::string & SysType_PU = ctx.get("pileup_direction", "nominal");
   common->init(ctx, SysType_PU);
 
-  // Setup JEC, JER for TopJets ourselves
+  // Setup JEC, JER for TopJets ourselves this time
   // Setup for MC only in this example
   // Again, this read "jecsmear_direction" and "jersmear_direction" from XML
   topjet_corrector_MC.reset(new YearSwitcher(ctx));
@@ -72,13 +76,25 @@ ExampleModuleSystematics::ExampleModuleSystematics(Context & ctx)
   // TODO: MuonPOG have better systematics files now - use those instead?
   float muonPtSystPercentage = 0.1; // this is an additionaly uncertainity of 0.1% of the muon pT, that gets added in quadrature to the error from the SF
   muon_id_sf.reset(new MCMuonScaleFactor(ctx,
-                                         "common/data/2018/Muon_ID_SF_RunABCD.root",
-                                         "NUM_LooseID_DEN_TrackerMuons_pt_abseta",
+                                         "common/data/2018/Muon_ID_SF_RunABCD.root", // make sure you pick the right file for your year - maybe setup with YearRunSwitcher?
+                                         "NUM_LooseID_DEN_TrackerMuons_pt_abseta", // example - make sure you pick the name that corresponds to ID used in analysis
                                          muonPtSystPercentage,
                                          "",
                                          true,
                                          ctx.get("muon_id_sf_direction", "nominal"),  // here we link up the option in XML to the class constructor argument
                                          "muons"));
+
+  // Setup BTag SF weights
+  btag_sf.reset(new MCBTagScaleFactor(ctx,
+                                      BTag::DEEPCSV, // example settings here - these should agree with whatever ID you use in your analysis
+                                      BTag::WP_MEDIUM,
+                                      "jets",
+                                      ctx.get("btag_sf_direction", "nominal"),  // here we link up the option in XML to the class constructor argument
+                                      "mujets",
+                                      "incl",
+                                      "MCBtagEfficiencies",
+                                      "",
+                                      "BTagCalibration"));
 }
 
 
