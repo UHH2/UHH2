@@ -71,12 +71,20 @@ def readEntries(worker, xmlfiles, fast=False):
 
 
 def commentOutEmptyRootFiles(xmlfile, entries_per_rootfile,fast=False):
+    """Edit the XML file so that ROOT files with 0 events are commented out
+
+    This is because sframe can crash if the first file has 0 events.
+    (For some reason CRAB makes these empty files)
+
+    Note that we need != 0 as some files have -ve entries due to weights
+    (we assume the user knows how to handle that scenario)
+    """
     newText = []
     with open(xmlfile, "U") as file:
         i_ = 0
         for line in file.readlines():
             if '.root' in line:
-                newText.append(line if entries_per_rootfile[i_]>0 else '<!--EMPTY <In FileName="'+line.split('"')[1]+'" Lumi="0.0"/> -->\n')
+                newText.append(line if entries_per_rootfile[i_]!=0 else '<!--EMPTY <In FileName="'+line.split('"')[1]+'" Lumi="0.0"/> -->\n')
                 i_ += 1
         if len(entries_per_rootfile)!= i_: print "ERROR", len(entries_per_rootfile), i_
     with open(xmlfile, "w") as outputfile:
