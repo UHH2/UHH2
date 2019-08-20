@@ -181,6 +181,9 @@ public:
                                      float eta,
                                      float discr=0.) const;
 
+  std::pair<float, float> min_max_eta(BTagEntry::JetFlavor jf,
+                                      float discr=0.) const;
+
 protected:
   class BTagCalibrationReaderImpl;
   std::unique_ptr<BTagCalibrationReaderImpl> pimpl;
