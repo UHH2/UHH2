@@ -123,7 +123,9 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
   }
   if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
+  if(phoid) modules.emplace_back(new PhotonCleaner(phoid));
   if(muid)  modules.emplace_back(new MuonCleaner(muid));
+
   if(tauid) modules.emplace_back(new TauCleaner(tauid));
   if(jetpfidcleaner){
     modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
@@ -267,6 +269,7 @@ void CommonModules::print_setup() const {
     {"Jet PF ID cleaner", jetpfidcleaner},
     {"Jet ID", (bool) jetid},
     {"Electron ID", (bool) eleid},
+    {"Photon ID", (bool) phoid},
     {"Muon ID", (bool) muid},
     {"Tau ID", (bool) tauid},
   };
