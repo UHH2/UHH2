@@ -49,6 +49,15 @@ private:
     boost::optional<ElectronId> eleid;
 };
 
+class NPhotonSelection: public uhh2::Selection {
+public:
+    explicit NPhotonSelection(int nmin, int nmax = -1, const boost::optional<PhotonId> & phoid = boost::none);
+    virtual bool passes(const uhh2::Event & event);
+private:
+    int nmin, nmax;
+    boost::optional<PhotonId> phoid;
+};
+
 class NJetSelection: public uhh2::Selection {
 public:
     explicit NJetSelection(int nmin, int nmax = -1,

@@ -81,6 +81,14 @@ bool ElectronCleaner::process(uhh2::Event & event){
     return true;
 }
 
+PhotonCleaner::PhotonCleaner(const PhotonId & pho_id_): pho_id(pho_id_){}
+
+bool PhotonCleaner::process(uhh2::Event & event){
+    assert(event.photons);
+    clean_collection(*event.photons, event, pho_id);
+    return true;
+}
+
 TauCleaner::TauCleaner(const TauId & tau_id_): tau_id(tau_id_){}
 
 bool TauCleaner::process(uhh2::Event & event){

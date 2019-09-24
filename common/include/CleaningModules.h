@@ -83,6 +83,20 @@ private:
     ElectronId ele_id;
 };
 
+/** \brief Keep only electrons passing a given electron id
+ * 
+ * See comments for MuonCleaner.
+ */
+class PhotonCleaner : public uhh2::AnalysisModule {
+public:
+    
+    explicit PhotonCleaner(const PhotonId & pho_id);
+    virtual bool process(uhh2::Event & event) override;
+    
+private:
+    PhotonId pho_id;
+};
+
 /** \brief Keep only taus passing a given tau id
  *
  * See comments for MuonCleaner.
