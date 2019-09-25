@@ -7,6 +7,7 @@
 #include "UHH2/JetMETObjects/interface/JetCorrectorParameters.h"
 
 #include <string>
+#include <cmath>
 
 using namespace std;
 using namespace uhh2;
@@ -1088,6 +1089,16 @@ float GenericJetResolutionSmearer::getResolution(float eta, float rho, float pt)
   if(valid){
     res_formula->SetParameters(par0,par1,par2,par3);
     resolution = res_formula->Eval(pt);
+    if (isnan(resolution)) {
+      // resolution can be nan if bad formula parameters
+      if (fabs(eta) > 2.3 && pt < 30) { // leniency in this problematic region hopefully fixed in future version of JER
+        cout << "WARNING: GenericJetResolutionSmearer::getResolution() evaluated to nan. Since this jet is in problematic region, it will instead be set to 0." << endl;
+        cout << "Input eta : rho : pt = " << eta << " : " << rho << ": " << pt << endl;
+        resolution = 0.;
+      } else {
+        throw std::runtime_error("GenericJetResolutionSmearer::getResolution() evaluated to nan. Input eta : rho : pt = " + double2string(eta) + " : " + double2string(rho) + " : " + double2string(pt));
+      }
+    }
   }
 
   return resolution;
