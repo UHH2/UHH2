@@ -741,8 +741,6 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunD_V7 = {
 
 ////
 
-//8888888888888888
-
 // 2018 -> to be used with combined dataset
 const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_V1 = {
   // 0 = upper jet-eta limit
