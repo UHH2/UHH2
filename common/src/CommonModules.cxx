@@ -29,7 +29,7 @@ CommonModules::CommonModules(){
   jec_ver_2017 = "32";
 
   jec_tag_2018 = "Autumn18";
-  jec_ver_2018 = "7";
+  jec_ver_2018 = "19";
 
   jec_jet_coll = "AK4PFchs";
 }
