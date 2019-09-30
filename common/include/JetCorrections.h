@@ -233,6 +233,11 @@ namespace JERSmearing {
   extern const SFtype1 SF_13TeV_Fall17_V3;
   extern const SFtype1 SF_13TeV_Fall17_V3_RunBCDEF_Madgraph;// for JERC people only
 
+  //2018, update after Moriond19
+  extern const SFtype1 SF_13TeV_Autumn18_V7;
+  extern const SFtype1 SF_13TeV_Autumn18_RunABC_V7;
+  extern const SFtype1 SF_13TeV_Autumn18_RunD_V7;
+
   //Moriond19
   extern const SFtype1 SF_13TeV_Autumn18_V1; 
   extern const SFtype1 SF_13TeV_Autumn18_RunABC_V1;
