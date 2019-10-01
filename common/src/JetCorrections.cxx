@@ -19,6 +19,7 @@ using namespace uhh2;
     corrector.setJetEta(jet.eta());
     corrector.setJetE(jet.energy() * factor_raw);
     corrector.setJetA(jet.jetArea());
+    corrector.setJetPhi(jet.phi());
     corrector.setRho(event.rho);
     auto correctionfactors = corrector.getSubCorrections();
     auto correctionfactor_L1  = correctionfactors.front();
