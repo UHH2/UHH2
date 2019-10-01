@@ -262,7 +262,7 @@ void CommonModules::print_setup() const {
     {"JECs", jec},
     {"JER smearing", jersmear},
     {"Jet-Lepton cleaning", jetlepcleaner},
-    {"MET Type-1 corrections", do_metcorrection},
+    {"MET Type-1 corrections", ((jetlepcleaner && jec) || (do_metcorrection && jec))},
     {"MET filters", metfilters},
     {"PV filter", pvfilter},
     {"Jet pT sorting", jetptsort},
