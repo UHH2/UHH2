@@ -2,7 +2,7 @@
 # * "sframe": build cdode for use with SFrame; this executes 'make' in all subdirectories defined in the "dirs" variable below
 # * "scram": execute scram for building codf for CMSSW
 # * "all": both scram and sframe
-dirs := core JetMETObjects common examples HOTVR HighPtSingleTop
+dirs := core JetMETObjects common examples
 
 # Makefile.local can be used to append more directories to be built to 'dirs'
 -include Makefile.local

@@ -20,5 +20,3 @@ JECDatabase/*
 pydump.py
 Makefile.local
 JetsTest/*
-HighPtSingleTop/*
-HOTVR/*
