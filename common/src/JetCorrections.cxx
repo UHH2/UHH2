@@ -906,28 +906,43 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     throw runtime_error("JetCollection not CHS or Puppi - cannot determine filename for JetResolutionSmearer");
   }
 
+  std::string filenameAppend = jetAlgoRadius+"PF"+puName+".txt";
+
   const Year & year = extract_year(ctx);
-  JERSmearing::SFtype1 JER_sf;
+  JERSmearing::SFtype1 JER_sf = {};
+  std::string sfFilename = "";
   std::string resFilename = "";
   if (year == Year::is2016v2 || year == Year::is2016v3) {
     JER_sf = JERSmearing::SF_13TeV_Summer16_25nsV1;
-    resFilename = "2016/Summer16_25nsV1_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
+    resFilename = "2016/Summer16_25nsV1_MC_PtResolution_" + filenameAppend;
   } else if (year == Year::is2017v1 || year == Year::is2017v2) {
     JER_sf = JERSmearing::SF_13TeV_Fall17_V3;
-    resFilename = "2017/Fall17_V3_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
+    resFilename = "2017/Fall17_V3_MC_PtResolution_" + filenameAppend;
   } else if (year == Year::is2018) {
     JER_sf = JERSmearing::SF_13TeV_Autumn18_RunABCD_V4;
-    resFilename = "2018/Autumn18_V4_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
+    // sfFilename = "common/data/2018/Autumn18_V7_MC_SF_" + filenameAppend;
+    resFilename = "2018/Autumn18_V4_MC_PtResolution_" + filenameAppend;
   } else {
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }
 
-  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JER_sf, resFilename);
+  if (sfFilename != "") {
+    m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", sfFilename, resFilename);
+  } else if (JER_sf.size() > 0) {
+    m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JER_sf, resFilename);
+  } else {
+    throw runtime_error("No valid JER SF either as text file nor JERSmearing::SFtype1");
+  }
+
 }
 
 
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf, const std::string& resFilename){
   m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JER_sf, resFilename);
+}
+
+JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const std::string& scaleFactorFilename, const std::string& resFilename){
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", scaleFactorFilename, resFilename);
 }
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
