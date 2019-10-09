@@ -964,6 +964,32 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   resolution_ = JME::JetResolution(locate_file(filename.Data()));
 }
 
+GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const TString ScaleFactorFileName, const TString ResolutionFileName){
+
+  if(ctx.get("meta_jer_applied__"+recjet_label, "") != "true") ctx.set_metadata("jer_applied__"+recjet_label, "true");
+  else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already applied to this RECO-jets collection: "+recjet_label);
+
+  const std::string& dir = ctx.get("jersmear_direction", "nominal");
+  if     (dir == "nominal") direction =  0;
+  else if(dir == "up")      direction =  1;
+  else if(dir == "down")    direction = -1;
+  else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- invalid value jersmear_direction='"+dir+"' (valid: 'nominal', 'up', 'down')");
+
+  h_recjets_    = ctx.get_handle<std::vector<Jet> >      (recjet_label);
+  h_rectopjets_ = ctx.get_handle<std::vector<TopJet> >   (recjet_label);
+
+  h_genjets_    = ctx.get_handle<std::vector<GenJet> > (genjet_label);
+  h_gentopjets_ = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
+
+  //read in file for jet resolution (taken from https://github.com/cms-jet/JRDatabase/blob/master/textFiles/)
+  TString filename = "common/data/" + ResolutionFileName;
+  resolution_ = JME::JetResolution(locate_file(filename.Data()));
+
+  res_sf_ = JME::JetResolutionScaleFactor(locate_file(ScaleFactorFileName.Data()));
+
+  JER_SFs_ = {}; // set explicitly to empty so we know it isn't used
+}
+
 bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
 
   if(evt.isRealData) return true;
@@ -1012,24 +1038,25 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 
       LorentzVector jet_v4 = jet.v4();
       float recopt = jet_v4.pt();
-      float abseta = fabs(jet_v4.eta());
+      float recoeta = jet_v4.eta();
+      float abseta = fabs(recoeta);
 
       // find next genjet:
       auto closest_genjet = closestParticle(jet, gen_jets);
       float genpt = -1.;
 
       // Get resolution for this jet:
-      float resolution = resolution_.getResolution({{JME::Binning::JetPt, recopt}, {JME::Binning::JetEta, jet.eta()}, {JME::Binning::Rho, rho}});
+      float resolution = resolution_.getResolution({{JME::Binning::JetPt, recopt}, {JME::Binning::JetEta, recoeta}, {JME::Binning::Rho, rho}});
 
       // Resolution can be nan if bad formula parameters - check here
       // Generally this should be reported! This is a Bad Thing
       if (isnan(resolution)) {
         if (recopt < 35) { // leniency in this problematic region, hopefully fixed in future version of JER
           cout << "WARNING: getResolution() evaluated to nan. Since this jet is in problematic region, it will instead be set to 0." << endl;
-          cout << "Input eta : rho : pt = " << jet.eta() << " : " << rho << ": " << recopt << endl;
+          cout << "Input eta : rho : pt = " << recoeta << " : " << rho << ": " << recopt << endl;
           resolution = 0.;
         } else {
-          throw std::runtime_error("getResolution() evaluated to nan. Input eta : rho : pt = " + double2string(jet.eta()) + " : " + double2string(rho) + " : " + double2string(recopt));
+          throw std::runtime_error("getResolution() evaluated to nan. Input eta : rho : pt = " + double2string(recoeta) + " : " + double2string(rho) + " : " + double2string(recopt));
         }
       }
 
@@ -1048,32 +1075,11 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
         genpt=-1.;
       }
 
-      // Check if there is a valid scale factor for this jet (i.e. jet is within bounds for parameters)
-      int ieta(-1);
-
-      for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
-
-        const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
-        const float max_eta =       JER_SFs_.at(idx)  .at(0);
-
-        if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
-      }
-      if(ieta < 0) {
-        std::cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << std::endl;
-        std::cout << "         no JER smearing is applied." << std::endl;
-        continue;
-      }
-
       // Get the scale factor for this jet
-      float c;
-      if(direction == 0){
-        c = JER_SFs_.at(ieta).at(1);
-      }
-      else if(direction == 1){
-        c = JER_SFs_.at(ieta).at(2);
-      }
-      else{
-        c = JER_SFs_.at(ieta).at(3);
+      float c = getScaleFactor(recopt, recoeta);
+      if (c < 0) {
+        std::cout << "WARNING: GenericJetResolutionSmearer: no scale factor found for this jet with pt : eta = " << recopt << " : " << recoeta << std::endl;
+        std::cout << "         No JER smearing will be applied." << std::endl;
       }
 
       // Calculate the new pt
@@ -1097,10 +1103,66 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 
       jet.set_JEC_factor_raw(factor_raw);
       jet.set_v4(jet_v4);
-
   }
 
   return;
+}
+
+/**
+ * Get the resolution scale factor for a jet with given pt, eta.
+ * Automatically accounts for the up & down variations, which is already
+ * specified as a member variable.
+ *
+ * This hides away the fact that we might be using a vector of floats,
+ * or the JetResolutionScaleFactor object.
+
+ * If SF < 0, then indicates something has gone wrong or is out of bounds,
+ * and the jet should be skipped
+ */
+float GenericJetResolutionSmearer::getScaleFactor(float pt, float eta)
+{
+  // Using the JERSmearing::SFtype1 structure
+  if (res_sf_.getResolutionObject() == nullptr) {
+    // Check if there is a valid scale factor for this jet (i.e. jet is within bounds for parameters)
+    int ieta(-1);
+    float abseta = fabs(eta);
+
+    for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
+
+      const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
+      const float max_eta =       JER_SFs_.at(idx)  .at(0);
+
+      if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
+    }
+    if(ieta < 0) {
+      return -1.;
+    }
+
+    // Get the scale factor for this jet
+    float c = -1.;
+    if (direction == 0) {
+      c = JER_SFs_.at(ieta).at(1);
+    } else if (direction == 1) {
+      c = JER_SFs_.at(ieta).at(2);
+    } else {
+      c = JER_SFs_.at(ieta).at(3);
+    }
+
+    return c;
+  }
+
+  // Using the JetResolutionScaleFactor object
+  else {
+    float c = -1;
+    if (direction == 0) {
+      c = res_sf_.getScaleFactor({{JME::Binning::JetPt, pt}, {JME::Binning::JetEta, eta}});
+    } else if (direction == 1) {
+      c = res_sf_.getScaleFactor({{JME::Binning::JetPt, pt}, {JME::Binning::JetEta, eta}}, Variation::UP);
+    } else {
+      c = res_sf_.getScaleFactor({{JME::Binning::JetPt, pt}, {JME::Binning::JetEta, eta}}, Variation::DOWN);
+    }
+    return c;
+  }
 }
 
 

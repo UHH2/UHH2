@@ -259,8 +259,20 @@ namespace JERSmearing {
 /** \brief generalization of JetResolutionSmearer (see the latter for additional info)
  *         to apply jet-energy-resolution smearing on non-default jet collections
  *
- *  options parsed from Context:
+ *  Note that the reco and genjets can refer to either Jet or TopJet collections,
+ *  and GenJet or GenTopJet collections, for flexibility
+ *
+ *  Options parsed from Context (e.g. from XML file):
  *   - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing correction
+ *
+ *  There are 2 constructors, depending on the format of the scale factors.
+ *  For "old-style" scale factors, where they are independent of pt, one can use
+ *  the constructor that takes a JERSmearing::SFtype1 argument.
+ *  For "new-style" scale factors that come as a text file, one should use
+ *  the constructor that takes a TString instead.
+ *
+ *  Note that the ResolutionFileName argument will have "common/data" prepended
+ *  to it.
  *
  */
 class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
@@ -268,6 +280,8 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
  public:
   explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets",
                                        const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_Fall17_V3, const TString ResolutionFileName="Fall17_V3_MC_PtResolution_AK4PFchs.txt");
+  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets",
+                                       const TString ScaleFactorFileName="", const TString ResolutionFileName="Fall17_V3_MC_PtResolution_AK4PFchs.txt");
   virtual ~GenericJetResolutionSmearer() = default;
 
   virtual bool process(uhh2::Event&) override;
@@ -275,6 +289,8 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
   template<typename RJ, typename GJ> void apply_JER_smearing(std::vector<RJ>&, const std::vector<GJ>&, float radius, float rho);
 
  private:
+  virtual float getScaleFactor(float pt, float eta);
+
   uhh2::Event::Handle<std::vector<Jet> >       h_recjets_;
   uhh2::Event::Handle<std::vector<GenJet> >    h_genjets_;
   uhh2::Event::Handle<std::vector<TopJet> >    h_rectopjets_;
