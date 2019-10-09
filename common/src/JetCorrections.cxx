@@ -990,6 +990,19 @@ bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
   return true;
 }
 
+/**
+ * Here is where the actual smearing is done to each jet in the collection
+ * The "hybrid" method is used:
+ * - if there is a matching genjet, we use the "scaling" method,
+ *   using the relative reco-gen difference to rescale the jet
+ * - if there is no matching genjet, we use the "stochastic" method,
+ *   using a random number drawn from a Gaussian of the jet resolution to rescale the jet
+ *
+ * In both cases, we need the jet resolution, and a resolution scale factor (SF),
+ * which scales MC resolution to data.
+ *
+ * See https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution#Smearing_procedures
+ */
 template<typename RJ, typename GJ>
 void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, const std::vector<GJ>& gen_jets, float radius, float rho){
 
@@ -1020,79 +1033,65 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
         }
       }
 
-      // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt. These jets will be treated with the stochastic method.
+      // Test if acceptable genjet match:
+      // Ignore unmatched jets (= no genjets at all, or large DeltaR relative to jet radius),
+      // or jets where the difference between recojet & genjet is much larger
+      // than the expected resolution, or the genjet pt is too small.
+      // These jets will instead be treated with the stochastic method.
       if(!(closest_genjet == nullptr) && uhh2::deltaR(*closest_genjet, jet) < 0.5*radius){
-	genpt = closest_genjet->pt();
+        genpt = closest_genjet->pt();
       }
       if( fabs(genpt-recopt) > 3*resolution*recopt){
-	genpt=-1;
+        genpt=-1;
       }
       if(genpt < 15.0f) {
-	genpt=-1.;
+        genpt=-1.;
       }
 
-
+      // Check if there is a valid scale factor for this jet (i.e. jet is within bounds for parameters)
       int ieta(-1);
 
       for(unsigned int idx=0; idx<JER_SFs_.size(); ++idx){
 
-	const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
-	const float max_eta =       JER_SFs_.at(idx)  .at(0);
+        const float min_eta = idx ? JER_SFs_.at(idx-1).at(0) : 0.;
+        const float max_eta =       JER_SFs_.at(idx)  .at(0);
 
-	if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
+        if(min_eta <= abseta && abseta < max_eta){ ieta = idx; break; }
       }
       if(ieta < 0) {
-	std::cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << std::endl;
-	std::cout << "         no JER smearing is applied." << std::endl;
-	continue;
+        std::cout << "WARNING: JetResolutionSmearer: index for JER-smearing SF not found for jet with |eta| = " << abseta << std::endl;
+        std::cout << "         no JER smearing is applied." << std::endl;
+        continue;
       }
 
+      // Get the scale factor for this jet
       float c;
       if(direction == 0){
-	c = JER_SFs_.at(ieta).at(1);
+        c = JER_SFs_.at(ieta).at(1);
       }
       else if(direction == 1){
-	c = JER_SFs_.at(ieta).at(2);
+        c = JER_SFs_.at(ieta).at(2);
       }
       else{
-	c = JER_SFs_.at(ieta).at(3);
+        c = JER_SFs_.at(ieta).at(3);
       }
-      /*
-      if(abseta>2.5 && abseta<3.139){
-	  TF1 *f3 = new TF1("SFnew3","sqrt(pow([0],2)/(x*x)+pow(sqrt([3])*[1],2)/x+pow([3]*[2],2)) / sqrt(pow([3]*[0],2)/(x*x)+pow([3]*[1],2)/x+pow([3]*[2],2)) * [3]",10,3000);
-	  
-	  if(abseta>=2.5 && abseta<2.853)
-	    f3->SetParameters(0.00052, 0.95257, 0.03180, c);
-	  
-	  if(abseta>=2.853 && abseta<2.965)
-	     f3->SetParameters(0.00299, 1.119685, 0.08168, c);
-	  
-	  if(abseta>=2.965 && abseta<3.139)
-	     f3->SetParameters(0.00548, 1.86809, 0.07888, c);
-	  // if(genpt>0)
-	  //   c = f3->Eval(genpt);
-	  // else 
-	  //   c = c;
-	  c = f3->Eval(recopt);
-	  //cout<<"c = "<<c<<" abseta = "<<abseta<<" recopt = "<<recopt<<endl;
-      }	     	  
-      */
 
+      // Calculate the new pt
       float new_pt = -1.;
-      //use smearing method in case a matching generator jet was found
+      // Use scaling method in case a matching generator jet was found
       if(genpt>0){
-	new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
+        new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
       }
-      //use stochastic method if no generator jet could be matched to the reco jet
+      // Use stochastic method if no generator jet could be matched to the reco jet
       else{
-	//initialize random generator with eta-dependend random seed to be reproducible
-	TRandom rand((int)(1000*abseta));
-	float random_gauss = rand.Gaus(0,resolution);
-	new_pt = recopt * (1 + random_gauss*sqrt(std::max( c*c-1,0.0f)));
+        // Initialize random generator with eta-dependend random seed to be reproducible
+        TRandom rand((int)(1000*abseta));
+        float random_gauss = rand.Gaus(0, resolution);
+        new_pt = recopt * (1 + random_gauss*sqrt(std::max(c*c-1, 0.0f)));
       }
       jet_v4 *= new_pt / recopt;
 
-      //update JEC_factor_raw needed for smearing MET
+      // Update JEC_factor_raw needed for smearing MET
       float factor_raw = jet.JEC_factor_raw();
       factor_raw *= recopt/new_pt;
 
