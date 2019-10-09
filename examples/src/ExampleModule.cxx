@@ -99,9 +99,12 @@ bool ExampleModule::process(Event & event) {
     cout << "ExampleModule: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
     
     // 1. run all modules other modules.
-    common->process(event);
+    // Note that it returns a bool, that may be False
+    // (e.g. Golden JSON, MET filters), and therefore user should return early
+    bool commonResult = common->process(event);
+    if (!commonResult) return false;
     jetcleaner->process(event);
-    
+
     // 2. test selections and fill histograms
     h_ele->fill(event);
     h_nocuts->fill(event);
