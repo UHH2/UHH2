@@ -960,28 +960,8 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   JER_SFs_ = JER_sf;
 
   //read in file for jet resolution (taken from https://github.com/cms-jet/JRDatabase/blob/master/textFiles/)
-  m_ResolutionFileName = ResolutionFileName;
-
-  TString filename = std::getenv("CMSSW_BASE");
-  filename += "/src/UHH2/common/data/";
-  filename += ResolutionFileName;
-  m_resfile.open(filename);
-  if (!m_resfile) {
-    throw runtime_error("Resolution file " + filename + " does not exist");
-  }
-
-  //get the formula from the header
-  TString dummy;
-  TString formula;
-  m_resfile >>dummy;
-  m_resfile >>dummy;
-  m_resfile >>dummy;
-  m_resfile >>dummy;
-  m_resfile >>dummy;
-  m_resfile >>formula;
-
-  res_formula =  new TFormula("res_formula",formula);
-
+  TString filename = "common/data/" + ResolutionFileName;
+  resolution_ = JME::JetResolution(locate_file(filename.Data()));
 }
 
 bool GenericJetResolutionSmearer::process(uhh2::Event& evt){
@@ -1021,12 +1001,24 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
       float recopt = jet_v4.pt();
       float abseta = fabs(jet_v4.eta());
 
-
       // find next genjet:
       auto closest_genjet = closestParticle(jet, gen_jets);
       float genpt = -1.;
 
-      float resolution = getResolution(jet_v4.eta(), rho, jet_v4.pt())  ;
+      // Get resolution for this jet:
+      float resolution = resolution_.getResolution({{JME::Binning::JetPt, recopt}, {JME::Binning::JetEta, jet.eta()}, {JME::Binning::Rho, rho}});
+
+      // Resolution can be nan if bad formula parameters - check here
+      // Generally this should be reported! This is a Bad Thing
+      if (isnan(resolution)) {
+        if (recopt < 35) { // leniency in this problematic region, hopefully fixed in future version of JER
+          cout << "WARNING: getResolution() evaluated to nan. Since this jet is in problematic region, it will instead be set to 0." << endl;
+          cout << "Input eta : rho : pt = " << jet.eta() << " : " << rho << ": " << recopt << endl;
+          resolution = 0.;
+        } else {
+          throw std::runtime_error("getResolution() evaluated to nan. Input eta : rho : pt = " + double2string(jet.eta()) + " : " + double2string(rho) + " : " + double2string(recopt));
+        }
+      }
 
       // ignore unmatched jets (=no genjets at all or large DeltaR), or jets with very low genjet pt. These jets will be treated with the stochastic method.
       if(!(closest_genjet == nullptr) && uhh2::deltaR(*closest_genjet, jet) < 0.5*radius){
@@ -1110,70 +1102,6 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
   }
 
   return;
-}
-
-float GenericJetResolutionSmearer::getResolution(float eta, float rho, float pt){
-  float resolution = 0.;
-
-  //go to beginning of the file
-  m_resfile.clear();
-  m_resfile.seekg(0, ios::beg);
-
-  //drop the header from the file
-  char header[1000];
-  m_resfile.getline( header, 1000);
-
-  float eta_min;
-  float eta_max;
-  float rho_min;
-  float rho_max;
-  int N;
-  float pt_min;
-  float pt_max;
-  float par0;
-  float par1;
-  float par2;
-  float par3;
-
-  bool valid=false;
-
-  while(!m_resfile.eof() && !valid){
-
-    m_resfile >> eta_min;
-    m_resfile >> eta_max;
-    m_resfile >> rho_min;
-    m_resfile >> rho_max;
-    m_resfile >> N;
-    m_resfile >> pt_min;
-    m_resfile >> pt_max;
-    m_resfile >> par0;
-    m_resfile >> par1;
-    m_resfile >> par2;
-    m_resfile >> par3;
-
-    //find correct bin
-    if(eta_min <= eta && eta_max > eta && rho_min <= rho && rho_max > rho && pt_min <= pt && pt_max > pt){
-      valid=true;
-    }
-
-  }
-
-  if(valid){
-    res_formula->SetParameters(par0,par1,par2,par3);
-    resolution = res_formula->Eval(pt);
-    if (isnan(resolution)) {
-      // resolution can be nan if bad formula parameters
-      if (fabs(eta) > 2.3 && pt < 30) { // leniency in this problematic region hopefully fixed in future version of JER
-        cout << "WARNING: GenericJetResolutionSmearer::getResolution() evaluated to nan. Since this jet is in problematic region, it will instead be set to 0." << endl;
-        cout << "Input eta : rho : pt = " << eta << " : " << rho << ": " << pt << endl;
-        resolution = 0.;
-      } else {
-        throw std::runtime_error("GenericJetResolutionSmearer::getResolution() evaluated to nan. Input eta : rho : pt = " + double2string(eta) + " : " + double2string(rho) + " : " + double2string(pt));
-      }
-    }
-  }
-
-  return resolution;
 }
 
 

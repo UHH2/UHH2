@@ -4,6 +4,7 @@
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/JetMETObjects/interface/JetCorrectionUncertainty.h"
+#include "UHH2/JetMETObjects/interface/JetResolution.h"
 #include "UHH2/common/include/JetCorrectionSets.h"
 #include "TRandom.h"
 #include "TFormula.h"
@@ -267,7 +268,7 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
  public:
   explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets",
                                        const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_Fall17_V3, const TString ResolutionFileName="Fall17_V3_MC_PtResolution_AK4PFchs.txt");
-  virtual ~GenericJetResolutionSmearer() {m_resfile.close();}
+  virtual ~GenericJetResolutionSmearer() = default;
 
   virtual bool process(uhh2::Event&) override;
 
@@ -281,12 +282,10 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
   int direction = 0; // -1 = down, +1 = up, 0 = nominal
   JERSmearing::SFtype1 JER_SFs_;
-  TString m_ResolutionFileName;
 
-  std::ifstream m_resfile;
+  JME::JetResolution resolution_;
+  JME::JetResolutionScaleFactor res_sf_;
 
-  float getResolution(float eta, float rho, float pt);
-  TFormula* res_formula;
 };
 
 
