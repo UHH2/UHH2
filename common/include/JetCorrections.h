@@ -294,9 +294,10 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 /** \brief Smear the Jets' (specified in event.jets / JetCollection) four-momenta in MC to match the resolution in data.
  * It will have no effect on data events.
  *
- * There are 2 constructors to either automatically choose resolution txt file
- * & scale factors based on year & jet algorithm,
- * or allow the user to specify them exactly.
+ * The constructor with only the Context argument automatically chooses
+ * the resolution txt file & scale factors based on year & jet algorithm.
+ * The other constructors allow the user to specify the scale factors
+ * (either as vector of floats or from text file), and the resolution txt file
  *
  * See https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution for details
  * We use the hybrid method, depending on if a matching genjet was found.
@@ -317,6 +318,7 @@ class JetResolutionSmearer: public uhh2::AnalysisModule{
 public:
     explicit JetResolutionSmearer(uhh2::Context & ctx);
     explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf, const std::string& resFilename);
+    explicit JetResolutionSmearer(uhh2::Context & ctx, const std::string& scaleFactorFilename, const std::string& resFilename);
 
     virtual bool process(uhh2::Event & event) override;
 
