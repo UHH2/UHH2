@@ -1048,75 +1048,75 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 
   for(unsigned int i=0; i<rec_jets.size(); ++i){
 
-      auto& jet = rec_jets.at(i);
+    auto& jet = rec_jets.at(i);
 
-      LorentzVector jet_v4 = jet.v4();
-      float recopt = jet_v4.pt();
-      float recoeta = jet_v4.eta();
-      float abseta = fabs(recoeta);
+    LorentzVector jet_v4 = jet.v4();
+    float recopt = jet_v4.pt();
+    float recoeta = jet_v4.eta();
+    float abseta = fabs(recoeta);
 
-      // find next genjet:
-      auto closest_genjet = closestParticle(jet, gen_jets);
-      float genpt = -1.;
+    // find next genjet:
+    auto closest_genjet = closestParticle(jet, gen_jets);
+    float genpt = -1.;
 
-      // Get resolution for this jet:
-      float resolution = resolution_.getResolution({{JME::Binning::JetPt, recopt}, {JME::Binning::JetEta, recoeta}, {JME::Binning::Rho, rho}});
+    // Get resolution for this jet:
+    float resolution = resolution_.getResolution({{JME::Binning::JetPt, recopt}, {JME::Binning::JetEta, recoeta}, {JME::Binning::Rho, rho}});
 
-      // Resolution can be nan if bad formula parameters - check here
-      // Generally this should be reported! This is a Bad Thing
-      if (isnan(resolution)) {
-        if (recopt < 35) { // leniency in this problematic region, hopefully fixed in future version of JER
-          cout << "WARNING: getResolution() evaluated to nan. Since this jet is in problematic region, it will instead be set to 0." << endl;
-          cout << "Input eta : rho : pt = " << recoeta << " : " << rho << ": " << recopt << endl;
-          resolution = 0.;
-        } else {
-          throw std::runtime_error("getResolution() evaluated to nan. Input eta : rho : pt = " + double2string(recoeta) + " : " + double2string(rho) + " : " + double2string(recopt));
-        }
+    // Resolution can be nan if bad formula parameters - check here
+    // Generally this should be reported! This is a Bad Thing
+    if (isnan(resolution)) {
+      if (recopt < 35) { // leniency in this problematic region, hopefully fixed in future version of JER
+        cout << "WARNING: getResolution() evaluated to nan. Since this jet is in problematic region, it will instead be set to 0." << endl;
+        cout << "Input eta : rho : pt = " << recoeta << " : " << rho << ": " << recopt << endl;
+        resolution = 0.;
+      } else {
+        throw std::runtime_error("getResolution() evaluated to nan. Input eta : rho : pt = " + double2string(recoeta) + " : " + double2string(rho) + " : " + double2string(recopt));
       }
+    }
 
-      // Test if acceptable genjet match:
-      // Ignore unmatched jets (= no genjets at all, or large DeltaR relative to jet radius),
-      // or jets where the difference between recojet & genjet is much larger
-      // than the expected resolution, or the genjet pt is too small.
-      // These jets will instead be treated with the stochastic method.
-      if(!(closest_genjet == nullptr) && uhh2::deltaR(*closest_genjet, jet) < 0.5*radius){
-        genpt = closest_genjet->pt();
-      }
-      if( fabs(genpt-recopt) > 3*resolution*recopt){
-        genpt=-1;
-      }
-      if(genpt < 15.0f) {
-        genpt=-1.;
-      }
+    // Test if acceptable genjet match:
+    // Ignore unmatched jets (= no genjets at all, or large DeltaR relative to jet radius),
+    // or jets where the difference between recojet & genjet is much larger
+    // than the expected resolution, or the genjet pt is too small.
+    // These jets will instead be treated with the stochastic method.
+    if(!(closest_genjet == nullptr) && uhh2::deltaR(*closest_genjet, jet) < 0.5*radius){
+      genpt = closest_genjet->pt();
+    }
+    if( fabs(genpt-recopt) > 3*resolution*recopt){
+      genpt=-1;
+    }
+    if(genpt < 15.0f) {
+      genpt=-1.;
+    }
 
-      // Get the scale factor for this jet
-      float c = getScaleFactor(recopt, recoeta);
-      if (c < 0) {
-        std::cout << "WARNING: GenericJetResolutionSmearer: no scale factor found for this jet with pt : eta = " << recopt << " : " << recoeta << std::endl;
-        std::cout << "         No JER smearing will be applied." << std::endl;
-      }
+    // Get the scale factor for this jet
+    float c = getScaleFactor(recopt, recoeta);
+    if (c < 0) {
+      std::cout << "WARNING: GenericJetResolutionSmearer: no scale factor found for this jet with pt : eta = " << recopt << " : " << recoeta << std::endl;
+      std::cout << "         No JER smearing will be applied." << std::endl;
+    }
 
-      // Calculate the new pt
-      float new_pt = -1.;
-      // Use scaling method in case a matching generator jet was found
-      if(genpt>0){
-        new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
-      }
-      // Use stochastic method if no generator jet could be matched to the reco jet
-      else{
-        // Initialize random generator with eta-dependend random seed to be reproducible
-        TRandom rand((int)(1000*abseta));
-        float random_gauss = rand.Gaus(0, resolution);
-        new_pt = recopt * (1 + random_gauss*sqrt(std::max(c*c-1, 0.0f)));
-      }
-      jet_v4 *= new_pt / recopt;
+    // Calculate the new pt
+    float new_pt = -1.;
+    // Use scaling method in case a matching generator jet was found
+    if(genpt>0){
+      new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
+    }
+    // Use stochastic method if no generator jet could be matched to the reco jet
+    else{
+      // Initialize random generator with eta-dependend random seed to be reproducible
+      TRandom rand((int)(1000*abseta));
+      float random_gauss = rand.Gaus(0, resolution);
+      new_pt = recopt * (1 + random_gauss*sqrt(std::max(c*c-1, 0.0f)));
+    }
+    jet_v4 *= new_pt / recopt;
 
-      // Update JEC_factor_raw needed for smearing MET
-      float factor_raw = jet.JEC_factor_raw();
-      factor_raw *= recopt/new_pt;
+    // Update JEC_factor_raw needed for smearing MET
+    float factor_raw = jet.JEC_factor_raw();
+    factor_raw *= recopt/new_pt;
 
-      jet.set_JEC_factor_raw(factor_raw);
-      jet.set_v4(jet_v4);
+    jet.set_JEC_factor_raw(factor_raw);
+    jet.set_v4(jet_v4);
   }
 
   return;
