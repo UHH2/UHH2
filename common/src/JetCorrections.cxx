@@ -919,9 +919,8 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     JER_sf = JERSmearing::SF_13TeV_Fall17_V3;
     resFilename = "2017/Fall17_V3_MC_PtResolution_" + filenameAppend;
   } else if (year == Year::is2018) {
-    JER_sf = JERSmearing::SF_13TeV_Autumn18_RunABCD_V4;
-    // sfFilename = "common/data/2018/Autumn18_V7_MC_SF_" + filenameAppend;
-    resFilename = "2018/Autumn18_V4_MC_PtResolution_" + filenameAppend;
+    sfFilename = "common/data/2018/Autumn18_V7_MC_SF_" + filenameAppend;
+    resFilename = "2018/Autumn18_V7_MC_PtResolution_" + filenameAppend;
   } else {
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }
