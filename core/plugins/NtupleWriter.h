@@ -160,7 +160,7 @@ class NtupleWriter : public edm::EDFilter {
       edm::EDGetTokenT<double> prefweightup_token;
       edm::EDGetTokenT<double> prefweightdown_token;
 
-      bool newrun, setup_output_branches_done;
+      bool newrun, setup_output_branches_done, firstEvent;
 
       edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
       edm::EDGetTokenT<edm::TriggerResults>  metfilterBits_;

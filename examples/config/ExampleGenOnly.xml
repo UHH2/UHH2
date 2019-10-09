@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+
+<!-- OutputLevel controls which messages are printed; set to VERBOSE or DEBUG for more verbosity, to WARNING or ERROR for less -->
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+    <Library Name="libSUHH2examples"/>
+    <Package Name="SUHH2examples.par" />
+
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+
+        <!-- Verion attribute must have year in it, same as used in ntuple config, e.g. 2018, 2016v3, etc -->
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="ExampleGenOnly_2016v3" Cacheable="False">
+            <In FileName="Ntuple.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+        </InputData>
+
+        <UserConfig>
+            <!-- define which collections to read from the input. Only specify what you need to save I/O time -->
+            <Item Name="GenJetCollection" Value="ak4GenJets" />
+
+            <!-- the class name of the AnalysisModule subclasses to run: -->
+            <Item Name="AnalysisModule" Value="ExampleModuleGenOnly" />
+
+            <!-- Important, stops it from reading trigger bits etc (see AnalysisModuleRunnerImpl::begin_input_data()) -->
+            <Item Name="readTrigger" Value="false" />
+
+            <!-- tell AnalysisModuleRunner NOT to use the MC event weight from SFrame; rather let
+                 MCLumiWeight (called via CommonModules) calculate the MC event weight. The MC
+                 event weight assigned by MCLumiWeight is InputData.Lumi / Cycle.TargetLumi. -->
+            <Item Name="use_sframe_weight" Value="false" />
+
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+
+<!-- OutputLevel controls which messages are printed; set to VERBOSE or DEBUG for more verbosity, to WARNING or ERROR for less -->
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+    <Library Name="libSUHH2examples"/>
+    <Package Name="SUHH2examples.par" />
+
+   <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+
+        <InputData Lumi="1" NEventsMax="100" Type="MC" Version="ExampleSyst_2018" Cacheable="False">
+            <In FileName="Ntuple2018.root" Lumi="0.0"/>
+            <InputTree Name="AnalysisTree" />
+        </InputData>
+
+        <UserConfig>
+            <Item Name="JetCollection" Value="jetsAk4CHS" />
+            <Item Name="TopJetCollection" Value="jetsAk8CHSSubstructure_SoftDropCHS" />
+            <Item Name="GenJetCollection" Value="slimmedGenJets" />
+            <Item Name="GenTopJetCollection" Value="genjetsAk8SubstructureSoftDrop" />
+            <Item Name="METName" Value="slimmedMETs" />
+            <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices" />
+            <Item Name="ElectronCollection" Value="slimmedElectronsUSER" />
+            <Item Name="MuonCollection" Value="slimmedMuonsUSER" />
+
+            <!--
+                Here is the magic: many modules that do e.g. corrections read settings from your XML
+                The default is the nominal/central value, but they also accept up/down variations.
+
+                Note that some only affect MC, and will not do anything to data
+                (and will also not tell you this!)
+
+                This differs from module to module, but here are some common examples:
+             -->
+
+            <!--
+                These will *globally* affect all jets
+                e.g. event.jets, event.topjets, etc all get smeared "up"
+                Will also be applied to MET
+            -->
+            <Item Name="jecsmear_direction" Value="nominal"/>
+            <!-- <Item Name="jecsmear_direction" Value="down"/> -->
+            <!-- <Item Name="jecsmear_direction" Value="up"/> -->
+
+            <!-- <Item Name="jersmear_direction" Value="nominal"/> -->
+            <Item Name="jersmear_direction" Value="down"/>
+            <!-- <Item Name="jersmear_direction" Value="up"/> -->
+
+            <Item Name="pileup_direction" Value="nominal"/>
+
+            <!-- These files are specific for 2018 -->
+            <Item Name="pileup_directory" Value="common/data/2018/MyMCPileupHistogram.root"/>
+            <Item Name="pileup_directory_data" Value="common/data/2018/MyDataPileupHistogram2018.root"/>
+
+            <!--
+                For each PU variation, we also need a different input file.
+                This is because we use a different min bias xsec to create the
+                up & down variations.
+                Currently the min bias central value for Run2 is 69.2mb.
+                The variation is 4.6%, corresponding to 66.017 (down) and 72.383 (up)
+            -->
+            <!-- <Item Name="pileup_direction" Value="down"/> -->
+            <!-- <Item Name="pileup_directory_data_down" Value="common/data/2018/MyDataPileupHistogram2018_66017.root"/> -->
+
+            <!-- <Item Name="pileup_direction" Value="up"/> -->
+            <!-- <Item Name="pileup_directory_data_up" Value="common/data/2018/MyDataPileupHistogram2018_72383.root"/> -->
+
+            <!--
+                Here we vary muR and muF by factor 2
+                Note that doing one up and one down is not recommended as
+                leads to overly large uncertainties
+             -->
+            <!-- <Item Name="ScaleVariationMuR" Value="nominal"/> -->
+            <Item Name="ScaleVariationMuR" Value="down"/>
+            <!-- <Item Name="ScaleVariationMuR" Value="up"/> -->
+
+            <!-- <Item Name="ScaleVariationMuF" Value="nominal"/> -->
+            <Item Name="ScaleVariationMuF" Value="down"/>
+            <!-- <Item Name="ScaleVariationMuF" Value="up"/> -->
+
+
+            <!--
+                Muon ID scale factors for MC
+                This one is one we have set up ourselves - see analysis code
+            -->
+            <!-- <Item Name="muon_id_sf_direction" Value="nominal"/> -->
+            <Item Name="muon_id_sf_direction" Value="down"/>
+            <!-- <Item Name="muon_id_sf_direction" Value="up"/> -->
+
+            <Item Name="MCBtagEfficiencies" Value="nominal"/>
+            <!--
+                Btag scale factors for MC
+                Again, this is one we have set up ourselves
+            -->
+            <!-- <Item Name="btag_sf_direction" Value="nominal"/> -->
+            <Item Name="btag_sf_direction" Value="down"/>
+            <!-- <Item Name="btag_sf_direction" Value="down_bc"/> -->
+            <!-- <Item Name="btag_sf_direction" Value="down_udsg"/> -->
+            <!-- <Item Name="btag_sf_direction" Value="up"/> -->
+            <!-- <Item Name="btag_sf_direction" Value="up_bc"/> -->
+            <!-- <Item Name="btag_sf_direction" Value="up_udsg"/> -->
+
+
+
+            <Item Name="AnalysisModule" Value="ExampleModuleSystematics" />
+
+            <Item Name="use_sframe_weight" Value="false" />
+
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>

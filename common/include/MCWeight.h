@@ -3,6 +3,8 @@
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/JetIds.h"
+#include "UHH2/common/include/BTagCalibrationStandalone.h"
+
 #include "TH2.h"
 
 /** \brief Set the event weight according to the sample lumi and a target lumi

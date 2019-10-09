@@ -82,6 +82,10 @@ public:
         fail_if_init();
         eleid = eleid_;
     }
+    void set_photon_id(const PhotonId & phoid_){
+        fail_if_init();
+        phoid = phoid_;
+    }
     void set_muon_id(const MuonId & muid_){
         fail_if_init();
         muid = muid_;
@@ -105,6 +109,7 @@ private:
     std::vector<std::unique_ptr<AnalysisModule>> modules;
     JetId jetid;
     ElectronId eleid;
+    PhotonId phoid;
     MuonId muid;
     TauId tauid;
     JetPFID::wp working_point;

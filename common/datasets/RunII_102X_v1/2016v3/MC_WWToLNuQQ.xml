@@ -358,7 +358,7 @@
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/anmalara/RunII_102X_v1/2016v3/WWToLNuQQ_13TeV-powheg/crab_WWToLNuQQ_13TeV-powheg_Summer16_ext1_v2/190625_141329/0000/Ntuple_95.root" Lumi="0.0"/>
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/anmalara/RunII_102X_v1/2016v3/WWToLNuQQ_13TeV-powheg/crab_WWToLNuQQ_13TeV-powheg_Summer16_ext1_v2/190625_141329/0000/Ntuple_96.root" Lumi="0.0"/>
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/anmalara/RunII_102X_v1/2016v3/WWToLNuQQ_13TeV-powheg/crab_WWToLNuQQ_13TeV-powheg_Summer16_ext1_v2/190625_141329/0000/Ntuple_97.root" Lumi="0.0"/>
-<IE FileName="/pnfs/desy.de/cms/tier2/store/user/anmalara/RunII_102X_v1/2016v3/WWToLNuQQ_13TeV-powheg/crab_WWToLNuQQ_13TeV-powheg_Summer16_ext1_v2/190625_141329/0000/Ntuple_98.root" Lumi="0.0"/>
+<In FileName="/pnfs/desy.de/cms/tier2/store/user/anmalara/RunII_102X_v1/2016v3/WWToLNuQQ_13TeV-powheg/crab_WWToLNuQQ_13TeV-powheg_Summer16_ext1_v2/190625_141329/0000/Ntuple_98.root" Lumi="0.0"/>
 <In FileName="/pnfs/desy.de/cms/tier2/store/user/anmalara/RunII_102X_v1/2016v3/WWToLNuQQ_13TeV-powheg/crab_WWToLNuQQ_13TeV-powheg_Summer16_ext1_v2/190625_141329/0000/Ntuple_99.root" Lumi="0.0"/>
 <!-- < NumberEntries="1999200" Method=fast /> -->
 <!-- < NumberEntries="6655400" Method=fast /> -->
