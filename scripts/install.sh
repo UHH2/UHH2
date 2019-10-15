@@ -139,8 +139,9 @@ scram setup fastjet-contrib-archive
 scram b clean
 time scram b $MAKEFLAGS
 
-# Get the UHH2 repo & JEC files
+# Get the UHH2 repo & JEC,JER files
 cd $CMSSW_BASE/src
 time git clone -b RunII_102X_v2 https://github.com/UHH2/UHH2.git
 cd UHH2
 time git clone https://github.com/cms-jet/JECDatabase.git
+time git clone https://github.com/cms-jet/JRDatabase.git
