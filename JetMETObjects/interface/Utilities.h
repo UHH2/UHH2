@@ -1,11 +1,7 @@
 #ifndef CondFormats_JetMETObjects_Utilities_h
 #define CondFormats_JetMETObjects_Utilities_h
 
-#ifdef STANDALONE
 #include <stdexcept>
-#else
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
-#endif
 
 #include <cstdlib>
 #include <sstream>
@@ -17,13 +13,9 @@ namespace
 {
   void handleError(const std::string& fClass, const std::string& fMessage)
   {
-#ifdef STANDALONE
     std::stringstream sserr;
     sserr<<fClass<<" ERROR: "<<fMessage;
     throw std::runtime_error(sserr.str());
-#else
-    edm::LogError(fClass) << fMessage;
-#endif
   }
   //----------------------------------------------------------------------
   inline float getFloat(const std::string& token)
@@ -34,7 +26,7 @@ namespace
       {
         std::stringstream sserr;
         sserr<<"can't convert token "<<token<<" to float value";
-	handleError("getFloat",sserr.str());
+        handleError("getFloat",sserr.str());
       }
     return result;
   }
@@ -47,7 +39,7 @@ namespace
       {
         std::stringstream sserr;
         sserr<<"can't convert token "<<token<<" to unsigned value";
-	handleError("getUnsigned",sserr.str());
+        handleError("getUnsigned",sserr.str());
       }
     return result;
   }
@@ -73,8 +65,8 @@ namespace
           { // flush current token if any
             if (!currentToken.empty())
               {
-	        tokens.push_back(currentToken);
-	        currentToken.clear();
+                tokens.push_back(currentToken);
+                currentToken.clear();
               }
           }
         else

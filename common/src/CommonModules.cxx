@@ -29,7 +29,7 @@ CommonModules::CommonModules(){
   jec_ver_2017 = "32";
 
   jec_tag_2018 = "Autumn18";
-  jec_ver_2018 = "7";
+  jec_ver_2018 = "19";
 
   jec_jet_coll = "AK4PFchs";
 }
@@ -168,14 +168,9 @@ bool CommonModules::process(uhh2::Event & event){
   if(!init_done){
     throw runtime_error("CommonModules::init not called (has to be called in AnalysisModule constructor)");
   }
-  if(event.isRealData && lumisel){
-    if(!lumi_selection->passes(event)) return false;
-  }
+
   for(auto & m : modules){
     m->process(event);
-  }
-  if(metfilters){
-    if(!metfilters_selection->passes(event)) return false;
   }
 
   if(jetlepcleaner){
@@ -215,6 +210,18 @@ bool CommonModules::process(uhh2::Event & event){
   if(jetptsort){
     sort_by_pt(*event.jets);
   }
+
+  // Put the return parts last, such that every other modifying module always runs
+  // This avoids bugs where this function is exited early, but the user expects
+  // the other modules to always run
+  if(event.isRealData && lumisel){
+    if(!lumi_selection->passes(event)) return false;
+  }
+
+  if(metfilters){
+    if(!metfilters_selection->passes(event)) return false;
+  }
+
   return true;
 }
 

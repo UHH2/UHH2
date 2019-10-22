@@ -4,6 +4,7 @@
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/JetMETObjects/interface/JetCorrectionUncertainty.h"
+#include "UHH2/JetMETObjects/interface/JetResolution.h"
 #include "UHH2/common/include/JetCorrectionSets.h"
 #include "TRandom.h"
 #include "TFormula.h"
@@ -233,13 +234,10 @@ namespace JERSmearing {
   extern const SFtype1 SF_13TeV_Fall17_V3;
   extern const SFtype1 SF_13TeV_Fall17_V3_RunBCDEF_Madgraph;// for JERC people only
 
-  //2018, update after Moriond19
-  extern const SFtype1 SF_13TeV_Autumn18_V7;
-  extern const SFtype1 SF_13TeV_Autumn18_RunABC_V7;
-  extern const SFtype1 SF_13TeV_Autumn18_RunD_V7;
+  // For 2018 V7 and onwards, use text files instead for scale factors
 
   //Moriond19
-  extern const SFtype1 SF_13TeV_Autumn18_V1; 
+  extern const SFtype1 SF_13TeV_Autumn18_V1;
   extern const SFtype1 SF_13TeV_Autumn18_RunABC_V1;
   extern const SFtype1 SF_13TeV_Autumn18_RunD_V1;
 
@@ -258,8 +256,20 @@ namespace JERSmearing {
 /** \brief generalization of JetResolutionSmearer (see the latter for additional info)
  *         to apply jet-energy-resolution smearing on non-default jet collections
  *
- *  options parsed from Context:
+ *  Note that the reco and genjets can refer to either Jet or TopJet collections,
+ *  and GenJet or GenTopJet collections, for flexibility
+ *
+ *  Options parsed from Context (e.g. from XML file):
  *   - "jersmear_direction": either "nominal", "up", or "down" to apply nominal, +1sigma, -1sigma smearing correction
+ *
+ *  There are 2 constructors, depending on the format of the scale factors.
+ *  For "old-style" scale factors, where they are independent of pt, one can use
+ *  the constructor that takes a JERSmearing::SFtype1 argument.
+ *  For "new-style" scale factors that come as a text file, one should use
+ *  the constructor that takes a TString instead.
+ *
+ *  Note that the ResolutionFileName argument will have "common/data" prepended
+ *  to it.
  *
  */
 class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
@@ -267,13 +277,17 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
  public:
   explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets",
                                        const JERSmearing::SFtype1& JER_sf=JERSmearing::SF_13TeV_Fall17_V3, const TString ResolutionFileName="Fall17_V3_MC_PtResolution_AK4PFchs.txt");
-  virtual ~GenericJetResolutionSmearer() {m_resfile.close();}
+  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets",
+                                       const TString ScaleFactorFileName="", const TString ResolutionFileName="Fall17_V3_MC_PtResolution_AK4PFchs.txt");
+  virtual ~GenericJetResolutionSmearer() = default;
 
   virtual bool process(uhh2::Event&) override;
 
   template<typename RJ, typename GJ> void apply_JER_smearing(std::vector<RJ>&, const std::vector<GJ>&, float radius, float rho);
 
  private:
+  virtual float getScaleFactor(float pt, float eta);
+
   uhh2::Event::Handle<std::vector<Jet> >       h_recjets_;
   uhh2::Event::Handle<std::vector<GenJet> >    h_genjets_;
   uhh2::Event::Handle<std::vector<TopJet> >    h_rectopjets_;
@@ -281,12 +295,10 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
   int direction = 0; // -1 = down, +1 = up, 0 = nominal
   JERSmearing::SFtype1 JER_SFs_;
-  TString m_ResolutionFileName;
 
-  std::ifstream m_resfile;
+  JME::JetResolution resolution_;
+  JME::JetResolutionScaleFactor res_sf_;
 
-  float getResolution(float eta, float rho, float pt);
-  TFormula* res_formula;
 };
 
 
@@ -294,9 +306,10 @@ class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 /** \brief Smear the Jets' (specified in event.jets / JetCollection) four-momenta in MC to match the resolution in data.
  * It will have no effect on data events.
  *
- * There are 2 constructors to either automatically choose resolution txt file
- * & scale factors based on year & jet algorithm,
- * or allow the user to specify them exactly.
+ * The constructor with only the Context argument automatically chooses
+ * the resolution txt file & scale factors based on year & jet algorithm.
+ * The other constructors allow the user to specify the scale factors
+ * (either as vector of floats or from text file), and the resolution txt file
  *
  * See https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetResolution for details
  * We use the hybrid method, depending on if a matching genjet was found.
@@ -317,6 +330,7 @@ class JetResolutionSmearer: public uhh2::AnalysisModule{
 public:
     explicit JetResolutionSmearer(uhh2::Context & ctx);
     explicit JetResolutionSmearer(uhh2::Context & ctx, const JERSmearing::SFtype1& JER_sf, const std::string& resFilename);
+    explicit JetResolutionSmearer(uhh2::Context & ctx, const std::string& scaleFactorFilename, const std::string& resFilename);
 
     virtual bool process(uhh2::Event & event) override;
 
