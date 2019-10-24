@@ -169,6 +169,15 @@ bool CommonModules::process(uhh2::Event & event){
     throw runtime_error("CommonModules::init not called (has to be called in AnalysisModule constructor)");
   }
 
+  // Must run these first, otherwise e.g. JEC that depend on valid run number will crash
+  if(event.isRealData && lumisel){
+    if(!lumi_selection->passes(event)) return false;
+  }
+
+  if(metfilters){
+    if(!metfilters_selection->passes(event)) return false;
+  }
+
   for(auto & m : modules){
     m->process(event);
   }
@@ -209,17 +218,6 @@ bool CommonModules::process(uhh2::Event & event){
 
   if(jetptsort){
     sort_by_pt(*event.jets);
-  }
-
-  // Put the return parts last, such that every other modifying module always runs
-  // This avoids bugs where this function is exited early, but the user expects
-  // the other modules to always run
-  if(event.isRealData && lumisel){
-    if(!lumi_selection->passes(event)) return false;
-  }
-
-  if(metfilters){
-    if(!metfilters_selection->passes(event)) return false;
   }
 
   return true;
