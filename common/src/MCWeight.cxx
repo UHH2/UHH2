@@ -203,6 +203,13 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
 
   auto dataset_type = ctx.get("dataset_type");
   bool is_mc = dataset_type == "MC";
+  h_murmuf_weight_upup_     = ctx.declare_event_output<float>("weight_murmuf_upup");
+  h_murmuf_weight_upnone_   = ctx.declare_event_output<float>("weight_murmuf_upnone");
+  h_murmuf_weight_noneup_   = ctx.declare_event_output<float>("weight_murmuf_noneup");
+  h_murmuf_weight_downdown_ = ctx.declare_event_output<float>("weight_murmuf_downdown");
+  h_murmuf_weight_downnone_ = ctx.declare_event_output<float>("weight_murmuf_downnone");
+  h_murmuf_weight_nonedown_ = ctx.declare_event_output<float>("weight_murmuf_nonedown");
+
   if(!is_mc){
     cout << "Warning: MCScaleVariation will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
     return;
@@ -219,30 +226,52 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
 }
 
 bool MCScaleVariation::process(Event & event){
-  if (event.isRealData) {return true;}
+  if (event.isRealData) {
+    event.set(h_murmuf_weight_upup_, 1.);
+    event.set(h_murmuf_weight_upnone_, 1.);
+    event.set(h_murmuf_weight_noneup_, 1.);
+    event.set(h_murmuf_weight_downdown_, 1.);
+    event.set(h_murmuf_weight_downnone_, 1.);
+    event.set(h_murmuf_weight_nonedown_, 1.);
+    return true;
+  }
 
   try{
-  if(event.genInfo->systweights().size() == 0) return true;
+    if(event.genInfo->systweights().size() == 0 || (i_mu_r == 0 && i_mu_f == 0)){
+      event.set(h_murmuf_weight_upup_, 1.);
+      event.set(h_murmuf_weight_upnone_, 1.);
+      event.set(h_murmuf_weight_noneup_, 1.);
+      event.set(h_murmuf_weight_downdown_, 1.);
+      event.set(h_murmuf_weight_downnone_, 1.);
+      event.set(h_murmuf_weight_nonedown_, 1.);
+      return true;
+    }
 
-  if(i_mu_r == 0 && i_mu_f == 0) return true;
-  else if(i_mu_r == 0 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(1);
-  else if(i_mu_r == 0 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(2);
-                                      
-  else if(i_mu_r == 1 && i_mu_f == 0) syst_weight = event.genInfo->systweights().at(3);
-  else if(i_mu_r == 1 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(4);
-  else if(i_mu_r == 1 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(5);
-                                      
-  else if(i_mu_r == 2 && i_mu_f == 0) syst_weight = event.genInfo->systweights().at(6);
-  else if(i_mu_r == 2 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(7);
-  else if(i_mu_r == 2 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(8);
+    else if(i_mu_r == 0 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(1);
+    else if(i_mu_r == 0 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(2);
 
-  event.weight *= syst_weight/event.genInfo->originalXWGTUP();
+    else if(i_mu_r == 1 && i_mu_f == 0) syst_weight = event.genInfo->systweights().at(3);
+    else if(i_mu_r == 1 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(4);
+    else if(i_mu_r == 1 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(5);
+
+    else if(i_mu_r == 2 && i_mu_f == 0) syst_weight = event.genInfo->systweights().at(6);
+    else if(i_mu_r == 2 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(7);
+    else if(i_mu_r == 2 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(8);
+
+    event.set(h_murmuf_weight_upup_, event.genInfo->systweights().at(4)/event.genInfo->originalXWGTUP());
+    event.set(h_murmuf_weight_upnone_, event.genInfo->systweights().at(3)/event.genInfo->originalXWGTUP());
+    event.set(h_murmuf_weight_noneup_, event.genInfo->systweights().at(1)/event.genInfo->originalXWGTUP());
+    event.set(h_murmuf_weight_downdown_, event.genInfo->systweights().at(8)/event.genInfo->originalXWGTUP());
+    event.set(h_murmuf_weight_downnone_, event.genInfo->systweights().at(6)/event.genInfo->originalXWGTUP());
+    event.set(h_murmuf_weight_nonedown_, event.genInfo->systweights().at(2)/event.genInfo->originalXWGTUP());
+
+    event.weight *= syst_weight/event.genInfo->originalXWGTUP();
   }
   catch(const std::runtime_error& error){
-      std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
-      std::cout<<error.what();
+    std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
+    std::cout<<error.what();
   }
-  
+
   return true;
 }
 
