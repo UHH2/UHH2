@@ -239,8 +239,8 @@ bool MCScaleVariation::process(Event & event){
   }
 
   try{
-    // Set weights to 1 if no genInfo exists
-    if(event.genInfo->systweights().size() == 0){
+    // Set weights to 1 if no genInfo scale variation weights exist
+    if(event.genInfo->systweights().size() < 9){
       event.set(h_murmuf_weight_upup_, 1.);
       event.set(h_murmuf_weight_upnone_, 1.);
       event.set(h_murmuf_weight_noneup_, 1.);
