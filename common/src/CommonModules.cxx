@@ -29,7 +29,7 @@ CommonModules::CommonModules(){
   jec_ver_2017 = "32";
 
   jec_tag_2018 = "Autumn18";
-  jec_ver_2018 = "7";
+  jec_ver_2018 = "19";
 
   jec_jet_coll = "AK4PFchs";
 }
@@ -123,7 +123,9 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
   }
   if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
+  if(phoid) modules.emplace_back(new PhotonCleaner(phoid));
   if(muid)  modules.emplace_back(new MuonCleaner(muid));
+
   if(tauid) modules.emplace_back(new TauCleaner(tauid));
   if(jetpfidcleaner){
     modules.emplace_back(new JetCleaner(ctx, JetPFID(working_point)));
@@ -166,14 +168,9 @@ bool CommonModules::process(uhh2::Event & event){
   if(!init_done){
     throw runtime_error("CommonModules::init not called (has to be called in AnalysisModule constructor)");
   }
-  if(event.isRealData && lumisel){
-    if(!lumi_selection->passes(event)) return false;
-  }
+
   for(auto & m : modules){
     m->process(event);
-  }
-  if(metfilters){
-    if(!metfilters_selection->passes(event)) return false;
   }
 
   if(jetlepcleaner){
@@ -213,6 +210,18 @@ bool CommonModules::process(uhh2::Event & event){
   if(jetptsort){
     sort_by_pt(*event.jets);
   }
+
+  // Put the return parts last, such that every other modifying module always runs
+  // This avoids bugs where this function is exited early, but the user expects
+  // the other modules to always run
+  if(event.isRealData && lumisel){
+    if(!lumi_selection->passes(event)) return false;
+  }
+
+  if(metfilters){
+    if(!metfilters_selection->passes(event)) return false;
+  }
+
   return true;
 }
 
@@ -260,13 +269,14 @@ void CommonModules::print_setup() const {
     {"JECs", jec},
     {"JER smearing", jersmear},
     {"Jet-Lepton cleaning", jetlepcleaner},
-    {"MET Type-1 corrections", do_metcorrection},
+    {"MET Type-1 corrections", ((jetlepcleaner && jec) || (do_metcorrection && jec))},
     {"MET filters", metfilters},
     {"PV filter", pvfilter},
     {"Jet pT sorting", jetptsort},
     {"Jet PF ID cleaner", jetpfidcleaner},
     {"Jet ID", (bool) jetid},
     {"Electron ID", (bool) eleid},
+    {"Photon ID", (bool) phoid},
     {"Muon ID", (bool) muid},
     {"Tau ID", (bool) tauid},
   };

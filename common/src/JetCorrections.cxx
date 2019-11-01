@@ -7,6 +7,7 @@
 #include "UHH2/JetMETObjects/interface/JetCorrectorParameters.h"
 
 #include <string>
+#include <cmath>
 
 using namespace std;
 using namespace uhh2;
@@ -18,6 +19,7 @@ using namespace uhh2;
     corrector.setJetEta(jet.eta());
     corrector.setJetE(jet.energy() * factor_raw);
     corrector.setJetA(jet.jetArea());
+    corrector.setJetPhi(jet.phi());
     corrector.setRho(event.rho);
     auto correctionfactors = corrector.getSubCorrections();
     auto correctionfactor_L1  = correctionfactors.front();
@@ -670,6 +672,77 @@ const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Fall17_V3_RunBCDEF_Madgraph = {
 };
 
 
+// 2018, update after Moriond19
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_V7 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+
+  {{0.522, 1.1813, 1.2452, 1.1174}},
+  {{0.783, 1.1136, 1.2114, 1.0158}},
+  {{1.131, 1.1048, 1.1376, 1.0719}},
+  {{1.305, 1.0741, 1.1268, 1.0215}},
+  {{1.740, 1.0923, 1.1876, 0.9970}},
+  {{1.930, 1.0779, 1.1372, 1.0187}},
+  {{2.043, 1.0893, 1.2833, 0.8952}},
+  {{2.322, 1.0755, 1.2024, 0.9485}},
+  {{2.500, 1.4188, 1.6398, 1.1978}},
+  {{2.853, 1.9206, 2.4017, 1.4395}},
+  {{2.964, 2.0118, 2.3034, 1.7202}},
+  {{3.139, 1.1904, 1.3127, 1.0681}},
+  {{5.191, 1.0846, 1.3544, 0.8149}},
+
+};
+
+// 2018 -> to be used with RunABC
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunABC_V7 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+
+  {{0.522, 1.19, 1.2573, 1.1227}},
+  {{0.783, 1.11, 1.1937, 1.0263}},
+  {{1.131, 1.11, 1.1707, 1.0493}},
+  {{1.305, 1.04, 1.1347, 0.9453}},
+  {{1.74,  1.1,  1.1536, 1.0464}},
+  {{1.93,  1.1,  1.1488, 1.0512}},
+  {{2.043, 1.07, 1.2524, 0.8876}},
+  {{2.322, 1.1,  1.2274, 0.9726}},
+  {{2.5,   1.29, 1.5796, 1.0004}},
+  {{2.853, 1.63, 1.8868, 1.3732}},
+  {{2.964, 1.66, 1.8146, 1.5054}},
+  {{3.139, 1.23, 1.3449, 1.1151}},
+  {{5.191, 1.06, 1.3035, 0.8165}},
+
+};
+
+// 2018 -> to be used with RunD
+const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_RunD_V7 = {
+  // 0 = upper jet-eta limit
+  // 1 = JER SF
+  // 2 = JER SF + 1sigma
+  // 3 = JER SF - 1sigma
+
+  {{0.522, 1.17, 1.2338, 1.1062}},
+  {{0.783, 1.12, 1.2032, 1.0368}},
+  {{1.131, 1.13, 1.1608, 1.0992}},
+  {{1.305, 1.09, 1.1562, 1.0238}},
+  {{1.74,  1.1,  1.186,  1.014 }},
+  {{1.93,  1.09, 1.1152, 1.0648}},
+  {{2.043, 1.14, 1.2764, 1.0036}},
+  {{2.322, 1.07, 1.1599, 0.9801}},
+  {{2.5,   1.5,  1.6695, 1.3305}},
+  {{2.853, 2.22, 2.5102, 1.9298}},
+  {{2.964, 2.2,  2.3818, 2.0182}},
+  {{3.139, 1.18, 1.285,  1.075 }},
+  {{5.191, 1.08, 1.2837, 0.8763}},
+
+};
+
+////
+
 // 2018 -> to be used with combined dataset
 const JERSmearing::SFtype1 JERSmearing::SF_13TeV_Autumn18_V1 = {
   // 0 = upper jet-eta limit
@@ -1088,6 +1161,17 @@ float GenericJetResolutionSmearer::getResolution(float eta, float rho, float pt)
   if(valid){
     res_formula->SetParameters(par0,par1,par2,par3);
     resolution = res_formula->Eval(pt);
+    if (isnan(resolution)) {
+      // resolution can be nan if bad formula parameters
+      //      if (fabs(eta) > 2.3 && pt < 30) { // leniency in this problematic region hopefully fixed in future version of JER
+      if (pt < 35) { // leniency in this problematic region hopefully fixed in future version of JER
+        cout << "WARNING: GenericJetResolutionSmearer::getResolution() evaluated to nan. Since this jet is in problematic region, it will instead be set to 0." << endl;
+        cout << "Input eta : rho : pt = " << eta << " : " << rho << ": " << pt << endl;
+        resolution = 0.;
+      } else {
+        throw std::runtime_error("GenericJetResolutionSmearer::getResolution() evaluated to nan. Input eta : rho : pt = " + double2string(eta) + " : " + double2string(rho) + " : " + double2string(pt));
+      }
+    }
   }
 
   return resolution;
