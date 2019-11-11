@@ -141,7 +141,7 @@ bool MCPileupReweight::process(Event &event){
     double weight = 0., weight_up = 0., weight_down = 0., trueNumInteractions = 0.;
     // handle scenarios where events fall outside of our histograms
     // esp for 94X MC screwup where -ve # vertices exist
-    
+
     try{
     trueNumInteractions = event.genInfo->pileup_TrueNumInteractions();
     if (event.genInfo->pileup_TrueNumInteractions() < h_npu_mc->GetXaxis()->GetXmin()) {
@@ -164,7 +164,7 @@ bool MCPileupReweight::process(Event &event){
       std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
       std::cout<<error.what();
     }
-    
+
     int binnumber = h_npu_mc->GetXaxis()->FindBin(trueNumInteractions);
     auto mc_cont = h_npu_mc->GetBinContent(binnumber);
     if (mc_cont > 0) {
@@ -203,6 +203,13 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
 
   auto dataset_type = ctx.get("dataset_type");
   bool is_mc = dataset_type == "MC";
+  h_murmuf_weight_upup_     = ctx.declare_event_output<float>("weight_murmuf_upup");
+  h_murmuf_weight_upnone_   = ctx.declare_event_output<float>("weight_murmuf_upnone");
+  h_murmuf_weight_noneup_   = ctx.declare_event_output<float>("weight_murmuf_noneup");
+  h_murmuf_weight_downdown_ = ctx.declare_event_output<float>("weight_murmuf_downdown");
+  h_murmuf_weight_downnone_ = ctx.declare_event_output<float>("weight_murmuf_downnone");
+  h_murmuf_weight_nonedown_ = ctx.declare_event_output<float>("weight_murmuf_nonedown");
+
   if(!is_mc){
     cout << "Warning: MCScaleVariation will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
     return;
@@ -219,30 +226,58 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
 }
 
 bool MCScaleVariation::process(Event & event){
-  if (event.isRealData) {return true;}
+
+  // Set weights to 1 for data
+  if (event.isRealData) {
+    event.set(h_murmuf_weight_upup_, 1.);
+    event.set(h_murmuf_weight_upnone_, 1.);
+    event.set(h_murmuf_weight_noneup_, 1.);
+    event.set(h_murmuf_weight_downdown_, 1.);
+    event.set(h_murmuf_weight_downnone_, 1.);
+    event.set(h_murmuf_weight_nonedown_, 1.);
+    return true;
+  }
 
   try{
-  if(event.genInfo->systweights().size() == 0) return true;
+    // Set weights to 1 if no genInfo scale variation weights exist
+    if(event.genInfo->systweights().size() < 9){
+      event.set(h_murmuf_weight_upup_, 1.);
+      event.set(h_murmuf_weight_upnone_, 1.);
+      event.set(h_murmuf_weight_noneup_, 1.);
+      event.set(h_murmuf_weight_downdown_, 1.);
+      event.set(h_murmuf_weight_downnone_, 1.);
+      event.set(h_murmuf_weight_nonedown_, 1.);
+      return true;
+    }
 
-  if(i_mu_r == 0 && i_mu_f == 0) return true;
-  else if(i_mu_r == 0 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(1);
-  else if(i_mu_r == 0 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(2);
-                                      
-  else if(i_mu_r == 1 && i_mu_f == 0) syst_weight = event.genInfo->systweights().at(3);
-  else if(i_mu_r == 1 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(4);
-  else if(i_mu_r == 1 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(5);
-                                      
-  else if(i_mu_r == 2 && i_mu_f == 0) syst_weight = event.genInfo->systweights().at(6);
-  else if(i_mu_r == 2 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(7);
-  else if(i_mu_r == 2 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(8);
+    // Set handles, written for all relevant cases irrespective of the values of mu_r and mu_f specified in the config file
+    event.set(h_murmuf_weight_upup_, event.genInfo->systweights().at(4)/event.genInfo->originalXWGTUP());
+    event.set(h_murmuf_weight_upnone_, event.genInfo->systweights().at(3)/event.genInfo->originalXWGTUP());
+    event.set(h_murmuf_weight_noneup_, event.genInfo->systweights().at(1)/event.genInfo->originalXWGTUP());
+    event.set(h_murmuf_weight_downdown_, event.genInfo->systweights().at(8)/event.genInfo->originalXWGTUP());
+    event.set(h_murmuf_weight_downnone_, event.genInfo->systweights().at(6)/event.genInfo->originalXWGTUP());
+    event.set(h_murmuf_weight_nonedown_, event.genInfo->systweights().at(2)/event.genInfo->originalXWGTUP());
 
-  event.weight *= syst_weight/event.genInfo->originalXWGTUP();
+    // Modify event weight according to scale variation specified in config file
+    if (i_mu_r == 0 && i_mu_f == 0) return true;
+    else if(i_mu_r == 0 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(1);
+    else if(i_mu_r == 0 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(2);
+
+    else if(i_mu_r == 1 && i_mu_f == 0) syst_weight = event.genInfo->systweights().at(3);
+    else if(i_mu_r == 1 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(4);
+    else if(i_mu_r == 1 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(5);
+
+    else if(i_mu_r == 2 && i_mu_f == 0) syst_weight = event.genInfo->systweights().at(6);
+    else if(i_mu_r == 2 && i_mu_f == 1) syst_weight = event.genInfo->systweights().at(7);
+    else if(i_mu_r == 2 && i_mu_f == 2) syst_weight = event.genInfo->systweights().at(8);
+
+    event.weight *= syst_weight/event.genInfo->originalXWGTUP();
   }
   catch(const std::runtime_error& error){
-      std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
-      std::cout<<error.what();
+    std::cout<<"Problem with genInfo in MCWeight.cxx"<<std::endl;
+    std::cout<<error.what();
   }
-  
+
   return true;
 }
 
@@ -256,7 +291,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
                                      const std::string & weight_postfix,
 				     bool etaYaxis,
                                      const std::string & sys_uncert,
-                                     const std::string & muons_handle_name): 
+                                     const std::string & muons_handle_name):
   h_muons_            (ctx.get_handle<std::vector<Muon>>(muons_handle_name)),
   h_muon_weight_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix)),
   h_muon_weight_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_up")),
@@ -276,14 +311,14 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
   if (sf_file.IsZombie()) {
     throw runtime_error("Scale factor file for muons not found: " + sf_file_path);
   }
-  
+
   sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/abseta_pt").c_str()));
   if (!sf_hist_.get()) {
     sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/abseta_pt_ratio").c_str()));
     if (!sf_hist_.get()) {
       sf_hist_.reset((TH2*) sf_file.Get((sf_name + "/abseta_pair_newTuneP_probe_pt").c_str()));
       if (!sf_hist_.get()) {
-	sf_hist_.reset((TH2*) sf_file.Get((sf_name).c_str()));      
+	sf_hist_.reset((TH2*) sf_file.Get((sf_name).c_str()));
 	if (!sf_hist_.get()) {
 	  throw runtime_error("Scale factor directory not found in file: " + sf_name);
 	}
@@ -314,13 +349,13 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
 
 bool MCMuonScaleFactor::process(uhh2::Event & event) {
 
-  if (!sf_hist_) {  
+  if (!sf_hist_) {
     event.set(h_muon_weight_,       1.);
     event.set(h_muon_weight_up_,    1.);
     event.set(h_muon_weight_down_,  1.);
     return true;
   }
- 
+
   const auto & muons = event.get(h_muons_);
   float weight = 1., weight_up = 1., weight_down = 1.;
   for (const auto & mu : muons) {
@@ -356,7 +391,7 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
     }
 
   }
-  
+
 
   event.set(h_muon_weight_,       weight);
   event.set(h_muon_weight_up_,    weight_up);
@@ -376,7 +411,7 @@ bool MCMuonScaleFactor::process(uhh2::Event & event) {
 
 bool MCMuonScaleFactor::process_onemuon(uhh2::Event & event, int i) {
 
-  if (!sf_hist_) {  
+  if (!sf_hist_) {
     event.set(h_muon_weight_,       1.);
     event.set(h_muon_weight_up_,    1.);
     event.set(h_muon_weight_down_,  1.);
@@ -399,30 +434,30 @@ bool MCMuonScaleFactor::process_onemuon(uhh2::Event & event, int i) {
         pt=pt_max_-0.0001;
         out_of_range = true;
      }
-     
+
      int bin;
      if(etaYaxis_)
         bin       = sf_hist_->FindFixBin(pt, eta);
      else
         bin       = sf_hist_->FindFixBin(eta, pt);
-     
+
      float w       = sf_hist_->GetBinContent(bin);
      float err     = sf_hist_->GetBinError(bin);
      float err_tot = sqrt(err*err + pow(w*sys_error_factor_, 2));
      //take twice the uncertainty if the pT is outside the measured pT range
      if(out_of_range) err_tot*=2;
-     
+
      weight      *= w;
      weight_up   *= w + err_tot;
      weight_down *= w - err_tot;
-     
+
   }
-  
+
 
   event.set(h_muon_weight_,       weight);
   event.set(h_muon_weight_up_,    weight_up);
   event.set(h_muon_weight_down_,  weight_down);
-  
+
   if (sys_direction_ == 1) {
      event.weight *= weight_up;
   } else if (sys_direction_ == -1) {
@@ -440,7 +475,7 @@ MCMuonTrkScaleFactor::MCMuonTrkScaleFactor(uhh2::Context & ctx,
                                      float sys_error_percantage,
                                      const std::string & weight_postfix,
                                      const std::string & sys_uncert,
-                                     const std::string & muons_handle_name): 
+                                     const std::string & muons_handle_name):
   h_muons_            (ctx.get_handle<std::vector<Muon>>(muons_handle_name)),
   h_muontrk_weight_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix)),
   h_muontrk_weight_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_up")),
@@ -487,7 +522,7 @@ MCMuonTrkScaleFactor::MCMuonTrkScaleFactor(uhh2::Context & ctx,
 
 bool MCMuonTrkScaleFactor::process(uhh2::Event & event) {
 
-  // if (!sf_hist_) {  
+  // if (!sf_hist_) {
     event.set(h_muontrk_weight_,       1.);
     event.set(h_muontrk_weight_up_,    1.);
     event.set(h_muontrk_weight_down_,  1.);
@@ -521,7 +556,7 @@ bool MCMuonTrkScaleFactor::process(uhh2::Event & event) {
   event.set(h_muontrk_weight_,       weight);
   event.set(h_muontrk_weight_up_,    weight_up);
   event.set(h_muontrk_weight_down_,  weight_down);
-  
+
   if (sys_direction_ == 1) {
     event.weight *= weight_up;
   } else if (sys_direction_ == -1) {
@@ -529,7 +564,7 @@ bool MCMuonTrkScaleFactor::process(uhh2::Event & event) {
   } else {
     event.weight *= weight;
   }
-  
+
   return true;
 }
 
@@ -540,7 +575,7 @@ MCElecScaleFactor::MCElecScaleFactor(uhh2::Context & ctx,
                                      float sys_error_percantage,
                                      const std::string & weight_postfix,
                                      const std::string & sys_uncert,
-                                     const std::string & elecs_handle_name): 
+                                     const std::string & elecs_handle_name):
   h_elecs_            (ctx.get_handle<std::vector<Electron>>(elecs_handle_name)),
   h_elec_weight_      (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix)),
   h_elec_weight_up_   (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_up")),
@@ -559,7 +594,7 @@ MCElecScaleFactor::MCElecScaleFactor(uhh2::Context & ctx,
   if (sf_file.IsZombie()) {
     throw runtime_error("Scale factor file for electrons not found: " + sf_file_path);
   }
-  
+
   sf_hist_.reset((TH2*) sf_file.Get("EGamma_SF2D"));
   if (!sf_hist_.get()) {
     throw runtime_error("Electron scale factor histogram not found in file");
@@ -580,7 +615,7 @@ MCElecScaleFactor::MCElecScaleFactor(uhh2::Context & ctx,
 
 bool MCElecScaleFactor::process(uhh2::Event & event) {
 
-  if (!sf_hist_) {  
+  if (!sf_hist_) {
     event.set(h_elec_weight_,       1.);
     event.set(h_elec_weight_up_,    1.);
     event.set(h_elec_weight_down_,  1.);
@@ -736,12 +771,12 @@ bool MCBTagScaleFactor::process(Event & event) {
   event.set(h_btag_weight_udsg_up_,   weight_udsg_up);
   event.set(h_btag_weight_udsg_down_, weight_udsg_down);
 
-       if (sysType_ == "up")        {event.weight *= weight_up;} 
-  else if (sysType_ == "down")      {event.weight *= weight_down;} 
-  else if (sysType_ == "up_bc")     {event.weight *= weight_bc_up;} 
-  else if (sysType_ == "down_bc")   {event.weight *= weight_bc_down;} 
-  else if (sysType_ == "up_udsg")   {event.weight *= weight_udsg_up;} 
-  else if (sysType_ == "down_udsg") {event.weight *= weight_udsg_down;} 
+       if (sysType_ == "up")        {event.weight *= weight_up;}
+  else if (sysType_ == "down")      {event.weight *= weight_down;}
+  else if (sysType_ == "up_bc")     {event.weight *= weight_bc_up;}
+  else if (sysType_ == "down_bc")   {event.weight *= weight_bc_down;}
+  else if (sysType_ == "up_udsg")   {event.weight *= weight_udsg_up;}
+  else if (sysType_ == "down_udsg") {event.weight *= weight_udsg_down;}
   else                              {event.weight *= weight;}
 
   return true;
@@ -811,7 +846,7 @@ std::tuple<float, float, float> MCBTagScaleFactor::get_weight_btag(const vector<
 
   }}
 
-  float wtbtag = (dataNoTag * dataTag ) / ( mcNoTag * mcTag ); 
+  float wtbtag = (dataNoTag * dataTag ) / ( mcNoTag * mcTag );
   float wtbtagErrBC = fabs(err1+err2) * wtbtag;
   float wtbtagErrUDSG = fabs(err3+err4) * wtbtag;
 
@@ -835,7 +870,7 @@ std::tuple<float, float, float> MCBTagScaleFactor::get_weight_btag(const vector<
 std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, int flav) {
 
   auto btagentry_flav = flav == 5 ? BTagEntry::FLAV_B : (
-                            flav == 4 ? BTagEntry::FLAV_C : 
+                            flav == 4 ? BTagEntry::FLAV_C :
                                 BTagEntry::FLAV_UDSG);
 
   auto sf_bounds = calib_->min_max_pt(btagentry_flav, abs_eta);
@@ -1079,7 +1114,7 @@ TauEffVariation::TauEffVariation(Context & ctx){
 }
 bool TauEffVariation::process(Event & event){
   if (event.isRealData) return true;
-  
+
   std::vector<Tau> real_taus;
   for(unsigned int j=0; j<event.taus->size(); ++j)
     {
@@ -1133,7 +1168,7 @@ TauChargeVariation::TauChargeVariation(Context & ctx){
 }
 bool TauChargeVariation::process(Event & event){
   if (event.isRealData) return true;
-  
+
   for(unsigned int j=0; j<event.taus->size(); ++j)
     {
       Tau tau = event.taus->at(j);
@@ -1152,7 +1187,7 @@ bool TauChargeVariation::process(Event & event){
 		event.weight *= 0.98;
 	      }
 	    }
-	  } 
+	  }
 	}
       }
       catch(const std::runtime_error& error){
@@ -1162,4 +1197,3 @@ bool TauChargeVariation::process(Event & event){
           }
   return true;
 }
-
