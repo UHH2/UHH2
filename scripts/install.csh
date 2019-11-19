@@ -11,9 +11,15 @@ set MAKEFLAGS="-j${cores}"
 
 # Get CMSSW
 source /cvmfs/cms.cern.ch/cmsset_default.csh
-setenv SCRAM_ARCH slc6_amd64_gcc700
+setenv SCRAM_ARCH slc7_amd64_gcc700
 set kernel=`uname -r`
-if ( "$kernel" =~ *el7* ) setenv SCRAM_ARCH slc7_amd64_gcc700
+if ( "$kernel" =~ *el7* ) then
+    :
+else
+    echo "This release requires an EL7 machine, e.g. naf-cms-el7.desy.de"
+    echo "Please log into one and run this again"
+    exit 1
+endif
 set CMSREL=CMSSW_10_6_5
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src

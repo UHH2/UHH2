@@ -89,11 +89,16 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh
 time git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
-export SCRAM_ARCH=slc6_amd64_gcc700
+export SCRAM_ARCH=slc7_amd64_gcc700
 KERNEL=$(uname -r)
-# Update for EL7 (i.e. CC7/SL7) - should work for lxplus and NAF EL7 machines
-if [[ "$KERNEL" == *el7* ]]; then
-	export SCRAM_ARCH=slc7_amd64_gcc700
+# Check if this machine is compatible, because at DESY the default is SL6,
+# whereas we need EL7
+# Note that lxplus machines have uname e.g. 3.10.0-1062.4.1.el7.x86_64
+# so just checking for el7 is OK
+if [[ "$KERNEL" != *el7* ]]; then
+    echo "This release requires an EL7 machine, e.g. naf-cms-el7.desy.de"
+    echo "Please log into one and run this again"
+    exit 1
 fi
 CMSREL=CMSSW_10_6_5
 eval `cmsrel ${CMSREL}`
