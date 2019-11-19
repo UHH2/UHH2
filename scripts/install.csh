@@ -11,10 +11,16 @@ set MAKEFLAGS="-j${cores}"
 
 # Get CMSSW
 source /cvmfs/cms.cern.ch/cmsset_default.csh
-setenv SCRAM_ARCH slc6_amd64_gcc700
+setenv SCRAM_ARCH slc7_amd64_gcc700
 set kernel=`uname -r`
-if ( "$kernel" =~ *el7* ) setenv SCRAM_ARCH slc7_amd64_gcc700
-set CMSREL=CMSSW_10_2_16
+if ( "$kernel" =~ *el7* ) then
+    :
+else
+    echo "This release requires an EL7 machine, e.g. naf-cms-el7.desy.de"
+    echo "Please log into one and run this again"
+    exit 1
+endif
+set CMSREL=CMSSW_10_6_5
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -csh`
@@ -100,7 +106,7 @@ time scram b $MAKEFLAGS
 
 # Get the UHH2 repo & JEC,JER files
 cd ${CMSSW_BASE}/src
-git clone -b RunII_102X_v2 https://github.com/UHH2/UHH2.git
+git clone -b RunII_106X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 git clone https://github.com/cms-jet/JECDatabase.git
 git clone https://github.com/cms-jet/JRDatabase.git

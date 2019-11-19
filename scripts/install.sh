@@ -83,19 +83,43 @@ setupFastjet() {
 	cd ..
 }
 
+checkArch() {
+	# Check if this machine is compatible, because at DESY the default is SL6,
+	# whereas we need EL7
+	# Note that lxplus machines have uname e.g. 3.10.0-1062.4.1.el7.x86_64
+	# so just checking for el7 is OK
+	# To complicate matters, we need to handle gitlab CI as well,
+	# however there uname is useless, it just gives e.g. 4.19.68-coreos. 
+	# Instead we must rely on the IMAGE variable that we set in .gitlab-ci.yml
+	# (yes that is a horrible dependence)
+	if [ -n "$IMAGE" ]
+	then
+		# here is on gitlab CI
+		if [[ "$IMAGE" != *cc7* ]]; then
+			echo "This release requires a CC7 image"
+			echo "Please update .gitlab-ci.yml and/or testPR.sh and run this again"
+			exit 1
+		fi
+	else
+		# here is normal running e.g. on NAF
+		KERNEL=$(uname -r)
+		if [[ "$KERNEL" != *el7* ]]; then
+			echo "This release requires an EL7 machine, e.g. naf-cms-el7.desy.de"
+			echo "Please log into one and run this again"
+			exit 1
+		fi
+	fi
+}
+
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
 # Get SFrame, do not compile it until we have the right ROOT etc
 time git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
-export SCRAM_ARCH=slc6_amd64_gcc700
-KERNEL=$(uname -r)
-# Update for EL7 (i.e. CC7/SL7) - should work for lxplus and NAF EL7 machines
-if [[ "$KERNEL" == *el7* ]]; then
-	export SCRAM_ARCH=slc7_amd64_gcc700
-fi
-CMSREL=CMSSW_10_2_16
+export SCRAM_ARCH=slc7_amd64_gcc700
+checkArch
+CMSREL=CMSSW_10_6_5
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
@@ -141,7 +165,7 @@ time scram b $MAKEFLAGS
 
 # Get the UHH2 repo & JEC,JER files
 cd $CMSSW_BASE/src
-time git clone -b RunII_102X_v2 https://github.com/UHH2/UHH2.git
+time git clone -b RunII_106X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 time git clone https://github.com/cms-jet/JECDatabase.git
 time git clone https://github.com/cms-jet/JRDatabase.git
