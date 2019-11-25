@@ -246,7 +246,7 @@ bool TopTagReconstruction::process(uhh2::Event & event) {
 
 std::vector<LorentzVector> NeutrinoReconstruction(const LorentzVector & lepton, const LorentzVector & met) {
     LorentzVector lepton_ = lepton;
-    lepton_.SetE(lepton_.P()); //TEST: set mass of lepton to 0
+    lepton_.SetE(lepton_.P()); // set mass of lepton to 0
     TVector3 lepton_pT = toVector(lepton_);
     lepton_pT.SetZ(0);
     TVector3 neutrino_pT = toVector(met);
@@ -263,26 +263,15 @@ std::vector<LorentzVector> NeutrinoReconstruction(const LorentzVector & lepton, 
         LorentzVectorXYZE solution (met.Px(),met.Py(),-B / A,0);
         solution.SetE(solution.P());
         solutions.emplace_back(toPtEtaPhi(solution));
-	//	cout<<"!!! Only real part of the solution !!!"<<endl;
     }
     else {
         discriminant = sqrt(discriminant);
         LorentzVectorXYZE solution (met.Px(),met.Py(),(-B - discriminant) / A,0);
         solution.SetE(solution.P());
         solutions.emplace_back(toPtEtaPhi(solution));
-	//	cout<<"((( 2 solutions )))"<<endl;
         LorentzVectorXYZE solution2 (met.Px(),met.Py(),(-B + discriminant) / A,0);
         solution2.SetE(solution2.P());
         solutions.emplace_back(toPtEtaPhi(solution2));
     }
-    // if(solutions.size()>0){
-    //   cout<<"solutions.size() = "<<solutions.size()<<endl;
-    //   cout<<"solution1.M: "<<solutions.at(0).M()<<" solutions.at(0).Pt(): "<<solutions.at(0).Pt()<<endl;
-    //   cout<<"Lepton: mass, pt "<<lepton_.M()<<", "<<lepton_.Pt()<<endl;
-    //   LorentzVector Wvec = solutions.at(0) + lepton;
-    //   cout<<"Wvec.M: "<<Wvec.M()<<endl;
-
-    //   //      cout<<"solution2.M: "<<solutions.at(2).M()<<endl;
-    // }
     return solutions;
 }
