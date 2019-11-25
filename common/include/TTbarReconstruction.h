@@ -45,6 +45,41 @@ private:
 };
 
 
+/** \brief Make a list of ttbar reconstruction hypotheses for Tstar-Tstar search with 13 TeV data
+ * In this case leading jet(s) does not belong to ttbar and should be skipped in the reconstruction
+ *
+ * Make a list of ttbar reconstruction hypothesis using all (~ 3^Njet) combinations
+ * of assigning jets to either the leptonic top, the hadronic top, or none of them;
+ * hypotheses not assigning any jet to either the hadronic or leptonic top
+ * are discarded.
+ * For the leptonic side, the primary lepton and the neutrino reconstruction
+ * according to the neutrinofunction parameter is done, which typically doubles
+ * the number of hypotheses.
+ *
+ * Make sure to run an appropriate cleaner to keep only jets which should be used
+ * in the hypothesis. Only works for events with Njets >= 2.
+ *
+ * neutrinofunction can be e.g. NeutrinoReconstruction or NeutrinoFitPolar
+ *
+ * label = name of the hypotheses list in the event / output tree
+ */
+class HighMassSkipJetsTTbarReconstruction: public uhh2::AnalysisModule {
+public:
+
+  explicit HighMassSkipJetsTTbarReconstruction(uhh2::Context & ctx, const NeutrinoReconstructionMethod & neutrinofunction, const std::string & label="HighMassSkipJetsReconstruction", const int & N_skip_jets=1);
+
+    virtual bool process(uhh2::Event & event) override;
+
+    virtual ~HighMassSkipJetsTTbarReconstruction();
+
+private:
+    int n_skip_jets_;
+    NeutrinoReconstructionMethod m_neutrinofunction;
+    uhh2::Event::Handle<std::vector<ReconstructionHypothesis>> h_recohyps;
+    uhh2::Event::Handle<FlavorParticle> h_primlep;
+};
+
+
 /** \brief Make a list of ttbar reconstruction hypotheses using top tagging
  *
  * Take the C/A-Jet with the TopTag and use it as hadronic Top.
