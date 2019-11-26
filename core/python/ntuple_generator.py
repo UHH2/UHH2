@@ -55,7 +55,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         If the year argument is not one of the allowable options
     """
     year = str(year)  # sanitise string
-    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "2017UL"]
+    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "2017UL", "2018UL"]
     if year not in acceptable_years:
         raise ValueError("year argument in generate_process() should be one of: %s. You provided: %s" % (acceptable_years, year))
 
@@ -72,6 +72,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # eras are needed for correct b-tagging
     from Configuration.StandardSequences.Eras import eras
     if year == "2018":
+        process = cms.Process("USER", eras.Run2_2018)
+    elif year == "2018UL":
         process = cms.Process("USER", eras.Run2_2018)
     elif year == "2017UL":
         process = cms.Process("USER", eras.Run2_2018)
@@ -289,6 +291,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         "2018": {
             "data": "102X_dataRun2_Prompt_v6",
             "mc": "102X_upgrade2018_realistic_v15",
+        },
+        "2018UL": {
+            "data": "106X_dataRun2_v24",
+            "mc": "106X_upgrade2018_realistic_v11_L1v1",
         },
     }
     if set(global_tags.keys()) != set(acceptable_years):
@@ -1861,6 +1867,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         "2017v2": ele_iso_17,
         "2017UL": ele_iso_17,
         "2018": ele_iso_17,
+        "2018UL": ele_iso_17,
     }
 
     # slimmedElectronsUSER ( = slimmedElectrons + USER variables)
