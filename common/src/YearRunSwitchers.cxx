@@ -161,5 +161,9 @@ void RunSwitcher::setupRun(const std::string & runPeriod, std::shared_ptr<uhh2::
 
 std::string RunSwitcher::shortYear(const std::string & year) {
   // sanitise year, chop off any v*
-  return year.substr(0, year.find("v"));
+  if (year.find("UL") != std::string::npos) {
+    return year.substr(0, year.find("UL"));
+  } else {
+    return year.substr(0, year.find("v"));
+  }
 }
