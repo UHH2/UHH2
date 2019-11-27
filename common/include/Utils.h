@@ -102,8 +102,8 @@ enum class Year {
     is2017v1,
     is2017v2,
     is2017UL,
-    is2018,
-    is2018UL
+    is2018UL,
+    is2018
 };
 
 /* Map from Year to string */
