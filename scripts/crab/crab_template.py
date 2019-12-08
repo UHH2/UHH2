@@ -16,7 +16,12 @@ from DasQuery import autocomplete_Datasets
 
 
 def get_request_name(dataset_name):
-    """Generate short string to use for request name from full dataset name"""
+    """Generate short string to use for request name from full dataset name
+
+    Note that since this is used later on by e.g. multicrab status check,
+    it should be invariant wrt time, commit hash, etc, otherwise it will not
+    find the correct dir
+    """
     modified_name = dataset_name.split('/')[1]
     modified_name = modified_name.replace('_TuneCUETP8M1_13TeV-madgraphMLM-pythia8', '_P8M1')
     modified_name = modified_name.replace('_TuneCP5_13TeV-madgraphMLM-pythia8', '_CP5')
@@ -73,7 +78,7 @@ requestNames = [get_request_name(x) for x in inputDatasets]
 # Classical part of crab, after resolving the * it uses in the example below just the first entry
 #
 
-from CRABClient.UserUtilities import config, getUsernameFromSiteDB
+from CRABClient.UserUtilities import config
 from CRABClient.ClientExceptions import ProxyException
 import os
 import re
@@ -92,23 +97,22 @@ config.JobType.maxMemoryMB = 2500
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'EventAwareLumiBased'
 config.Data.unitsPerJob = 24000
-try:
-    # Add subdirectory using year from config filename
-    pset = os.path.basename(config.JobType.psetName)
-    result = re.search(r'201[\d](v\d)?', pset)
-    if not result:
-        raise RuntimeError("Cannot extract year from psetName! Does your psetName have 201* in it?")
-    year = result.group()
-    config.Data.outLFNDirBase = '/store/user/%s/RunII_102X_v1/%s/' % (getUsernameFromSiteDB(), year)
-except ProxyException as e:
-    print "Encountered ProxyException:"
-    print e.message
-    print "Not setting config.Data.outLFNDirBase, will use default"
+
+# Add subdirectory using year from config filename
+pset = os.path.basename(config.JobType.psetName)
+result = re.search(r'201[\d](v\d)?', pset)
+if not result:
+    raise RuntimeError("Cannot extract year from psetName! Does your psetName have 201* in it?")
+year = result.group()
+config.Data.outLFNDirBase = '/store/group/uhh/uhh2ntuples/RunII_102X_v2/%s/' % (year)
+
+# If you want to run some private production and not put it in the group area, use this instead:
+# from CRABClient.UserUtilities import getUsernameFromSiteDB
+# config.Data.outLFNDirBase = '/store/user/%s/RunII_102X_v1/%s/' % (getUsernameFromSiteDB(), year)
 
 config.Data.publication = False
 config.JobType.sendExternalFolder = True
 #config.Data.allowNonValidInputDataset = True
-#config.Data.publishDataName = 'CRAB3_tutorial_May2015_MC_analysis'
 
 config.Site.storageSite = 'T2_DE_DESY'
 
