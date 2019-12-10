@@ -100,3 +100,12 @@ git clone -b RunII_102X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 git clone https://github.com/cms-jet/JECDatabase.git
 time make $MAKEFLAGS
+
+# Add the UHH2-datasets repo
+cd common/datasets
+git init
+git remote add UHH https://github.com/UHH2/UHH2-datasets
+git fetch UHH
+git reset --hard UHH/master  # reset to the HEAD state of UHH2-dataset
+git branch -u UHH/master  # setup to track from the main repo, i.e. default if you do git pull
+cd ../..
