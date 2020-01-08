@@ -119,7 +119,7 @@ time git clone https://github.com/UHH2/SFrame.git
 # Get CMSSW
 export SCRAM_ARCH=slc7_amd64_gcc700
 checkArch
-CMSREL=CMSSW_10_6_5
+CMSREL=CMSSW_10_6_8
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
