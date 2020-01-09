@@ -7,7 +7,13 @@
 
 
 import sys, multiprocessing, time, os
+import subprocess
+import ROOT
 from ROOT import *
+
+ROOT.PyConfig.IgnoreCommandLineOptions = True
+ROOT.gROOT.SetBatch(1)
+
 
 def read_xml(xmlFileDir):
     xmlFile = open(str(xmlFileDir))
@@ -21,10 +27,13 @@ def read_xml(xmlFileDir):
 def read_tree(rootDir):
     numberOfweightedEntries = 0
     try:
-        ntuple = TFile(str(rootDir))
-        AnalysisTree = ntuple.Get("AnalysisTree")
-        for event in AnalysisTree:
-            numberOfweightedEntries+=event.m_weights[0]
+        # Use C++ script to count as significantly faster (~15x)
+        cmd = "root -q -b -l 'countNumberEvents.C+(\""+rootDir+"\",false)'"
+        output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+        # now have to be careful - root will return 0 even if there's an error
+        if "error:" in output.lower():
+            raise RuntimeError("Error running ROOT: " + output)
+        numberOfweightedEntries = float(output.splitlines()[-1])
     except Exception as e:
         print 'unable to count events in root file',rootDir
         print e
