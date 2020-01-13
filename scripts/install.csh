@@ -20,7 +20,7 @@ else
     echo "Please log into one and run this again"
     exit 1
 endif
-set CMSREL=CMSSW_10_6_5
+set CMSREL=CMSSW_10_6_8
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -csh`
