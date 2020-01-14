@@ -142,14 +142,12 @@ if __name__ == '__main__':
                         fileList.append(xmlname)
                 result_list = readEntries(cores,fileList,fast)
                 
-                entriesFile = open("entriesFile.txt",'w+')
+                entriesFile = open("entriesFile.txt",'a+')
                 if fast: 
                         entriesFile.write('The fast Method used for the number of Entries, no weights used\n')
                 else:
                         entriesFile.write('Weights have been used\n')
                 for i, name in enumerate(fileList):
                         entriesFile.write(name+' '+str(result_list[i])+'\n')
-                        xmlFile = open(name,'a')
-                        #xmlFile.write('<!-- < NumberEntries="'+str(result_list[i])+'" Method='+method+' /> -->')
                 entriesFile.close()
                 
