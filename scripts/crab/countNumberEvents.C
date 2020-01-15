@@ -34,6 +34,7 @@ using namespace std;
  */
 
 void countNumberEvents(string filename, bool ignoreWeights) {
+  if (filename=="") return;
   TFile * f = TFile::Open(filename.c_str());
   if (f == nullptr || f->IsZombie()) {
     throw std::runtime_error("Cannot open " + filename);

@@ -7,6 +7,9 @@ pydump*.py
 core/python/__init__.py
 *.pyc
 *.root
+*.d
+*.so
+*.pcm
 *~
 *.local
 *.pdf

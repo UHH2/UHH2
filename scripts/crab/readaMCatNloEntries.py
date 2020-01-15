@@ -28,7 +28,7 @@ def read_tree(rootDir):
     numberOfweightedEntries = 0
     try:
         # Use C++ script to count as significantly faster (~15x)
-        cmd = "root -q -b -l 'countNumberEvents.C(\""+rootDir+"\",false)'"
+        cmd = "root -q -b -l 'countNumberEvents.C+(\""+rootDir+"\",false)'"
         output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
         # now have to be careful - root will return 0 even if there's an error
         if "error:" in output.lower():
@@ -52,6 +52,7 @@ def read_treeFast(rootDir):
 
 def readEntries(worker, xmlfiles, fast=False):
     if fast: print 'Going to use the Fast Method, no weights used'
+    else: os.system("root -q -b -l 'countNumberEvents.C+(\"\",0)'")
     print "number of workers",worker
     result_list = []
     for xml in xmlfiles:
