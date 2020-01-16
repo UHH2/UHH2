@@ -78,7 +78,7 @@ def readEntries(worker, xmlfiles, fast=False):
         pool.join()
         entries_per_rootfile = [r for r in result.get()]
         print "number of events in",xml,sum(entries_per_rootfile)
-	result_list.append(sum(entries_per_rootfile))
+        result_list.append(sum(entries_per_rootfile))
         commentOutEmptyRootFiles(xml, entries_per_rootfile,fast)
     return result_list
 
