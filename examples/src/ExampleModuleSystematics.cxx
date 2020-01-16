@@ -61,11 +61,9 @@ ExampleModuleSystematics::ExampleModuleSystematics(Context & ctx)
   topjet_corrector_MC->setup2017(std::make_shared<TopJetCorrector>(ctx, JERFiles::JECFilesMC("Fall17_17Nov2017", "32", "AK8PFchs")));
   topjet_corrector_MC->setup2018(std::make_shared<TopJetCorrector>(ctx, JERFiles::JECFilesMC("Autumn18", "7", "AK8PFchs")));
   // This should really be set up for different years as well, but to keep life simple it's only for 2018
-  topjet_resolution_smearer.reset(new GenericJetResolutionSmearer(ctx,
-                                                                  "topjets",
-                                                                  "gentopjets",
-                                                                  JERSmearing::SF_13TeV_Autumn18_RunABCD_V4,
-                                                                  "2018/Autumn18_V4_MC_PtResolution_AK8PFPuppi.txt"));
+  topjet_resolution_smearer.reset(new GenericJetResolutionSmearer(ctx, "topjets", "gentopjets",
+  "JRDatabase/textFiles/Autumn18_V4_MC/Autumn18_V4_MC_SF_AK8PFPuppi.txt",
+  "JRDatabase/textFiles/Autumn18_V4_MC/Autumn18_V4_MC_PtResolution_AK8PFPuppi.txt"));
 
 
   // Setup Scale (muF, muR) reweighting

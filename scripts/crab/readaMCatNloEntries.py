@@ -33,10 +33,10 @@ def read_tree(rootDir):
         # now have to be careful - root will return 0 even if there's an error
         if "error:" in output.lower():
             raise RuntimeError("Error running ROOT: " + output)
-        numberOfweightedEntries = float(output.splitlines()[-1])
     except Exception as e:
         print 'unable to count events in root file',rootDir
         print e
+    numberOfweightedEntries = float(output.splitlines()[-1])
     return numberOfweightedEntries
 
 def read_treeFast(rootDir):
@@ -52,7 +52,9 @@ def read_treeFast(rootDir):
 
 def readEntries(worker, xmlfiles, fast=False):
     if fast: print 'Going to use the Fast Method, no weights used'
+    else: os.system("root -q -b -l 'countNumberEvents.C+(\"\",0)'")
     print "number of workers",worker
+    result_list = []
     for xml in xmlfiles:
         pool = multiprocessing.Pool(processes=int(worker))
         print "open XML file:",xml
@@ -76,7 +78,9 @@ def readEntries(worker, xmlfiles, fast=False):
         pool.join()
         entries_per_rootfile = [r for r in result.get()]
         print "number of events in",xml,sum(entries_per_rootfile)
+        result_list.append(sum(entries_per_rootfile))
         commentOutEmptyRootFiles(xml, entries_per_rootfile,fast)
+    return result_list
 
 
 def commentOutEmptyRootFiles(xmlfile, entries_per_rootfile,fast=False):
