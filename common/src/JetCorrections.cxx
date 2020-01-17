@@ -42,10 +42,10 @@ void correct_jet(FactorizedJetCorrector & corrector, Jet & jet, const Event & ev
 
       double unc = 0.;
       if (jec_unc_direction == 1){
-        unc = jec_unc->getUncertainty(1);
+        unc = jec_unc->getUncertainty(true);
         correctionfactor *= (1 + fabs(unc));
       } else if (jec_unc_direction == -1){
-        unc = jec_unc->getUncertainty(-1);
+        unc = jec_unc->getUncertainty(false);
         correctionfactor *= (1 - fabs(unc));
       }
       jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
