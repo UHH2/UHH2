@@ -42,10 +42,10 @@ using namespace uhh2;
 
 	double unc = 0.;
 	if (jec_unc_direction == 1){
-	  unc = jec_unc->getUncertainty(1);
+	  unc = jec_unc->getUncertainty(true);
 	  correctionfactor *= (1 + fabs(unc));
 	} else if (jec_unc_direction == -1){
-	  unc = jec_unc->getUncertainty(-1);
+	  unc = jec_unc->getUncertainty(false);
 	  correctionfactor *= (1 - fabs(unc));
 	}
 	jet_v4_corrected = jet.v4() * (factor_raw *correctionfactor);
@@ -155,20 +155,23 @@ JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::
         throw runtime_error("JetCorrector: invalid value jecsmear_direction='" + dir + "' (valid: 'nominal', 'up', 'down')");
     }
 
+    // Get optional source of JEC, defaults the total uncertainty if the user doesn't specify one
+    std::string source = ctx.get("jecsmear_source", "Total");
+
     //initialize JetCorrectionUncertainty if shift direction is not "nominal", else return NULL pointer
     if(direction!=0){
-      //take name from the L1FastJet correction (0th element of filenames) and replace "L1FastJet" by "Uncertainty" to get the proper name of the uncertainty file
+      //take name from the L1FastJet correction (0th element of filenames) and replace "L1FastJet" by "UncertaintySources" to get the proper name of the uncertainty file
       TString unc_file = locate_file(filenames[0]);
       if (unc_file.Contains("L1FastJet")) {
-        unc_file.ReplaceAll("L1FastJet","Uncertainty");
+        unc_file.ReplaceAll("L1FastJet","UncertaintySources");
       }
       else if (unc_file.Contains("L2Relative")) {
-        unc_file.ReplaceAll("L2Relative","Uncertainty");
+        unc_file.ReplaceAll("L2Relative","UncertaintySources");
       }
       else {
         throw runtime_error("WARNING No JEC Uncertainty File found!");
       }
-      JetCorrectionUncertainty* jec_uncertainty = new JetCorrectionUncertainty(unc_file.Data());
+      JetCorrectionUncertainty* jec_uncertainty = new JetCorrectionUncertainty(*(new JetCorrectorParameters(unc_file.Data(), source)));
       return jec_uncertainty;
     }
     return NULL;
