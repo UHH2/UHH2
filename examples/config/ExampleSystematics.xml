@@ -42,6 +42,14 @@
             <!-- <Item Name="jecsmear_direction" Value="down"/> -->
             <!-- <Item Name="jecsmear_direction" Value="up"/> -->
 
+            <Item Name="jecsmear_source" Value="Total"/>
+            <!--
+                 Can specify exactly which JEC ucnertainty gets applied,
+                 for valid options you have to look inside the *UncertaintySources*.txt
+                 in JECDatabase/textFiles
+            -->
+            <!-- <Item Name="jecsmear_source" Value="TimePtEta"/> -->
+
             <!-- <Item Name="jersmear_direction" Value="nominal"/> -->
             <Item Name="jersmear_direction" Value="down"/>
             <!-- <Item Name="jersmear_direction" Value="up"/> -->
