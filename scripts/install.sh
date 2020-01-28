@@ -169,3 +169,9 @@ time git clone -b RunII_106X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 time git clone https://github.com/cms-jet/JECDatabase.git
 time git clone https://github.com/cms-jet/JRDatabase.git
+cd common
+time git clone https://github.com/UHH2/UHH2-datasets.git
+cd UHH2-datasets
+git remote rename origin UHH2
+git branch -u UHH2/master
+cd ../..

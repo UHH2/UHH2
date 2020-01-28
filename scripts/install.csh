@@ -110,4 +110,7 @@ git clone -b RunII_106X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 git clone https://github.com/cms-jet/JECDatabase.git
 git clone https://github.com/cms-jet/JRDatabase.git
+cd common
+git clone https://github.com/UHH2/UHH2-datasets.git
+cd ..
 time make $MAKEFLAGS
