@@ -265,42 +265,58 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
 };
 
 
-class MCCSVv2ShapeSystematic: public uhh2::AnalysisModule {
-public:
-  explicit MCCSVv2ShapeSystematic(uhh2::Context & ctx,
-                                  const std::string & jets_handle_name="jets",
-                                  const std::string & sysType="central",
-                                  const std::string & measType="iterativefit",
-                                  const std::string & weights_name_postfix="",
-                                  const std::string & xml_calib_name="MCCSVv2ShapeSystematic");
+/**\brief Apply reweighting of b-tag discriminant distribution
+ *
+ * jets_handle_name should point to a handle of type vector<Jet>
+ *
+ * The file given by xml_calib_name should point to a .csv file containing all weights;
+ * the files for the individual years can be downloaded here:
+ * https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation#Recommendation_for_13_TeV_Data
+ * (click on the link in the 'Twiki' column, then download the inclusive file -- not the WP-only file)
+ *
+ * In contrast to CSVv2, the DeepJet/DeepCSV .csv files contain not only a total JES variation but also all
+ * individual contributions to the JES variation, e.g. 'jesPileUpPtBB', 'jesSinglePionHCAL' ...
+ * For now, we ignore these individual contributions and just use the combined total JES variation.
+ */
+class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
+ public:
+  explicit MCBTagDiscriminantReweighting(uhh2::Context & ctx,
+					 BTag::algo algorithm,
+					 const std::string & jets_handle_name="jets",
+					 const std::string & sysType="central",
+					 const std::string & measType="iterativefit",
+					 const std::string & weights_name_postfix="",
+					 const std::string & xml_calib_name="BTagCalibration");
 
   virtual bool process(uhh2::Event & event) override;
 
-protected:
-
+ protected:
+  BTag::algo algorithm_;
   std::unique_ptr<BTagCalibrationReader> reader;
   uhh2::Event::Handle<std::vector<Jet>> h_jets_;
   std::string sysType_;
-  uhh2::Event::Handle<float> h_weight_csv_central;
-  uhh2::Event::Handle<float> h_weight_csv_jesup;
-  uhh2::Event::Handle<float> h_weight_csv_jesdown;
-  uhh2::Event::Handle<float> h_weight_csv_lfup;
-  uhh2::Event::Handle<float> h_weight_csv_lfdown;
-  uhh2::Event::Handle<float> h_weight_csv_hfup;
-  uhh2::Event::Handle<float> h_weight_csv_hfdown;
-  uhh2::Event::Handle<float> h_weight_csv_hfstats1up;
-  uhh2::Event::Handle<float> h_weight_csv_hfstats1down;
-  uhh2::Event::Handle<float> h_weight_csv_hfstats2up;
-  uhh2::Event::Handle<float> h_weight_csv_hfstats2down;
-  uhh2::Event::Handle<float> h_weight_csv_lfstats1up;
-  uhh2::Event::Handle<float> h_weight_csv_lfstats1down;
-  uhh2::Event::Handle<float> h_weight_csv_lfstats2up;
-  uhh2::Event::Handle<float> h_weight_csv_lfstats2down;
-  uhh2::Event::Handle<float> h_weight_csv_cferr1up;
-  uhh2::Event::Handle<float> h_weight_csv_cferr1down;
-  uhh2::Event::Handle<float> h_weight_csv_cferr2up;
-  uhh2::Event::Handle<float> h_weight_csv_cferr2down;
+  uhh2::Event::Handle<float> h_weight_btagdisc_central;
+  uhh2::Event::Handle<float> h_weight_btagdisc_jesup;
+  uhh2::Event::Handle<float> h_weight_btagdisc_jesdown;
+  uhh2::Event::Handle<float> h_weight_btagdisc_lfup;
+  uhh2::Event::Handle<float> h_weight_btagdisc_lfdown;
+  uhh2::Event::Handle<float> h_weight_btagdisc_hfup;
+  uhh2::Event::Handle<float> h_weight_btagdisc_hfdown;
+  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats1up;
+  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats1down;
+  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats2up;
+  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats2down;
+  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats1up;
+  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats1down;
+  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats2up;
+  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats2down;
+  uhh2::Event::Handle<float> h_weight_btagdisc_cferr1up;
+  uhh2::Event::Handle<float> h_weight_btagdisc_cferr1down;
+  uhh2::Event::Handle<float> h_weight_btagdisc_cferr2up;
+  uhh2::Event::Handle<float> h_weight_btagdisc_cferr2down;
+  // TODO: Add a bunch of handles for splitted JES uncertainties here later if needed. Splitted JES uncertainties are not available for CSVv2 but for DeepJet and DeepCSV.
 };
+
 
 /** \brief Vary Tau efficiency
  *
@@ -320,6 +336,7 @@ class TauEffVariation: public uhh2::AnalysisModule {
   // SF for Run-2 2016 is 0.83 while SF for Run-1 and Run-2 2015 is equal to 1.
   double SF_TauId = 0.9; 
 };
+
 
 /** \brief Vary Tau charge
  *

@@ -911,44 +911,48 @@ std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, 
 }
 
 
-///// Copy from https://github.com/reimersa/UHH2/blob/RunII_94X_v1/common/src/MCWeight.cxx#L851
-MCCSVv2ShapeSystematic::MCCSVv2ShapeSystematic(uhh2::Context & ctx,
-                                               const std::string & jets_handle_name,
-                                               const std::string & sysType,
-                                               const std::string & measType,
-                                               const std::string & weights_name_postfix,
-                                               const std::string & xml_calib_name):
+// Originally copied from https://github.com/reimersa/UHH2/blob/RunII_94X_v1/common/src/MCWeight.cxx#L851
+// Old class name: 'MCCSVv2ShapeSystematic'
+// This new version also works for DeepJet and DeepCSV!
+MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(uhh2::Context & ctx,
+							     BTag::algo algorithm,
+							     const std::string & jets_handle_name,
+							     const std::string & sysType,
+							     const std::string & measType,
+							     const std::string & weights_name_postfix,
+							     const std::string & xml_calib_name):
+  algorithm_(algorithm),
   h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
   sysType_(sysType),
-  h_weight_csv_central (ctx.declare_event_output<float>("weight_csv_central"+weights_name_postfix)),
-  h_weight_csv_jesup (ctx.declare_event_output<float>("weight_csv_jesup"+weights_name_postfix)),
-  h_weight_csv_jesdown (ctx.declare_event_output<float>("weight_csv_jesdown"+weights_name_postfix)),
-  h_weight_csv_lfup (ctx.declare_event_output<float>("weight_csv_lfup"+weights_name_postfix)),
-  h_weight_csv_lfdown (ctx.declare_event_output<float>("weight_csv_lfdown"+weights_name_postfix)),
-  h_weight_csv_hfup (ctx.declare_event_output<float>("weight_csv_hfup"+weights_name_postfix)),
-  h_weight_csv_hfdown (ctx.declare_event_output<float>("weight_csv_hfdown"+weights_name_postfix)),
-  h_weight_csv_hfstats1up (ctx.declare_event_output<float>("weight_csv_hfstats1up"+weights_name_postfix)),
-  h_weight_csv_hfstats1down (ctx.declare_event_output<float>("weight_csv_hfstats1down"+weights_name_postfix)),
-  h_weight_csv_hfstats2up (ctx.declare_event_output<float>("weight_csv_hfstats2up"+weights_name_postfix)),
-  h_weight_csv_hfstats2down (ctx.declare_event_output<float>("weight_csv_hfstats2down"+weights_name_postfix)),
-  h_weight_csv_lfstats1up (ctx.declare_event_output<float>("weight_csv_lfstats1up"+weights_name_postfix)),
-  h_weight_csv_lfstats1down (ctx.declare_event_output<float>("weight_csv_lfstats1down"+weights_name_postfix)),
-  h_weight_csv_lfstats2up (ctx.declare_event_output<float>("weight_csv_lfstats2up"+weights_name_postfix)),
-  h_weight_csv_lfstats2down (ctx.declare_event_output<float>("weight_csv_lfstats2down"+weights_name_postfix)),
-  h_weight_csv_cferr1up (ctx.declare_event_output<float>("weight_csv_cferr1up"+weights_name_postfix)),
-  h_weight_csv_cferr1down (ctx.declare_event_output<float>("weight_csv_cferr1down"+weights_name_postfix)),
-  h_weight_csv_cferr2up (ctx.declare_event_output<float>("weight_csv_cferr2up"+weights_name_postfix)),
-  h_weight_csv_cferr2down (ctx.declare_event_output<float>("weight_csv_cferr2down"+weights_name_postfix))
+  h_weight_btagdisc_central (ctx.declare_event_output<float>("weight_btagdisc_central"+weights_name_postfix)),
+  h_weight_btagdisc_jesup (ctx.declare_event_output<float>("weight_btagdisc_jesup"+weights_name_postfix)),
+  h_weight_btagdisc_jesdown (ctx.declare_event_output<float>("weight_btagdisc_jesdown"+weights_name_postfix)),
+  h_weight_btagdisc_lfup (ctx.declare_event_output<float>("weight_btagdisc_lfup"+weights_name_postfix)),
+  h_weight_btagdisc_lfdown (ctx.declare_event_output<float>("weight_btagdisc_lfdown"+weights_name_postfix)),
+  h_weight_btagdisc_hfup (ctx.declare_event_output<float>("weight_btagdisc_hfup"+weights_name_postfix)),
+  h_weight_btagdisc_hfdown (ctx.declare_event_output<float>("weight_btagdisc_hfdown"+weights_name_postfix)),
+  h_weight_btagdisc_hfstats1up (ctx.declare_event_output<float>("weight_btagdisc_hfstats1up"+weights_name_postfix)),
+  h_weight_btagdisc_hfstats1down (ctx.declare_event_output<float>("weight_btagdisc_hfstats1down"+weights_name_postfix)),
+  h_weight_btagdisc_hfstats2up (ctx.declare_event_output<float>("weight_btagdisc_hfstats2up"+weights_name_postfix)),
+  h_weight_btagdisc_hfstats2down (ctx.declare_event_output<float>("weight_btagdisc_hfstats2down"+weights_name_postfix)),
+  h_weight_btagdisc_lfstats1up (ctx.declare_event_output<float>("weight_btagdisc_lfstats1up"+weights_name_postfix)),
+  h_weight_btagdisc_lfstats1down (ctx.declare_event_output<float>("weight_btagdisc_lfstats1down"+weights_name_postfix)),
+  h_weight_btagdisc_lfstats2up (ctx.declare_event_output<float>("weight_btagdisc_lfstats2up"+weights_name_postfix)),
+  h_weight_btagdisc_lfstats2down (ctx.declare_event_output<float>("weight_btagdisc_lfstats2down"+weights_name_postfix)),
+  h_weight_btagdisc_cferr1up (ctx.declare_event_output<float>("weight_btagdisc_cferr1up"+weights_name_postfix)),
+  h_weight_btagdisc_cferr1down (ctx.declare_event_output<float>("weight_btagdisc_cferr1down"+weights_name_postfix)),
+  h_weight_btagdisc_cferr2up (ctx.declare_event_output<float>("weight_btagdisc_cferr2up"+weights_name_postfix)),
+  h_weight_btagdisc_cferr2down (ctx.declare_event_output<float>("weight_btagdisc_cferr2down"+weights_name_postfix))
 {
   auto dataset_type = ctx.get("dataset_type");
   bool is_mc = dataset_type == "MC";
   if (!is_mc) {
-    cout << "Warning: MCCSVv2ShapeSystematic will not have an effect on "
+    cout << "Warning: MCBTagDiscriminantReweighting will not have an effect on "
          <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
     return;
   }
 
-  BTagCalibration calib_csvv2("csvv2", ctx.get(xml_calib_name));
+  BTagCalibration calibration("tagger", ctx.get(xml_calib_name)); // CHECK: the first std::string argument here should not be relevant
   reader.reset(new BTagCalibrationReader(BTagEntry::OP_RESHAPING,"central",
                                          {"up_jes","down_jes",
                                              "up_lf","down_lf",
@@ -959,34 +963,34 @@ MCCSVv2ShapeSystematic::MCCSVv2ShapeSystematic(uhh2::Context & ctx,
                                              "up_lfstats2","down_lfstats2",
                                              "up_cferr1","down_cferr1",
                                              "up_cferr2","down_cferr2"}));
-  reader->load(calib_csvv2,BTagEntry::FLAV_B,measType);
-  reader->load(calib_csvv2,BTagEntry::FLAV_C,measType);
-  reader->load(calib_csvv2,BTagEntry::FLAV_UDSG,measType);
+  reader->load(calibration,BTagEntry::FLAV_B,measType);
+  reader->load(calibration,BTagEntry::FLAV_C,measType);
+  reader->load(calibration,BTagEntry::FLAV_UDSG,measType);
 
 }
 
-bool MCCSVv2ShapeSystematic::process(Event & event) {
+bool MCBTagDiscriminantReweighting::process(Event & event) {
 
   if (event.isRealData) {
-    event.set(h_weight_csv_central,1.);
-    event.set(h_weight_csv_jesup,1.);
-    event.set(h_weight_csv_jesdown,1.);
-    event.set(h_weight_csv_lfup,1.);
-    event.set(h_weight_csv_lfdown,1.);
-    event.set(h_weight_csv_hfup,1.);
-    event.set(h_weight_csv_hfdown,1.);
-    event.set(h_weight_csv_hfstats1up,1.);
-    event.set(h_weight_csv_hfstats1down,1.);
-    event.set(h_weight_csv_hfstats2up,1.);
-    event.set(h_weight_csv_hfstats2down,1.);
-    event.set(h_weight_csv_lfstats1up,1.);
-    event.set(h_weight_csv_lfstats1down,1.);
-    event.set(h_weight_csv_lfstats2up,1.);
-    event.set(h_weight_csv_lfstats2down,1.);
-    event.set(h_weight_csv_cferr1up,1.);
-    event.set(h_weight_csv_cferr1down,1.);
-    event.set(h_weight_csv_cferr2up,1.);
-    event.set(h_weight_csv_cferr2down,1.);
+    event.set(h_weight_btagdisc_central,1.);
+    event.set(h_weight_btagdisc_jesup,1.);
+    event.set(h_weight_btagdisc_jesdown,1.);
+    event.set(h_weight_btagdisc_lfup,1.);
+    event.set(h_weight_btagdisc_lfdown,1.);
+    event.set(h_weight_btagdisc_hfup,1.);
+    event.set(h_weight_btagdisc_hfdown,1.);
+    event.set(h_weight_btagdisc_hfstats1up,1.);
+    event.set(h_weight_btagdisc_hfstats1down,1.);
+    event.set(h_weight_btagdisc_hfstats2up,1.);
+    event.set(h_weight_btagdisc_hfstats2down,1.);
+    event.set(h_weight_btagdisc_lfstats1up,1.);
+    event.set(h_weight_btagdisc_lfstats1down,1.);
+    event.set(h_weight_btagdisc_lfstats2up,1.);
+    event.set(h_weight_btagdisc_lfstats2down,1.);
+    event.set(h_weight_btagdisc_cferr1up,1.);
+    event.set(h_weight_btagdisc_cferr1down,1.);
+    event.set(h_weight_btagdisc_cferr2up,1.);
+    event.set(h_weight_btagdisc_cferr2down,1.);
     return true;
   }
 
@@ -1011,68 +1015,74 @@ bool MCCSVv2ShapeSystematic::process(Event & event) {
   float weight_cferr2down = 1.0;
 
   const auto & jets = event.get(h_jets_);
-  for (size_t ijet=0; ijet < 2; ijet++) {
+  for (size_t ijet=0; ijet < jets.size(); ijet++) {
     Jet jet = jets.at(ijet);
     float jet_pt = jet.pt();
     float jet_eta = jet.eta();
-    float jet_csv = jet.btag_combinedSecondaryVertex();
-    if (jet_csv < 0.0) jet_csv = -0.05;
-    if (jet_csv > 1.0) jet_csv = 1.0;
+
+    float jet_btagdisc;
+    if      (algorithm_ == BTag::CSVV2)   jet_btagdisc = jet.btag_combinedSecondaryVertex();
+    else if (algorithm_ == BTag::DEEPCSV) jet_btagdisc = jet.btag_DeepCSV();
+    else if (algorithm_ == BTag::DEEPJET) jet_btagdisc = jet.btag_DeepJet();
+    else throw runtime_error("MCBTagDiscriminantReweighting::process: Given b-tagging algorithm is (right now) not suited to be used jointly with this routine. Please check if it is compatible and then add your chosen algorithm as option to this analysis module. Adjust the routine if necessary.");
+
+    if (jet_btagdisc < 0.0) jet_btagdisc = -0.05;
+    if (jet_btagdisc > 1.0) jet_btagdisc = 1.0;
 
     BTagEntry::JetFlavor jet_flavor = BTagEntry::FLAV_UDSG;
     if (abs(jet.hadronFlavour()) == 5) jet_flavor = BTagEntry::FLAV_B;
     else if (abs(jet.hadronFlavour()) == 4) jet_flavor = BTagEntry::FLAV_C;
 
     if( jet_pt > 20.0 && fabs(jet_eta) < 2.4) {
-      weight_central *= reader->eval_auto_bounds("central",jet_flavor, jet_eta, jet_pt, jet_csv);
+      weight_central *= reader->eval_auto_bounds("central",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
       if (jet_flavor == BTagEntry::FLAV_B) {
-        weight_jesup *= reader->eval_auto_bounds("up_jes",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_jesdown *= reader->eval_auto_bounds("down_jes",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_lfup *= reader->eval_auto_bounds("up_lf",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_lfdown *= reader->eval_auto_bounds("down_lf",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_hfstats1up *= reader->eval_auto_bounds("up_hfstats1",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_hfstats1down *= reader->eval_auto_bounds("down_hfstats1",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_hfstats2up *= reader->eval_auto_bounds("up_hfstats2",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_hfstats2down *= reader->eval_auto_bounds("down_hfstats2",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_jesup *= reader->eval_auto_bounds("up_jes",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_jesdown *= reader->eval_auto_bounds("down_jes",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lfup *= reader->eval_auto_bounds("up_lf",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lfdown *= reader->eval_auto_bounds("down_lf",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hfstats1up *= reader->eval_auto_bounds("up_hfstats1",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hfstats1down *= reader->eval_auto_bounds("down_hfstats1",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hfstats2up *= reader->eval_auto_bounds("up_hfstats2",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hfstats2down *= reader->eval_auto_bounds("down_hfstats2",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
       }
       if (jet_flavor == BTagEntry::FLAV_C) {
-        weight_cferr1up *= reader->eval_auto_bounds("up_cferr1",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_cferr1down *= reader->eval_auto_bounds("down_cferr1",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_cferr2up *= reader->eval_auto_bounds("up_cferr2",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_cferr2down *= reader->eval_auto_bounds("down_cferr2",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_cferr1up *= reader->eval_auto_bounds("up_cferr1",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_cferr1down *= reader->eval_auto_bounds("down_cferr1",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_cferr2up *= reader->eval_auto_bounds("up_cferr2",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_cferr2down *= reader->eval_auto_bounds("down_cferr2",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
       }
       if (jet_flavor == BTagEntry::FLAV_UDSG) {
-        weight_jesup *= reader->eval_auto_bounds("up_jes",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_jesdown *= reader->eval_auto_bounds("down_jes",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_hfup *= reader->eval_auto_bounds("up_hf",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_hfdown *= reader->eval_auto_bounds("down_hf",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_lfstats1up *= reader->eval_auto_bounds("up_lfstats1",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_lfstats1down *= reader->eval_auto_bounds("down_lfstats1",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_lfstats2up *= reader->eval_auto_bounds("up_lfstats2",jet_flavor, jet_eta, jet_pt, jet_csv);
-        weight_lfstats2down *= reader->eval_auto_bounds("down_lfstats2",jet_flavor, jet_eta, jet_pt, jet_csv);
+        weight_jesup *= reader->eval_auto_bounds("up_jes",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_jesdown *= reader->eval_auto_bounds("down_jes",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hfup *= reader->eval_auto_bounds("up_hf",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hfdown *= reader->eval_auto_bounds("down_hf",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lfstats1up *= reader->eval_auto_bounds("up_lfstats1",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lfstats1down *= reader->eval_auto_bounds("down_lfstats1",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lfstats2up *= reader->eval_auto_bounds("up_lfstats2",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lfstats2down *= reader->eval_auto_bounds("down_lfstats2",jet_flavor, jet_eta, jet_pt, jet_btagdisc);
       }
     }
   }
 
-  event.set(h_weight_csv_central, weight_central);
-  event.set(h_weight_csv_jesup, weight_jesup);
-  event.set(h_weight_csv_jesdown, weight_jesdown);
-  event.set(h_weight_csv_lfup, weight_lfup);
-  event.set(h_weight_csv_lfdown, weight_lfdown);
-  event.set(h_weight_csv_hfup, weight_hfup);
-  event.set(h_weight_csv_hfdown, weight_hfdown);
-  event.set(h_weight_csv_hfstats1up, weight_hfstats1up);
-  event.set(h_weight_csv_hfstats1down, weight_hfstats1down);
-  event.set(h_weight_csv_hfstats2up, weight_hfstats2up);
-  event.set(h_weight_csv_hfstats2down, weight_hfstats2down);
-  event.set(h_weight_csv_lfstats1up, weight_lfstats1up);
-  event.set(h_weight_csv_lfstats1down, weight_lfstats1down);
-  event.set(h_weight_csv_lfstats2up, weight_lfstats2up);
-  event.set(h_weight_csv_lfstats2down, weight_lfstats2down);
-  event.set(h_weight_csv_cferr1up, weight_cferr1up);
-  event.set(h_weight_csv_cferr1down, weight_cferr1down);
-  event.set(h_weight_csv_cferr2up, weight_cferr2up);
-  event.set(h_weight_csv_cferr2down, weight_cferr2down);
+  event.set(h_weight_btagdisc_central, weight_central);
+  event.set(h_weight_btagdisc_jesup, weight_jesup);
+  event.set(h_weight_btagdisc_jesdown, weight_jesdown);
+  event.set(h_weight_btagdisc_lfup, weight_lfup);
+  event.set(h_weight_btagdisc_lfdown, weight_lfdown);
+  event.set(h_weight_btagdisc_hfup, weight_hfup);
+  event.set(h_weight_btagdisc_hfdown, weight_hfdown);
+  event.set(h_weight_btagdisc_hfstats1up, weight_hfstats1up);
+  event.set(h_weight_btagdisc_hfstats1down, weight_hfstats1down);
+  event.set(h_weight_btagdisc_hfstats2up, weight_hfstats2up);
+  event.set(h_weight_btagdisc_hfstats2down, weight_hfstats2down);
+  event.set(h_weight_btagdisc_lfstats1up, weight_lfstats1up);
+  event.set(h_weight_btagdisc_lfstats1down, weight_lfstats1down);
+  event.set(h_weight_btagdisc_lfstats2up, weight_lfstats2up);
+  event.set(h_weight_btagdisc_lfstats2down, weight_lfstats2down);
+  event.set(h_weight_btagdisc_cferr1up, weight_cferr1up);
+  event.set(h_weight_btagdisc_cferr1down, weight_cferr1down);
+  event.set(h_weight_btagdisc_cferr2up, weight_cferr2up);
+  event.set(h_weight_btagdisc_cferr2down, weight_cferr2down);
 
   if (sysType_ == "jesup") {event.weight *= weight_jesup;}
   else if (sysType_ == "jesdown") {event.weight *= weight_jesdown;}
