@@ -4,6 +4,12 @@
 <use name="LHAPDF" />
 <use name="UHH2/core" />
 <use name="UHH2/JetMETObjects" />
+<use name="PhysicsTools/TensorFlow"/>
+<use name="tensorflow-cc"/>
+<use name="tensorflow"/>
+<use name="protobuf"/>
+<use name="Eigen"/>
+<use name="RecoBTag/TensorFlow"/>
 <export>
     <lib name="1" />
 </export>
