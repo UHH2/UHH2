@@ -3,7 +3,6 @@
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
 
-
 // save diagnostic state
 #pragma GCC diagnostic push
 // turn off the specific warning. Can also use "-Wall"
@@ -11,9 +10,6 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
 #pragma GCC diagnostic pop
-
-// #include <eigen3/Eigen/Dense>
-#include <UHH2/Eigen/Eigen/Dense>
 
 
 class NeuralNetworkBase: public uhh2::AnalysisModule {
