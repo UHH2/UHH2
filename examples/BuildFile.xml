@@ -6,5 +6,5 @@
 <use name="tensorflow-cc"/>
 <use name="tensorflow"/>
 <use name="protobuf"/>
-<use name="RecoBTag/TensorFlow"/>
 <use name="Eigen"/>
+<use name="RecoBTag/TensorFlow"/>
