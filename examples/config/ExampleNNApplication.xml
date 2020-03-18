@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd">
+
+<JobConfiguration JobName="ExampleCycleJob" OutputLevel="INFO">
+    <Library Name="libSUHH2examples"/>
+    <Package Name="examples.par" />
+
+    <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="./" PostFix="" TargetLumi="1" >
+
+        <InputData Lumi="1" NEventsMax="-1" Type="MC" Version="NNApplication" Cacheable="False"> <In FileName="Ntuple_NNApplication.root" Lumi="0.0"/> <InputTree Name="AnalysisTree" /> <OutputTree Name="AnalysisTree" /> </InputData>
+
+        <UserConfig>
+            <Item Name="ElectronCollection"         Value="slimmedElectronsUSER"/>
+            <Item Name="MuonCollection"             Value="slimmedMuonsUSER"/>
+            <Item Name="JetCollection"              Value="jetsAk4Puppi"/>
+            <Item Name="TopPuppiJetCollection"      Value="jetsAk8PuppiSubstructure_SoftDropPuppi"/>
+
+            <!-- the class name of the AnalysisModule subclasses to run: -->
+            <Item Name="AnalysisModule" Value="ExampleModuleNNApplication" />
+        </UserConfig>
+    </Cycle>
+</JobConfiguration>

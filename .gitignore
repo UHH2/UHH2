@@ -4,7 +4,7 @@
 */bin
 */tmp
 pydump*.py
-core/python/__init__.py
+**/python/__init__.py
 *.pyc
 *.root
 *~
