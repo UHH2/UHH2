@@ -184,6 +184,8 @@ bool MCPileupReweight::process(Event &event){
       cout << "WARNING no value in MC hist for trueNumInteractions = " << trueNumInteractions;
       cout << " Setting event weight_pu to 0" << endl;
       event.set(h_pu_weight_, 0.f);
+      event.set(h_pu_weight_up_, 0.f);
+      event.set(h_pu_weight_down_, 0.f);
       return false;
     }
 
