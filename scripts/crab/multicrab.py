@@ -27,6 +27,12 @@ if __name__ == '__main__':
         parser.add_argument('--submit','-s', dest='submit_flag', action='store_true',
                             default=False,
                             help='Submit to the grid')
+	parser.add_argument('--resubmit','-r', dest='resubmit_flag', action='store_true',
+                            default=False,
+                            help='Resubmit to the grid')
+	parser.add_argument('--extratime','-t', dest='extratime_flag', action='store_true',
+                            default=False,
+                            help='Resubmit with extra time to the grid')
         parser.add_argument('--status', dest='status_flag', action='store_true',
                             default=False,
                             help='check status of all jobs. Have a lok at the dashbord')
@@ -106,6 +112,14 @@ if __name__ == '__main__':
         if args.submit_flag:
                 work = CrabConfig(ConfigFile.config,'submit',args.crab_options)
                 work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
+	if args.resubmit_flag:
+                work = CrabConfig(ConfigFile.config,'resubmit',args.crab_options)
+                work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
+	if args.extratime_flag:
+		if not "--maxjobruntime=2750" in set(args.crab_options):
+			args.crab_options.append("--maxjobruntime=2750")
+                work = CrabConfig(ConfigFile.config,'resubmit',args.crab_options)
+                work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
         if args.status_flag:
                 work = CrabConfig(ConfigFile.config,'status',args.crab_options)
                 work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
@@ -142,14 +156,12 @@ if __name__ == '__main__':
                         fileList.append(xmlname)
                 result_list = readEntries(cores,fileList,fast)
                 
-                entriesFile = open("entriesFile.txt",'w+')
+                entriesFile = open("entriesFile.txt",'a+')
                 if fast: 
                         entriesFile.write('The fast Method used for the number of Entries, no weights used\n')
                 else:
                         entriesFile.write('Weights have been used\n')
                 for i, name in enumerate(fileList):
                         entriesFile.write(name+' '+str(result_list[i])+'\n')
-                        xmlFile = open(name,'a')
-                        #xmlFile.write('<!-- < NumberEntries="'+str(result_list[i])+'" Method='+method+' /> -->')
                 entriesFile.close()
                 
