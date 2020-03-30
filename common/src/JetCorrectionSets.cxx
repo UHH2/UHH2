@@ -48,6 +48,13 @@ const std::map<std::string, std::map<std::string, std::string> > JERFiles::jecRu
     {"DE", "DE"},
     {"F", "F"}
   }},
+  {"Summer19UL17", {
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"},
+    {"E", "E"},
+    {"F", "F"}
+  }},
   {"Autumn18", {
     {"A", "A"},
     {"B", "B"},
@@ -67,7 +74,7 @@ const std::string JERFiles::JECPathStringDATA(const std::string & tag,
   std::string campaign = tag.substr(0, tag.find("_"));
   std::string newRunName = JERFiles::jecRunMap.at(campaign).at(runName);
   // in 2018 they use "_RunA" instead of just "A"
-  if (tag.find("18") != std::string::npos) {
+  if (tag.find("18") != std::string::npos || tag.find("UL17") != std::string::npos) {
     newRunName = "_Run" + runName;
   }
 
@@ -88,7 +95,8 @@ const std::string JERFiles::JECPathStringDATA(const std::string & tag,
 }
 
 const std::vector<std::string> JERFiles::L1L2L3 = {"L1FastJet", "L2Relative", "L3Absolute"};
-
+const std::vector<std::string> JERFiles::L1L2 = {"L1FastJet", "L2Relative"};
+const std::vector<std::string> JERFiles::L1L2Residual = {"L1FastJet", "L2Relative", "L2Residual"};
 const std::vector<std::string> JERFiles::L1L2L3Residual = {"L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"};
 
 const std::vector<std::string> JERFiles::JECFilesMC(const std::string & tag,
