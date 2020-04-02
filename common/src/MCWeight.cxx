@@ -44,8 +44,10 @@ bool MCLumiWeight::process(uhh2::Event & event){
 
 MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
     h_pu_weight_(ctx.declare_event_output<float>("weight_pu")),
-    h_npu_data_up(ctx.declare_event_output<float>("weight_pu_down")),
-    h_npu_data_down(ctx.declare_event_output<float>("weight_pu_up")),
+    h_pu_weight_up_(ctx.declare_event_output<float>("weight_pu_down")),
+    h_pu_weight_down_(ctx.declare_event_output<float>("weight_pu_up")),
+    h_npu_data_up(0),
+    h_npu_data_down(0),
     sysType_(sysType)
 {
     auto dataset_type = ctx.get("dataset_type");
