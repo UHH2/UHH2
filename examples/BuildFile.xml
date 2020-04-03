@@ -2,3 +2,9 @@
 <use name="boost" />
 <use name="UHH2/common" />
 <use name="UHH2/core" />
+<use name="PhysicsTools/TensorFlow"/>
+<use name="tensorflow-cc"/>
+<use name="tensorflow"/>
+<use name="protobuf"/>
+<use name="Eigen"/>
+<use name="RecoBTag/TensorFlow"/>
