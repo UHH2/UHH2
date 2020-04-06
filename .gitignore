@@ -15,6 +15,7 @@ pydump*.py
 *.pdf
 *.png
 *.json
+common/UHH2-datasets/*
 VLQToHiggsPairProd/*
 ZprimeSemiLeptonic/*
 Varial

@@ -52,7 +52,7 @@ def read_treeFast(rootDir):
 
 def readEntries(worker, xmlfiles, fast=False):
     if fast: print 'Going to use the Fast Method, no weights used'
-    else: os.system("root -q -b -l 'countNumberEvents.C+(\"\",0)'")
+    else: print 'Going to use the Weight Method: countNumberEvents.C'
     print "number of workers",worker
     result_list = []
     for xml in xmlfiles:
