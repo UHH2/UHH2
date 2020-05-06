@@ -536,8 +536,8 @@ bool NoLeptonInJet::operator()(const Jet& jet, const uhh2::Event& ev) const {
     for(const auto& muo : *ev.muons){
       if(muo_id && !(*muo_id)(muo, ev)) continue;
 
-      if (drmax && drmax>0) {
-        if(deltaR(jet, muo) < drmax && jet.muonMultiplicity() > 0){
+      if (drmax && (*drmax)>0) {
+        if(deltaR(jet, muo) < (*drmax) && jet.muonMultiplicity() > 0){
           return false;
         }
       } else {
@@ -553,8 +553,8 @@ bool NoLeptonInJet::operator()(const Jet& jet, const uhh2::Event& ev) const {
   if(doElectrons){
     for(const auto& ele : *ev.electrons){
       if(ele_id && !(*ele_id)(ele, ev)) continue;
-      if (drmax && drmax>0) {
-        if(deltaR(jet, ele) < drmax && jet.electronMultiplicity() > 0){
+      if (drmax && (*drmax)>0) {
+        if(deltaR(jet, ele) < (*drmax) && jet.electronMultiplicity() > 0){
           return false;
         }
       } else {
