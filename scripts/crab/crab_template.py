@@ -107,8 +107,10 @@ year = result.group()
 config.Data.outLFNDirBase = '/store/group/uhh/uhh2ntuples/RunII_102X_v2/%s/' % (year)
 
 # If you want to run some private production and not put it in the group area, use this instead:
-# from CRABClient.UserUtilities import getUsernameFromSiteDB
-# config.Data.outLFNDirBase = '/store/user/%s/RunII_102X_v1/%s/' % (getUsernameFromSiteDB(), year)
+# replacing YOUR_CERN_USERNAME_HERE as appropriate
+# config.Data.outLFNDirBase = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_102X_v2/%s/' % (year)
+if 'YOUR_CERN_USERNAME_HERE' in config.Data.outLFNDirBase:
+    raise RuntimeError("You didn't insert your CERN username in config.Data.outLFNDirBase, please fix it")
 
 config.Data.publication = False
 config.JobType.sendExternalFolder = True
