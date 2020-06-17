@@ -4,3 +4,7 @@ Slight changes have been made to enable stand-alone compilation and to avoid nam
 In particular, the Workaround.h file contains some code emulating cmssw edm::LogError to
 minimize required changes in other places of the code.
 
+The JetResolution class is from JetMETCorrections/Modules (not the one in CondFormats/JetMETObject!),
+whilst the JetResolutionObject class is from CondFormats/JetMETObjects
+
+In future, it would be good to just cms-addpkg instead of maintaining our own copies.
