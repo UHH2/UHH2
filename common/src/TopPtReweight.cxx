@@ -31,7 +31,7 @@ TopPtReweight::TopPtReweight(uhh2::Context& ctx,
 
 
 bool TopPtReweight::process(uhh2::Event& event){
-  if (event.isRealData || (!boost::algorithm::contains(version_,"ttbar") && !boost::algorithm::contains(version_,"ttjets")) ) {
+  if (event.isRealData || (!boost::algorithm::contains(version_,"ttbar") && !boost::algorithm::contains(version_,"ttjets") && !boost::algorithm::starts_with(version_,"ttto")) ) {
     return true;
   }
   const TTbarGen& ttbargen = !ttgen_name_.empty() ? event.get(h_ttbargen_) : TTbarGen(*event.genparticles,false);
