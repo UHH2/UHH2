@@ -326,41 +326,15 @@ GenericSubJetCorrector::GenericSubJetCorrector(uhh2::Context & ctx, const std::v
   h_topjets = ctx.get_handle<std::vector<TopJet> >(collectionname);
 }
 
-void GenericSubJetCorrector::set_doJER(uhh2::Context & ctx, const TString sfFilename, const TString resFilename, const std::string & genjet_label, bool _isHOTVR) {
-  set_HOTVR(_isHOTVR);
-  if (ctx.get("dataset_type") != "MC") return;
-  doJER = true;
-  m_gjrs.reset(new GenericJetResolutionSmearer(ctx, collectionname+std::to_string(isHOTVR), genjet_label, sfFilename, resFilename));
-  h_gentopjets = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
-}
-
 bool GenericSubJetCorrector::process(uhh2::Event & event){
 
   const auto topjets = &event.get(h_topjets);
-  std::vector<GenTopJet>* gen_topjets = nullptr;
-
-  vector<GenJet> gen_subjets;
-  if (doJER && !event.isRealData) {
-    gen_topjets = &event.get(h_gentopjets);
-    for (const GenTopJet &genjet : *gen_topjets) {
-      for (GenJet gensubj : genjet.subjets()){
-        gen_subjets.push_back(gensubj);
-      }
-    }
-  }
 
   assert(topjets);
   for(auto & topjet : *topjets){
     auto subjets = topjet.subjets();
     for (auto & subjet : subjets) {
       correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
-    }
-    if (doJER && !event.isRealData) m_gjrs->apply_JER_smearing(subjets, gen_subjets , 0.4, event.rho);
-    if (isHOTVR) {
-      LorentzVector v4;
-      for (auto & subjet : subjets) v4 += subjet.v4();
-      topjet.set_v4(v4);
-      topjet.set_softdropmass(v4.M());
     }
     topjet.set_subjets(move(subjets));
   }

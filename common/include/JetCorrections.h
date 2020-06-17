@@ -125,16 +125,13 @@ public:
 
   virtual ~GenericSubJetCorrector();
 
-  void set_doJER(uhh2::Context & ctx, const TString sfFilename="", const TString resFilename="Fall17_V3_MC_PtResolution_AK4PFchs.txt", const std::string & genjet_label = "hotvrGen", bool _isHOTVR=false);
-  void set_HOTVR(bool _isHOTVR=false) { isHOTVR = _isHOTVR; };
-
 private:
   std::unique_ptr<FactorizedJetCorrector> corrector;
   uhh2::Event::Handle<std::vector<TopJet> > h_topjets;
   JetCorrectionUncertainty* jec_uncertainty;
   int direction = 0; // -1 = down, +1 = up, 0 = nominal
   std::string collectionname;
-  bool doJER = false, isHOTVR = false;
+
   std::unique_ptr<GenericJetResolutionSmearer> m_gjrs;
   uhh2::Event::Handle<std::vector<GenTopJet> > h_gentopjets;
 };
