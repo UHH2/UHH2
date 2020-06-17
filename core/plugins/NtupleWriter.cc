@@ -574,6 +574,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     genparticle_token = consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genparticle_source"));
     generator_token = consumes<GenEventInfoProduct>( edm::InputTag("generator"));
     lhe_token = consumes<LHEEventProduct> ( edm::InputTag("externalLHEProducer"));
+    // this one is necessary to read the LHERunInfoProduct:
+    consumes<LHERunInfoProduct, edm::InRun>({"externalLHEProducer"});
     pus_token = consumes<std::vector<PileupSummaryInfo> > ( edm::InputTag("slimmedAddPileupInfo"));
     if(doStableGenParticles) stablegenparticle_token = consumes<edm::View<reco::Candidate> >(iConfig.getParameter<edm::InputTag>("stablegenparticle_source"));
     event->genInfo = new GenInfo();
