@@ -31,16 +31,16 @@ using namespace std;
  * Done in C++ for speed (neccessary when iterating over all events in tree)
  *
  * Run:
- * root -q -b 'dump_lumilist.C+("/a/b/c.root",false)'
+ * root -q -b 'dump_lumilist.C+("/a/b/c.root","output.json")'
  *
  * DO NOT PUT SPACES INBETWEEN ARGS
  *
  * root:
- * > .x dump_lumilist("/a/b/c.root", false)
+ * > .x dump_lumilist("/a/b/c.root","output.json")
  *
  * In a bash script with args $1, $2:
  *
- * root -q -b -l 'dump_lumilist.C+("'${1}'",'${2}')'
+ * root -q -b -l 'dump_lumilist.C+("'${1}'","'${2}'")'
  */
 
 
