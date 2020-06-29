@@ -45,6 +45,7 @@ def comment_out_bad_xml(xml_filename, txt_filename, output_filename):
             else:
                 filename = child.attrib['FileName']
                 if ".root" in filename:
+                    filename = os.path.normpath(filename.strip())
                     if filename not in reference_filenames:
                         # print out line as it was before
                         f.write(ET.tostring(child))
