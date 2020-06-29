@@ -2,7 +2,7 @@
 
 
 """
-Script to create lumilist of lumisections for MC sample
+Script to create lumilist of lumisections for MC or data dataset
 
 It is designed to only work on *one* sample (& its ext, if it exists),
 not multiple:
@@ -33,7 +33,7 @@ def get_mc_lumi_list(inputDataset="/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/RunIIF
         if a list/tuple/set[str], will iterate over each entry in the list, without asking DAS to autocomplete.
         This is because the user might have cached the dataset names before calling this function, and we don't want to call DAS more than necessary.
 
-    returns: a dict with an entry for each dataset user inputs with das string as key and LumiList as value (assumes MC samples with only one run "1")
+    returns: a dict with an entry for each dataset user inputs with das string as key and LumiList as value
 
     raises RuntimeError if no valid voms proxy
     raises TypeError if inputDataset incorrect type
@@ -49,16 +49,22 @@ def get_mc_lumi_list(inputDataset="/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/RunIIF
     result = {}
     for dataset in inputDatasets:
         print(dataset)
-        json_dict = get_data(host='https://cmsweb.cern.ch', query="lumi file dataset="+dataset, idx=0, limit=0, threshold=300)
+        json_dict = get_data(host='https://cmsweb.cern.ch', query="run lumi file dataset="+dataset, idx=0, limit=0, threshold=300)
         lumi_list = LumiList.LumiList()
         try:
             n_files = len(json_dict['data'])
+            printout = round(n_files / 10)
             for i, file_info in enumerate(json_dict['data']):
                 if (i>n_files):
                     break
-                lumi_list += LumiList.LumiList(runsAndLumis={'1': file_info['lumi'][0]['number']})
-        except:
+                if i % printout == 0:
+                    print("{}% done...".format(100 * i / n_files))
+                ls = file_info['lumi'][0]['number']
+                run = file_info['run'][0]['run_number']
+                lumi_list += LumiList.LumiList(runsAndLumis={run: ls})
+        except Exception as e:
             print('Did not find lumis for', dataset)
+            print(e)
         result.update({dataset:lumi_list})
     return result
 
