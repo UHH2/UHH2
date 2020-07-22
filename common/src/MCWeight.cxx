@@ -585,7 +585,8 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
       float sys_error_percantage,
       const std::string & weight_postfix,
       const std::string & sys_uncert,
-      const std::string & elecs_handle_name):
+      const std::string & elecs_handle_name,
+      const std::string & sf_name):
       h_elecs_            (ctx.get_handle<std::vector<Electron>>(elecs_handle_name)),
       h_elec_weight_      (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix)),
       h_elec_weight_up_   (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_up")),
@@ -605,7 +606,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
           throw runtime_error("Scale factor file for electrons not found: " + sf_file_path);
         }
 
-        sf_hist_.reset((TH2*) sf_file.Get("EGamma_SF2D"));
+        sf_hist_.reset((TH2*) sf_file.Get(sf_name.c_str()));
         if (!sf_hist_.get()) {
           throw runtime_error("Electron scale factor histogram not found in file");
         }
