@@ -261,7 +261,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     # see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
     # for latest global tags
-    # But check with https://twiki.cern.ch/twiki/bin/viewauth/CMS/PdmVAnalysisSummaryTable
+    # But check with:
+    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PdmVAnalysisSummaryTable
+    # https://twiki.cern.ch/twiki/bin/view/CMS/PdmVRun2LegacyAnalysisSummaryTable
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
     # There should be 1 key:value entry per entry in acceptable_years, and each
@@ -285,15 +287,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             "mc": "94X_mc2017_realistic_v17"
         },
        "2017UL": {
-            "data": "106X_dataRun2_v15",
-            "mc": "106X_mc2017_realistic_v6",
+            "data": "106X_dataRun2_v28",
+            "mc": "106X_mc2017_realistic_v7",
         },
         "2018": {
             "data": "102X_dataRun2_Prompt_v6",
             "mc": "102X_upgrade2018_realistic_v15",
         },
         "2018UL": {
-            "data": "106X_dataRun2_v24",
+            "data": "106X_dataRun2_v28",
             "mc": "106X_upgrade2018_realistic_v11_L1v1",
         },
     }
