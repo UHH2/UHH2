@@ -18,6 +18,18 @@ process.source.fileNames = cms.untracked.vstring([
     # '/store/data/Run2018B/EGamma/MINIAOD/12Nov2019_UL2018-v2/100000/F37232DA-6F44-D640-A3BB-5CFEC6D6D04A.root'
 ])
 
+# Turn on jet constituent storing for leading three AK4 jets
+process.MyNtuple.doPFJetConstituentsNjets=3
+
+# Turn on jet constituent storing for leading three AK8 jets
+process.MyNtuple.doPFTopJetConstituentsNjets=3
+
+# Turn on jet constituent storing for all AK8 jets with pT > 300 GeV
+process.MyNtuple.doPFTopJetConstituentsMinJetPt=300
+
+# Turn on jet constituent storing for the two exclusive XCone jets
+process.MyNtuple.doPFxconeJetConstituentsNjets=2
+
 # Do this after setting process.source.fileNames, since we want the ability to override it on the commandline
 options = setup_opts()
 parse_apply_opts(process, options)
