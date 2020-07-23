@@ -17,7 +17,7 @@
  *  - "dataset_lumi": the lumi of the current dataset, in inverse pb
  *  - "target_lumi": the data lumi to reweight to, in inverse pb
  * These are set automatically if running via SFrame by AnalysisModuleRunner.
- * 
+ *
  * The event weight is multiplied with the ratio of dataset_lumi and target_lumi, independent
  * of the maximum number of processed events. This is different from sframe which
  * takes into account the number of events to process.
@@ -40,7 +40,7 @@ private:
  * be set to the path to root files which contain the pileup information for each MC
  * sample and data. If an empty value is given, no pileup reweighting is done.
  * "pileup_directory_data_up" and "pileup_directory_data_down" may be set as well.
- * 
+ *
  * If sysType is set to "up" or "down", both path are needed: pileup_directory_data_<up/down>
  */
 class MCPileupReweight: public uhh2::AnalysisModule {
@@ -65,7 +65,7 @@ private:
  *
  * Interprets "ScaleVariationMuR" and "ScaleVariationMuF" from Context, the values may be "up" or "down".
  * Any other value will result in no scale variation. This method also will have no effect on samples
- * where genInfo.systweight is not filled. 
+ * where genInfo.systweight is not filled.
  */
 class MCScaleVariation: public uhh2::AnalysisModule {
  public:
@@ -97,11 +97,11 @@ class MCScaleVariation: public uhh2::AnalysisModule {
  *   - sf_name: directory name in the root file
  *   - sys_error_percantage: e.g. "1." for 1% of systematic error
  *   - weight_postfix: handle name for weights, e.g. "trigger" will produce the
- *     handles "weight_sfmu_trigger", "weight_sfmu_trigger_up" and 
+ *     handles "weight_sfmu_trigger", "weight_sfmu_trigger_up" and
  *     "weight_sfmu_trigger_down"
- *   - sys_uncert: which uncertainty is applied to event.weight, can be "up", 
+ *   - sys_uncert: which uncertainty is applied to event.weight, can be "up",
  *     "down" or "nominal".
- *   - muons_handle_name: handle to the muon collection (the default points to 
+ *   - muons_handle_name: handle to the muon collection (the default points to
  *     event.muons)
  */
 class MCMuonScaleFactor: public uhh2::AnalysisModule {
@@ -113,10 +113,10 @@ public:
                              const std::string & weight_postfix="",
 			     bool etaYaxis=false,
                              const std::string & sys_uncert="nominal",
-                             const std::string & muons_handle_name="muons"); 
+                             const std::string & muons_handle_name="muons");
 
   virtual bool process(uhh2::Event & event) override;
-  virtual bool process_onemuon(uhh2::Event & event, int i); 
+  virtual bool process_onemuon(uhh2::Event & event, int i);
 
 private:
   uhh2::Event::Handle<std::vector<Muon>> h_muons_;
@@ -130,7 +130,7 @@ private:
   bool etaYaxis_;
 };
 
-// Muon tracking efficiency 
+// Muon tracking efficiency
 // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffsRun2
 class MCMuonTrkScaleFactor: public uhh2::AnalysisModule {
 public:
@@ -139,7 +139,7 @@ public:
                              float sys_error_percantage,
                              const std::string & weight_postfix="",
                              const std::string & sys_uncert="nominal",
-                             const std::string & muons_handle_name="muons"); 
+                             const std::string & muons_handle_name="muons");
 
   virtual bool process(uhh2::Event & event) override;
 
@@ -170,11 +170,11 @@ private:
  *   - sf_file_path: path the root file with the scale factors
  *   - sys_error_percantage: e.g. "1." for 1% of systematic error
  *   - weight_postfix: handle name for weights, e.g. "trigger" will produce the
- *     handles "weight_sfel_trigger", "weight_sfel_trigger_up" and 
+ *     handles "weight_sfel_trigger", "weight_sfel_trigger_up" and
  *     "weight_sfel_trigger_down"
- *   - sys_uncert: which uncertainty is applied to event.weight, can be "up", 
+ *   - sys_uncert: which uncertainty is applied to event.weight, can be "up",
  *     "down" or "nominal".
- *   - electrons_handle_name: handle to the electrons collection (the default points to 
+ *   - electrons_handle_name: handle to the electrons collection (the default points to
  *     event.electrons)
  */
 class MCElecScaleFactor: public uhh2::AnalysisModule {
@@ -184,7 +184,8 @@ public:
                              float sys_error_percantage,
                              const std::string & weight_postfix="",
                              const std::string & sys_uncert="nominal",
-                             const std::string & elecs_handle_name="electrons"); 
+                             const std::string & elecs_handle_name="electrons",
+                             const std::string & sf_name="EGamma_SF2D");
 
   virtual bool process(uhh2::Event & event) override;
 
@@ -208,7 +209,7 @@ class BTagCalibrationReader;  // forward declaration
  *
  * measurementType and sysType are interpreted by the BTagCalibration
  * (check https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagCalibration).
- * Currently, sysType can be one of central, up, down, up_bc, down_bc, up_udsg, 
+ * Currently, sysType can be one of central, up, down, up_bc, down_bc, up_udsg,
  * down_udsg.
  *
  * This module is designed to be used with the CSVBTag class
@@ -323,7 +324,7 @@ class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
  * https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV#Tau_ID_efficiency
  *
  * Interprets "TauIdVariation" from Context, the values may be "up" or "down".
- * Any other value will result in no scale variation. 
+ * Any other value will result in no scale variation.
  */
 class TauEffVariation: public uhh2::AnalysisModule {
  public:
@@ -334,7 +335,7 @@ class TauEffVariation: public uhh2::AnalysisModule {
   private:
   int i_TauEff = 0;
   // SF for Run-2 2016 is 0.83 while SF for Run-1 and Run-2 2015 is equal to 1.
-  double SF_TauId = 0.9; 
+  double SF_TauId = 0.9;
 };
 
 
@@ -343,7 +344,7 @@ class TauEffVariation: public uhh2::AnalysisModule {
  * https://twiki.cern.ch/twiki/bin/view/CMS/TauIDRecommendation13TeV#Tau_charge_misidentification_rat
  *
  * Interprets "TauChargeVariation" from Context, the values may be "up" or "down".
- * Any other value will result in no scale variation. 
+ * Any other value will result in no scale variation.
  */
 class TauChargeVariation: public uhh2::AnalysisModule {
  public:
