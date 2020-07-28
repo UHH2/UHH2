@@ -144,7 +144,10 @@ namespace {
   JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::vector<std::string> & filenames, int &direction){
 
     auto dir = ctx.get("jecsmear_direction", "nominal");
-    if(dir == "up"){
+    if (ctx.get("dataset_type") != "MC") {
+      direction = 0;
+    }
+    else if(dir == "up"){
       direction = 1;
     }
     else if(dir == "down"){
