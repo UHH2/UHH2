@@ -105,3 +105,14 @@ Year extract_year(const uhh2::Context & ctx) {
     }
     throw std::runtime_error("Cannot figure out year from dataset_version. Should include one of: " + yearStr);
 }
+
+const std::vector<std::string> year2runPeriods(const std::string& year) {
+   if (year.find("16") != std::string::npos) return runPeriods2016;
+   else if (year.find("17") != std::string::npos) return runPeriods2017;
+   else if (year.find("18") != std::string::npos) return runPeriods2018;
+   else throw std::runtime_error("year2runPeriods -- not defined year: "+year);
+ }
+
+  const std::vector<std::string> year2runPeriods(const Year& year) {
+   return year2runPeriods(year_str_map_simple.at(year));
+ }

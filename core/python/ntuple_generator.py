@@ -55,7 +55,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         If the year argument is not one of the allowable options
     """
     year = str(year)  # sanitise string
-    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "2017UL", "2018UL"]
+    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "UL16_preVFP", "UL16_postVFP" "UL17", "UL18"]
     if year not in acceptable_years:
         raise ValueError("year argument in generate_process() should be one of: %s. You provided: %s" % (acceptable_years, year))
 
@@ -73,18 +73,22 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     from Configuration.StandardSequences.Eras import eras
     if year == "2018":
         process = cms.Process("USER", eras.Run2_2018)
-    elif year == "2018UL":
-        process = cms.Process("USER", eras.Run2_2018)
-    elif year == "2017UL":
-        process = cms.Process("USER", eras.Run2_2018)
     elif year == "2017v2":
         process = cms.Process("USER", eras.Run2_2017, eras.run2_miniAOD_94XFall17)
     elif year == "2017v1":
         process = cms.Process("USER", eras.Run2_2017)
     elif year == "2016v3":
-        process = cms.Process("USER", eras.Run2_2016, eras.run2_miniAOD_80XLegacy) 
+        process = cms.Process("USER", eras.Run2_2016, eras.run2_miniAOD_80XLegacy)
     elif year == "2016v2":
         process = cms.Process("USER", eras.Run2_2016)
+    elif year == "UL18":
+        process = cms.Process("USER", eras.Run2_2018)
+    elif year == "UL17":
+        process = cms.Process("USER", eras.Run2_2017)
+    elif year == "UL16_postVFP":
+        process = cms.Process("USER", eras.Run2_2016)
+    elif year == "UL16_preVFP":
+        process = cms.Process("USER", eras.Run2_2016_HIPM)
     else:
         raise RuntimeError("Cannot setup process for this year, may need to add a new entry.")
 
@@ -286,15 +290,23 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             "data": "94X_dataRun2_v11",
             "mc": "94X_mc2017_realistic_v17"
         },
-       "2017UL": {
-            "data": "106X_dataRun2_v28",
-            "mc": "106X_mc2017_realistic_v7",
-        },
         "2018": {
             "data": "102X_dataRun2_Prompt_v6",
             "mc": "102X_upgrade2018_realistic_v15",
         },
-        "2018UL": {
+        "UL16_preVFP": {
+             "data": "106X_dataRun2_v28",
+             "mc": "106X_mcRun2_asymptotic_preVFP_v8",
+         },
+        "UL16_postVFP": {
+             "data": "106X_dataRun2_v28",
+             "mc": "106X_mcRun2_asymptotic_v13",
+         },
+        "UL17": {
+             "data": "106X_dataRun2_v28",
+             "mc": "106X_mc2017_realistic_v7",
+         },
+        "UL18": {
             "data": "106X_dataRun2_v28",
             "mc": "106X_upgrade2018_realistic_v11_L1v1",
         },
@@ -1871,9 +1883,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         "2016v3": ele_iso_16,
         "2017v1": ele_iso_17,
         "2017v2": ele_iso_17,
-        "2017UL": ele_iso_17,
-        "2018": ele_iso_17,
-        "2018UL": ele_iso_17,
+        "2018":   ele_iso_17,
+        "UL16_preVFP":  ele_iso_17,
+        "UL16_postVFP": ele_iso_17,
+        "UL17": ele_iso_17,
+        "UL18": ele_iso_17,
     }
 
     # slimmedElectronsUSER ( = slimmedElectrons + USER variables)
@@ -2592,7 +2606,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     doGenXCone_dijet=cms.bool(False),
                                     #store GEN constituents for GenXCone_dijet_sources: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
                                     doGenxconeDijetJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
-                                    doGenxconeDijetJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not 
+                                    doGenxconeDijetJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not
                                     GenXCone_dijet_sources=cms.VInputTag(
                                         cms.InputTag("genXCone2jets04"),
                                         cms.InputTag("genXCone3jets04"),

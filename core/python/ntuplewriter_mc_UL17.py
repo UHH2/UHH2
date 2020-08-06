@@ -3,13 +3,13 @@ from UHH2.core.ntuple_generator import generate_process  # use CMSSW type path f
 from UHH2.core.optionsParse import setup_opts, parse_apply_opts
 
 
-"""NTuple config for 2017UL MC datasets.
+"""NTuple config for UL17 MC datasets.
 
 You should try and put any centralised changes in generate_process(), not here.
 """
 
 
-process = generate_process(year="2017UL", useData=False)
+process = generate_process(year="UL17", useData=False)
 
 # Please do not commit changes to source filenames - used for consistency testing
 process.source.fileNames = cms.untracked.vstring([
@@ -20,5 +20,5 @@ process.source.fileNames = cms.untracked.vstring([
 options = setup_opts()
 parse_apply_opts(process, options)
 
-with open('pydump_mc_2017UL.py', 'w') as f:
+with open('pydump_mc_UL17.py', 'w') as f:
     f.write(process.dumpPython())

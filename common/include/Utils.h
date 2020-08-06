@@ -101,20 +101,36 @@ enum class Year {
     is2016v3,
     is2017v1,
     is2017v2,
-    is2017UL,
-    is2018UL,
-    is2018
+    is2018,
+    isUL16_preVFP,
+    isUL16_postVFP,
+    isUL17,
+    isUL18,
 };
 
 /* Map from Year to string */
 const std::map<Year, std::string> year_str_map = {
-    {Year::is2016v2, "2016v2"},
-    {Year::is2016v3, "2016v3"},
-    {Year::is2017v1, "2017v1"},
-    {Year::is2017v2, "2017v2"},
-    {Year::is2017UL, "2017UL"},
-    {Year::is2018UL, "2018UL"},
-    {Year::is2018,   "2018"},
+    {Year::is2016v2,        "2016v2"},
+    {Year::is2016v3,        "2016v3"},
+    {Year::is2017v1,        "2017v1"},
+    {Year::is2017v2,        "2017v2"},
+    {Year::is2018,          "2018"},
+    {Year::isUL16_preVFP,   "UL16_preVFP"},
+    {Year::isUL16_postVFP,  "UL16_postVFP"},
+    {Year::isUL17,          "UL17"},
+    {Year::isUL18,          "UL18"},
+};
+
+const std::map<Year, std::string> year_str_map_simple = {
+    {Year::is2016v2,        "2016"},
+    {Year::is2016v3,        "2016"},
+    {Year::is2017v1,        "2017"},
+    {Year::is2017v2,        "2017"},
+    {Year::is2018,          "2018"},
+    {Year::isUL16_preVFP,   "2016"},
+    {Year::isUL16_postVFP,  "2016"},
+    {Year::isUL17,          "2017"},
+    {Year::isUL18,          "2018"},
 };
 // TODO: inverse map?
 
@@ -130,6 +146,10 @@ const std::vector<std::string> runPeriods2016 = {"B", "C", "D", "E", "F", "G", "
 const std::vector<std::string> runPeriods2017 = {"B", "C", "D", "E", "F"};
 
 const std::vector<std::string> runPeriods2018 = {"A", "B", "C", "D"};
+
+const std::vector<std::string> year2runPeriods(const std::string& year);
+
+const std::vector<std::string> year2runPeriods(const Year& year);
 
 /**
  * Map run periods to run numbers for each year
