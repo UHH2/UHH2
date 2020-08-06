@@ -55,7 +55,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         If the year argument is not one of the allowable options
     """
     year = str(year)  # sanitise string
-    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "UL16_preVFP", "UL16_postVFP" "UL17", "UL18"]
+    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "UL16_preVFP", "UL16_postVFP", "UL17", "UL18"]
     if year not in acceptable_years:
         raise ValueError("year argument in generate_process() should be one of: %s. You provided: %s" % (acceptable_years, year))
 
