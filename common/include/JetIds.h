@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/optional.hpp>
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/ObjectIdUtils.h"
 #include "TH2.h"
@@ -125,13 +126,30 @@ class JetPUid {
 };
 
 /**
- * Jet EtaPhiaCut Id rejects jets, selected according to etaphi map
- */
-class JetEtaPhiCleaningId{
- public:
-	explicit JetEtaPhiCleaningId(const std::string & mapFilename, const std::string & mapHistname="h2hotfilter");
-  ~JetEtaPhiCleaningId()=default;
-	bool operator()(const Jet&,const uhh2::Event&) const;
- private:
-	TH2D h_map;
+* Jet EtaPhiCut Id rejects jets, selected according to etaphi map
+* http://hsiikone.web.cern.ch/hsiikone/hotcoldjets/
+*/
+class HotZoneVetoId {
+public:
+  explicit HotZoneVetoId(const bool& isHotZoneOnly);
+  bool operator()(const Jet&, const uhh2::Event&) const;
+private:
+  std::map<std::string, TH2D*> h2HotExcl;
+};
+
+
+/**
+* Check presence of at least one lepton inside the jet
+*/
+class NoLeptonInJet{
+public:
+  explicit NoLeptonInJet(const std::string& lepton_ = "all", const boost::optional<ElectronId> & ele_id_ = boost::none, const boost::optional<MuonId> & muo_id_ = boost::none, const boost::optional<double> & drmax_ = boost::none);
+  ~NoLeptonInJet()=default;
+  bool operator()(const Jet&,const uhh2::Event&) const;
+private:
+  std::string lepton;
+  boost::optional<ElectronId> ele_id;
+  boost::optional<MuonId> muo_id;
+  boost::optional<double> drmax;
+
 };

@@ -459,26 +459,114 @@ bool JetPUid::operator()(const Jet & jet, const Event &ev) const{
   //return jet.get_tag(wp_id)>0;
 }
 
-JetEtaPhiCleaningId::JetEtaPhiCleaningId(const std::string & mapFilename, const std::string & mapHistname){
-	TFile map_file(locate_file(mapFilename).c_str());
-  if (map_file.IsZombie()) {
-    throw runtime_error("2D map file not found: " + mapFilename);
+
+//////// HotZoneVetoId
+
+HotZoneVetoId::HotZoneVetoId(const bool& isHotZoneOnly) {
+  std::string mapHistname;
+
+  for (const auto& el : year_str_map) {
+    std::string year = el.second;
+    if (year.find("UL")!=std::string::npos) {
+      mapHistname = isHotZoneOnly? "h2hot_ul17": "h2hot_ul17_plus_hep17";
+      try {
+        TFile file_map(locate_file("JECDatabase/hotzone_maps/Summer19UL17_V1/hotjets-UL17.root").c_str());
+        h2HotExcl[year] = (TH2D*) file_map.Get(mapHistname.c_str());
+        h2HotExcl.at(year)->SetDirectory(0);
+        file_map.Close();
+      } catch (...){}
+
+      continue;
+    }
+
+    mapHistname="h2hotfilter";
+    for (auto ver: {"v1", "v2", "v3"}) if (year.find(ver) != std::string::npos) year.erase(year.find(ver), 2);
+
+    try {
+      TFile file_mc(locate_file("common/data/"+year+"/hotjets-"+year+"_MC.root").c_str());
+      h2HotExcl[year+"_MC"] = (TH2D*) file_mc.Get(mapHistname.c_str());
+      h2HotExcl.at(year+"_MC")->SetDirectory(0);
+      file_mc.Close();
+    } catch (...){}
+
+    for (const auto & runItr : year2runPeriods(year)) {
+      try {
+        TFile file_data(locate_file("common/data/"+year+"/hotjets-"+year+"_Run"+runItr+".root").c_str());
+        h2HotExcl[year+"_"+runItr] = (TH2D*) file_data.Get(mapHistname.c_str());
+        h2HotExcl.at(year+"_"+runItr)->SetDirectory(0);
+        file_data.Close();
+      } catch (...){}
+    }
   }
-  if (!map_file.GetListOfKeys()->Contains(mapHistname.c_str())) {
-    throw runtime_error("2D map histogram not found in file");
-  }
-  h_map=*((TH2D*) map_file.Get(mapHistname.c_str()));
-  h_map.SetDirectory(0);
-	map_file.Close();
 }
 
-bool JetEtaPhiCleaningId::operator()(const Jet &jet, const Event &ev) const{
-	(void) ev;
-	const TAxis *xaxis = h_map.GetXaxis();
-	const TAxis *yaxis = h_map.GetYaxis();
-	Int_t binx = xaxis->FindBin(jet.eta());
-	Int_t biny = yaxis->FindBin(jet.phi());
-	double cutValue=0;
-	cutValue = h_map.GetBinContent(binx,biny);
-	return cutValue == 0;
+
+bool HotZoneVetoId::operator()(const Jet &jet, const Event &ev) const{
+  string mapName;
+  string runItr = "";
+  std::string year = ev.year;
+  for (auto ver: {"v1", "v2", "v3"}) if (year.find(ver) != std::string::npos) year.erase(year.find(ver), 2);
+
+  if(!ev.isRealData) runItr = "MC";
+  else {
+    for (const auto & [key, val] : run_number_map.at(year)) {
+      if (ev.run >= val.first && ev.run <= val.second) runItr = key;
+    }
+  }
+  mapName = year+"_"+runItr;
+  if (year.find("UL")!=std::string::npos) mapName = year;
+
+  if (h2HotExcl.find(mapName) == h2HotExcl.end()) throw std::runtime_error("In HotZoneVetoId: "+mapName+" not found.");
+
+  return (h2HotExcl.at(mapName)->GetBinContent(h2HotExcl.at(mapName)->FindBin(jet.eta(),jet.phi())) <= 0);
+}
+
+// NoLeptonInJet
+
+NoLeptonInJet::NoLeptonInJet(const string& lepton_, const boost::optional<ElectronId> & ele_id_, const boost::optional<MuonId> & muo_id_, const boost::optional<double>& drmax_): lepton(lepton_), ele_id(ele_id_), muo_id(muo_id_), drmax(drmax_) {};
+
+bool NoLeptonInJet::operator()(const Jet& jet, const uhh2::Event& ev) const {
+
+  vector<long int> jlk = jet.lepton_keys();
+
+  bool doMuons = ev.muons && (lepton=="muon" || lepton=="all");
+  bool doElectrons = ev.electrons && (lepton=="ele" || lepton=="all");
+
+  if(doMuons){
+    for(const auto& muo : *ev.muons){
+      if(muo_id && !(*muo_id)(muo, ev)) continue;
+
+      if (drmax && drmax>0) {
+        if(deltaR(jet, muo) < drmax && jet.muonMultiplicity() > 0){
+          return false;
+        }
+      } else {
+        for(const auto& muo_cand : muo.source_candidates()){
+          if(find(jlk.begin(), jlk.end(), muo_cand.key) != jlk.end()) {
+            return false;
+          }
+        }
+      }
+    }
+  }
+
+  if(doElectrons){
+    for(const auto& ele : *ev.electrons){
+      if(ele_id && !(*ele_id)(ele, ev)) continue;
+      if (drmax && drmax>0) {
+        if(deltaR(jet, ele) < drmax && jet.electronMultiplicity() > 0){
+          return false;
+        }
+      } else {
+        for(const auto& ele_cand : ele.source_candidates()){
+          if(find(jlk.begin(), jlk.end(), ele_cand.key) != jlk.end()) {
+            return false;
+          }
+        }
+      }
+    }
+  }
+
+  return true;
+
 }
