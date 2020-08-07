@@ -716,20 +716,20 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 
     // Calculate the new pt
     float new_pt = -1.;
-    //Use scaling method in case a matching generator jet was found
+    // Use scaling method in case a matching generator jet was found
     if(genpt>0){
       new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
     }
-    //Use stochastic method if no generator jet could be matched to the reco jet
+    // Use stochastic method if no generator jet could be matched to the reco jet
     else{
-      //Initialize random generator with eta-dependend random seed to be reproducible
+      // Initialize random generator with eta-dependend random seed to be reproducible
       TRandom rand((int)(1000*abseta));
-      float random_gauss = rand.Gaus(0,resolution);
-      new_pt = recopt * (1 + random_gauss*sqrt(std::max( c*c-1,0.0f)));
+      float random_gauss = rand.Gaus(0, resolution);
+      new_pt = recopt * (1 + random_gauss*sqrt(std::max(c*c-1, 0.0f)));
     }
     jet_v4 *= new_pt / recopt;
 
-    //Update JEC_factor_raw needed for smearing MET
+    // Update JEC_factor_raw needed for smearing MET
     float factor_raw = jet.JEC_factor_raw();
     factor_raw *= recopt/new_pt;
 
