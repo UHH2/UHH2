@@ -239,7 +239,7 @@ private:
 class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
 public:
-  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const TString sfFilename="", const TString resFilename="Fall17_V3_MC_PtResolution_AK4PFchs.txt");
+  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const TString& scaleFactorFilename="", const TString& resolutionFilename="");
   virtual ~GenericJetResolutionSmearer() = default;
 
   virtual bool process(uhh2::Event&) override;
@@ -289,7 +289,7 @@ private:
 class JetResolutionSmearer: public uhh2::AnalysisModule{
 public:
   explicit JetResolutionSmearer(uhh2::Context & ctx);
-  explicit JetResolutionSmearer(uhh2::Context & ctx, const std::string& sfFilename, const std::string& resFilename);
+  explicit JetResolutionSmearer(uhh2::Context & ctx, const std::string& scaleFactorFilename, const std::string& resolutionFilename);
 
   virtual bool process(uhh2::Event & event) override;
 

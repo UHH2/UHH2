@@ -576,15 +576,15 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }
 
-  std::string sfFilename  = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_SF_"+jetAlgoRadius+"PF"+puName+".txt";
-  std::string resFilename = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
+  std::string scaleFactorFilename  = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_SF_"+jetAlgoRadius+"PF"+puName+".txt";
+  std::string resolutionFilename = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
 
-  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", sfFilename, resFilename);
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", scaleFactorFilename, resolutionFilename);
 
 }
 
-JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const std::string& sfFilename, const std::string& resFilename){
-  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", sfFilename, resFilename);
+JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const std::string& scaleFactorFilename, const std::string& resolutionFilename){
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", scaleFactorFilename, resolutionFilename);
 }
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
@@ -597,7 +597,7 @@ JetResolutionSmearer::~JetResolutionSmearer(){}
 
 ////
 
-GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const TString sfFilename, const TString resFilename){
+GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const TString& scaleFactorFilename, const TString& resolutionFilename){
 
   if(ctx.get("meta_jer_applied__"+recjet_label, "") != "true") ctx.set_metadata("jer_applied__"+recjet_label, "true");
   else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already applied to this RECO-jets collection: "+recjet_label);
@@ -615,11 +615,10 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   h_gentopjets_ = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
 
   //read in file for jet resolution (taken from https://github.com/cms-jet/JRDatabase/blob/master/textFiles/)
-  TString sffilename  = sfFilename.Contains("JRDatabase/textFiles/") ? sfFilename  : "JRDatabase/textFiles/"+sfFilename;
-  TString resfilename = sfFilename.Contains("JRDatabase/textFiles/") ? resFilename : "JRDatabase/textFiles/"+resFilename;
-  resolution_ = JME::JetResolution(locate_file(sffilename.Data()));
-
-  res_sf_ = JME::JetResolutionScaleFactor(locate_file(resfilename.Data()));
+  TString scaleFactorFilename_ = scaleFactorFilename.Contains("JRDatabase/textFiles/")? scaleFactorFilename : "JRDatabase/textFiles/"+scaleFactorFilename;
+  TString resolutionFilename_ = resolutionFilename.Contains("JRDatabase/textFiles/")?  resolutionFilename  : "JRDatabase/textFiles/"+resolutionFilename;
+  res_sf_ = JME::JetResolutionScaleFactor(locate_file(scaleFactorFilename_.Data()));
+  resolution_ = JME::JetResolution(locate_file(resolutionFilename_.Data()));
 
 }
 
