@@ -543,7 +543,7 @@ bool JetLeptonCleaner_by_KEYmatching::process(uhh2::Event& event){
 }
 
 JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
-  // Auto-determine correct resolution txt file & SFs from year + jet & PU algorithms
+  // Auto-determine recommended resolution txt file & SFs from year + jet & PU algorithms
   std::string jetstr = uhh2::string2lowercase(ctx.get("JetCollection"));
 
   std::string jetAlgoRadius;
@@ -564,6 +564,8 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     throw runtime_error("JetCollection not CHS or Puppi - cannot determine filename for JetResolutionSmearer");
   }
 
+  // Official recommendations:
+  // https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution#JER_Scaling_factors_and_Uncertai
   const Year & year = extract_year(ctx);
   std::string version = "";
   if (year == Year::is2016v2 || year == Year::is2016v3) {
@@ -572,6 +574,11 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     version = "Fall17_V3";
   } else if (year == Year::is2018) {
     version = "Autumn18_V7";
+  }  else if (year == Year::isUL17) {
+    version = "Summer19UL17_JRV2";
+  } else if (year == Year::isUL18) {
+    version = "Autumn18_V7";
+    std::cout << "WARNING: UL18 JER need updating - currently no recommendation" << std::endl;
   } else {
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }

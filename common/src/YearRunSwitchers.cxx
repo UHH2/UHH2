@@ -10,9 +10,9 @@ YearSwitcher::YearSwitcher(const uhh2::Context & ctx):
   module2017_(nullptr),
   module2017v1_(nullptr),
   module2017v2_(nullptr),
-  module2017UL_(nullptr),
+  moduleUL17_(nullptr),
   module2018_(nullptr),
-  module2018UL_(nullptr),
+  moduleUL18_(nullptr),
   theModule_(nullptr)
 {}
 
@@ -42,17 +42,17 @@ bool YearSwitcher::process(uhh2::Event & event) {
     else if ((year_ == Year::is2017v2) && module2017v2_) {
       theModule_ = module2017v2_;
     }
-    else if ((year_ == Year::is2017UL) && module2017UL_) {
-      theModule_ = module2017UL_;
+    else if ((year_ == Year::isUL17) && moduleUL17_) {
+      theModule_ = moduleUL17_;
     }
-    else if ((year_ == Year::is2017v1 || year_ == Year::is2017v2 || year_ == Year::is2017UL) && module2017_) {
+    else if ((year_ == Year::is2017v1 || year_ == Year::is2017v2 || year_ == Year::isUL17) && module2017_) {
       theModule_ = module2017_;
     }
 
-    else if ((year_ == Year::is2018UL) && module2018UL_) {
-      theModule_ = module2018UL_;
+    else if ((year_ == Year::isUL18) && moduleUL18_) {
+      theModule_ = moduleUL18_;
     }
-    else if ((year_ == Year::is2018 || year_ == Year::is2018UL) && module2018_) {
+    else if ((year_ == Year::is2018 || year_ == Year::isUL18) && module2018_) {
       theModule_ = module2018_;
     }
     doneInit_ = true;
@@ -92,16 +92,16 @@ void YearSwitcher::setup2017v2(std::shared_ptr<uhh2::AnalysisModule> module) {
   module2017v2_ = module;
 }
 
-void YearSwitcher::setup2017UL(std::shared_ptr<uhh2::AnalysisModule> module) {
-  module2017UL_ = module;
+void YearSwitcher::setupUL17(std::shared_ptr<uhh2::AnalysisModule> module) {
+  moduleUL17_ = module;
 }
 
 void YearSwitcher::setup2018(std::shared_ptr<uhh2::AnalysisModule> module) {
   module2018_ = module;
 }
 
-void YearSwitcher::setup2018UL(std::shared_ptr<uhh2::AnalysisModule> module) {
-  module2018UL_ = module;
+void YearSwitcher::setupUL18(std::shared_ptr<uhh2::AnalysisModule> module) {
+  moduleUL18_ = module;
 }
 
 
@@ -160,10 +160,10 @@ void RunSwitcher::setupRun(const std::string & runPeriod, std::shared_ptr<uhh2::
 }
 
 std::string RunSwitcher::shortYear(const std::string & year) {
-  // sanitise year, chop off any v*
-  if (year.find("UL") != std::string::npos) {
-    return year.substr(0, year.find("UL"));
-  } else {
-    return year.substr(0, year.find("v"));
-  }
+  // sanitise year: chop off any v*, UL
+  // ensure it has 20 at the start
+  if (year.find("16") != std::string::npos) return "2016";
+  if (year.find("17") != std::string::npos) return "2017";
+  if (year.find("18") != std::string::npos) return "2018";
+  throw std::runtime_error("Cannot identify shortYear from " + year);
 }

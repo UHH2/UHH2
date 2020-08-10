@@ -46,6 +46,10 @@ def get_request_name(dataset_name):
         modified_name += "_Fall17"
     elif "Autumn18" in dataset_name:
         modified_name += "_Autumn18"
+    elif "Summer19UL17" in dataset_name:
+        modified_name += "_Summer19UL17"
+    elif "Summer19UL18" in dataset_name:
+        modified_name += "_Summer19UL18"
 
     if 'ext1' in dataset_name:
         modified_name += '_ext1'
@@ -100,15 +104,15 @@ config.Data.unitsPerJob = 24000
 
 # Add subdirectory using year from config filename
 pset = os.path.basename(config.JobType.psetName)
-result = re.search(r'201[\d](v\d)?', pset)
+result = re.search(r'(20|UL)1[\d](v\d)?', pset)
 if not result:
     raise RuntimeError("Cannot extract year from psetName! Does your psetName have 201* in it?")
 year = result.group()
-config.Data.outLFNDirBase = '/store/group/uhh/uhh2ntuples/RunII_102X_v2/%s/' % (year)
+config.Data.outLFNDirBase = '/store/group/uhh/uhh2ntuples/RunII_106X_v1/%s/' % (year)
 
 # If you want to run some private production and not put it in the group area, use this instead:
 # replacing YOUR_CERN_USERNAME_HERE as appropriate
-# config.Data.outLFNDirBase = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_102X_v2/%s/' % (year)
+# config.Data.outLFNDirBase = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v1/%s/' % (year)
 if 'YOUR_CERN_USERNAME_HERE' in config.Data.outLFNDirBase:
     raise RuntimeError("You didn't insert your CERN username in config.Data.outLFNDirBase, please fix it")
 
