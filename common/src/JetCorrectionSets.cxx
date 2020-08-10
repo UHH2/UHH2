@@ -25,7 +25,7 @@ const std::string JERFiles::JECPathStringMC(const std::string & tag,
   return result;
 }
 
-// translate individual runs into the merged ones
+// translate individual runs into the merged ones (as used in the txt filenames)
 // e.g. B -> BCD for Summer16
 const std::map<std::string, std::map<std::string, std::string> > JERFiles::jecRunMap = {
   {"Summer16", {
@@ -53,7 +53,28 @@ const std::map<std::string, std::map<std::string, std::string> > JERFiles::jecRu
     {"B", "B"},
     {"C", "C"},
     {"D", "D"}
-  }}
+  }},
+  {"Summer19UL16", {
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"},
+    {"E", "E"},
+    {"F", "F"}
+  }},
+  {"Summer19UL17", {
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"},
+    {"E", "E"},
+    {"F", "F"}
+  }},
+  {"Summer19UL18", {
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"},
+    {"E", "E"},
+    {"F", "F"}
+  }},
 };
 
 const std::string JERFiles::JECPathStringDATA(const std::string & tag,
@@ -66,8 +87,8 @@ const std::string JERFiles::JECPathStringDATA(const std::string & tag,
 
   std::string campaign = tag.substr(0, tag.find("_"));
   std::string newRunName = JERFiles::jecRunMap.at(campaign).at(runName);
-  // in 2018 they use "_RunA" instead of just "A"
-  if (tag.find("18") != std::string::npos) {
+  // in 2018, and for UL,  they use "_RunX" instead of just "X"
+  if (tag.find("18") != std::string::npos || tag.find("UL") != std::string::npos) {
     newRunName = "_Run" + runName;
   }
 
