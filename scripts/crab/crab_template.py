@@ -108,11 +108,11 @@ result = re.search(r'(20|UL)1[\d](v\d)?', pset)
 if not result:
     raise RuntimeError("Cannot extract year from psetName! Does your psetName have 201* in it?")
 year = result.group()
-config.Data.outLFNDirBase = '/store/group/uhh/uhh2ntuples/RunII_102X_v2/%s/' % (year)
+config.Data.outLFNDirBase = '/store/group/uhh/uhh2ntuples/RunII_106X_v1/%s/' % (year)
 
 # If you want to run some private production and not put it in the group area, use this instead:
 # replacing YOUR_CERN_USERNAME_HERE as appropriate
-# config.Data.outLFNDirBase = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_102X_v2/%s/' % (year)
+# config.Data.outLFNDirBase = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v1/%s/' % (year)
 if 'YOUR_CERN_USERNAME_HERE' in config.Data.outLFNDirBase:
     raise RuntimeError("You didn't insert your CERN username in config.Data.outLFNDirBase, please fix it")
 
