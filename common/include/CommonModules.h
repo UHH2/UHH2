@@ -114,9 +114,9 @@ private:
     TauId tauid;
     JetPFID::wp working_point;
     std::unique_ptr<YearSwitcher> jet_corrector_MC, jet_corrector_data;
-    std::shared_ptr<RunSwitcher> jec_switcher_16, jec_switcher_17, jec_switcher_18;
+    std::shared_ptr<RunSwitcher> jec_switcher_16, jec_switcher_17, jec_switcher_18, jec_switcher_UL17, jec_switcher_UL18;
     std::unique_ptr<YearSwitcher> JLC_MC, JLC_data;
-    std::shared_ptr<RunSwitcher> JLC_switcher_16, JLC_switcher_17, JLC_switcher_18;
+    std::shared_ptr<RunSwitcher> JLC_switcher_16, JLC_switcher_17, JLC_switcher_18, JLC_switcher_UL17, JLC_switcher_UL18;
     std::unique_ptr<JetResolutionSmearer> jet_resolution_smearer;
     std::unique_ptr<JetCleaner> jet_cleaner;
 
@@ -131,6 +131,8 @@ private:
     std::string jec_tag_2016, jec_ver_2016;
     std::string jec_tag_2017, jec_ver_2017;
     std::string jec_tag_2018, jec_ver_2018;
+    std::string jec_tag_UL17, jec_ver_UL17;
+    std::string jec_tag_UL18, jec_ver_UL18;
     std::string jec_jet_coll;
 
     std::unique_ptr<Selection> lumi_selection;
