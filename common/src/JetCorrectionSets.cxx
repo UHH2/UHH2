@@ -89,6 +89,10 @@ const std::string JERFiles::JECPathStringDATA(const std::string & tag,
 
 const std::vector<std::string> JERFiles::L1L2L3 = {"L1FastJet", "L2Relative", "L3Absolute"};
 
+const std::vector<std::string> JERFiles::L1L2 = {"L1FastJet", "L2Relative"};
+
+const std::vector<std::string> JERFiles::L1L2Residual = {"L1FastJet", "L2Relative", "L2Residual"};
+
 const std::vector<std::string> JERFiles::L1L2L3Residual = {"L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"};
 
 const std::vector<std::string> JERFiles::JECFilesMC(const std::string & tag,

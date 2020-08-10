@@ -125,16 +125,12 @@ public:
 
   virtual ~GenericSubJetCorrector();
 
-  void set_doJER(uhh2::Context & ctx, const TString sfFilename="", const TString resFilename="Fall17_V3_MC_PtResolution_AK4PFchs.txt", const std::string & genjet_label = "hotvrGen", bool _isHOTVR=false);
-  void set_HOTVR(bool _isHOTVR=false) { isHOTVR = _isHOTVR; };
-
 private:
   std::unique_ptr<FactorizedJetCorrector> corrector;
   uhh2::Event::Handle<std::vector<TopJet> > h_topjets;
   JetCorrectionUncertainty* jec_uncertainty;
   int direction = 0; // -1 = down, +1 = up, 0 = nominal
   std::string collectionname;
-  bool doJER = false, isHOTVR = false;
   std::unique_ptr<GenericJetResolutionSmearer> m_gjrs;
   uhh2::Event::Handle<std::vector<GenTopJet> > h_gentopjets;
 };
@@ -243,7 +239,7 @@ private:
 class GenericJetResolutionSmearer : public uhh2::AnalysisModule {
 
 public:
-  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const TString sfFilename="", const TString resFilename="Fall17_V3_MC_PtResolution_AK4PFchs.txt");
+  explicit GenericJetResolutionSmearer(uhh2::Context&, const std::string& recj="jets", const std::string& genj="genjets", const TString& scaleFactorFilename="", const TString& resolutionFilename="");
   virtual ~GenericJetResolutionSmearer() = default;
 
   virtual bool process(uhh2::Event&) override;
@@ -293,13 +289,12 @@ private:
 class JetResolutionSmearer: public uhh2::AnalysisModule{
 public:
   explicit JetResolutionSmearer(uhh2::Context & ctx);
-  explicit JetResolutionSmearer(uhh2::Context & ctx, const std::string& sfFilename, const std::string& resFilename);
+  explicit JetResolutionSmearer(uhh2::Context & ctx, const std::string& scaleFactorFilename, const std::string& resolutionFilename);
 
   virtual bool process(uhh2::Event & event) override;
 
   virtual ~JetResolutionSmearer();
 private:
-
   GenericJetResolutionSmearer* m_gjrs;
 };
 
@@ -311,18 +306,18 @@ private:
 class SoftDropMassCalculator: public uhh2::AnalysisModule {
 public:
   explicit SoftDropMassCalculator(uhh2::Context & ctx,
-    bool applyCorrections=true,
-    const std::string & puppiCorrFilename="",
-    const std::string & jetCollName="topjets");
-    virtual ~SoftDropMassCalculator() {};
-    virtual bool process(uhh2::Event&) override;
-    float calcSDmass(const TopJet & jet);
-    float getPUPPIweight(float pt, float eta);
-  private:
-    uhh2::Event::Handle<std::vector<TopJet>> h_topjets_;
-    uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjets_;
-    bool applyCorrections_;
-    std::unique_ptr<TFile> puppiCorrFile;
-    std::unique_ptr<TF1> puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for;
-  };
-  //// -----------------------------------------------------------------
+                                  bool applyCorrections=true,
+                                  const std::string & puppiCorrFilename="",
+                                  const std::string & jetCollName="topjets");
+  virtual ~SoftDropMassCalculator() {};
+  virtual bool process(uhh2::Event&) override;
+  float calcSDmass(const TopJet & jet);
+  float getPUPPIweight(float pt, float eta);
+private:
+  uhh2::Event::Handle<std::vector<TopJet>> h_topjets_;
+  uhh2::Event::Handle<std::vector<GenTopJet>> h_gentopjets_;
+  bool applyCorrections_;
+  std::unique_ptr<TFile> puppiCorrFile;
+  std::unique_ptr<TF1> puppisd_corrGEN, puppisd_corrRECO_cen, puppisd_corrRECO_for;
+};
+//// -----------------------------------------------------------------

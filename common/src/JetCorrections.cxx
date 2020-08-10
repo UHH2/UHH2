@@ -329,41 +329,15 @@ GenericSubJetCorrector::GenericSubJetCorrector(uhh2::Context & ctx, const std::v
   h_topjets = ctx.get_handle<std::vector<TopJet> >(collectionname);
 }
 
-void GenericSubJetCorrector::set_doJER(uhh2::Context & ctx, const TString sfFilename, const TString resFilename, const std::string & genjet_label, bool _isHOTVR) {
-  set_HOTVR(_isHOTVR);
-  if (ctx.get("dataset_type") != "MC") return;
-  doJER = true;
-  m_gjrs.reset(new GenericJetResolutionSmearer(ctx, collectionname+std::to_string(isHOTVR), genjet_label, sfFilename, resFilename));
-  h_gentopjets = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
-}
-
 bool GenericSubJetCorrector::process(uhh2::Event & event){
 
   const auto topjets = &event.get(h_topjets);
-  std::vector<GenTopJet>* gen_topjets = nullptr;
-
-  vector<GenJet> gen_subjets;
-  if (doJER && !event.isRealData) {
-    gen_topjets = &event.get(h_gentopjets);
-    for (const GenTopJet &genjet : *gen_topjets) {
-      for (GenJet gensubj : genjet.subjets()){
-        gen_subjets.push_back(gensubj);
-      }
-    }
-  }
 
   assert(topjets);
   for(auto & topjet : *topjets){
     auto subjets = topjet.subjets();
     for (auto & subjet : subjets) {
       correct_jet(*corrector, subjet, event, jec_uncertainty, direction);
-    }
-    if (doJER && !event.isRealData) m_gjrs->apply_JER_smearing(subjets, gen_subjets , 0.4, event.rho);
-    if (isHOTVR) {
-      LorentzVector v4;
-      for (auto & subjet : subjets) v4 += subjet.v4();
-      topjet.set_v4(v4);
-      topjet.set_softdropmass(v4.M());
     }
     topjet.set_subjets(move(subjets));
   }
@@ -602,15 +576,15 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }
 
-  std::string sfFilename  = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_SF_"+jetAlgoRadius+"PF"+puName+".txt";
-  std::string resFilename = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
+  std::string scaleFactorFilename  = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_SF_"+jetAlgoRadius+"PF"+puName+".txt";
+  std::string resolutionFilename = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
 
-  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", sfFilename, resFilename);
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", scaleFactorFilename, resolutionFilename);
 
 }
 
-JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const std::string& sfFilename, const std::string& resFilename){
-  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", sfFilename, resFilename);
+JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx, const std::string& scaleFactorFilename, const std::string& resolutionFilename){
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", scaleFactorFilename, resolutionFilename);
 }
 
 bool JetResolutionSmearer::process(uhh2::Event & event) {
@@ -623,7 +597,7 @@ JetResolutionSmearer::~JetResolutionSmearer(){}
 
 ////
 
-GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const TString sfFilename, const TString resFilename){
+GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, const std::string& recjet_label, const std::string& genjet_label, const TString& scaleFactorFilename, const TString& resolutionFilename){
 
   if(ctx.get("meta_jer_applied__"+recjet_label, "") != "true") ctx.set_metadata("jer_applied__"+recjet_label, "true");
   else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already applied to this RECO-jets collection: "+recjet_label);
@@ -641,11 +615,10 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   h_gentopjets_ = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
 
   //read in file for jet resolution (taken from https://github.com/cms-jet/JRDatabase/blob/master/textFiles/)
-  TString sffilename  = sfFilename.Contains("JRDatabase/textFiles/") ? sfFilename  : "JRDatabase/textFiles/"+sfFilename;
-  TString resfilename = sfFilename.Contains("JRDatabase/textFiles/") ? resFilename : "JRDatabase/textFiles/"+resFilename;
-  resolution_ = JME::JetResolution(locate_file(sffilename.Data()));
-
-  res_sf_ = JME::JetResolutionScaleFactor(locate_file(resfilename.Data()));
+  TString scaleFactorFilename_ = scaleFactorFilename.Contains("JRDatabase/textFiles/")? scaleFactorFilename : "JRDatabase/textFiles/"+scaleFactorFilename;
+  TString resolutionFilename_ = resolutionFilename.Contains("JRDatabase/textFiles/")?  resolutionFilename  : "JRDatabase/textFiles/"+resolutionFilename;
+  res_sf_ = JME::JetResolutionScaleFactor(locate_file(scaleFactorFilename_.Data()));
+  resolution_ = JME::JetResolution(locate_file(resolutionFilename_.Data()));
 
 }
 
@@ -743,20 +716,20 @@ void GenericJetResolutionSmearer::apply_JER_smearing(std::vector<RJ>& rec_jets, 
 
     // Calculate the new pt
     float new_pt = -1.;
-    //Use scaling method in case a matching generator jet was found
+    // Use scaling method in case a matching generator jet was found
     if(genpt>0){
       new_pt = std::max(0.0f, genpt + c * (recopt - genpt));
     }
-    //Use stochastic method if no generator jet could be matched to the reco jet
+    // Use stochastic method if no generator jet could be matched to the reco jet
     else{
-      //Initialize random generator with eta-dependend random seed to be reproducible
+      // Initialize random generator with eta-dependend random seed to be reproducible
       TRandom rand((int)(1000*abseta));
-      float random_gauss = rand.Gaus(0,resolution);
-      new_pt = recopt * (1 + random_gauss*sqrt(std::max( c*c-1,0.0f)));
+      float random_gauss = rand.Gaus(0, resolution);
+      new_pt = recopt * (1 + random_gauss*sqrt(std::max(c*c-1, 0.0f)));
     }
     jet_v4 *= new_pt / recopt;
 
-    //Update JEC_factor_raw needed for smearing MET
+    // Update JEC_factor_raw needed for smearing MET
     float factor_raw = jet.JEC_factor_raw();
     factor_raw *= recopt/new_pt;
 

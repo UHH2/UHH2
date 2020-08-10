@@ -38,6 +38,8 @@ namespace JERFiles{
                                       const std::string & correction);
 
   // Some common variable to replace long vector strings
+  extern const std::vector<std::string> L1L2;
+  extern const std::vector<std::string> L1L2Residual;
   extern const std::vector<std::string> L1L2L3;
   extern const std::vector<std::string> L1L2L3Residual;
 

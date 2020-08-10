@@ -116,6 +116,16 @@ const std::map<Year, std::string> year_str_map = {
     {Year::is2018UL, "2018UL"},
     {Year::is2018,   "2018"},
 };
+
+const std::map<Year, std::string> year_str_map_simple = {
+    {Year::is2016v2,  "2016"},
+    {Year::is2016v3,  "2016"},
+    {Year::is2017v1,  "2017"},
+    {Year::is2017v2,  "2017"},
+    {Year::is2018,    "2018"},
+    {Year::is2017UL,  "2017"},
+    {Year::is2018UL,  "2018"}
+};
 // TODO: inverse map?
 
 /* Get Year enum from dataset_version in XML config */
@@ -130,6 +140,10 @@ const std::vector<std::string> runPeriods2016 = {"B", "C", "D", "E", "F", "G", "
 const std::vector<std::string> runPeriods2017 = {"B", "C", "D", "E", "F"};
 
 const std::vector<std::string> runPeriods2018 = {"A", "B", "C", "D"};
+
+const std::vector<std::string> year2runPeriods(const std::string& year);
+
+const std::vector<std::string> year2runPeriods(const Year& year);
 
 /**
  * Map run periods to run numbers for each year
