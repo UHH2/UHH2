@@ -40,8 +40,8 @@ bool TopPtReweight::process(uhh2::Event& event){
   if (ttbargen.DecayChannel() != TTbarGen::e_notfound) {
     float tpt1 = ttbargen.Top().v4().Pt();
     float tpt2 = ttbargen.Antitop().v4().Pt();
-    tpt1 = std::min(tpt1, float(400.));
-    tpt2 = std::min(tpt2, float(400.));
+    tpt1 = std::min(tpt1, float(500.));
+    tpt2 = std::min(tpt2, float(500.));
     wgt = sqrt(exp(a_+b_*tpt1)*exp(a_+b_*tpt2));
   }
 
