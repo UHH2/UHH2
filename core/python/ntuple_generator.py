@@ -55,7 +55,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         If the year argument is not one of the allowable options
     """
     year = str(year)  # sanitise string
-    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "UL17", "UL18"]
+    acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "UL16preVFP", "UL16postVFP", "UL17", "UL18"]
     if year not in acceptable_years:
         raise ValueError("year argument in generate_process() should be one of: %s. You provided: %s" % (acceptable_years, year))
 
@@ -80,6 +80,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     elif year == "2016v3":
         process = cms.Process("USER", eras.Run2_2016, eras.run2_miniAOD_80XLegacy) 
     elif year == "2016v2":
+        process = cms.Process("USER", eras.Run2_2016)
+    elif year == "UL16preVFP":
+        process = cms.Process("USER", eras.Run2_2016_HIPM)
+    elif year == "UL16postVFP":
         process = cms.Process("USER", eras.Run2_2016)
     elif year == "UL17":
         process = cms.Process("USER", eras.Run2_2017)
@@ -289,6 +293,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         "2018": {
             "data": "102X_dataRun2_Prompt_v6",
             "mc": "102X_upgrade2018_realistic_v15",
+        },
+106X_dataRun2_v27
+        "UL16preVFP": {
+            "data": "106X_dataRun2_v28",
+            "mc": "106X_mcRun2_asymptotic_preVFP_v8",
+        },
+        "UL16postVFP": {
+            "data": "106X_dataRun2_v28",
+            "mc": "106X_mcRun2_asymptotic_v13",
         },
         "UL17": {
             "data": "106X_dataRun2_v28",
@@ -1872,6 +1885,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         "2017v1": ele_iso_17,
         "2017v2": ele_iso_17,
         "2018": ele_iso_17,
+        "UL16preVFP": ele_iso_17,
+        "UL16postVFP": ele_iso_17,
         "UL17": ele_iso_17,
         "UL18": ele_iso_17,
     }
