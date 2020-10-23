@@ -9,6 +9,17 @@
 namespace JERFiles{
 
   /**
+   * JERPathString returns the path of a JER file from JRDatabase for a given 
+   * tag, 
+   * jetCollection,
+   * type (i.e. SF,PtResolution, etc.).
+   * To be used for example in JetResolutionSmearer or when constructing a GenericJetResolutionSmearer
+   */
+  const std::string JERPathStringMC(const std::string & tag,
+                                  const std::string & jetCollection,
+                                  const std::string & type = "SF");  
+
+  /**
    * There are 2 ways to get access to JEC sets, needed for *JetEnergyCorrector class:
    * - use the JECFiles[DATA|MC]() functions
    * - a C++ variable, defined below with the DEFINE_* macros,
