@@ -847,32 +847,19 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     throw runtime_error("JetCollection not CHS or Puppi - cannot determine filename for JetResolutionSmearer");
   }
 
-  std::string filenameAppend = jetAlgoRadius+"PF"+puName+".txt";
-
+  std::string jetCollection = jetAlgoRadius+"PF"+puName;
   const Year & year = extract_year(ctx);
-  JERSmearing::SFtype1 JER_sf = {};
-  std::string sfFilename = "";
-  std::string resFilename = "";
+  std::string jer_tag = "";
   if (year == Year::is2016v2 || year == Year::is2016v3) {
-    JER_sf = JERSmearing::SF_13TeV_Summer16_25nsV1;
-    resFilename = "2016/Summer16_25nsV1_MC_PtResolution_" + filenameAppend;
+    jer_tag = "Summer16_25nsV1";
   } else if (year == Year::is2017v1 || year == Year::is2017v2) {
-    JER_sf = JERSmearing::SF_13TeV_Fall17_V3;
-    resFilename = "2017/Fall17_V3_MC_PtResolution_" + filenameAppend;
+    jer_tag = "Fall17_V3";
   } else if (year == Year::is2018) {
-    sfFilename = "common/data/2018/Autumn18_V7_MC_SF_" + filenameAppend;
-    resFilename = "2018/Autumn18_V7_MC_PtResolution_" + filenameAppend;
+    jer_tag = "Autumn18_V7";
   } else {
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }
-
-  if (sfFilename != "") {
-    m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", sfFilename, resFilename);
-  } else if (JER_sf.size() > 0) {
-    m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JER_sf, resFilename);
-  } else {
-    throw runtime_error("No valid JER SF either as text file nor JERSmearing::SFtype1");
-  }
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", JERFiles::JERPathStringMC(jer_tag,jetCollection,"SF"), JERFiles::JERPathStringMC(jer_tag,jetCollection,"PtResolution"));
 
 }
 
