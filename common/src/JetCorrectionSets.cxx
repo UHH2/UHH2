@@ -1,6 +1,23 @@
 #include "UHH2/common/include/JetCorrectionSets.h"
 #include <string>
 
+// Getting path of a JER file from JRDatabase (e.g. SF, PtResolution, etc) for a given tag and jetCollection
+const std::string JERFiles::JERPathStringMC(const std::string & tag,
+                                          const std::string & jetCollection,
+                                          const std::string & type){
+  
+  std::string result = "JRDatabase/textFiles/";
+  result += tag;
+  result += "_MC/";
+  result += tag;
+  result += "_MC_";
+  result += type;
+  result += "_";
+  result += jetCollection;
+  result += ".txt";
+  return result;
+  }
+
 //see https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookJetEnergyCorrections#GetTxtFiles how to get the txt files with jet energy corrections from the database
 
 // The idea of the following methods is to simplify the creation of new JEC input files.
