@@ -566,6 +566,7 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
 
   // Official recommendations:
   // https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution#JER_Scaling_factors_and_Uncertai
+  std::string jetCollection = jetAlgoRadius+"PF"+puName;
   const Year & year = extract_year(ctx);
   std::string version = "";
   if (year == Year::is2016v2 || year == Year::is2016v3) {
@@ -577,16 +578,12 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
   }  else if (year == Year::isUL17) {
     version = "Summer19UL17_JRV2";
   } else if (year == Year::isUL18) {
-    version = "Autumn18_V7";
-    std::cout << "WARNING: UL18 JER need updating - currently no recommendation" << std::endl;
+    version = "Summer19UL18_JRV2";
   } else {
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }
 
-  std::string scaleFactorFilename  = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_SF_"+jetAlgoRadius+"PF"+puName+".txt";
-  std::string resolutionFilename = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
-
-  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", scaleFactorFilename, resolutionFilename);
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets",JERFiles::JERPathStringMC(version,jetCollection,"SF"), JERFiles::JERPathStringMC(version,jetCollection,"PtResolution"));
 
 }
 
