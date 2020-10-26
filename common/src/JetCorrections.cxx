@@ -566,6 +566,7 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
 
   // Official recommendations:
   // https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution#JER_Scaling_factors_and_Uncertai
+  std::string jetCollection = jetAlgoRadius+"PF"+puName;
   const Year & year = extract_year(ctx);
   std::string version = "";
   if (year == Year::is2016v2 || year == Year::is2016v3) {
@@ -577,16 +578,12 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
   }  else if (year == Year::isUL17) {
     version = "Summer19UL17_JRV2";
   } else if (year == Year::isUL18) {
-    version = "Autumn18_V7";
-    std::cout << "WARNING: UL18 JER need updating - currently no recommendation" << std::endl;
+    version = "Summer19UL18_JRV2";
   } else {
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }
 
-  std::string scaleFactorFilename  = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_SF_"+jetAlgoRadius+"PF"+puName+".txt";
-  std::string resolutionFilename = "JRDatabase/textFiles/"+version+"_MC/"+version+"_MC_PtResolution_"+jetAlgoRadius+"PF"+puName+".txt";
-
-  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets", scaleFactorFilename, resolutionFilename);
+  m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets",JERFiles::JERPathStringMC(version,jetCollection,"SF"), JERFiles::JERPathStringMC(version,jetCollection,"PtResolution"));
 
 }
 
@@ -622,10 +619,8 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   h_gentopjets_ = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
 
   //read in file for jet resolution (taken from https://github.com/cms-jet/JRDatabase/blob/master/textFiles/)
-  TString scaleFactorFilename_ = scaleFactorFilename.Contains("JRDatabase/textFiles/")? scaleFactorFilename : "JRDatabase/textFiles/"+scaleFactorFilename;
-  TString resolutionFilename_ = resolutionFilename.Contains("JRDatabase/textFiles/")?  resolutionFilename  : "JRDatabase/textFiles/"+resolutionFilename;
-  res_sf_ = JME::JetResolutionScaleFactor(locate_file(scaleFactorFilename_.Data()));
-  resolution_ = JME::JetResolution(locate_file(resolutionFilename_.Data()));
+  res_sf_ = JME::JetResolutionScaleFactor(locate_file(scaleFactorFilename.Data()));
+  resolution_ = JME::JetResolution(locate_file(resolutionFilename.Data()));
 
 }
 
