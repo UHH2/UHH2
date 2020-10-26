@@ -619,10 +619,8 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   h_gentopjets_ = ctx.get_handle<std::vector<GenTopJet> >(genjet_label);
 
   //read in file for jet resolution (taken from https://github.com/cms-jet/JRDatabase/blob/master/textFiles/)
-  TString scaleFactorFilename_ = scaleFactorFilename.Contains("JRDatabase/textFiles/")? scaleFactorFilename : "JRDatabase/textFiles/"+scaleFactorFilename;
-  TString resolutionFilename_ = resolutionFilename.Contains("JRDatabase/textFiles/")?  resolutionFilename  : "JRDatabase/textFiles/"+resolutionFilename;
-  res_sf_ = JME::JetResolutionScaleFactor(locate_file(scaleFactorFilename_.Data()));
-  resolution_ = JME::JetResolution(locate_file(resolutionFilename_.Data()));
+  res_sf_ = JME::JetResolutionScaleFactor(locate_file(scaleFactorFilename.Data()));
+  resolution_ = JME::JetResolution(locate_file(resolutionFilename.Data()));
 
 }
 
