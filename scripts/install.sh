@@ -84,31 +84,21 @@ setupFastjet() {
 }
 
 
-checkArch() {
-    # Check if this machine is compatible, because at CERN the default is EL7,
-    # whereas we need SL6
-    # Note that lxplus machines have uname e.g. 3.10.0-1062.4.1.el7.x86_64
-    # so just checking for el7 is ok
+setupArch() {
+    # Set the correct SCRAM_ARCH depending on the machine arch
     # To complicate matters, we need to handle gitlab CI as well,
     # however there uname is useless, it just gives e.g. 4.19.68-coreos.
-    # Instead we must rely on the IMAGE variable that we set in .gitlab-ci.yml
-    # (yes that is a horrible dependence)
-    if [ -n "$IMAGE" ]
-    then
-        # here is on gitlab CI
-        if [[ "$IMAGE" == *cc7* ]]; then
-            echo "This release requires a SL6 image"
-            echo "Please update .gitlab-ci.yml and/or testPR.sh and run this again"
-            exit 1
-        fi
+    SL6ARCH="slc6_amd64_gcc700"
+    EL7ARCH="slc7_amd64_gcc700"
+    # this is the best script to tell OS, can't use uname on gitlab
+    myos=$(/cvmfs/cms.cern.ch/common/cmsos)
+    if [[ $myos == slc6* ]]; then
+        export SCRAM_ARCH="${SL6ARCH}"
+    elif [[ $myos == slc7* ]]; then
+        export SCRAM_ARCH="${EL7ARCH}"
     else
-        # here is normal running e.g. on NAF
-        KERNEL=$(uname -r)
-        if [[ "$KERNEL" == *el7* ]]; then
-            echo "This release requires a SL6 machine, e.g. naf-cms11.desy.de"
-            echo "Please log into one and run this again"
-            exit 1
-        fi
+        echo "Don't know SCRAM_ARCH for arch $myos"
+        exit 1
     fi
 }
 
@@ -119,9 +109,9 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh
 time git clone https://github.com/UHH2/SFrame.git
 
 # Get CMSSW
-checkArch
-export SCRAM_ARCH=slc6_amd64_gcc700
-CMSREL=CMSSW_10_2_16
+setupArch
+echo $SCRAM_ARCH
+CMSREL=CMSSW_10_2_17
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
