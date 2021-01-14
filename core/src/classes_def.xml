@@ -11,8 +11,6 @@
 <class name="std::vector<Jet>"/>
 <class name="GenJet"/>
 <class name="std::vector<GenJet>"/>
-<class name="JetBTagInfo"/>
-<class name="std::vector<JetBTagInfo>"/>
 <class name="TopJet"/>
 <class name="std::vector<TopJet>"/>
 <class name="GenTopJet"/>
