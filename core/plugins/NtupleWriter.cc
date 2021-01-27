@@ -35,6 +35,8 @@
 #include "TH1.h"
 #include "Compression.h"
 
+#include "TESTDUMMYFILE.h"
+
 using namespace std;
 
 namespace{
