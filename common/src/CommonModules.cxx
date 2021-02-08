@@ -34,9 +34,8 @@ CommonModules::CommonModules(){
   jec_tag_UL17 = "Summer19UL17";
   jec_ver_UL17 = "5";
 
-  // FIXME: update when official set
-  jec_tag_UL18 = "Autumn18";
-  jec_ver_UL18 = "19";
+  jec_tag_UL18 = "Summer19UL18";
+  jec_ver_UL18 = "5";
 
   jec_jet_coll = "AK4PFchs";
 }
