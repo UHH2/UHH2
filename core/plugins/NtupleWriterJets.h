@@ -27,7 +27,7 @@ size_t add_pfpart(const reco::Candidate & pf, std::vector<PFParticle> & pfparts)
 
 class NtupleWriterJets: public NtupleWriterModule {
 public:
-    static void fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, bool doPuppiSpecific, bool fill_pfcand=false);
+    static void fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool doPuppiSpecific, bool fill_pfcand=false);
 
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents, double MinPtJetwConstituents);
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member, const std::vector<std::string>&, const std::vector<std::string>&, unsigned int NPFJetwConstituents, double MinPtJetwConstituents);
@@ -61,7 +61,7 @@ public:
     struct Config: public NtupleWriterModule::Config {
         using NtupleWriterModule::Config::Config;
 
-        bool do_btagging = true, do_btagging_subjets = true, do_taginfo_subjets;
+        bool do_btagging = true, do_btagging_subjets = true;
 
         edm::InputTag substructure_variables_src;// a jet collection from where to take the subjet variables (after DeltaR-matching)
         edm::InputTag substructure_groomed_variables_src;
@@ -89,7 +89,7 @@ public:
 private:
     edm::InputTag src;
     float ptmin, etamax;
-    bool do_btagging, do_btagging_subjets, do_taginfo_subjets, do_toptagging;
+    bool do_btagging, do_btagging_subjets, do_toptagging;
     edm::EDGetToken src_token, src_higgs_token, src_softdrop_token, substructure_variables_src_token, substructure_variables_src_tokenreco, substructure_groomed_variables_src_token, substructure_groomed_variables_src_tokenreco;
     edm::EDGetToken src_njettiness1_token, src_njettiness2_token, src_njettiness3_token, src_njettiness4_token, src_qjets_token;
     edm::EDGetToken src_njettiness1_groomed_token, src_njettiness2_groomed_token, src_njettiness3_groomed_token, src_njettiness4_groomed_token;

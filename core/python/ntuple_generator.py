@@ -2262,13 +2262,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                             # Otherwise use "daughters" here to treat all jet daughters as subjets
                                             subjet_source=cms.string("SoftDropCHS"),
 
-                                            # Specify if you want to store b-tagging taginfos for subjet collection,
-                                            # make sure to have included them with .addTagInfos = True
-                                            # addTagInfos = True is currently true by default, however,
-                                            # only for collections produced and not read directly from miniAOD
-                                            # Default is do_subjet_taginfo=False
-                                            do_subjet_taginfo=cms.bool(True),
-
                                             # If you want to store the MVA Higgs tagger discriminator,
                                             # specify the jet collection from which to pick it up and the tagger name
                                             # currently the discriminator is trained on ungroomed jets, so
@@ -2304,8 +2297,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                             topjet_source=cms.string("jetsAk8PuppiSubstructure"),  # store ungroomed vars
                                             subjet_source=cms.string("SoftDropPuppi"),
 
-                                            do_subjet_taginfo=cms.bool(True),
-
                                             higgstag_source=cms.string("patJetsAk8PuppiJetsFat"),
                                             higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
                                             higgstaginfo_source=cms.string("pfBoostedDoubleSVTagInfosPuppi"),  # FIXME Does this need replacing?
@@ -2325,7 +2316,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         # cms.PSet(
                                         #     topjet_source=cms.string("slimmedJetsAK8"),  # puppijets in 2017 MiniAOD & later
                                         #     subjet_source=cms.string("SoftDropPuppi"),
-                                        #     do_subjet_taginfo=cms.bool(False),
                                         #     higgstag_source=cms.string("patJetsAk8PuppiJetsFat"),
                                         #     higgstag_name=cms.string("pfBoostedDoubleSecondaryVertexAK8BJetTags"),
                                         #     #njettiness_source = cms.string(""),
@@ -2349,7 +2339,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                         #     topjet_source = cms.string(
                                         #         "patJetsHepTopTagCHSPacked"),
                                         #     subjet_source = cms.string("daughters"),
-                                        #     do_subjet_taginfo = cms.bool(True),
                                         #     higgstag_source = cms.string(
                                         #         "patJetsCa15CHSJets"),
                                         #     higgstag_name=cms.string(
