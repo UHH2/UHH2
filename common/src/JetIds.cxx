@@ -110,36 +110,72 @@ bool DeepCSVBTag::operator()(const Jet & jet, const Event &ev){
       throw invalid_argument("invalid working point passed to DeepCSVBTag");
     }
   }
-  else if(ev.year.find("2017") != string::npos){
-    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-    switch(m_working_point){
-      case WP_LOOSE:
-      deepcsv_threshold = 0.1522;
-      break;
-      case WP_MEDIUM:
-      deepcsv_threshold = 0.4941;
-      break;
-      case WP_TIGHT:
-      deepcsv_threshold = 0.8001;
-      break;
-      default:
-      throw invalid_argument("invalid working point passed to DeepCSVBTag");
+  else if(ev.year.find("17") != string::npos){
+    if(ev.year.find("UL") != string::npos){
+      //https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepcsv_threshold = 0.1355;
+        break;
+        case WP_MEDIUM:
+        deepcsv_threshold = 0.4506;
+        break;
+        case WP_TIGHT:
+        deepcsv_threshold = 0.7738;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepCSVBTag");
+      }
+    }
+    else {
+      //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepcsv_threshold = 0.1522;
+        break;
+        case WP_MEDIUM:
+        deepcsv_threshold = 0.4941;
+        break;
+        case WP_TIGHT:
+        deepcsv_threshold = 0.8001;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepCSVBTag");
+      }
     }
   }
-  else if(ev.year == "2018"){
-    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
-    switch(m_working_point){
-      case WP_LOOSE:
-      deepcsv_threshold = 0.1241;
-      break;
-      case WP_MEDIUM:
-      deepcsv_threshold = 0.4184;
-      break;
-      case WP_TIGHT:
-      deepcsv_threshold = 0.7527;
-      break;
-      default:
-      throw invalid_argument("invalid working point passed to DeepCSVBTag");
+  else if(ev.year.find("18") != string::npos){
+    if(ev.year.find("UL") != string::npos){
+      //https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepcsv_threshold = 0.1208;
+        break;
+        case WP_MEDIUM:
+        deepcsv_threshold = 0.4168;
+        break;
+        case WP_TIGHT:
+        deepcsv_threshold = 0.7665;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepCSVBTag");
+      }
+    }
+    else {
+      //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepcsv_threshold = 0.1241;
+        break;
+        case WP_MEDIUM:
+        deepcsv_threshold = 0.4184;
+        break;
+        case WP_TIGHT:
+        deepcsv_threshold = 0.7527;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepCSVBTag");
+      }
     }
   } else {
     cout << "Invalid year, DeepCSVBTag returning false" << endl;
@@ -173,36 +209,72 @@ bool DeepJetBTag::operator()(const Jet & jet, const Event &ev){
       throw invalid_argument("invalid working point passed to DeepJetBTag");
     }
   }
-  else if(ev.year.find("2017") != string::npos){
-    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-    switch(m_working_point){
-      case WP_LOOSE:
-      deepjet_threshold = 0.0521;
-      break;
-      case WP_MEDIUM:
-      deepjet_threshold = 0.3033;
-      break;
-      case WP_TIGHT:
-      deepjet_threshold = 0.7489;
-      break;
-      default:
-      throw invalid_argument("invalid working point passed to DeepJetBTag");
+  else if(ev.year.find("17") != string::npos){
+    if(ev.year.find("UL") != string::npos){
+      //https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepjet_threshold = 0.0532;
+        break;
+        case WP_MEDIUM:
+        deepjet_threshold = 0.3040;
+        break;
+        case WP_TIGHT:
+        deepjet_threshold = 0.7476;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepJetBTag");
+      }
+    }
+    else {
+      //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepjet_threshold = 0.0521;
+        break;
+        case WP_MEDIUM:
+        deepjet_threshold = 0.3033;
+        break;
+        case WP_TIGHT:
+        deepjet_threshold = 0.7489;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepJetBTag");
+      }
     }
   }
-  else if(ev.year == "2018"){
-    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
-    switch(m_working_point){
-      case WP_LOOSE:
-      deepjet_threshold = 0.0494;
-      break;
-      case WP_MEDIUM:
-      deepjet_threshold = 0.2770;
-      break;
-      case WP_TIGHT:
-      deepjet_threshold = 0.7264;
-      break;
-      default:
-      throw invalid_argument("invalid working point passed to DeepJetBTag");
+  else if(ev.year.find("18") != string::npos){
+    if(ev.year.find("UL") != string::npos){
+      //https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepjet_threshold = 0.0490;
+        break;
+        case WP_MEDIUM:
+        deepjet_threshold = 0.2783;
+        break;
+        case WP_TIGHT:
+        deepjet_threshold = 0.7100;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepJetBTag");
+      }
+    }
+    else {
+      //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepjet_threshold = 0.0494;
+        break;
+        case WP_MEDIUM:
+        deepjet_threshold = 0.2770;
+        break;
+        case WP_TIGHT:
+        deepjet_threshold = 0.7264;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepJetBTag");
+      }
     }
   } else {
     cout << "Invalid year, DeepJetBTag returning false" << endl;
