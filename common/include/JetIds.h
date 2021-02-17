@@ -86,27 +86,36 @@ private:
 */
 class JetPFID {
 public:
-  enum wp {WP_LOOSE_CHS, WP_TIGHT_CHS, WP_LOOSE_PUPPI, WP_TIGHT_PUPPI, WP_TIGHT_LEPVETO};
+  enum wp {WP_LOOSE_CHS, WP_TIGHT_CHS, WP_LOOSE_PUPPI, WP_TIGHT_PUPPI, WP_TIGHT_LEPVETO, WP_TIGHT_LEPVETO_CHS, WP_TIGHT_LEPVETO_PUPPI}; // keep WP_TIGHT_LEPVETO for some backward compatibility; use of WP_TIGHT_LEPVETO_CHS/PUPPI is encouraged
   explicit JetPFID(wp working_point);
   bool operator()(const Jet&, const uhh2::Event&) const;
 private:
   wp m_working_point;
+
+  //UL taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
+  // No differences between the UL years
+  bool tightIDUL_CHS(const Jet & jet) const;
+  bool tightIDUL_PUPPI(const Jet & jet) const;
+  bool tightLepVetoIDUL_CHS(const Jet & jet) const;
+  bool tightLepVetoIDUL_PUPPI(const Jet & jet) const;
+
   //2016 taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2016
   bool looseID2016_CHS(const Jet & jet) const;
   bool tightID2016_CHS(const Jet & jet) const;
   bool looseID2016_PUPPI(const Jet & jet) const;
   bool tightID2016_PUPPI(const Jet & jet) const;
-  bool tightLepVetoID2016(const Jet & jet) const;
+  bool tightLepVetoID2016(const Jet & jet) const; // same for CHS and PUPPI in 2016
 
   //2017 taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2017
   bool tightID2017_CHS(const Jet & jet) const;
   bool tightID2017_PUPPI(const Jet & jet) const;
-  bool tightLepVetoID2017(const Jet & jet) const;
+  bool tightLepVetoID2017(const Jet & jet) const; // same for CHS and PUPPI in 2017
 
   //2018 taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID13TeVRun2018
   bool tightID2018_CHS(const Jet & jet) const;
-  bool tightLepVetoID2018(const Jet & jet) const;
-
+  bool tightID2018_PUPPI(const Jet & jet) const;
+  bool tightLepVetoID2018_CHS(const Jet & jet) const;
+  bool tightLepVetoID2018_PUPPI(const Jet & jet) const;
 };
 
 /**

@@ -110,36 +110,72 @@ bool DeepCSVBTag::operator()(const Jet & jet, const Event &ev){
       throw invalid_argument("invalid working point passed to DeepCSVBTag");
     }
   }
-  else if(ev.year.find("2017") != string::npos){
-    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-    switch(m_working_point){
-      case WP_LOOSE:
-      deepcsv_threshold = 0.1522;
-      break;
-      case WP_MEDIUM:
-      deepcsv_threshold = 0.4941;
-      break;
-      case WP_TIGHT:
-      deepcsv_threshold = 0.8001;
-      break;
-      default:
-      throw invalid_argument("invalid working point passed to DeepCSVBTag");
+  else if(ev.year.find("17") != string::npos){
+    if(ev.year.find("UL") != string::npos){
+      //https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepcsv_threshold = 0.1355;
+        break;
+        case WP_MEDIUM:
+        deepcsv_threshold = 0.4506;
+        break;
+        case WP_TIGHT:
+        deepcsv_threshold = 0.7738;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepCSVBTag");
+      }
+    }
+    else {
+      //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepcsv_threshold = 0.1522;
+        break;
+        case WP_MEDIUM:
+        deepcsv_threshold = 0.4941;
+        break;
+        case WP_TIGHT:
+        deepcsv_threshold = 0.8001;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepCSVBTag");
+      }
     }
   }
-  else if(ev.year == "2018"){
-    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
-    switch(m_working_point){
-      case WP_LOOSE:
-      deepcsv_threshold = 0.1241;
-      break;
-      case WP_MEDIUM:
-      deepcsv_threshold = 0.4184;
-      break;
-      case WP_TIGHT:
-      deepcsv_threshold = 0.7527;
-      break;
-      default:
-      throw invalid_argument("invalid working point passed to DeepCSVBTag");
+  else if(ev.year.find("18") != string::npos){
+    if(ev.year.find("UL") != string::npos){
+      //https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepcsv_threshold = 0.1208;
+        break;
+        case WP_MEDIUM:
+        deepcsv_threshold = 0.4168;
+        break;
+        case WP_TIGHT:
+        deepcsv_threshold = 0.7665;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepCSVBTag");
+      }
+    }
+    else {
+      //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepcsv_threshold = 0.1241;
+        break;
+        case WP_MEDIUM:
+        deepcsv_threshold = 0.4184;
+        break;
+        case WP_TIGHT:
+        deepcsv_threshold = 0.7527;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepCSVBTag");
+      }
     }
   } else {
     cout << "Invalid year, DeepCSVBTag returning false" << endl;
@@ -173,36 +209,72 @@ bool DeepJetBTag::operator()(const Jet & jet, const Event &ev){
       throw invalid_argument("invalid working point passed to DeepJetBTag");
     }
   }
-  else if(ev.year.find("2017") != string::npos){
-    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-    switch(m_working_point){
-      case WP_LOOSE:
-      deepjet_threshold = 0.0521;
-      break;
-      case WP_MEDIUM:
-      deepjet_threshold = 0.3033;
-      break;
-      case WP_TIGHT:
-      deepjet_threshold = 0.7489;
-      break;
-      default:
-      throw invalid_argument("invalid working point passed to DeepJetBTag");
+  else if(ev.year.find("17") != string::npos){
+    if(ev.year.find("UL") != string::npos){
+      //https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepjet_threshold = 0.0532;
+        break;
+        case WP_MEDIUM:
+        deepjet_threshold = 0.3040;
+        break;
+        case WP_TIGHT:
+        deepjet_threshold = 0.7476;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepJetBTag");
+      }
+    }
+    else {
+      //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepjet_threshold = 0.0521;
+        break;
+        case WP_MEDIUM:
+        deepjet_threshold = 0.3033;
+        break;
+        case WP_TIGHT:
+        deepjet_threshold = 0.7489;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepJetBTag");
+      }
     }
   }
-  else if(ev.year == "2018"){
-    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
-    switch(m_working_point){
-      case WP_LOOSE:
-      deepjet_threshold = 0.0494;
-      break;
-      case WP_MEDIUM:
-      deepjet_threshold = 0.2770;
-      break;
-      case WP_TIGHT:
-      deepjet_threshold = 0.7264;
-      break;
-      default:
-      throw invalid_argument("invalid working point passed to DeepJetBTag");
+  else if(ev.year.find("18") != string::npos){
+    if(ev.year.find("UL") != string::npos){
+      //https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepjet_threshold = 0.0490;
+        break;
+        case WP_MEDIUM:
+        deepjet_threshold = 0.2783;
+        break;
+        case WP_TIGHT:
+        deepjet_threshold = 0.7100;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepJetBTag");
+      }
+    }
+    else {
+      //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
+      switch(m_working_point){
+        case WP_LOOSE:
+        deepjet_threshold = 0.0494;
+        break;
+        case WP_MEDIUM:
+        deepjet_threshold = 0.2770;
+        break;
+        case WP_TIGHT:
+        deepjet_threshold = 0.7264;
+        break;
+        default:
+        throw invalid_argument("invalid working point passed to DeepJetBTag");
+      }
     }
   } else {
     cout << "Invalid year, DeepJetBTag returning false" << endl;
@@ -215,7 +287,25 @@ bool DeepJetBTag::operator()(const Jet & jet, const Event &ev){
 JetPFID::JetPFID(wp working_point):m_working_point(working_point){}
 
 bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
-  if (ev.year.find("2016") != string::npos){
+  if(ev.year.find("UL") != string::npos){
+    // Note: These jet IDs are only confirmed to be valid for UL17 and UL18 yet
+    // https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
+    switch(m_working_point){
+      case WP_TIGHT_CHS:
+      return tightIDUL_CHS(jet);
+      case WP_TIGHT_PUPPI:
+      return tightIDUL_PUPPI(jet);
+      case WP_TIGHT_LEPVETO_CHS:
+      return tightLepVetoIDUL_CHS(jet);
+      case WP_TIGHT_LEPVETO_PUPPI:
+      return tightLepVetoIDUL_PUPPI(jet);
+      case WP_TIGHT_LEPVETO:
+      throw invalid_argument("In UL, the LepVeto JetPFID is not the same for CHS and PUPPI. Please specify either CHS or PUPPI working point.");
+      default:
+      throw invalid_argument("invalid working point passed to JetPFID");
+    }
+  }
+  else if (ev.year.find("2016") != string::npos){
     switch(m_working_point){
       case WP_LOOSE_CHS:
       return looseID2016_CHS(jet);
@@ -225,12 +315,15 @@ bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
       return looseID2016_PUPPI(jet);
       case WP_TIGHT_PUPPI:
       return tightID2016_PUPPI(jet);
-      case  WP_TIGHT_LEPVETO:
+      case WP_TIGHT_LEPVETO:
+      return tightLepVetoID2016(jet);
+      case WP_TIGHT_LEPVETO_CHS:
+      return tightLepVetoID2016(jet);
+      case WP_TIGHT_LEPVETO_PUPPI:
       return tightLepVetoID2016(jet);
       default:
       throw invalid_argument("invalid working point passed to JetPFID");
     }
-    return false;
   }
   else if (ev.year.find("2017") != string::npos){
     switch(m_working_point){
@@ -238,7 +331,11 @@ bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
       return tightID2017_CHS(jet);
       case WP_TIGHT_PUPPI:
       return tightID2017_PUPPI(jet);
-      case  WP_TIGHT_LEPVETO:
+      case WP_TIGHT_LEPVETO:
+      return tightLepVetoID2017(jet);
+      case WP_TIGHT_LEPVETO_CHS:
+      return tightLepVetoID2017(jet);
+      case WP_TIGHT_LEPVETO_PUPPI:
       return tightLepVetoID2017(jet);
       default:
       throw invalid_argument("invalid working point passed to JetPFID");
@@ -249,14 +346,91 @@ bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
       case WP_TIGHT_CHS:
       return tightID2018_CHS(jet);
       case WP_TIGHT_PUPPI:
-      return tightID2018_CHS(jet);//placeholder
-      case  WP_TIGHT_LEPVETO:
-      return tightLepVetoID2018(jet);
+      return tightID2018_PUPPI(jet);
+      case WP_TIGHT_LEPVETO_CHS:
+      return tightLepVetoID2018_CHS(jet);
+      case WP_TIGHT_LEPVETO_PUPPI:
+      return tightLepVetoID2018_PUPPI(jet);
+      case WP_TIGHT_LEPVETO:
+      throw invalid_argument("In 2018, the LepVeto JetPFID is not the same for CHS and PUPPI. Please specify either CHS or PUPPI working point.");
       default:
       throw invalid_argument("invalid working point passed to JetPFID");
     }
   } else {
     cout<<"Invalid year, JetID set to False"<<endl;
+  }
+  return false;
+}
+
+
+//according to https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
+bool JetPFID::tightIDUL_CHS(const Jet & jet) const{
+  if(fabs(jet.eta())<=2.6
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.90
+  && jet.numberOfDaughters()>1
+  && jet.chargedHadronEnergyFraction()>0
+  && jet.chargedMultiplicity()>0) return true;
+
+  if(fabs(jet.eta())>2.6 && fabs(jet.eta())<=2.7
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.99
+  && jet.chargedMultiplicity()>0) return true;
+
+  if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3.0
+  && jet.neutralEmEnergyFraction()>0.01 && jet.neutralEmEnergyFraction()<0.99
+  && jet.neutralMultiplicity()>1) return true;
+
+  if(fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0
+  && jet.neutralHadronEnergyFraction()>0.2
+  && jet.neutralEmEnergyFraction()<0.9
+  && jet.neutralMultiplicity()>10) return true;
+
+  if(fabs(jet.eta())>5.0) return true; // not sure if anyone will ever use these jets but, according to the reference link above, they are not explicitly vetoed
+
+  return false;
+}
+
+bool JetPFID::tightIDUL_PUPPI(const Jet & jet) const{
+  if(fabs(jet.eta())<=2.6
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.90
+  && jet.numberOfDaughters()>1
+  && jet.chargedHadronEnergyFraction()>0
+  && jet.chargedMultiplicity()>0) return true;
+
+  if(fabs(jet.eta())>2.6 && fabs(jet.eta())<=2.7
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.99) return true;
+
+  if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3.0
+  && jet.neutralHadronEnergyFraction()<0.9999) return true;
+
+  if(fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0
+  && jet.neutralEmEnergyFraction()<0.9
+  && jet.neutralPuppiMultiplicity()>2) return true;
+
+  if(fabs(jet.eta())>5.0) return true; // not sure if anyone will ever use these jets but, according to the reference link above, they are not explicitly vetoed
+
+  return false;
+}
+
+bool JetPFID::tightLepVetoIDUL_CHS(const Jet & jet) const{
+  if(fabs(jet.eta())>2.7) return true;
+  if(!tightIDUL_CHS(jet)) return false;
+  if(jet.muonEnergyFraction()<0.80
+  && jet.chargedEmEnergyFraction()<0.80){
+    return true;
+  }
+  return false;
+}
+
+bool JetPFID::tightLepVetoIDUL_PUPPI(const Jet & jet) const{
+  if(fabs(jet.eta())>2.7) return true;
+  if(!tightIDUL_PUPPI(jet)) return false;
+  if(jet.muonEnergyFraction()<0.80
+  && jet.chargedEmEnergyFraction()<0.80){
+    return true;
   }
   return false;
 }
@@ -268,7 +442,7 @@ bool JetPFID::tightID2017_CHS(const Jet & jet) const{
   && jet.neutralHadronEnergyFraction()<0.90
   && jet.neutralEmEnergyFraction()<0.90){
 
-    if(fabs(jet.eta())>=2.4)
+    if(fabs(jet.eta())>2.4)
     return true;
 
     if(jet.chargedHadronEnergyFraction()>0
@@ -297,7 +471,7 @@ bool JetPFID::tightID2017_PUPPI(const Jet & jet) const{
   && jet.neutralHadronEnergyFraction()<0.90
   && jet.neutralEmEnergyFraction()<0.90){
 
-    if(fabs(jet.eta())>=2.4)
+    if(fabs(jet.eta())>2.4)
     return true;
 
     if(jet.chargedHadronEnergyFraction()>0
@@ -348,31 +522,76 @@ bool JetPFID::tightID2018_CHS(const Jet & jet) const{
   && jet.neutralMultiplicity()>2){
     return true;
   }
-  else if(fabs(jet.eta())>3
+  else if(fabs(jet.eta())>3 && fabs(jet.eta()) <= 5.0
   && jet.neutralMultiplicity()>10
   && jet.neutralEmEnergyFraction()<0.90
   && jet.neutralHadronEnergyFraction()>0.02){
     return true;
   }
+  else if(fabs(jet.eta())>5.0){ // not sure if anyone will ever use these jets but, according to the reference link above, they are not explicitly vetoed
+    return true;
+  }
   return false;
 }
 
-bool JetPFID::tightLepVetoID2018(const Jet & jet) const{
-  if(fabs(jet.eta())>2.6) return true;
+bool JetPFID::tightID2018_PUPPI(const Jet & jet) const{
+  if(fabs(jet.eta())<=2.6
+  && jet.numberOfDaughters()>1
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.90
+  && jet.chargedHadronEnergyFraction()>0
+  && jet.chargedMultiplicity()>0){
+    return true;
+  }
+  else if(fabs(jet.eta())>2.6 && fabs(jet.eta())<=2.7
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.99){
+    return true;
+  }
+  else if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3.0
+  && jet.neutralHadronEnergyFraction()<0.99){
+    return true;
+  }
+  else if(fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0
+  && jet.neutralHadronEnergyFraction()>0.02
+  && jet.neutralEmEnergyFraction()<0.9
+  && jet.neutralPuppiMultiplicity()>2 && jet.neutralPuppiMultiplicity()<15){
+    return true;
+  }
+  else if(fabs(jet.eta())>5.0){ // not sure if anyone will ever use these jets but, according to the reference link above, they are not explicitly vetoed
+    return true;
+  }
+  return false;
+}
+
+bool JetPFID::tightLepVetoID2018_CHS(const Jet & jet) const{
+  if(fabs(jet.eta())>2.7) return true;
   if(fabs(jet.eta())<=2.6 && !tightID2018_CHS(jet)) return false;
-  if(jet.muonEnergyFraction() <0.8
-  &&jet.chargedEmEnergyFraction()<0.80)
-  return true;
+  if(jet.muonEnergyFraction()<0.80
+  &&jet.chargedEmEnergyFraction()<0.80){
+    return true;
+  }
   return false;
 }
 
+bool JetPFID::tightLepVetoID2018_PUPPI(const Jet & jet) const{
+  if(fabs(jet.eta())>2.7) return true;
+  if(fabs(jet.eta())<=2.6 && !tightID2018_PUPPI(jet)) return false;
+  if(jet.muonEnergyFraction()<0.80
+  &&jet.chargedEmEnergyFraction()<0.80){
+    return true;
+  }
+  return false;
+}
+
+// according to https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2016
 bool JetPFID::looseID2016_CHS(const Jet & jet) const{
   if(fabs(jet.eta())<=2.7
   && jet.numberOfDaughters()>1
   && jet.neutralHadronEnergyFraction()<0.99
   && jet.neutralEmEnergyFraction()<0.99){
 
-    if(fabs(jet.eta())>=2.4)
+    if(fabs(jet.eta())>2.4)
     return true;
 
     if(jet.chargedEmEnergyFraction()<0.99
@@ -417,14 +636,12 @@ bool JetPFID::tightID2016_PUPPI(const Jet & jet) const{
   return tightID2016_CHS(jet);
 }
 
-
 bool JetPFID::tightLepVetoID2016(const Jet & jet) const{
   if(fabs(jet.eta())>2.7) return true;//no requirement for eta>2.7
-  if(!tightID2016_CHS(jet)) return false;
+  if(!tightID2016_CHS(jet)) return false; // due to previous line, there effectively is no difference between CHS and PUPPI LepVetoID in 2016
   if(jet.muonEnergyFraction()>=0.8) return false;
-  if(fabs(jet.eta())<=2.4 && jet.chargedEmEnergyFraction()>0.90) return false;
+  if(fabs(jet.eta())<=2.4 && jet.chargedEmEnergyFraction()>=0.90) return false;
   return true;
-
 }
 
 //////// Jet PU id
