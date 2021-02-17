@@ -91,6 +91,13 @@ public:
   bool operator()(const Jet&, const uhh2::Event&) const;
 private:
   wp m_working_point;
+
+  //UL taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
+  bool tightIDUL_CHS(const Jet & jet) const;
+  // bool tightLepVetoIDUL_CHS(const Jet & jet) const;
+  bool tightIDUL_PUPPI(const Jet & jet) const;
+  // bool tightLepVetoIDUL_PUPPI(const Jet & jet) const;
+
   //2016 taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2016
   bool looseID2016_CHS(const Jet & jet) const;
   bool tightID2016_CHS(const Jet & jet) const;

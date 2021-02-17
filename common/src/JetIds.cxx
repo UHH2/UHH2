@@ -287,7 +287,19 @@ bool DeepJetBTag::operator()(const Jet & jet, const Event &ev){
 JetPFID::JetPFID(wp working_point):m_working_point(working_point){}
 
 bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
-  if (ev.year.find("2016") != string::npos){
+  if(ev.year.find("UL") != string::npos){
+    // Note: These jet IDs are only confirmed to be valid for UL17 and UL18 yet
+    // https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
+    switch(m_working_point){
+      case WP_TIGHT_CHS:
+      return tightIDUL_CHS(jet);
+      case WP_TIGHT_PUPPI:
+      return tightIDUL_PUPPI(jet);
+      default:
+      throw invalid_argument("invalid working point passed to JetPFID");
+    }
+  }
+  else if (ev.year.find("2016") != string::npos){
     switch(m_working_point){
       case WP_LOOSE_CHS:
       return looseID2016_CHS(jet);
@@ -297,12 +309,11 @@ bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
       return looseID2016_PUPPI(jet);
       case WP_TIGHT_PUPPI:
       return tightID2016_PUPPI(jet);
-      case  WP_TIGHT_LEPVETO:
+      case WP_TIGHT_LEPVETO:
       return tightLepVetoID2016(jet);
       default:
       throw invalid_argument("invalid working point passed to JetPFID");
     }
-    return false;
   }
   else if (ev.year.find("2017") != string::npos){
     switch(m_working_point){
@@ -330,6 +341,55 @@ bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
   } else {
     cout<<"Invalid year, JetID set to False"<<endl;
   }
+  return false;
+}
+
+
+//according to https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
+bool JetPFID::tightIDUL_CHS(const Jet & jet) const{
+  if(fabs(jet.eta())<=2.6
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.90
+  && jet.numberOfDaughters()>1
+  && jet.chargedHadronEnergyFraction()>0
+  && jet.chargedMultiplicity()>0) return true;
+
+  if(fabs(jet.eta())>2.6 && fabs(jet.eta())<=2.7
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.99
+  && jet.chargedMultiplicity()>0) return true;
+
+  if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3.0
+  && jet.neutralEmEnergyFraction()>0.01 && jet.neutralEmEnergyFraction()<0.99
+  && jet.neutralMultiplicity()>1) return true;
+
+  if(fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0
+  && jet.neutralHadronEnergyFraction()>0.2
+  && jet.neutralEmEnergyFraction()<0.9
+  && jet.neutralMultiplicity()>10) return true;
+
+  return false;
+}
+
+bool JetPFID::tightIDUL_PUPPI(const Jet & jet) const{
+  if(fabs(jet.eta())<=2.6
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.90
+  && jet.numberOfDaughters()>1
+  && jet.chargedHadronEnergyFraction()>0
+  && jet.chargedMultiplicity()>0) return true;
+
+  if(fabs(jet.eta())>2.6 && fabs(jet.eta())<=2.7
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.99) return true;
+
+  if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3.0
+  && jet.neutralHadronEnergyFraction()<0.9999) return true;
+
+  if(fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0
+  && jet.neutralEmEnergyFraction()<0.9
+  && jet.neutralPuppiMultiplicity()>2) return true;
+
   return false;
 }
 
