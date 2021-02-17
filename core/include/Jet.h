@@ -2,7 +2,6 @@
 
 #include "FlavorParticle.h"
 #include "Tags.h"
-#include "JetBTagInfo.h"
 
 #include <vector>
 
@@ -102,7 +101,6 @@ class Jet : public FlavorParticle {
   float genjet_index() const{return m_genjet_index;}
   float get_tag(tag t) const { return tags.get_tag(static_cast<int>(t)); }
   float has_tag(tag t) const { return tags.has_tag(static_cast<int>(t)); }
-  JetBTagInfo btaginfo() const{return m_btaginfo;}
   float pileupID() const {return m_pileupID;}
 
   const std::vector<long int>& lepton_keys() const { return m_lepton_keys; }
@@ -142,7 +140,6 @@ class Jet : public FlavorParticle {
   void set_JEC_L1factor_raw(float x){m_JEC_L1factor_raw=x;}
   void set_genjet_index(int x){m_genjet_index=x;}
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
-  void set_btaginfo(JetBTagInfo x){m_btaginfo=x;}
 
   void set_pileupID(float x){m_pileupID = x;}
 
@@ -189,8 +186,6 @@ class Jet : public FlavorParticle {
   int m_genjet_index;
 
   float m_pileupID;
-
-  JetBTagInfo m_btaginfo;
 
   std::vector<long int> m_lepton_keys;
   std::vector<long int> m_pfcand_indexs;
