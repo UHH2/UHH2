@@ -10,7 +10,7 @@ using namespace std;
 
 class EtaPhiEventCleaner: public uhh2::Selection {
 public:
-  EtaPhiEventCleaner(uhh2::Context& ctx, int min_run, int max_run, float min_eta, float max_eta, float min_phi, float max_phi, std::string JetCollection = "jets", std::string TopJetCollection = "topjets", bool doElectrons = true, bool doMuons = true);
+  EtaPhiEventCleaner(uhh2::Context& ctx, const int min_run, const int max_run, const float min_eta, const float max_eta, const float min_phi, const float max_phi, const std::string JetCollection = "jets", const std::string TopJetCollection = "topjets", const bool doElectrons = true, const bool doMuons = true);
   virtual bool passes(const uhh2::Event& event) override;
 private:
   int min_run;
@@ -40,6 +40,6 @@ public:
   static constexpr float min_phi_HEM = -1.6;
   static constexpr float max_phi_HEM = -0.87;
 
-  HEMCleanerSelection(uhh2::Context& ctx, std::string JetCollection, std::string TopJetCollection, bool doElectrons=true, bool doMuons=true);
+  HEMCleanerSelection(uhh2::Context& ctx, const std::string JetCollection, const std::string TopJetCollection, const bool doElectrons=true, const bool doMuons=true);
 
 };
