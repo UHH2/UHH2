@@ -2,8 +2,8 @@
 #include "UHH2/core/include/Event.h"
 
 
-EtaPhiEventCleaner::EtaPhiEventCleaner(Context& ctx, const int& min_run_, const int& max_run_, const float& min_eta_, const float& max_eta_, const float& min_phi_, const float& max_phi_,
-  const string& JetCollection_, const string& TopJetCollection_, const bool& doElectrons_, const bool& doMuons_):
+EtaPhiEventCleaner::EtaPhiEventCleaner(Context& ctx, const int min_run_, const int max_run_, const float min_eta_, const float max_eta_, const float min_phi_, const float max_phi_,
+  const string& JetCollection_, const string& TopJetCollection_, const bool doElectrons_, const bool doMuons_):
   min_run(min_run_), max_run(max_run_), min_eta(min_eta_), max_eta(max_eta_), min_phi(min_phi_), max_phi(max_phi_),
   JetCollection(JetCollection_), TopJetCollection(TopJetCollection_), doElectrons(doElectrons_), doMuons(doMuons_) {
 
@@ -69,5 +69,5 @@ bool EtaPhiEventCleaner::passes(const Event& event){
   return true;
 }
 
-HEMCleanerSelection::HEMCleanerSelection(Context& ctx, const string& JetCollection, const string& TopJetCollection, const bool& doElectrons, const bool& doMuons):
+HEMCleanerSelection::HEMCleanerSelection(Context& ctx, const string& JetCollection, const string& TopJetCollection, const bool doElectrons, const bool doMuons):
 EtaPhiEventCleaner(ctx, min_run_HEM, max_run_HEM, min_eta_HEM, max_eta_HEM,min_phi_HEM, max_phi_HEM, JetCollection, TopJetCollection, doElectrons, doMuons){};
