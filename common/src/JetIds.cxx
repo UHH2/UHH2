@@ -522,30 +522,26 @@ bool JetPUid::operator()(const Jet & jet, const Event &ev) const{
 
 //////// HotZoneVetoId
 
-HotZoneVetoId::HotZoneVetoId(const bool& isHotZoneOnly) {
-  std::string mapHistname;
+HotZoneVetoId::HotZoneVetoId() {
 
-  std::string year = "UL16postVFP";
-
-  TFile file_map(locate_file("/nfs/dust/cms/user/amalara/WorkingArea/UHH2_106X_v1_UL/CMSSW_10_6_13/src/UHH2/DiJetJERC/conf/hotjets-UL16.root").c_str());
-  h2HotExcl[year] = (TH2D*) file_map.Get("h2hot_ul16_plus_hbm2_hbp12_qie11");
-  h2HotExcl.at(year)->SetDirectory(0);
-  h2HotExcl[year+"_MC"] = (TH2D*) file_map.Get("h2hot_mc");
-  h2HotExcl.at(year+"_MC")->SetDirectory(0);
-  file_map.Close();
-
+  for (const auto& x : info) {
+    std::string year = x.first;
+    for (unsigned int i=0; i<x.second.at("hname").size(); i++) {
+      TFile f_(locate_file(x.second.at("fname")[i]).c_str());
+      h2HotExcl[year][x.second.at("hname")[i]] = (TH2D*)f_.Get(x.second.at("hname")[i].c_str());
+      h2HotExcl.at(year).at(x.second.at("hname")[i])->SetDirectory(0);
+      f_.Close();
+    }
+  }
 }
 
 
 bool HotZoneVetoId::operator()(const Jet &jet, const Event &ev) const{
-  string mapName;
-  string runItr = "";
-  std::string year =ev.year;
-  if(!ev.isRealData) year += "_MC";
-
-  if (h2HotExcl.find(year) == h2HotExcl.end()) throw std::runtime_error("In HotZoneVetoId: "+year+" not found.");
-
-  return (h2HotExcl.at(year)->GetBinContent(h2HotExcl.at(year)->FindBin(jet.eta(),jet.phi())) <= 0);
+  if (h2HotExcl.find(ev.year) == h2HotExcl.end()) throw std::runtime_error("In HotZoneVetoId: "+ev.year+" not found.");
+  for (const auto& h : h2HotExcl.at(ev.year)) {
+    if (h.second->GetBinContent(h.second->FindBin(jet.eta(),jet.phi())) > 0) return false;
+  }
+  return true;
 }
 
 // NoLeptonInJet
