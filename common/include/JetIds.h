@@ -137,10 +137,30 @@ private:
 */
 class HotZoneVetoId {
 public:
-  explicit HotZoneVetoId(const bool& isHotZoneOnly);
+  explicit HotZoneVetoId();
   bool operator()(const Jet&, const uhh2::Event&) const;
 private:
-  std::map<std::string, TH2D*> h2HotExcl;
+  std::map<std::string, std::map<std::string, TH2D*>> h2HotExcl;
+
+  std::map<std::string, std::map<std::string, std::vector<std::string>>> info = {
+    { "UL16preVFP", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer19UL16_V0/hotjets-UL16.root", "JECDatabase/jet_veto_maps/Summer19UL16_V0/hotjets-UL16.root"}},
+      { "hname",  {"h2hot_ul16_plus_hbm2_hbp12_qie11", "h2hot_mc"}},
+    }},
+    { "UL16postVFP", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer19UL16_V0/hotjets-UL16.root", "JECDatabase/jet_veto_maps/Summer19UL16_V0/hotjets-UL16.root"}},
+      { "hname",  {"h2hot_ul16_plus_hbm2_hbp12_qie11", "h2hot_mc"}},
+    }},
+    { "UL17", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer19UL17_V2/hotjets-UL17_v2.root"}},
+      { "hname",  {"h2hot_ul17_plus_hep17_plus_hbpw89"}},
+    }},
+    { "UL18", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer19UL18_V1/hotjets-UL18.root"}},
+      { "hname",  {"h2hot_ul18_plus_hem1516_and_hbp2m1"}},
+    }},
+  };
+
 };
 
 

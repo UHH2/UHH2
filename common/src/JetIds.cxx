@@ -387,7 +387,6 @@ bool JetPFID::tightIDUL_CHS(const Jet & jet) const{
   && jet.neutralMultiplicity()>10) return true;
 
   if(fabs(jet.eta())>5.0) return true; // not sure if anyone will ever use these jets but, according to the reference link above, they are not explicitly vetoed
-
   return false;
 }
 
@@ -679,63 +678,26 @@ bool JetPUid::operator()(const Jet & jet, const Event &ev) const{
 
 //////// HotZoneVetoId
 
-HotZoneVetoId::HotZoneVetoId(const bool& isHotZoneOnly) {
-  std::string mapHistname;
+HotZoneVetoId::HotZoneVetoId() {
 
-  for (const auto& el : year_str_map) {
-    std::string year = el.second;
-    if (year.find("UL")!=std::string::npos) {
-      mapHistname = isHotZoneOnly? "h2hot_ul17": "h2hot_ul17_plus_hep17";
-      try {
-        TFile file_map(locate_file("JECDatabase/hotzone_maps/Summer19UL17_V1/hotjets-UL17.root").c_str());
-        h2HotExcl[year] = (TH2D*) file_map.Get(mapHistname.c_str());
-        h2HotExcl.at(year)->SetDirectory(0);
-        file_map.Close();
-      } catch (...){}
-
-      continue;
-    }
-
-    mapHistname="h2hotfilter";
-    for (auto ver: {"v1", "v2", "v3"}) if (year.find(ver) != std::string::npos) year.erase(year.find(ver), 2);
-
-    try {
-      TFile file_mc(locate_file("common/data/"+year+"/hotjets-"+year+"_MC.root").c_str());
-      h2HotExcl[year+"_MC"] = (TH2D*) file_mc.Get(mapHistname.c_str());
-      h2HotExcl.at(year+"_MC")->SetDirectory(0);
-      file_mc.Close();
-    } catch (...){}
-
-    for (const auto & runItr : year2runPeriods(year)) {
-      try {
-        TFile file_data(locate_file("common/data/"+year+"/hotjets-"+year+"_Run"+runItr+".root").c_str());
-        h2HotExcl[year+"_"+runItr] = (TH2D*) file_data.Get(mapHistname.c_str());
-        h2HotExcl.at(year+"_"+runItr)->SetDirectory(0);
-        file_data.Close();
-      } catch (...){}
+  for (const auto& x : info) {
+    std::string year = x.first;
+    for (unsigned int i=0; i<x.second.at("hname").size(); i++) {
+      TFile f_(locate_file(x.second.at("fname")[i]).c_str());
+      h2HotExcl[year][x.second.at("hname")[i]] = (TH2D*)f_.Get(x.second.at("hname")[i].c_str());
+      h2HotExcl.at(year).at(x.second.at("hname")[i])->SetDirectory(0);
+      f_.Close();
     }
   }
 }
 
 
 bool HotZoneVetoId::operator()(const Jet &jet, const Event &ev) const{
-  string mapName;
-  string runItr = "";
-  std::string year = ev.year;
-  for (auto ver: {"v1", "v2", "v3"}) if (year.find(ver) != std::string::npos) year.erase(year.find(ver), 2);
-
-  if(!ev.isRealData) runItr = "MC";
-  else {
-    for (const auto & [key, val] : run_number_map.at(year)) {
-      if (ev.run >= val.first && ev.run <= val.second) runItr = key;
-    }
+  if (h2HotExcl.find(ev.year) == h2HotExcl.end()) throw std::runtime_error("In HotZoneVetoId: "+ev.year+" not found.");
+  for (const auto& h : h2HotExcl.at(ev.year)) {
+    if (h.second->GetBinContent(h.second->FindBin(jet.eta(),jet.phi())) > 0) return false;
   }
-  mapName = year+"_"+runItr;
-  if (year.find("UL")!=std::string::npos) mapName = year;
-
-  if (h2HotExcl.find(mapName) == h2HotExcl.end()) throw std::runtime_error("In HotZoneVetoId: "+mapName+" not found.");
-
-  return (h2HotExcl.at(mapName)->GetBinContent(h2HotExcl.at(mapName)->FindBin(jet.eta(),jet.phi())) <= 0);
+  return true;
 }
 
 // NoLeptonInJet

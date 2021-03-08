@@ -7,6 +7,8 @@ YearSwitcher::YearSwitcher(const uhh2::Context & ctx):
   module2016_(nullptr),
   module2016v2_(nullptr),
   module2016v3_(nullptr),
+  moduleUL16preVFP_(nullptr),
+  moduleUL16postVFP_(nullptr),
   module2017_(nullptr),
   module2017v1_(nullptr),
   module2017v2_(nullptr),
@@ -35,6 +37,12 @@ bool YearSwitcher::process(uhh2::Event & event) {
     else if ((year_ == Year::is2016v2 || year_ == Year::is2016v3) && module2016_) {
       theModule_ = module2016_;
     }
+    else if ((year_ == Year::isUL16preVFP) && moduleUL16preVFP_) {
+      theModule_ = moduleUL16preVFP_;
+    }
+    else if ((year_ == Year::isUL16postVFP) && moduleUL16postVFP_) {
+      theModule_ = moduleUL16postVFP_;
+    }
 
     else if ((year_ == Year::is2017v1) && module2017v1_) {
       theModule_ = module2017v1_;
@@ -45,14 +53,14 @@ bool YearSwitcher::process(uhh2::Event & event) {
     else if ((year_ == Year::isUL17) && moduleUL17_) {
       theModule_ = moduleUL17_;
     }
-    else if ((year_ == Year::is2017v1 || year_ == Year::is2017v2 || year_ == Year::isUL17) && module2017_) {
+    else if ((year_ == Year::is2017v1 || year_ == Year::is2017v2) && module2017_) {
       theModule_ = module2017_;
     }
 
     else if ((year_ == Year::isUL18) && moduleUL18_) {
       theModule_ = moduleUL18_;
     }
-    else if ((year_ == Year::is2018 || year_ == Year::isUL18) && module2018_) {
+    else if ((year_ == Year::is2018) && module2018_) {
       theModule_ = module2018_;
     }
     doneInit_ = true;
@@ -78,6 +86,14 @@ void YearSwitcher::setup2016v2(std::shared_ptr<uhh2::AnalysisModule> module) {
 
 void YearSwitcher::setup2016v3(std::shared_ptr<uhh2::AnalysisModule> module) {
   module2016v3_ = module;
+}
+
+void YearSwitcher::setupUL16preVFP(std::shared_ptr<uhh2::AnalysisModule> module) {
+  moduleUL16preVFP_ = module;
+}
+
+void YearSwitcher::setupUL16postVFP(std::shared_ptr<uhh2::AnalysisModule> module) {
+  moduleUL16postVFP_ = module;
 }
 
 void YearSwitcher::setup2017(std::shared_ptr<uhh2::AnalysisModule> module) {
