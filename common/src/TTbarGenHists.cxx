@@ -1,6 +1,7 @@
 #include "UHH2/common/include/TTbarGenHists.h"
 #include "TH1F.h"
 #include "TH2F.h"
+#include "TLorentzVector.h"
 
 using namespace uhh2;
 
