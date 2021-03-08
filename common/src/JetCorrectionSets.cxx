@@ -91,11 +91,10 @@ const std::map<std::string, std::map<std::string, std::string> > JERFiles::jecRu
     {"F", "F"}
   }},
   {"Summer19UL18", {
+    {"A", "A"},
     {"B", "B"},
     {"C", "C"},
-    {"D", "D"},
-    {"E", "E"},
-    {"F", "F"}
+    {"D", "D"}
   }},
 };
 
