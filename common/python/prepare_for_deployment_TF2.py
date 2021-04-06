@@ -46,7 +46,7 @@ print(frozen_func.outputs)
 # writing graph (the .pb file)
 tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
                   logdir=frozen_out_path,
-                  name=f"{frozen_graph_filename}.pb",
+                  name=frozen_graph_filename+".pb",
                   as_text=False)
 
 # writing the .config.pbtxt file
