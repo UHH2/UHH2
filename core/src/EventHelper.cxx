@@ -8,7 +8,7 @@ using namespace std;
 
 
 namespace {
-    
+
 template<typename T>
 Event::Handle<T> declare_in_out(const std::string & branch_name, const std::string & event_name, Context & ctx){
     auto result = ctx.declare_event_input<T>(branch_name, event_name);
@@ -19,8 +19,8 @@ Event::Handle<T> declare_in_out(const std::string & branch_name, const std::stri
 }
 
 EventHelper::EventHelper(uhh2::Context & ctx_): ctx(ctx_), event(0), pvs(false), electrons(false), muons(false), taus(false), photons(false), jets(false),
-						topjets(false), toppuppijets(false), met(false),  genmet(false), genInfo(false), gentopjets(false), 
-						genparticles(false), genjets(false), pfparticles(false), trigger(false),  L1EG_seeds(false), L1J_seeds(false), first_event_read(true){
+						topjets(false), toppuppijets(false), met(false),  genmet(false), genInfo(false), gentopjets(false),
+						genparticles(false), genjets(false), pfparticles(false), trigger(false),  L1EG_seeds(false), L1J_seeds(false), L1M_seeds(false), first_event_read(true){
     h_run = declare_in_out<int>("run", "run", ctx);
     h_lumi = declare_in_out<int>("luminosityBlock", "luminosityBlock", ctx);
     h_event = declare_in_out<int>("event", "event", ctx);
@@ -63,6 +63,7 @@ IMPL_SETUP(genjets, vector<GenJet>)
 IMPL_SETUP(genmet, MET)
 IMPL_SETUP(L1EG_seeds, vector<L1EGamma>)
 IMPL_SETUP(L1J_seeds, vector<L1Jet>)
+IMPL_SETUP(L1M_seeds, vector<L1Muon>)
 
 
 
@@ -114,7 +115,7 @@ void EventHelper::event_read(){
         }
         triggernames_last_runid_event = event->run;
     }
-    
+
     // note: pointers only need to be set once
     if(first_event_read){
         first_event_read = false;
@@ -153,7 +154,7 @@ void EventHelper::event_read(){
 	catch(const std::runtime_error& error){
 	  std::cout<<"Problem with genjets in EventHelper.cxx"<<std::endl;
 	  std::cout<<error.what();
-	}	
+	}
         if(trigger){
             event->get_triggerResults() = &event->get(h_triggerResults);
 	    event->get_triggerPrescales() = &event->get(h_triggerPrescales);
@@ -165,6 +166,9 @@ void EventHelper::event_read(){
 	}
 	if(L1J_seeds){
 	  event->L1J_seeds =  &event->get(h_L1J_seeds);
+	}
+  if(L1M_seeds){
+	  event->L1M_seeds =  &event->get(h_L1M_seeds);
 	}
     }
 }
@@ -183,7 +187,7 @@ void EventHelper::event_write(){
     event->set(h_prefire, event->prefiringWeight);
     event->set(h_prefireUp, event->prefiringWeightUp);
     event->set(h_prefireDown, event->prefiringWeightDown);
-    
+
     // special case: trigger is saved only once per runid:
     if(trigger){
         if(triggernames_written.find(event->run) == triggernames_written.end()){
@@ -198,7 +202,6 @@ void EventHelper::event_write(){
             event->set(h_triggerNames, vector<string>());
         }
     }
-    
+
     // TODO: can check here whether someone changes the pointers of Event although they shouldn't.
 }
-
