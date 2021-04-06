@@ -15,3 +15,4 @@
 #include "UHH2/core/include/PFParticle.h"
 #include "UHH2/core/include/L1EGamma.h"
 #include "UHH2/core/include/L1Jet.h"
+#include "UHH2/core/include/L1Muon.h"

@@ -18,6 +18,7 @@
 #include "UHH2/core/include/source_candidate.h"
 #include "UHH2/core/include/L1EGamma.h"
 #include "UHH2/core/include/L1Jet.h"
+#include "UHH2/core/include/L1Muon.h"
 
 #include <vector>
 #include <map>
@@ -42,17 +43,17 @@ namespace {
     std::vector<GenJet> genjets;
     GenTopJet gentopjet;
     std::vector<GenTopJet> gentopjets;
-    Electron ele; 
-    std::vector<Electron> eles; 
-    Muon mu; 
-    std::vector<Muon> mus; 
+    Electron ele;
+    std::vector<Electron> eles;
+    Muon mu;
+    std::vector<Muon> mus;
     Tau tau;
-    std::vector<Tau> taus; 
-    Photon ph; 
-    std::vector<Photon> phs; 
+    std::vector<Tau> taus;
+    Photon ph;
+    std::vector<Photon> phs;
     MET met;
     PrimaryVertex pv;
-    std::vector<PrimaryVertex> pvs; 
+    std::vector<PrimaryVertex> pvs;
     GenInfo genInfo;
     GenParticle genp;
     std::vector<GenParticle> genps;
@@ -64,5 +65,7 @@ namespace {
     std::vector<L1EGamma> L1EG_seeds;
     L1Jet L1Jet_seed;
     std::vector<L1Jet> L1J_seeds;
+    L1Muon L1Muon_seed;
+    std::vector<L1Muon> L1M_seeds;
   }
 }

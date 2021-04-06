@@ -39,4 +39,6 @@
 <class name="std::vector<L1EGamma>"/>
 <class name="L1Jet"/>
 <class name="std::vector<L1Jet>"/>
+<class name="L1Muon"/>
+<class name="std::vector<L1Muon>"/>
 </lcgdict>

@@ -19,6 +19,7 @@
 #include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
 #include "DataFormats/L1Trigger/interface/EGamma.h"
 #include "DataFormats/L1Trigger/interface/Jet.h"
+#include "DataFormats/L1Trigger/interface/Muon.h"
 
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
@@ -45,7 +46,7 @@ class NtupleWriter : public edm::EDFilter {
       virtual void endJob() override;
 
       virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
-      
+
       // fill gen particles and other info from a reco::jet
       void fill_geninfo_recojet(const reco::Jet& reco_genjet, GenJet& genjet, bool &add);
 
@@ -144,14 +145,14 @@ class NtupleWriter : public edm::EDFilter {
       std::vector<MET> met;
 
       std::vector<edm::EDGetToken> genmet_tokens;
-      std::vector<MET> genmet; 
+      std::vector<MET> genmet;
 
       std::vector<edm::EDGetToken> pv_tokens;
       std::vector<std::vector<PrimaryVertex>> pvs;
 
       edm::EDGetToken genparticle_token;
-      edm::EDGetToken stablegenparticle_token;   
-      
+      edm::EDGetToken stablegenparticle_token;
+
       std::vector<std::string> trigger_prefixes;
       std::vector<std::string> triggerNames_outbranch;
 
@@ -197,9 +198,12 @@ class NtupleWriter : public edm::EDFilter {
       edm::EDGetTokenT<BXVector<GlobalAlgBlk>> l1GtToken_;
       edm::EDGetTokenT<BXVector<l1t::EGamma>> l1EGToken_;
       edm::EDGetTokenT<BXVector<l1t::Jet>> l1JetToken_;
+      edm::EDGetTokenT<BXVector<l1t::Muon>> l1MuonToken_;
 
       std::vector<L1EGamma>  L1EG_seeds;
       std::vector<L1Jet> L1Jet_seeds;
+      std::vector<L1Muon> L1Muon_seeds;
+
 
 };
 
