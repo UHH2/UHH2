@@ -49,4 +49,6 @@
 #pragma link C++ class std::vector<L1Jet>+;
 #pragma link C++ class L1Muon+;
 #pragma link C++ class std::vector<L1Muon>+;
+#pragma link C++ class L1EtSum+;
+#pragma link C++ class std::vector<L1EtSum>+;
 #endif // __CINT__

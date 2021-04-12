@@ -41,4 +41,6 @@
 <class name="std::vector<L1Jet>"/>
 <class name="L1Muon"/>
 <class name="std::vector<L1Muon>"/>
+<class name="L1EtSum"/>
+<class name="std::vector<L1EtSum>"/>
 </lcgdict>

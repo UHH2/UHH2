@@ -641,10 +641,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     l1EGToken_ = consumes<BXVector<l1t::EGamma>>(iConfig.getParameter<edm::InputTag>("l1EGSrc"));
     l1JetToken_ = consumes<BXVector<l1t::Jet>>(iConfig.getParameter<edm::InputTag>("l1JetSrc"));
     l1MuonToken_ = consumes<BXVector<l1t::Muon>>(iConfig.getParameter<edm::InputTag>("l1MuonSrc"));
+    l1EtSumToken_ = consumes<BXVector<l1t::EtSum>>(iConfig.getParameter<edm::InputTag>("l1EtSumSrc"));
 
     branch(tr,"L1EGamma_seeds","std::vector<L1EGamma>",&L1EG_seeds);
     branch(tr,"L1Jet_seeds","std::vector<L1Jet>",&L1Jet_seeds);
     branch(tr,"L1Muon_seeds","std::vector<L1Muon>",&L1Muon_seeds);
+    branch(tr,"L1EtSum_seeds","std::vector<L1EtSum>",&L1EtSum_seeds);
   }
 
   if(doAllPFParticles){
@@ -1371,6 +1373,66 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        readBxmuon(*l1MuonHandle, -1);
        readBxmuon(*l1MuonHandle, +1);
        readBxmuon(*l1MuonHandle, +2);
+     }
+
+     //l1EtSum
+     edm::Handle<BXVector<l1t::EtSum>> l1EtSumHandle;
+     iEvent.getByToken(l1EtSumToken_, l1EtSumHandle);
+     L1EtSum_seeds.clear();
+     auto readBxetsum = [&] (const BXVector<l1t::EtSum>& egVect, int bx) {
+       for (auto itL1=l1EtSumHandle->begin(bx); itL1!=l1EtSumHandle->end(bx); ++itL1) {
+         L1EtSum l1EtSum;
+
+         // checking and setting type
+         if(itL1->getType() == l1t::EtSum::EtSumType::kTotalEt) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalEt);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kTotalHt) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalHt);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kMissingEt) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kMissingEt);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kMissingHt) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kMissingHt);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kTotalEtx) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalEtx);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kTotalEty) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalEty);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kTotalHtx) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalEtx);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kTotalHty) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalEty);
+         }
+         else continue; // only keeping a selection of types for the moment
+
+      	 l1EtSum.set_pt(itL1->p4().Pt());
+      	 l1EtSum.set_eta(itL1->p4().Eta());
+      	 l1EtSum.set_phi(itL1->p4().Phi());
+      	 l1EtSum.set_energy(itL1->p4().energy());
+         l1EtSum.set_charge(itL1->charge());
+
+         l1EtSum.set_bx(bx);
+
+         l1EtSum.set_hwPt(itL1->hwPt());
+         l1EtSum.set_hwEta(itL1->hwEta());
+         l1EtSum.set_hwPhi(itL1->hwPhi());
+         l1EtSum.set_hwQual(itL1->hwQual());
+         l1EtSum.set_hwIso(itL1->hwIso());
+
+         L1EtSum_seeds.push_back(l1EtSum);
+       }
+     };
+     readBxetsum(*l1EtSumHandle, 0);
+     if(iEvent.isRealData()) {
+       readBxetsum(*l1EtSumHandle, -2);
+       readBxetsum(*l1EtSumHandle, -1);
+       readBxetsum(*l1EtSumHandle, +1);
+       readBxetsum(*l1EtSumHandle, +2);
      }
    }
 

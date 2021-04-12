@@ -16,3 +16,4 @@
 #include "UHH2/core/include/L1EGamma.h"
 #include "UHH2/core/include/L1Jet.h"
 #include "UHH2/core/include/L1Muon.h"
+#include "UHH2/core/include/L1EtSum.h"
