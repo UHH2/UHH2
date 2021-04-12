@@ -18,6 +18,8 @@
 #include "UHH2/core/include/L1EGamma.h"
 #include "UHH2/core/include/L1Jet.h"
 #include "UHH2/core/include/L1Muon.h"
+#include "UHH2/core/include/L1EtSum.h"
+
 
 #include <vector>
 #include <map>
@@ -64,5 +66,7 @@ namespace {
     std::vector<L1Jet> L1J_seeds;
     L1Muon L1Muon_seed;
     std::vector<L1Muon> L1M_seeds;
+    L1EtSum L1EtSum_seed;
+    std::vector<L1EtSum> L1EtS_seeds;
   }
 }
