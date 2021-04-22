@@ -107,7 +107,11 @@ Year extract_year(const uhh2::Context & ctx) {
 }
 
 const std::vector<std::string> year2runPeriods(const std::string& year) {
-  if (year.find("16") != std::string::npos) return runPeriods2016;
+  if (year.find("16") != std::string::npos) {
+    if (year.find("preVFP") != std::string::npos) return runPeriodsUL16preVFP;
+    else if (year.find("postVFP") != std::string::npos) return runPeriodsUL16postVFP;
+    else return runPeriods2016;
+  }
   else if (year.find("17") != std::string::npos) return runPeriods2017;
   else if (year.find("18") != std::string::npos) return runPeriods2018;
   else throw std::runtime_error("year2runPeriods -- not defined year: "+year);

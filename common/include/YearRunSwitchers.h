@@ -41,6 +41,8 @@ public:
   void setup2016(std::shared_ptr<uhh2::AnalysisModule> module);
   void setup2016v2(std::shared_ptr<uhh2::AnalysisModule> module);
   void setup2016v3(std::shared_ptr<uhh2::AnalysisModule> module);
+  void setupUL16preVFP(std::shared_ptr<uhh2::AnalysisModule> module);
+  void setupUL16postVFP(std::shared_ptr<uhh2::AnalysisModule> module);
 
   void setup2017(std::shared_ptr<uhh2::AnalysisModule> module);
   void setup2017v1(std::shared_ptr<uhh2::AnalysisModule> module);
@@ -57,7 +59,7 @@ private:
   // have modules for each year, plus for the specific versions of each year
   // shared_ptr, because the user might already own it, and we want to ensure
   // it is kept alive, or deleted as necessary if this is the only owner
-  std::shared_ptr<uhh2::AnalysisModule> module2016_, module2016v2_, module2016v3_;
+  std::shared_ptr<uhh2::AnalysisModule> module2016_, module2016v2_, module2016v3_, moduleUL16preVFP_, moduleUL16postVFP_;
   std::shared_ptr<uhh2::AnalysisModule> module2017_, module2017v1_, module2017v2_, moduleUL17_;
   std::shared_ptr<uhh2::AnalysisModule> module2018_, moduleUL18_;
   std::shared_ptr<uhh2::AnalysisModule> theModule_;

@@ -5,7 +5,7 @@
 const std::string JERFiles::JERPathStringMC(const std::string & tag,
                                           const std::string & jetCollection,
                                           const std::string & type){
-  
+
   std::string result = "JRDatabase/textFiles/";
   result += tag;
   result += "_MC/";
@@ -71,12 +71,17 @@ const std::map<std::string, std::map<std::string, std::string> > JERFiles::jecRu
     {"C", "C"},
     {"D", "D"}
   }},
-  {"Summer19UL16", {
+  {"Summer19UL16APV", {
     {"B", "B"},
     {"C", "C"},
     {"D", "D"},
     {"E", "E"},
-    {"F", "F"}
+    {"F", "F"},
+  }},
+  {"Summer19UL16", {
+    {"F", "FGH"},
+    {"G", "FGH"},
+    {"H", "FGH"},
   }},
   {"Summer19UL17", {
     {"B", "B"},
@@ -86,11 +91,10 @@ const std::map<std::string, std::map<std::string, std::string> > JERFiles::jecRu
     {"F", "F"}
   }},
   {"Summer19UL18", {
+    {"A", "A"},
     {"B", "B"},
     {"C", "C"},
-    {"D", "D"},
-    {"E", "E"},
-    {"F", "F"}
+    {"D", "D"}
   }},
 };
 
@@ -106,7 +110,7 @@ const std::string JERFiles::JECPathStringDATA(const std::string & tag,
   std::string newRunName = JERFiles::jecRunMap.at(campaign).at(runName);
   // in 2018, and for UL,  they use "_RunX" instead of just "X"
   if (tag.find("18") != std::string::npos || tag.find("UL") != std::string::npos) {
-    newRunName = "_Run" + runName;
+    newRunName = "_Run" + newRunName;
   }
 
   std::string result = "JECDatabase/textFiles/";

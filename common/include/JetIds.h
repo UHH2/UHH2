@@ -86,27 +86,36 @@ private:
 */
 class JetPFID {
 public:
-  enum wp {WP_LOOSE_CHS, WP_TIGHT_CHS, WP_LOOSE_PUPPI, WP_TIGHT_PUPPI, WP_TIGHT_LEPVETO};
+  enum wp {WP_LOOSE_CHS, WP_TIGHT_CHS, WP_LOOSE_PUPPI, WP_TIGHT_PUPPI, WP_TIGHT_LEPVETO, WP_TIGHT_LEPVETO_CHS, WP_TIGHT_LEPVETO_PUPPI}; // keep WP_TIGHT_LEPVETO for some backward compatibility; use of WP_TIGHT_LEPVETO_CHS/PUPPI is encouraged
   explicit JetPFID(wp working_point);
   bool operator()(const Jet&, const uhh2::Event&) const;
 private:
   wp m_working_point;
+
+  //UL taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
+  // No differences between the UL years
+  bool tightIDUL_CHS(const Jet & jet) const;
+  bool tightIDUL_PUPPI(const Jet & jet) const;
+  bool tightLepVetoIDUL_CHS(const Jet & jet) const;
+  bool tightLepVetoIDUL_PUPPI(const Jet & jet) const;
+
   //2016 taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2016
   bool looseID2016_CHS(const Jet & jet) const;
   bool tightID2016_CHS(const Jet & jet) const;
   bool looseID2016_PUPPI(const Jet & jet) const;
   bool tightID2016_PUPPI(const Jet & jet) const;
-  bool tightLepVetoID2016(const Jet & jet) const;
+  bool tightLepVetoID2016(const Jet & jet) const; // same for CHS and PUPPI in 2016
 
   //2017 taken from https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVRun2017
   bool tightID2017_CHS(const Jet & jet) const;
   bool tightID2017_PUPPI(const Jet & jet) const;
-  bool tightLepVetoID2017(const Jet & jet) const;
+  bool tightLepVetoID2017(const Jet & jet) const; // same for CHS and PUPPI in 2017
 
   //2018 taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID13TeVRun2018
   bool tightID2018_CHS(const Jet & jet) const;
-  bool tightLepVetoID2018(const Jet & jet) const;
-
+  bool tightID2018_PUPPI(const Jet & jet) const;
+  bool tightLepVetoID2018_CHS(const Jet & jet) const;
+  bool tightLepVetoID2018_PUPPI(const Jet & jet) const;
 };
 
 /**
@@ -128,10 +137,30 @@ private:
 */
 class HotZoneVetoId {
 public:
-  explicit HotZoneVetoId(const bool& isHotZoneOnly);
+  explicit HotZoneVetoId();
   bool operator()(const Jet&, const uhh2::Event&) const;
 private:
-  std::map<std::string, TH2D*> h2HotExcl;
+  std::map<std::string, std::map<std::string, TH2D*>> h2HotExcl;
+
+  std::map<std::string, std::map<std::string, std::vector<std::string>>> info = {
+    { "UL16preVFP", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer19UL16_V0/hotjets-UL16.root", "JECDatabase/jet_veto_maps/Summer19UL16_V0/hotjets-UL16.root"}},
+      { "hname",  {"h2hot_ul16_plus_hbm2_hbp12_qie11", "h2hot_mc"}},
+    }},
+    { "UL16postVFP", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer19UL16_V0/hotjets-UL16.root", "JECDatabase/jet_veto_maps/Summer19UL16_V0/hotjets-UL16.root"}},
+      { "hname",  {"h2hot_ul16_plus_hbm2_hbp12_qie11", "h2hot_mc"}},
+    }},
+    { "UL17", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer19UL17_V2/hotjets-UL17_v2.root"}},
+      { "hname",  {"h2hot_ul17_plus_hep17_plus_hbpw89"}},
+    }},
+    { "UL18", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer19UL18_V1/hotjets-UL18.root"}},
+      { "hname",  {"h2hot_ul18_plus_hem1516_and_hbp2m1"}},
+    }},
+  };
+
 };
 
 

@@ -210,7 +210,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
         bool storePFcands = false;
         if(i<NPFJetwConstituents_ || pat_jet.pt()>MinPtJetwConstituents_) storePFcands = true;
         try {
-          fill_jet_info(uevent,pat_jet, jet, true, false, doPuppiSpecific, storePFcands);
+          fill_jet_info(uevent,pat_jet, jet, true, doPuppiSpecific, storePFcands);
         }
         catch(runtime_error & ex){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info NtupleWriterJets::process for jets with src = " + src.label());
@@ -240,7 +240,7 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
 }
 
 
-void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool do_taginfo, bool doPuppiSpecific, bool fill_pfcand){
+void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool doPuppiSpecific, bool fill_pfcand){
   jet.set_charge(pat_jet.charge());
   jet.set_pt(pat_jet.pt());
   jet.set_eta(pat_jet.eta());
@@ -306,80 +306,6 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
     jet.set_JEC_L1factor_raw(1.);
   }
 
-
-  if(do_taginfo){
-    JetBTagInfo jetbtaginfo;
-    //ip tag info
-    reco::TaggingVariableList tvlIP=pat_jet.tagInfoCandIP("pfImpactParameter")->taggingVariables();
-    jetbtaginfo.set_TrackMomentum(tvlIP.getList(reco::btau::trackMomentum,false));
-    jetbtaginfo.set_TrackEta(tvlIP.getList(reco::btau::trackEta,false));
-    jetbtaginfo.set_TrackEtaRel(tvlIP.getList(reco::btau::trackEtaRel,false));
-    jetbtaginfo.set_TrackDeltaR(tvlIP.getList(reco::btau::trackDeltaR,false));
-    jetbtaginfo.set_TrackSip3dVal(tvlIP.getList(reco::btau::trackSip3dVal,false));
-    jetbtaginfo.set_TrackSip3dSig(tvlIP.getList(reco::btau::trackSip3dSig,false));
-    jetbtaginfo.set_TrackSip2dVal(tvlIP.getList(reco::btau::trackSip2dVal,false));
-    jetbtaginfo.set_TrackSip2dSig(tvlIP.getList(reco::btau::trackSip2dSig,false));
-    jetbtaginfo.set_TrackDecayLenVal(tvlIP.getList(reco::btau::trackDecayLenVal,false));
-    jetbtaginfo.set_TrackChi2(tvlIP.getList(reco::btau::trackChi2,false));
-    jetbtaginfo.set_TrackNTotalHits(tvlIP.getList(reco::btau::trackNTotalHits,false));
-    jetbtaginfo.set_TrackNPixelHits(tvlIP.getList(reco::btau::trackNPixelHits,false));
-    jetbtaginfo.set_TrackPtRel(tvlIP.getList(reco::btau::trackPtRel,false));
-    jetbtaginfo.set_TrackPPar(tvlIP.getList(reco::btau::trackPPar,false));
-    jetbtaginfo.set_TrackPtRatio(tvlIP.getList(reco::btau::trackPtRatio,false));
-    jetbtaginfo.set_TrackPParRatio(tvlIP.getList(reco::btau::trackPParRatio,false));
-    jetbtaginfo.set_TrackJetDistVal(tvlIP.getList(reco::btau::trackJetDistVal,false));
-    jetbtaginfo.set_TrackJetDistSig(tvlIP.getList(reco::btau::trackJetDistSig,false));
-    jetbtaginfo.set_TrackGhostTrackDistVal(tvlIP.getList(reco::btau::trackGhostTrackDistVal,false));
-    jetbtaginfo.set_TrackGhostTrackDistSig(tvlIP.getList(reco::btau::trackGhostTrackDistSig,false));
-    jetbtaginfo.set_TrackGhostTrackWeight(tvlIP.getList(reco::btau::trackGhostTrackWeight,false));
-    //sv tag info
-    reco::TaggingVariableList tvlSV=pat_jet.tagInfoCandSecondaryVertex("pfInclusiveSecondaryVertexFinder")->taggingVariables();
-    jetbtaginfo.set_FlightDistance2dVal(tvlSV.getList(reco::btau::flightDistance2dVal,false));
-    jetbtaginfo.set_FlightDistance2dSig(tvlSV.getList(reco::btau::flightDistance2dSig,false));
-    jetbtaginfo.set_FlightDistance3dVal(tvlSV.getList(reco::btau::flightDistance3dVal,false));
-    jetbtaginfo.set_FlightDistance3dSig(tvlSV.getList(reco::btau::flightDistance3dSig,false));
-    jetbtaginfo.set_VertexJetDeltaR(tvlSV.getList(reco::btau::vertexJetDeltaR,false));
-    jetbtaginfo.set_JetNSecondaryVertices(pat_jet.tagInfoCandSecondaryVertex("pfInclusiveSecondaryVertexFinder")->nVertices());
-    std::vector<TLorentzVector> vp4; vp4.clear();
-    std::vector<float> vchi2; vchi2.clear();
-    std::vector<float> vndof; vndof.clear();
-    std::vector<float> vchi2ndof; vchi2ndof.clear();
-    std::vector<int> sizetracks; sizetracks.clear();
-    for(unsigned int i = 0; i < pat_jet.tagInfoCandSecondaryVertex("pfInclusiveSecondaryVertexFinder")->nVertices(); ++i) {
-      reco::VertexCompositePtrCandidate sv=pat_jet.tagInfoCandSecondaryVertex("pfInclusiveSecondaryVertexFinder")->secondaryVertex(i);
-      sizetracks.push_back(sv.numberOfSourceCandidatePtrs());
-      ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > p4 = sv.p4();
-      vp4.push_back(TLorentzVector(p4.px(),p4.py(),p4.pz(),p4.e()));
-      vchi2.push_back(sv.vertexChi2());
-      vndof.push_back(sv.vertexNdof());
-      vchi2ndof.push_back(sv.vertexNormalizedChi2());
-    }
-    jetbtaginfo.set_SecondaryVertex(vp4);
-    jetbtaginfo.set_VertexChi2(vchi2);
-    jetbtaginfo.set_VertexNdof(vndof);
-    jetbtaginfo.set_VertexNormalizedChi2(vchi2ndof);
-    jetbtaginfo.set_VertexNTracks(sizetracks);
-    //try computer: currently not implemented! Only draft code for future use
-    /*const GenericMVAJetTagComputer *computer ;
-      edm::ESHandle<JetTagComputer> computerHandle;
-      std::string SVComputer_ = "candidateCombinedSecondaryVertexV2Computer";
-      iSetup.get<JetTagComputerRecord>().get(SVComputer_.c_str(), computerHandle );
-      computer = dynamic_cast<const GenericMVAJetTagComputer*>( computerHandle.product() );
-      if(computer)
-      {
-      std::vector<const reco::BaseTagInfo*>  baseTagInfos;
-      baseTagInfos.push_back(pat_jet.tagInfoTrackIP("pfImpactParameter") );
-      baseTagInfos.push_back(pat_jet.tagInfoSecondaryVertex("pfInclusiveSecondaryVertexFinder") );
-      JetTagComputer::TagInfoHelper helper(baseTagInfos);
-      reco::TaggingVariableList vars = computer->taggingVariables(helper);
-      jetbtaginfo.set_VertexMassJTC(vars.get(reco::btau::vertexMass,-9999));
-      jetbtaginfo.set_VertexCategoryJTC(vars.get(reco::btau::vertexCategory,-9999));
-      jetbtaginfo.set_VertexEnergyRatioJTC(vars.get(reco::btau::vertexEnergyRatio,-9999));
-      jetbtaginfo.set_TrackSip3dSigAboveCharmJTC(vars.get(reco::btau::trackSip3dSigAboveCharm,-9999));
-      }*/
-    jet.set_btaginfo(jetbtaginfo);
-    JetBTagInfo postcheck=jet.btaginfo();
-  }//do taginfos
   if(do_btagging){
     const auto & bdisc = pat_jet.getPairDiscri();
     bool csv = false, csvmva = false,  deepcsv_b = false, deepcsv_bb = false;
@@ -502,7 +428,6 @@ NtupleWriterTopJets::NtupleWriterTopJets(Config & cfg, bool set_jets_member, uns
 
     src_higgs_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.higgs_src);
     higgs_name=cfg.higgs_name;
-    do_taginfo_subjets = cfg.do_taginfo_subjets;
     src = cfg.src;
     do_btagging = cfg.do_btagging;
     do_btagging_subjets = cfg.do_btagging_subjets;
@@ -989,7 +914,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
         bool storePFcands = false;
         if(i<NPFJetwConstituents_ || pat_topjet.pt()>MinPtJetwConstituents_) storePFcands = true;
         try{
-          uhh2::NtupleWriterJets::fill_jet_info(uevent,pat_topjet, topjet, do_btagging, false, doPuppiSpecific, storePFcands);
+          uhh2::NtupleWriterJets::fill_jet_info(uevent,pat_topjet, topjet, do_btagging, doPuppiSpecific, storePFcands);
         }catch(runtime_error &){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for topjets in NtupleWriterTopJets with src = " + src.label());
         }
@@ -1325,7 +1250,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
             auto patsubjetd = dynamic_cast<const pat::Jet *>(pat_topjet.daughter(k));
             if (patsubjetd) {
 	      try{
-		NtupleWriterJets::fill_jet_info(uevent,*patsubjetd, subjet, do_btagging_subjets, do_taginfo_subjets, doPuppiSpecific, storePFcands);
+		NtupleWriterJets::fill_jet_info(uevent,*patsubjetd, subjet, do_btagging_subjets, doPuppiSpecific, storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for daughters in NtupleWriterTopJets with src = " + src.label());
 	      }
@@ -1354,7 +1279,7 @@ void NtupleWriterTopJets::process(const edm::Event & event, uhh2::Event & uevent
 	    auto tpatsubjet = dynamic_cast<const pat::Jet *>(tSubjets.at(sj).get());
             if (tpatsubjet) {
 	      try{
-		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, do_taginfo_subjets, doPuppiSpecific, storePFcands);
+		NtupleWriterJets::fill_jet_info(uevent,*tpatsubjet, subjet, do_btagging_subjets, doPuppiSpecific, storePFcands);
 	      }catch(runtime_error &){
                 throw cms::Exception("fill_jet_info error", "Error in fill_jet_info for subjets in NtupleWriterTopJets with src = " + src.label());
 	      }

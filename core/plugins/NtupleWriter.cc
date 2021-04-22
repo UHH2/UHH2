@@ -373,12 +373,6 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
         cfg.ptmin = topjet_ptmin;
         cfg.etamax = topjet_etamax;
         cfg.subjet_src = subjet_source;
-        if(topjets_list[j].exists("do_subjet_taginfo")){
-          cfg.do_taginfo_subjets = topjets_list[j].getParameter<bool>("do_subjet_taginfo");
-        }
-        else{
-          cfg.do_taginfo_subjets = false;
-        }
 
         if(topjets_list[j].exists("softdropmass_source")){
           cfg.softdrop_src = topjets_list[j].getParameter<std::string>("softdropmass_source");

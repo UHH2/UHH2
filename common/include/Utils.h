@@ -102,6 +102,8 @@ enum class Year {
     is2017v1,
     is2017v2,
     is2018,
+    isUL16preVFP,
+    isUL16postVFP,
     isUL17,
     isUL18,
 };
@@ -113,6 +115,8 @@ const std::map<Year, std::string> year_str_map = {
     {Year::is2017v1,        "2017v1"},
     {Year::is2017v2,        "2017v2"},
     {Year::is2018,          "2018"},
+    {Year::isUL16preVFP,    "UL16preVFP"},
+    {Year::isUL16postVFP,   "UL16postVFP"},
     {Year::isUL17,          "UL17"},
     {Year::isUL18,          "UL18"},
 };
@@ -140,6 +144,9 @@ const std::vector<std::string> runPeriods2016 = {"B", "C", "D", "E", "F", "G", "
 const std::vector<std::string> runPeriods2017 = {"B", "C", "D", "E", "F"};
 
 const std::vector<std::string> runPeriods2018 = {"A", "B", "C", "D"};
+
+const std::vector<std::string> runPeriodsUL16preVFP = {"B", "C", "D", "E", "F"};
+const std::vector<std::string> runPeriodsUL16postVFP = {"F", "G", "H"};
 
 const std::vector<std::string> year2runPeriods(const std::string& year);
 
