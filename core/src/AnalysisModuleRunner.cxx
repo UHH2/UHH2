@@ -608,6 +608,7 @@ void AnalysisModuleRunner::AnalysisModuleRunnerImpl::begin_input_data(AnalysisMo
 	      eh->setup_L1J_seeds(context->get("L1JseedsCollection", ""));
         eh->setup_L1M_seeds(context->get("L1MseedsCollection", ""));
         eh->setup_L1EtS_seeds(context->get("L1EtSseedsCollection", ""));
+        eh->setup_L1T_seeds(context->get("L1TseedsCollection", ""));
 
         bool is_mc = context->get("dataset_type") == "MC";
         if (is_mc) {

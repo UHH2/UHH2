@@ -21,6 +21,7 @@
 #include "DataFormats/L1Trigger/interface/Jet.h"
 #include "DataFormats/L1Trigger/interface/Muon.h"
 #include "DataFormats/L1Trigger/interface/EtSum.h"
+#include "DataFormats/L1Trigger/interface/Tau.h"
 
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/AnalysisModule.h"
@@ -201,11 +202,13 @@ class NtupleWriter : public edm::EDFilter {
       edm::EDGetTokenT<BXVector<l1t::Jet>> l1JetToken_;
       edm::EDGetTokenT<BXVector<l1t::Muon>> l1MuonToken_;
       edm::EDGetTokenT<BXVector<l1t::EtSum>> l1EtSumToken_;
+      edm::EDGetTokenT<BXVector<l1t::Tau>> l1TauToken_;
 
       std::vector<L1EGamma>  L1EG_seeds;
       std::vector<L1Jet> L1Jet_seeds;
       std::vector<L1Muon> L1Muon_seeds;
       std::vector<L1EtSum> L1EtSum_seeds;
+      std::vector<L1Tau> L1Tau_seeds;
 
 
 };
