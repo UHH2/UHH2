@@ -48,6 +48,7 @@ public:
   std::vector< L1Jet>* L1J_seeds;
   std::vector< L1Muon>* L1M_seeds;
   std::vector< L1EtSum>* L1EtS_seeds;
+  std::vector< L1Tau>* L1T_seeds;
 
   GenInfo* genInfo;
   std::vector< GenTopJet >* gentopjets;

@@ -20,7 +20,7 @@ Event::Handle<T> declare_in_out(const std::string & branch_name, const std::stri
 
 EventHelper::EventHelper(uhh2::Context & ctx_): ctx(ctx_), event(0), pvs(false), electrons(false), muons(false), taus(false), photons(false), jets(false),
 						topjets(false), toppuppijets(false), met(false),  genmet(false), genInfo(false), gentopjets(false),
-						genparticles(false), genjets(false), pfparticles(false), trigger(false),  L1EG_seeds(false), L1J_seeds(false), L1M_seeds(false), L1EtS_seeds(false), first_event_read(true){
+						genparticles(false), genjets(false), pfparticles(false), trigger(false),  L1EG_seeds(false), L1J_seeds(false), L1M_seeds(false), L1EtS_seeds(false), L1T_seeds(false), first_event_read(true){
     h_run = declare_in_out<int>("run", "run", ctx);
     h_lumi = declare_in_out<int>("luminosityBlock", "luminosityBlock", ctx);
     h_event = declare_in_out<int>("event", "event", ctx);
@@ -65,6 +65,8 @@ IMPL_SETUP(L1EG_seeds, vector<L1EGamma>)
 IMPL_SETUP(L1J_seeds, vector<L1Jet>)
 IMPL_SETUP(L1M_seeds, vector<L1Muon>)
 IMPL_SETUP(L1EtS_seeds, vector<L1EtSum>)
+IMPL_SETUP(L1T_seeds, vector<L1Tau>)
+
 
 
 
@@ -173,6 +175,9 @@ void EventHelper::event_read(){
 	}
   if(L1EtS_seeds){
 	  event->L1EtS_seeds =  &event->get(h_L1EtS_seeds);
+	}
+  if(L1T_seeds){
+	  event->L1T_seeds =  &event->get(h_L1T_seeds);
 	}
     }
 }

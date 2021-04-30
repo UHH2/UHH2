@@ -68,6 +68,7 @@ public:
     void setup_L1J_seeds(const std::string & bname);
     void setup_L1M_seeds(const std::string & bname);
     void setup_L1EtS_seeds(const std::string & bname);
+    void setup_L1T_seeds(const std::string & bname);
 
     void setup_trigger();
 
@@ -93,7 +94,7 @@ private:
     bool genInfo, gentopjets, genparticles, genjets;
     bool pfparticles;
     bool trigger;
-    bool L1EG_seeds, L1J_seeds, L1M_seeds, L1EtS_seeds;
+    bool L1EG_seeds, L1J_seeds, L1M_seeds, L1EtS_seeds, L1T_seeds;
     bool first_event_read;
 
     // trigger handling:
@@ -133,6 +134,7 @@ private:
     Event::Handle<std::vector<L1Jet>> h_L1J_seeds;
     Event::Handle<std::vector<L1Muon>> h_L1M_seeds;
     Event::Handle<std::vector<L1EtSum>> h_L1EtS_seeds;
+    Event::Handle<std::vector<L1Tau>> h_L1T_seeds;
 
 };
 

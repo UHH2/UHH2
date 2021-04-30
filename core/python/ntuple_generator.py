@@ -2437,6 +2437,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     l1JetSrc = cms.InputTag("caloStage2Digis:Jet"),
                                     l1MuonSrc = cms.InputTag("gmtStage2Digis:Muon"),
                                     l1EtSumSrc = cms.InputTag("caloStage2Digis:EtSum"),
+                                    l1TauSrc = cms.InputTag("caloStage2Digis:Tau"),
 
                                     doEcalBadCalib=cms.bool(bad_ecal),
                                     ecalBadCalib_source=cms.InputTag("ecalBadCalibReducedMINIAODFilter"),

@@ -642,11 +642,13 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     l1JetToken_ = consumes<BXVector<l1t::Jet>>(iConfig.getParameter<edm::InputTag>("l1JetSrc"));
     l1MuonToken_ = consumes<BXVector<l1t::Muon>>(iConfig.getParameter<edm::InputTag>("l1MuonSrc"));
     l1EtSumToken_ = consumes<BXVector<l1t::EtSum>>(iConfig.getParameter<edm::InputTag>("l1EtSumSrc"));
+    l1TauToken_ = consumes<BXVector<l1t::Tau>>(iConfig.getParameter<edm::InputTag>("l1TauSrc"));
 
     branch(tr,"L1EGamma_seeds","std::vector<L1EGamma>",&L1EG_seeds);
     branch(tr,"L1Jet_seeds","std::vector<L1Jet>",&L1Jet_seeds);
     branch(tr,"L1Muon_seeds","std::vector<L1Muon>",&L1Muon_seeds);
     branch(tr,"L1EtSum_seeds","std::vector<L1EtSum>",&L1EtSum_seeds);
+    branch(tr,"L1Tau_seeds","std::vector<L1Tau>",&L1Tau_seeds);
   }
 
   if(doAllPFParticles){
@@ -1434,6 +1436,48 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
        readBxetsum(*l1EtSumHandle, +1);
        readBxetsum(*l1EtSumHandle, +2);
      }
+
+
+     //L1Tau
+     edm::Handle<BXVector<l1t::Tau>> l1TauHandle;
+     iEvent.getByToken(l1TauToken_, l1TauHandle);
+     L1Tau_seeds.clear();
+     auto readBxtau = [&] (const BXVector<l1t::Tau>& egVect, int bx) {
+       for (auto itL1=l1TauHandle->begin(bx); itL1!=l1TauHandle->end(bx); ++itL1) {
+         L1Tau l1tau;
+         l1tau.set_pt(itL1->p4().Pt());
+         l1tau.set_eta(itL1->p4().Eta());
+         l1tau.set_phi(itL1->p4().Phi());
+         l1tau.set_energy(itL1->p4().energy());
+         l1tau.set_charge(itL1->charge());
+
+         l1tau.set_bx(bx);
+
+         l1tau.set_hwPt(itL1->hwPt());
+         l1tau.set_hwEta(itL1->hwEta());
+         l1tau.set_hwPhi(itL1->hwPhi());
+         l1tau.set_hwQual(itL1->hwQual());
+         l1tau.set_hwIso(itL1->hwIso());
+
+         l1tau.set_towerIEta(itL1->towerIEta());
+         l1tau.set_towerIPhi(itL1->towerIPhi());
+         l1tau.set_rawEt(itL1->rawEt());
+         l1tau.set_isoEt(itL1->isoEt());
+         l1tau.set_nTT(itL1->nTT());
+         l1tau.set_hasEM(itL1->hasEM());
+         l1tau.set_isMerged(itL1->isMerged());
+
+         L1Tau_seeds.push_back(l1tau);
+       }
+     };
+     readBxtau(*l1TauHandle, 0);
+     if(iEvent.isRealData()) {
+       readBxtau(*l1TauHandle, -2);
+       readBxtau(*l1TauHandle, -1);
+       readBxtau(*l1TauHandle, +1);
+       readBxtau(*l1TauHandle, +2);
+     }
+
    }
 
 
