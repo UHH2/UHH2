@@ -175,6 +175,47 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         'pfDeepBoostedJetTags:probZbb'
     ]
 
+    # from RecoBTag.ONNXRuntime.pfParticleNet_cff import _pfParticleNetJetTagsAll as pfParticleNetJetTagsAll
+    pfParticleNetJetTagsAll = [
+    'pfParticleNetJetTags:probTbcq',
+    'pfParticleNetJetTags:probTbqq',
+    'pfParticleNetJetTags:probTbc',
+    'pfParticleNetJetTags:probTbq',
+    'pfParticleNetJetTags:probTbel',
+    'pfParticleNetJetTags:probTbmu',
+    'pfParticleNetJetTags:probTbta',
+    'pfParticleNetJetTags:probWcq',
+    'pfParticleNetJetTags:probWqq',
+    'pfParticleNetJetTags:probZbb',
+    'pfParticleNetJetTags:probZcc',
+    'pfParticleNetJetTags:probZqq',
+    'pfParticleNetJetTags:probHbb',
+    'pfParticleNetJetTags:probHcc',
+    'pfParticleNetJetTags:probHqqqq',
+    'pfParticleNetJetTags:probQCDbb',
+    'pfParticleNetJetTags:probQCDcc',
+    'pfParticleNetJetTags:probQCDb',
+    'pfParticleNetJetTags:probQCDc',
+    'pfParticleNetJetTags:probQCDothers',
+    'pfParticleNetDiscriminatorsJetTags:TvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:WvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:ZvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:ZbbvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:HbbvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:HccvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:H4qvsQCD',
+    'pfMassDecorrelatedParticleNetJetTags:probXbb',
+    'pfMassDecorrelatedParticleNetJetTags:probXcc',
+    'pfMassDecorrelatedParticleNetJetTags:probXqq',
+    'pfMassDecorrelatedParticleNetJetTags:probQCDbb',
+    'pfMassDecorrelatedParticleNetJetTags:probQCDcc',
+    'pfMassDecorrelatedParticleNetJetTags:probQCDb',
+    'pfMassDecorrelatedParticleNetJetTags:probQCDc',
+    'pfMassDecorrelatedParticleNetJetTags:probQCDothers',
+    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XbbvsQCD',
+    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XccvsQCD',
+    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XqqvsQCD']
+    ak8btagDiscriminators += pfParticleNetJetTagsAll
 
     bTagInfos = [
         'pfImpactParameterTagInfos', 'pfSecondaryVertexTagInfos', 'pfInclusiveSecondaryVertexFinderTagInfos', 'softPFMuonsTagInfos', 'softPFElectronsTagInfos'
