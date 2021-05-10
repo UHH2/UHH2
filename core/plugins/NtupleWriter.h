@@ -100,7 +100,7 @@ class NtupleWriter : public edm::EDFilter {
 
       bool doPV;
       bool doTrigger;
-      bool doL1seed;
+      bool doL1TriggerObjects;
       bool doEcalBadCalib;
       bool doPrefire;
       bool runOnMiniAOD;

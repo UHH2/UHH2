@@ -30,7 +30,7 @@ process.MyNtuple.doMET = cms.bool(False)
 process.MyNtuple.doGenMET = cms.bool(False)
 process.MyNtuple.doTopJets = cms.bool(False)
 process.MyNtuple.doTrigger = cms.bool(False)
-process.MyNtuple.doL1seed = cms.bool(False)
+process.MyNtuple.doL1TriggerObjects = cms.bool(False)
 process.MyNtuple.doEcalBadCalib = cms.bool(False)
 process.MyNtuple.doPrefire = cms.bool(False)
 

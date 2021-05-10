@@ -209,7 +209,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
-  doL1seed = iConfig.getParameter<bool>("doL1seed");
+  doL1TriggerObjects = iConfig.getParameter<bool>("doL1TriggerObjects");
   doEcalBadCalib = iConfig.getParameter<bool>("doEcalBadCalib");
   doPrefire = iConfig.getParameter<bool>("doPrefire");
 
@@ -636,7 +636,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     prefweightup_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbUp"));
     prefweightdown_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbDown"));
   }
-  if(doL1seed){
+  if(doL1TriggerObjects){
     l1GtToken_ = consumes<BXVector<GlobalAlgBlk>>(iConfig.getParameter<edm::InputTag>("l1GtSrc"));
     l1EGToken_ = consumes<BXVector<l1t::EGamma>>(iConfig.getParameter<edm::InputTag>("l1EGSrc"));
     l1JetToken_ = consumes<BXVector<l1t::Jet>>(iConfig.getParameter<edm::InputTag>("l1JetSrc"));
@@ -1244,39 +1244,38 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
    print_times(timer, "trigger+prefire");
 
+   if(iEvent.isRealData()) {
+     auto & triggerResults = *event->get_triggerResults();
+     auto & triggerPrescales = *event->get_triggerPrescales();
+     auto & triggerPrescalesL1min = *event->get_triggerPrescalesL1min();
+     auto & triggerPrescalesL1max = *event->get_triggerPrescalesL1max();
 
-   if(doL1seed){
-     if(iEvent.isRealData()) {
-       auto & triggerResults = *event->get_triggerResults();
-       auto & triggerPrescales = *event->get_triggerPrescales();
-       auto & triggerPrescalesL1min = *event->get_triggerPrescalesL1min();
-       auto & triggerPrescalesL1max = *event->get_triggerPrescalesL1max();
+     //muGT
+     edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
+     iEvent.getByToken(l1GtToken_, l1GtHandle);
+     bool prefire = l1GtHandle->begin(-1)->getFinalOR();
+     triggerNames_outbranch.push_back("muGT_BX_minus_1__prefire");
+     triggerResults.push_back(prefire);
+     triggerPrescales.push_back(1);
+     triggerPrescalesL1min.push_back(1);
+     triggerPrescalesL1max.push_back(1);
 
-       //muGT
-       edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
-       iEvent.getByToken(l1GtToken_, l1GtHandle);
-       bool prefire = l1GtHandle->begin(-1)->getFinalOR();
-       triggerNames_outbranch.push_back("muGT_BX_minus_1__prefire");
-       triggerResults.push_back(prefire);
-       triggerPrescales.push_back(1);
-       triggerPrescalesL1min.push_back(1);
-       triggerPrescalesL1max.push_back(1);
+     bool postfire = l1GtHandle->begin(1)->getFinalOR();
+     triggerNames_outbranch.push_back("muGT_BX_plus_1");
+     triggerResults.push_back(postfire);
+     triggerPrescales.push_back(1);
+     triggerPrescalesL1min.push_back(1);
+     triggerPrescalesL1max.push_back(1);
 
-       bool postfire = l1GtHandle->begin(1)->getFinalOR();
-       triggerNames_outbranch.push_back("muGT_BX_plus_1");
-       triggerResults.push_back(postfire);
-       triggerPrescales.push_back(1);
-       triggerPrescalesL1min.push_back(1);
-       triggerPrescalesL1max.push_back(1);
+     bool fire = l1GtHandle->begin(0)->getFinalOR();
+     triggerNames_outbranch.push_back("muGT_BX_plus_0");
+     triggerResults.push_back(fire);
+     triggerPrescales.push_back(1);
+     triggerPrescalesL1min.push_back(1);
+     triggerPrescalesL1max.push_back(1);
+   }
 
-       bool fire = l1GtHandle->begin(0)->getFinalOR();
-       triggerNames_outbranch.push_back("muGT_BX_plus_0");
-       triggerResults.push_back(fire);
-       triggerPrescales.push_back(1);
-       triggerPrescalesL1min.push_back(1);
-       triggerPrescalesL1max.push_back(1);
-     }
-
+   if(doL1TriggerObjects){
      //L1EG
      edm::Handle<BXVector<l1t::EGamma>> l1EGHandle;
      iEvent.getByToken(l1EGToken_, l1EGHandle);
