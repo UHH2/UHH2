@@ -175,6 +175,47 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         'pfDeepBoostedJetTags:probZbb'
     ]
 
+    # from RecoBTag.ONNXRuntime.pfParticleNet_cff import _pfParticleNetJetTagsAll as pfParticleNetJetTagsAll
+    pfParticleNetJetTagsAll = [
+    'pfParticleNetJetTags:probTbcq',
+    'pfParticleNetJetTags:probTbqq',
+    'pfParticleNetJetTags:probTbc',
+    'pfParticleNetJetTags:probTbq',
+    'pfParticleNetJetTags:probTbel',
+    'pfParticleNetJetTags:probTbmu',
+    'pfParticleNetJetTags:probTbta',
+    'pfParticleNetJetTags:probWcq',
+    'pfParticleNetJetTags:probWqq',
+    'pfParticleNetJetTags:probZbb',
+    'pfParticleNetJetTags:probZcc',
+    'pfParticleNetJetTags:probZqq',
+    'pfParticleNetJetTags:probHbb',
+    'pfParticleNetJetTags:probHcc',
+    'pfParticleNetJetTags:probHqqqq',
+    'pfParticleNetJetTags:probQCDbb',
+    'pfParticleNetJetTags:probQCDcc',
+    'pfParticleNetJetTags:probQCDb',
+    'pfParticleNetJetTags:probQCDc',
+    'pfParticleNetJetTags:probQCDothers',
+    'pfParticleNetDiscriminatorsJetTags:TvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:WvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:ZvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:ZbbvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:HbbvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:HccvsQCD',
+    'pfParticleNetDiscriminatorsJetTags:H4qvsQCD',
+    'pfMassDecorrelatedParticleNetJetTags:probXbb',
+    'pfMassDecorrelatedParticleNetJetTags:probXcc',
+    'pfMassDecorrelatedParticleNetJetTags:probXqq',
+    'pfMassDecorrelatedParticleNetJetTags:probQCDbb',
+    'pfMassDecorrelatedParticleNetJetTags:probQCDcc',
+    'pfMassDecorrelatedParticleNetJetTags:probQCDb',
+    'pfMassDecorrelatedParticleNetJetTags:probQCDc',
+    'pfMassDecorrelatedParticleNetJetTags:probQCDothers',
+    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XbbvsQCD',
+    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XccvsQCD',
+    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XqqvsQCD']
+    ak8btagDiscriminators += pfParticleNetJetTagsAll
 
     bTagInfos = [
         'pfImpactParameterTagInfos', 'pfSecondaryVertexTagInfos', 'pfInclusiveSecondaryVertexFinderTagInfos', 'softPFMuonsTagInfos', 'softPFElectronsTagInfos'
@@ -1187,23 +1228,21 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     )
     task.add(process.rekeyPackedPatJetsAk8PuppiJets)
 
-    #### update PUPPI to v14
-    from CommonTools.PileupAlgos.customizePuppiTune_cff import UpdatePuppiTuneV14
-    UpdatePuppiTuneV14(process, not useData)
+    #### update PUPPI to v15
+    from CommonTools.PileupAlgos.customizePuppiTune_cff import UpdatePuppiTuneV15
+    UpdatePuppiTuneV15(process, not useData)
 
     # Update DeepBoosted training to V2 for everything but 2016v2
     # Check https://twiki.cern.ch/twiki/bin/view/CMS/DeepAKXTagging for latest recommendations
     # e.g. 2018 specific training
     if (year != "2016v2"):
-        from RecoBTag.MXNet.pfDeepBoostedJet_cff import pfDeepBoostedJetTags, pfMassDecorrelatedDeepBoostedJetTags
-        from RecoBTag.MXNet.Parameters.V02.pfDeepBoostedJetPreprocessParams_cfi import pfDeepBoostedJetPreprocessParams as pfDeepBoostedJetPreprocessParamsV02
-        from RecoBTag.MXNet.Parameters.V02.pfMassDecorrelatedDeepBoostedJetPreprocessParams_cfi import pfMassDecorrelatedDeepBoostedJetPreprocessParams as pfMassDecorrelatedDeepBoostedJetPreprocessParamsV02
+        from RecoBTag.ONNXRuntime.pfDeepBoostedJet_cff import pfDeepBoostedJetTags, pfMassDecorrelatedDeepBoostedJetTags
+        from RecoBTag.ONNXRuntime.Parameters.DeepBoostedJet.V02.pfDeepBoostedJetPreprocessParams_cfi import pfDeepBoostedJetPreprocessParams as pfDeepBoostedJetPreprocessParamsV02
+        from RecoBTag.ONNXRuntime.Parameters.DeepBoostedJet.V02.pfMassDecorrelatedDeepBoostedJetPreprocessParams_cfi import pfMassDecorrelatedDeepBoostedJetPreprocessParams as pfMassDecorrelatedDeepBoostedJetPreprocessParamsV02
         pfDeepBoostedJetTags.preprocessParams = pfDeepBoostedJetPreprocessParamsV02
-        pfDeepBoostedJetTags.model_path = 'RecoBTag/Combined/data/DeepBoostedJet/V02/full/resnet-symbol.json'
-        pfDeepBoostedJetTags.param_path = 'RecoBTag/Combined/data/DeepBoostedJet/V02/full/resnet-0000.params'
+        pfDeepBoostedJetTags.model_path = 'RecoBTag/Combined/data/DeepBoostedJet/V02/full/resnet.onnx'
         pfMassDecorrelatedDeepBoostedJetTags.preprocessParams = pfMassDecorrelatedDeepBoostedJetPreprocessParamsV02
-        pfMassDecorrelatedDeepBoostedJetTags.model_path = 'RecoBTag/Combined/data/DeepBoostedJet/V02/decorrelated/resnet-symbol.json'
-        pfMassDecorrelatedDeepBoostedJetTags.param_path = 'RecoBTag/Combined/data/DeepBoostedJet/V02/decorrelated/resnet-0000.params'
+        pfMassDecorrelatedDeepBoostedJetTags.model_path = 'RecoBTag/Combined/data/DeepBoostedJet/V02/decorrelated/resnet.onnx'
 
     ###############################################
     # Do deep flavours & deep tagging
