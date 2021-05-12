@@ -636,8 +636,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     prefweightup_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbUp"));
     prefweightdown_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbDown"));
   }
+  l1GtToken_ = consumes<BXVector<GlobalAlgBlk>>(iConfig.getParameter<edm::InputTag>("l1GtSrc"));
   if(doL1TriggerObjects){
-    l1GtToken_ = consumes<BXVector<GlobalAlgBlk>>(iConfig.getParameter<edm::InputTag>("l1GtSrc"));
     l1EGToken_ = consumes<BXVector<l1t::EGamma>>(iConfig.getParameter<edm::InputTag>("l1EGSrc"));
     l1JetToken_ = consumes<BXVector<l1t::Jet>>(iConfig.getParameter<edm::InputTag>("l1JetSrc"));
     l1MuonToken_ = consumes<BXVector<l1t::Muon>>(iConfig.getParameter<edm::InputTag>("l1MuonSrc"));
