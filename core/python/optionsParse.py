@@ -16,7 +16,7 @@ def setup_opts():
     options.register ('eventContent',
                       'default',
                       VarParsing.multiplicity.singleton,
-                      VarParsing.varType.string,  # have to use int for a bool (!)
+                      VarParsing.varType.string,
                       "Control which variables are stored. Possible values: 'default', 'min', max'")
 
     # setup defaults
