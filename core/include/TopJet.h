@@ -150,6 +150,49 @@ public:
       m_btag_DeepBoosted_probZqq=-2;
       m_btag_DeepBoosted_probHqqqq=-2;
       m_btag_DeepBoosted_probZbb=-2;
+      
+      m_btag_ParticleNetJetTags_probTbcq=-2;
+      m_btag_ParticleNetJetTags_probTbqq=-2;
+      m_btag_ParticleNetJetTags_probTbc=-2;
+      m_btag_ParticleNetJetTags_probTbq=-2;
+      m_btag_ParticleNetJetTags_probTbel=-2;
+      m_btag_ParticleNetJetTags_probTbmu=-2;
+      m_btag_ParticleNetJetTags_probTbta=-2;
+      m_btag_ParticleNetJetTags_probWcq=-2;
+      m_btag_ParticleNetJetTags_probWqq=-2;
+      m_btag_ParticleNetJetTags_probZbb=-2;
+      m_btag_ParticleNetJetTags_probZcc=-2;
+      m_btag_ParticleNetJetTags_probZqq=-2;
+      m_btag_ParticleNetJetTags_probHbb=-2;
+      m_btag_ParticleNetJetTags_probHcc=-2;
+      m_btag_ParticleNetJetTags_probHqqqq=-2;
+      m_btag_ParticleNetJetTags_probQCDbb=-2;
+      m_btag_ParticleNetJetTags_probQCDcc=-2;
+      m_btag_ParticleNetJetTags_probQCDb=-2;
+      m_btag_ParticleNetJetTags_probQCDc=-2;
+      m_btag_ParticleNetJetTags_probQCDothers=-2;
+
+      m_btag_ParticleNetDiscriminatorsJetTags_TvsQCD=-2;
+      m_btag_ParticleNetDiscriminatorsJetTags_WvsQCD=-2;
+      m_btag_ParticleNetDiscriminatorsJetTags_ZvsQCD=-2;
+      m_btag_ParticleNetDiscriminatorsJetTags_ZbbvsQCD=-2;
+      m_btag_ParticleNetDiscriminatorsJetTags_HbbvsQCD=-2;
+      m_btag_ParticleNetDiscriminatorsJetTags_HccvsQCD=-2;
+      m_btag_ParticleNetDiscriminatorsJetTags_H4qvsQCD=-2;
+
+      m_btag_MassDecorrelatedParticleNetJetTags_probXbb=-2;
+      m_btag_MassDecorrelatedParticleNetJetTags_probXcc=-2;
+      m_btag_MassDecorrelatedParticleNetJetTags_probXqq=-2;
+      m_btag_MassDecorrelatedParticleNetJetTags_probQCDbb=-2;
+      m_btag_MassDecorrelatedParticleNetJetTags_probQCDcc=-2;
+      m_btag_MassDecorrelatedParticleNetJetTags_probQCDb=-2;
+      m_btag_MassDecorrelatedParticleNetJetTags_probQCDc=-2;
+      m_btag_MassDecorrelatedParticleNetJetTags_probQCDothers=-2;
+
+      m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XbbvsQCD=-2;
+      m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD=-2;
+      m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD=-2;
+
 
   }
 
@@ -275,7 +318,53 @@ public:
   float btag_MassDecorrelatedDeepBoosted_raw_score_h()const{return m_btag_MassDecorrelatedDeepBoosted_probHbb+m_btag_MassDecorrelatedDeepBoosted_probHcc+m_btag_MassDecorrelatedDeepBoosted_probHqqqq;}
 
 
+  //raw scores of ParticleNet tagger
+  float btag_ParticleNetJetTags_probTbcq() const{return m_btag_ParticleNetJetTags_probTbcq;}
+  float btag_ParticleNetJetTags_probTbqq() const{return m_btag_ParticleNetJetTags_probTbqq;}
+  float btag_ParticleNetJetTags_probTbc() const{return m_btag_ParticleNetJetTags_probTbc;}
+  float btag_ParticleNetJetTags_probTbq() const{return m_btag_ParticleNetJetTags_probTbq;}
+  float btag_ParticleNetJetTags_probTbel() const{return m_btag_ParticleNetJetTags_probTbel;}
+  float btag_ParticleNetJetTags_probTbmu() const{return m_btag_ParticleNetJetTags_probTbmu;}
+  float btag_ParticleNetJetTags_probTbta() const{return m_btag_ParticleNetJetTags_probTbta;}
+  float btag_ParticleNetJetTags_probWcq() const{return m_btag_ParticleNetJetTags_probWcq;}
+  float btag_ParticleNetJetTags_probWqq() const{return m_btag_ParticleNetJetTags_probWqq;}
+  float btag_ParticleNetJetTags_probZbb() const{return m_btag_ParticleNetJetTags_probZbb;}
+  float btag_ParticleNetJetTags_probZcc() const{return m_btag_ParticleNetJetTags_probZcc;}
+  float btag_ParticleNetJetTags_probZqq() const{return m_btag_ParticleNetJetTags_probZqq;}
+  float btag_ParticleNetJetTags_probHbb() const{return m_btag_ParticleNetJetTags_probHbb;}
+  float btag_ParticleNetJetTags_probHcc() const{return m_btag_ParticleNetJetTags_probHcc;}
+  float btag_ParticleNetJetTags_probHqqqq() const{return m_btag_ParticleNetJetTags_probHqqqq;}
+  float btag_ParticleNetJetTags_probQCDbb() const{return m_btag_ParticleNetJetTags_probQCDbb;}
+  float btag_ParticleNetJetTags_probQCDcc() const{return m_btag_ParticleNetJetTags_probQCDcc;}
+  float btag_ParticleNetJetTags_probQCDb() const{return m_btag_ParticleNetJetTags_probQCDb;}
+  float btag_ParticleNetJetTags_probQCDc() const{return m_btag_ParticleNetJetTags_probQCDc;}
+  float btag_ParticleNetJetTags_probQCDothers() const{return m_btag_ParticleNetJetTags_probQCDothers;}
+  float btag_ParticleNetJetTags_probQCD() const{return m_btag_ParticleNetJetTags_probQCDbb+m_btag_ParticleNetJetTags_probQCDcc+m_btag_ParticleNetJetTags_probQCDb+m_btag_ParticleNetJetTags_probQCDc+m_btag_ParticleNetJetTags_probQCDothers;}
 
+  //binary scores of ParticleNet, see https://github.com/cms-sw/cmssw/blob/master/RecoBTag/ONNXRuntime/python/pfParticleNetDiscriminatorsJetTags_cfi.py
+  float btag_ParticleNetDiscriminatorsJetTags_TvsQCD() const{return m_btag_ParticleNetDiscriminatorsJetTags_TvsQCD;}
+  float btag_ParticleNetDiscriminatorsJetTags_WvsQCD() const{return m_btag_ParticleNetDiscriminatorsJetTags_WvsQCD;}
+  float btag_ParticleNetDiscriminatorsJetTags_ZvsQCD() const{return m_btag_ParticleNetDiscriminatorsJetTags_ZvsQCD;}
+  float btag_ParticleNetDiscriminatorsJetTags_ZbbvsQCD() const{return m_btag_ParticleNetDiscriminatorsJetTags_ZbbvsQCD;}
+  float btag_ParticleNetDiscriminatorsJetTags_HbbvsQCD() const{return m_btag_ParticleNetDiscriminatorsJetTags_HbbvsQCD;}
+  float btag_ParticleNetDiscriminatorsJetTags_HccvsQCD() const{return m_btag_ParticleNetDiscriminatorsJetTags_HccvsQCD;}
+  float btag_ParticleNetDiscriminatorsJetTags_H4qvsQCD() const{return m_btag_ParticleNetDiscriminatorsJetTags_H4qvsQCD;}
+
+  //raw scores of mass decorrelated ParticleNet tagger
+  float btag_MassDecorrelatedParticleNetJetTags_probXbb() const{return m_btag_MassDecorrelatedParticleNetJetTags_probXbb;}
+  float btag_MassDecorrelatedParticleNetJetTags_probXcc() const{return m_btag_MassDecorrelatedParticleNetJetTags_probXcc;}
+  float btag_MassDecorrelatedParticleNetJetTags_probXqq() const{return m_btag_MassDecorrelatedParticleNetJetTags_probXqq;}
+  float btag_MassDecorrelatedParticleNetJetTags_probQCDbb() const{return m_btag_MassDecorrelatedParticleNetJetTags_probQCDbb;}
+  float btag_MassDecorrelatedParticleNetJetTags_probQCDcc() const{return m_btag_MassDecorrelatedParticleNetJetTags_probQCDcc;}
+  float btag_MassDecorrelatedParticleNetJetTags_probQCDb() const{return m_btag_MassDecorrelatedParticleNetJetTags_probQCDb;}
+  float btag_MassDecorrelatedParticleNetJetTags_probQCDc() const{return m_btag_MassDecorrelatedParticleNetJetTags_probQCDc;}
+  float btag_MassDecorrelatedParticleNetJetTags_probQCDothers() const{return m_btag_MassDecorrelatedParticleNetJetTags_probQCDothers;}
+  float btag_MassDecorrelatedParticleNetJetTags_probQCD() const{return m_btag_MassDecorrelatedParticleNetJetTags_probQCDbb+m_btag_MassDecorrelatedParticleNetJetTags_probQCDcc+m_btag_MassDecorrelatedParticleNetJetTags_probQCDb+m_btag_MassDecorrelatedParticleNetJetTags_probQCDc+m_btag_MassDecorrelatedParticleNetJetTags_probQCDothers;}
+
+  //binary scores of mass decorrelated ParticleNet tagger, see https://github.com/cms-sw/cmssw/blob/master/RecoBTag/ONNXRuntime/python/pfMassDecorrelatedParticleNetDiscriminatorsJetTags_cfi.py
+  float btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XbbvsQCD() const{return m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XbbvsQCD;}
+  float btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD() const{return m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD;}
+  float btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD() const{return m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD;}
 
   
 
@@ -377,6 +466,48 @@ public:
   void set_btag_DeepBoosted_probHqqqq(float x) { m_btag_DeepBoosted_probHqqqq=x;}
   void set_btag_DeepBoosted_probZbb(float x) { m_btag_DeepBoosted_probZbb=x;}
 
+  void set_btag_ParticleNetJetTags_probTbcq(float x) { m_btag_ParticleNetJetTags_probTbcq=x;}
+  void set_btag_ParticleNetJetTags_probTbqq(float x) { m_btag_ParticleNetJetTags_probTbqq=x;}
+  void set_btag_ParticleNetJetTags_probTbc(float x) { m_btag_ParticleNetJetTags_probTbc=x;}
+  void set_btag_ParticleNetJetTags_probTbq(float x) { m_btag_ParticleNetJetTags_probTbq=x;}
+  void set_btag_ParticleNetJetTags_probTbel(float x) { m_btag_ParticleNetJetTags_probTbel=x;}
+  void set_btag_ParticleNetJetTags_probTbmu(float x) { m_btag_ParticleNetJetTags_probTbmu=x;}
+  void set_btag_ParticleNetJetTags_probTbta(float x) { m_btag_ParticleNetJetTags_probTbta=x;}
+  void set_btag_ParticleNetJetTags_probWcq(float x) { m_btag_ParticleNetJetTags_probWcq=x;}
+  void set_btag_ParticleNetJetTags_probWqq(float x) { m_btag_ParticleNetJetTags_probWqq=x;}
+  void set_btag_ParticleNetJetTags_probZbb(float x) { m_btag_ParticleNetJetTags_probZbb=x;}
+  void set_btag_ParticleNetJetTags_probZcc(float x) { m_btag_ParticleNetJetTags_probZcc=x;}
+  void set_btag_ParticleNetJetTags_probZqq(float x) { m_btag_ParticleNetJetTags_probZqq=x;}
+  void set_btag_ParticleNetJetTags_probHbb(float x) { m_btag_ParticleNetJetTags_probHbb=x;}
+  void set_btag_ParticleNetJetTags_probHcc(float x) { m_btag_ParticleNetJetTags_probHcc=x;}
+  void set_btag_ParticleNetJetTags_probHqqqq(float x) { m_btag_ParticleNetJetTags_probHqqqq=x;}
+  void set_btag_ParticleNetJetTags_probQCDbb(float x) { m_btag_ParticleNetJetTags_probQCDbb=x;}
+  void set_btag_ParticleNetJetTags_probQCDcc(float x) { m_btag_ParticleNetJetTags_probQCDcc=x;}
+  void set_btag_ParticleNetJetTags_probQCDb(float x) { m_btag_ParticleNetJetTags_probQCDb=x;}
+  void set_btag_ParticleNetJetTags_probQCDc(float x) { m_btag_ParticleNetJetTags_probQCDc=x;}
+  void set_btag_ParticleNetJetTags_probQCDothers(float x) { m_btag_ParticleNetJetTags_probQCDothers=x;}
+
+  void set_btag_ParticleNetDiscriminatorsJetTags_TvsQCD(float x) { m_btag_ParticleNetDiscriminatorsJetTags_TvsQCD=x;}
+  void set_btag_ParticleNetDiscriminatorsJetTags_WvsQCD(float x) { m_btag_ParticleNetDiscriminatorsJetTags_WvsQCD=x;}
+  void set_btag_ParticleNetDiscriminatorsJetTags_ZvsQCD(float x) { m_btag_ParticleNetDiscriminatorsJetTags_ZvsQCD=x;}
+  void set_btag_ParticleNetDiscriminatorsJetTags_ZbbvsQCD(float x) { m_btag_ParticleNetDiscriminatorsJetTags_ZbbvsQCD=x;}
+  void set_btag_ParticleNetDiscriminatorsJetTags_HbbvsQCD(float x) { m_btag_ParticleNetDiscriminatorsJetTags_HbbvsQCD=x;}
+  void set_btag_ParticleNetDiscriminatorsJetTags_HccvsQCD(float x) { m_btag_ParticleNetDiscriminatorsJetTags_HccvsQCD=x;}
+  void set_btag_ParticleNetDiscriminatorsJetTags_H4qvsQCD(float x) { m_btag_ParticleNetDiscriminatorsJetTags_H4qvsQCD=x;}
+
+  void set_btag_MassDecorrelatedParticleNetJetTags_probXbb(float x) { m_btag_MassDecorrelatedParticleNetJetTags_probXbb=x;}
+  void set_btag_MassDecorrelatedParticleNetJetTags_probXcc(float x) { m_btag_MassDecorrelatedParticleNetJetTags_probXcc=x;}
+  void set_btag_MassDecorrelatedParticleNetJetTags_probXqq(float x) { m_btag_MassDecorrelatedParticleNetJetTags_probXqq=x;}
+  void set_btag_MassDecorrelatedParticleNetJetTags_probQCDbb(float x) { m_btag_MassDecorrelatedParticleNetJetTags_probQCDbb=x;}
+  void set_btag_MassDecorrelatedParticleNetJetTags_probQCDcc(float x) { m_btag_MassDecorrelatedParticleNetJetTags_probQCDcc=x;}
+  void set_btag_MassDecorrelatedParticleNetJetTags_probQCDb(float x) { m_btag_MassDecorrelatedParticleNetJetTags_probQCDb=x;}
+  void set_btag_MassDecorrelatedParticleNetJetTags_probQCDc(float x) { m_btag_MassDecorrelatedParticleNetJetTags_probQCDc=x;}
+  void set_btag_MassDecorrelatedParticleNetJetTags_probQCDothers(float x) { m_btag_MassDecorrelatedParticleNetJetTags_probQCDothers=x;}
+
+  void set_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XbbvsQCD(float x) { m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XbbvsQCD=x;}
+  void set_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD(float x) { m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD=x;}
+  void set_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD(float x) { m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD=x;}
+
 private:
   std::vector<Jet> m_subjets;
 
@@ -463,6 +594,48 @@ private:
   float m_btag_DeepBoosted_probZqq;
   float m_btag_DeepBoosted_probHqqqq;
   float m_btag_DeepBoosted_probZbb;
+
+  float m_btag_ParticleNetJetTags_probTbcq;
+  float m_btag_ParticleNetJetTags_probTbqq;
+  float m_btag_ParticleNetJetTags_probTbc;
+  float m_btag_ParticleNetJetTags_probTbq;
+  float m_btag_ParticleNetJetTags_probTbel;
+  float m_btag_ParticleNetJetTags_probTbmu;
+  float m_btag_ParticleNetJetTags_probTbta;
+  float m_btag_ParticleNetJetTags_probWcq;
+  float m_btag_ParticleNetJetTags_probWqq;
+  float m_btag_ParticleNetJetTags_probZbb;
+  float m_btag_ParticleNetJetTags_probZcc;
+  float m_btag_ParticleNetJetTags_probZqq;
+  float m_btag_ParticleNetJetTags_probHbb;
+  float m_btag_ParticleNetJetTags_probHcc;
+  float m_btag_ParticleNetJetTags_probHqqqq;
+  float m_btag_ParticleNetJetTags_probQCDbb;
+  float m_btag_ParticleNetJetTags_probQCDcc;
+  float m_btag_ParticleNetJetTags_probQCDb;
+  float m_btag_ParticleNetJetTags_probQCDc;
+  float m_btag_ParticleNetJetTags_probQCDothers;
+
+  float m_btag_ParticleNetDiscriminatorsJetTags_TvsQCD;
+  float m_btag_ParticleNetDiscriminatorsJetTags_WvsQCD;
+  float m_btag_ParticleNetDiscriminatorsJetTags_ZvsQCD;
+  float m_btag_ParticleNetDiscriminatorsJetTags_ZbbvsQCD;
+  float m_btag_ParticleNetDiscriminatorsJetTags_HbbvsQCD;
+  float m_btag_ParticleNetDiscriminatorsJetTags_HccvsQCD;
+  float m_btag_ParticleNetDiscriminatorsJetTags_H4qvsQCD;
+
+  float m_btag_MassDecorrelatedParticleNetJetTags_probXbb;
+  float m_btag_MassDecorrelatedParticleNetJetTags_probXcc;
+  float m_btag_MassDecorrelatedParticleNetJetTags_probXqq;
+  float m_btag_MassDecorrelatedParticleNetJetTags_probQCDbb;
+  float m_btag_MassDecorrelatedParticleNetJetTags_probQCDcc;
+  float m_btag_MassDecorrelatedParticleNetJetTags_probQCDb;
+  float m_btag_MassDecorrelatedParticleNetJetTags_probQCDc;
+  float m_btag_MassDecorrelatedParticleNetJetTags_probQCDothers;
+
+  float m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XbbvsQCD;
+  float m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD;
+  float m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD;
 
   Tags tags;
 };

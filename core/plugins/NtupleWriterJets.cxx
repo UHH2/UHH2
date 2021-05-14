@@ -491,7 +491,17 @@ void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & 
     decorrmass_deepboosted_probQCDothers=false,decorrmass_deepboosted_probQCDb=false,decorrmass_deepboosted_probTbc=false,
     decorrmass_deepboosted_probWqq=false,decorrmass_deepboosted_probQCDcc=false,decorrmass_deepboosted_probHcc=false,
     decorrmass_deepboosted_probWcq=false,decorrmass_deepboosted_probZcc=false,decorrmass_deepboosted_probZqq=false,
-    decorrmass_deepboosted_probHqqqq=false,decorrmass_deepboosted_probZbb=false;
+    decorrmass_deepboosted_probHqqqq=false,decorrmass_deepboosted_probZbb=false,
+    particlenet_probTbcq=false,particlenet_probTbqq=false,particlenet_probTbc=false,particlenet_probTbq=false,
+    particlenet_probTbel=false,particlenet_probTbmu=false,particlenet_probTbta=false,particlenet_probWcq=false,
+    particlenet_probWqq=false,particlenet_probZbb=false,particlenet_probZcc=false,particlenet_probZqq=false,
+    particlenet_probHbb=false,particlenet_probHcc=false,particlenet_probHqqqq=false,particlenet_probQCDbb=false,
+    particlenet_probQCDcc=false,particlenet_probQCDb=false,particlenet_probQCDc=false,particlenet_probQCDothers=false,
+    particlenet_TvsQCD=false,particlenet_WvsQCD=false,particlenet_ZvsQCD=false,particlenet_ZbbvsQCD=false,
+    particlenet_HbbvsQCD=false,particlenet_HccvsQCD=false,particlenet_H4qvsQCD=false,
+    decorrmass_particlenet_probXbb=false,decorrmass_particlenet_probXcc=false,decorrmass_particlenet_probXqq=false,decorrmass_particlenet_probQCDbb=false,
+    decorrmass_particlenet_probQCDcc=false,decorrmass_particlenet_probQCDb=false,decorrmass_particlenet_probQCDc=false,decorrmass_particlenet_probQCDothers=false,
+    decorrmass_particlenet_XbbvsQCD=false,decorrmass_particlenet_XccvsQCD=false,decorrmass_particlenet_XqqvsQCD=false;
 
 
     for(const auto & name_value : bdisc){
@@ -761,6 +771,158 @@ void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & 
         jet.set_btag_DeepBoosted_probZbb(value);
         deepboosted_probZbb=true;
       }
+      else if(name == "pfParticleNetJetTags:probTbcq"){
+        jet.set_btag_ParticleNetJetTags_probTbcq(value);
+        particlenet_probTbcq = true;
+      }
+      else if(name == "pfParticleNetJetTags:probTbqq"){
+        jet.set_btag_ParticleNetJetTags_probTbqq(value);
+        particlenet_probTbqq = true;
+      }
+      else if(name == "pfParticleNetJetTags:probTbc"){
+        jet.set_btag_ParticleNetJetTags_probTbc(value);
+        particlenet_probTbc = true;
+      }
+      else if(name == "pfParticleNetJetTags:probTbq"){
+        jet.set_btag_ParticleNetJetTags_probTbq(value);
+        particlenet_probTbq = true;
+      }
+      else if(name == "pfParticleNetJetTags:probTbel"){
+        jet.set_btag_ParticleNetJetTags_probTbel(value);
+        particlenet_probTbel = true;
+      }
+      else if(name == "pfParticleNetJetTags:probTbmu"){
+        jet.set_btag_ParticleNetJetTags_probTbmu(value);
+        particlenet_probTbmu = true;
+      }
+      else if(name == "pfParticleNetJetTags:probTbta"){
+        jet.set_btag_ParticleNetJetTags_probTbta(value);
+        particlenet_probTbta = true;
+      }
+      else if(name == "pfParticleNetJetTags:probWcq"){
+        jet.set_btag_ParticleNetJetTags_probWcq(value);
+        particlenet_probWcq = true;
+      }
+      else if(name == "pfParticleNetJetTags:probWqq"){
+        jet.set_btag_ParticleNetJetTags_probWqq(value);
+        particlenet_probWqq = true;
+      }
+      else if(name == "pfParticleNetJetTags:probZbb"){
+        jet.set_btag_ParticleNetJetTags_probZbb(value);
+        particlenet_probZbb = true;
+      }
+      else if(name == "pfParticleNetJetTags:probZcc"){
+        jet.set_btag_ParticleNetJetTags_probZcc(value);
+        particlenet_probZcc = true;
+      }
+      else if(name == "pfParticleNetJetTags:probZqq"){
+        jet.set_btag_ParticleNetJetTags_probZqq(value);
+        particlenet_probZqq = true;
+      }
+      else if(name == "pfParticleNetJetTags:probHbb"){
+        jet.set_btag_ParticleNetJetTags_probHbb(value);
+        particlenet_probHbb = true;
+      }
+      else if(name == "pfParticleNetJetTags:probHcc"){
+        jet.set_btag_ParticleNetJetTags_probHcc(value);
+        particlenet_probHcc = true;
+      }
+      else if(name == "pfParticleNetJetTags:probHqqqq"){
+        jet.set_btag_ParticleNetJetTags_probHqqqq(value);
+        particlenet_probHqqqq = true;
+      }
+      else if(name == "pfParticleNetJetTags:probQCDbb"){
+        jet.set_btag_ParticleNetJetTags_probQCDbb(value);
+        particlenet_probQCDbb = true;
+      }
+      else if(name == "pfParticleNetJetTags:probQCDcc"){
+        jet.set_btag_ParticleNetJetTags_probQCDcc(value);
+        particlenet_probQCDcc = true;
+      }
+      else if(name == "pfParticleNetJetTags:probQCDb"){
+        jet.set_btag_ParticleNetJetTags_probQCDb(value);
+        particlenet_probQCDb = true;
+      }
+      else if(name == "pfParticleNetJetTags:probQCDc"){
+        jet.set_btag_ParticleNetJetTags_probQCDc(value);
+        particlenet_probQCDc = true;
+      }
+      else if(name == "pfParticleNetJetTags:probQCDothers"){
+        jet.set_btag_ParticleNetJetTags_probQCDothers(value);
+        particlenet_probQCDothers = true;
+      }
+      else if(name == "pfParticleNetDiscriminatorsJetTags:TvsQCD"){
+        jet.set_btag_ParticleNetDiscriminatorsJetTags_TvsQCD(value);
+        particlenet_TvsQCD = true;
+      }
+      else if(name == "pfParticleNetDiscriminatorsJetTags:WvsQCD"){
+        jet.set_btag_ParticleNetDiscriminatorsJetTags_WvsQCD(value);
+        particlenet_WvsQCD = true;
+      }
+      else if(name == "pfParticleNetDiscriminatorsJetTags:ZvsQCD"){
+        jet.set_btag_ParticleNetDiscriminatorsJetTags_ZvsQCD(value);
+        particlenet_ZvsQCD = true;
+      }
+      else if(name == "pfParticleNetDiscriminatorsJetTags:ZbbvsQCD"){
+        jet.set_btag_ParticleNetDiscriminatorsJetTags_ZbbvsQCD(value);
+        particlenet_ZbbvsQCD = true;
+      }
+      else if(name == "pfParticleNetDiscriminatorsJetTags:HbbvsQCD"){
+        jet.set_btag_ParticleNetDiscriminatorsJetTags_HbbvsQCD(value);
+        particlenet_HbbvsQCD = true;
+      }
+      else if(name == "pfParticleNetDiscriminatorsJetTags:HccvsQCD"){
+        jet.set_btag_ParticleNetDiscriminatorsJetTags_HccvsQCD(value);
+        particlenet_HccvsQCD = true;
+      }
+      else if(name == "pfParticleNetDiscriminatorsJetTags:H4qvsQCD"){
+        jet.set_btag_ParticleNetDiscriminatorsJetTags_H4qvsQCD(value);
+        particlenet_H4qvsQCD = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetJetTags:probXbb"){
+        jet.set_btag_MassDecorrelatedParticleNetJetTags_probXbb(value);
+        decorrmass_particlenet_probXbb = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetJetTags:probXcc"){
+        jet.set_btag_MassDecorrelatedParticleNetJetTags_probXcc(value);
+        decorrmass_particlenet_probXcc = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetJetTags:probXqq"){
+        jet.set_btag_MassDecorrelatedParticleNetJetTags_probXqq(value);
+        decorrmass_particlenet_probXqq = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetJetTags:probQCDbb"){
+        jet.set_btag_MassDecorrelatedParticleNetJetTags_probQCDbb(value);
+        decorrmass_particlenet_probQCDbb = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetJetTags:probQCDcc"){
+        jet.set_btag_MassDecorrelatedParticleNetJetTags_probQCDcc(value);
+        decorrmass_particlenet_probQCDcc = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetJetTags:probQCDb"){
+        jet.set_btag_MassDecorrelatedParticleNetJetTags_probQCDb(value);
+        decorrmass_particlenet_probQCDb = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetJetTags:probQCDc"){
+        jet.set_btag_MassDecorrelatedParticleNetJetTags_probQCDc(value);
+        decorrmass_particlenet_probQCDc = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetJetTags:probQCDothers"){
+        jet.set_btag_MassDecorrelatedParticleNetJetTags_probQCDothers(value);
+        decorrmass_particlenet_probQCDothers = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XbbvsQCD"){
+        jet.set_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XbbvsQCD(value);
+        decorrmass_particlenet_XbbvsQCD = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XccvsQCD"){
+        jet.set_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD(value);
+        decorrmass_particlenet_XccvsQCD = true;
+      }
+      else if(name == "pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XqqvsQCD"){
+        jet.set_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD(value);
+        decorrmass_particlenet_XqqvsQCD = true;
+      }
 
     }
 
@@ -788,7 +950,17 @@ void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & 
        || !decorrmass_deepboosted_probQCDcc || !decorrmass_deepboosted_probHcc
        || !decorrmass_deepboosted_probWcq || !decorrmass_deepboosted_probZcc
        || !decorrmass_deepboosted_probZqq || !decorrmass_deepboosted_probHqqqq
-       || !decorrmass_deepboosted_probZbb){
+       || !decorrmass_deepboosted_probZbb
+       || !particlenet_probTbcq || !particlenet_probTbqq || !particlenet_probTbc || !particlenet_probTbq
+       || !particlenet_probTbel || !particlenet_probTbmu || !particlenet_probTbta || !particlenet_probWcq
+       || !particlenet_probWqq || !particlenet_probZbb || !particlenet_probZcc || !particlenet_probZqq
+       || !particlenet_probHbb || !particlenet_probHcc || !particlenet_probHqqqq || !particlenet_probQCDbb
+       || !particlenet_probQCDcc || !particlenet_probQCDb || !particlenet_probQCDc || !particlenet_probQCDothers
+       || !particlenet_TvsQCD || !particlenet_WvsQCD || !particlenet_ZvsQCD || !particlenet_ZbbvsQCD
+       || !particlenet_HbbvsQCD || !particlenet_HccvsQCD || !particlenet_H4qvsQCD
+       || !decorrmass_particlenet_probXbb || !decorrmass_particlenet_probXcc || !decorrmass_particlenet_probXqq || !decorrmass_particlenet_probQCDbb
+       || !decorrmass_particlenet_probQCDcc || !decorrmass_particlenet_probQCDb || !decorrmass_particlenet_probQCDc || !decorrmass_particlenet_probQCDothers
+       || !decorrmass_particlenet_XbbvsQCD || !decorrmass_particlenet_XccvsQCD || !decorrmass_particlenet_XqqvsQCD){
       if(btag_warning){
         std::string btag_list = "";
         for(const auto & name_value : bdisc){
