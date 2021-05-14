@@ -189,12 +189,12 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doPFJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFJetConstituentsNjets");
   doPFJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFJetConstituentsMinJetPt");
   doPFJetConstituents = false;
-  if(doPFJetConstituentsNjets>0 || doPFJetConstituentsMinJetPt>0) 
+  if(doPFJetConstituentsNjets>0 || doPFJetConstituentsMinJetPt>0)
     doPFJetConstituents=true;
   doPFTopJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFTopJetConstituentsNjets");
   doPFTopJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFTopJetConstituentsMinJetPt");
   doPFTopJetConstituents = false;
-  if(doPFTopJetConstituentsNjets>0 || doPFTopJetConstituentsMinJetPt>0) 
+  if(doPFTopJetConstituentsNjets>0 || doPFTopJetConstituentsMinJetPt>0)
     doPFTopJetConstituents=true;
 
   doPhotons = iConfig.getParameter<bool>("doPhotons");
@@ -202,14 +202,14 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenMET = iConfig.getParameter<bool>("doGenMET");
   doGenInfo = iConfig.getParameter<bool>("doGenInfo");
   doStableGenParticles = iConfig.getParameter<bool>("doStableGenParticles");
-  
+
   doAllPFParticles = iConfig.getParameter<bool>("doAllPFParticles");
 
   // topjet configuration:
   bool doTopJets = iConfig.getParameter<bool>("doTopJets");
 
   doTrigger = iConfig.getParameter<bool>("doTrigger");
-  doL1seed = iConfig.getParameter<bool>("doL1seed");
+  doL1TriggerObjects = iConfig.getParameter<bool>("doL1TriggerObjects");
   doEcalBadCalib = iConfig.getParameter<bool>("doEcalBadCalib");
   doPrefire = iConfig.getParameter<bool>("doPrefire");
 
@@ -218,7 +218,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doPFxconeJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFxconeJetConstituentsNjets");
   doPFxconeJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFxconeJetConstituentsMinJetPt");
   doPFxconeJetConstituents = false;
-  if((doPFxconeJetConstituentsNjets>0 || doPFxconeJetConstituentsMinJetPt>0) && doXCone) 
+  if((doPFxconeJetConstituentsNjets>0 || doPFxconeJetConstituentsMinJetPt>0) && doXCone)
     doPFxconeJetConstituents=true;
   if(doPFxconeJetConstituentsMinJetPt<1e-6) doPFxconeJetConstituentsMinJetPt=2e6;
 
@@ -226,7 +226,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doPFhotvrJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFhotvrJetConstituentsNjets");
   doPFhotvrJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFhotvrJetConstituentsMinJetPt");
   doPFhotvrJetConstituents = false;
-  if((doPFhotvrJetConstituentsNjets>0 || doPFhotvrJetConstituentsMinJetPt>0) && doHOTVR) 
+  if((doPFhotvrJetConstituentsNjets>0 || doPFhotvrJetConstituentsMinJetPt>0) && doHOTVR)
     doPFhotvrJetConstituents=true;
   if(doPFhotvrJetConstituentsMinJetPt<1e-6) doPFhotvrJetConstituentsMinJetPt=2e6;
 
@@ -245,7 +245,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doPFxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFxconeDijetJetConstituentsNjets");
   doPFxconeDijetJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFxconeDijetJetConstituentsMinJetPt");
   doPFxconeDijetJetConstituents = false;
-  if((doPFxconeDijetJetConstituentsNjets>0 || doPFxconeDijetJetConstituentsMinJetPt>0) && doXCone_dijet) 
+  if((doPFxconeDijetJetConstituentsNjets>0 || doPFxconeDijetJetConstituentsMinJetPt>0) && doXCone_dijet)
     doPFxconeDijetJetConstituents=true;
   if(doPFxconeDijetJetConstituentsMinJetPt<1e-6) doPFxconeDijetJetConstituentsMinJetPt=2e6;
 
@@ -532,7 +532,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
     genjetflavor_token = consumes<reco::JetFlavourInfoMatchingCollection > ( edm::InputTag("slimmedGenJetsFlavourInfos"));
   }
-  
+
   if(doMET){
      auto met_sources = iConfig.getParameter<std::vector<std::string> >("met_sources");
      met.resize(met_sources.size());
@@ -636,13 +636,19 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     prefweightup_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbUp"));
     prefweightdown_token = consumes<double>(edm::InputTag(prefire_source, "nonPrefiringProbDown"));
   }
-  if(doL1seed){
-    l1GtToken_ = consumes<BXVector<GlobalAlgBlk>>(iConfig.getParameter<edm::InputTag>("l1GtSrc"));
+  l1GtToken_ = consumes<BXVector<GlobalAlgBlk>>(iConfig.getParameter<edm::InputTag>("l1GtSrc"));
+  if(doL1TriggerObjects){
     l1EGToken_ = consumes<BXVector<l1t::EGamma>>(iConfig.getParameter<edm::InputTag>("l1EGSrc"));
     l1JetToken_ = consumes<BXVector<l1t::Jet>>(iConfig.getParameter<edm::InputTag>("l1JetSrc"));
+    l1MuonToken_ = consumes<BXVector<l1t::Muon>>(iConfig.getParameter<edm::InputTag>("l1MuonSrc"));
+    l1EtSumToken_ = consumes<BXVector<l1t::EtSum>>(iConfig.getParameter<edm::InputTag>("l1EtSumSrc"));
+    l1TauToken_ = consumes<BXVector<l1t::Tau>>(iConfig.getParameter<edm::InputTag>("l1TauSrc"));
 
     branch(tr,"L1EGamma_seeds","std::vector<L1EGamma>",&L1EG_seeds);
     branch(tr,"L1Jet_seeds","std::vector<L1Jet>",&L1Jet_seeds);
+    branch(tr,"L1Muon_seeds","std::vector<L1Muon>",&L1Muon_seeds);
+    branch(tr,"L1EtSum_seeds","std::vector<L1EtSum>",&L1EtSum_seeds);
+    branch(tr,"L1Tau_seeds","std::vector<L1Tau>",&L1Tau_seeds);
   }
 
   if(doAllPFParticles){
@@ -1024,7 +1030,7 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
    } // end if doGenJets
    print_times(timer, "genjets");
 
-  
+
    for(auto & m : writer_modules){
        m->process(iEvent, *event, iSetup);
    }
@@ -1238,14 +1244,13 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
    print_times(timer, "trigger+prefire");
 
-
-   if(doL1seed && iEvent.isRealData()){
-     auto & triggerResults = *event->get_triggerResults();   
+   if(iEvent.isRealData()) {
+     auto & triggerResults = *event->get_triggerResults();
      auto & triggerPrescales = *event->get_triggerPrescales();
      auto & triggerPrescalesL1min = *event->get_triggerPrescalesL1min();
      auto & triggerPrescalesL1max = *event->get_triggerPrescalesL1max();
-     
-     //muGT 
+
+     //muGT
      edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
      iEvent.getByToken(l1GtToken_, l1GtHandle);
      bool prefire = l1GtHandle->begin(-1)->getFinalOR();
@@ -1254,67 +1259,224 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
      triggerPrescales.push_back(1);
      triggerPrescalesL1min.push_back(1);
      triggerPrescalesL1max.push_back(1);
-     
+
      bool postfire = l1GtHandle->begin(1)->getFinalOR();
      triggerNames_outbranch.push_back("muGT_BX_plus_1");
      triggerResults.push_back(postfire);
      triggerPrescales.push_back(1);
      triggerPrescalesL1min.push_back(1);
      triggerPrescalesL1max.push_back(1);
-     
+
      bool fire = l1GtHandle->begin(0)->getFinalOR();
      triggerNames_outbranch.push_back("muGT_BX_plus_0");
      triggerResults.push_back(fire);
      triggerPrescales.push_back(1);
      triggerPrescalesL1min.push_back(1);
      triggerPrescalesL1max.push_back(1);
+   }
+
+   if(doL1TriggerObjects){
      //L1EG
-     
      edm::Handle<BXVector<l1t::EGamma>> l1EGHandle;
      iEvent.getByToken(l1EGToken_, l1EGHandle);
      L1EG_seeds.clear();
      auto readBx = [&] (const BXVector<l1t::EGamma>& egVect, int bx) {
        for (auto itL1=l1EGHandle->begin(bx); itL1!=l1EGHandle->end(bx); ++itL1) {
-	 L1EGamma l1eg;
-	 l1eg.set_bx(bx);
-	 l1eg.set_pt(itL1->p4().Pt());
-	 l1eg.set_eta(itL1->p4().Eta());
-	 l1eg.set_phi(itL1->p4().Phi());
-	 l1eg.set_energy(itL1->p4().energy());
-	 l1eg.set_Shape(itL1->shape());
-	 l1eg.set_iso(itL1->hwIso());
-	 L1EG_seeds.push_back(l1eg);
+      	 L1EGamma l1eg;
+      	 l1eg.set_bx(bx);
+      	 l1eg.set_pt(itL1->p4().Pt());
+      	 l1eg.set_eta(itL1->p4().Eta());
+      	 l1eg.set_phi(itL1->p4().Phi());
+      	 l1eg.set_energy(itL1->p4().energy());
+      	 l1eg.set_Shape(itL1->shape());
+      	 l1eg.set_iso(itL1->hwIso());
+      	 L1EG_seeds.push_back(l1eg);
        }
      };
-     readBx(*l1EGHandle, -2);
-     readBx(*l1EGHandle, -1);
      readBx(*l1EGHandle, 0);
-     readBx(*l1EGHandle, +1);
-     readBx(*l1EGHandle, +2);
-     
+     if(iEvent.isRealData()) {
+       readBx(*l1EGHandle, -2);
+       readBx(*l1EGHandle, -1);
+       readBx(*l1EGHandle, +1);
+       readBx(*l1EGHandle, +2);
+     }
+
      //L1Jet
      edm::Handle<BXVector<l1t::Jet>> l1JetHandle;
      iEvent.getByToken(l1JetToken_, l1JetHandle);
      L1Jet_seeds.clear();
      auto readBxjet = [&] (const BXVector<l1t::Jet>& egVect, int bx) {
        for (auto itL1=l1JetHandle->begin(bx); itL1!=l1JetHandle->end(bx); ++itL1) {
-	 L1Jet l1jet;
-	 l1jet.set_bx(bx);
-	 l1jet.set_pt(itL1->p4().Pt());
-	 l1jet.set_eta(itL1->p4().Eta());
-	 l1jet.set_phi(itL1->p4().Phi());
-	 l1jet.set_energy(itL1->p4().energy());
-	 l1jet.set_puEt(itL1->puEt());
-	 l1jet.set_seedEt(itL1->seedEt());
-	 l1jet.set_rawEt(itL1->rawEt());
-	 L1Jet_seeds.push_back(l1jet);
+      	 L1Jet l1jet;
+      	 l1jet.set_bx(bx);
+      	 l1jet.set_pt(itL1->p4().Pt());
+      	 l1jet.set_eta(itL1->p4().Eta());
+      	 l1jet.set_phi(itL1->p4().Phi());
+      	 l1jet.set_energy(itL1->p4().energy());
+      	 l1jet.set_puEt(itL1->puEt());
+      	 l1jet.set_seedEt(itL1->seedEt());
+      	 l1jet.set_rawEt(itL1->rawEt());
+      	 L1Jet_seeds.push_back(l1jet);
        }
      };
-     readBxjet(*l1JetHandle, -2);
-     readBxjet(*l1JetHandle, -1);
      readBxjet(*l1JetHandle, 0);
-     readBxjet(*l1JetHandle, +1);
-     readBxjet(*l1JetHandle, +2);
+     if(iEvent.isRealData()) {
+       readBxjet(*l1JetHandle, -2);
+       readBxjet(*l1JetHandle, -1);
+       readBxjet(*l1JetHandle, +1);
+       readBxjet(*l1JetHandle, +2);
+     }
+
+     //L1Muon
+     edm::Handle<BXVector<l1t::Muon>> l1MuonHandle;
+     iEvent.getByToken(l1MuonToken_, l1MuonHandle);
+     L1Muon_seeds.clear();
+     auto readBxmuon = [&] (const BXVector<l1t::Muon>& egVect, int bx) {
+       for (auto itL1=l1MuonHandle->begin(bx); itL1!=l1MuonHandle->end(bx); ++itL1) {
+      	 L1Muon l1muon;
+      	 l1muon.set_pt(itL1->p4().Pt());
+      	 l1muon.set_eta(itL1->p4().Eta());
+      	 l1muon.set_phi(itL1->p4().Phi());
+      	 l1muon.set_energy(itL1->p4().energy());
+         l1muon.set_charge(itL1->charge());
+
+         l1muon.set_bx(bx);
+
+         l1muon.set_hwPt(itL1->hwPt());
+         l1muon.set_hwEta(itL1->hwEta());
+         l1muon.set_hwPhi(itL1->hwPhi());
+         l1muon.set_hwQual(itL1->hwQual());
+         l1muon.set_hwIso(itL1->hwIso());
+
+         l1muon.set_hwCharge(itL1->hwCharge());
+         l1muon.set_hwChargeValid(itL1->hwChargeValid());
+         l1muon.set_tfMuonIndex(itL1->tfMuonIndex());
+         l1muon.set_hwTag(itL1->hwTag());
+
+         l1muon.set_hwEtaAtVtx(itL1->hwEtaAtVtx());
+         l1muon.set_hwPhiAtVtx(itL1->hwPhiAtVtx());
+         l1muon.set_etaAtVtx(itL1->etaAtVtx());
+         l1muon.set_phiAtVtx(itL1->phiAtVtx());
+
+         l1muon.set_hwIsoSum(itL1->hwIsoSum());
+         l1muon.set_hwDPhiExtra(itL1->hwDPhiExtra());
+         l1muon.set_hwDEtaExtra(itL1->hwDEtaExtra());
+         l1muon.set_hwRank(itL1->hwRank());
+
+         l1muon.set_debug(itL1->debug());
+
+         L1Muon_seeds.push_back(l1muon);
+       }
+     };
+     readBxmuon(*l1MuonHandle, 0);
+     if(iEvent.isRealData()) {
+       readBxmuon(*l1MuonHandle, -2);
+       readBxmuon(*l1MuonHandle, -1);
+       readBxmuon(*l1MuonHandle, +1);
+       readBxmuon(*l1MuonHandle, +2);
+     }
+
+     //l1EtSum
+     edm::Handle<BXVector<l1t::EtSum>> l1EtSumHandle;
+     iEvent.getByToken(l1EtSumToken_, l1EtSumHandle);
+     L1EtSum_seeds.clear();
+     auto readBxetsum = [&] (const BXVector<l1t::EtSum>& egVect, int bx) {
+       for (auto itL1=l1EtSumHandle->begin(bx); itL1!=l1EtSumHandle->end(bx); ++itL1) {
+         L1EtSum l1EtSum;
+
+         // checking and setting type
+         if(itL1->getType() == l1t::EtSum::EtSumType::kTotalEt) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalEt);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kTotalHt) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalHt);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kMissingEt) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kMissingEt);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kMissingHt) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kMissingHt);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kTotalEtx) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalEtx);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kTotalEty) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalEty);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kTotalHtx) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalEtx);
+         }
+         else if(itL1->getType() == l1t::EtSum::EtSumType::kTotalHty) {
+           l1EtSum.set_type(L1EtSum::EtSumType::kTotalEty);
+         }
+         else continue; // only keeping a selection of types for the moment
+
+      	 l1EtSum.set_pt(itL1->p4().Pt());
+      	 l1EtSum.set_eta(itL1->p4().Eta());
+      	 l1EtSum.set_phi(itL1->p4().Phi());
+      	 l1EtSum.set_energy(itL1->p4().energy());
+         l1EtSum.set_charge(itL1->charge());
+
+         l1EtSum.set_bx(bx);
+
+         l1EtSum.set_hwPt(itL1->hwPt());
+         l1EtSum.set_hwEta(itL1->hwEta());
+         l1EtSum.set_hwPhi(itL1->hwPhi());
+         l1EtSum.set_hwQual(itL1->hwQual());
+         l1EtSum.set_hwIso(itL1->hwIso());
+
+         L1EtSum_seeds.push_back(l1EtSum);
+       }
+     };
+     readBxetsum(*l1EtSumHandle, 0);
+     if(iEvent.isRealData()) {
+       readBxetsum(*l1EtSumHandle, -2);
+       readBxetsum(*l1EtSumHandle, -1);
+       readBxetsum(*l1EtSumHandle, +1);
+       readBxetsum(*l1EtSumHandle, +2);
+     }
+
+
+     //L1Tau
+     edm::Handle<BXVector<l1t::Tau>> l1TauHandle;
+     iEvent.getByToken(l1TauToken_, l1TauHandle);
+     L1Tau_seeds.clear();
+     auto readBxtau = [&] (const BXVector<l1t::Tau>& egVect, int bx) {
+       for (auto itL1=l1TauHandle->begin(bx); itL1!=l1TauHandle->end(bx); ++itL1) {
+         L1Tau l1tau;
+         l1tau.set_pt(itL1->p4().Pt());
+         l1tau.set_eta(itL1->p4().Eta());
+         l1tau.set_phi(itL1->p4().Phi());
+         l1tau.set_energy(itL1->p4().energy());
+         l1tau.set_charge(itL1->charge());
+
+         l1tau.set_bx(bx);
+
+         l1tau.set_hwPt(itL1->hwPt());
+         l1tau.set_hwEta(itL1->hwEta());
+         l1tau.set_hwPhi(itL1->hwPhi());
+         l1tau.set_hwQual(itL1->hwQual());
+         l1tau.set_hwIso(itL1->hwIso());
+
+         l1tau.set_towerIEta(itL1->towerIEta());
+         l1tau.set_towerIPhi(itL1->towerIPhi());
+         l1tau.set_rawEt(itL1->rawEt());
+         l1tau.set_isoEt(itL1->isoEt());
+         l1tau.set_nTT(itL1->nTT());
+         l1tau.set_hasEM(itL1->hasEM());
+         l1tau.set_isMerged(itL1->isMerged());
+
+         L1Tau_seeds.push_back(l1tau);
+       }
+     };
+     readBxtau(*l1TauHandle, 0);
+     if(iEvent.isRealData()) {
+       readBxtau(*l1TauHandle, -2);
+       readBxtau(*l1TauHandle, -1);
+       readBxtau(*l1TauHandle, +1);
+       readBxtau(*l1TauHandle, +2);
+     }
+
    }
 
 
