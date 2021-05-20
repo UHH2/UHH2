@@ -160,6 +160,13 @@ scram setup fastjet
 scram setup fastjet-contrib
 scram setup fastjet-contrib-archive
 
+# Get L1PrefiringMaps.root (not in CMSSW_10_6_X yet), according to recipe described at https://twiki.cern.ch/twiki/bin/viewauth/CMS/L1ECALPrefiringWeightRecipe#Accessing_the_UL2017_maps
+# Remove these lines again once these maps are included in CMSSW. FIXME/TODO: For UL16, no prefiring maps available yet. Needs to be addressed before UL16 ntuple production starts
+time git cms-addpkg PhysicsTools/PatUtils
+cd PhysicsTools/PatUtils/data/
+wget --no-check-certificate https://github.com/cms-data/PhysicsTools-PatUtils/raw/master/L1PrefiringMaps.root
+cd ../../../
+
 scram b clean
 time scram b $MAKEFLAGS
 

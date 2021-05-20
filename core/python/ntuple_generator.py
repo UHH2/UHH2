@@ -2051,6 +2051,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         '2016v3': '2016BtoH',
         '2017v1': '2017BtoF',
         '2017v2': '2017BtoF',
+        'UL17': 'UL2017BtoF',
+        #'UL16preVFP': '', # FIXME/TODO
+        #'UL16postVFP': '', # FIXME/TODO
     }
     prefire_era = None if useData else prefire_era_dict.get(year, None)
     do_prefire = prefire_era is not None
