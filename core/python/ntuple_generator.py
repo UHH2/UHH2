@@ -2073,7 +2073,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     ###############################################
     # Deal with bad ECAL endcap crystals
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#How_to_run_ecal_BadCalibReducedM
-    bad_ecal = useData and ("2017" in year or "2018" in year)
+    bad_ecal = useData and (year=="2017v1" or year=="2017v2" or year=="2018")
+
     if bad_ecal:
         process.load('RecoMET.METFilters.ecalBadCalibFilter_cfi')
 
