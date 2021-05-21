@@ -2074,7 +2074,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # Deal with bad ECAL endcap crystals
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#How_to_run_ecal_BadCalibReducedM
     bad_ecal = useData and (year=="2017v1" or year=="2017v2" or year=="2018")
-
     if bad_ecal:
         process.load('RecoMET.METFilters.ecalBadCalibFilter_cfi')
 
@@ -2088,12 +2087,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
              872437185,872422564,872421566,872421695,
              872421955,872421567,872437184,872421951,
              872421694,872437056,872437057,872437313
-
-             # Are these supposed to be used as well?
-             # 872438182,872438951,872439990,872439864,
-             # 872439609,872437181,872437182,872437053,
-             # 872436794,872436667,872436536,872421541,
-             # 872421413,872421414,872421031,872423083,872421439
              ])
 
 
@@ -2106,7 +2099,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         )
         task.add(process.ecalBadCalibReducedMINIAODFilter)
 
-    # Run Bad Charged Hadron and Bad Muon filters for 2016v2, since they were
+    # Run Bad Muon filters for 2016v2, since they were
     # only introduced after samples were produced.
     # Newer samples will already have these.
     do_bad_muon_charged_filters = (year == "2016v2")
@@ -2118,18 +2111,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         process.BadPFMuonFilter.taggingMode = True  # Don't veto, store bit in ntuple
         task.add(process.BadPFMuonFilter)
         extra_trigger_bits.append(process.BadPFMuonFilter.label())
-
-        # DISABLE Bad Charged Hadron Filter for now as some inefficiency for TeV jets
-        # Under review, update when necessary
-        # process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
-        # process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
-        # process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
-        # process.BadChargedCandidateFilter.taggingMode = True
-        # task.add(process.BadChargedCandidateFilter)
-        # extra_trigger_bits.append(process.BadChargedCandidateFilter.label())
-
-    # NtupleWriter
-    #
 
     if useData:
         metfilterpath = "RECO"
