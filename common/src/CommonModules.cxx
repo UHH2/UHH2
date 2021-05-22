@@ -146,21 +146,47 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
     }
   }
   if(metfilters){
-    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
     metfilters_selection.reset(new AndSelection(ctx, "metfilters"));
-    metfilters_selection->add<TriggerSelection>("HBHENoiseFilter", "Flag_HBHENoiseFilter");
-    metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
-    metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter", "Flag_globalSuperTightHalo2016Filter");
-    metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
-    if (!is_mc) metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
-    // metfilters_selection->add<TriggerSelection>("BadChargedCandidateFilter", "Flag_BadChargedCandidateFilter"); // Not recommended, under review. Separate module in ntuple_generator for 2016v2
-    if (year != Year::is2016v2) {
+
+    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
+
+    if( is_UL(year) ) {
+      // recommendation for UL datasets
+      //
+      // Recommendation for UL still NOT final
+      // The following needs to be updated!
+      // - UL 2016 MC treatment is still missing recommendation (treat as UL 17/18 for now, but needs update)
+      // 
+      metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
+      metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter", "Flag_globalSuperTightHalo2016Filter");
+      metfilters_selection->add<TriggerSelection>("HBHENoiseFilter", "Flag_HBHENoiseFilter");
+      metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
+      metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
       metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
+      metfilters_selection->add<TriggerSelection>("BadPFMuonDzFilter", "Flag_BadPFMuonDzFilter");
+      if (!is_mc) {
+	metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
+      }
+      if ( year==Year::isUL17 || year==Year::isUL18 ) {
+	metfilters_selection->add<TriggerSelection>("Flag_ecalBadCalibFilter", "Flag_ecalBadCalibFilter");
+      }
+
     } else {
-      metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Extra_BadPFMuonFilter");
+      // recommendation for EOY datasets
+      metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
+      metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter", "Flag_globalSuperTightHalo2016Filter");
+      metfilters_selection->add<TriggerSelection>("HBHENoiseFilter", "Flag_HBHENoiseFilter");
+      metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
+      metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
+      if (year == Year::is2016v2) { // filter was run during ntuple production as info not in miniAOD
+	metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Extra_BadPFMuonFilter");
+      } else {
+	metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
+      }
+      if (!is_mc) metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
+      metfilters_selection->add<EcalBadCalibSelection>("EcalBadCalibSelection"); // Use this instead of Flag_ecalBadCalibFilter, uses ecalBadCalibReducedMINIAODFilter in ntuple_generator
     }
-    metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
-    metfilters_selection->add<EcalBadCalibSelection>("EcalBadCalibSelection"); // Use this instead of Flag_ecalBadCalibFilter, uses ecalBadCalibReducedMINIAODFilter in ntuple_generator
+
     if(pvfilter) metfilters_selection->add<NPVSelection>("1 good PV",1,-1,pvid);
   }
   if(eleid) modules.emplace_back(new ElectronCleaner(eleid));
