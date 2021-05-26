@@ -156,6 +156,7 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
       // Recommendation for UL still NOT final
       // The following needs to be updated!
       // - UL 2016 MC treatment is still missing recommendation (treat as UL 17/18 for now, but needs update)
+      // - BadPFMuonDzFilter not in Summer19 UL samples, only in Summer20 (?)
       // 
       metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
       metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter", "Flag_globalSuperTightHalo2016Filter");
@@ -163,7 +164,7 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
       metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
       metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
       metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
-      metfilters_selection->add<TriggerSelection>("BadPFMuonDzFilter", "Flag_BadPFMuonDzFilter");
+      //metfilters_selection->add<TriggerSelection>("BadPFMuonDzFilter", "Flag_BadPFMuonDzFilter");
       if (!is_mc) {
 	metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
       }
