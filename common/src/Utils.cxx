@@ -106,6 +106,10 @@ Year extract_year(const uhh2::Context & ctx) {
     throw std::runtime_error("Cannot figure out year from dataset_version. Should include one of: " + yearStr);
 }
 
+bool is_UL(const Year& year) {
+  return year==Year::isUL16preVFP || year==Year::isUL16postVFP || year==Year::isUL17 || year==Year::isUL18;
+}
+
 const std::vector<std::string> year2runPeriods(const std::string& year) {
   if (year.find("16") != std::string::npos) {
     if (year.find("preVFP") != std::string::npos) return runPeriodsUL16preVFP;

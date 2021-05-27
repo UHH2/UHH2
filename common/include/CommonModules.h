@@ -24,7 +24,7 @@
  *  - MCPileupReweight (for MC only)
  *  - JetCorrector using the latest PHYS14 corrections for MC
  *  - JetResolutionSmearer  (for MC only)
- *  - apply MET filters (all filters listed here: https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#MiniAOD_76X_v2),
+ *  - apply MET filters (all filters listed here: https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2),
  *      at least one good primary vertex is only required if pvfilter is also active
  *  - Primary vertex cleaner (remove all non-good PVs from the list of primary vertices)
  *  - ElectronCleaner

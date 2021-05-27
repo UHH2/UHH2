@@ -135,6 +135,8 @@ const std::map<Year, std::string> year_str_map_simple = {
 /* Get Year enum from dataset_version in XML config */
 Year extract_year(const uhh2::Context & ctx);
 
+/* True if is UL year */
+bool is_UL(const Year& year);
 
 /**
  * Run period names for each year
