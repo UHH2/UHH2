@@ -107,9 +107,8 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
         ele.set_dxy(pat_ele.gsfTrack()->dxy(PV.position()));// correct for vertex postion
 
         for(const auto& tag_str : IDtag_keys){
-
-          if(!pat_ele.hasUserInt(tag_str)) throw cms::Exception("Missing userInt label", "Label for pat::Electron::userInt not found: "+tag_str);
-          ele.set_tag(Electron::tagname2tag(tag_str), float(pat_ele.userInt(tag_str)));
+          if(!pat_ele.isElectronIDAvailable(tag_str)) throw cms::Exception("Missing Electron ID", "ElectronID not found: "+tag_str);
+          ele.set_tag(Electron::tagname2tag(tag_str), float(pat_ele.electronID(tag_str)));
         }
 
         /* source candidates */
@@ -197,8 +196,8 @@ void NtupleWriterPhotons::process(const edm::Event & event, uhh2::Event & uevent
         pho.set_puChargedHadronIso(pat_pho.puChargedHadronIso());
 
         for(const auto& tag_str : IDtag_keys){
-          if(!pat_pho.hasUserInt(tag_str)) throw cms::Exception("Missing userInt label", "Label for pat::Photon::userInt not found: "+tag_str);
-          pho.set_tag(Photon::tagname2tag(tag_str), float(pat_pho.userInt(tag_str)));
+          if(!pat_pho.isPhotonIDAvailable(tag_str)) throw cms::Exception("Missing Photon ID", "PhotonID not found: "+tag_str);
+          pho.set_tag(Photon::tagname2tag(tag_str), float(pat_pho.photonID(tag_str)));
         }
 
         /* source candidates */
