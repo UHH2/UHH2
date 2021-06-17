@@ -89,7 +89,7 @@ checkArch() {
 	# Note that lxplus machines have uname e.g. 3.10.0-1062.4.1.el7.x86_64
 	# so just checking for el7 is OK
 	# To complicate matters, we need to handle gitlab CI as well,
-	# however there uname is useless, it just gives e.g. 4.19.68-coreos. 
+	# however there uname is useless, it just gives e.g. 4.19.68-coreos.
 	# Instead we must rely on the IMAGE variable that we set in .gitlab-ci.yml
 	# (yes that is a horrible dependence)
 	if [ -n "$IMAGE" ]
@@ -159,6 +159,12 @@ sed -i "s|$OLD_FJCONTRIB_VER|$FJCONTRIBVER|g" "$FJCONFIG_ARCHIVE_TOOL_FILE"
 scram setup fastjet
 scram setup fastjet-contrib
 scram setup fastjet-contrib-archive
+
+# fetching Egamma POG postrecotools here
+time git clone https://github.com/cms-egamma/EgammaPostRecoTools.git  EgammaUser/EgammaPostRecoTools
+cd EgammaUser/EgammaPostRecoTools
+git checkout master
+cd $CMSSW_BASE/src
 
 scram b clean
 time scram b $MAKEFLAGS
