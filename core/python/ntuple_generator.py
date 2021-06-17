@@ -1869,20 +1869,32 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     #
 
     # era needs to be passed, convert from the "year" string
-    # out years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "UL16preVFP", "UL16postVFP", "UL17", "UL18"]
-    # postrecotool eras = ['2017-Nov17ReReco','2016-Legacy','2016-Feb17ReMiniAOD','2018-Prompt','2016preVFP-UL', '2016postVFP-UL', '2017-UL', '2018-UL']
-    if(year == "2016v2"): egamma_era = "???"
-    elif(year == "2016v3"): egamma_era = "???"
-    elif(year == "2017v1"): egamma_era = "???"
-    elif(year == "2017v2"): egamma_era = "???"
+    if(year == "2016v2"): egamma_era = "2016-Legacy"
+    elif(year == "2016v3"): egamma_era = "2016-Legacy"
+    elif(year == "2017v1"): egamma_era = "2017-Nov17ReReco"
+    elif(year == "2017v2"): egamma_era = "2017-Nov17ReReco"
     elif(year == "2018"): egamma_era = "2018-Prompt"
     elif(year == "UL16preVFP"): egamma_era = "2016preVFP-UL"
     elif(year == "UL16postVFP"): egamma_era = "2016postVFP-UL"
     elif(year == "UL17"): egamma_era = "2017-UL"
     elif(year == "UL18"): egamma_era = "2018-UL"
 
+    # setting runVID according to recommendations
+    if(year == "2016v2"): doRunVID=True
+    elif(year == "2016v3"): doRunVID=True
+    elif(year == "2017v1"): doRunVID=True
+    elif(year == "2017v2"): doRunVID=True
+    elif(year == "2018"): doRunVID=True
+    elif(year == "UL16preVFP"): doRunVID=True
+    elif(year == "UL16postVFP"): doRunVID=True
+    elif(year == "UL17"): doRunVID=True
+    elif(year == "UL18"): doRunVID=True
+
+    doRunEnergyCorrections=True
+    if(year == "2016v3"): runEnergyCorrections=False
+
     # this is the magic thing by the Egamma POG that does *everything*
-    setupEgammaPostRecoSeq(process, era=egamma_era)
+    setupEgammaPostRecoSeq(process, era=egamma_era, runVID=doRunVID, runEnergyCorrections=doRunEnergyCorrections)
 
 
 
