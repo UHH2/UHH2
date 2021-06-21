@@ -15,12 +15,10 @@ class Electron : public RecParticle {
     twodcut_dRmin,
     twodcut_pTrel,
     // 2016
-    heepElectronID_HEEPV60,
     cutBasedElectronID_Summer16_80X_V1_veto,
     cutBasedElectronID_Summer16_80X_V1_loose,
     cutBasedElectronID_Summer16_80X_V1_medium,
     cutBasedElectronID_Summer16_80X_V1_tight,
-    cutBasedElectronHLTPreselection_Summer16_V1,
     mvaEleID_Spring16_GeneralPurpose_V1_wp90,
     mvaEleID_Spring16_GeneralPurpose_V1_wp80,
     // 2017 & 2018
@@ -38,12 +36,10 @@ class Electron : public RecParticle {
   };
 
   static tag tagname2tag(const std::string & tagname){
-    if(tagname == "heepElectronID-HEEPV60") return heepElectronID_HEEPV60;
     if(tagname == "cutBasedElectronID-Summer16-80X-V1-veto") return cutBasedElectronID_Summer16_80X_V1_veto;
     if(tagname == "cutBasedElectronID-Summer16-80X-V1-loose") return cutBasedElectronID_Summer16_80X_V1_loose;
     if(tagname == "cutBasedElectronID-Summer16-80X-V1-medium") return cutBasedElectronID_Summer16_80X_V1_medium;
     if(tagname == "cutBasedElectronID-Summer16-80X-V1-tight") return cutBasedElectronID_Summer16_80X_V1_tight;
-    if(tagname == "cutBasedElectronHLTPreselection-Summer16-V1") return cutBasedElectronHLTPreselection_Summer16_V1;
     if(tagname == "mvaEleID-Spring16-GeneralPurpose-V1-wp90") return mvaEleID_Spring16_GeneralPurpose_V1_wp90;
     if(tagname == "mvaEleID-Spring16-GeneralPurpose-V1-wp80") return mvaEleID_Spring16_GeneralPurpose_V1_wp80;
 
