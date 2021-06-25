@@ -1896,6 +1896,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # this is the magic thing by the Egamma POG that does *everything*
     setupEgammaPostRecoSeq(process, era=egamma_era, runVID=doRunVID, runEnergyCorrections=doRunEnergyCorrections)
 
+    # renaming to be consistent with general structure
+    rename_module(process, task, "slimmedElectrons", "slimmedElectronsUSER", False)
+    rename_module(process, task, "slimmedPhotons", "slimmedPhotonsUSER", False)
 
 
     ###############################################
@@ -2031,7 +2034,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     save_lepton_keys=cms.bool(True),
 
                                     doElectrons=cms.bool(True),
-                                    electron_source=cms.InputTag("slimmedElectrons"),
+                                    electron_source=cms.InputTag("slimmedElectronsUSER"),
                                     electron_IDtags=cms.vstring(
                                         # keys to be stored in UHH2 Electron class via the tag mechanism:
                                         # each string should correspond to a variable saved
@@ -2069,7 +2072,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     tau_etamax=cms.double(999.0),
 
                                     doPhotons=cms.bool(True),
-                                    photon_sources = cms.InputTag("slimmedPhotons"),
+                                    photon_sources = cms.InputTag("slimmedPhotonsUSER"),
                                     photon_IDtags=cms.vstring(
                                         # keys to be stored in UHH2 Electron class via the tag mechanism:
                                         # each string should correspond to a variable saved
