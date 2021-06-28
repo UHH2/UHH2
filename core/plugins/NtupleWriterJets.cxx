@@ -501,7 +501,7 @@ void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & 
     particlenet_HbbvsQCD=false,particlenet_HccvsQCD=false,particlenet_H4qvsQCD=false,
     decorrmass_particlenet_probXbb=false,decorrmass_particlenet_probXcc=false,decorrmass_particlenet_probXqq=false,decorrmass_particlenet_probQCDbb=false,
     decorrmass_particlenet_probQCDcc=false,decorrmass_particlenet_probQCDb=false,decorrmass_particlenet_probQCDc=false,decorrmass_particlenet_probQCDothers=false,
-    decorrmass_particlenet_XbbvsQCD=false,decorrmass_particlenet_XccvsQCD=false,decorrmass_particlenet_XqqvsQCD=false;
+    decorrmass_particlenet_XbbvsQCD=false,decorrmass_particlenet_XccvsQCD=false,decorrmass_particlenet_XqqvsQCD=false,particlenet_mass=false;
 
 
     for(const auto & name_value : bdisc){
@@ -923,6 +923,10 @@ void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & 
         jet.set_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD(value);
         decorrmass_particlenet_XqqvsQCD = true;
       }
+      else if(name == "pfParticleNetMassRegressionJetTags:mass"){
+        jet.set_ParticleNetMassRegressionJetTags_mass(value);
+        particlenet_mass=true;
+      }
 
     }
 
@@ -960,7 +964,7 @@ void NtupleWriterTopJets::fill_btag_info(uhh2::Event & uevent, const pat::Jet & 
        || !particlenet_HbbvsQCD || !particlenet_HccvsQCD || !particlenet_H4qvsQCD
        || !decorrmass_particlenet_probXbb || !decorrmass_particlenet_probXcc || !decorrmass_particlenet_probXqq || !decorrmass_particlenet_probQCDbb
        || !decorrmass_particlenet_probQCDcc || !decorrmass_particlenet_probQCDb || !decorrmass_particlenet_probQCDc || !decorrmass_particlenet_probQCDothers
-       || !decorrmass_particlenet_XbbvsQCD || !decorrmass_particlenet_XccvsQCD || !decorrmass_particlenet_XqqvsQCD){
+       || !decorrmass_particlenet_XbbvsQCD || !decorrmass_particlenet_XccvsQCD || !decorrmass_particlenet_XqqvsQCD || !particlenet_mass){
       if(btag_warning){
         std::string btag_list = "";
         for(const auto & name_value : bdisc){

@@ -214,7 +214,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     'pfMassDecorrelatedParticleNetJetTags:probQCDothers',
     'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XbbvsQCD',
     'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XccvsQCD',
-    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XqqvsQCD']
+    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XqqvsQCD',
+    'pfParticleNetMassRegressionJetTags:mass']
     ak8btagDiscriminators += pfParticleNetJetTagsAll
 
     bTagInfos = [

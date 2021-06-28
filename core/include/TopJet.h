@@ -193,6 +193,7 @@ public:
       m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD=-2;
       m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD=-2;
 
+      m_ParticleNetMassRegressionJetTags_mass = -999.;
 
   }
 
@@ -366,7 +367,8 @@ public:
   float btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD() const{return m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD;}
   float btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD() const{return m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD;}
 
-  
+  //mass from ParticleNet mass regression
+  float ParticleNetMassRegressionJetTags_mass() const{return m_ParticleNetMassRegressionJetTags_mass;}
 
 
   // setters
@@ -508,6 +510,8 @@ public:
   void set_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD(float x) { m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD=x;}
   void set_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD(float x) { m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD=x;}
 
+  void set_ParticleNetMassRegressionJetTags_mass(float x){ m_ParticleNetMassRegressionJetTags_mass=x;}
+  
 private:
   std::vector<Jet> m_subjets;
 
@@ -637,6 +641,8 @@ private:
   float m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XccvsQCD;
   float m_btag_MassDecorrelatedParticleNetDiscriminatorsJetTags_XqqvsQCD;
 
+  float m_ParticleNetMassRegressionJetTags_mass;
+  
   Tags tags;
 };
 
