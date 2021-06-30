@@ -1868,6 +1868,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # ELECTRONS and PHOTONS
     #
 
+
+
     # era needs to be passed, convert from the "year" string
     if(year == "2016v2"): egamma_era = "2016-Legacy"
     elif(year == "2016v3"): egamma_era = "2016-Legacy"
@@ -1896,10 +1898,55 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # this is the magic thing by the Egamma POG that does *everything*
     setupEgammaPostRecoSeq(process, era=egamma_era, runVID=doRunVID, runEnergyCorrections=doRunEnergyCorrections)
 
-    # renaming to be consistent with general structure
-    rename_module(process, task, "slimmedElectrons", "slimmedElectronsUSER", False)
-    rename_module(process, task, "slimmedPhotons", "slimmedPhotonsUSER", False)
+    el_isovals = []
 
+    load_elecPFMiniIso(process,
+        'elecPFMiniIsoSequenceSTAND',
+        algo = 'STAND',
+        src = 'slimmedElectrons',
+        src_charged_hadron = 'pfAllChargedHadrons',
+        src_neutral_hadron = 'pfAllNeutralHadrons',
+        src_photon         = 'pfAllPhotons',
+        src_charged_pileup = 'pfPileUpAllChargedParticles',
+        isoval_list = el_isovals
+    )
+    load_elecPFMiniIso(process,
+        'elecPFMiniIsoSequencePFWGT',
+        algo = 'PFWGT',
+        src = 'slimmedElectrons',
+        src_neutral_hadron = 'pfWeightedNeutralHadrons',
+        src_photon         = 'pfWeightedPhotons',
+        isoval_list = el_isovals
+    )
+    for m in el_isovals:
+        task.add(getattr(process, m))
+        task.add(getattr(process, m.replace('Value', 'Deposit')))
+
+    from RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff import isoInputs as ele_iso_16
+    from RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff import isoInputs as ele_iso_17
+    iso_input_era_dict = {
+        "2016v2": ele_iso_16,
+        "2016v3": ele_iso_16,
+        "2017v1": ele_iso_17,
+        "2017v2": ele_iso_17,
+        "2018": ele_iso_17,
+        "UL16preVFP": ele_iso_17,
+        "UL16postVFP": ele_iso_17,
+        "UL17": ele_iso_17,
+        "UL18": ele_iso_17,
+    }
+
+    # slimmedElectronsUSER ( = slimmedElectrons + USER variables)
+    process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
+                                                  src=cms.InputTag(
+                                                      'slimmedElectrons'),
+
+                                                  vmaps_double=cms.vstring(el_isovals),
+                                                  effAreas_file=cms.FileInPath(iso_input_era_dict[year].isoEffAreas)
+                                                  )
+    task.add(process.slimmedElectronsUSER)
+
+    rename_module(process, task, "slimmedPhotons", "slimmedPhotonsUSER", False)
 
     ###############################################
     # TRIGGER, MET FILTERS
