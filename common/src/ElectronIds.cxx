@@ -18,6 +18,8 @@ bool Electron_MINIIso::operator()(const Electron& ele, const uhh2::Event&) const
 
 bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const std::string& tuning_, const std::string& wp_, const bool apply_iso_cut_){
 
+  throw std::runtime_error("This usage of electron ID is deprecated, please use the tag method from the Electron.h class instead!");
+
   bool pass(false);
 
   int wp_idx(-1);
@@ -36,6 +38,8 @@ bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const st
 }
 
 bool Electron_CutBasedID(const Electron& ele_, const uhh2::Event& evt_, const std::string& tuning_, const std::string& eleSC_pos_, const int wp_idx_, const bool apply_iso_cut_){
+
+  throw std::runtime_error("This usage of electron ID is deprecated, please use the tag method from the Electron.h class instead!");
 
   assert(evt_.pvs);
   if(!evt_.pvs->size()) return false;
@@ -117,6 +121,8 @@ bool ElectronID_Fall17_tight_noIso (const Electron& ele, const uhh2::Event& evt)
 
 bool Electron_MVAID(const Electron& ele_, const uhh2::Event&, const std::string& tuning_, const std::string& wp_, const bool iso_){
 
+  throw std::runtime_error("This usage of electron ID is deprecated, please use the tag method from the Electron.h class instead!");
+
   std::string category("");
 
   const float pt(ele_.pt()), abs_etaSC(fabs(ele_.supercluster_eta()));
@@ -158,6 +164,8 @@ bool ElectronID_HEEP_RunII_25ns(const Electron& ele, const uhh2::Event&){ return
 
 bool Electron_HEEP(const Electron& ele_, const std::string& tuning_, const std::string& wp_){
 
+  throw std::runtime_error("This usage of electron ID is deprecated, please use the tag method from the Electron.h class instead!");
+
   bool pass(false);
 
   int wp_idx(-1);
@@ -167,13 +175,15 @@ bool Electron_HEEP(const Electron& ele_, const std::string& tuning_, const std::
   const float abs_etaSC(fabs(ele_.supercluster_eta()));
 
   if     (                     abs_etaSC < 1.4442) pass = Electron_HEEP(ele_, tuning_, "barrel", wp_idx);
-  else if(1.566 < abs_etaSC && abs_etaSC < 2.5   ) pass = Electron_HEEP(ele_, tuning_, "endcap", wp_idx); 
+  else if(1.566 < abs_etaSC && abs_etaSC < 2.5   ) pass = Electron_HEEP(ele_, tuning_, "endcap", wp_idx);
   else                                             pass = false;
 
   return pass;
 }
 
 bool Electron_HEEP(const Electron& ele_, const std::string& tuning_, const std::string& eleSC_pos_, const int wp_idx_){
+
+  throw std::runtime_error("This usage of electron ID is deprecated, please use the tag method from the Electron.h class instead!");
 
   const float Et            = ele_.pt();
   const float dEtaInSeed    = ele_.dEtaInSeed();
