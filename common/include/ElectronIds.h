@@ -62,6 +62,11 @@ class Electron_MINIIso {
   std::string iso_key_;
 };
 
+// ####################
+// #### DEPRECATED ####
+// ####################
+// All below IDs are deprecated and should no longer be used, instead us ID via tags from the Electron.h class!
+
 // Electron IDs ------------------------------------------------------
 
 
@@ -97,10 +102,10 @@ namespace ElectronID {
 
   const std::unordered_map<std::string, std::unordered_map<std::string, std::unordered_map<std::string, std::vector<float> > > > CutBased_LUT = {
 
-  
+
     /** Summer16 **/
     {"Summer16", {
- 
+
 	{"barrel", {
                           /* Veto   , Loose   , Medium  , Tight   */
 	{"sigmaIetaIeta" , { 0.0115, 0.011, 	0.00998,   0.00998  }},
@@ -118,7 +123,7 @@ namespace ElectronID {
         {"passConvVeto"  , { 1      , 1       , 1       , 1       }},
        },
       },
-      
+
 	{"endcap", {
                           /* Veto   , Loose   , Medium  , Tight   */
 	{"sigmaIetaIeta" , { 0.037, 	0.0314,   0.0298,     0.0292 }},
@@ -144,7 +149,7 @@ namespace ElectronID {
 
     /** Fall17 according to https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2#Working_points_for_94X_and_later **/
     {"Fall17", {
- 
+
 	{"barrel", {
                           /* Veto   , Loose   , Medium  , Tight   */
 	{"sigmaIetaIeta" , { 0.0126 , 0.0112  , 0.0106  , 0.0104  }},
@@ -162,7 +167,7 @@ namespace ElectronID {
         {"passConvVeto"  , { 1      , 1       , 1       , 1       }},
        },
       },
-      
+
 	{"endcap", {
                           /* Veto   , Loose   , Medium  , Tight   */
 	{"sigmaIetaIeta" , { 0.0457  , 0.0425 , 0.0387  , 0.0353  }},
