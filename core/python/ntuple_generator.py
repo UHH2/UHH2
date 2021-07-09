@@ -2382,10 +2382,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     extra_trigger_bits=extra_trigger_bits,
 
                                     #For 2017 data with prefiring issue it might be usefull to store L1 seeds
-                                    doL1seed=cms.bool(True),
+                                    doL1TriggerObjects=cms.bool(False),
                                     l1GtSrc = cms.InputTag("gtStage2Digis"),
                                     l1EGSrc = cms.InputTag("caloStage2Digis:EGamma"),
                                     l1JetSrc = cms.InputTag("caloStage2Digis:Jet"),
+                                    l1MuonSrc = cms.InputTag("gmtStage2Digis:Muon"),
+                                    l1EtSumSrc = cms.InputTag("caloStage2Digis:EtSum"),
+                                    l1TauSrc = cms.InputTag("caloStage2Digis:Tau"),
 
                                     doEcalBadCalib=cms.bool(bad_ecal),
                                     ecalBadCalib_source=cms.InputTag("ecalBadCalibReducedMINIAODFilter"),

@@ -22,7 +22,7 @@ def setup_opts():
     # setup defaults
     options.maxEvents = 500
     options.outputFile = "Ntuple.root"
-    
+
     return options
 
 
@@ -40,14 +40,14 @@ def set_event_content(process, eventContent):
         else     : do nothing here, keep content as in process
     """
     if eventContent == 'min':
-        process.MyNtuple.doL1seed=cms.bool(False)
+        process.MyNtuple.doL1TriggerObjects=cms.bool(False)
     if eventContent == 'max':
-        process.MyNtuple.doL1seed=cms.bool(True)
+        process.MyNtuple.doL1TriggerObjects=cms.bool(True)
 
 
 def parse_apply_opts(process, options):
     """Handle command-line args, and apply to the cms.Process object
-    
+
     Parameters
     ----------
     process : cms.Process
