@@ -2119,6 +2119,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     tau_etamax=cms.double(999.0),
 
                                     doPhotons=cms.bool(True),
+                                    save_photon_keys=cms.bool(True),
                                     photon_sources = cms.InputTag("slimmedPhotonsUSER"),
                                     photon_IDtags=cms.vstring(
                                         # keys to be stored in UHH2 Electron class via the tag mechanism:

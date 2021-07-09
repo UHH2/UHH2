@@ -46,7 +46,7 @@ namespace{
       tree->Branch(bname, t);
     }
   }
-  
+
   template<typename T>
   void branch(TTree * tree, const char * bname, const char * type, T t){
     if(tree){
@@ -169,6 +169,8 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doRho = iConfig.getUntrackedParameter<bool>("doRho",true);
 
   const bool save_lepton_keys = iConfig.exists("save_lepton_keys") ? iConfig.getParameter<bool>("save_lepton_keys") : false;
+  const bool save_photon_keys = iConfig.exists("save_photon_keys") ? iConfig.getParameter<bool>("save_photon_keys") : false;
+
 
   bool doElectrons = iConfig.getParameter<bool>("doElectrons");
 
@@ -282,7 +284,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     cfg.pv_src = pv_sources[0];
     cfg.doPuppiIso = true;
     if (year == "2016v2") { cfg.doPuppiIso = false; } // PUPPI isolation doens't exist in 80X
-    writer_modules.emplace_back(new NtupleWriterPhotons(cfg, true, false));
+    writer_modules.emplace_back(new NtupleWriterPhotons(cfg, true, save_photon_keys));
   }
   if(doMuons){
     using uhh2::NtupleWriterMuons;
