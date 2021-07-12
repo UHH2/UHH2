@@ -41,8 +41,10 @@ def set_event_content(process, eventContent):
     """
     if eventContent == 'min':
         process.MyNtuple.doL1TriggerObjects=cms.bool(False)
+        process.MyNtuple.save_photon_keys=cms.bool(False)
     if eventContent == 'max':
         process.MyNtuple.doL1TriggerObjects=cms.bool(True)
+        process.MyNtuple.save_photon_keys=cms.bool(True)
 
 
 def parse_apply_opts(process, options):
