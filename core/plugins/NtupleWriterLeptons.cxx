@@ -118,7 +118,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
       ele.set_tag(Electron::tagname2tag(tag_str), float(pat_ele.electronID(tag_str)));
     }
 
-    // L1-reco matching
+    // L1-reco matching: defaults to 10 if there's no L1 object to match
     for(const l1t::EGamma & itL1 : *l1electron_handle){
       double dR_recoElec_l1Elec = reco::deltaR(pat_ele.eta(), pat_ele.phi(), itL1.p4().Eta(), itL1.p4().Phi());
       if(dR_recoElec_l1Elec < ele.minDeltaRToL1Electron()) ele.set_minDeltaRToL1Electron(dR_recoElec_l1Elec);
@@ -262,9 +262,6 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent, 
 
   edm::Handle<BXVector<l1t::Muon>> l1muon_handle;
   event.getByToken(l1muon_token, l1muon_handle);
-  // if(l1muon_handle->isEmpty()){
-  //   edm::LogWarning("NtupleWriterMuons") << "No L1 muons found, not doing L1-reco matching!";
-  // }
 
   std::vector<Muon> mus;
   for (const pat::Muon & pat_mu : *mu_handle) {
@@ -378,7 +375,7 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent, 
     mu.set_tunePTrackPhi(tunePTrack->phi());
     mu.set_tunePTrackType(static_cast<Muon::MuonTrackType>(pat_mu.tunePMuonBestTrackType()));
 
-    // L1-reco matching
+    // L1-reco matching: defaults to 10 if there's no L1 object to match
     for(const l1t::Muon & itL1 : *l1muon_handle){
       double dR_recoMuon_l1Muon = reco::deltaR(pat_mu.eta(), pat_mu.phi(), itL1.p4().Eta(), itL1.p4().Phi());
       if(dR_recoMuon_l1Muon < mu.minDeltaRToL1Muon()) mu.set_minDeltaRToL1Muon(dR_recoMuon_l1Muon);
