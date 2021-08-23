@@ -23,15 +23,15 @@ class Muon : public Particle {
     Highpt,
     // 2016v3 & 2017 onwards selectors:
     CutBasedIdLoose,
-    CutBasedIdMedium, 
-    CutBasedIdMediumPrompt, 
-    CutBasedIdTight, 
-    CutBasedIdGlobalHighPt, 
-    CutBasedIdTrkHighPt, 
-    SoftCutBasedId, 
-    SoftMvaId, 
-    MvaLoose, 
-    MvaMedium, 
+    CutBasedIdMedium,
+    CutBasedIdMediumPrompt,
+    CutBasedIdTight,
+    CutBasedIdGlobalHighPt,
+    CutBasedIdTrkHighPt,
+    SoftCutBasedId,
+    SoftMvaId,
+    MvaLoose,
+    MvaMedium,
     MvaTight,
     PFIsoVeryLoose,
     PFIsoLoose,
@@ -40,9 +40,9 @@ class Muon : public Particle {
     PFIsoVeryTight,
     TkIsoLoose,
     TkIsoTight,
-    MiniIsoLoose,           
-    MiniIsoMedium,          
-    MiniIsoTight,           
+    MiniIsoLoose,
+    MiniIsoMedium,
+    MiniIsoTight,
     MiniIsoVeryTight
   };
 
@@ -60,8 +60,8 @@ class Muon : public Particle {
 
   Note that this is only available for 2017 datasets and later
   */
-  enum SimType{ 
-    Unknown                     = 999, 
+  enum SimType{
+    Unknown                     = 999,
     NotMatched                  = 0,
     MatchedPunchthrough         = 1,
     MatchedElectron             = 11,
@@ -75,7 +75,7 @@ class Muon : public Particle {
     GhostPrimaryMuon            = -13,
     GhostHeavyQuark             = -3,
     GhostLightQuark             = -2
-    
+
   };
 
   enum MuonTrackType{
@@ -135,12 +135,14 @@ class Muon : public Particle {
     m_simFlavor = 0;
     m_simPdgId = 0;
     m_simMotherPdgId = 0;
-    m_simHeaviestMotherFlavor = 0; 
+    m_simHeaviestMotherFlavor = 0;
 
     m_tunePTrackPt = 0;
     m_tunePTrackEta = -999;
     m_tunePTrackPhi = -999;
     m_tunePTrackType = InnerTk;
+
+    m_minDeltaRToL1Muon = 10.;
 
     m_source_candidates.clear();
   }
@@ -160,8 +162,8 @@ class Muon : public Particle {
   float combinedQuality_trkKink()                 const { return m_combinedQuality_trkKink; }
   float segmentCompatibility()                    const { return m_segmentCompatibility; }
 
-  float sumChargedHadronPt() const{ return m_sumChargedHadronPt; } 
-  float sumNeutralHadronEt() const{ return m_sumNeutralHadronEt; } 
+  float sumChargedHadronPt() const{ return m_sumChargedHadronPt; }
+  float sumNeutralHadronEt() const{ return m_sumNeutralHadronEt; }
   float sumPhotonEt()        const{ return m_sumPhotonEt; }
   float sumPUPt()            const{ return m_sumPUPt; }
 
@@ -176,19 +178,21 @@ class Muon : public Particle {
   int simFlavor()               const {return m_simFlavor;}
   int simPdgId()                const {return m_simPdgId;}
   int simMotherPdgId()          const {return m_simMotherPdgId;}
-  int simHeaviestMotherFlavor() const {return m_simHeaviestMotherFlavor;} 
+  int simHeaviestMotherFlavor() const {return m_simHeaviestMotherFlavor;}
 
   float tunePTrackPt()           const {return m_tunePTrackPt;}
   float tunePTrackEta()          const {return m_tunePTrackEta;}
   float tunePTrackPhi()          const {return m_tunePTrackPhi;}
   MuonTrackType tunePTrackType() const {return m_tunePTrackType;}
 
+  double minDeltaRToL1Muon() const{return m_minDeltaRToL1Muon;}
+
   const std::vector<source_candidate>& source_candidates() const { return m_source_candidates; }
 
   void set_dxy(float x){m_dxy=x;}
   void set_dxy_error(float x){m_dxy_error=x;}
-  void set_dz(float x){m_dz=x;} 
-  void set_dz_error(float x){m_dz_error=x;} 
+  void set_dz(float x){m_dz=x;}
+  void set_dz_error(float x){m_dz_error=x;}
 
   void set_globalTrack_normalizedChi2             (float x){ m_globalTrack_normalizedChi2 = x; }
   void set_globalTrack_numberOfValidMuonHits      (int   x){ m_globalTrack_numberOfValidMuonHits = x; }
@@ -200,8 +204,8 @@ class Muon : public Particle {
   void set_combinedQuality_trkKink                (float x){ m_combinedQuality_trkKink = x; }
   void set_segmentCompatibility                   (float x){ m_segmentCompatibility = x; }
 
-  void set_sumChargedHadronPt(float x){m_sumChargedHadronPt=x;} 
-  void set_sumNeutralHadronEt(float x){m_sumNeutralHadronEt=x;} 
+  void set_sumChargedHadronPt(float x){m_sumChargedHadronPt=x;}
+  void set_sumNeutralHadronEt(float x){m_sumNeutralHadronEt=x;}
   void set_sumPhotonEt       (float x){m_sumPhotonEt=x;}
   void set_sumPUPt           (float x){m_sumPUPt=x;}
 
@@ -216,12 +220,14 @@ class Muon : public Particle {
   void set_simFlavor              (int x){m_simFlavor = x;}
   void set_simPdgId               (int x){m_simPdgId = x;}
   void set_simMotherPdgId         (int x){m_simMotherPdgId = x;}
-  void set_simHeaviestMotherFlavor(int x){m_simHeaviestMotherFlavor = x;} 
+  void set_simHeaviestMotherFlavor(int x){m_simHeaviestMotherFlavor = x;}
 
   void set_tunePTrackPt  (float x){ m_tunePTrackPt = x; }
   void set_tunePTrackEta (float x){ m_tunePTrackEta = x; }
   void set_tunePTrackPhi (float x){ m_tunePTrackPhi = x; }
   void set_tunePTrackType(MuonTrackType x){ m_tunePTrackType = x; }
+
+  void set_minDeltaRToL1Muon(double x){m_minDeltaRToL1Muon = x;}
 
   void set_source_candidates(const std::vector<source_candidate>& vsc){ m_source_candidates = vsc; }
   void add_source_candidate (const source_candidate& sc){ m_source_candidates.push_back(sc); }
@@ -287,6 +293,8 @@ class Muon : public Particle {
   float m_tunePTrackEta;
   float m_tunePTrackPhi;
   MuonTrackType m_tunePTrackType;
+
+  double m_minDeltaRToL1Muon;
 
   std::vector<source_candidate> m_source_candidates;
 

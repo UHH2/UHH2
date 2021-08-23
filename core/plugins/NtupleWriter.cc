@@ -171,9 +171,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   const bool save_lepton_keys = iConfig.exists("save_lepton_keys") ? iConfig.getParameter<bool>("save_lepton_keys") : false;
   const bool save_photon_keys = iConfig.exists("save_photon_keys") ? iConfig.getParameter<bool>("save_photon_keys") : false;
 
-
   bool doElectrons = iConfig.getParameter<bool>("doElectrons");
-
   bool doMuons = iConfig.getParameter<bool>("doMuons");
   bool doTaus = iConfig.getParameter<bool>("doTaus");
   bool doJets = iConfig.getParameter<bool>("doJets");
@@ -256,7 +254,9 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doGenxconeDijetJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeDijetJetConstituentsMinJetPt");
   if(doGenxconeDijetJetConstituentsMinJetPt<1e-6) doGenxconeDijetJetConstituentsMinJetPt=2e6;
 
-  auto pv_sources = iConfig.getParameter<std::vector<std::string> >("pv_sources");
+  auto pv_sources       = iConfig.getParameter<std::vector<std::string> >("pv_sources");
+  auto l1muon_sources   = iConfig.getParameter<edm::InputTag>("l1MuonSrc");
+  auto l1egamma_sources = iConfig.getParameter<edm::InputTag>("l1EGSrc");
 
   // important: initialize first all module_writers, so that they can
   // inform the ges what they write to the uhh2::Event
@@ -271,6 +271,7 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     cfg.id_keys = iConfig.getParameter<std::vector<std::string>>("electron_IDtags");
     assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
     cfg.pv_src = pv_sources[0];
+    cfg.l1egamma_src = iConfig.getParameter<edm::InputTag>("l1EGSrc");
     writer_modules.emplace_back(new NtupleWriterElectrons(cfg, true, save_lepton_keys));
     //}
 
@@ -283,19 +284,18 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     assert(pv_sources.size() > 0); // note: pvs are needed for electron id.
     cfg.pv_src = pv_sources[0];
     cfg.doPuppiIso = true;
-    if (year == "2016v2") { cfg.doPuppiIso = false; } // PUPPI isolation doens't exist in 80X
+    if (year == "2016v2") { cfg.doPuppiIso = false; } // PUPPI isolation doesn't exist in 80X
     writer_modules.emplace_back(new NtupleWriterPhotons(cfg, true, save_photon_keys));
   }
   if(doMuons){
     using uhh2::NtupleWriterMuons;
-    auto muon_sources = iConfig.getParameter<std::vector<std::string> >("muon_sources");
+    auto muon_sources = iConfig.getParameter<std::vector<std::string>>("muon_sources");
 
     for(size_t i=0; i< muon_sources.size(); ++i){
-
       NtupleWriterMuons::Config cfg(*context, consumesCollector(), muon_sources[i], muon_sources[i]);
       assert(pv_sources.size() > 0); // note: pvs are required for muon id.
-
-      cfg.pv_src = pv_sources[0];
+      cfg.pv_src     = pv_sources[0];
+      cfg.l1muon_src = iConfig.getParameter<edm::InputTag>("l1MuonSrc");
       writer_modules.emplace_back(new NtupleWriterMuons(cfg, i==0, save_lepton_keys));
     }
   }

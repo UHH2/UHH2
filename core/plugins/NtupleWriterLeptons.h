@@ -3,13 +3,18 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "UHH2/core/plugins/NtupleWriterModule.h"
 
+#include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
+#include "DataFormats/L1Trigger/interface/Muon.h"
+#include "DataFormats/L1Trigger/interface/EGamma.h"
+
 namespace uhh2 {
 
 class NtupleWriterElectrons: public NtupleWriterModule {
 public:
-    
-    struct Config: public NtupleWriterModule::Config {     
+
+    struct Config: public NtupleWriterModule::Config {
       edm::InputTag pv_src;
+      edm::InputTag l1egamma_src;
       std::vector<std::string> id_keys;
 
       // inherit constructor does not work yet :-(
@@ -26,6 +31,7 @@ public:
 private:
     edm::EDGetToken src_token;
     edm::EDGetToken pv_token;
+    edm::EDGetTokenT<BXVector<l1t::EGamma>> l1electron_token;
     std::vector<std::string> IDtag_keys;
     Event::Handle<std::vector<Electron>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Electron>>> electrons_handle; // handle of name "electrons" in case set_electrons_member is true
@@ -35,8 +41,8 @@ private:
 
 class NtupleWriterPhotons: public NtupleWriterModule {
 public:
-    
-    struct Config: public NtupleWriterModule::Config {     
+
+    struct Config: public NtupleWriterModule::Config {
       edm::InputTag pv_src;
       std::vector<std::string> id_keys;
       bool doPuppiIso;
@@ -67,9 +73,10 @@ private:
 
 class NtupleWriterMuons: public NtupleWriterModule {
 public:
-    
+
     struct Config: public NtupleWriterModule::Config {
       edm::InputTag pv_src;
+      edm::InputTag l1muon_src;
 
       // inherit constructor does not work yet :-(
       Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_,
@@ -85,6 +92,7 @@ public:
 private:
     edm::EDGetToken src_token;
     edm::EDGetToken pv_token;
+    edm::EDGetTokenT<BXVector<l1t::Muon>> l1muon_token;
     Event::Handle<std::vector<Muon>> handle;
     boost::optional<Event::Handle<std::vector<Muon>>> muons_handle;
 
@@ -107,5 +115,3 @@ private:
 };
 
 }
-
-
