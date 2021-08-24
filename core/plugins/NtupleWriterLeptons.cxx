@@ -20,7 +20,7 @@ NtupleWriterElectrons::NtupleWriterElectrons(Config & cfg, bool set_electrons_me
   if(set_electrons_member) electrons_handle = cfg.ctx.get_handle<vector<Electron>>("electrons");
   src_token        = cfg.cc.consumes<std::vector<pat::Electron>>(cfg.src);
   pv_token         = cfg.cc.consumes<std::vector<reco::Vertex>>(cfg.pv_src);
-  l1electron_token = cfg.cc.consumes<BXVector<l1t::EGamma>>(cfg.l1egamma_src);
+  l1egamma_token = cfg.cc.consumes<BXVector<l1t::EGamma>>(cfg.l1egamma_src);
 
   IDtag_keys = cfg.id_keys;
 }
@@ -39,8 +39,8 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
   }
   const auto & PV = pv_handle->front();
 
-  edm::Handle<BXVector<l1t::EGamma>> l1electron_handle;
-  event.getByToken(l1electron_token, l1electron_handle);
+  edm::Handle<BXVector<l1t::EGamma>> l1egamma_handle;
+  event.getByToken(l1egamma_token, l1egamma_handle);
 
   std::vector<Electron> eles;
   const size_t n_ele = ele_handle->size();
@@ -119,9 +119,9 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     }
 
     // L1-reco matching: defaults to 10 if there's no L1 object to match
-    for(const l1t::EGamma & itL1 : *l1electron_handle){
+    for(const l1t::EGamma & itL1 : *l1egamma_handle){
       double dR_recoElec_l1Elec = reco::deltaR(pat_ele.eta(), pat_ele.phi(), itL1.p4().Eta(), itL1.p4().Phi());
-      if(dR_recoElec_l1Elec < ele.minDeltaRToL1Electron()) ele.set_minDeltaRToL1Electron(dR_recoElec_l1Elec);
+      if(dR_recoElec_l1Elec < ele.minDeltaRToL1EGamma()) ele.set_minDeltaRToL1EGamma(dR_recoElec_l1Elec);
     }
 
     /* source candidates */
@@ -157,8 +157,9 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
 NtupleWriterPhotons::NtupleWriterPhotons(Config & cfg, bool set_photons_member, const bool save_source_cands): save_source_candidates_(save_source_cands){
   handle = cfg.ctx.declare_event_output<vector<Photon>>(cfg.dest_branchname, cfg.dest);
   if(set_photons_member) photons_handle = cfg.ctx.get_handle<vector<Photon>>("photons");
-  src_token = cfg.cc.consumes<std::vector<pat::Photon>>(cfg.src);
-  pv_token = cfg.cc.consumes<std::vector<reco::Vertex>>(cfg.pv_src);
+  src_token      = cfg.cc.consumes<std::vector<pat::Photon>>(cfg.src);
+  pv_token       = cfg.cc.consumes<std::vector<reco::Vertex>>(cfg.pv_src);
+  l1egamma_token = cfg.cc.consumes<BXVector<l1t::EGamma>>(cfg.l1egamma_src);
   IDtag_keys = cfg.id_keys;
   doPuppiIso_ = cfg.doPuppiIso;
 }
@@ -172,10 +173,13 @@ void NtupleWriterPhotons::process(const edm::Event & event, uhh2::Event & uevent
   //  edm::Handle<std::vector<reco::Vertex>> pv_handle;
   // event.getByToken(pv_token, pv_handle);
   // if(pv_handle->empty()){
-  //     edm::LogWarning("NtupleWriterPhotons") << "No PVs found, not writing phoctrons!";
+  //     edm::LogWarning("NtupleWriterPhotons") << "No PVs found, not writing photons!";
   //     return;
   // }
   // const auto & PV = pv_handle->front();
+
+  edm::Handle<BXVector<l1t::EGamma>> l1egamma_handle;
+  event.getByToken(l1egamma_token, l1egamma_handle);
 
   std::vector<Photon> phos;
   for (const pat::Photon & pat_pho : *pho_handle) {
@@ -211,6 +215,17 @@ void NtupleWriterPhotons::process(const edm::Event & event, uhh2::Event & uevent
     for(const auto& tag_str : IDtag_keys){
       if(!pat_pho.isPhotonIDAvailable(tag_str)) throw cms::Exception("Missing Photon ID", "PhotonID not found: "+tag_str);
       pho.set_tag(Photon::tagname2tag(tag_str), float(pat_pho.photonID(tag_str)));
+    }
+
+    // L1-reco matching: defaults to 10 if there's no L1 object to match
+    for(const l1t::EGamma & itL1 : *l1egamma_handle){
+      double dR_recoPho_l1EGamma = reco::deltaR(pat_pho.eta(), pat_pho.phi(), itL1.p4().Eta(), itL1.p4().Phi());
+      if(dR_recoPho_l1EGamma < pho.minDeltaRToL1EGamma()){
+        pho.set_minDeltaRToL1EGamma(dR_recoPho_l1EGamma);
+
+        // delete this itL1 from l1egamma_handle
+
+      }
     }
 
     /* source candidates */
@@ -413,7 +428,8 @@ NtupleWriterTaus::NtupleWriterTaus(Config & cfg, bool set_taus_member){
   if(set_taus_member){
     taus_handle = cfg.ctx.get_handle<vector<Tau>>("taus");
   }
-  src_token = cfg.cc.consumes<std::vector<pat::Tau>>(cfg.src);
+  src_token   = cfg.cc.consumes<std::vector<pat::Tau>>(cfg.src);
+  l1tau_token = cfg.cc.consumes<BXVector<l1t::Tau>>(cfg.l1tau_src);
   ptmin = cfg.ptmin;
   etamax = cfg.etamax;
 }
@@ -423,6 +439,10 @@ NtupleWriterTaus::~NtupleWriterTaus(){}
 void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent,  const edm::EventSetup& iSetup){
   edm::Handle< std::vector<pat::Tau> > tau_handle;
   event.getByToken(src_token, tau_handle);
+
+  edm::Handle<BXVector<l1t::Tau>> l1tau_handle;
+  event.getByToken(l1tau_token, l1tau_handle);
+
   std::vector<Tau> taus;
   for (const auto & pat_tau : *tau_handle) {
     if(pat_tau.pt() < ptmin) continue;
@@ -430,11 +450,17 @@ void NtupleWriterTaus::process(const edm::Event & event, uhh2::Event & uevent,  
     taus.emplace_back();
     Tau & tau = taus.back();
 
-    tau.set_charge( pat_tau.charge());
-    tau.set_pt( pat_tau.pt());
-    tau.set_eta( pat_tau.eta());
-    tau.set_phi( pat_tau.phi());
-    tau.set_energy( pat_tau.energy());
+    tau.set_charge(pat_tau.charge());
+    tau.set_pt(pat_tau.pt());
+    tau.set_eta(pat_tau.eta());
+    tau.set_phi(pat_tau.phi());
+    tau.set_energy(pat_tau.energy());
+
+    // L1-reco matching: defaults to 10 if there's no L1 object to match
+    for(const l1t::Tau & itL1 : *l1tau_handle){
+      double dR_recoTau_l1Tau = reco::deltaR(pat_tau.eta(), pat_tau.phi(), itL1.p4().Eta(), itL1.p4().Phi());
+      if(dR_recoTau_l1Tau < tau.minDeltaRToL1Tau()) tau.set_minDeltaRToL1Tau(dR_recoTau_l1Tau);
+    }
 
     // use the macro to avoid typos: using this macro assures that the enum name
     // used in the same as the string used for the pat tauID.

@@ -55,18 +55,20 @@ class Jet : public FlavorParticle {
     m_btag_DeepFlavour_probc=-2;
     m_btag_DeepFlavour_probuds=-2;
     m_btag_DeepFlavour_probg=-2;
-   
+
     m_JEC_factor_raw = 0;
     m_JEC_L1factor_raw = 0;
     m_genjet_index = -1; // not default of 0, as 0 is a valid index
     m_pileupID = -2;
+
+    m_minDeltaRToL1Jet = 10.;
 
     m_lepton_keys.clear();
     m_pfcand_indexs.clear();
   }
 
   float jetArea() const{return m_jetArea;}
-  int numberOfDaughters() const{return m_numberOfDaughters;} 
+  int numberOfDaughters() const{return m_numberOfDaughters;}
   float neutralEmEnergyFraction() const{return m_neutralEmEnergyFraction;}
   float neutralHadronEnergyFraction() const{return m_neutralHadronEnergyFraction;}
   float chargedEmEnergyFraction() const{return m_chargedEmEnergyFraction;}
@@ -75,7 +77,7 @@ class Jet : public FlavorParticle {
   float photonEnergyFraction() const{return m_photonEnergyFraction;}
   int chargedMultiplicity() const{return m_chargedMultiplicity;}
   int neutralMultiplicity() const{return m_neutralMultiplicity;}
-  int muonMultiplicity() const{return m_muonMultiplicity;} 
+  int muonMultiplicity() const{return m_muonMultiplicity;}
   int electronMultiplicity() const{return m_electronMultiplicity;}
   int photonMultiplicity() const{return m_photonMultiplicity;}
   float puppiMultiplicity() const{return m_puppiMultiplicity;}
@@ -94,7 +96,6 @@ class Jet : public FlavorParticle {
   float btag_DeepFlavour_g() const{return m_btag_DeepFlavour_probg;}
   float btag_DeepFlavour_c() const{return m_btag_DeepFlavour_probc;}
   float btag_DeepJet() const{return m_btag_DeepFlavour_probbb+m_btag_DeepFlavour_probb+m_btag_DeepFlavour_problepb;}
- 
 
   float JEC_factor_raw() const{return m_JEC_factor_raw;} // This takes you from corrected -> uncorrected
   float JEC_L1factor_raw() const{return m_JEC_L1factor_raw;} // This takes you from uncorrected -> L1 corrected
@@ -103,11 +104,13 @@ class Jet : public FlavorParticle {
   float has_tag(tag t) const { return tags.has_tag(static_cast<int>(t)); }
   float pileupID() const {return m_pileupID;}
 
+  double minDeltaRToL1Jet() const{return m_minDeltaRToL1Jet;}
+
   const std::vector<long int>& lepton_keys() const { return m_lepton_keys; }
   const std::vector<long int>& pfcand_indexs() const { return m_pfcand_indexs; }
 
   void set_jetArea(float x){m_jetArea=x;}
-  void set_numberOfDaughters(int x){m_numberOfDaughters=x;} 
+  void set_numberOfDaughters(int x){m_numberOfDaughters=x;}
   void set_neutralEmEnergyFraction(float x){m_neutralEmEnergyFraction=x;}
   void set_neutralHadronEnergyFraction(float x){m_neutralHadronEnergyFraction=x;}
   void set_chargedEmEnergyFraction(float x){m_chargedEmEnergyFraction=x;}
@@ -116,7 +119,7 @@ class Jet : public FlavorParticle {
   void set_photonEnergyFraction(float x){m_photonEnergyFraction=x;}
   void set_chargedMultiplicity(int x){m_chargedMultiplicity=x;}
   void set_neutralMultiplicity(int x){m_neutralMultiplicity=x;}
-  void set_muonMultiplicity(int x){m_muonMultiplicity=x;} 
+  void set_muonMultiplicity(int x){m_muonMultiplicity=x;}
   void set_electronMultiplicity(int x){m_electronMultiplicity=x;}
   void set_photonMultiplicity(int x){m_photonMultiplicity=x;}
   void set_puppiMultiplicity(float x){m_puppiMultiplicity=x;}
@@ -142,6 +145,8 @@ class Jet : public FlavorParticle {
   void set_tag(tag t, float value) { return tags.set_tag(static_cast<int>(t), value); }
 
   void set_pileupID(float x){m_pileupID = x;}
+
+  void set_minDeltaRToL1Jet(double x){m_minDeltaRToL1Jet = x;}
 
   void set_lepton_keys(const std::vector<long int>& vlk){ m_lepton_keys = vlk; }
   void add_lepton_key (const long int k){ m_lepton_keys.push_back(k); }
@@ -180,12 +185,14 @@ class Jet : public FlavorParticle {
   float m_btag_DeepFlavour_probuds;
   float m_btag_DeepFlavour_probc;
   float m_btag_DeepFlavour_probg;
-  
+
   float m_JEC_factor_raw;
   float m_JEC_L1factor_raw;
   int m_genjet_index;
 
   float m_pileupID;
+
+  double m_minDeltaRToL1Jet;
 
   std::vector<long int> m_lepton_keys;
   std::vector<long int> m_pfcand_indexs;

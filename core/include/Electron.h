@@ -99,7 +99,7 @@ class Electron : public RecParticle {
     m_pfMINIIso_NH_pfwgt = 0;
     m_pfMINIIso_Ph_pfwgt = 0;
 
-    m_minDeltaRToL1Electron = 10.;
+    m_minDeltaRToL1EGamma = 10.;
 
     m_source_candidates.clear();
 
@@ -154,7 +154,7 @@ class Electron : public RecParticle {
   float pfMINIIso_NH_pfwgt() const { return m_pfMINIIso_NH_pfwgt; }
   float pfMINIIso_Ph_pfwgt() const { return m_pfMINIIso_Ph_pfwgt; }
 
-  double minDeltaRToL1Electron() const{return m_minDeltaRToL1Electron;}
+  double minDeltaRToL1EGamma() const{return m_minDeltaRToL1EGamma;}
 
   const std::vector<source_candidate>& source_candidates() const { return m_source_candidates; }
 
@@ -198,7 +198,7 @@ class Electron : public RecParticle {
   void set_pfMINIIso_NH_pfwgt(float x){ m_pfMINIIso_NH_pfwgt = x; }
   void set_pfMINIIso_Ph_pfwgt(float x){ m_pfMINIIso_Ph_pfwgt = x; }
 
-  void set_minDeltaRToL1Electron(double x){m_minDeltaRToL1Electron = x;}
+  void set_minDeltaRToL1EGamma(double x){m_minDeltaRToL1EGamma = x;}
 
   void set_source_candidates(const std::vector<source_candidate>& vsc){ m_source_candidates = vsc; }
   void add_source_candidate (const source_candidate& sc){ m_source_candidates.push_back(sc); }
@@ -299,7 +299,7 @@ class Electron : public RecParticle {
   float m_pfMINIIso_NH_pfwgt;
   float m_pfMINIIso_Ph_pfwgt;
 
-  double m_minDeltaRToL1Electron;
+  double m_minDeltaRToL1EGamma;
 
   std::vector<source_candidate> m_source_candidates;
 

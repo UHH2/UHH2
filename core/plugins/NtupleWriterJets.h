@@ -16,6 +16,8 @@
 #include "TrackingTools/IPTools/interface/IPTools.h"
 #include "fastjet/PseudoJet.hh"
 #include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
+#include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
+#include "DataFormats/L1Trigger/interface/Jet.h"
 
 
 class GenericMVAJetTagComputer;
@@ -27,6 +29,16 @@ size_t add_pfpart(const reco::Candidate & pf, std::vector<PFParticle> & pfparts)
 
 class NtupleWriterJets: public NtupleWriterModule {
 public:
+
+    struct Config: public NtupleWriterModule::Config {
+      edm::InputTag l1jet_src;
+
+      // inherit constructor does not work yet :-(
+      Config(uhh2::Context & ctx_, edm::ConsumesCollector && cc_, const edm::InputTag & src_,
+             const std::string & dest_, const std::string & dest_branchname_ = ""):
+        NtupleWriterModule::Config(ctx_, std::move(cc_), src_, dest_, dest_branchname_) {}
+    };
+
     static void fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_jet, Jet & jet, bool do_btagging, bool doPuppiSpecific, bool fill_pfcand=false);
 
     explicit NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned int NPFJetwConstituents, double MinPtJetwConstituents);
@@ -40,6 +52,7 @@ private:
     edm::EDGetToken src_token;
     edm::EDGetToken src_higgs_token;
     edm::EDGetToken src_softdrop_token;
+    edm::EDGetTokenT<BXVector<l1t::Jet>> l1jet_token;
     float ptmin, etamax;
     Event::Handle<std::vector<Jet>> handle; // main handle to write output to
     boost::optional<Event::Handle<std::vector<Jet>>> jets_handle; // handle of name "jets" in case set_jets_member is true
