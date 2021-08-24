@@ -220,12 +220,7 @@ void NtupleWriterPhotons::process(const edm::Event & event, uhh2::Event & uevent
     // L1-reco matching: defaults to 10 if there's no L1 object to match
     for(const l1t::EGamma & itL1 : *l1egamma_handle){
       double dR_recoPho_l1EGamma = reco::deltaR(pat_pho.eta(), pat_pho.phi(), itL1.p4().Eta(), itL1.p4().Phi());
-      if(dR_recoPho_l1EGamma < pho.minDeltaRToL1EGamma()){
-        pho.set_minDeltaRToL1EGamma(dR_recoPho_l1EGamma);
-
-        // delete this itL1 from l1egamma_handle
-
-      }
+      if(dR_recoPho_l1EGamma < pho.minDeltaRToL1EGamma()) pho.set_minDeltaRToL1EGamma(dR_recoPho_l1EGamma);
     }
 
     /* source candidates */
