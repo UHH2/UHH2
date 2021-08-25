@@ -59,6 +59,8 @@ public:
     m_photonIso =-1;
     m_puChargedHadronIso =-1;
 
+    m_minDeltaRToL1EGamma = 10.;
+
     m_source_candidates.clear();
   }
 
@@ -82,6 +84,7 @@ public:
   float photonIso() const{return m_photonIso;}
   float puChargedHadronIso() const{return m_puChargedHadronIso;}
 
+  double minDeltaRToL1EGamma() const{return m_minDeltaRToL1EGamma;}
 
   //  float get_tag(tag t) const{ return tags.get_tag(static_cast<int>(t));}
 
@@ -106,6 +109,8 @@ public:
   void set_puChargedHadronIso(float x){m_puChargedHadronIso =x;}
 
   //  void set_tag(tag t, float value){tags.set_tag(static_cast<int>(t), value);}
+
+  void set_minDeltaRToL1EGamma(double x){m_minDeltaRToL1EGamma = x;}
 
   void set_source_candidates(const std::vector<source_candidate>& vsc){ m_source_candidates = vsc; }
   void add_source_candidate (const source_candidate& sc){ m_source_candidates.push_back(sc); }
@@ -135,6 +140,8 @@ private:
   float m_neutralHadronIso;
   float m_photonIso;
   float m_puChargedHadronIso;
+
+  double m_minDeltaRToL1EGamma;
 
   std::vector<source_candidate> m_source_candidates;
 

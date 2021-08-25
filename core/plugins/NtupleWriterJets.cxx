@@ -137,6 +137,7 @@ NtupleWriterJets::NtupleWriterJets(Config & cfg, bool set_jets_member, unsigned 
     }
     src = cfg.src;
     src_token = cfg.cc.consumes<std::vector<pat::Jet>>(cfg.src);
+    l1jet_token = cfg.cc.consumes<BXVector<l1t::Jet>>(cfg.l1jet_src);
     btag_warning=true;
     save_lepton_keys_ = false;
 
@@ -166,6 +167,9 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
     edm::Handle< std::vector<pat::Jet> > jet_handle;
     event.getByToken(src_token, jet_handle);
     const std::vector<pat::Jet> & pat_jets = *jet_handle;
+
+    edm::Handle<BXVector<l1t::Jet>> l1jet_handle;
+    event.getByToken(l1jet_token, l1jet_handle);
 
     /*--- lepton keys ---*/
     std::vector<long int> lepton_keys;
@@ -214,6 +218,12 @@ void NtupleWriterJets::process(const edm::Event & event, uhh2::Event & uevent,  
         }
         catch(runtime_error & ex){
           throw cms::Exception("fill_jet_info error", "Error in fill_jet_info NtupleWriterJets::process for jets with src = " + src.label());
+        }
+
+        // L1-reco matching: defaults to 10 if there's no L1 object to match
+        for(const l1t::Jet & itL1 : *l1jet_handle){
+          double dR_recoJet_l1Jet = reco::deltaR(pat_jet.eta(), pat_jet.phi(), itL1.p4().Eta(), itL1.p4().Phi());
+          if(dR_recoJet_l1Jet < jet.minDeltaRToL1Jet()) jet.set_minDeltaRToL1Jet(dR_recoJet_l1Jet);
         }
 
         /*--- lepton keys ---*/
