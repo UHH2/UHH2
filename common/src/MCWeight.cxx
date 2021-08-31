@@ -1040,8 +1040,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
                 float jet_eta = jet.eta();
 
                 float jet_btagdisc;
-                if      (algorithm_ == BTag::CSVV2)   jet_btagdisc = jet.btag_combinedSecondaryVertex();
-                else if (algorithm_ == BTag::DEEPCSV) jet_btagdisc = jet.btag_DeepCSV();
+                if (algorithm_ == BTag::DEEPCSV) jet_btagdisc = jet.btag_DeepCSV();
                 else if (algorithm_ == BTag::DEEPJET) jet_btagdisc = jet.btag_DeepJet();
                 else throw runtime_error("MCBTagDiscriminantReweighting::process: Given b-tagging algorithm is (right now) not suited to be used jointly with this routine. Please check if it is compatible and then add your chosen algorithm as option to this analysis module. Adjust the routine if necessary.");
 

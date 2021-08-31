@@ -1,3 +1,4 @@
+
 #include "UHH2/common/include/JetHists.h"
 #include "UHH2/common/include/Utils.h"
 #include "UHH2/core/include/Event.h"
@@ -18,7 +19,6 @@ JetHistsBase::jetHist JetHistsBase::book_jetHist(const string & axisSuffix, cons
   jet_hist.eta = book<TH1F>("eta"+histSuffix,"#eta "+axisSuffix,100,-5,5);
   jet_hist.phi = book<TH1F>("phi"+histSuffix,"#phi "+axisSuffix,50,-M_PI,M_PI);
   jet_hist.mass = book<TH1F>("mass"+histSuffix,"M^{ "+axisSuffix+"} [GeV/c^{2}]", 100, 0, 300);
-  jet_hist.csv = book<TH1F>("csv"+histSuffix,"csv-disriminator "+axisSuffix,50,0,1);
   return jet_hist;
 }
 
@@ -27,7 +27,6 @@ void JetHistsBase::fill_jetHist(const Jet & jet, JetHistsBase::jetHist & jet_his
   jet_hist.eta->Fill(jet.eta(), weight);
   jet_hist.phi->Fill(jet.phi(), weight);
   jet_hist.mass->Fill(jet.v4().M(), weight);
-  jet_hist.csv->Fill(jet.btag_combinedSecondaryVertex(), weight);
 }
 
 // JetHists
@@ -106,7 +105,6 @@ TopJetHists::subjetHist TopJetHists::book_subjetHist(const std::string & axisSuf
   subjet_hist.eta = book<TH1F>("eta"+histSuffix,"#eta "+axisSuffix,100,-5,5);
   subjet_hist.phi = book<TH1F>("phi"+histSuffix,"#phi "+axisSuffix,50,-M_PI,M_PI);
   subjet_hist.mass = book<TH1F>("mass"+histSuffix,"M^{ "+axisSuffix+"} [GeV/c^{2}]", 100, 0, 200);
-  subjet_hist.csv = book<TH1F>("csv"+histSuffix,"csv-disriminator "+axisSuffix,50,0,1);
   subjet_hist.sum4Vec = book<TH1F>("sum_mass"+histSuffix,"Mass sum  "+axisSuffix,100,0,350);
 
   return subjet_hist;
@@ -121,7 +119,6 @@ void TopJetHists::fill_subjetHist(const TopJet & topjet, subjetHist & subjet_his
     subjet_hist.eta->Fill(subjet.eta(), weight);
     subjet_hist.phi->Fill(subjet.phi(), weight);
     subjet_hist.mass->Fill(subjet.v4().M(), weight);
-    subjet_hist.csv->Fill(subjet.btag_combinedSecondaryVertex(), weight);
     sumLorenzv4 += subjet.v4();
   }
   subjet_hist.sum4Vec->Fill(sumLorenzv4.M(), weight);
@@ -230,7 +227,7 @@ void TopJetHists::fill(const Event & event){
             const auto & ak4jet = ak4jets[j];
             double deltaRtopjetak4jet = deltaR(jet, ak4jet);
             deltaR_ak4jet->Fill(deltaRtopjetak4jet,w);
-            invmass_topjetak4jet->Fill(inv_mass_safe(jet.v4()+ak4jet.v4())); 
+            invmass_topjetak4jet->Fill(inv_mass_safe(jet.v4()+ak4jet.v4()));
          }
       if (jet.has_tag(jet.tagname2tag("mass"))) HTT_mass ->Fill(jet.get_tag(jet.tagname2tag("mass")),w);
       if (jet.has_tag(jet.tagname2tag("fRec"))) fRec ->Fill(jet.get_tag(jet.tagname2tag("fRec")),w);
