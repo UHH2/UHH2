@@ -318,20 +318,12 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
 
   if(do_btagging){
     const auto & bdisc = pat_jet.getPairDiscri();
-    bool csv = false, csvmva = false,  deepcsv_b = false, deepcsv_bb = false;
+    bool deepcsv_b = false, deepcsv_bb = false;
     bool deepflavour_bb=false, deepflavour_b=false, deepflavour_lepb=false, deepflavour_c=false, deepflavour_uds=false, deepflavour_g=false;
     for(const auto & name_value : bdisc){
       const auto & name = name_value.first;
       const auto & value = name_value.second;
-      if(name == "pfCombinedInclusiveSecondaryVertexV2BJetTags"){
-        jet.set_btag_combinedSecondaryVertex(value);
-        csv = true;
-      }
-      else if(name == "pfCombinedMVAV2BJetTags"){
-        jet.set_btag_combinedSecondaryVertexMVA(value);
-        csvmva = true;
-      }
-      else if(name == "pfDeepCSVJetTags:probb"){
+      if(name == "pfDeepCSVJetTags:probb"){
         jet.set_btag_DeepCSV_probb(value);
         deepcsv_b = true;
       }
@@ -367,9 +359,7 @@ void NtupleWriterJets::fill_jet_info(uhh2::Event & uevent, const pat::Jet & pat_
 
 
 
-    if(!csv || !csvmva || !deepcsv_b || !deepcsv_bb
-       || !deepflavour_bb || !deepflavour_b || !deepflavour_lepb
-       || !deepflavour_uds || !deepflavour_c || !deepflavour_g){
+    if(!deepcsv_b || !deepcsv_bb || !deepflavour_bb || !deepflavour_b || !deepflavour_lepb || !deepflavour_uds || !deepflavour_c || !deepflavour_g){
       if(btag_warning){
         std::string btag_list = "";
         for(const auto & name_value : bdisc){

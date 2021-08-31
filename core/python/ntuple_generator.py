@@ -94,8 +94,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         raise RuntimeError("Cannot setup process for this year, may need to add a new entry.")
 
     bTagDiscriminators = [
-        'pfCombinedInclusiveSecondaryVertexV2BJetTags',
-        'pfCombinedMVAV2BJetTags',
         'pfDeepCSVJetTags:probb',
         'pfDeepCSVJetTags:probbb',
         'pfBoostedDoubleSecondaryVertexAK8BJetTags',

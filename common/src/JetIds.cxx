@@ -8,10 +8,6 @@ using namespace uhh2;
 BTag::BTag(algo tagger, wp working_point) {
   m_working_point = (int) working_point;
   switch (tagger) {
-    case CSVV2 :
-    jet_id = CSVBTag((CSVBTag::wp) m_working_point);
-    m_algo = "CSVv2";
-    break;
     case DEEPCSV :
     jet_id = DeepCSVBTag((DeepCSVBTag::wp) m_working_point);
     m_algo = "DeepCSV";
@@ -23,50 +19,6 @@ BTag::BTag(algo tagger, wp working_point) {
     default:
     throw invalid_argument("invalid b-tagging algorithm passed to BTag");
   }
-}
-
-CSVBTag::CSVBTag(wp working_point) {
-  m_working_point = working_point;
-}
-
-CSVBTag::CSVBTag(float float_point):csv_threshold(float_point) {}
-
-
-bool CSVBTag::operator()(const Jet & jet, const Event & ev){
-  if(ev.year == "2016v2" || ev.year == "2016v3"){
-    //  https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80XReReco
-    switch(m_working_point){
-      case WP_LOOSE:
-      csv_threshold = 0.5426;
-      break;
-      case WP_MEDIUM:
-      csv_threshold = 0.8484;
-      break;
-      case WP_TIGHT:
-      csv_threshold = 0.9535;
-      break;
-      default:
-      throw invalid_argument("invalid working point passed to CSVBTag");
-    }
-  }
-  if(ev.year.find("2017") != string::npos || ev.year.find("2018") != string::npos){
-    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-    //Note: CSV is not supported for 2018 analyses
-    switch(m_working_point){
-      case WP_LOOSE:
-      csv_threshold = 0.5803;
-      break;
-      case WP_MEDIUM:
-      csv_threshold = 0.8838;
-      break;
-      case WP_TIGHT:
-      csv_threshold = 0.9693;
-      break;
-      default:
-      throw invalid_argument("invalid working point passed to CSVBTag");
-    }
-  }
-  return jet.btag_combinedSecondaryVertex() > csv_threshold;
 }
 
 ///

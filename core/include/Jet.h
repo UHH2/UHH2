@@ -45,16 +45,14 @@ class Jet : public FlavorParticle {
     m_HFEMPuppiMultiplicity = 0;
     // Discriminants should have a initial value of something clear "wrong"
     // -2 is safe as some discrimintants start at -1, some start at 0
-    m_btag_combinedSecondaryVertex = -2;
-    m_btag_combinedSecondaryVertexMVA = -2;
     m_btag_DeepCSV_probb = -2;
     m_btag_DeepCSV_probbb = -2;
-    m_btag_DeepFlavour_probbb=-2;
-    m_btag_DeepFlavour_probb=-2;
-    m_btag_DeepFlavour_problepb=-2;
-    m_btag_DeepFlavour_probc=-2;
-    m_btag_DeepFlavour_probuds=-2;
-    m_btag_DeepFlavour_probg=-2;
+    m_btag_DeepFlavour_probbb = -2;
+    m_btag_DeepFlavour_probb = -2;
+    m_btag_DeepFlavour_problepb = -2;
+    m_btag_DeepFlavour_probc = -2;
+    m_btag_DeepFlavour_probuds = -2;
+    m_btag_DeepFlavour_probg = -2;
 
     m_JEC_factor_raw = 0;
     m_JEC_L1factor_raw = 0;
@@ -86,8 +84,6 @@ class Jet : public FlavorParticle {
   float photonPuppiMultiplicity() const{return m_photonPuppiMultiplicity;}
   float HFHadronPuppiMultiplicity() const{return m_HFHadronPuppiMultiplicity;}
   float HFEMPuppiMultiplicity() const{return m_HFEMPuppiMultiplicity;}
-  float btag_combinedSecondaryVertex() const{return m_btag_combinedSecondaryVertex;} // combinedInclusiveSecondaryVertexV2BJetTags
-  float btag_combinedSecondaryVertexMVA() const{return m_btag_combinedSecondaryVertexMVA;}
   float btag_DeepCSV() const{return m_btag_DeepCSV_probb + m_btag_DeepCSV_probbb;} // pfDeepCSVJetTags:probb + pfDeepCSVJetTags:probbb
   float btag_DeepFlavour_bb() const{return m_btag_DeepFlavour_probbb;}
   float btag_DeepFlavour_b() const{return m_btag_DeepFlavour_probb;}
@@ -128,8 +124,6 @@ class Jet : public FlavorParticle {
   void set_photonPuppiMultiplicity(float x){m_photonPuppiMultiplicity=x;}
   void set_HFHadronPuppiMultiplicity(float x){m_HFHadronPuppiMultiplicity=x;}
   void set_HFEMPuppiMultiplicity(float x){m_HFEMPuppiMultiplicity=x;}
-  void set_btag_combinedSecondaryVertex(float x){m_btag_combinedSecondaryVertex=x;} // for 72, this is combinedInclusiveSecondaryVertexV2BJetTags
-  void set_btag_combinedSecondaryVertexMVA(float x){m_btag_combinedSecondaryVertexMVA=x;}
   void set_btag_DeepCSV_probb(float x){m_btag_DeepCSV_probb=x;} // pfDeepCSVJetTags:probb
   void set_btag_DeepCSV_probbb(float x){m_btag_DeepCSV_probbb=x;} // pfDeepCSVJetTags:probbb
   void set_btag_DeepFlavour_probbb(float x){m_btag_DeepFlavour_probbb=x;}
@@ -175,8 +169,6 @@ class Jet : public FlavorParticle {
   float m_HFHadronPuppiMultiplicity;
   float m_HFEMPuppiMultiplicity;
 
-  float m_btag_combinedSecondaryVertex;
-  float m_btag_combinedSecondaryVertexMVA;
   float m_btag_DeepCSV_probb;
   float m_btag_DeepCSV_probbb;
   float m_btag_DeepFlavour_probbb;
