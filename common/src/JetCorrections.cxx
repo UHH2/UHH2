@@ -575,13 +575,19 @@ JetResolutionSmearer::JetResolutionSmearer(uhh2::Context & ctx){
     version = "Fall17_V3";
   } else if (year == Year::is2018) {
     version = "Autumn18_V7";
-  }  else if (year == Year::isUL17) {
+  } else if (year == Year::isUL16preVFP) {
+    version = "Summer20UL16APV_JRV3";
+  } else if (year == Year::isUL16postVFP) {
+    version = "Summer20UL16_JRV3";
+  } else if (year == Year::isUL17) {
     version = "Summer19UL17_JRV2";
   } else if (year == Year::isUL18) {
     version = "Summer19UL18_JRV2";
   } else {
     throw runtime_error("Cannot find suitable jet resolution file & scale factors for this year for JetResolutionSmearer");
   }
+
+  cout << "Setting up JER smearing with version " << version << endl;
 
   m_gjrs = new GenericJetResolutionSmearer(ctx, "jets", "genjets",JERFiles::JERPathStringMC(version,jetCollection,"SF"), JERFiles::JERPathStringMC(version,jetCollection,"PtResolution"));
 
