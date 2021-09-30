@@ -31,16 +31,15 @@ CommonModules::CommonModules(){
   jec_tag_2018 = "Autumn18";
   jec_ver_2018 = "19";
 
-  jec_tag_UL16preVFP = "Summer19UL16";
-  jec_ver_UL16preVFP = "2";
+  jec_tag_UL16preVFP = "Summer19UL16APV";
+  jec_ver_UL16preVFP = "7";
 
-  jec_tag_UL16postVFP = "Summer19UL16APV";
-  jec_ver_UL16postVFP = "2";
+  jec_tag_UL16postVFP = "Summer19UL16";
+  jec_ver_UL16postVFP = "7";
 
   jec_tag_UL17 = "Summer19UL17";
   jec_ver_UL17 = "5";
 
-  // FIXME: update when official set
   jec_tag_UL18 = "Summer19UL18";
   jec_ver_UL18 = "5";
 
@@ -227,12 +226,12 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
 
       JLC_switcher_UL16preVFP.reset(new RunSwitcher(ctx, "2016"));
       for (const auto & runItr : runPeriodsUL16preVFP) {
-        JLC_switcher_UL16preVFP->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(jec_tag_UL17, jec_ver_UL17, jec_jet_coll, runItr)));
+        JLC_switcher_UL16preVFP->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(jec_tag_UL16preVFP, jec_ver_UL16preVFP, jec_jet_coll, runItr)));
       }
 
       JLC_switcher_UL16postVFP.reset(new RunSwitcher(ctx, "2016"));
       for (const auto & runItr : runPeriodsUL16postVFP) {
-        JLC_switcher_UL16postVFP->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(jec_tag_UL17, jec_ver_UL17, jec_jet_coll, runItr)));
+        JLC_switcher_UL16postVFP->setupRun(runItr, std::make_shared<JetCorrector>(ctx, JERFiles::JECFilesDATA(jec_tag_UL16postVFP, jec_ver_UL16postVFP, jec_jet_coll, runItr)));
       }
 
       JLC_switcher_UL17.reset(new RunSwitcher(ctx, "2017"));
