@@ -147,43 +147,34 @@ void CommonModules::init(Context & ctx, const std::string & SysType_PU){
   if(metfilters){
     metfilters_selection.reset(new AndSelection(ctx, "metfilters"));
 
-    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
+    // Twiki: https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2
 
     if( is_UL(year) ) {
       // recommendation for UL datasets
-      //
-      // Recommendation for UL still NOT final
-      // The following needs to be updated!
-      // - UL 2016 MC treatment is still missing recommendation (treat as UL 17/18 for now, but needs update)
-      // - BadPFMuonDzFilter not in Summer19 UL samples, only in Summer20 (?)
-      // 
-      metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
-      metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter", "Flag_globalSuperTightHalo2016Filter");
-      metfilters_selection->add<TriggerSelection>("HBHENoiseFilter", "Flag_HBHENoiseFilter");
-      metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
-      metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
-      metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
-      //metfilters_selection->add<TriggerSelection>("BadPFMuonDzFilter", "Flag_BadPFMuonDzFilter");
-      if (!is_mc) {
-	metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
-      }
+      metfilters_selection->add<TriggerSelection>("goodVertices"                      ,"Flag_goodVertices");
+      metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter"    ,"Flag_globalSuperTightHalo2016Filter");
+      metfilters_selection->add<TriggerSelection>("HBHENoiseFilter"                   ,"Flag_HBHENoiseFilter");
+      metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter"                ,"Flag_HBHENoiseIsoFilter");
+      metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter","Flag_EcalDeadCellTriggerPrimitiveFilter");
+      metfilters_selection->add<TriggerSelection>("BadPFMuonFilter"                   ,"Flag_BadPFMuonFilter");
+      metfilters_selection->add<TriggerSelection>("BadPFMuonDzFilter"                 ,"Flag_BadPFMuonDzFilter");
+      metfilters_selection->add<TriggerSelection>("eeBadScFilter"                     ,"Flag_eeBadScFilter");
       if ( year==Year::isUL17 || year==Year::isUL18 ) {
-	metfilters_selection->add<TriggerSelection>("Flag_ecalBadCalibFilter", "Flag_ecalBadCalibFilter");
+        metfilters_selection->add<TriggerSelection>("Flag_ecalBadCalibFilter", "Flag_ecalBadCalibFilter");
       }
-
     } else {
       // recommendation for EOY datasets
-      metfilters_selection->add<TriggerSelection>("goodVertices", "Flag_goodVertices");
-      metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter", "Flag_globalSuperTightHalo2016Filter");
-      metfilters_selection->add<TriggerSelection>("HBHENoiseFilter", "Flag_HBHENoiseFilter");
-      metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter", "Flag_HBHENoiseIsoFilter");
-      metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter", "Flag_EcalDeadCellTriggerPrimitiveFilter");
+      metfilters_selection->add<TriggerSelection>("goodVertices"                      ,"Flag_goodVertices");
+      metfilters_selection->add<TriggerSelection>("globalSuperTightHalo2016Filter"    ,"Flag_globalSuperTightHalo2016Filter");
+      metfilters_selection->add<TriggerSelection>("HBHENoiseFilter"                   ,"Flag_HBHENoiseFilter");
+      metfilters_selection->add<TriggerSelection>("HBHENoiseIsoFilter"                ,"Flag_HBHENoiseIsoFilter");
+      metfilters_selection->add<TriggerSelection>("EcalDeadCellTriggerPrimitiveFilter","Flag_EcalDeadCellTriggerPrimitiveFilter");
       if (year == Year::is2016v2) { // filter was run during ntuple production as info not in miniAOD
-	metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Extra_BadPFMuonFilter");
+        metfilters_selection->add<TriggerSelection>("BadPFMuonFilter","Extra_BadPFMuonFilter");
       } else {
-	metfilters_selection->add<TriggerSelection>("BadPFMuonFilter", "Flag_BadPFMuonFilter");
+        metfilters_selection->add<TriggerSelection>("BadPFMuonFilter","Flag_BadPFMuonFilter");
       }
-      if (!is_mc) metfilters_selection->add<TriggerSelection>("eeBadScFilter", "Flag_eeBadScFilter");
+      if (!is_mc) metfilters_selection->add<TriggerSelection>("eeBadScFilter","Flag_eeBadScFilter");
       metfilters_selection->add<EcalBadCalibSelection>("EcalBadCalibSelection"); // Use this instead of Flag_ecalBadCalibFilter, uses ecalBadCalibReducedMINIAODFilter in ntuple_generator
     }
 
