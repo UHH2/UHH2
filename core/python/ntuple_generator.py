@@ -1949,28 +1949,51 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     ###############################################
     # TRIGGER, MET FILTERS
     #
-    # L1 prefiring, only needed for simulation in 2016/7
-    #
-    prefire_era_dict = {
+    # L1 prefiring (ECAL and muons)
+    # ECAL prefiring: needed for 2016/2017 simulation
+    # Muon prefiring: needed for 2016/2017/2018 simulation
+    # Documentation: https://twiki.cern.ch/twiki/bin/viewauth/CMS/L1PrefiringWeightRecipe
+
+    prefire_era_ECAL_dict = {
         '2016v2': '2016BtoH',
         '2016v3': '2016BtoH',
         '2017v1': '2017BtoF',
         '2017v2': '2017BtoF',
+        'UL16preVFP': 'UL2016preVFP',
+        'UL16postVFP': 'UL2016postVFP',
+        'UL17': 'UL2017BtoF',
     }
-    prefire_era = None if useData else prefire_era_dict.get(year, None)
-    do_prefire = prefire_era is not None
+    prefire_era_Muon_dict = {
+        '2016v2': '2016',
+        '2016v3': '2016',
+        '2017v1': '20172018',
+        '2017v2': '20172018',
+        '2018': '20172018',
+        'UL16preVFP': '2016preVFP',
+        'UL16postVFP': '2016postVFP',
+        'UL17': '20172018',
+        'UL18': '20172018',
+    }
+    prefire_era_ECAL = None if useData else prefire_era_ECAL_dict.get(year, None)
+    prefire_era_Muon = None if useData else prefire_era_Muon_dict.get(year, None)
+    do_prefire_ECAL = prefire_era_ECAL is not None
+    do_prefire_Muon = prefire_era_Muon is not None
+
+    do_prefire = do_prefire_ECAL or do_prefire_Muon
     prefire_source = "prefiringweight"
     if do_prefire:
         setattr(process,
                 prefire_source,
-                cms.EDProducer("L1ECALPrefiringWeightProducer",
+                cms.EDProducer("L1PrefiringWeightProducer",
                     ThePhotons = cms.InputTag("slimmedPhotons"),
                     TheJets = cms.InputTag("slimmedJets"),
-                    L1Maps = cms.string("L1PrefiringMaps.root"),
-                    DataEra = cms.string(prefire_era),
+                    TheMuons = cms.InputTag("slimmedMuons"),
+                    DataEraECAL = cms.string(prefire_era_ECAL if do_prefire_ECAL else 'None'),
+                    DataEraMuon = cms.string(prefire_era_Muon if do_prefire_Muon else 'None'),
+                    DoMuons = cms.bool(do_prefire_Muon),
                     UseJetEMPt = cms.bool(False),  # can be set to true to use jet prefiring maps parametrized vs pt(em) instead of pt
-                    PrefiringRateSystematicUncty = cms.double(0.2),  # Minimum relative prefiring uncty per object
-                    SkipWarnings = cms.bool(True)
+                    PrefiringRateSystematicUnctyECAL = cms.double(0.2),  # Minimum relative prefiring uncty per object
+                    PrefiringRateSystematicUnctyMuon = cms.double(0.2),
                 )
         )
         task.add(getattr(process, prefire_source))
