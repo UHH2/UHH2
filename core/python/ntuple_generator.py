@@ -308,7 +308,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # for latest global tags
     # But check with:
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PdmVAnalysisSummaryTable
-    # https://twiki.cern.ch/twiki/bin/view/CMS/PdmVRun2LegacyAnalysisSummaryTable
+    # https://twiki.cern.ch/twiki/bin/view/CMS/PdmVRun2LegacyAnalysis
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
     # There should be 1 key:value entry per entry in acceptable_years, and each
@@ -336,20 +336,20 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
             "mc": "102X_upgrade2018_realistic_v15",
         },
         "UL16preVFP": {
-            "data": "106X_dataRun2_v28",
-            "mc": "106X_mcRun2_asymptotic_preVFP_v8",
+            "data": "106X_dataRun2_v35",
+            "mc": "106X_mcRun2_asymptotic_preVFP_v11",
         },
         "UL16postVFP": {
-            "data": "106X_dataRun2_v28",
-            "mc": "106X_mcRun2_asymptotic_v13",
+            "data": "106X_dataRun2_v35",
+            "mc": "106X_mcRun2_asymptotic_v17",
         },
         "UL17": {
-            "data": "106X_dataRun2_v28",
-            "mc": "106X_mc2017_realistic_v7",
+            "data": "106X_dataRun2_v35",
+            "mc": "106X_mc2017_realistic_v9",
         },
         "UL18": {
-            "data": "106X_dataRun2_v28",
-            "mc": "106X_upgrade2018_realistic_v11_L1v1",
+            "data": "106X_dataRun2_v35",
+            "mc": "106X_upgrade2018_realistic_v16_L1v1",
         },
     }
     if set(global_tags.keys()) != set(acceptable_years):
