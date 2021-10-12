@@ -34,55 +34,60 @@ def get_request_name(dataset_name):
 
     # for the usually very long MC dataset names, do some more name modification ...
 
-    modified_name = dataset_name.split('/')[1]
-    modified_name = modified_name.replace('_TuneCUETP8M1_13TeV-madgraphMLM-pythia8', '_P8M1')
-    modified_name = modified_name.replace('_TuneCP5_13TeV-madgraphMLM-pythia8', '_CP5')
-    modified_name = modified_name.replace('_TuneCUETP8M1_13TeV_pythia8', '_P8M1')
+    # remove redundant substrings
+    modified_name = dataset_name.split('/')[1].replace('Tune', '').replace('13TeV-', '').replace('13TeV_', '')
 
-    # request name can only be 100 characters maximum
-    # at this point we need to chop it down, to allow for campaign, time, date, ext2, v2
-    max_len = 100-34
-    if len(modified_name) > max_len:
-        modified_name = modified_name[:max_len]
-
+    campaign_etc = ''
     # Add MC campaign
     if "Summer16" in dataset_name:
-        modified_name += "_Summer16"
+        campaign_etc += "_Summer16"
     elif "Fall17" in dataset_name:
-        modified_name += "_Fall17"
+        campaign_etc += "_Fall17"
     elif "Autumn18" in dataset_name:
-        modified_name += "_Autumn18"
+        campaign_etc += "_Autumn18"
     elif "Summer19UL17" in dataset_name:
-        modified_name += "_Summer19UL17"
+        campaign_etc += "_Summer19UL17"
     elif "Summer19UL18" in dataset_name:
-        modified_name += "_Summer19UL18"
+        campaign_etc += "_Summer19UL18"
     elif "Summer20UL16" in dataset_name:
-        modified_name += "_Summer20UL16"
+        campaign_etc += "_Summer20UL16"
         if "APV" in dataset_name:
-            modified_name += "APV"
+            campaign_etc += "APV"
     elif "Summer20UL17" in dataset_name:
-        modified_name += "_Summer20UL17"
+        campaign_etc += "_Summer20UL17"
     elif "Summer20UL18" in dataset_name:
-        modified_name += "_Summer20UL18"
-
-    ext = re.search('ext[0-9]+', dataset_name.split('/')[-2])
+        campaign_etc += "_Summer20UL18"
+    # Add 'ext1', 'ext2' etc.
+    ext = re.search(r'ext[0-9]+', dataset_name.split('/')[-2])
     if ext:
-        modified_name += '_'+ext.group(0)
+        campaign_etc += '_'+ext.group(0)
     elif 'ext' in dataset_name:
-        modified_name += '_ext'
+        campaign_etc += '_ext'
     elif 'backup' in dataset_name:
-        modified_name += '_backup'
-
+        campaign_etc += '_backup'
+    # Add sample version (last 'v*' before '/MINIAODSIM')
     version_number = dataset_name.split('/')[-2].split('-')[-1]
-    if re.match('v[0-9]+', version_number):
-        modified_name += '_'+version_number
+    if re.match(r'v[0-9]+', version_number):
+        campaign_etc += '_'+version_number
+
+    # request name can only be 100 characters maximum
+    max_len = 100-len(campaign_etc)
+    if len(modified_name) > max_len:
+        modified_name = modified_name[:max_len]
+    modified_name += campaign_etc
 
     return modified_name
 
 
 inputDatasets = ['/DYJetsToLL_M-50_HT-*to*_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_*/MINIAODSIM']
 inputDatasets = autocomplete_Datasets(inputDatasets)
-requestNames = [get_request_name(x) for x in inputDatasets]
+requestNames = [get_request_name(x) for x in inputDatasets] # Here you can define custom request names if the get_request_names function doesn't return nice ones
+
+if __name__=='__main__':
+    print 'Request names (100 characters max.) will be:'
+    for x in requestNames:
+        print x.ljust(101), 'Length:', len(x)
+    exit(0)
 
 # ===============================================================================
 # Classical part of crab, after resolving the * it uses in the example below just the first entry
@@ -105,12 +110,8 @@ config.JobType.outputFiles = ["Ntuple.root"]
 config.JobType.maxMemoryMB = 2500
 
 config.Data.inputDBS = 'global'
-# Recommended for real data (don't use the 'Automatic' splitting as recommended in the crab TWiki; it sometimes bugs out and leads to duplicate data -- an absolute No-Go!):
-#config.Data.splitting = 'EventAwareLumiBased'
-#config.Data.unitsPerJob = 24000 # targeted approximate number of events per job
-# Recommended for MC:
-config.Data.splitting = 'FileBased'
-config.Data.unitsPerJob = 1 # number of files processed per job
+config.Data.splitting = 'EventAwareLumiBased' # (don't use the 'Automatic' splitting as recommended in the crab TWiki for real data; it sometimes bugs out and leads to duplicate data -- an absolute No-Go!)
+config.Data.unitsPerJob = 24000 # targeted approximate number of events per job
 
 # Add subdirectory using year from config filename
 pset = os.path.basename(config.JobType.psetName)
@@ -118,11 +119,11 @@ result = re.search(r'(20|UL)1[\d](v\d)?', pset)
 if not result:
     raise RuntimeError("Cannot extract year from psetName! Does your psetName have 201* in it (or UL1*)?")
 year = result.group()
-config.Data.outLFNDirBase = '/store/group/uhh/uhh2ntuples/RunII_106X_v1/%s/' % (year)
+config.Data.outLFNDirBase = '/store/group/uhh/uhh2ntuples/RunII_106X_v1/%s/' % (year) # FIXME: change to RunII_106X_v2 before central production in autumn 2021
 
 # If you want to run some private production and not put it in the group area, use this instead:
 # replacing YOUR_CERN_USERNAME_HERE as appropriate
-# config.Data.outLFNDirBase = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v1/%s/' % (year)
+# config.Data.outLFNDirBase = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v1/%s/' % (year) # FIXME: change to RunII_106X_v2 before central production in autumn 2021
 if 'YOUR_CERN_USERNAME_HERE' in config.Data.outLFNDirBase:
     raise RuntimeError("You didn't insert your CERN username in config.Data.outLFNDirBase, please fix it")
 
