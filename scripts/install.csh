@@ -73,10 +73,11 @@ source setup.csh
 time make $MAKEFLAGS
 
 cd ${CMSSW_BASE}/src
-time git cms-init -y  # not needed if not addpkg ing
-# Necessary for using our FastJet
-git cms-addpkg RecoJets/JetProducers
 
+time git cms-init -y  # not needed if not addpkg ing
+
+# Necessary for using our FastJet
+time git cms-addpkg RecoJets/JetProducers
 # For JetCorrector, JetResolution objects
 time git cms-addpkg CondFormats/JetMETObjects
 time git cms-addpkg JetMETCorrections/Modules
@@ -101,16 +102,27 @@ scram setup fastjet
 scram setup fastjet-contrib
 scram setup fastjet-contrib-archive
 
+# fetching Egamma POG postrecotools
+# twiki: https://twiki.cern.ch/twiki/bin/view/CMS/EgammaUL2016To2018
+time git cms-addpkg RecoEgamma/EgammaTools
+time git clone https://github.com/cms-egamma/EgammaPostRecoTools.git
+mv EgammaPostRecoTools/python/EgammaPostRecoTools.py RecoEgamma/EgammaTools/python/.
+time git clone -b ULSSfiles_correctScaleSysMC https://github.com/jainshilpi/EgammaAnalysis-ElectronTools.git EgammaAnalysis/ElectronTools/data/
+time git cms-addpkg EgammaAnalysis/ElectronTools
+
 scram b clean
 time scram b $MAKEFLAGS
 
 # Get the UHH2 repo & JEC,JER files
 cd ${CMSSW_BASE}/src
-git clone -b RunII_106X_v1 https://github.com/UHH2/UHH2.git
+time git clone -b RunII_106X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
-git clone https://github.com/cms-jet/JECDatabase.git
-git clone https://github.com/cms-jet/JRDatabase.git
+time git clone https://github.com/cms-jet/JECDatabase.git
+time git clone https://github.com/cms-jet/JRDatabase.git
 cd common
-git clone https://github.com/UHH2/UHH2-datasets.git
-cd ..
+time git clone https://github.com/UHH2/UHH2-datasets.git
+cd UHH2-datasets
+git remote rename origin UHH2
+git branch -u UHH2/master
+cd ../..
 time make $MAKEFLAGS
