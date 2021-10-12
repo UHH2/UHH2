@@ -21,10 +21,10 @@ then
 fi
 
 getToolVersion() {
-    # Get CMSSW tool version using scram
-    # args: <toolname>
-    local toolname="$1"
-    scram tool info "$toolname" | grep -i "Version : " | sed "s/Version : //"
+	# Get CMSSW tool version using scram
+	# args: <toolname>
+	local toolname="$1"
+	scram tool info "$toolname" | grep -i "Version : " | sed "s/Version : //"
 }
 
 setupFastjet() {
@@ -160,11 +160,13 @@ scram setup fastjet
 scram setup fastjet-contrib
 scram setup fastjet-contrib-archive
 
-# fetching Egamma POG postrecotools here
-time git clone https://github.com/cms-egamma/EgammaPostRecoTools.git  EgammaUser/EgammaPostRecoTools
-cd EgammaUser/EgammaPostRecoTools
-git checkout master
-cd $CMSSW_BASE/src
+# fetching Egamma POG postrecotools
+# twiki: https://twiki.cern.ch/twiki/bin/view/CMS/EgammaUL2016To2018
+time git cms-addpkg RecoEgamma/EgammaTools
+time git clone https://github.com/cms-egamma/EgammaPostRecoTools.git
+mv EgammaPostRecoTools/python/EgammaPostRecoTools.py RecoEgamma/EgammaTools/python/.
+time git clone -b ULSSfiles_correctScaleSysMC https://github.com/jainshilpi/EgammaAnalysis-ElectronTools.git EgammaAnalysis/ElectronTools/data/
+time git cms-addpkg EgammaAnalysis/ElectronTools
 
 scram b clean
 time scram b $MAKEFLAGS
