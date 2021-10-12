@@ -26,8 +26,7 @@ from RecoBTag.SecondaryVertex.trackSelection_cff import *
 from UHH2.core.muon_pfMiniIsolation_cff import *
 from UHH2.core.electron_pfMiniIsolation_cff import *
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
-from EgammaUser.EgammaPostRecoTools.EgammaPostRecoTools import *
-
+from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
 # NOTE: all from xxx import * must go here, not inside the function
 
 
