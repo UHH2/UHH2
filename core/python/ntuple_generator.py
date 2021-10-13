@@ -11,25 +11,6 @@ e.g.:
 
 """
 
-
-import os
-
-import FWCore.ParameterSet.Config as cms
-from Configuration.EventContent.EventContent_cff import *
-from RecoJets.Configuration.RecoPFJets_cff import *
-from RecoJets.JetProducers.fixedGridRhoProducerFastjet_cfi import *
-from RecoJets.JetProducers.AnomalousCellParameters_cfi import *
-from RecoJets.JetProducers.PFJetParameters_cfi import *
-from PhysicsTools.PatAlgos.tools.jetTools import *
-from PhysicsTools.PatAlgos.tools.pfTools import *
-from RecoBTag.SecondaryVertex.trackSelection_cff import *
-from UHH2.core.muon_pfMiniIsolation_cff import *
-from UHH2.core.electron_pfMiniIsolation_cff import *
-from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
-from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
-# NOTE: all from xxx import * must go here, not inside the function
-
-
 def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     """Main function to make a cms.Process object to create ntuples.
 
@@ -54,6 +35,9 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     ValueError
         If the year argument is not one of the allowable options
     """
+
+    import FWCore.ParameterSet.Config as cms    
+
     year = str(year)  # sanitise string
     acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "UL16preVFP", "UL16postVFP", "UL17", "UL18"]
     if year not in acceptable_years:
@@ -269,6 +253,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     ###############################################
     # OUT
+    from Configuration.EventContent.EventContent_cff import MINIAODSIMEventContent
     process.out = cms.OutputModule("PoolOutputModule",
                                    fileName=cms.untracked.string('miniaod.root'),
                                    outputCommands=MINIAODSIMEventContent.outputCommands
@@ -356,6 +341,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     process.GlobalTag.globaltag = global_tags[year]['data' if useData else 'mc']
 
+    from RecoJets.Configuration.RecoPFJets_cff import fixedGridRhoFastjetAll
     process.fixedGridRhoFastjetAll = fixedGridRhoFastjetAll.clone(
         pfCandidatesTag='packedPFCandidates'
     )
@@ -419,6 +405,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     # This is primarily used for JEC studies.
     # It has a low pT threshold, and will not get any substructure info.
+    from RecoJets.Configuration.RecoPFJets_cff import ak8PFJets
     process.ak8CHSJets = ak8PFJets.clone(
         src='chs',
         doAreaFastjet=True,
@@ -442,6 +429,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # and the subjets as reco::PFJets, with instance label "SubJets"
     # It is used for its subjets
     # NB its "daughters/constituents" are ONLY the subjets not actual constituents
+    from RecoJets.Configuration.RecoPFJets_cff import ak8PFJetsCHSSoftDrop
     process.ak8CHSJetsSoftDrop = ak8PFJetsCHSSoftDrop.clone(
         src=cms.InputTag('chs'),
         jetPtMin=fatjet_ptmin
@@ -710,6 +698,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # groomed_jets_name, and top_tagging must be set True. Additionally,
     # btagging must be set True
 
+    from PhysicsTools.PatAlgos.tools.jetTools import addJetCollection, updateJetCollection
     def add_fatjets_subjets(process, fatjets_name, groomed_jets_name, jetcorr_label='AK8PFchs', jetcorr_label_subjets='AK4PFchs', genjets_name=None, verbose=True, btagging=True, top_tagging=False):
         rParam = getattr(process, fatjets_name).rParam.value()
         algo_dict = {"CambridgeAachen": "ca", "AntiKt": "ak"}
@@ -952,6 +941,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
 
     # Adapt primary vertex collection
+    from PhysicsTools.PatAlgos.tools.pfTools import adaptPVs
     adaptPVs(process, pvCollection=cms.InputTag('offlineSlimmedPrimaryVertices'))
 
     ###############################################
@@ -1438,6 +1428,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
 
     # Higgs tagging commissioning
+    from RecoBTag.SecondaryVertex.trackSelection_cff import trackSelectionBlock
     process.pfBoostedDoubleSVTagInfosCHS = cms.EDProducer("BoostedDoubleSVProducer",
         trackSelectionBlock,
         beta=cms.double(1.0),
@@ -1836,6 +1827,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # mini-isolation
     mu_isovals = []
 
+    from UHH2.core.muon_pfMiniIsolation_cff import load_muonPFMiniIso
     load_muonPFMiniIso(process, 'muonPFMiniIsoSequenceSTAND', algo='STAND',
                        src='slimmedMuons',
                        src_charged_hadron='pfAllChargedHadrons',
@@ -1893,10 +1885,12 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     if(year == "2016v3"): runEnergyCorrections=False
 
     # this is the magic thing by the Egamma POG that does *everything*
+    from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
     setupEgammaPostRecoSeq(process, era=egamma_era, runVID=doRunVID, runEnergyCorrections=doRunEnergyCorrections)
 
     el_isovals = []
 
+    from UHH2.core.electron_pfMiniIsolation_cff import load_elecPFMiniIso
     load_elecPFMiniIso(process,
         'elecPFMiniIsoSequenceSTAND',
         algo = 'STAND',
