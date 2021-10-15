@@ -8,7 +8,6 @@ e.g.:
 >> import FWCore.ParameterSet.Config as cms
 >> from UHH2.core.ntuple_generator import generate_process
 >> process = generate_process(year="2016", useData=False)
-
 """
 
 def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
@@ -36,7 +35,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         If the year argument is not one of the allowable options
     """
 
-    import FWCore.ParameterSet.Config as cms    
+    import FWCore.ParameterSet.Config as cms
 
     year = str(year)  # sanitise string
     acceptable_years = ["2016v2", "2016v3", "2017v1", "2017v2", "2018", "UL16preVFP", "UL16postVFP", "UL17", "UL18"]
@@ -80,7 +79,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         'pfDeepCSVJetTags:probb',
         'pfDeepCSVJetTags:probbb',
         'pfBoostedDoubleSecondaryVertexAK8BJetTags',
-        'pfBoostedDoubleSecondaryVertexCA15BJetTags',
+        'pfBoostedDoubleSecondaryVertexCA15BJetTags'
     ]
 
     ak4btagDiscriminators = [
@@ -159,45 +158,46 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     # from RecoBTag.ONNXRuntime.pfParticleNet_cff import _pfParticleNetJetTagsAll as pfParticleNetJetTagsAll
     pfParticleNetJetTagsAll = [
-    'pfParticleNetJetTags:probTbcq',
-    'pfParticleNetJetTags:probTbqq',
-    'pfParticleNetJetTags:probTbc',
-    'pfParticleNetJetTags:probTbq',
-    'pfParticleNetJetTags:probTbel',
-    'pfParticleNetJetTags:probTbmu',
-    'pfParticleNetJetTags:probTbta',
-    'pfParticleNetJetTags:probWcq',
-    'pfParticleNetJetTags:probWqq',
-    'pfParticleNetJetTags:probZbb',
-    'pfParticleNetJetTags:probZcc',
-    'pfParticleNetJetTags:probZqq',
-    'pfParticleNetJetTags:probHbb',
-    'pfParticleNetJetTags:probHcc',
-    'pfParticleNetJetTags:probHqqqq',
-    'pfParticleNetJetTags:probQCDbb',
-    'pfParticleNetJetTags:probQCDcc',
-    'pfParticleNetJetTags:probQCDb',
-    'pfParticleNetJetTags:probQCDc',
-    'pfParticleNetJetTags:probQCDothers',
-    'pfParticleNetDiscriminatorsJetTags:TvsQCD',
-    'pfParticleNetDiscriminatorsJetTags:WvsQCD',
-    'pfParticleNetDiscriminatorsJetTags:ZvsQCD',
-    'pfParticleNetDiscriminatorsJetTags:ZbbvsQCD',
-    'pfParticleNetDiscriminatorsJetTags:HbbvsQCD',
-    'pfParticleNetDiscriminatorsJetTags:HccvsQCD',
-    'pfParticleNetDiscriminatorsJetTags:H4qvsQCD',
-    'pfMassDecorrelatedParticleNetJetTags:probXbb',
-    'pfMassDecorrelatedParticleNetJetTags:probXcc',
-    'pfMassDecorrelatedParticleNetJetTags:probXqq',
-    'pfMassDecorrelatedParticleNetJetTags:probQCDbb',
-    'pfMassDecorrelatedParticleNetJetTags:probQCDcc',
-    'pfMassDecorrelatedParticleNetJetTags:probQCDb',
-    'pfMassDecorrelatedParticleNetJetTags:probQCDc',
-    'pfMassDecorrelatedParticleNetJetTags:probQCDothers',
-    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XbbvsQCD',
-    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XccvsQCD',
-    'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XqqvsQCD',
-    'pfParticleNetMassRegressionJetTags:mass']
+        'pfParticleNetJetTags:probTbcq',
+        'pfParticleNetJetTags:probTbqq',
+        'pfParticleNetJetTags:probTbc',
+        'pfParticleNetJetTags:probTbq',
+        'pfParticleNetJetTags:probTbel',
+        'pfParticleNetJetTags:probTbmu',
+        'pfParticleNetJetTags:probTbta',
+        'pfParticleNetJetTags:probWcq',
+        'pfParticleNetJetTags:probWqq',
+        'pfParticleNetJetTags:probZbb',
+        'pfParticleNetJetTags:probZcc',
+        'pfParticleNetJetTags:probZqq',
+        'pfParticleNetJetTags:probHbb',
+        'pfParticleNetJetTags:probHcc',
+        'pfParticleNetJetTags:probHqqqq',
+        'pfParticleNetJetTags:probQCDbb',
+        'pfParticleNetJetTags:probQCDcc',
+        'pfParticleNetJetTags:probQCDb',
+        'pfParticleNetJetTags:probQCDc',
+        'pfParticleNetJetTags:probQCDothers',
+        'pfParticleNetDiscriminatorsJetTags:TvsQCD',
+        'pfParticleNetDiscriminatorsJetTags:WvsQCD',
+        'pfParticleNetDiscriminatorsJetTags:ZvsQCD',
+        'pfParticleNetDiscriminatorsJetTags:ZbbvsQCD',
+        'pfParticleNetDiscriminatorsJetTags:HbbvsQCD',
+        'pfParticleNetDiscriminatorsJetTags:HccvsQCD',
+        'pfParticleNetDiscriminatorsJetTags:H4qvsQCD',
+        'pfMassDecorrelatedParticleNetJetTags:probXbb',
+        'pfMassDecorrelatedParticleNetJetTags:probXcc',
+        'pfMassDecorrelatedParticleNetJetTags:probXqq',
+        'pfMassDecorrelatedParticleNetJetTags:probQCDbb',
+        'pfMassDecorrelatedParticleNetJetTags:probQCDcc',
+        'pfMassDecorrelatedParticleNetJetTags:probQCDb',
+        'pfMassDecorrelatedParticleNetJetTags:probQCDc',
+        'pfMassDecorrelatedParticleNetJetTags:probQCDothers',
+        'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XbbvsQCD',
+        'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XccvsQCD',
+        'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XqqvsQCD',
+        'pfParticleNetMassRegressionJetTags:mass'
+    ]
     ak8btagDiscriminators += pfParticleNetJetTagsAll
 
     bTagInfos = [
@@ -334,7 +334,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         "UL18": {
             "data": "106X_dataRun2_v35",
             "mc": "106X_upgrade2018_realistic_v16_L1v1",
-        },
+        }
     }
     if set(global_tags.keys()) != set(acceptable_years):
         raise KeyError("Mismatch between acceptable_years and global_tags")
@@ -367,7 +367,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                            'drop 11 <= abs(pdgId) <= 16 && numberOfMothers() == 1 && abs(mother().pdgId())==6',
                                            'keep 11 <= abs(pdgId) <= 16 && numberOfMothers() == 1 && abs(mother().pdgId())==6 ' \
                                            '&& mother().numberOfDaughters() > 2 && abs(mother().daughter(0).pdgId()) != 24 ' \
-                                           '&& abs(mother().daughter(1).pdgId()) != 24 && abs(mother().daughter(2).pdgId()) != 24',
+                                           '&& abs(mother().daughter(1).pdgId()) != 24 && abs(mother().daughter(2).pdgId()) != 24'
                                        )
     )
     task.add(process.prunedPrunedGenParticles)
