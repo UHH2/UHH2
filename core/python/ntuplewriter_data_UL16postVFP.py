@@ -13,7 +13,7 @@ process = generate_process(year="UL16postVFP", useData=True)
 
 # Please do not commit changes to source filenames - used for consistency testing
 process.source.fileNames = cms.untracked.vstring([
-    '/store/data/Run2016F/JetHT/MINIAOD/21Feb2020_UL2016-v1/20000/0A917D93-1CCE-8D47-ABFB-24E36E58575F.root'
+    '/store/data/Run2016F/JetHT/MINIAOD/UL2016_MiniAODv2-v2/70000/7265A535-3E52-6943-89F6-9D1E0800C538.root'
 ])
 
 # Do this after setting process.source.fileNames, since we want the ability to override it on the commandline

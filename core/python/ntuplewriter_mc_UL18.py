@@ -13,7 +13,7 @@ process = generate_process(year="UL18", useData=False)
 
 # Please do not commit changes to source filenames - used for consistency testing
 process.source.fileNames = cms.untracked.vstring([
-    '/store/mc/RunIISummer19UL18MiniAOD/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v11_L1v1-v2/10000/CB2A4110-1466-E949-BFE4-661AFEB27197.root'
+    '/store/mc/RunIISummer20UL18MiniAODv2/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/120000/7607A42F-199C-0B4D-89FE-1887216C8D84.root'
 ])
 
 # Do this after setting process.source.fileNames, since we want the ability to override it on the commandline
