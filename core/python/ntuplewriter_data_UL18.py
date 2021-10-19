@@ -13,9 +13,9 @@ process = generate_process(year="UL18", useData=True)
 
 # Please do not commit changes to source filenames - used for consistency testing
 process.source.fileNames = cms.untracked.vstring([
-    '/store/data/Run2018B/JetHT/MINIAOD/12Nov2019_UL2018-v2/110000/C65A083B-9762-AF49-ACA1-DA764EA05A9E.root'
-    # '/store/data/Run2018B/SingleMuon/MINIAOD/12Nov2019_UL2018-v2/70000/5EEF8EA9-86A1-A147-91BB-194B64FC4972.root'
-    # '/store/data/Run2018B/EGamma/MINIAOD/12Nov2019_UL2018-v2/100000/F37232DA-6F44-D640-A3BB-5CFEC6D6D04A.root'
+    '/store/data/Run2018B/JetHT/MINIAOD/UL2018_MiniAODv2-v1/260000/DBA9BBD8-CE95-AA40-97C0-17C5AAED2AE8.root'
+    # '/store/data/Run2018B/SingleMuon/MINIAOD/UL2018_MiniAODv2-v2/100000/B29BDCC8-5429-7244-96D9-A5BF6C04BB73.root'
+    # '/store/data/Run2018B/EGamma/MINIAOD/UL2018_MiniAODv2-v1/2610000/16C79B67-BD8F-884F-8DC9-8025C13F6E72.root'
 ])
 
 # Do this after setting process.source.fileNames, since we want the ability to override it on the commandline
