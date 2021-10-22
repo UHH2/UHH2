@@ -112,6 +112,25 @@ class Electron : public RecParticle {
     m_full5x5_e1x5 = 0;
     m_full5x5_e2x5Max = 0;
     m_full5x5_e5x5 = 0;
+
+    m_dxylog = -99;
+    m_miniIsoCharged = -99;
+    m_miniIsoNeutral = -99;
+    m_sip3d = -99;
+    m_dzlog = -99;
+    m_jetNDauChargedMVASel = -99;
+    m_pTRel = -99;
+    m_ptRatio = -99;
+    m_bTagDeepJetClosestJet = -99;
+
+    m_puppiChargedHadronIso = -99;
+    m_puppiNeutralHadronIso = -99;
+    m_puppiPhotonIso = -99;
+    m_puppiNoLeptonsChargedHadronIso = -99;
+    m_puppiNoLeptonsNeutralHadronIso = -99;
+    m_puppiNoLeptonsPhotonIso = -99;
+
+    m_electronMVATOP = -99;
   }
 
   float supercluster_eta() const{return m_supercluster_eta;}
@@ -155,6 +174,25 @@ class Electron : public RecParticle {
   float pfMINIIso_Ph_pfwgt() const { return m_pfMINIIso_Ph_pfwgt; }
 
   double minDeltaRToL1EGamma() const{return m_minDeltaRToL1EGamma;}
+
+  float dxylog()                          const { return m_dxylog;}
+  float miniIsoCharged()                  const { return m_miniIsoCharged;}
+  float miniIsoNeutral()                  const { return m_miniIsoNeutral;}
+  float sip3d()                           const { return m_sip3d;}
+  float dzlog()                           const { return m_dzlog;}
+  float jetNDauChargedMVASel()            const { return m_jetNDauChargedMVASel;}
+  float pTRel()                           const { return m_pTRel;}
+  float ptRatio()                         const { return m_ptRatio;}
+  float bTagDeepJetClosestJet()           const { return m_bTagDeepJetClosestJet;}
+
+  float puppiChargedHadronIso()           const { return m_puppiChargedHadronIso;}
+  float puppiNeutralHadronIso()           const { return m_puppiNeutralHadronIso;}
+  float puppiPhotonIso()                  const { return m_puppiPhotonIso;}
+  float puppiNoLeptonsChargedHadronIso()  const { return m_puppiNoLeptonsChargedHadronIso;}
+  float puppiNoLeptonsNeutralHadronIso()  const { return m_puppiNoLeptonsNeutralHadronIso;}
+  float puppiNoLeptonsPhotonIso()         const { return m_puppiNoLeptonsPhotonIso;}
+
+  float electronMVATOP()                      const { return m_electronMVATOP;}
 
   const std::vector<source_candidate>& source_candidates() const { return m_source_candidates; }
 
@@ -215,6 +253,25 @@ class Electron : public RecParticle {
   void set_full5x5_e1x5(float x){m_full5x5_e1x5 = x;}
   void set_full5x5_e2x5Max(float x){m_full5x5_e2x5Max = x;}
   void set_full5x5_e5x5(float x){m_full5x5_e5x5 = x;}
+
+  void set_dxylog(float x)                           { m_dxylog=x;}
+  void set_miniIsoCharged(float x)                   { m_miniIsoCharged=x;}
+  void set_miniIsoNeutral(float x)                   { m_miniIsoNeutral=x;}
+  void set_sip3d(float x)                            { m_sip3d=x;}
+  void set_dzlog(float x)                            { m_dzlog=x;}
+  void set_jetNDauChargedMVASel(float x)             { m_jetNDauChargedMVASel=x;}
+  void set_electronMVATOP(float x)                   { m_electronMVATOP=x;}
+  void set_pTRel(float x)                            { m_pTRel=x;}
+  void set_ptRatio(float x)                          { m_ptRatio=x;}
+  void set_bTagDeepJetClosestJet(float x)            { m_bTagDeepJetClosestJet=x;}
+
+  void set_puppiChargedHadronIso(float x)            { m_puppiChargedHadronIso=x;}
+  void set_puppiNeutralHadronIso(float x)            { m_puppiNeutralHadronIso=x;}
+  void set_puppiPhotonIso(float x)                   { m_puppiPhotonIso=x;}
+  void set_puppiNoLeptonsChargedHadronIso(float x)   { m_puppiNoLeptonsChargedHadronIso=x;}
+  void set_puppiNoLeptonsNeutralHadronIso(float x)   { m_puppiNoLeptonsNeutralHadronIso=x;}
+  void set_puppiNoLeptonsPhotonIso(float x)          { m_puppiNoLeptonsPhotonIso=x;}
+
 
   float gsfTrack_dxy_vertex(const float point_x, const float point_y) const{
     return ( - (m_gsfTrack_vx-point_x) * m_gsfTrack_py + (m_gsfTrack_vy-point_y) * m_gsfTrack_px ) / sqrt(m_gsfTrack_px*m_gsfTrack_px+m_gsfTrack_py*m_gsfTrack_py);
@@ -315,4 +372,23 @@ class Electron : public RecParticle {
   float m_full5x5_e1x5;
   float m_full5x5_e2x5Max;
   float m_full5x5_e5x5;
+
+  float m_dxylog;
+  float m_miniIsoCharged;
+  float m_miniIsoNeutral;
+  float m_sip3d;
+  float m_dzlog;
+  float m_jetNDauChargedMVASel;
+  float m_pTRel;
+  float m_ptRatio;
+  float m_bTagDeepJetClosestJet;
+
+  float m_puppiChargedHadronIso;
+  float m_puppiNeutralHadronIso;
+  float m_puppiPhotonIso;
+  float m_puppiNoLeptonsChargedHadronIso;
+  float m_puppiNoLeptonsNeutralHadronIso;
+  float m_puppiNoLeptonsPhotonIso;
+
+  float m_electronMVATOP;
 };

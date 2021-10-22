@@ -1847,10 +1847,80 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         task.add(getattr(process, m))
         task.add(getattr(process, m.replace("Value", "Deposit")))
 
-    process.slimmedMuonsUSER = cms.EDProducer('PATMuonUserData',
+    process.slimmedMuonsData = cms.EDProducer('PATMuonUserData',
                                               src=cms.InputTag('slimmedMuons'),
                                               vmaps_double=cms.vstring(mu_isovals),
                                               )
+    task.add(process.slimmedMuonsData)
+
+
+    #### Muons miniIso
+    process.isoForMu = cms.EDProducer("MuonIsoValueMapProducer",
+                              src = cms.InputTag("slimmedMuonsData"),
+                              relative = cms.bool(False),
+                              rho_MiniIso = cms.InputTag("fixedGridRhoFastjetAll"),
+                              EAFile_MiniIso = cms.FileInPath("PhysicsTools/NanoAOD/data/effAreaMuons_cone03_pfNeuHadronsAndPhotons_94X.txt"),
+                          )
+    task.add(process.isoForMu)
+
+    process.ptRatioRelForMu = cms.EDProducer("MuonJetVarProducer",
+                                             srcJet = cms.InputTag("jetsAk4CHS"),
+                                             srcLep = cms.InputTag("slimmedMuonsData"),
+                                             srcVtx = cms.InputTag("offlineSlimmedPrimaryVertices"),
+                                         )
+    task.add(process.ptRatioRelForMu)
+
+
+    process.slimmedMuonsWithUserData = cms.EDProducer("PATMuonUserDataEmbedder",
+                                              src = cms.InputTag("slimmedMuonsData"),
+                                              userFloats = cms.PSet(
+                                                  miniIsoChg = cms.InputTag("isoForMu:miniIsoChg"),
+                                                  miniIsoAll = cms.InputTag("isoForMu:miniIsoAll"),
+                                                  ptRatio = cms.InputTag("ptRatioRelForMu:ptRatio"),
+                                                  ptRel = cms.InputTag("ptRatioRelForMu:ptRel"),
+                                                  jetNDauChargedMVASel = cms.InputTag("ptRatioRelForMu:jetNDauChargedMVASel")
+                                              ),
+                                              userCands = cms.PSet(
+                                                  jetForLepJetVar = cms.InputTag("ptRatioRelForMu:jetForLepJetVar") # warning: Ptr is null if no match is found
+                                              ),
+                                          )
+    task.add(process.slimmedMuonsWithUserData)
+
+    muonMVAweightFile="UHH2/common/data/UL16preVFP/TMVA_BDTG_TOP_muon_2016.weights.xml"
+    if (year=="UL17"):  muonMVAweightFile="UHH2/common/data/UL17/TMVA_BDTG_TOP_muon_2017.weights.xml"
+    elif(year=="UL18"): muonMVAweightFile="UHH2/common/data/UL18/TMVA_BDTG_TOP_muon_2018.weights.xml"
+    
+
+    process.muonMVATOP= cms.EDProducer("MuonBaseMVAValueMapProducer",
+                                       src = cms.InputTag("slimmedMuonsWithUserData"),
+                                       weightFile =  cms.FileInPath(muonMVAweightFile),
+                                       name = cms.string("muonMVATOP"),
+                                       isClassifier = cms.bool(True),
+                                    variablesOrder = cms.vstring(["dxylog", "miniIsoCharged", "miniIsoNeutral", "pTRel", "sip3d", "segmentCompatibility", "ptRatio", "bTagDeepJetClosestJet", "pt", "trackMultClosestJet", "etaAbs", "dzlog", "relIso"]),
+                                       variables = cms.PSet(
+                                           dxylog = cms.string("log(abs(dB('PV2D')))"),
+                                           miniIsoCharged = cms.string("userFloat('miniIsoChg')/pt"),
+                                           miniIsoNeutral = cms.string("(userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt"),
+                                           pTRel = cms.string("?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0"),
+                                           sip3d = cms.string("abs(dB('PV3D')/edB('PV3D'))"),
+                                           segmentCompatibility = cms.string("segmentCompatibility"),
+                                           ptRatio = cms.string("?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
+                                           bTagDeepJetClosestJet = cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probbb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:problepb'),0.0):0.0"),
+                                           pt = cms.string("pt"),
+                                           trackMultClosestJet = cms.string("?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
+                                           etaAbs = cms.string("abs(eta)"),
+                                           dzlog = cms.string("log(abs(dB('PVDZ')))"),
+                                           relIso = cms.string("(pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt"),
+                                       )
+                                   )
+    task.add(process.muonMVATOP)
+
+    process.slimmedMuonsUSER = cms.EDProducer("PATMuonUserDataEmbedder",
+                                              src = cms.InputTag("slimmedMuonsWithUserData"),
+                                              userFloats = cms.PSet(
+                                                  mvaTOP = cms.InputTag("muonMVATOP"),
+                                              ),
+                                          )
     task.add(process.slimmedMuonsUSER)
 
     ###############################################
@@ -1928,14 +1998,103 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     }
 
     # slimmedElectronsUSER ( = slimmedElectrons + USER variables)
-    process.slimmedElectronsUSER = cms.EDProducer('PATElectronUserData',
+    process.slimmedElectronsData = cms.EDProducer('PATElectronUserData',
                                                   src=cms.InputTag(
                                                       'slimmedElectrons'),
 
                                                   vmaps_double=cms.vstring(el_isovals),
                                                   effAreas_file=cms.FileInPath(iso_input_era_dict[year].isoEffAreas)
                                                   )
+    task.add(process.slimmedElectronsData)
+
+    EAFile_MiniIso_file = "RecoEgamma/ElectronIdentification/data/Spring15/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_25ns.txt"
+    EAFile_PFIso_file = "RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt"
+    if(year=="UL16preVFP" or year=="UL16postVFP"):
+            EAFile_MiniIso_file = "RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt"
+            EAFile_PFIso_file = "RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt"
+    
+
+    process.isoForEle = cms.EDProducer("EleIsoValueMapProducer",
+                                       src = cms.InputTag("slimmedElectronsData"),
+                                       relative = cms.bool(False),
+                                       rho_MiniIso = cms.InputTag("fixedGridRhoFastjetAll"),
+                                       rho_PFIso = cms.InputTag("fixedGridRhoFastjetAll"),
+                                       EAFile_MiniIso = cms.FileInPath(EAFile_MiniIso_file),
+                                       EAFile_PFIso = cms.FileInPath(EAFile_PFIso_file),
+                                   )
+    task.add(process.isoForEle)
+
+    process.ptRatioRelForEle = cms.EDProducer("ElectronJetVarProducer",
+                                      srcJet = cms.InputTag("jetsAk4CHS"),
+                                      srcLep = cms.InputTag("slimmedElectronsData"),
+                                      srcVtx = cms.InputTag("offlineSlimmedPrimaryVertices"),
+                                  )
+
+    task.add(process.ptRatioRelForEle)
+
+    from RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_noIso_V2_cff import mvaEleID_Fall17_noIso_V2_producer_config
+    process.electronMVAValueMapProducerv2 = cms.EDProducer('ElectronMVAValueMapProducer',
+                                             src = cms.InputTag('slimmedElectronsData'),
+                                             mvaConfigurations = cms.VPSet(mvaEleID_Fall17_noIso_V2_producer_config)
+                                             )
+    task.add(process.electronMVAValueMapProducerv2)
+
+    process.slimmedElectronsWithUserData = cms.EDProducer("PATElectronUserDataEmbedder",
+                                                          src = cms.InputTag("slimmedElectronsData"),
+                                                          userFloats = cms.PSet(
+                                                              mvaFall17V2noIso = cms.InputTag("electronMVAValueMapProducerv2:ElectronMVAEstimatorRun2Fall17NoIsoV2Values"),
+                                                              miniIsoChg = cms.InputTag("isoForEle:miniIsoChg"),
+                                                              miniIsoAll = cms.InputTag("isoForEle:miniIsoAll"),
+                                                              PFIsoChg = cms.InputTag("isoForEle:PFIsoChg"),
+                                                              PFIsoAll = cms.InputTag("isoForEle:PFIsoAll"),
+                                                              PFIsoAll04 = cms.InputTag("isoForEle:PFIsoAll04"),
+                                                              ptRatio = cms.InputTag("ptRatioRelForEle:ptRatio"),
+                                                              ptRel = cms.InputTag("ptRatioRelForEle:ptRel"),
+                                                              jetNDauChargedMVASel = cms.InputTag("ptRatioRelForEle:jetNDauChargedMVASel")
+                                                          ),
+                                                          userCands = cms.PSet(
+                                                              jetForLepJetVar = cms.InputTag("ptRatioRelForEle:jetForLepJetVar") # warning: Ptr is null if no match is found
+                                                          )
+                                                      )
+    task.add(process.slimmedElectronsWithUserData)
+
+    electronMVAweightFile="UHH2/common/data/UL16preVFP/TMVA_BDTG_TOP_elec_2016.weights.xml"
+    if (year=="UL17"):  electronMVAweightFile="UHH2/common/data/UL17/TMVA_BDTG_TOP_elec_2017.weights.xml"
+    elif(year=="UL18"): electronMVAweightFile="UHH2/common/data/UL18/TMVA_BDTG_TOP_elec_2018.weights.xml"
+
+    process.electronMVATOP = cms.EDProducer("EleBaseMVAValueMapProducer",
+                                            src = cms.InputTag("slimmedElectronsWithUserData"),
+                                            weightFile =  cms.FileInPath(electronMVAweightFile),
+                                            name = cms.string("electronMVATOP"),
+                                            isClassifier = cms.bool(True),
+                                            variablesOrder = cms.vstring(["dxylog", "miniIsoCharged", "miniIsoNeutral", "pTRel", "sip3d", "mvaIdFall17v2noIso", "ptRatio", "bTagDeepJetClosestJet", "pt", "trackMultClosestJet", "etaAbs", "dzlog", "relIso"]),
+                                            variables = cms.PSet(
+                                                dxylog = cms.string("log(abs(dB('PV2D')))"),
+                                                miniIsoCharged = cms.string("userFloat('miniIsoChg')/pt"),
+                                                miniIsoNeutral = cms.string("(userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt"),
+                                                pTRel = cms.string("?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0"),
+                                                sip3d = cms.string("abs(dB('PV3D')/edB('PV3D'))"),
+                                                mvaIdFall17v2noIso = cms.string("userFloat('mvaFall17V2noIso')"),
+                                                ptRatio = cms.string("?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+userFloat('PFIsoAll04')/pt)"),
+                                                bTagDeepJetClosestJet = cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probbb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:problepb'),0.0):0.0"),
+                                                pt = cms.string("pt/userFloat('ecalTrkEnergyPostCorr')*userFloat('ecalTrkEnergyPreCorr')"),
+                                                trackMultClosestJet = cms.string("?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
+                                                etaAbs = cms.string("abs(eta)"),
+                                                dzlog = cms.string("log(abs(dB('PVDZ')))"),
+                                                relIso = cms.string("userFloat('PFIsoAll')/pt"),
+                                            )
+                                        )
+    task.add(process.electronMVATOP)
+
+    process.slimmedElectronsUSER = cms.EDProducer("PATElectronUserDataEmbedder",
+                                              src = cms.InputTag("slimmedElectronsWithUserData"),
+                                              userFloats = cms.PSet(
+                                                  mvaTOP = cms.InputTag("electronMVATOP"),
+                                              ),
+                                          )
     task.add(process.slimmedElectronsUSER)
+
+
 
     rename_module(process, task, "slimmedPhotons", "slimmedPhotonsUSER", False)
 
