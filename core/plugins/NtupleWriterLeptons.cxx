@@ -7,6 +7,7 @@
 #include "DataFormats/PatCandidates/interface/Photon.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Tau.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
 
 #include "DataFormats/HLTReco/interface/TriggerTypeDefs.h"
 
@@ -112,6 +113,30 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     ele.set_dEtaInSeed(pat_ele.deltaEtaSeedClusterTrackAtVtx());
 
     ele.set_dxy(pat_ele.gsfTrack()->dxy(PV.position()));// correct for vertex postion
+
+    ele.set_dxylog(log(abs(pat_ele.dB(pat::Electron::PV2D))));
+    ele.set_miniIsoCharged(pat_ele.hasUserFloat("miniIsoChg")?pat_ele.hasUserFloat("miniIsoChg")/pat_ele.pt(): -999.);
+    ele.set_miniIsoNeutral((pat_ele.hasUserFloat("miniIsoAll")&&pat_ele.hasUserFloat("miniIsoChg")) ? (pat_ele.userFloat("miniIsoAll")-pat_ele.userFloat("miniIsoChg"))/pat_ele.pt():-999.);
+    ele.set_sip3d(abs(pat_ele.dB(pat::Electron::PV3D)/pat_ele.edB(pat::Electron::PV3D)));
+    ele.set_dzlog(log(abs(pat_ele.dB(pat::Electron::PVDZ))));
+
+    ele.set_jetNDauChargedMVASel(pat_ele.hasUserCand("jetForLepJetVar")?pat_ele.userFloat("jetNDauChargedMVASel"):-999.);
+    ele.set_pTRel(pat_ele.hasUserCand("jetForLepJetVar")?pat_ele.userFloat("ptRel"):-999.);
+    ele.set_ptRatio(pat_ele.hasUserCand("jetForLepJetVar")?min(pat_ele.userFloat("ptRatio"),float(1.5)):-999.);
+    
+    const pat::Jet* closestJet = nullptr;
+    if (pat_ele.hasUserCand("jetForLepJetVar")){closestJet = dynamic_cast<const pat::Jet*>(pat_ele.userCand("jetForLepJetVar").get());}
+    ele.set_bTagDeepJetClosestJet(closestJet?max(closestJet->bDiscriminator("pfDeepFlavourJetTags:probbb")+closestJet->bDiscriminator("pfDeepFlavourJetTags:probb")+closestJet->bDiscriminator("pfDeepFlavourJetTags:problepb"),float(0.0)):-1.);
+
+    ele.set_electronMVATOP(pat_ele.hasUserFloat("mvaTOP")?pat_ele.userFloat("mvaTOP"):-999.);
+
+    ele.set_puppiChargedHadronIso(pat_ele.puppiChargedHadronIso());
+    ele.set_puppiNeutralHadronIso(pat_ele.puppiNeutralHadronIso());          
+    ele.set_puppiPhotonIso(pat_ele.puppiPhotonIso());            
+    ele.set_puppiNoLeptonsChargedHadronIso(pat_ele.puppiNoLeptonsChargedHadronIso());
+    ele.set_puppiNoLeptonsNeutralHadronIso(pat_ele.puppiNoLeptonsNeutralHadronIso()); 
+    ele.set_puppiNoLeptonsPhotonIso(pat_ele.puppiNoLeptonsPhotonIso());   
+
 
     for(const auto& tag_str : IDtag_keys){
       if(!pat_ele.isElectronIDAvailable(tag_str)) throw cms::Exception("Missing Electron ID", "ElectronID not found: "+tag_str);
@@ -378,6 +403,28 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent, 
     mu.set_pfMINIIso_PU      (pat_mu.hasUserFloat("muPFMiniIsoValuePUSTAND") ? pat_mu.userFloat("muPFMiniIsoValuePUSTAND") : -999.);
     mu.set_pfMINIIso_NH_pfwgt(pat_mu.hasUserFloat("muPFMiniIsoValueNHPFWGT") ? pat_mu.userFloat("muPFMiniIsoValueNHPFWGT") : -999.);
     mu.set_pfMINIIso_Ph_pfwgt(pat_mu.hasUserFloat("muPFMiniIsoValuePhPFWGT") ? pat_mu.userFloat("muPFMiniIsoValuePhPFWGT") : -999.);
+
+    mu.set_dxylog(log(abs(pat_mu.dB(pat::Muon::PV2D))));
+    mu.set_miniIsoCharged(pat_mu.hasUserFloat("miniIsoChg")?pat_mu.userFloat("miniIsoChg")/pat_mu.pt(): -999.);
+    mu.set_miniIsoNeutral(pat_mu.hasUserFloat("miniIsoAll")&&pat_mu.hasUserFloat("miniIsoChg") ? (pat_mu.userFloat("miniIsoAll")-pat_mu.userFloat("miniIsoChg"))/pat_mu.pt():-999.);
+    mu.set_sip3d(abs(pat_mu.dB(pat::Muon::PV3D)/pat_mu.edB(pat::Muon::PV3D)));
+    mu.set_dzlog(log(abs(pat_mu.dB(pat::Muon::PVDZ))));
+
+    mu.set_puppiChargedHadronIso(pat_mu.puppiChargedHadronIso());
+    mu.set_puppiNeutralHadronIso(pat_mu.puppiNeutralHadronIso());          
+    mu.set_puppiPhotonIso(pat_mu.puppiPhotonIso());            
+    mu.set_puppiNoLeptonsChargedHadronIso(pat_mu.puppiNoLeptonsChargedHadronIso());
+    mu.set_puppiNoLeptonsNeutralHadronIso(pat_mu.puppiNoLeptonsNeutralHadronIso()); 
+    mu.set_puppiNoLeptonsPhotonIso(pat_mu.puppiNoLeptonsPhotonIso());   
+
+    mu.set_jetNDauChargedMVASel(pat_mu.hasUserCand("jetForLepJetVar")?pat_mu.userFloat("jetNDauChargedMVASel"):-999.);
+    mu.set_pTRel(pat_mu.hasUserCand("jetForLepJetVar")?pat_mu.userFloat("ptRel"):-999.);
+    mu.set_ptRatio(pat_mu.hasUserCand("jetForLepJetVar")?min(pat_mu.userFloat("ptRatio"),float(1.5)):-999.);
+    const pat::Jet* closestJet = nullptr;
+    if (pat_mu.hasUserCand("jetForLepJetVar")){closestJet = dynamic_cast<const pat::Jet*>(pat_mu.userCand("jetForLepJetVar").get());}
+    mu.set_bTagDeepJetClosestJet(closestJet?max(closestJet->bDiscriminator("pfDeepFlavourJetTags:probbb")+closestJet->bDiscriminator("pfDeepFlavourJetTags:probb")+closestJet->bDiscriminator("pfDeepFlavourJetTags:problepb"),float(0.0)):-1.);
+
+    mu.set_muonMVATOP(pat_mu.hasUserFloat("mvaTOP")?pat_mu.userFloat("mvaTOP"):-999.);
 
     const auto & tunePTrack = pat_mu.tunePMuonBestTrack();
     mu.set_tunePTrackPt(tunePTrack->pt());

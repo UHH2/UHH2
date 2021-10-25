@@ -145,6 +145,25 @@ class Muon : public Particle {
     m_minDeltaRToL1Muon = 10.;
 
     m_source_candidates.clear();
+
+    m_dxylog = -99;
+    m_miniIsoCharged = -99;
+    m_miniIsoNeutral = -99;
+    m_sip3d = -99;
+    m_dzlog = -99;
+    m_jetNDauChargedMVASel = -99;
+    m_pTRel = -99;
+    m_ptRatio = -99;
+    m_bTagDeepJetClosestJet = -99;
+
+    m_puppiChargedHadronIso = -99;
+    m_puppiNeutralHadronIso = -99;
+    m_puppiPhotonIso = -99;
+    m_puppiNoLeptonsChargedHadronIso = -99;
+    m_puppiNoLeptonsNeutralHadronIso = -99;
+    m_puppiNoLeptonsPhotonIso = -99;
+
+    m_muonMVATOP = -99;
   }
 
   float dxy() const{return m_dxy;}
@@ -186,6 +205,26 @@ class Muon : public Particle {
   MuonTrackType tunePTrackType() const {return m_tunePTrackType;}
 
   double minDeltaRToL1Muon() const{return m_minDeltaRToL1Muon;}
+
+  float dxylog()                          const { return m_dxylog;}
+  float miniIsoCharged()                  const { return m_miniIsoCharged;}
+  float miniIsoNeutral()                  const { return m_miniIsoNeutral;}
+  float sip3d()                           const { return m_sip3d;}
+  float dzlog()                           const { return m_dzlog;}
+  float jetNDauChargedMVASel()            const { return m_jetNDauChargedMVASel;}
+  float pTRel()                           const { return m_pTRel;}
+  float ptRatio()                         const { return m_ptRatio;}
+  float bTagDeepJetClosestJet()           const { return m_bTagDeepJetClosestJet;}
+  
+
+  float puppiChargedHadronIso()           const { return m_puppiChargedHadronIso;}
+  float puppiNeutralHadronIso()           const { return m_puppiNeutralHadronIso;}
+  float puppiPhotonIso()                  const { return m_puppiPhotonIso;}
+  float puppiNoLeptonsChargedHadronIso()  const { return m_puppiNoLeptonsChargedHadronIso;}
+  float puppiNoLeptonsNeutralHadronIso()  const { return m_puppiNoLeptonsNeutralHadronIso;}
+  float puppiNoLeptonsPhotonIso()         const { return m_puppiNoLeptonsPhotonIso;}
+
+  float muonMVATOP()                      const { return m_muonMVATOP;}
 
   const std::vector<source_candidate>& source_candidates() const { return m_source_candidates; }
 
@@ -239,6 +278,24 @@ class Muon : public Particle {
   float relIso() const{
     return ( m_sumChargedHadronPt + std::max( 0.0, m_sumNeutralHadronEt + m_sumPhotonEt - 0.5*m_sumPUPt) ) / pt();
   }
+
+  void set_dxylog(float x)                           { m_dxylog=x;}
+  void set_miniIsoCharged(float x)                   { m_miniIsoCharged=x;}
+  void set_miniIsoNeutral(float x)                   { m_miniIsoNeutral=x;}
+  void set_sip3d(float x)                            { m_sip3d=x;}
+  void set_dzlog(float x)                            { m_dzlog=x;}
+  void set_jetNDauChargedMVASel(float x)             { m_jetNDauChargedMVASel=x;}
+
+  void set_puppiChargedHadronIso(float x)            { m_puppiChargedHadronIso=x;}
+  void set_puppiNeutralHadronIso(float x)            { m_puppiNeutralHadronIso=x;}
+  void set_puppiPhotonIso(float x)                   { m_puppiPhotonIso=x;}
+  void set_puppiNoLeptonsChargedHadronIso(float x)   { m_puppiNoLeptonsChargedHadronIso=x;}
+  void set_puppiNoLeptonsNeutralHadronIso(float x)   { m_puppiNoLeptonsNeutralHadronIso=x;}
+  void set_puppiNoLeptonsPhotonIso(float x)          { m_puppiNoLeptonsPhotonIso=x;}
+  void set_muonMVATOP(float x)                       { m_muonMVATOP=x;}
+  void set_pTRel(float x)                            { m_pTRel=x;}
+  void set_ptRatio(float x)                          { m_ptRatio=x;}
+  void set_bTagDeepJetClosestJet(float x)            { m_bTagDeepJetClosestJet=x;}
 
   operator FlavorParticle() const {
 
@@ -295,6 +352,25 @@ class Muon : public Particle {
   MuonTrackType m_tunePTrackType;
 
   double m_minDeltaRToL1Muon;
+
+  float m_dxylog;
+  float m_miniIsoCharged;
+  float m_miniIsoNeutral;
+  float m_sip3d;
+  float m_dzlog;
+  float m_jetNDauChargedMVASel;
+  float m_pTRel;
+  float m_ptRatio;
+  float m_bTagDeepJetClosestJet;
+  
+  float m_puppiChargedHadronIso;
+  float m_puppiNeutralHadronIso;
+  float m_puppiPhotonIso;
+  float m_puppiNoLeptonsChargedHadronIso;
+  float m_puppiNoLeptonsNeutralHadronIso;
+  float m_puppiNoLeptonsPhotonIso;
+  
+  float m_muonMVATOP;
 
   std::vector<source_candidate> m_source_candidates;
 
