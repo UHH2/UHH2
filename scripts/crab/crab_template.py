@@ -78,8 +78,37 @@ def get_request_name(dataset_name):
 
     return modified_name
 
+def get_ntuplewriter(dataset, jetConstituents=False):
+    ntuplewriter_name = 'ntuplewriter_'
 
-inputDatasets = ['/DYJetsToLL_M-50_HT-*to*_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_*/MINIAODSIM']
+    _,primary_ds_name,processed_ds_name,data_tier_name = tuple(dataset.split('/'))
+
+    if(data_tier_name == 'MINIAODSIM'):
+        ntuplewriter_name += 'mc_'
+    elif(data_tier_name == 'MINIAOD'):
+        ntuplewriter_name += 'data_'
+    else:
+        raise BaseException('Could not extract sample tier (MC;DATA) from DAS string:'%dataset)
+
+    year = re.search(r'UL(?:20)?1[678]',processed_ds_name)
+    if(year):
+        ntuplewriter_name += year.group(0).replace('20','')
+        if('16' in year.group(0)):
+            if('APV' in processed_ds_name or 'HIPM' in processed_ds_name):
+                ntuplewriter_name += 'preVFP'
+            else:
+                ntuplewriter_name += 'postVFP'
+    else:
+        raise BaseException('Could not extract year from DAS: %s'%dataset)
+    
+    if(jetConstituents):
+        ntuplewriter_name += '_leadingjetConstits'
+
+    ntuplewriter_name += '.py'
+    return ntuplewriter_name
+
+
+inputDatasets = ['/DYJetsToLL_M-50_HT-*to*_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/RunIISummer20UL16*APV*/MINIAODSIM']
 inputDatasets = autocomplete_Datasets(inputDatasets)
 requestNames = [get_request_name(x) for x in inputDatasets] # Here you can define custom request names if the get_request_names function doesn't return nice ones
 
@@ -105,7 +134,12 @@ config.General.transferOutputs = True
 config.General.transferLogs = True
 
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/ntuplewriter_mc_2016.py') # Don't forget to adjust this
+
+# By default choose the ntuplewriter based on the DAS string
+# set jetConstituents=True to take the version that stores the Constituents for the leading AK8 jets
+# You can also choose the ntuplewriter yourself by replacing the function get_ntuplewriter with the name of the ntuplewriter_*_*.py
+config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/', get_ntuplewriter(inputDatasets[0],jetConstituents=False))
+
 config.JobType.outputFiles = ["Ntuple.root"]
 config.JobType.maxMemoryMB = 2500
 
