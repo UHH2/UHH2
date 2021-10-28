@@ -16,7 +16,7 @@ from DasQuery import autocomplete_Datasets
 
 
 # set storeJetConstituents=True to store the constituents for the leading AK8 jets (using the ntuplewriter_*_leadingjetConstits)
-storeJetConstituents = True
+storeJetConstituents = False
 
 inputDatasets = [
     '/JetHT/Run2016*-HIPM_UL2016_MiniAODv2-v2/MINIAOD',
