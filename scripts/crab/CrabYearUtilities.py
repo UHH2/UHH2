@@ -1,4 +1,4 @@
-import re
+import re,os
 
 def get_request_name(dataset_name):
     """Generate short string to use for request name from full dataset name
@@ -109,7 +109,6 @@ def get_ntuplewriter(dataset, jetConstituents=False):
     ntuplewriter_name += '.py'
     return ntuplewriter_name
 
-def get_outLFNDirBase(dataset):
-    """Build outLFNDirBase from dataset DAS string"""
-    
-    return '/store/group/uhh/uhh2ntuples/RunII_106X_v1/%s/' % (get_year(dataset)) # FIXME: change to RunII_106X_v2 before central production in autumn 2021
+def get_outLFNDirBase(dataset, prefix = '/store/group/uhh/uhh2ntuples/RunII_106X_v1/'):# FIXME: change to RunII_106X_v2 before central production in autumn 2021
+    """Build outLFNDirBase from dataset DAS string by adding year dependent subdir to prefix."""
+    return os.path.join(prefix, get_year(dataset))

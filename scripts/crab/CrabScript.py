@@ -51,7 +51,10 @@ class CrabConfig:
                 if(self.config.JobType.DefaultPsetName):
                     self.config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/', get_ntuplewriter(listOfDatasets[i],self.config.General.storeJetConstituents))
                 if(self.config.Data.DefaultOutLFNDirBase):
-                    self.config.Data.outLFNDirBase = get_outLFNDirBase(listOfDatasets[i])
+                    if(hasattr(self.config.Data,'outLFNDirBasePrefix')):
+                        self.config.Data.outLFNDirBase = get_outLFNDirBase(listOfDatasets[i],prefix=self.config.Data.outLFNDirBasePrefix)
+                    else:
+                        self.config.Data.outLFNDirBase = get_outLFNDirBase(listOfDatasets[i])
 
                 #print "Working on DataSet", listOfDatasets[i],"Request Name", listOfNames[i]+namePostfix
 		#self._submit_(self.config)
