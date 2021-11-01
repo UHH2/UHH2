@@ -109,3 +109,16 @@ bool TopJetCleaner::process(uhh2::Event & event){
     clean_collection(topjet_collection, event, topjet_id);
     return true;
 }
+
+GenTopJetCleaner::GenTopJetCleaner(Context & ctx, const GenTopJetId & gentopjet_id_, string const & label_):
+    gentopjet_id(gentopjet_id_), hndl(ctx.get_handle<vector<GenTopJet>>(label_)) {}
+
+bool GenTopJetCleaner::process(uhh2::Event & event){
+    if (!event.is_valid(hndl)) {
+        cerr << "In GenTopJetCleaner: Handle not valid!\n";
+        assert(false);
+    }
+    vector<GenTopJet> & gentopjet_collection = event.get(hndl);
+    clean_collection(gentopjet_collection, event, gentopjet_id);
+    return true;
+}
