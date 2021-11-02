@@ -15,6 +15,23 @@ class CrabConfig:
         self.options = options
         self.command = command
 
+        self.storeJetConstituents = False
+        self.DefaultPsetName = True
+        self.DefaultOutLFNDirBase = True
+        self.outLFNDirBasePrefix = None
+        #getting values for UHH2 specific from crab config fields
+        if(hasattr(self.config,'UHH2')):
+            if(hasattr(self.config.UHH2,'storeJetConstituents')):
+                self.storeJetConstituents = self.config.UHH2.storeJetConstituents
+            if(hasattr(self.config.UHH2,'DefaultPsetName')):
+                self.DefaultPsetName = self.config.UHH2.DefaultPsetName
+            if(hasattr(self.config.UHH2,'DefaultOutLFNDirBase')):
+                self.DefaultOutLFNDirBase = self.config.UHH2.DefaultOutLFNDirBase
+            if(hasattr(self.config.UHH2,'outLFNDirBasePrefix')):
+                self.outLFNDirBasePrefix = self.config.UHH2.outLFNDirBasePrefix
+            #delete complete UHH2 specific ConfigSection, since crab will check against internal ConfigMapping for mispelled config attributes
+            del self.config.UHH2
+
     def _submit_(self, myconfig):
         try:
             if 'submit' not in self.command or 'resubmit' in self.command:
@@ -32,14 +49,6 @@ class CrabConfig:
     def ByDatasets(self,listOfDatasets, listOfNames, namePostfix):
         #print "DataSets", listOfDatasets,"Request Name", listOfNames, "Postfix",namePostfix
         
-        #setting default values for UHH2 specific crab config fields, if User has not set them earlier 
-        if(not hasattr(self.config.General,'storeJetConstituents')):
-            self.config.General.storeJetConstituents = False
-        if(not hasattr(self.config.JobType,'DefaultPsetName')):
-            self.config.JobType.DefaultPsetName = True
-        if(not hasattr(self.config.Data,'DefaultOutLFNDirBase')):
-            self.config.Data.DefaultOutLFNDirBase = True
-
         if(len(listOfNames)==len(listOfDatasets)):
             for i in range(0,len(listOfDatasets)):
                 print "Working on", listOfNames[i]+namePostfix
@@ -48,11 +57,11 @@ class CrabConfig:
 
 
                 #if user wants to provied psetname/outLFNDirBase themself, don't overwrite it here
-                if(self.config.JobType.DefaultPsetName):
-                    self.config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/', get_ntuplewriter(listOfDatasets[i],self.config.General.storeJetConstituents))
-                if(self.config.Data.DefaultOutLFNDirBase):
-                    if(hasattr(self.config.Data,'outLFNDirBasePrefix')):
-                        self.config.Data.outLFNDirBase = get_outLFNDirBase(listOfDatasets[i],prefix=self.config.Data.outLFNDirBasePrefix)
+                if(self.DefaultPsetName):
+                    self.config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/python/', get_ntuplewriter(listOfDatasets[i],self.storeJetConstituents))
+                if(self.DefaultOutLFNDirBase):
+                    if(self.outLFNDirBasePrefix is not None):
+                        self.config.Data.outLFNDirBase = get_outLFNDirBase(listOfDatasets[i],prefix=self.outLFNDirBasePrefix)
                     else:
                         self.config.Data.outLFNDirBase = get_outLFNDirBase(listOfDatasets[i])
 

@@ -43,7 +43,7 @@ if __name__=='__main__':
 
 from CRABClient.UserUtilities import config
 from CRABClient.ClientExceptions import ProxyException
-import os
+import os, sys
 import re
 
 
@@ -68,16 +68,14 @@ config.JobType.sendExternalFolder = True
 
 config.Site.storageSite = 'T2_DE_DESY'
 
-config.General.storeJetConstituents = storeJetConstituents
-
 
 # The remaining lines are only used if one does not run this template with multicrab, but rather 'manually ' with crab itself.
 # In this case crab will only run on the first entry in inputDatasets!
 
 # If you know what you are doing and would like multicrab not to overwrite the psetname or outLFNDirBase
 # set respective flag to False:
-# config.JobType.DefaultPsetName = False
-# config.Data.DefaultOutLFNDirBase = False
+# DefaultPsetName = False
+# DefaultOutLFNDirBase = False
 
 # By default choose the ntuplewriter based on the DAS string
 # You can also choose the ntuplewriter yourself by replacing the function get_ntuplewriter with the name of the ntuplewriter_*_*.py
@@ -92,11 +90,22 @@ config.Data.outLFNDirBase = CrabYearUtilities.get_outLFNDirBase(inputDatasets[0]
 # replacing YOUR_CERN_USERNAME_HERE as appropriate
 # config.Data.outLFNDirBase = CrabYearUtilities.get_outLFNDirBase(inputDatasets[0],prefix='/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v1/') # FIXME: change to RunII_106X_v2 before central production in autumn 2021
 # If you still want multicrab to choose year dependent sub-directories, but not put it in the group area, you can provide the base-dir prefix:
-# config.Data.outLFNDirBasePrefix = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v1/'
+# outLFNDirBasePrefix = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v1/'
 
-if 'YOUR_CERN_USERNAME_HERE' in config.Data.outLFNDirBase or (hasattr(config.Data,'outLFNDirBasePrefix') and ('YOUR_CERN_USERNAME_HERE' in config.Data.outLFNDirBasePrefix)):
-    raise RuntimeError("You didn't insert your CERN username in config.Data.outLFNDirBase or config.Data.outLFNDirBasePrefix, please fix it")
+if 'YOUR_CERN_USERNAME_HERE' in config.Data.outLFNDirBase or ('YOUR_CERN_USERNAME_HERE' in globals().get('outLFNDirBasePrefix','')):
+    raise RuntimeError("You didn't insert your CERN username in config.Data.outLFNDirBase or outLFNDirBasePrefix, please fix it")
 
 if len(inputDatasets) > 0 and len(requestNames) > 0:
     config.General.requestName = requestNames[0]
     config.Data.inputDataset = inputDatasets[0]
+
+# If one runs in multicrab we need to set these UHH2 specific Configuration attributes,
+# in order to be able to make decisions on a per dataset basis.
+# If you are running multicrab in an additional wrapper, you might have to move everything out of the if-statement. 
+if('multicrab' in sys.argv[0]):
+    config.section_("UHH2")
+    config.UHH2.document_("Config Section for UHH2 specific settings")
+    config.UHH2.storeJetConstituents = storeJetConstituents
+    config.UHH2.DefaultPsetName = globals().get('DefaultPsetName',True)
+    config.UHH2.DefaultOutLFNDirBase = globals().get('DefaultOutLFNDirBase',True)
+    config.UHH2.outLFNDirBasePrefix  = globals().get('outLFNDirBasePrefix',None)
