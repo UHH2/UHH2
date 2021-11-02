@@ -128,6 +128,18 @@ private:
     uhh2::Event::Handle<std::vector<TopJet>> hndl;
 };
 
+
+class GenTopJetCleaner : public uhh2::AnalysisModule {
+public:
+
+    explicit GenTopJetCleaner(uhh2::Context & ctx, const GenTopJetId & jet_id_, std::string const & label_ = "gentopjets");
+    virtual bool process(uhh2::Event & event) override;
+
+private:
+    GenTopJetId gentopjet_id;
+    uhh2::Event::Handle<std::vector<GenTopJet>> hndl;
+};
+
 class JetMuonOverlapRemoval: public uhh2::AnalysisModule {
    public:
       explicit JetMuonOverlapRemoval(double deltaRmax);
