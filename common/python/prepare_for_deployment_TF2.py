@@ -13,7 +13,7 @@ parser.add_argument('inputpath', help='path to input model')
 parser.add_argument('-o', "--outputpath", help='output path', default=".")
 args = parser.parse_args()
 inputpath = args.inputpath
-outputpath = args.outputpath
+frozen_out_path = args.outputpath
 
 # definine output filename base
 frozen_graph_filename = "frozen_graph"
