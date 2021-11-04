@@ -26,7 +26,7 @@ if __name__ == "__main__":
     normTagPath = "/cvmfs/cms-bril.cern.ch/cms-lumi-pog/Normtags/"
     pileupFile = "/13TeV/PileUp/pileup_latest.txt"
 
-    outputPath = os.environ["CMSSW_BASE"]+"/src/UHH2/common/data/"
+    outputPath = os.environ["CMSSW_BASE"]+"/src/UHH2/common/UHH2-data/"
 
     UL16runSplit = 278802
 
