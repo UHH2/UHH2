@@ -88,9 +88,9 @@ config.Data.outLFNDirBase = CrabYearUtilities.get_outLFNDirBase(inputDatasets[0]
 
 # If you want to run some private production and not put it in the group area, use this instead:
 # replacing YOUR_CERN_USERNAME_HERE as appropriate
-# config.Data.outLFNDirBase = CrabYearUtilities.get_outLFNDirBase(inputDatasets[0],prefix='/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v1/') # FIXME: change to RunII_106X_v2 before central production in autumn 2021
+# config.Data.outLFNDirBase = CrabYearUtilities.get_outLFNDirBase(inputDatasets[0],prefix='/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v2/') # FIXME: change to RunII_106X_v2 before central production in autumn 2021
 # If you still want multicrab to choose year dependent sub-directories, but not put it in the group area, you can provide the base-dir prefix:
-# outLFNDirBasePrefix = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v1/'
+# outLFNDirBasePrefix = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v2/'
 
 if 'YOUR_CERN_USERNAME_HERE' in config.Data.outLFNDirBase or ('YOUR_CERN_USERNAME_HERE' in globals().get('outLFNDirBasePrefix','')):
     raise RuntimeError("You didn't insert your CERN username in config.Data.outLFNDirBase or outLFNDirBasePrefix, please fix it")
