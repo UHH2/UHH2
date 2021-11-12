@@ -95,6 +95,7 @@ def readEntries(worker, xmlfiles, fast=False):
             entries_per_rootfile.append(pool.apply_async(func=(read_treeFast if fast else read_tree), args=(rootFile,progress_bar,)))
         pool.close()
         pool.join()
+        progress_bar.close()
         entries_per_rootfile = [result.get() for result in entries_per_rootfile]
         print 'Done.', ('Number of events:' if fast else 'Sum of event weights:'), sum(entries_per_rootfile)
         result_list.append(sum(entries_per_rootfile))
