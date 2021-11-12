@@ -118,12 +118,14 @@ def commentOutEmptyRootFiles(xmlfile, entries_per_rootfile,fast=False):
             if '.root' in line:
                 newText.append(line if entries_per_rootfile[i_]!=0 else '<!--EMPTY <In FileName="'+line.split('"')[1]+'" Lumi="0.0"/> -->\n')
                 i_ += 1
+            elif line.startswith('<!-- < NumberEntries'):
+                newText.append(line)
         if len(entries_per_rootfile)!= i_: print "ERROR", len(entries_per_rootfile), i_
     with open(xmlfile, "w") as outputfile:
         for line in newText:
             outputfile.write(line)
         method = 'fast' if fast else 'weights'
-        outputfile.write('<!-- < NumberEntries="'+str(sum(entries_per_rootfile))+'" Method='+method+' /> -->')
+        outputfile.write('<!-- < NumberEntries="'+str(sum(entries_per_rootfile))+'" Method='+method+' /> -->\n')
 
 
 if __name__ == "__main__":
