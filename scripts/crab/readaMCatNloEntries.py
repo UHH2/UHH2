@@ -6,10 +6,12 @@
 
 
 
-import sys, multiprocessing, time, os
+import sys, time, os
+from multiprocessing.pool import ThreadPool
 import subprocess
 import ROOT
 from ROOT import *
+from tqdm import tqdm
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(1)
@@ -48,7 +50,7 @@ def compile_counting_macro():
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
 
-def read_tree(rootDir):
+def read_tree(rootDir, progress_bar=None):
     numberOfweightedEntries = 0
     try:
         # Use C++ script to count as significantly faster (~15x)
@@ -61,9 +63,10 @@ def read_tree(rootDir):
         print 'unable to count events in root file',rootDir
         print e
     numberOfweightedEntries = float(output.splitlines()[-1])
+    if progress_bar: progress_bar.update(1)
     return numberOfweightedEntries
 
-def read_treeFast(rootDir):
+def read_treeFast(rootDir, progress_bar=None):
     fastentries =0
     try:
         ntuple = TFile(str(rootDir))
@@ -72,6 +75,7 @@ def read_treeFast(rootDir):
     except Exception as e:
         print 'unable to count events in root file',rootDir
         print e
+    if progress_bar: progress_bar.update(1)
     return fastentries
 
 def readEntries(worker, xmlfiles, fast=False):
@@ -79,31 +83,20 @@ def readEntries(worker, xmlfiles, fast=False):
     else:
         print 'Going to use the Weight Method: countNumberEvents.C'
         compile_counting_macro()
-    print "number of workers",worker
+    print "Number of workers:",worker
     result_list = []
     for xml in xmlfiles:
-        pool = multiprocessing.Pool(processes=int(worker))
-        print "open XML file:",xml
+        pool = ThreadPool(processes=int(worker))
+        print "Open XML file:",xml
         rootFileStore = read_xml(xml)
-        numberXMLFiles = len(rootFileStore)
-        result = None
-        if(fast):
-            result = pool.map_async(read_treeFast,rootFileStore)
-        else:
-            result = pool.map_async(read_tree,rootFileStore)
-
-        print result._number_left ,numberXMLFiles,result._chunksize
-        while result._number_left>0:
-            sys.stdout.write("\033[F")
-            missing = round(float(result._number_left)*float(result._chunksize)/float(numberXMLFiles)*100)
-            if(missing > 100):
-                missing =100
-            print "Missing [%]", missing
-            time.sleep(10)
+        entries_per_rootfile = []
+        progress_bar = tqdm(total=len(rootFileStore), desc='Ntuples counted', dynamic_ncols=True, leave=False)
+        for rootFile in rootFileStore:
+            entries_per_rootfile.append(pool.apply_async(func=(read_treeFast if fast else read_tree), args=(rootFile,progress_bar,)))
         pool.close()
         pool.join()
-        entries_per_rootfile = [r for r in result.get()]
-        print "number of events in",xml,sum(entries_per_rootfile)
+        entries_per_rootfile = [result.get() for result in entries_per_rootfile]
+        print 'Done.', ('Number of events:' if fast else 'Sum of event weights:'), sum(entries_per_rootfile)
         result_list.append(sum(entries_per_rootfile))
         commentOutEmptyRootFiles(xml, entries_per_rootfile,fast)
     return result_list
