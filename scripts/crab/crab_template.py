@@ -26,7 +26,7 @@ inputDatasets = [
     '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16MiniAODAPVv2-106X_mcRun2_asymptotic_preVFP_v11-v1/MINIAODSIM',
     '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16MiniAODv2-106X_mcRun2_asymptotic_v17-v1/MINIAODSIM',
     '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1/MINIAODSIM',
-    '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM',  
+    '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL18MiniAODv2-106X_upgrade2018_realistic_v16_L1v1-v2/MINIAODSIM',
 ]
 inputDatasets = autocomplete_Datasets(inputDatasets)
 requestNames = [CrabYearUtilities.get_request_name(x) for x in inputDatasets] # Here you can define custom request names if the get_request_names function doesn't return nice ones
@@ -84,11 +84,11 @@ config.JobType.psetName = os.path.join(os.environ['CMSSW_BASE'], 'src/UHH2/core/
 
 # Add subdirectory using year from config filename
 # NOTE: this will not be used when submitting with multicrab, if config.Data.DefaultOutLFNDirBaseis not set to False!!!
-config.Data.outLFNDirBase = CrabYearUtilities.get_outLFNDirBase(inputDatasets[0]) # FIXME: change to RunII_106X_v2 before central production in autumn 2021
+config.Data.outLFNDirBase = CrabYearUtilities.get_outLFNDirBase(inputDatasets[0])
 
 # If you want to run some private production and not put it in the group area, use this instead:
 # replacing YOUR_CERN_USERNAME_HERE as appropriate
-# config.Data.outLFNDirBase = CrabYearUtilities.get_outLFNDirBase(inputDatasets[0],prefix='/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v2/') # FIXME: change to RunII_106X_v2 before central production in autumn 2021
+# config.Data.outLFNDirBase = CrabYearUtilities.get_outLFNDirBase(inputDatasets[0],prefix='/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v2/')
 # If you still want multicrab to choose year dependent sub-directories, but not put it in the group area, you can provide the base-dir prefix:
 # outLFNDirBasePrefix = '/store/user/YOUR_CERN_USERNAME_HERE/RunII_106X_v2/'
 
@@ -101,7 +101,7 @@ if len(inputDatasets) > 0 and len(requestNames) > 0:
 
 # If one runs in multicrab we need to set these UHH2 specific Configuration attributes,
 # in order to be able to make decisions on a per dataset basis.
-# If you are running multicrab in an additional wrapper, you might have to move everything out of the if-statement. 
+# If you are running multicrab in an additional wrapper, you might have to move everything out of the if-statement.
 if('multicrab' in sys.argv[0]):
     config.section_("UHH2")
     config.UHH2.document_("Config Section for UHH2 specific settings")
