@@ -4,7 +4,7 @@
 """
 *
 * Usage :
-* ./multicrab.py ConfigFile [options] 
+* ./multicrab.py ConfigFile [options]
 *
 *
 """
@@ -15,11 +15,12 @@ import os, glob, sys
 from CrabScript import *
 from create_dataset_xmlfile import create_dataset_xml
 from readaMCatNloEntries import readEntries
+from CrabYearUtilities import get_outLFNDirBase
 
 
-if __name__ == '__main__':        
+if __name__ == '__main__':
         parser = argparse.ArgumentParser(description='Scripts for a simple multicrab')
-        parser.add_argument('ConfigFile', action='store', 
+        parser.add_argument('ConfigFile', action='store',
                             help='Config File which should be processed')
         parser.add_argument('--xml', dest='xml_create',action='store_true',
                             default=False,
@@ -63,12 +64,12 @@ if __name__ == '__main__':
         for i in range(len(args.crab_options)):
                 if '--' not in args.crab_options:
                         args.crab_options[i] = '--'+args.crab_options[i]
-                
+
         if args.ConfigFile.endswith('.py'):
                 args.ConfigFile = args.ConfigFile.replace('.py','')
 
 	#sys.path.append(os.path.abspath("/nfs/dust/cms/user/gonvaq/CMSSW/CMSSW_7_4_15_patch1/src/UHH2/VLQToTopAndLepton/Utils/crab"))
-        
+
         module_name = args.ConfigFile
         __import__(module_name)
         ConfigFile = sys.modules[module_name]
@@ -82,9 +83,9 @@ if __name__ == '__main__':
                 print 'Number of Request-Names',len(ConfigFile.requestNames),' unequal to number of Input-Datasets',len(ConfigFile.inputDatasets)
                 print 'prefere to exit'
                 exit(100)
-        
+
         if len(args.filter_dataset) > 0 or len(args.filter_request) > 0:
-                setList = [] 
+                setList = []
                 filterlist =[]
                 if len(args.filter_dataset) > 0 and len(args.filter_request) > 0:
                         print 'Only one filter list at a time supported. Exit'
@@ -101,10 +102,10 @@ if __name__ == '__main__':
                                 #print 'deleting',i,ConfigFile.requestNames[i],ConfigFile.inputDatasets[i]
                                 del ConfigFile.requestNames[i]
                                 del ConfigFile.inputDatasets[i]
-        
 
 
-        print 'Going to print the Request-Name / Input-Dataset pairs' 
+
+        print 'Going to print the Request-Name / Input-Dataset pairs'
 	print 'Number of Samples',len(ConfigFile.requestNames)
         for i in range(len(ConfigFile.requestNames)):
                 print ConfigFile.requestNames[i],ConfigFile.inputDatasets[i]
@@ -131,10 +132,10 @@ if __name__ == '__main__':
                 for i,name in enumerate(ConfigFile.requestNames):
                         help_name = ConfigFile.inputDatasets[i].split('/')[1]
                         #print help_name
-                        dirname = '/pnfs/desy.de/cms/tier2/'+ConfigFile.config.Data.outLFNDirBase+'/'+help_name+'/crab_'+name+args.postfix+'/**/**/*.root'
+                        dirname = '/pnfs/desy.de/cms/tier2/'+get_outLFNDirBase(ConfigFile.inputDatasets[i])+'/'+help_name+'/crab_'+name+args.postfix+'/**/**/*.root'
                         xmlname = name+'.xml'
                         #print dirname
-                        print 'For',xmlname 
+                        print 'For',xmlname
                         l = glob.glob(dirname)
                         #print xmlname, l
                         create_dataset_xml(dirname,xmlname)
@@ -155,13 +156,12 @@ if __name__ == '__main__':
                         xmlname = name +'.xml'
                         fileList.append(xmlname)
                 result_list = readEntries(cores,fileList,fast)
-                
+
                 entriesFile = open("entriesFile.txt",'a+')
-                if fast: 
+                if fast:
                         entriesFile.write('The fast Method used for the number of Entries, no weights used\n')
                 else:
                         entriesFile.write('Weights have been used\n')
                 for i, name in enumerate(fileList):
                         entriesFile.write(name+' '+str(result_list[i])+'\n')
                 entriesFile.close()
-                

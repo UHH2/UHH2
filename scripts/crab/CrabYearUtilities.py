@@ -65,9 +65,9 @@ def get_request_name(dataset_name):
 
 
 def get_year(dataset):
-    """Extract year string from DAS string. 
+    """Extract year string from DAS string.
 
-    Note that this assumes that we will only run on UL samples, since it heavily relies on the naming scheme of those, 
+    Note that this assumes that we will only run on UL samples, since it heavily relies on the naming scheme of those,
     and will raise exceptions if it can't find a UL-typical year
     """
     _,primary_ds_name,processed_ds_name,data_tier_name = tuple(dataset.split('/'))
@@ -89,7 +89,7 @@ def get_year(dataset):
 
 def get_ntuplewriter(dataset, jetConstituents=False):
     """Generate the name of the ntuplewriter template that should be used, based on the DAS-string of the dataset"""
-    
+
     ntuplewriter_name = 'ntuplewriter_'
 
     _,primary_ds_name,processed_ds_name,data_tier_name = tuple(dataset.split('/'))
@@ -102,13 +102,13 @@ def get_ntuplewriter(dataset, jetConstituents=False):
         raise BaseException('Could not extract sample type (MC;DATA) from DAS string: %s'%dataset)
 
     ntuplewriter_name += get_year(dataset)
-    
+
     if(jetConstituents):
         ntuplewriter_name += '_leadingjetConstits'
 
     ntuplewriter_name += '.py'
     return ntuplewriter_name
 
-def get_outLFNDirBase(dataset, prefix = '/store/group/uhh/uhh2ntuples/RunII_106X_v2/'):# FIXME: change to RunII_106X_v2 before central production in autumn 2021
+def get_outLFNDirBase(dataset, prefix = '/store/group/uhh/uhh2ntuples/RunII_106X_v2/'):
     """Build outLFNDirBase from dataset DAS string by adding year dependent subdir to prefix."""
     return os.path.join(prefix, get_year(dataset))
