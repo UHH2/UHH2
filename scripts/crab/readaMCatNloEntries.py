@@ -57,12 +57,15 @@ def read_tree(rootDir, progress_bar=None):
         cmd = "root -q -b -l 'countNumberEvents.C+(\""+rootDir+"\",false)'"
         output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
         # now have to be careful - root will return 0 even if there's an error
-        if "error:" in output.lower():
+        if any(["error" in x.lower() for x in output.splitlines()]):
             raise RuntimeError("Error running ROOT: " + output)
     except Exception as e:
         print 'unable to count events in root file',rootDir
         print e
-    numberOfweightedEntries = float(output.splitlines()[-1])
+        return numberOfweightedEntries
+    w = output.splitlines()[-1]
+    if not w.replace(".","").isdigit(): return numberOfweightedEntries
+    numberOfweightedEntries = float(w)
     if progress_bar: progress_bar.update(1)
     return numberOfweightedEntries
 
