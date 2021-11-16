@@ -13,34 +13,35 @@
 using namespace std;
 
 /**
- * Standalone utility to count number of events in a Ntuple tree.
- *
- * ignoreWeights: true to ignore event weights, false to sum over them
- *
- * Should ONLY print number of events...although ROOT also prints gubbins
- * Done in C++ for speed (neccessary when iterating over all events in tree)
- *
- * Run:
- * root -q -b 'countNumberEvents.C+("/a/b/c.root",false)'
- *
- * DO NOT PUT SPACES INBETWEEN ARGS
- *
- * root:
- * > .x countNumberEvents("/a/b/c.root", false)
- *
- * In a bash script with args $1, $2:
- *
- * root -q -b -l 'countNumberEvents.C+("'${1}'",'${2}')'
- */
+* Standalone utility to count number of events in a Ntuple tree.
+*
+* ignoreWeights: true to ignore event weights, false to sum over them
+*
+* Should ONLY print number of events...although ROOT also prints gubbins
+* Done in C++ for speed (neccessary when iterating over all events in tree)
+*
+* Run:
+* root -q -b 'countNumberEvents.C+("/a/b/c.root",false)'
+*
+* DO NOT PUT SPACES INBETWEEN ARGS
+*
+* root:
+* > .x countNumberEvents("/a/b/c.root", false)
+*
+* In a bash script with args $1, $2:
+*
+* root -q -b -l 'countNumberEvents.C+("'${1}'",'${2}')'
+*/
 
 void countNumberEvents(string filename, bool ignoreWeights) {
-  if (filename=="") return;
   TFile * f = TFile::Open(filename.c_str());
   if (f == nullptr || f->IsZombie()) {
+    cout<< " f == nullptr " << (f == nullptr) << " " << (f->IsZombie()) << endl;
     throw std::runtime_error("Cannot open " + filename);
   }
   TTree * tree = (TTree*) f->Get("AnalysisTree");
   if (tree == nullptr || tree->IsZombie()) {
+    cout<< " tree == nullptr " << (tree == nullptr) << " " << (tree->IsZombie()) << endl;
     throw std::runtime_error("Cannot get TTree");
   }
   if (ignoreWeights) {
