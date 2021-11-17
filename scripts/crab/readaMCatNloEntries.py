@@ -10,7 +10,6 @@ import sys, time, os
 from multiprocessing.pool import ThreadPool
 import subprocess
 import ROOT
-from ROOT import *
 from tqdm import tqdm
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -48,7 +47,7 @@ def read_tree(rootDir, progress_bar=None):
 def read_treeFast(rootDir, progress_bar=None):
     fastentries =0
     try:
-        ntuple = TFile(str(rootDir))
+        ntuple = ROOT.TFile(str(rootDir))
         AnalysisTree = ntuple.Get("AnalysisTree")
         fastentries =  AnalysisTree.GetEntriesFast()
     except Exception as e:
