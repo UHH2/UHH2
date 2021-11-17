@@ -60,5 +60,6 @@ void countNumberEvents(string filename, bool ignoreWeights) {
 }
 
 int main(int argc, char * argv[]){
-  countNumberEvents(argv[0], bool(argv[1]));
+  bool ignoreWeights(argv[2] && (std::string) argv[2] == "true");
+  countNumberEvents(argv[1], ignoreWeights);
 }

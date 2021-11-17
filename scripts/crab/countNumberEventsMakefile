@@ -1,0 +1,8 @@
+all: countNumberEvents
+
+clean:
+	rm countNumberEvents
+
+countNumberEvents: countNumberEvents.C 
+	@echo 'building countEvents macro'
+	@g++ -o countNumberEvents countNumberEvents.C `root-config --cflags --libs` -L $ROOTSYS/lib -I$$CMSSW_BASE/src
