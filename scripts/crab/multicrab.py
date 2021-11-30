@@ -34,7 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('--extratime','-t', dest='extratime_flag', action='store_true',
                         default=False,
                         help='Resubmit with extra time to the grid')
-    parser.add_argument('--status', dest='status_flag', action='store_true',
+    parser.add_argument('--status','-u', dest='status_flag', action='store_true',
                         default=False,
                         help='check status of all jobs. Have a lok at the dashbord')
     parser.add_argument('--command','-c', dest='crab_command', action='store',
