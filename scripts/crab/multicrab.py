@@ -29,6 +29,9 @@ if __name__ == '__main__':
     parser.add_argument('--submit','-s', dest='submit_flag', action='store_true',
                         default=False,
                         help='Submit to the grid')
+    parser.add_argument('--proceed','-d', dest='proceed_flag', action='store_true',
+                        default=False,
+                        help='Proceed after dryrun submission')
     parser.add_argument('--resubmit','-r', dest='resubmit_flag', action='store_true',
                         default=False,
                         help='Resubmit to the grid')
@@ -110,6 +113,9 @@ if __name__ == '__main__':
             if not click.confirm('You have not specified to perform a dryrun (dryruns are highly suggested!). Do you really want to continue?'):
                 sys.exit('Abort')
         work = CrabConfig(ConfigFile.config,'submit',args.crab_options)
+        work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
+    if args.proceed_flag:
+        work = CrabConfig(ConfigFile.config,'proceed',args.crab_options)
         work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
     if args.resubmit_flag:
         work = CrabConfig(ConfigFile.config,'resubmit',args.crab_options)
