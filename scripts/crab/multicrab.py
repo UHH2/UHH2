@@ -11,6 +11,7 @@
 from fnmatch import fnmatchcase
 import argparse
 import os, glob, sys
+import click
 
 from CrabScript import *
 from create_dataset_xmlfile import create_dataset_xml
@@ -105,6 +106,9 @@ if __name__ == '__main__':
         print ConfigFile.requestNames[i],ConfigFile.inputDatasets[i]
 
     if args.submit_flag:
+        if not '--dryrun' in set(args.crab_options):
+            if not click.confirm('You have not specified to perform a dryrun (dryruns are highly suggested!). Do you really want to continue?'):
+                sys.exit('Abort')
         work = CrabConfig(ConfigFile.config,'submit',args.crab_options)
         work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
     if args.resubmit_flag:
