@@ -48,10 +48,10 @@ if __name__ == '__main__':
                         help='read the all entries contained in all xml files. Specify how many cores you want to use.')
     parser.add_argument('--readEntriesFast', dest='readEntriesFast', action='store',
                         default=0,
-                            help='read the all entries contained in all xml files. Specify how many cores you want to use. This version can be used it no negativ weights are needed')
+                        help='read the all entries contained in all xml files. Specify how many cores you want to use. This version can be used it no negativ weights are needed')
     parser.add_argument('--postfix','-p', dest='postfix', action='store',
-                       default='',
-                       help="Posibility to add a postfix to the request names. Don't forget to add it too if using --xml/--readEntries")
+                        default='',
+                        help="Posibility to add a postfix to the request names. Don't forget to add it too if using --xml/--readEntries")
     parser.add_argument('--filterByDatasets','-D', dest='filter_dataset', action='append',
                         default=[],
                         help='Only act on a certain file or a group of files. Filter by dataset, wildcard symbol */?/[] can be used.')
@@ -113,8 +113,8 @@ if __name__ == '__main__':
     if args.extratime_flag:
         if not "--maxjobruntime=2750" in set(args.crab_options):
             args.crab_options.append("--maxjobruntime=2750")
-            work = CrabConfig(ConfigFile.config,'resubmit',args.crab_options)
-            work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
+        work = CrabConfig(ConfigFile.config,'resubmit',args.crab_options)
+        work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
     if args.status_flag:
         work = CrabConfig(ConfigFile.config,'status',args.crab_options)
         work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
