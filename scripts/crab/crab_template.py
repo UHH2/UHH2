@@ -104,7 +104,6 @@ if len(inputDatasets) > 0 and len(requestNames) > 0:
 # If you are running multicrab in an additional wrapper, you might have to move everything out of the if-statement.
 if('multicrab' in sys.argv[0]):
     config.section_("UHH2")
-    config.UHH2.document_("Config Section for UHH2 specific settings")
     config.UHH2.storeJetConstituents = storeJetConstituents
     config.UHH2.DefaultPsetName = globals().get('DefaultPsetName',True)
     config.UHH2.DefaultOutLFNDirBase = globals().get('DefaultOutLFNDirBase',True)
