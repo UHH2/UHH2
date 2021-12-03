@@ -31,6 +31,7 @@ class CrabConfig:
                 self.outLFNDirBasePrefix = self.config.UHH2.outLFNDirBasePrefix
             #delete complete UHH2 specific ConfigSection, since crab will check against internal ConfigMapping for mispelled config attributes
             del self.config.UHH2
+            self.config._internal_sections.remove("UHH2")
 
     def _submit_(self, myconfig):
         try:
