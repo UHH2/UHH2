@@ -24,7 +24,7 @@ def read_xml(xmlFileDir):
         if ".root" in line:
             rootFileStore.append(line.split('"')[1])
     return rootFileStore
-    
+
 def read_tree(rootDir, progress_bar=None):
     numberOfweightedEntries = 0
     try:
@@ -39,7 +39,9 @@ def read_tree(rootDir, progress_bar=None):
         print e
         return numberOfweightedEntries
     w = output.splitlines()[-1]
-    if not w.replace(".","").replace("-","").isdigit(): return numberOfweightedEntries
+    if not w.replace(".","").replace("-","").isdigit():
+        print "Problem while trying to convert countNumberEvents output to float. Affected ntuple:", rootDir
+        return numberOfweightedEntries
     numberOfweightedEntries = float(w)
     if progress_bar: progress_bar.update(1)
     return numberOfweightedEntries
