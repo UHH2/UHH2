@@ -72,21 +72,29 @@ std::cerr << "ERROR in BTagCalibration: "
 throw std::exception();
   }
 
-  // make parameters
-  unsigned op = stoi(vec[0]);
-  if (op > 3) {
-std::cerr << "ERROR in BTagCalibration: "
-          << "Invalid csv line; OperatingPoint > 3: "
-          << csvLine;
-throw std::exception();
+  // read OP
+  std::vector<std::string> accepted_op_params = {"L", "M", "T", "shape"};
+  std::string op_string = vec[0];
+  if (std::find(accepted_op_params.begin(), accepted_op_params.end(), op_string) == accepted_op_params.end()) {
+    std::cerr << "ERROR in BTagCalibration: "
+              << "Invalid csv line; OperatingPoint must be L, M, T or shape: "
+              << csvLine;
+    throw std::exception();
   }
+
+  // converting to number
+  unsigned op = std::find(accepted_op_params.begin(), accepted_op_params.end(), op_string) - accepted_op_params.begin();
+
+  // read JF
+  std::vector<int> accepted_jf_params = {5, 4, 0};
   unsigned jf = stoi(vec[3]);
-  if (jf > 2) {
-std::cerr << "ERROR in BTagCalibration: "
-          << "Invalid csv line; JetFlavor > 2: "
-          << csvLine;
-throw std::exception();
+  if (std::find(accepted_jf_params.begin(), accepted_jf_params.end(), jf) == accepted_jf_params.end()) {
+    std::cerr << "ERROR in BTagCalibration: "
+              << "Invalid csv line; JetFlavor must be 5, 4 or 0: "
+              << csvLine;
+    throw std::exception();
   }
+
   params = BTagEntry::Parameters(
     BTagEntry::OperatingPoint(op),
     vec[1],
@@ -99,6 +107,7 @@ throw std::exception();
     stof(vec[8]),
     stof(vec[9])
   );
+
 }
 
 BTagEntry::BTagEntry(const std::string &func, BTagEntry::Parameters p):
@@ -333,6 +342,7 @@ void BTagCalibration::readCSV(std::istream &s)
     }
     addEntry(BTagEntry(line));
   }
+
 }
 
 void BTagCalibration::makeCSV(std::ostream &s) const
