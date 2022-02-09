@@ -62,6 +62,38 @@ bool DeepCSVBTag::operator()(const Jet & jet, const Event &ev){
       throw invalid_argument("invalid working point passed to DeepCSVBTag");
     }
   }
+  else if(ev.year == "UL16preVFP") {
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL16preVFP
+    switch(m_working_point){
+      case WP_LOOSE:
+      deepcsv_threshold = 0.2027;
+      break;
+      case WP_MEDIUM:
+      deepcsv_threshold = 0.6001;
+      break;
+      case WP_TIGHT:
+      deepcsv_threshold = 0.8819;
+      break;
+      default:
+      throw invalid_argument("invalid working point passed to DeepCSVBTag");
+    }
+  }
+  else if(ev.year == "UL16postVFP") {
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL16postVFP
+    switch(m_working_point){
+      case WP_LOOSE:
+      deepcsv_threshold = 0.1918;
+      break;
+      case WP_MEDIUM:
+      deepcsv_threshold = 0.5847;
+      break;
+      case WP_TIGHT:
+      deepcsv_threshold = 0.8767;
+      break;
+      default:
+      throw invalid_argument("invalid working point passed to DeepCSVBTag");
+    }
+  }
   else if(ev.year.find("17") != string::npos){
     if(ev.year.find("UL") != string::npos){
       //https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17
@@ -156,6 +188,38 @@ bool DeepJetBTag::operator()(const Jet & jet, const Event &ev){
       break;
       case WP_TIGHT:
       deepjet_threshold = 0.7221;
+      break;
+      default:
+      throw invalid_argument("invalid working point passed to DeepJetBTag");
+    }
+  }
+  else if(ev.year == "UL16preVFP") {
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL16preVFP
+    switch(m_working_point){
+      case WP_LOOSE:
+      deepjet_threshold = 0.0508;
+      break;
+      case WP_MEDIUM:
+      deepjet_threshold = 0.2598;
+      break;
+      case WP_TIGHT:
+      deepjet_threshold = 0.6502;
+      break;
+      default:
+      throw invalid_argument("invalid working point passed to DeepJetBTag");
+    }
+  }
+  else if(ev.year == "UL16postVFP") {
+    //https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation106XUL16postVFP
+    switch(m_working_point){
+      case WP_LOOSE:
+      deepjet_threshold = 0.0480;
+      break;
+      case WP_MEDIUM:
+      deepjet_threshold = 0.2489;
+      break;
+      case WP_TIGHT:
+      deepjet_threshold = 0.6377;
       break;
       default:
       throw invalid_argument("invalid working point passed to DeepJetBTag");
