@@ -62,31 +62,34 @@ throw std::exception();
     vec[10].erase(remove(vec[10].begin(),vec[10].end(),chars[i]),vec[10].end());
   }
 
+
   // make formula
   formula = vec[10];
-  TF1 f1("", formula.c_str());  // compile formula to check validity
-  if (f1.IsZombie()) {
-std::cerr << "ERROR in BTagCalibration: "
-          << "Invalid csv line; formula does not compile: "
-          << csvLine;
-throw std::exception();
+
+  // read OP
+  std::vector<std::string> accepted_op_params = {"L", "M", "T", "shape"};
+  std::string op_string = vec[0];
+  if (std::find(accepted_op_params.begin(), accepted_op_params.end(), op_string) == accepted_op_params.end()) {
+    std::cerr << "ERROR in BTagCalibration: "
+              << "Invalid csv line; OperatingPoint must be L, M, T or shape: "
+              << csvLine;
+    throw std::exception();
   }
 
-  // make parameters
-  unsigned op = stoi(vec[0]);
-  if (op > 3) {
-std::cerr << "ERROR in BTagCalibration: "
-          << "Invalid csv line; OperatingPoint > 3: "
-          << csvLine;
-throw std::exception();
+  // converting to number
+  unsigned op = std::find(accepted_op_params.begin(), accepted_op_params.end(), op_string) - accepted_op_params.begin();
+
+  // read JF
+  std::vector<int> accepted_jf_params = {5, 4, 0};
+  unsigned jf_preConversion = stoi(vec[3]);
+  if (std::find(accepted_jf_params.begin(), accepted_jf_params.end(), jf_preConversion) == accepted_jf_params.end()) {
+    std::cerr << "ERROR in BTagCalibration: "
+              << "Invalid csv line; JetFlavor must be 5, 4 or 0: "
+              << csvLine;
+    throw std::exception();
   }
-  unsigned jf = stoi(vec[3]);
-  if (jf > 2) {
-std::cerr << "ERROR in BTagCalibration: "
-          << "Invalid csv line; JetFlavor > 2: "
-          << csvLine;
-throw std::exception();
-  }
+
+  unsigned jf = std::find(accepted_jf_params.begin(), accepted_jf_params.end(), jf_preConversion) - accepted_jf_params.begin();
   params = BTagEntry::Parameters(
     BTagEntry::OperatingPoint(op),
     vec[1],
@@ -325,7 +328,6 @@ void BTagCalibration::readCSV(std::istream &s)
   if (line.find("OperatingPoint") == std::string::npos) {
     addEntry(BTagEntry(line));
   }
-
   while (getline(s,line)) {
     line = BTagEntry::trimStr(line);
     if (line.empty()) {  // skip empty lines
@@ -333,6 +335,7 @@ void BTagCalibration::readCSV(std::istream &s)
     }
     addEntry(BTagEntry(line));
   }
+
 }
 
 void BTagCalibration::makeCSV(std::ostream &s) const
@@ -456,6 +459,7 @@ void BTagCalibrationReader::BTagCalibrationReaderImpl::load(
                                              BTagEntry::JetFlavor jf,
                                              std::string measurementType)
 {
+
   if (tmpData_[jf].size()) {
 std::cerr << "ERROR in BTagCalibrationReader: "
           << "Data for this jet-flavor is already loaded: "
