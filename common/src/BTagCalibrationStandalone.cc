@@ -62,15 +62,9 @@ throw std::exception();
     vec[10].erase(remove(vec[10].begin(),vec[10].end(),chars[i]),vec[10].end());
   }
 
+
   // make formula
   formula = vec[10];
-  TF1 f1("", formula.c_str());  // compile formula to check validity
-  if (f1.IsZombie()) {
-std::cerr << "ERROR in BTagCalibration: "
-          << "Invalid csv line; formula does not compile: "
-          << csvLine;
-throw std::exception();
-  }
 
   // read OP
   std::vector<std::string> accepted_op_params = {"L", "M", "T", "shape"};
@@ -87,14 +81,15 @@ throw std::exception();
 
   // read JF
   std::vector<int> accepted_jf_params = {5, 4, 0};
-  unsigned jf = stoi(vec[3]);
-  if (std::find(accepted_jf_params.begin(), accepted_jf_params.end(), jf) == accepted_jf_params.end()) {
+  unsigned jf_preConversion = stoi(vec[3]);
+  if (std::find(accepted_jf_params.begin(), accepted_jf_params.end(), jf_preConversion) == accepted_jf_params.end()) {
     std::cerr << "ERROR in BTagCalibration: "
               << "Invalid csv line; JetFlavor must be 5, 4 or 0: "
               << csvLine;
     throw std::exception();
   }
 
+  unsigned jf = std::find(accepted_jf_params.begin(), accepted_jf_params.end(), jf_preConversion) - accepted_jf_params.begin();
   params = BTagEntry::Parameters(
     BTagEntry::OperatingPoint(op),
     vec[1],
@@ -107,7 +102,6 @@ throw std::exception();
     stof(vec[8]),
     stof(vec[9])
   );
-
 }
 
 BTagEntry::BTagEntry(const std::string &func, BTagEntry::Parameters p):
@@ -334,7 +328,6 @@ void BTagCalibration::readCSV(std::istream &s)
   if (line.find("OperatingPoint") == std::string::npos) {
     addEntry(BTagEntry(line));
   }
-
   while (getline(s,line)) {
     line = BTagEntry::trimStr(line);
     if (line.empty()) {  // skip empty lines
@@ -466,6 +459,7 @@ void BTagCalibrationReader::BTagCalibrationReaderImpl::load(
                                              BTagEntry::JetFlavor jf,
                                              std::string measurementType)
 {
+
   if (tmpData_[jf].size()) {
 std::cerr << "ERROR in BTagCalibrationReader: "
           << "Data for this jet-flavor is already loaded: "

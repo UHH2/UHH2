@@ -23,7 +23,7 @@
 class BTagEntry
 {
 public:
-  // working points and jet flavour taken from this presentation:
+  // working points and jet flavour taken from this presentation, and shifted to the previous ones:
   // https://indico.cern.ch/event/1096988/contributions/4615134/attachments/2346047/4000529/Nov21_btaggingSFjsons.pdf
   enum OperatingPoint {
     OP_LOOSE=0, // L
@@ -32,9 +32,9 @@ public:
     OP_RESHAPING=3, // shape
   };
   enum JetFlavor {
-    FLAV_B=5,
-    FLAV_C=4,
-    FLAV_UDSG=0,
+    FLAV_B=0, // 5
+    FLAV_C=1, // 4
+    FLAV_UDSG=2, // 0
   };
   struct Parameters {
     OperatingPoint operatingPoint;
