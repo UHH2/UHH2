@@ -1886,7 +1886,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     muonMVAweightFile="UHH2/common/data/UL16preVFP/TMVA_BDTG_TOP_muon_2016.weights.xml"
     if (year=="UL17"):  muonMVAweightFile="UHH2/common/data/UL17/TMVA_BDTG_TOP_muon_2017.weights.xml"
     elif(year=="UL18"): muonMVAweightFile="UHH2/common/data/UL18/TMVA_BDTG_TOP_muon_2018.weights.xml"
-    
+
 
     process.muonMVATOP= cms.EDProducer("MuonBaseMVAValueMapProducer",
                                        src = cms.InputTag("slimmedMuonsWithUserData"),
@@ -2009,7 +2009,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     if(year=="UL16preVFP" or year=="UL16postVFP"):
             EAFile_MiniIso_file = "RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt"
             EAFile_PFIso_file = "RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt"
-    
+
 
     process.isoForEle = cms.EDProducer("EleIsoValueMapProducer",
                                        src = cms.InputTag("slimmedElectronsData"),
@@ -2190,7 +2190,10 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         extra_trigger_bits.append(process.BadPFMuonFilter.label())
 
     if useData:
-        metfilterpath = "RECO"
+        ## According to the CMS talk below, only the PAT path was updated for UL MiniAODv2, not the RECO path. Therefore, one needs to use PAT also for data in UL MiniAODv2 productions in order to have access to all new MET filters introduced in UL (specifically "BadPFMuonDzFilter" and "hfNoisyHitsFilter")
+        ## https://cms-talk.web.cern.ch/t/met-filter-badpfmuondzfilter-missing-in-ul-miniaodv2-data-samples/5101/11
+        # metfilterpath = "RECO" # not updated for UL MiniAODv2!
+        metfilterpath = "PAT"
     else:
         metfilterpath = "PAT"
 
