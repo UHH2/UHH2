@@ -287,12 +287,14 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
   const std::string & weight_postfix,
   bool etaYaxis,
   const std::string & sys_uncert,
-  const std::string & muons_handle_name):
+  const std::string & muons_handle_name,
+  const bool absolute_eta):
   h_muons_            (ctx.get_handle<std::vector<Muon>>(muons_handle_name)),
   h_muon_weight_      (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix)),
   h_muon_weight_up_   (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_up")),
   h_muon_weight_down_ (ctx.declare_event_output<float>("weight_sfmu_" + weight_postfix + "_down")),
-  sys_error_factor_(sys_error_percantage/100.), etaYaxis_(etaYaxis)
+  sys_error_factor_(sys_error_percantage/100.), etaYaxis_(etaYaxis),
+  fAbsoluteEta(absolute_eta)
   {
     auto dataset_type = ctx.get("dataset_type");
     bool is_mc = dataset_type == "MC";
@@ -355,7 +357,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
     const auto & muons = event.get(h_muons_);
     float weight = 1., weight_up = 1., weight_down = 1.;
     for (const auto & mu : muons) {
-      float eta = fabs(mu.eta());
+      float eta = fAbsoluteEta ? fabs(mu.eta()) : mu.eta();
       float pt = mu.pt();
       if (eta_min_ < eta && eta_max_ > eta){
         bool out_of_range = false;
@@ -423,7 +425,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
     const auto & muons = event.get(h_muons_);
     float weight = 1., weight_up = 1., weight_down = 1.;
     Muon mu = muons.at(i);
-    float eta = fabs(mu.eta());
+    float eta = fAbsoluteEta ? fabs(mu.eta()) : mu.eta();
     float pt = mu.pt();
     if (eta_min_ < eta && eta_max_ > eta){
       bool out_of_range = false;
@@ -586,12 +588,14 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
       const std::string & weight_postfix,
       const std::string & sys_uncert,
       const std::string & elecs_handle_name,
-      const std::string & sf_name):
+      const std::string & sf_name,
+      const bool absolute_eta):
       h_elecs_            (ctx.get_handle<std::vector<Electron>>(elecs_handle_name)),
       h_elec_weight_      (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix)),
       h_elec_weight_up_   (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_up")),
       h_elec_weight_down_ (ctx.declare_event_output<float>("weight_sfelec_" + weight_postfix + "_down")),
-      sys_error_factor_(sys_error_percantage/100.)
+      sys_error_factor_(sys_error_percantage/100.),
+      fAbsoluteEta(absolute_eta)
       {
         auto dataset_type = ctx.get("dataset_type");
         bool is_mc = dataset_type == "MC";
@@ -636,7 +640,7 @@ MCMuonScaleFactor::MCMuonScaleFactor(uhh2::Context & ctx,
         const auto & elecs = event.get(h_elecs_);
         float weight = 1., weight_up = 1., weight_down = 1.;
         for (const auto & el : elecs) {
-          float eta = fabs(el.supercluster_eta());
+          float eta = fAbsoluteEta ? fabs(el.supercluster_eta()) : el.supercluster_eta();
           float pt = el.pt();
           if (eta_min_ < eta && eta_max_ > eta){
             bool out_of_range = false;

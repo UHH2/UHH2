@@ -103,6 +103,9 @@ class MCScaleVariation: public uhh2::AnalysisModule {
  *     "down" or "nominal".
  *   - muons_handle_name: handle to the muon collection (the default points to
  *     event.muons)
+ *   - absolute_eta: should be true if the eta range in the scale factor histogram is positive only
+ *     (i.e. only shows absolute eta values); should be false if eta can also be negative (i.e. scale
+ *     factors are not strictly symmetric around zero)
  */
 class MCMuonScaleFactor: public uhh2::AnalysisModule {
 public:
@@ -113,7 +116,8 @@ public:
                              const std::string & weight_postfix="",
 			     bool etaYaxis=false,
                              const std::string & sys_uncert="nominal",
-                             const std::string & muons_handle_name="muons");
+                             const std::string & muons_handle_name="muons",
+                             const bool absolute_eta = true);
 
   virtual bool process(uhh2::Event & event) override;
   virtual bool process_onemuon(uhh2::Event & event, int i);
@@ -128,6 +132,7 @@ private:
   float eta_min_, eta_max_, pt_min_, pt_max_;
   int sys_direction_;
   bool etaYaxis_;
+  const bool fAbsoluteEta;
 };
 
 // Muon tracking efficiency
@@ -176,6 +181,9 @@ private:
  *     "down" or "nominal".
  *   - electrons_handle_name: handle to the electrons collection (the default points to
  *     event.electrons)
+ *   - absolute_eta: should be true if the eta range in the scale factor histogram is positive only
+ *     (i.e. only shows absolute eta values); should be false if eta can also be negative (i.e. scale
+ *     factors are not strictly symmetric around zero)
  */
 class MCElecScaleFactor: public uhh2::AnalysisModule {
 public:
@@ -185,7 +193,8 @@ public:
                              const std::string & weight_postfix="",
                              const std::string & sys_uncert="nominal",
                              const std::string & elecs_handle_name="electrons",
-                             const std::string & sf_name="EGamma_SF2D");
+                             const std::string & sf_name="EGamma_SF2D",
+                             const bool absolute_eta = true);
 
   virtual bool process(uhh2::Event & event) override;
 
@@ -198,6 +207,7 @@ private:
   float sys_error_factor_;
   float eta_min_, eta_max_, pt_min_, pt_max_;
   int sys_direction_;
+  const bool fAbsoluteEta;
 };
 
 
