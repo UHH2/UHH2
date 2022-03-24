@@ -7,4 +7,3 @@
 <use name="tensorflow"/>
 <use name="protobuf"/>
 <use name="Eigen"/>
-<use name="RecoBTag/TensorFlow"/>
