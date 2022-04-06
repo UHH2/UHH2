@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <memory>
 
 #include "UHH2/core/include/AnalysisModule.h"
