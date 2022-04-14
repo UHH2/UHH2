@@ -24,7 +24,7 @@ MCLumiWeight::MCLumiWeight(Context & ctx){
     cout << "Warning: MCLumiWeight will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
     return;
   } else {
-    double dataset_lumi = string2double(ctx.get("dataset_lumi"));
+    double dataset_lumi = abs(string2double(ctx.get("dataset_lumi")));
     double reweight_to_lumi = string2double(ctx.get("target_lumi"));
     if(reweight_to_lumi <= 0.0){
       throw runtime_error("MCLumiWeight: target_lumi <= 0.0 not allowed");
