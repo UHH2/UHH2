@@ -109,15 +109,17 @@ class MCScaleVariation: public uhh2::AnalysisModule {
  */
 class MCMuonScaleFactor: public uhh2::AnalysisModule {
 public:
-  explicit MCMuonScaleFactor(uhh2::Context & ctx,
-                             const std::string & sf_file_path,
-                             const std::string & sf_name,
-                             float sys_error_percantage,
-                             const std::string & weight_postfix="",
-			     bool etaYaxis=false,
-                             const std::string & sys_uncert="nominal",
-                             const std::string & muons_handle_name="muons",
-                             const bool absolute_eta = true);
+  explicit MCMuonScaleFactor(
+    uhh2::Context & ctx,
+    const std::string & sf_file_path,
+    const std::string & sf_name,
+    float sys_error_percantage,
+    const std::string & weight_postfix="",
+    bool etaYaxis=false,
+    const std::string & sys_uncert="nominal",
+    const std::string & muons_handle_name="muons",
+    const bool absolute_eta = true
+  );
 
   virtual bool process(uhh2::Event & event) override;
   virtual bool process_onemuon(uhh2::Event & event, int i);
@@ -139,12 +141,14 @@ private:
 // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffsRun2
 class MCMuonTrkScaleFactor: public uhh2::AnalysisModule {
 public:
-  explicit MCMuonTrkScaleFactor(uhh2::Context & ctx,
-                             const std::string & sf_file_path,
-                             float sys_error_percantage,
-                             const std::string & weight_postfix="",
-                             const std::string & sys_uncert="nominal",
-                             const std::string & muons_handle_name="muons");
+  explicit MCMuonTrkScaleFactor(
+    uhh2::Context & ctx,
+    const std::string & sf_file_path,
+    float sys_error_percantage,
+    const std::string & weight_postfix="",
+    const std::string & sys_uncert="nominal",
+    const std::string & muons_handle_name="muons"
+  );
 
   virtual bool process(uhh2::Event & event) override;
 
@@ -187,14 +191,16 @@ private:
  */
 class MCElecScaleFactor: public uhh2::AnalysisModule {
 public:
-  explicit MCElecScaleFactor(uhh2::Context & ctx,
-                             const std::string & sf_file_path,
-                             float sys_error_percantage,
-                             const std::string & weight_postfix="",
-                             const std::string & sys_uncert="nominal",
-                             const std::string & elecs_handle_name="electrons",
-                             const std::string & sf_name="EGamma_SF2D",
-                             const bool absolute_eta = true);
+  explicit MCElecScaleFactor(
+    uhh2::Context & ctx,
+    const std::string & sf_file_path,
+    float sys_error_percantage,
+    const std::string & weight_postfix="",
+    const std::string & sys_uncert="nominal",
+    const std::string & elecs_handle_name="electrons",
+    const std::string & sf_name="EGamma_SF2D",
+    const bool absolute_eta = true
+  );
 
   virtual bool process(uhh2::Event & event) override;
 
@@ -236,22 +242,24 @@ class BTagCalibrationReader;  // forward declaration
  *    containing scale factors.
  */
 class MCBTagScaleFactor: public uhh2::AnalysisModule {
- public:
-  explicit MCBTagScaleFactor(uhh2::Context & ctx,
-			     BTag::algo tagger,
-			     BTag::wp wp,
-                             const std::string & jets_handle_name="jets",
-                             const std::string & sysType="central",
-                             const std::string & measType_bc="mujets",
-                             const std::string & measType_udsg="incl",
-                             const std::string & xml_param_name="MCBtagEfficiencies",
-			     const std::string & weights_name_postfix="",
-                             const std::string & xml_calib_name="BTagCalibration");
+public:
+  explicit MCBTagScaleFactor(
+    uhh2::Context & ctx,
+    BTag::algo tagger,
+    BTag::wp wp,
+    const std::string & jets_handle_name="jets",
+    const std::string & sysType="central",
+    const std::string & measType_bc="mujets",
+    const std::string & measType_udsg="incl",
+    const std::string & xml_param_name="MCBtagEfficiencies",
+    const std::string & weights_name_postfix="",
+    const std::string & xml_calib_name="BTagCalibration"
+  );
 
 
   virtual bool process(uhh2::Event & event) override;
 
- protected:
+protected:
   std::tuple<float, float, float> get_weight_btag(const std::vector<TopJet> &jets,
                                                   uhh2::Event & event);
   std::pair<float, float> get_SF_btag(float pt, float abs_eta, int flav);
@@ -290,18 +298,20 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
  * For now, we ignore these individual contributions and just use the combined total JES variation.
  */
 class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
- public:
-  explicit MCBTagDiscriminantReweighting(uhh2::Context & ctx,
-					 BTag::algo algorithm,
-					 const std::string & jets_handle_name="jets",
-					 const std::string & sysType="central",
-					 const std::string & measType="iterativefit",
-					 const std::string & weights_name_postfix="",
-					 const std::string & xml_calib_name="BTagCalibration");
+public:
+  explicit MCBTagDiscriminantReweighting(
+    uhh2::Context & ctx,
+    BTag::algo algorithm,
+    const std::string & jets_handle_name="jets",
+    const std::string & sysType="central",
+    const std::string & measType="iterativefit",
+    const std::string & weights_name_postfix="",
+    const std::string & xml_calib_name="BTagCalibration"
+  );
 
   virtual bool process(uhh2::Event & event) override;
 
- protected:
+protected:
   BTag::algo algorithm_;
   std::unique_ptr<BTagCalibrationReader> reader;
   uhh2::Event::Handle<std::vector<Jet>> h_jets_;
@@ -337,12 +347,12 @@ class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
  * Any other value will result in no scale variation.
  */
 class TauEffVariation: public uhh2::AnalysisModule {
- public:
+public:
   explicit TauEffVariation(uhh2::Context & ctx);
 
   virtual bool process(uhh2::Event & event) override;
 
-  private:
+private:
   int i_TauEff = 0;
   // SF for Run-2 2016 is 0.83 while SF for Run-1 and Run-2 2015 is equal to 1.
   double SF_TauId = 0.9;
@@ -357,11 +367,11 @@ class TauEffVariation: public uhh2::AnalysisModule {
  * Any other value will result in no scale variation.
  */
 class TauChargeVariation: public uhh2::AnalysisModule {
- public:
+public:
   explicit TauChargeVariation(uhh2::Context & ctx);
 
   virtual bool process(uhh2::Event & event) override;
 
-  private:
+private:
   int i_TauCharge = 0;
 };
