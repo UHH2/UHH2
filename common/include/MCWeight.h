@@ -4,6 +4,7 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/JetIds.h"
 #include "UHH2/common/include/BTagCalibrationStandalone.h"
+#include "UHH2/common/include/Utils.h"
 
 #include "TH2.h"
 
@@ -109,15 +110,17 @@ class MCScaleVariation: public uhh2::AnalysisModule {
  */
 class MCMuonScaleFactor: public uhh2::AnalysisModule {
 public:
-  explicit MCMuonScaleFactor(uhh2::Context & ctx,
-                             const std::string & sf_file_path,
-                             const std::string & sf_name,
-                             float sys_error_percantage,
-                             const std::string & weight_postfix="",
-			     bool etaYaxis=false,
-                             const std::string & sys_uncert="nominal",
-                             const std::string & muons_handle_name="muons",
-                             const bool absolute_eta = true);
+  explicit MCMuonScaleFactor(
+    uhh2::Context & ctx,
+    const std::string & sf_file_path,
+    const std::string & sf_name,
+    float sys_error_percantage,
+    const std::string & weight_postfix="",
+    bool etaYaxis=false,
+    const std::string & sys_uncert="nominal",
+    const std::string & muons_handle_name="muons",
+    const bool absolute_eta = true
+  );
 
   virtual bool process(uhh2::Event & event) override;
   virtual bool process_onemuon(uhh2::Event & event, int i);
@@ -139,12 +142,14 @@ private:
 // https://twiki.cern.ch/twiki/bin/view/CMS/MuonReferenceEffsRun2
 class MCMuonTrkScaleFactor: public uhh2::AnalysisModule {
 public:
-  explicit MCMuonTrkScaleFactor(uhh2::Context & ctx,
-                             const std::string & sf_file_path,
-                             float sys_error_percantage,
-                             const std::string & weight_postfix="",
-                             const std::string & sys_uncert="nominal",
-                             const std::string & muons_handle_name="muons");
+  explicit MCMuonTrkScaleFactor(
+    uhh2::Context & ctx,
+    const std::string & sf_file_path,
+    float sys_error_percantage,
+    const std::string & weight_postfix="",
+    const std::string & sys_uncert="nominal",
+    const std::string & muons_handle_name="muons"
+  );
 
   virtual bool process(uhh2::Event & event) override;
 
@@ -187,14 +192,16 @@ private:
  */
 class MCElecScaleFactor: public uhh2::AnalysisModule {
 public:
-  explicit MCElecScaleFactor(uhh2::Context & ctx,
-                             const std::string & sf_file_path,
-                             float sys_error_percantage,
-                             const std::string & weight_postfix="",
-                             const std::string & sys_uncert="nominal",
-                             const std::string & elecs_handle_name="electrons",
-                             const std::string & sf_name="EGamma_SF2D",
-                             const bool absolute_eta = true);
+  explicit MCElecScaleFactor(
+    uhh2::Context & ctx,
+    const std::string & sf_file_path,
+    float sys_error_percantage,
+    const std::string & weight_postfix="",
+    const std::string & sys_uncert="nominal",
+    const std::string & elecs_handle_name="electrons",
+    const std::string & sf_name="EGamma_SF2D",
+    const bool absolute_eta = true
+  );
 
   virtual bool process(uhh2::Event & event) override;
 
@@ -236,22 +243,24 @@ class BTagCalibrationReader;  // forward declaration
  *    containing scale factors.
  */
 class MCBTagScaleFactor: public uhh2::AnalysisModule {
- public:
-  explicit MCBTagScaleFactor(uhh2::Context & ctx,
-			     BTag::algo tagger,
-			     BTag::wp wp,
-                             const std::string & jets_handle_name="jets",
-                             const std::string & sysType="central",
-                             const std::string & measType_bc="mujets",
-                             const std::string & measType_udsg="incl",
-                             const std::string & xml_param_name="MCBtagEfficiencies",
-			     const std::string & weights_name_postfix="",
-                             const std::string & xml_calib_name="BTagCalibration");
+public:
+  explicit MCBTagScaleFactor(
+    uhh2::Context & ctx,
+    BTag::algo tagger,
+    BTag::wp wp,
+    const std::string & jets_handle_name="jets",
+    const std::string & sysType="central",
+    const std::string & measType_bc="mujets",
+    const std::string & measType_udsg="incl",
+    const std::string & xml_param_name="MCBtagEfficiencies",
+    const std::string & weights_name_postfix="",
+    const std::string & xml_calib_name="BTagCalibration"
+  );
 
 
   virtual bool process(uhh2::Event & event) override;
 
- protected:
+protected:
   std::tuple<float, float, float> get_weight_btag(const std::vector<TopJet> &jets,
                                                   uhh2::Event & event);
   std::pair<float, float> get_SF_btag(float pt, float abs_eta, int flav);
@@ -280,52 +289,83 @@ class MCBTagScaleFactor: public uhh2::AnalysisModule {
  *
  * jets_handle_name should point to a handle of type vector<Jet>
  *
- * The file given by xml_calib_name should point to a .csv file containing all weights;
- * the files for the individual years can be downloaded here:
- * https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation#Recommendation_for_13_TeV_Data
- * (click on the link in the 'Twiki' column, then download the inclusive file -- not the WP-only file)
+ * Twiki: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation (including information how to handle correlations between years!)
  *
- * In contrast to CSVv2, the DeepJet/DeepCSV .csv files contain not only a total JES variation but also all
- * individual contributions to the JES variation, e.g. 'jesPileUpPtBB', 'jesSinglePionHCAL' ...
- * For now, we ignore these individual contributions and just use the combined total JES variation.
+ * For each jet, the event.weight will be modified by one factor. The factor depends on the jet pt, eta, hadronFlavor, and the b-tagging discriminant itself.
+ * The variations work as follows:
+ *
+ * The weight used for "central" depends on whether JES is varied or not (defined by "jecsmear_direction" in your config XML):
+ * If the nominal JES correction is used, the central weight is the one called "central" in the b-tagging SF file. If a JES variation is applied, the central
+ * weight will the one called "up/down_jes" in the b-tagging SF file. I.e. the JES-related uncertainty of the b-tagging SFs must be 100% correlated with the
+ * actual JES variation in your analysis. If you are interested in the split JES uncertainty sources, you can specify "jecsmear_source" in your XML config;
+ * this defaults to "Total", so you don't have to do anything if you are only interested in the total JES variations. But if you set "jecsmear_source" to
+ * e.g. "Fragmentation" while "jecsmear_direction" is not nominal, then your jet corretor module will apply only the up/down variation related to the
+ * "Fragmentation" uncertainty source and this b-tagging SF module will apply the "up/down_jesFragmentation" SF (it will still be called "central" in the
+ * AnalysisTree).
+ *
+ * The other variations not related to JES work as usual. Set "SystDirection_BTaggingShape" (default: "central") in your config XML to the corresponding
+ * variation. Available options are called like the SysType enums (see below). Note that this needs to stay "central" if you are doing JES variations!
  */
 class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
- public:
-  explicit MCBTagDiscriminantReweighting(uhh2::Context & ctx,
-					 BTag::algo algorithm,
-					 const std::string & jets_handle_name="jets",
-					 const std::string & sysType="central",
-					 const std::string & measType="iterativefit",
-					 const std::string & weights_name_postfix="",
-					 const std::string & xml_calib_name="BTagCalibration");
+public:
+  explicit MCBTagDiscriminantReweighting(
+    uhh2::Context & ctx,
+    BTag::algo algorithm,
+    const std::string & jets_handle_name="jets",
+    const std::string & weights_name_postfix="",
+    const std::string & measType="iterativefit"
+  );
 
   virtual bool process(uhh2::Event & event) override;
 
- protected:
-  BTag::algo algorithm_;
+private:
+  enum class SysType {
+    central,
+    cferr1_up,
+    cferr1_down,
+    cferr2_up,
+    cferr2_down,
+    lf_up,
+    lf_down,
+    lfstats1_up,
+    lfstats1_down,
+    lfstats2_up,
+    lfstats2_down,
+    hf_up,
+    hf_down,
+    hfstats1_up,
+    hfstats1_down,
+    hfstats2_up,
+    hfstats2_down,
+  };
+
+  const std::string fSystDirectionConfigName = "SystDirection_BTaggingShape";
+  const BTag::algo fAlgorithm;
+  const Year fYear;
+  const uhh2::Event::Handle<std::vector<Jet>> h_jets;
+
+  const uhh2::Event::Handle<float> h_weight_central;
+  const uhh2::Event::Handle<float> h_weight_cferr1_up;
+  const uhh2::Event::Handle<float> h_weight_cferr1_down;
+  const uhh2::Event::Handle<float> h_weight_cferr2_up;
+  const uhh2::Event::Handle<float> h_weight_cferr2_down;
+  const uhh2::Event::Handle<float> h_weight_lf_up;
+  const uhh2::Event::Handle<float> h_weight_lf_down;
+  const uhh2::Event::Handle<float> h_weight_lfstats1_up;
+  const uhh2::Event::Handle<float> h_weight_lfstats1_down;
+  const uhh2::Event::Handle<float> h_weight_lfstats2_up;
+  const uhh2::Event::Handle<float> h_weight_lfstats2_down;
+  const uhh2::Event::Handle<float> h_weight_hf_up;
+  const uhh2::Event::Handle<float> h_weight_hf_down;
+  const uhh2::Event::Handle<float> h_weight_hfstats1_up;
+  const uhh2::Event::Handle<float> h_weight_hfstats1_down;
+  const uhh2::Event::Handle<float> h_weight_hfstats2_up;
+  const uhh2::Event::Handle<float> h_weight_hfstats2_down;
+
+  SysType fSysType;
+  std::string fCentralOrJES;
+
   std::unique_ptr<BTagCalibrationReader> reader;
-  uhh2::Event::Handle<std::vector<Jet>> h_jets_;
-  std::string sysType_;
-  uhh2::Event::Handle<float> h_weight_btagdisc_central;
-  uhh2::Event::Handle<float> h_weight_btagdisc_jesup;
-  uhh2::Event::Handle<float> h_weight_btagdisc_jesdown;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfup;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfdown;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfup;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfdown;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats1up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats1down;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats2up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats2down;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats1up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats1down;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats2up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats2down;
-  uhh2::Event::Handle<float> h_weight_btagdisc_cferr1up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_cferr1down;
-  uhh2::Event::Handle<float> h_weight_btagdisc_cferr2up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_cferr2down;
-  // TODO: Add a bunch of handles for splitted JES uncertainties here later if needed. Splitted JES uncertainties are not available for CSVv2 but for DeepJet and DeepCSV.
 };
 
 
@@ -337,12 +377,12 @@ class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
  * Any other value will result in no scale variation.
  */
 class TauEffVariation: public uhh2::AnalysisModule {
- public:
+public:
   explicit TauEffVariation(uhh2::Context & ctx);
 
   virtual bool process(uhh2::Event & event) override;
 
-  private:
+private:
   int i_TauEff = 0;
   // SF for Run-2 2016 is 0.83 while SF for Run-1 and Run-2 2015 is equal to 1.
   double SF_TauId = 0.9;
@@ -357,11 +397,11 @@ class TauEffVariation: public uhh2::AnalysisModule {
  * Any other value will result in no scale variation.
  */
 class TauChargeVariation: public uhh2::AnalysisModule {
- public:
+public:
   explicit TauChargeVariation(uhh2::Context & ctx);
 
   virtual bool process(uhh2::Event & event) override;
 
-  private:
+private:
   int i_TauCharge = 0;
 };
