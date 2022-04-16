@@ -945,7 +945,6 @@ std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, 
 MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
   uhh2::Context & ctx,
   BTag::algo algorithm,
-  const std::string & sysType,
   const std::string & jets_handle_name,
   const std::string & weights_name_postfix,
   const std::string & measType
@@ -978,6 +977,7 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
     return;
   }
 
+  const string sysType = ctx.get(fSystDirectionConfigName, "central");
   if(sysType == "central" || sysType == "nominal") fSysType = SysType::central;
   else if(sysType == "cferr1_up") fSysType = SysType::cferr1_up;
   else if(sysType == "cferr1_down") fSysType = SysType::cferr1_down;

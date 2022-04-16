@@ -296,7 +296,6 @@ public:
   explicit MCBTagDiscriminantReweighting(
     uhh2::Context & ctx,
     BTag::algo algorithm,
-    const std::string & sysType="central",
     const std::string & jets_handle_name="jets",
     const std::string & weights_name_postfix="",
     const std::string & measType="iterativefit"
@@ -325,6 +324,7 @@ private:
     hfstats2_down,
   };
 
+  const std::string fSystDirectionConfigName = "SystDirection_BTaggingShape";
   const BTag::algo fAlgorithm;
   const Year fYear;
   const uhh2::Event::Handle<std::vector<Jet>> h_jets;
