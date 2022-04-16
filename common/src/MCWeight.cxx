@@ -1009,7 +1009,7 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
     "up_hfstats2", "down_hfstats2",
   };
 
-  const string jecsmear_direction = ctx.get("jecsmear_direction", "nominal");
+  const string jecsmear_direction = ctx.get("jecsmear_direction");
   const string jecsmear_source = ctx.get("jecsmear_source", "Total");
   if(jecsmear_direction == "nominal") {
     fCentralOrJES = "central";
