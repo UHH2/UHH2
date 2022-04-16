@@ -4,6 +4,7 @@
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/JetIds.h"
 #include "UHH2/common/include/BTagCalibrationStandalone.h"
+#include "UHH2/common/include/Utils.h"
 
 #include "TH2.h"
 
@@ -288,54 +289,68 @@ protected:
  *
  * jets_handle_name should point to a handle of type vector<Jet>
  *
- * The file given by xml_calib_name should point to a .csv file containing all weights;
- * the files for the individual years can be downloaded here:
- * https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation#Recommendation_for_13_TeV_Data
- * (click on the link in the 'Twiki' column, then download the inclusive file -- not the WP-only file)
- *
- * In contrast to CSVv2, the DeepJet/DeepCSV .csv files contain not only a total JES variation but also all
- * individual contributions to the JES variation, e.g. 'jesPileUpPtBB', 'jesSinglePionHCAL' ...
- * For now, we ignore these individual contributions and just use the combined total JES variation.
+ * Twiki: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation
  */
 class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
 public:
   explicit MCBTagDiscriminantReweighting(
     uhh2::Context & ctx,
     BTag::algo algorithm,
-    const std::string & jets_handle_name="jets",
     const std::string & sysType="central",
-    const std::string & measType="iterativefit",
+    const std::string & jets_handle_name="jets",
     const std::string & weights_name_postfix="",
-    const std::string & xml_calib_name="BTagCalibration"
+    const std::string & measType="iterativefit"
   );
 
   virtual bool process(uhh2::Event & event) override;
 
-protected:
-  BTag::algo algorithm_;
+private:
+  enum class SysType {
+    central,
+    cferr1_up,
+    cferr1_down,
+    cferr2_up,
+    cferr2_down,
+    lf_up,
+    lf_down,
+    lfstats1_up,
+    lfstats1_down,
+    lfstats2_up,
+    lfstats2_down,
+    hf_up,
+    hf_down,
+    hfstats1_up,
+    hfstats1_down,
+    hfstats2_up,
+    hfstats2_down,
+  };
+
+  const BTag::algo fAlgorithm;
+  const Year fYear;
+  const uhh2::Event::Handle<std::vector<Jet>> h_jets;
+
+  const uhh2::Event::Handle<float> h_weight_central;
+  const uhh2::Event::Handle<float> h_weight_cferr1_up;
+  const uhh2::Event::Handle<float> h_weight_cferr1_down;
+  const uhh2::Event::Handle<float> h_weight_cferr2_up;
+  const uhh2::Event::Handle<float> h_weight_cferr2_down;
+  const uhh2::Event::Handle<float> h_weight_lf_up;
+  const uhh2::Event::Handle<float> h_weight_lf_down;
+  const uhh2::Event::Handle<float> h_weight_lfstats1_up;
+  const uhh2::Event::Handle<float> h_weight_lfstats1_down;
+  const uhh2::Event::Handle<float> h_weight_lfstats2_up;
+  const uhh2::Event::Handle<float> h_weight_lfstats2_down;
+  const uhh2::Event::Handle<float> h_weight_hf_up;
+  const uhh2::Event::Handle<float> h_weight_hf_down;
+  const uhh2::Event::Handle<float> h_weight_hfstats1_up;
+  const uhh2::Event::Handle<float> h_weight_hfstats1_down;
+  const uhh2::Event::Handle<float> h_weight_hfstats2_up;
+  const uhh2::Event::Handle<float> h_weight_hfstats2_down;
+
+  SysType fSysType;
+  std::string fCentralOrJES;
+
   std::unique_ptr<BTagCalibrationReader> reader;
-  uhh2::Event::Handle<std::vector<Jet>> h_jets_;
-  std::string sysType_;
-  uhh2::Event::Handle<float> h_weight_btagdisc_central;
-  uhh2::Event::Handle<float> h_weight_btagdisc_jesup;
-  uhh2::Event::Handle<float> h_weight_btagdisc_jesdown;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfup;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfdown;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfup;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfdown;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats1up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats1down;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats2up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_hfstats2down;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats1up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats1down;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats2up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_lfstats2down;
-  uhh2::Event::Handle<float> h_weight_btagdisc_cferr1up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_cferr1down;
-  uhh2::Event::Handle<float> h_weight_btagdisc_cferr2up;
-  uhh2::Event::Handle<float> h_weight_btagdisc_cferr2down;
-  // TODO: Add a bunch of handles for splitted JES uncertainties here later if needed. Splitted JES uncertainties are not available for CSVv2 but for DeepJet and DeepCSV.
 };
 
 
