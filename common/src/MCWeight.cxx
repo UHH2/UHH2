@@ -1145,6 +1145,7 @@ bool MCBTagDiscriminantReweighting::process(Event & event) {
     if(jet_pt > 20.0 && fabs(jet_eta) < 2.5) { // UL: b-tagging possible for eta up to 2.5
 
       if(jet_flavor == BTagEntry::FLAV_C) {
+        // For c jets, no dedicated JES SFs are available and the "central" SF is always used for the "central" weight.
         weight_central *= reader->eval_auto_bounds("central", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
 
         weight_cferr1_up *= reader->eval_auto_bounds("up_cferr1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
@@ -1154,6 +1155,7 @@ bool MCBTagDiscriminantReweighting::process(Event & event) {
       }
 
       else if(jet_flavor == BTagEntry::FLAV_B || jet_flavor == BTagEntry::FLAV_UDSG) {
+        // For b and light jets, the "central" weight is either the "central" SF or a dedicated JES variation SF (if jecsmear_direction != nominal).
         weight_central *= reader->eval_auto_bounds(fCentralOrJES, jet_flavor, jet_eta, jet_pt, jet_btagdisc);
 
         // lf(stats1/2) and hf(stats1/2) variatons must be applied to both FLAV_B and FLAV_UDSG jets!

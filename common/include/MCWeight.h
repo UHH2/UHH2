@@ -289,7 +289,22 @@ protected:
  *
  * jets_handle_name should point to a handle of type vector<Jet>
  *
- * Twiki: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation
+ * Twiki: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation (including information how to handle correlations between years!)
+ *
+ * For each jet, the event.weight will be modified by one factor. The factor depends on the jet pt, eta, hadronFlavor, and the b-tagging discriminant itself.
+ * The variations work as follows:
+ *
+ * The weight used for "central" depends on whether JES is varied or not (defined by "jecsmear_direction" in your config XML):
+ * If the nominal JES correction is used, the central weight is the one called "central" in the b-tagging SF file. If a JES variation is applied, the central
+ * weight will the one called "up/down_jes" in the b-tagging SF file. I.e. the JES-related uncertainty of the b-tagging SFs must be 100% correlated with the
+ * actual JES variation in your analysis. If you are interested in the split JES uncertainty sources, you can specify "jecsmear_source" in your XML config;
+ * this defaults to "Total", so you don't have to do anything if you are only interested in the total JES variations. But if you set "jecsmear_source" to
+ * e.g. "Fragmentation" while "jecsmear_direction" is not nominal, then your jet corretor module will apply only the up/down variation related to the
+ * "Fragmentation" uncertainty source and this b-tagging SF module will apply the "up/down_jesFragmentation" SF (it will still be called "central" in the
+ * AnalysisTree).
+ *
+ * The other variations not related to JES work as usual. Set "SystDirection_BTaggingShape" (default: "central") in your config XML to the corresponding
+ * variation. Available options are called like the SysType enums (see below). Note that this needs to stay "central" if you are doing JES variations!
  */
 class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
 public:
