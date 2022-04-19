@@ -143,7 +143,7 @@ namespace {
 
   JetCorrectionUncertainty* corrector_uncertainty(uhh2::Context & ctx, const std::vector<std::string> & filenames, int &direction){
 
-    auto dir = ctx.get("jecsmear_direction", "nominal");
+    auto dir = ctx.get("jecsmear_direction");
     if (ctx.get("dataset_type") != "MC") {
       direction = 0;
     }
@@ -612,7 +612,7 @@ GenericJetResolutionSmearer::GenericJetResolutionSmearer(uhh2::Context& ctx, con
   if(ctx.get("meta_jer_applied__"+recjet_label, "") != "true") ctx.set_metadata("jer_applied__"+recjet_label, "true");
   else throw std::runtime_error("GenericJetResolutionSmearer::GenericJetResolutionSmearer -- JER smearing already applied to this RECO-jets collection: "+recjet_label);
 
-  const std::string& dir = ctx.get("jersmear_direction", "nominal");
+  const std::string& dir = ctx.get("jersmear_direction");
   if     (dir == "nominal") direction =  0;
   else if(dir == "up")      direction =  1;
   else if(dir == "down")    direction = -1;
