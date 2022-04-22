@@ -66,6 +66,10 @@
             <Item Name="pileup_directory" Value="common/data/2018/MyMCPileupHistogram.root" />
             <Item Name="pileup_directory_data" Value="common/data/2018/MyDataPileupHistogram2018.root" />
 
+            <!-- configuration for JEC and JER smearing (run as part of CommonModules): -->
+            <Item Name="jersmear_direction" Value="nominal" />
+            <Item Name="jecsmear_direction" Value="nominal" />
+
             <!-- Some test configuration; see ExampleModule.cxx for how to access it: -->
             <Item Name="TestKey" Value="TestKeyValue" />
         </UserConfig>
