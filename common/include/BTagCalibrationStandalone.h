@@ -73,6 +73,7 @@ public:
   static std::string makeCSVHeader();
   std::string makeCSVLine() const;
   static std::string trimStr(std::string str);
+  void SplitLineByCommas(const std::string &csvLine, std::vector<std::string> &vec);
 
   // public, no getters needed
   std::string formula;

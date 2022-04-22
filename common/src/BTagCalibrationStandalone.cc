@@ -34,24 +34,52 @@ BTagEntry::Parameters::Parameters(
                  sysType.begin(), ::tolower);
 }
 
-BTagEntry::BTagEntry(const std::string &csvLine)
-{
-  // make tokens
-  std::stringstream buff(csvLine);
-  std::vector<std::string> vec;
+
+// Splits line from csv file by commas disregarding commas
+// that might be present in the last column as part of an
+// equation and not as csv separators.
+void BTagEntry::SplitLineByCommas(const std::string &csvLine, std::vector<std::string> &vec) {
+  std::string csvLineCleaned = csvLine; 
+  std::string equation = ""; 
+
+  if (std::count(csvLine.begin(), csvLine.end(), ',') > 10 ) { 
+    std::stringstream buff(csvLine);
+    std::string token;
+    while (std::getline(buff, token, '"')) {
+      token = BTagEntry::trimStr(token);
+      int n_comma = std::count(token.begin(), token.end(), ',');
+      if (n_comma == 10) {
+        csvLineCleaned = token;
+      } else if (n_comma && n_comma < 10) {
+        equation = token;
+      }   
+    }   
+  }
+
+  std::stringstream buff(csvLineCleaned);
   std::string token;
   while (std::getline(buff, token, ","[0])) {
     token = BTagEntry::trimStr(token);
     if (token.empty()) {
       continue;
-    }
+    }   
     vec.push_back(token);
   }
+  if (equation != "") vec.push_back(equation);
+
+}
+
+
+BTagEntry::BTagEntry(const std::string &csvLine) {
+  // make tokens
+  std::vector<std::string> vec;
+  SplitLineByCommas(csvLine, vec);
+
   if (vec.size() != 11) {
-std::cerr << "ERROR in BTagCalibration: "
-          << "Invalid csv line; num tokens != 11: "
-          << csvLine;
-throw std::exception();
+    std::cerr << "ERROR in BTagCalibration: "
+      << "Invalid csv line; num tokens != 11: "
+      << csvLine;
+    throw std::exception();
   }
 
   // clean string values
