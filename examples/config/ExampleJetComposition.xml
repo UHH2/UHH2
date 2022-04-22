@@ -39,6 +39,10 @@
             <!-- configuration for MCPileupReweight (run as part of CommonModules): -->
 <!--            <Item Name="pileup_directory" Value="" /> -->
 
+            <!-- configuration for JEC and JER smearing (run as part of CommonModules): -->
+            <!-- <Item Name="jersmear_direction" Value="nominal" /> -->
+            <!-- <Item Name="jecsmear_direction" Value="nominal" /> -->
+
             <!-- Some test configuration; see ExampleJetComposition.cxx for how to access it: -->
             <Item Name="TestKey" Value="TestKeyValue" />
         </UserConfig>
