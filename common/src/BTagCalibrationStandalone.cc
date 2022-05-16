@@ -532,6 +532,7 @@ double BTagCalibrationReader::BTagCalibrationReaderImpl::eval(
                                              float pt,
                                              float discr) const
 {
+  
   bool use_discr = (op_ == BTagEntry::OP_RESHAPING);
   if (useAbsEta_[jf] && eta < 0) {
     eta = -eta;
@@ -566,6 +567,12 @@ double BTagCalibrationReader::BTagCalibrationReaderImpl::eval_auto_bounds(
                                              float pt,
                                              float discr) const
 {
+  
+  // added by Finn, without this the SF would only be applied to jets with positive eta!
+  if (useAbsEta_[jf] && eta < 0) {
+    eta = -eta;
+  }
+
   auto sf_bounds_eta = min_max_eta(jf, discr);
   bool eta_is_out_of_bounds = false;
 
