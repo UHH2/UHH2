@@ -536,8 +536,9 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     for(size_t j=0; j< met_sources.size(); ++j){
       met_tokens.push_back(consumes<vector<pat::MET>>(met_sources[j]));
       branch(tr, met_sources[j].c_str(), "MET", &met[j]);
-      if (met_sources[j]=="slimmedMETsPuppi") skipMETUncertainties.push_back(true);  // Puppi doesn't have METUncertainty
-      else skipMETUncertainties.push_back(false);
+      // if (met_sources[j]=="slimmedMETsPuppi") skipMETUncertainties.push_back(true);  // Puppi doesn't have METUncertainty
+      // else skipMETUncertainties.push_back(false);
+      skipMETUncertainties.push_back(false); // New: Puppi MET does have uncertainties (e.g. unclustered energy variations)
     }
     if(!met_sources.empty()){
       event->met = &met[0];
