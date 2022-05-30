@@ -95,19 +95,16 @@
             <Item Name="muon_id_sf_direction" Value="down"/>
             <!-- <Item Name="muon_id_sf_direction" Value="up"/> -->
 
-            <Item Name="MCBtagEfficiencies" Value="nominal"/>
+            <Item Name="MCBtagEfficiencies" Value="nominal"/> <!-- This should actually be a file path to a ROOT file with MC efficiences... -->
             <!--
                 Btag scale factors for MC
                 Again, this is one we have set up ourselves
             -->
-            <!-- <Item Name="btag_sf_direction" Value="nominal"/> -->
-            <Item Name="btag_sf_direction" Value="down"/>
-            <!-- <Item Name="btag_sf_direction" Value="down_bc"/> -->
-            <!-- <Item Name="btag_sf_direction" Value="down_udsg"/> -->
-            <!-- <Item Name="btag_sf_direction" Value="up"/> -->
-            <!-- <Item Name="btag_sf_direction" Value="up_bc"/> -->
-            <!-- <Item Name="btag_sf_direction" Value="up_udsg"/> -->
-
+            <!-- <Item Name="SystDirection_BTaggingFixedWP" Value="central"/> -->
+            <Item Name="SystDirection_BTaggingFixedWP" Value="bc_down"/>
+            <!-- <Item Name="SystDirection_BTaggingFixedWP" Value="bc_up"/> -->
+            <!-- <Item Name="SystDirection_BTaggingFixedWP" Value="light_down"/> -->
+            <!-- <Item Name="SystDirection_BTaggingFixedWP" Value="light_up"/> -->
 
 
             <Item Name="AnalysisModule" Value="ExampleModuleSystematics" />
