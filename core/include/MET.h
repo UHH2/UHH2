@@ -120,7 +120,7 @@ public:
 
 
   /// convert missing transverse energy into 4-vector
-  LorentzVector v4(){
+  LorentzVector v4() const {
     LorentzVector met(0,0,0,0);
     met.SetPt(m_pt);
     met.SetPhi(m_phi);
