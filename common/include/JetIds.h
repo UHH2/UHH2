@@ -29,10 +29,10 @@ public:
   };
   explicit BTag(algo tagger, wp working_point);
 
-  bool operator()(const Jet & jet, const uhh2::Event & event) {return jet_id(jet,event);}
+  bool operator()(const Jet & jet, const uhh2::Event & event) const {return jet_id(jet,event);}
 
-  std::string GetTagger() {return m_algo;}
-  int GetWorkingPoint() {return m_working_point;}
+  std::string GetTagger() const {return m_algo;}
+  int GetWorkingPoint() const {return m_working_point;}
 private:
   std::string m_algo;
   int m_working_point;
