@@ -87,12 +87,10 @@ ExampleModuleSystematics::ExampleModuleSystematics(Context & ctx)
                                       BTag::DEEPCSV, // example settings here - these should agree with whatever ID you use in your analysis
                                       BTag::WP_MEDIUM,
                                       "jets",
-                                      ctx.get("btag_sf_direction", "nominal"),  // here we link up the option in XML to the class constructor argument
                                       "mujets",
                                       "incl",
                                       "MCBtagEfficiencies",
-                                      "",
-                                      "BTagCalibration"));
+                                      ""));
 }
 
 

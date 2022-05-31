@@ -3,7 +3,8 @@
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/common/include/JetIds.h"
-#include "UHH2/common/include/BTagCalibrationStandalone.h"
+// #include "UHH2/common/include/BTagCalibrationStandalone.h"
+#include "UHH2/common/include/UHH2BTagCalibReader.h"
 #include "UHH2/common/include/Utils.h"
 
 #include "TH2.h"
@@ -224,64 +225,119 @@ class BTagCalibrationReader;  // forward declaration
  * jets_handle_name should point to a handle of type vector<Jet> _or_
  * vector<TopJet>, were in the latter case all of the subjets are used.
  *
- * measurementType and sysType are interpreted by the BTagCalibration
+ * measType_bc/udsg is interpreted by the BTagCalibrationReader
  * (check https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagCalibration).
- * Currently, sysType can be one of central, up, down, up_bc, down_bc, up_udsg,
- * down_udsg.
  *
- * This module is designed to be used with the CSVBTag class
- * (see include/JetIds.h) and only one operating point!
+ * This module is designed to be used with the BTag class (see include/JetIds.h)
+ * and only one operating point, following method 1a from here:
+ * https://twiki.cern.ch/twiki/bin/view/CMS/BTagSFMethods#1a_Event_reweighting_using_scale
  *
  * These values are taken from the context:
  *  - "MCBtagEfficiencies" should be a path-string pointing to a file with three
  *    histograms, that were made with the main selection of your analysis
- *    applied (TH2, x->pt, y->eta):
+ *    applied (TH2, x->pt, y->abseta):
  *    - BTagMCEffFlavBEff
  *    - BTagMCEffFlavCEff
  *    - BTagMCEffFlavUDSGEff
- *  - "BTagCalibration" should be a path-string pointing to the .csv file
- *    containing scale factors.
+ *
+ * This module writes several float weights to your AnalysisTree, each representing one variation
+ * of the b-tagging SFs: "weight_btag_<bc/light>_<up/down>_systtype" and "weight_btag_central".
+ * "weights_name_postfix" can be used to add a custom postfix ("weight_btag_<postfix>_<bc/light>_...").
+ *
+ * If you want to apply another SF than the central one to event.weight, than specify the name of
+ * the weight in your config XML, for example:
+ * <Item Name="SystDirection_BTaggingFixedWP" Value="bc_up_correlated"/> <!-- or: light_down_hdamp etc. -->
+ *
+ * It's up to you to handle the correlations between all variations correctly (e.g. via your
+ * Combine datacard) and which set of uncertainties you want to consider. More information here:
+ * https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation#UltraLegacy_scale_factor_uncerta
+ *
+ * By default, the BTagCalibration CSV file is chosen by the constructor, depending on the year and algorithm. If you want to force the use of another file,
+ * you can set in your SFrame config XML:
+ * <Item Name="BTagCalibration_FixedWP" Value=".../some/file/path/file.csv"/>
  */
 class MCBTagScaleFactor: public uhh2::AnalysisModule {
 public:
   explicit MCBTagScaleFactor(
     uhh2::Context & ctx,
-    BTag::algo tagger,
-    BTag::wp wp,
+    const BTag::algo algo,
+    const BTag::wp wp,
     const std::string & jets_handle_name="jets",
-    const std::string & sysType="central",
     const std::string & measType_bc="mujets",
     const std::string & measType_udsg="incl",
-    const std::string & xml_param_name="MCBtagEfficiencies",
-    const std::string & weights_name_postfix="",
-    const std::string & xml_calib_name="BTagCalibration"
+    const std::string & xml_config_eff_file="MCBtagEfficiencies",
+    const std::string & weights_name_postfix=""
   );
-
-
   virtual bool process(uhh2::Event & event) override;
 
-protected:
-  std::tuple<float, float, float> get_weight_btag(const std::vector<TopJet> &jets,
-                                                  uhh2::Event & event);
-  std::pair<float, float> get_SF_btag(float pt, float abs_eta, int flav);
+private:
+  enum class FlavType {
+    BC,
+    LIGHT,
+    NONE,
+  };
 
-  BTag btag_;
-  std::unique_ptr<BTagCalibrationReader> calib_up_;
-  std::unique_ptr<BTagCalibrationReader> calib_;
-  std::unique_ptr<BTagCalibrationReader> calib_down_;
-  std::unique_ptr<TH2> eff_b_;
-  std::unique_ptr<TH2> eff_c_;
-  std::unique_ptr<TH2> eff_udsg_;
-  uhh2::Event::Handle<std::vector<Jet>> h_jets_;
-  uhh2::Event::Handle<std::vector<TopJet>> h_topjets_;
-  std::string sysType_;
-  uhh2::Event::Handle<float> h_btag_weight_;
-  uhh2::Event::Handle<float> h_btag_weight_up_;
-  uhh2::Event::Handle<float> h_btag_weight_down_;
-  uhh2::Event::Handle<float> h_btag_weight_bc_up_;
-  uhh2::Event::Handle<float> h_btag_weight_bc_down_;
-  uhh2::Event::Handle<float> h_btag_weight_udsg_up_;
-  uhh2::Event::Handle<float> h_btag_weight_udsg_down_;
+  typedef struct {
+    std::string name;
+  } FlavTypeInfo;
+
+  const std::map<FlavType, FlavTypeInfo> kFlavTypes = {
+    { FlavType::BC, { .name="bc" } },
+    { FlavType::LIGHT, { .name="light" } },
+  };
+
+  float get_btag_weight(const uhh2::Event & event, const FlavType & ft, const std::string & sys) const;
+
+  const Year fYear;
+  const BTag fBTagID;
+  const uhh2::Event::Handle<std::vector<Jet>> fHandle_jets;
+  const uhh2::Event::Handle<std::vector<TopJet>> fHandle_topjets;
+
+  const std::string fCalibrationFileConfigName = "BTagCalibration_FixedWP";
+
+  std::map<FlavType, std::set<std::string>> fUncerts;
+  const std::map<std::string, std::set<std::string>> fUncerts_per_measType = {
+    {"incl", {
+      "up", "down",
+      "up_correlated", "down_correlated",
+      "up_uncorrelated", "down_uncorrelated",
+    }},
+    {"comb", {
+      "up", "down",
+      "up_correlated", "down_correlated",
+      "up_uncorrelated", "down_uncorrelated",
+      "up_fsr", "down_fsr",
+      "up_hdamp", "down_hdamp",
+      "up_isr", "down_isr",
+      "up_jer", "down_jer",
+      "up_jes", "down_jes",
+      "up_pileup", "down_pileup",
+      "up_qcdscale", "down_qcdscale",
+      "up_statistic", "down_statistic",
+      "up_topmass", "down_topmass",
+      "up_type3", "down_type3",
+    }},
+    {"mujets", {
+      "up", "down",
+      "up_correlated", "down_correlated",
+      "up_uncorrelated", "down_uncorrelated",
+      "up_jes", "down_jes",
+      "up_pileup", "down_pileup",
+      "up_statistic", "down_statistic",
+      "up_type3", "down_type3",
+    }},
+  };
+
+  uhh2::Event::Handle<float> fHandle_weight_central;
+  std::map<FlavType, std::map<std::string, uhh2::Event::Handle<float>>> fHandles_weights; // all non-central weights
+
+  const std::string fSystDirectionConfigName = "SystDirection_BTaggingFixedWP";
+  FlavType fSysType_ft = FlavType::NONE;
+  std::string fSysType_uncert;
+
+  std::map<FlavType, std::unique_ptr<uhh2::BTagCalib::Reader>> fReaders;
+
+  std::map<uhh2::BTagCalib::JetFlavor, std::unique_ptr<TH2>> fEffHists;
 };
 
 
@@ -305,6 +361,10 @@ protected:
  *
  * The other variations not related to JES work as usual. Set "SystDirection_BTaggingShape" (default: "central") in your config XML to the corresponding
  * variation. Available options are called like the SysType enums (see below). Note that this needs to stay "central" if you are doing JES variations!
+ *
+ * By default, the BTagCalibration CSV file is chosen by the constructor, depending on the year and algorithm. If you want to force the use of another file,
+ * you can set in your SFrame config XML:
+ * <Item Name="BTagCalibration_Shape" Value=".../some/file/path/file.csv"/>
  */
 class MCBTagDiscriminantReweighting: public uhh2::AnalysisModule {
 public:
@@ -365,7 +425,9 @@ private:
   SysType fSysType;
   std::string fCentralOrJES;
 
-  std::unique_ptr<BTagCalibrationReader> reader;
+  const std::string fCalibrationFileConfigName = "BTagCalibration_Shape";
+
+  std::unique_ptr<uhh2::BTagCalib::Reader> fReader;
 };
 
 

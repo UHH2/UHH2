@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/optional.hpp>
+
 #include "UHH2/core/include/Hists.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/LorentzVector.h"
@@ -113,32 +115,40 @@ class TopJetHists: public JetHistsBase{
 
 
 
-static const std::vector<float> BTagMCEffBinsEta = {-2.4, 2.4};
-static const std::vector<float> BTagMCEffBinsPt = {20., 30., 50., 70., 100., 140., 200., 300., 600., 1000.};
+ // These bins are the same as the pt and abseta bins in which the wp-based b-tagging SFs are given:
+static const std::vector<float> kBTagMCEffBinsAbsEta = {0.0, 2.5}; // the wp-based SFs are given abseta-inclusively (cut-off at 2.5 for Ultra Legacy)
+static const std::vector<float> kBTagMCEffBinsPt = {20., 30., 50., 70., 100., 140., 200., 300., 600., 1000.};
 /** \brief measure btag efficiency in MC
  *
  * jets_handle_name should point to a handle of type vector<Jet> _or_
  * vector<TopJet>, were in the latter case all of the subjets are used.
+ *
+ * pt_bins / abseta_bins : You can provide custom binnings if you need to. Else the default ones (see above) will be used.
  */
 class BTagMCEfficiencyHists: public uhh2::Hists {
 public:
-  BTagMCEfficiencyHists(uhh2::Context & ctx,
-                        const std::string & dirname,
-			const JetId & jet_id,
-                        const std::string & jets_handle_name="jets");
-
+  BTagMCEfficiencyHists(
+    uhh2::Context & ctx,
+    const std::string & dirname,
+    const JetId & jet_id,
+    const boost::optional<std::string> & jets_handle_name = boost::none,
+    const boost::optional<std::vector<float>> & pt_bins = boost::none,
+    const boost::optional<std::vector<float>> & abseta_bins = boost::none
+  );
   virtual void fill(const uhh2::Event & ev) override;
 
 protected:
   void do_fill(const std::vector<TopJet> & jets, const uhh2::Event & event);
 
-  JetId btag_;
+  const JetId btag_;
+  const std::vector<float> BTagMCEffBinsPt;
+  const std::vector<float> BTagMCEffBinsAbsEta;
   TH2F * hist_b_passing_;
   TH2F * hist_b_total_;
   TH2F * hist_c_passing_;
   TH2F * hist_c_total_;
   TH2F * hist_udsg_passing_;
   TH2F * hist_udsg_total_;
-  uhh2::Event::Handle<std::vector<TopJet>> h_topjets_;
-  uhh2::Event::Handle<std::vector<Jet>>    h_jets_;
+  const uhh2::Event::Handle<std::vector<TopJet>> h_topjets_;
+  const uhh2::Event::Handle<std::vector<Jet>> h_jets_;
 };

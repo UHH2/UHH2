@@ -259,18 +259,22 @@ BTagMCEfficiencyHists::BTagMCEfficiencyHists(
   uhh2::Context & ctx,
   const std::string & dirname,
   const JetId & jet_id,
-  const std::string & jets_handle_name
+  const boost::optional<std::string> & jets_handle_name,
+  const boost::optional<vector<float>> & pt_bins,
+  const boost::optional<vector<float>> & abseta_bins
 ):
   Hists(ctx, dirname),
   btag_(jet_id),
-  hist_b_passing_(   book<TH2F>("BTagMCEffFlavBPassing",    ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
-  hist_b_total_(     book<TH2F>("BTagMCEffFlavBTotal",      ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
-  hist_c_passing_(   book<TH2F>("BTagMCEffFlavCPassing",    ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
-  hist_c_total_(     book<TH2F>("BTagMCEffFlavCTotal",      ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
-  hist_udsg_passing_(book<TH2F>("BTagMCEffFlavUDSGPassing", ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
-  hist_udsg_total_(  book<TH2F>("BTagMCEffFlavUDSGTotal",   ";jet pt;jet eta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsEta.size()-1, BTagMCEffBinsEta.data())),
-  h_topjets_(ctx.get_handle<vector<TopJet>>(jets_handle_name)),
-  h_jets_(   ctx.get_handle<vector<Jet>>(   jets_handle_name))
+  BTagMCEffBinsPt(pt_bins ? *pt_bins : kBTagMCEffBinsPt),
+  BTagMCEffBinsAbsEta(abseta_bins ? *abseta_bins : kBTagMCEffBinsAbsEta),
+  hist_b_passing_(   book<TH2F>("BTagMCEffFlavBPassing",    ";jet pt;jet abseta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsAbsEta.size()-1, BTagMCEffBinsAbsEta.data())),
+  hist_b_total_(     book<TH2F>("BTagMCEffFlavBTotal",      ";jet pt;jet abseta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsAbsEta.size()-1, BTagMCEffBinsAbsEta.data())),
+  hist_c_passing_(   book<TH2F>("BTagMCEffFlavCPassing",    ";jet pt;jet abseta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsAbsEta.size()-1, BTagMCEffBinsAbsEta.data())),
+  hist_c_total_(     book<TH2F>("BTagMCEffFlavCTotal",      ";jet pt;jet abseta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsAbsEta.size()-1, BTagMCEffBinsAbsEta.data())),
+  hist_udsg_passing_(book<TH2F>("BTagMCEffFlavUDSGPassing", ";jet pt;jet abseta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsAbsEta.size()-1, BTagMCEffBinsAbsEta.data())),
+  hist_udsg_total_(  book<TH2F>("BTagMCEffFlavUDSGTotal",   ";jet pt;jet abseta", BTagMCEffBinsPt.size()-1, BTagMCEffBinsPt.data(), BTagMCEffBinsAbsEta.size()-1, BTagMCEffBinsAbsEta.data())),
+  h_topjets_(ctx.get_handle<vector<TopJet>>(jets_handle_name ? *jets_handle_name : "jets")),
+  h_jets_(ctx.get_handle<vector<Jet>>(jets_handle_name ? *jets_handle_name : "jets"))
 {}
 
 void BTagMCEfficiencyHists::fill(const Event & event)
@@ -289,24 +293,24 @@ void BTagMCEfficiencyHists::do_fill(const std::vector<TopJet> & jets, const Even
 {
   for (const auto & topjet : jets) { for (const auto & jet : topjet.subjets()) {
 
-    auto flav = jet.hadronFlavour();
-    bool is_tagged = btag_(jet, event);
-    float pt = jet.pt(), eta = jet.eta(), w = event.weight;
+    const auto flav = jet.hadronFlavour();
+    const bool is_tagged = btag_(jet, event);
+    const float pt = jet.pt(), abseta = fabs(jet.eta()), w = event.weight;
 
     if (flav == 5) {
-      hist_b_total_->Fill(pt, eta, w);
+      hist_b_total_->Fill(pt, abseta, w);
       if (is_tagged) {
-        hist_b_passing_->Fill(pt, eta, w);
+        hist_b_passing_->Fill(pt, abseta, w);
       }
     } else if (flav == 4) {
-      hist_c_total_->Fill(pt, eta, w);
+      hist_c_total_->Fill(pt, abseta, w);
       if (is_tagged) {
-        hist_c_passing_->Fill(pt, eta, w);
+        hist_c_passing_->Fill(pt, abseta, w);
       }
     } else {
-      hist_udsg_total_->Fill(pt, eta, w);
+      hist_udsg_total_->Fill(pt, abseta, w);
       if (is_tagged) {
-        hist_udsg_passing_->Fill(pt, eta, w);
+        hist_udsg_passing_->Fill(pt, abseta, w);
       }
     }
 

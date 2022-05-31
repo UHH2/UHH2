@@ -1,4 +1,4 @@
-#include "UHH2/common/include/BTagCalibrationStandalone.h"
+// #include "UHH2/common/include/BTagCalibrationStandalone.h"
 #include "UHH2/common/include/MCWeight.h"
 #include "UHH2/core/include/Event.h"
 #include "UHH2/core/include/Utils.h"
@@ -7,12 +7,14 @@
 #include "Riostream.h"
 #include "TFile.h"
 #include "TH1F.h"
+#include "TObjString.h"
 
 #include <stdexcept>
 
 using namespace uhh2;
 using namespace std;
 
+//____________________________________________________________________________________________________
 MCLumiWeight::MCLumiWeight(Context & ctx){
   use_sframe_weight = string2bool(ctx.get("use_sframe_weight", "true"));
   if(use_sframe_weight){
@@ -40,8 +42,7 @@ bool MCLumiWeight::process(uhh2::Event & event){
   return true;
 }
 
-
-
+//____________________________________________________________________________________________________
 MCPileupReweight::MCPileupReweight(Context & ctx, const std::string & sysType):
   h_pu_weight_(ctx.declare_event_output<float>("weight_pu")),
   h_pu_weight_up_(ctx.declare_event_output<float>("weight_pu_up")),
@@ -195,6 +196,7 @@ bool MCPileupReweight::process(Event &event){
   return true;
 }
 
+//____________________________________________________________________________________________________
 MCScaleVariation::MCScaleVariation(Context & ctx){
 
   auto dataset_type = ctx.get("dataset_type");
@@ -277,9 +279,7 @@ bool MCScaleVariation::process(Event & event){
   return true;
 }
 
-
-
-
+//____________________________________________________________________________________________________
 MCMuonScaleFactor::MCMuonScaleFactor(
   uhh2::Context & ctx,
   const std::string & sf_file_path,
@@ -483,7 +483,7 @@ bool MCMuonScaleFactor::process_onemuon(uhh2::Event & event, int i) {
   return true;
 }
 
-
+//____________________________________________________________________________________________________
 MCMuonTrkScaleFactor::MCMuonTrkScaleFactor(
   uhh2::Context & ctx,
   const std::string & sf_file_path,
@@ -584,8 +584,7 @@ bool MCMuonTrkScaleFactor::process(uhh2::Event & event) {
   return true;
 }
 
-
-
+//____________________________________________________________________________________________________
 MCElecScaleFactor::MCElecScaleFactor(
   uhh2::Context & ctx,
   const std::string & sf_file_path,
@@ -696,251 +695,217 @@ bool MCElecScaleFactor::process(uhh2::Event & event) {
   return true;
 }
 
-
+//____________________________________________________________________________________________________
 MCBTagScaleFactor::MCBTagScaleFactor(
   uhh2::Context & ctx,
-  BTag::algo tagger,
-  BTag::wp wp,
+  const BTag::algo algo,
+  const BTag::wp wp,
   const std::string & jets_handle_name,
-  const std::string & sysType,
   const std::string & measType_bc,
   const std::string & measType_udsg,
-  const std::string & xml_param_name,
-  const std::string & weights_name_postfix,
-  const std::string & xml_calib_name
+  const std::string & xml_config_eff_file,
+  const std::string & weights_name_postfix
 ):
-  btag_(BTag(tagger, wp)),
-  h_jets_(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
-  h_topjets_(ctx.get_handle<std::vector<TopJet>>(jets_handle_name)),
-  sysType_(sysType),
-  h_btag_weight_          (ctx.declare_event_output<float>("weight_btag"+weights_name_postfix)),
-  h_btag_weight_up_       (ctx.declare_event_output<float>("weight_btag_up"+weights_name_postfix)),
-  h_btag_weight_down_     (ctx.declare_event_output<float>("weight_btag_down"+weights_name_postfix)),
-  h_btag_weight_bc_up_    (ctx.declare_event_output<float>("weight_btag_bc_up"+weights_name_postfix)),
-  h_btag_weight_bc_down_  (ctx.declare_event_output<float>("weight_btag_bc_down"+weights_name_postfix)),
-  h_btag_weight_udsg_up_  (ctx.declare_event_output<float>("weight_btag_udsg_up"+weights_name_postfix)),
-  h_btag_weight_udsg_down_(ctx.declare_event_output<float>("weight_btag_udsg_down"+weights_name_postfix))
+  fYear(extract_year(ctx)),
+  fBTagID(BTag(algo, wp)),
+  fHandle_jets(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
+  fHandle_topjets(ctx.get_handle<std::vector<TopJet>>(jets_handle_name))
 {
-  auto dataset_type = ctx.get("dataset_type");
-  bool is_mc = dataset_type == "MC";
-  if (!is_mc) {
-    cout << "Warning: MCBTagScaleFactor will not have an effect on "
-    <<" this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+  fUncerts[FlavType::BC] = fUncerts_per_measType.at(measType_bc);
+  fUncerts[FlavType::LIGHT] = fUncerts_per_measType.at(measType_udsg);
+
+  const string weights_name = "weight_btag"+(weights_name_postfix.empty() ? "_" : "_"+weights_name_postfix+"_");
+  fHandle_weight_central = ctx.declare_event_output<float>(weights_name+"central");
+  for(const auto & ft : kFlavTypes) {
+    for(const string & uncert : fUncerts.at(ft.first)) {
+      fHandles_weights[ft.first][uncert] = ctx.declare_event_output<float>(weights_name+ft.second.name+"_"+uncert);
+    }
+  }
+
+  bool invalid_variation = false;
+  const string sysType = ctx.get(fSystDirectionConfigName, "central");
+  const auto tokens = ((TString)sysType).Tokenize("_");
+  for(const auto & ft : kFlavTypes) {
+    if(((TObjString*)tokens->First())->GetString() == ft.second.name) fSysType_ft = ft.first;
+  }
+  if(fSysType_ft != FlavType::NONE) {
+    fSysType_uncert = ((TObjString*)(tokens->At(1)))->GetString();
+    for(Int_t i = 2; i <= tokens->GetLast(); ++i) fSysType_uncert += "_"+((TObjString*)(tokens->At(i)))->GetString();
+    const auto & v = fUncerts.at(fSysType_ft);
+    if(std::find(v.begin(), v.end(), fSysType_uncert) == v.end()) invalid_variation = true;
+  }
+  else {
+    if(sysType != "central" && sysType != "nominal") invalid_variation = true;
+  }
+  if(invalid_variation) throw invalid_argument("MCBTagScaleFactor: The variation '"+sysType+"' that you request for application is invalid");
+
+  const string dataset_type = ctx.get("dataset_type");
+  const bool is_mc = dataset_type == "MC";
+  if(!is_mc) {
+    cout << "Warning: MCBTagScaleFactor will only setup dummy weights for this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
     return;
   }
 
-  TFile eff_file(locate_file(ctx.get(xml_param_name)).c_str());
-  if (eff_file.IsZombie()) {
-    cout << "Warning: MCBTagScaleFactor will not have an effect because the root-file "
-    << "with MC-efficiencies not found: " << ctx.get(xml_param_name) << endl;
-    eff_file.Close();
-    return;
+  string sf_file_path = (string)getenv("CMSSW_BASE")+"/src/UHH2/common/UHH2-data/btagging_SFs_UL/";
+  switch(algo) {
+    case BTag::DEEPCSV :
+    switch(fYear) {
+      case Year::isUL16preVFP :
+      sf_file_path += "wp_deepCSV_106XUL16preVFP_v2.csv";
+      break;
+      case Year::isUL16postVFP :
+      sf_file_path += "wp_deepCSV_106XUL16postVFP_v3.csv";
+      break;
+      case Year::isUL17 :
+      sf_file_path += "wp_deepCSV_106XUL17_v3.csv";
+      break;
+      case Year::isUL18 :
+      sf_file_path += "wp_deepCSV_106XUL18_v2.csv";
+      break;
+      default :
+      throw invalid_argument("MCBTagScaleFactor: Invalid year");
+    }
+    break;
+    case BTag::DEEPJET :
+    switch(fYear) {
+      case Year::isUL16preVFP :
+      sf_file_path += "wp_deepJet_106XUL16preVFP_v2.csv";
+      break;
+      case Year::isUL16postVFP :
+      sf_file_path += "wp_deepJet_106XUL16postVFP_v3.csv";
+      break;
+      case Year::isUL17 :
+      sf_file_path += "wp_deepJet_106XUL17_v3.csv";
+      break;
+      case Year::isUL18 :
+      sf_file_path += "wp_deepJet_106XUL18_v2.csv";
+      break;
+      default :
+      throw invalid_argument("MCBTagScaleFactor: Invalid year");
+    }
+    break;
+    default :
+    throw invalid_argument("MCBTagScaleFactor: Invalid b-tagging algorithm. This module only works with DeepJet or DeepCSV");
   }
-  eff_b_.reset((TH2*) eff_file.Get("BTagMCEffFlavBEff"));
-  eff_c_.reset((TH2*) eff_file.Get("BTagMCEffFlavCEff"));
-  eff_udsg_.reset((TH2*) eff_file.Get("BTagMCEffFlavUDSGEff"));
-  eff_b_->SetDirectory(0);
-  eff_c_->SetDirectory(0);
-  eff_udsg_->SetDirectory(0);
+  if(ctx.has(fCalibrationFileConfigName)) sf_file_path = ctx.get(fCalibrationFileConfigName);
+
+  BTagCalib::OperatingPoint op = BTagCalib::OperatingPoint::UNDEFINED;
+  switch(fBTagID.GetWorkingPoint()) {
+    case BTag::WP_LOOSE :
+    op = BTagCalib::OperatingPoint::LOOSE;
+    break;
+    case BTag::WP_MEDIUM :
+    op = BTagCalib::OperatingPoint::MEDIUM;
+    break;
+    case BTag::WP_TIGHT :
+    op = BTagCalib::OperatingPoint::TIGHT;
+    break;
+    default :
+    throw invalid_argument("MCBTagScaleFactor: Invalid working point");
+  }
+  fReaders[FlavType::BC].reset(new BTagCalib::Reader(locate_file(sf_file_path), op, measType_bc, fUncerts.at(FlavType::BC)));
+  fReaders[FlavType::LIGHT].reset(new BTagCalib::Reader(locate_file(sf_file_path), op, measType_udsg, fUncerts.at(FlavType::LIGHT)));
+
+  TFile eff_file(locate_file(ctx.get(xml_config_eff_file)).c_str());
+  if(eff_file.IsZombie()) {
+    throw runtime_error("MCBTagScaleFactor: MC-efficiencies ROOT file '" + dataset_type + "' is zombie");
+  }
+  // You need to provide a ROOT file with three histograms with these names containing MC b-tagging efficiencies:
+  fEffHists[BTagCalib::JetFlavor::FLAV_B].reset((TH2*)eff_file.Get("BTagMCEffFlavBEff"));
+  fEffHists[BTagCalib::JetFlavor::FLAV_C].reset((TH2*)eff_file.Get("BTagMCEffFlavCEff"));
+  fEffHists[BTagCalib::JetFlavor::FLAV_UDSG].reset((TH2*)eff_file.Get("BTagMCEffFlavUDSGEff"));
+  for(auto & hist : fEffHists) hist.second->SetDirectory(0);
   eff_file.Close();
-
-  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BTagCalibration
-  BTagCalibration calib_data(btag_.GetTagger(), ctx.get(xml_calib_name));
-  BTagEntry::OperatingPoint op = (BTagEntry::OperatingPoint) btag_.GetWorkingPoint();
-
-  calib_up_.reset(new BTagCalibrationReader(op, "up"));
-  calib_.reset(new BTagCalibrationReader(op, "central"));
-  calib_down_.reset(new BTagCalibrationReader(op, "down"));
-
-  calib_up_->load(calib_data, BTagEntry::FLAV_B, measType_bc);
-  calib_up_->load(calib_data, BTagEntry::FLAV_C, measType_bc);
-  calib_up_->load(calib_data, BTagEntry::FLAV_UDSG, measType_udsg);
-  calib_->load(calib_data, BTagEntry::FLAV_B, measType_bc);
-  calib_->load(calib_data, BTagEntry::FLAV_C, measType_bc);
-  calib_->load(calib_data, BTagEntry::FLAV_UDSG, measType_udsg);
-  calib_down_->load(calib_data, BTagEntry::FLAV_B, measType_bc);
-  calib_down_->load(calib_data, BTagEntry::FLAV_C, measType_bc);
-  calib_down_->load(calib_data, BTagEntry::FLAV_UDSG, measType_udsg);
 }
 
 bool MCBTagScaleFactor::process(Event & event) {
 
-  if (!calib_) {
-    event.set(h_btag_weight_,           1.);
-    event.set(h_btag_weight_up_,        1.);
-    event.set(h_btag_weight_down_,      1.);
-    event.set(h_btag_weight_bc_up_,     1.);
-    event.set(h_btag_weight_bc_down_,   1.);
-    event.set(h_btag_weight_udsg_up_,   1.);
-    event.set(h_btag_weight_udsg_down_, 1.);
+  float weight_central = 1.f;
+
+  if(event.isRealData) {
+    event.set(fHandle_weight_central, weight_central);
+    for(const auto & ft : kFlavTypes) {
+      for(const string & uncert : fUncerts.at(ft.first)) {
+        event.set(fHandles_weights[ft.first][uncert], weight_central);
+      }
+    }
     return true;
   }
 
-  float weight, weightErrBC, weightErrUDSG;
-  if (event.is_valid(h_topjets_)) {
-    std::tie(weight, weightErrBC, weightErrUDSG) = get_weight_btag(event.get(h_topjets_), event);
-  } else {
-    assert(event.is_valid(h_jets_));
-    TopJet tj;
-    tj.set_subjets(event.get(h_jets_));
-    std::tie(weight, weightErrBC, weightErrUDSG) = get_weight_btag(vector<TopJet>({tj}), event);
+  map<FlavType, float> weights_central;
+  for(const auto & ft : kFlavTypes) {
+    const float w = get_btag_weight(event, ft.first, "central");
+    weights_central[ft.first] = w;
+    weight_central *= w;
   }
-  float weightErr = sqrt(weightErrBC*weightErrBC + weightErrUDSG*weightErrUDSG);
+  event.set(fHandle_weight_central, weight_central);
+  for(const auto & ft : kFlavTypes) {
+    for(const string & uncert : fUncerts.at(ft.first)) {
+      event.set(fHandles_weights[ft.first][uncert], weight_central / weights_central.at(ft.first) * get_btag_weight(event, ft.first, uncert));
+    }
+  }
 
-  float weight_up        = weight + weightErr;
-  float weight_down      = weight - weightErr;
-  float weight_bc_up     = weight + weightErrBC;
-  float weight_bc_down   = weight - weightErrBC;
-  float weight_udsg_up   = weight + weightErrUDSG;
-  float weight_udsg_down = weight - weightErrUDSG;
-
-  event.set(h_btag_weight_,           weight);
-  event.set(h_btag_weight_up_,        weight_up);
-  event.set(h_btag_weight_down_,      weight_down);
-  event.set(h_btag_weight_bc_up_,     weight_bc_up);
-  event.set(h_btag_weight_bc_down_,   weight_bc_down);
-  event.set(h_btag_weight_udsg_up_,   weight_udsg_up);
-  event.set(h_btag_weight_udsg_down_, weight_udsg_down);
-
-  if (sysType_ == "up")        {event.weight *= weight_up;}
-  else if (sysType_ == "down")      {event.weight *= weight_down;}
-  else if (sysType_ == "up_bc")     {event.weight *= weight_bc_up;}
-  else if (sysType_ == "down_bc")   {event.weight *= weight_bc_down;}
-  else if (sysType_ == "up_udsg")   {event.weight *= weight_udsg_up;}
-  else if (sysType_ == "down_udsg") {event.weight *= weight_udsg_down;}
-  else                              {event.weight *= weight;}
-
+  if(fSysType_ft == FlavType::NONE) event.weight *= weight_central;
+  else {
+    event.weight *= event.get(fHandles_weights.at(fSysType_ft).at(fSysType_uncert));
+  }
   return true;
 }
 
+float MCBTagScaleFactor::get_btag_weight(const Event & event, const FlavType & ft, const string & sys) const {
+  float mcTag = 1.f;
+  float dataTag = 1.f;
+  float mcNoTag = 1.f;
+  float dataNoTag = 1.f;
 
-// originally taken from https://twiki.cern.ch/twiki/pub/CMS/BTagSFMethods/Method1aExampleCode_CSVM.cc.txt
-std::tuple<float, float, float> MCBTagScaleFactor::get_weight_btag(const vector<TopJet> &jets, Event & event) {
-
-  float mcTag = 1.;
-  float mcNoTag = 1.;
-  float dataTag = 1.;
-  float dataNoTag = 1.;
-
-  float err1 = 0.;
-  float err2 = 0.;
-  float err3 = 0.;
-  float err4 = 0.;
-
-  //Here we loop over all selected jets
-  for (const auto & topjet : jets) { for (const auto & jet : topjet.subjets()) {
-
-    int hadronFlavor = abs(jet.hadronFlavour());
-    float abs_eta = fabs(jet.eta());
-    float pt = jet.pt();
-
-    if(abs_eta > 2.4) {
-      continue;
+  vector<Jet> jets;
+  if(event.is_valid(fHandle_jets)) jets = event.get(fHandle_jets);
+  else {
+    assert(event.is_valid(fHandle_topjets));
+    for(const TopJet & tj : event.get(fHandle_topjets)) {
+      for(const Jet & sj : tj.subjets()) jets.push_back(sj);
     }
+  }
 
-    TH2* eff_hist;
-    if (hadronFlavor == 5) {
-      ///here one need to provide the pt/eta dependent efficiency for b-tag for "b jet"
-      eff_hist = eff_b_.get();
-    }else if( hadronFlavor==4){
-      ///here one need to provide the pt/eta dependent efficiency for b-tag for "c jet"
-      eff_hist = eff_c_.get();
-    }else{
-      ///here one need to provide the pt/eta dependent efficiency for b-tag for "light jet"
-      eff_hist = eff_udsg_.get();
-    }
+  for(size_t ijet = 0; ijet < jets.size(); ijet++) {
+    const Jet jet = jets.at(ijet);
+    const float jet_pt = jet.pt();
+    const float jet_eta = jet.eta();
+    if(jet_pt <= 20.f || fabs(jet_eta) >= 2.5f) continue; // UL: b-tagging possible for eta up to 2.5 // ">=" is correct, not ">"!
+
+    BTagCalib::JetFlavor jet_flavor = BTagCalib::JetFlavor::FLAV_UDSG;
+    if(abs(jet.hadronFlavour()) == 5) jet_flavor = BTagCalib::JetFlavor::FLAV_B;
+    else if(abs(jet.hadronFlavour()) == 4) jet_flavor = BTagCalib::JetFlavor::FLAV_C;
+    if(ft == FlavType::BC && jet_flavor == BTagCalib::JetFlavor::FLAV_UDSG) continue;
+    else if(ft == FlavType::LIGHT && jet_flavor != BTagCalib::JetFlavor::FLAV_UDSG) continue;
+
+    const TH2 *eff_hist = fEffHists.at(jet_flavor).get();
     const auto eff_pt_axis = eff_hist->GetXaxis();
-    float pt_low_edge = eff_pt_axis->GetBinLowEdge(eff_pt_axis->GetFirst());
-    float pt_high_edge = eff_pt_axis->GetBinUpEdge(eff_pt_axis->GetLast());
-    float pt_for_eff = (pt > pt_low_edge) ? pt : pt_low_edge + 1.;
-    pt_for_eff = (pt_for_eff < pt_high_edge) ? pt_for_eff : pt_high_edge - 1.;
-    float eff = eff_hist->GetBinContent(eff_hist->FindFixBin(pt_for_eff, abs_eta));
+    const float pt_low_edge = eff_pt_axis->GetBinLowEdge(eff_pt_axis->GetFirst());
+    const float pt_high_edge = eff_pt_axis->GetBinUpEdge(eff_pt_axis->GetLast());
+    const float pt_for_eff = max(pt_low_edge+0.001f, min(pt_high_edge-0.001f, jet_pt));
+    const float eff = eff_hist->GetBinContent(eff_hist->FindFixBin(pt_for_eff, fabs(jet_eta)));
 
-    float SF = 1., SFerr = 0.;
-    std::tie(SF, SFerr) = get_SF_btag(pt, abs_eta, hadronFlavor);
+    const float sf = fReaders.at(ft)->Evaluate(sys, jet_flavor, jet_eta, jet_pt);
 
-    if (btag_(jet, event)) {
+    if(fBTagID(jet, event)) {
       mcTag *= eff;
-      dataTag *= eff*SF;
-
-      if(hadronFlavor==5 || hadronFlavor ==4)  err1 += SFerr/SF; ///correlated for b/c
-      else err3 += SFerr/SF; //correlated for light
-
-    }else{
-      mcNoTag *= (1- eff);
-      dataNoTag *= (1- eff*SF);
-
-      if(hadronFlavor==5 || hadronFlavor ==4 ) err2 += (-eff*SFerr)/(1-eff*SF); /// /correlated for b/c
-      else err4 +=  (-eff*SFerr)/(1-eff*SF);  ////correlated for light
-
+      dataTag *= eff*sf;
     }
-
-  }}
-
-  float wtbtag = (dataNoTag * dataTag ) / ( mcNoTag * mcTag );
-  float wtbtagErrBC = fabs(err1+err2) * wtbtag;
-  float wtbtagErrUDSG = fabs(err3+err4) * wtbtag;
-
-  string errStr = " is NaN in MCBTagScaleFactor::get_weight_btag. Please check that all efficiency-bins are greater than 0.";
-  if (isnan(wtbtag)) {
-    throw runtime_error("wtbtag" + errStr);
-  }
-  if (isnan(wtbtagErrBC)) {
-    throw runtime_error("wtbtagErrBC" + errStr);
-  }
-  if (isnan(wtbtagErrUDSG)) {
-    throw runtime_error("wtbtagErrUDSG" + errStr);
+    else {
+      mcNoTag *= (1.f - eff);
+      dataNoTag *= (1.f - eff*sf);
+    }
   }
 
-  return std::make_tuple(wtbtag, wtbtagErrBC, wtbtagErrUDSG);
+  // Formula as given in https://twiki.cern.ch/twiki/bin/view/CMS/BTagSFMethods#1a_Event_reweighting_using_scale
+  const float w = (dataNoTag * dataTag) / (mcNoTag * mcTag);
+  if(isnan(w)) throw runtime_error("MCBTagScaleFactor::get_btag_weight(): Weight is NaN. Possible cause: Content of MC efficiency bin is 0 or exactly 1 and causes division by zero in weight formula");
+  return w;
 }
 
-
-// originally taken from https://twiki.cern.ch/twiki/pub/CMS/BTagSFMethods/Method1aExampleCode_CSVM.cc.txt
-// (only the purpose of the function is the same, interface and implementation changed)
-std::pair<float, float> MCBTagScaleFactor::get_SF_btag(float pt, float abs_eta, int flav) {
-
-  auto btagentry_flav = flav == 5 ? BTagEntry::FLAV_B : (
-    flav == 4 ? BTagEntry::FLAV_C :
-    BTagEntry::FLAV_UDSG);
-
-  auto sf_bounds = calib_->min_max_pt(btagentry_flav, abs_eta);
-
-  float pt_for_eval = pt;
-  bool is_out_of_bounds = false;
-  if (pt < sf_bounds.first) {
-    pt_for_eval = sf_bounds.first + 1e-5;
-    is_out_of_bounds = true;
-  } else if (pt > sf_bounds.second) {
-    pt_for_eval = sf_bounds.second - 0.1;
-    is_out_of_bounds = true;
-  }
-
-  float SF_up   = calib_up_->eval(btagentry_flav, abs_eta, pt_for_eval);
-  float SF      = calib_->eval(btagentry_flav, abs_eta, pt_for_eval);
-  float SF_down = calib_down_->eval(btagentry_flav, abs_eta, pt_for_eval);
-
-  float SFerr_up_ = fabs(SF - SF_up);
-  float SFerr_down_ = fabs(SF - SF_down);  // positive value!!
-
-  float SFerr = SFerr_up_ > SFerr_down_ ? SFerr_up_ : SFerr_down_;
-
-  if (is_out_of_bounds) {
-    SFerr *= 2;
-  }
-
-  if (SF < 1e-10) {
-    cout << "WARNING: SF vanishes! Will return SF = 1., SFerr = 0., Values: "
-    << "(SF, SFerr, is_out_of_bounds, lowbound, highbound, pt, pt_for_eval, btagentry_flav): "
-    << SF << ", " << SFerr << ", " << is_out_of_bounds << ", "
-    << sf_bounds.first << ", " << sf_bounds.second << ", "
-    << pt << ", " << pt_for_eval << ", " << btagentry_flav << endl;
-    SF = 1.;
-    SFerr = 0.;
-  }
-  return std::make_pair(SF, SFerr);
-}
-
+//____________________________________________________________________________________________________
+#define WEIGHTS_NAME_BTAGDISC "weight_btagdisc_"+(weights_name_postfix.empty() ? "" : weights_name_postfix+"_")
 
 MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
   uhh2::Context & ctx,
@@ -952,28 +917,28 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
   fAlgorithm(algorithm),
   fYear(extract_year(ctx)),
   h_jets(ctx.get_handle<std::vector<Jet>>(jets_handle_name)),
-  h_weight_central (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_central")),
-  h_weight_cferr1_up (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_cferr1_up")),
-  h_weight_cferr1_down (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_cferr1_down")),
-  h_weight_cferr2_up (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_cferr2_up")),
-  h_weight_cferr2_down (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_cferr2_down")),
-  h_weight_lf_up (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_lf_up")),
-  h_weight_lf_down (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_lf_down")),
-  h_weight_lfstats1_up (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_lfstats1_up")),
-  h_weight_lfstats1_down (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_lfstats1_down")),
-  h_weight_lfstats2_up (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_lfstats2_up")),
-  h_weight_lfstats2_down (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_lfstats2_down")),
-  h_weight_hf_up (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_hf_up")),
-  h_weight_hf_down (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_hf_down")),
-  h_weight_hfstats1_up (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_hfstats1_up")),
-  h_weight_hfstats1_down (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_hfstats1_down")),
-  h_weight_hfstats2_up (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_hfstats2_up")),
-  h_weight_hfstats2_down (ctx.declare_event_output<float>("weight_btagdisc_"+weights_name_postfix+"_hfstats2_down"))
+  h_weight_central (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"central")),
+  h_weight_cferr1_up (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"cferr1_up")),
+  h_weight_cferr1_down (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"cferr1_down")),
+  h_weight_cferr2_up (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"cferr2_up")),
+  h_weight_cferr2_down (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"cferr2_down")),
+  h_weight_lf_up (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"lf_up")),
+  h_weight_lf_down (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"lf_down")),
+  h_weight_lfstats1_up (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"lfstats1_up")),
+  h_weight_lfstats1_down (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"lfstats1_down")),
+  h_weight_lfstats2_up (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"lfstats2_up")),
+  h_weight_lfstats2_down (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"lfstats2_down")),
+  h_weight_hf_up (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"hf_up")),
+  h_weight_hf_down (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"hf_down")),
+  h_weight_hfstats1_up (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"hfstats1_up")),
+  h_weight_hfstats1_down (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"hfstats1_down")),
+  h_weight_hfstats2_up (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"hfstats2_up")),
+  h_weight_hfstats2_down (ctx.declare_event_output<float>(WEIGHTS_NAME_BTAGDISC+"hfstats2_down"))
 {
   const string dataset_type = ctx.get("dataset_type");
   const bool is_mc = dataset_type == "MC";
   if(!is_mc) {
-    cout << "Warning: MCBTagDiscriminantReweighting will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
+    cout << "Warning: MCBTagDiscriminantReweighting will only setup dummy weights for this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
     return;
   }
 
@@ -998,7 +963,7 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
   else if(sysType.find("jes") != string::npos) throw invalid_argument((string)"MCBTagDiscriminantReweighting: You specified a JES uncertainty source ('"+sysType+"') as systematic variation. The JES-varied b-tagging SFs are supposed to be applied jointly with the corresponding JEC variation and not as separate SF systematic!");
   else throw invalid_argument((string)"MCBTagDiscriminantReweighting: Invalid sysType '"+sysType+"'");
 
-  vector<string> to_be_loaded = {
+  set<string> to_be_loaded = {
     "up_cferr1", "down_cferr1",
     "up_cferr2", "down_cferr2",
     "up_lf", "down_lf",
@@ -1022,12 +987,12 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
   else if(jecsmear_direction == "up") {
     fCentralOrJES = "up_jes";
     if(jecsmear_source != "Total") fCentralOrJES += jecsmear_source;
-    to_be_loaded.push_back(fCentralOrJES);
+    to_be_loaded.insert(fCentralOrJES);
   }
   else if(jecsmear_direction == "down") {
     fCentralOrJES = "down_jes";
     if(jecsmear_source != "Total") fCentralOrJES += jecsmear_source;
-    to_be_loaded.push_back(fCentralOrJES);
+    to_be_loaded.insert(fCentralOrJES);
   }
   else {
     throw invalid_argument("MCBTagDiscriminantReweighting: Invalid jecsmear_direction '"+jecsmear_direction+"'");
@@ -1075,12 +1040,9 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
     default :
     throw invalid_argument("MCBTagDiscriminantReweighting: Invalid b-tagging algorithm. This module only works with DeepJet or DeepCSV");
   }
+  if(ctx.has(fCalibrationFileConfigName)) sf_file_path = ctx.get(fCalibrationFileConfigName);
 
-  BTagCalibration calibration("tagger", sf_file_path); // CHECK: the first std::string argument here should not be relevant
-  reader.reset(new BTagCalibrationReader(BTagEntry::OP_RESHAPING, "central", to_be_loaded));
-  reader->load(calibration, BTagEntry::FLAV_B, measType);
-  reader->load(calibration, BTagEntry::FLAV_C, measType);
-  reader->load(calibration, BTagEntry::FLAV_UDSG, measType);
+  fReader.reset(new BTagCalib::Reader(locate_file(sf_file_path), BTagCalib::OperatingPoint::SHAPE, measType, to_be_loaded));
 }
 
 bool MCBTagDiscriminantReweighting::process(Event & event) {
@@ -1138,40 +1100,40 @@ bool MCBTagDiscriminantReweighting::process(Event & event) {
     if(jet_btagdisc < 0.0) jet_btagdisc = -0.05;
     else if(jet_btagdisc > 1.0) jet_btagdisc = 1.0;
 
-    BTagEntry::JetFlavor jet_flavor = BTagEntry::FLAV_UDSG;
-    if(abs(jet.hadronFlavour()) == 5) jet_flavor = BTagEntry::FLAV_B;
-    else if(abs(jet.hadronFlavour()) == 4) jet_flavor = BTagEntry::FLAV_C;
+    BTagCalib::JetFlavor jet_flavor = BTagCalib::JetFlavor::FLAV_UDSG;
+    if(abs(jet.hadronFlavour()) == 5) jet_flavor = BTagCalib::JetFlavor::FLAV_B;
+    else if(abs(jet.hadronFlavour()) == 4) jet_flavor = BTagCalib::JetFlavor::FLAV_C;
 
     if(jet_pt > 20.0 && fabs(jet_eta) < 2.5) { // UL: b-tagging possible for eta up to 2.5
 
-      if(jet_flavor == BTagEntry::FLAV_C) {
+      if(jet_flavor == BTagCalib::JetFlavor::FLAV_C) {
         // For c jets, no dedicated JES SFs are available and the "central" SF is always used for the "central" weight.
-        weight_central *= reader->eval_auto_bounds("central", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_central *= fReader->Evaluate("central", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
 
-        weight_cferr1_up *= reader->eval_auto_bounds("up_cferr1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_cferr1_down *= reader->eval_auto_bounds("down_cferr1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_cferr2_up *= reader->eval_auto_bounds("up_cferr2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_cferr2_down *= reader->eval_auto_bounds("down_cferr2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_cferr1_up *= fReader->Evaluate("up_cferr1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_cferr1_down *= fReader->Evaluate("down_cferr1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_cferr2_up *= fReader->Evaluate("up_cferr2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_cferr2_down *= fReader->Evaluate("down_cferr2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
       }
 
-      else if(jet_flavor == BTagEntry::FLAV_B || jet_flavor == BTagEntry::FLAV_UDSG) {
+      else if(jet_flavor == BTagCalib::JetFlavor::FLAV_B || jet_flavor == BTagCalib::JetFlavor::FLAV_UDSG) {
         // For b and light jets, the "central" weight is either the "central" SF or a dedicated JES variation SF (if jecsmear_direction != nominal).
-        weight_central *= reader->eval_auto_bounds(fCentralOrJES, jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_central *= fReader->Evaluate(fCentralOrJES, jet_flavor, jet_eta, jet_pt, jet_btagdisc);
 
         // lf(stats1/2) and hf(stats1/2) variatons must be applied to both FLAV_B and FLAV_UDSG jets!
-        weight_lf_up *= reader->eval_auto_bounds("up_lf", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_lf_down *= reader->eval_auto_bounds("down_lf", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_lfstats1_up *= reader->eval_auto_bounds("up_lfstats1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_lfstats1_down *= reader->eval_auto_bounds("down_lfstats1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_lfstats2_up *= reader->eval_auto_bounds("up_lfstats2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_lfstats2_down *= reader->eval_auto_bounds("down_lfstats2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lf_up *= fReader->Evaluate("up_lf", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lf_down *= fReader->Evaluate("down_lf", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lfstats1_up *= fReader->Evaluate("up_lfstats1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lfstats1_down *= fReader->Evaluate("down_lfstats1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lfstats2_up *= fReader->Evaluate("up_lfstats2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_lfstats2_down *= fReader->Evaluate("down_lfstats2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
 
-        weight_hf_up *= reader->eval_auto_bounds("up_hf", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_hf_down *= reader->eval_auto_bounds("down_hf", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_hfstats1_up *= reader->eval_auto_bounds("up_hfstats1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_hfstats1_down *= reader->eval_auto_bounds("down_hfstats1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_hfstats2_up *= reader->eval_auto_bounds("up_hfstats2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
-        weight_hfstats2_down *= reader->eval_auto_bounds("down_hfstats2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hf_up *= fReader->Evaluate("up_hf", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hf_down *= fReader->Evaluate("down_hf", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hfstats1_up *= fReader->Evaluate("up_hfstats1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hfstats1_down *= fReader->Evaluate("down_hfstats1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hfstats2_up *= fReader->Evaluate("up_hfstats2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        weight_hfstats2_down *= fReader->Evaluate("down_hfstats2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
       }
     }
   }
@@ -1215,7 +1177,7 @@ bool MCBTagDiscriminantReweighting::process(Event & event) {
   return true;
 }
 
-
+//____________________________________________________________________________________________________
 TauEffVariation::TauEffVariation(Context & ctx){
 
   auto dataset_type = ctx.get("dataset_type");
@@ -1271,6 +1233,7 @@ bool TauEffVariation::process(Event & event){
   return true;
 }
 
+//____________________________________________________________________________________________________
 TauChargeVariation::TauChargeVariation(Context & ctx){
   auto dataset_type = ctx.get("dataset_type");
   bool is_mc = dataset_type == "MC";
