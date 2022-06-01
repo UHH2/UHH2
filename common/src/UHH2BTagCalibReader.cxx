@@ -96,7 +96,7 @@ void BTagCalib::Reader::ReadCSV()
       .ptMax = float(TOKEN_ELEMENT(7).Atof()),
       .discrMin = float(TOKEN_ELEMENT(8).Atof()),
       .discrMax = float(TOKEN_ELEMENT(9).Atof()),
-      .func = new TFormula("", formula.Data())
+      .func = TFormula("", formula.Data())
     };
 
     JetFlavor jf = JetFlavor::UNDEFINED;
@@ -198,7 +198,7 @@ float BTagCalib::Reader::Evaluate(
     else if(bVerbose) cout << ss.str() << "\nScale factor evaluated to default value "+to_string(result) << endl;
   }
   else {
-    const float sf = correct_entry->func->Eval(bShape ? discr : pt);
+    const float sf = correct_entry->func.Eval(bShape ? discr : pt);
     if(sysType != CENTRAL_CSV_STRING && out_of_bounds) {
       const float sf_central = Evaluate(CENTRAL_CSV_STRING, jf, eta, pt, discr);
       result = sf_central + 2*(sf - sf_central); // double uncertainty if out of eta/pt bounds

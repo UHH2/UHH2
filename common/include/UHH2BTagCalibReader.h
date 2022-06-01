@@ -82,7 +82,7 @@ private:
     float ptMax = F_MAX;
     float discrMin = F_MIN;
     float discrMax = F_MAX;
-    TFormula *func = nullptr;
+    TFormula func;
   } CalibEntry;
 
   void ReadCSV();
