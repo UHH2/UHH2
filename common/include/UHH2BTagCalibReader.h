@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <TF1.h>
+#include <TFormula.h>
 
 #define F_MAX std::numeric_limits<float>::max()
 #define F_MIN std::numeric_limits<float>::min()
@@ -82,7 +82,7 @@ private:
     float ptMax = F_MAX;
     float discrMin = F_MIN;
     float discrMax = F_MAX;
-    TF1 *func = nullptr;
+    TFormula *func = nullptr;
   } CalibEntry;
 
   void ReadCSV();

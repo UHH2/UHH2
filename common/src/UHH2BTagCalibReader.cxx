@@ -96,7 +96,7 @@ void BTagCalib::Reader::ReadCSV()
       .ptMax = float(TOKEN_ELEMENT(7).Atof()),
       .discrMin = float(TOKEN_ELEMENT(8).Atof()),
       .discrMax = float(TOKEN_ELEMENT(9).Atof()),
-      .func = new TF1("", formula.Data(), float(TOKEN_ELEMENT(bShape ? 8 : 6).Atof()), float(TOKEN_ELEMENT(bShape ? 9 : 7).Atof()))
+      .func = new TFormula("", formula.Data())
     };
 
     JetFlavor jf = JetFlavor::UNDEFINED;
