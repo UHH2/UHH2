@@ -5,7 +5,8 @@
 #include <string>
 #include <vector>
 
-#include <TFormula.h>
+// #include <TFormula.h>
+#include <UHH2/common/include/UHH2TFormula.h>
 
 #define F_MAX std::numeric_limits<float>::max()
 #define F_MIN std::numeric_limits<float>::min()
@@ -82,7 +83,8 @@ private:
     float ptMax = F_MAX;
     float discrMin = F_MIN;
     float discrMax = F_MAX;
-    TFormula func;
+    // TFormula func;
+    UHH2TFormula func;
   } CalibEntry;
 
   void ReadCSV();

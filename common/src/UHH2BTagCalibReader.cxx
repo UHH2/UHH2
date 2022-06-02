@@ -95,7 +95,8 @@ void BTagCalib::Reader::ReadCSV()
       .ptMax = float(TOKEN_ELEMENT(7).Atof()),
       .discrMin = float(TOKEN_ELEMENT(8).Atof()),
       .discrMax = float(TOKEN_ELEMENT(9).Atof()),
-      .func = TFormula("", formula.Data())
+      // .func = TFormula("", formula.Data())
+      .func = UHH2TFormula("", formula.Data())
     };
 
     JetFlavor jf = JetFlavor::UNDEFINED;
