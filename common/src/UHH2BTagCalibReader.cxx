@@ -35,14 +35,14 @@ BTagCalib::Reader::Reader(
   bFailIfNoEntry(failIfNoEntry ? *failIfNoEntry : true),
   bShape(fOperatingPoint == OperatingPoint::SHAPE)
 {
-  if(bVerbose) cout << "Hello World from BTagCalib::Reader!"
+  if (bVerbose) cout << "Hello World from BTagCalib::Reader!"
   << "\nCSV: " << fCSVFilePath
   << "\nWorking point: " << kOperatingPoints.at(fOperatingPoint).csv_string
   << "\nMeasurement type: " << fMeasurementType
   << "\nUse absolute pseudo-rapidity: " << (bAbsEta ? "true" : "false") << endl;
-  if(sysTypes) fSysTypes.insert(sysTypes->begin(), sysTypes->end());
+  if (sysTypes) fSysTypes.insert(sysTypes->begin(), sysTypes->end());
   ReadCSV();
-  if(bVerbose) cout << "BTagCalib::Reader has been initialized!" << endl;
+  if (bVerbose) cout << "BTagCalib::Reader has been initialized!" << endl;
 }
 
 void BTagCalib::Reader::ReadCSV()
@@ -69,18 +69,17 @@ void BTagCalib::Reader::ReadCSV()
     const int last = tokens->GetLast();
     TString formula = TOKEN_ELEMENT(last);
     if (last > default_last) { // if number of commas in line is not 10 (i.e. 11 tokens); happens if the formula itself contains a commma
-      string formula_;
+      formula = "";
       for (int i = default_last; i <= last; ++i) {
-        formula_ += TOKEN_ELEMENT(i);
+        formula += TOKEN_ELEMENT(i);
       }
-      formula_.erase(remove(formula_.begin(), formula_.end(), '\"'), formula_.end()); // remove quotes that appear around formulas if they contain additional commas
-      formula = TString(formula_);
     }
     else if (last < default_last) {
       stringstream ss;
       ss << "BTagCalib::Reader::ReadCSV(): File contains entry that does not have required format:\n" << line.Data();
       throw runtime_error(ss.str());
     }
+    formula.ReplaceAll("\"", ""); // remove quotes that appear around some formulas; happens if they contain additional commas
 
     const string sysType = TOKEN_ELEMENT(2).Data();
     if (
@@ -123,8 +122,8 @@ float BTagCalib::Reader::Evaluate(
   float discr
 ) const
 {
-  if(!fCalibEntries.count(sysType)) throw runtime_error("BTagCalib::Reader::Evaluate(): No entries for sysType '"+sysType+"' found. Not loaded?");
-  else if(!fCalibEntries.at(sysType).count(jf)) {
+  if (!fCalibEntries.count(sysType)) throw runtime_error("BTagCalib::Reader::Evaluate(): No entries for sysType '"+sysType+"' found. Not loaded?");
+  else if (!fCalibEntries.at(sysType).count(jf)) {
     stringstream ss;
     ss << "BTagCalib::Reader::Evaluate(): No entries for jetFlavor '"+kJetFlavors.at(jf).csv_string+"' found for sysType '"+sysType+"'.\n"
     << "This (probably) means that you request a scale factor for a particular sysType that is not provided for this jetFlavor at all.";
@@ -133,38 +132,38 @@ float BTagCalib::Reader::Evaluate(
 
   const auto & entries = fCalibEntries.at(sysType).at(jf);
   bool out_of_bounds = false;
-  if(bAbsEta && eta < 0) eta = -eta;
+  if (bAbsEta && eta < 0) eta = -eta;
 
   // Restrict eta to boundaries
   float etaMin = F_MAX;
   float etaMax = F_MIN;
-  for(const auto & entry : entries) {
+  for (const auto & entry : entries) {
     etaMin = min(etaMin, entry.etaMin);
     etaMax = max(etaMax, entry.etaMax);
   }
-  if(eta < etaMin || eta > etaMax) out_of_bounds = true;
+  if (eta < etaMin || eta > etaMax) out_of_bounds = true;
   eta = min(max(eta, nextafterf(etaMin, F_MAX)), nextafterf(etaMax, F_MIN));
 
   // Restrict pt to boundaries of this eta bin
   float ptMin = F_MAX;
   float ptMax = F_MIN;
-  for(const auto & entry : entries) {
-    if(
+  for (const auto & entry : entries) {
+    if (
       entry.etaMin <= eta && eta <= entry.etaMax
     ) {
       ptMin = min(ptMin, entry.ptMin);
       ptMax = max(ptMax, entry.ptMax);
     }
   }
-  if(pt < ptMin || pt > ptMax) out_of_bounds = true;
+  if (pt < ptMin || pt > ptMax) out_of_bounds = true;
   pt = min(max(pt, nextafterf(ptMin, F_MAX)), nextafterf(ptMax, F_MIN));
 
-  if(bShape) {
+  if (bShape) {
     // Restrict discr to boundaries of this eta/pt bin
     float discrMin = F_MAX;
     float discrMax = F_MIN;
-    for(const auto & entry : entries) {
-      if(
+    for (const auto & entry : entries) {
+      if (
         entry.etaMin <= eta && eta <= entry.etaMax
         && entry.ptMin <= pt && pt <= entry.ptMax
       ) {
@@ -176,36 +175,33 @@ float BTagCalib::Reader::Evaluate(
     discr = min(max(discr, nextafterf(discrMin, F_MAX)), nextafterf(discrMax, F_MIN));
   }
 
-  const CalibEntry *correct_entry = nullptr;
-  for(const auto & entry : entries) {
-    if(
+  float sf = kDefaultScaleFactor;
+  bool entry_found = false;
+  for (const auto & entry : entries) {
+    if (
       entry.etaMin <= eta && eta <= entry.etaMax
       && entry.ptMin <= pt && pt <= entry.ptMax
       && (bShape ? (entry.discrMin <= discr && discr <= entry.discrMax) : true)
     ) {
-      correct_entry = &entry;
+      sf = entry.func.Eval(bShape ? discr : pt);
+      entry_found = true;
       break;
     }
   }
 
-  float result = kDefaultScaleFactor;
-  if(!correct_entry) {
+  if (!entry_found) {
     stringstream ss;
     ss << "BTagEntry::Evaluate(): Calibration entry is null pointer!\n"
     << "This (probably) means that no valid entry can be found for this sysType/jetFlavor/eta/pt/discr combination:\n"
     << sysType << " / " << kJetFlavors.at(jf).csv_string << " / " << to_string(eta) << " / " << to_string(pt) << " / " << to_string(discr);
-    if(bFailIfNoEntry) throw runtime_error(ss.str());
-    else if(bVerbose) cout << ss.str() << "\nScale factor evaluated to default value "+to_string(result) << endl;
+    if (bFailIfNoEntry) throw runtime_error(ss.str());
+    else if (bVerbose) cout << ss.str() << "\nScale factor evaluated to default value "+to_string(sf) << endl;
   }
-  else {
-    const float sf = correct_entry->func.Eval(bShape ? discr : pt);
-    if(sysType != CENTRAL_CSV_STRING && out_of_bounds) {
-      const float sf_central = Evaluate(CENTRAL_CSV_STRING, jf, eta, pt, discr);
-      result = sf_central + 2*(sf - sf_central); // double uncertainty if out of eta/pt bounds
-    }
-    else result = sf;
+  else if (sysType != CENTRAL_CSV_STRING && out_of_bounds) {
+    const float sf_central = Evaluate(CENTRAL_CSV_STRING, jf, eta, pt, discr);
+    sf = sf_central + 2*(sf - sf_central); // double uncertainty if out of eta/pt bounds
   }
-  return result;
+  return sf;
 }
 
 }
