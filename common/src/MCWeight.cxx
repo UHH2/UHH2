@@ -7,6 +7,7 @@
 #include "Riostream.h"
 #include "TFile.h"
 #include "TH1F.h"
+#include "TObjArray.h"
 #include "TObjString.h"
 
 #include <stdexcept>

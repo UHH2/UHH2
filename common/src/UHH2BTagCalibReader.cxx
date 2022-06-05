@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include <TString.h>
+#include <TObjArray.h>
 #include <TObjString.h>
 
 #define TOKEN_ELEMENT(IDX) ((TObjString*)tokens->At((IDX)))->GetString()
@@ -62,10 +63,12 @@ void BTagCalib::Reader::ReadCSV()
   else throw runtime_error("BTagCalib::Reader::ReadCSV(): Unable to open file");
 
   if (bVerbose) cout << "Done reading. Constructing hash map with calibrations ..." << endl;
+  fSymbolTable.add_variable("x", fVariable); // "x" is the name of the variable in the formulas given in the CSV files
+  fSymbolTable.add_constants();
   const int default_last = 10;
   unsigned long entries = 0;
   for (const TString & line : lines) {
-    auto tokens = line.Tokenize(",");
+    const TObjArray *tokens = line.Tokenize(",");
     const int last = tokens->GetLast();
     TString formula = TOKEN_ELEMENT(last);
     if (last > default_last) { // if number of commas in line is not 10 (i.e. 11 tokens); happens if the formula itself contains a commma
@@ -88,16 +91,21 @@ void BTagCalib::Reader::ReadCSV()
       fSysTypes.find(sysType) == fSysTypes.end()
     ) continue;
 
-    const CalibEntry entry = {
+    const string expression_string = string(formula.Data());
+    // expression_string must represent valid C code; problems could arise e.g. if it includes ROOT-internal stuff like "TMath::Power" instead of "pow".
+    // Right now, the CSV files seem to consistently use the basic math functions/operators (e.g. +, -, *, /, pow, exp, ...) that can be interpreted by
+    // the exprtk library. In case BTV ever changes that, we would need to do more pre-processing of the formula here.
+    CalibEntry entry = {
       .etaMin = float(TOKEN_ELEMENT(4).Atof()),
       .etaMax = float(TOKEN_ELEMENT(5).Atof()),
       .ptMin = float(TOKEN_ELEMENT(6).Atof()),
       .ptMax = float(TOKEN_ELEMENT(7).Atof()),
       .discrMin = float(TOKEN_ELEMENT(8).Atof()),
       .discrMax = float(TOKEN_ELEMENT(9).Atof()),
-      // .func = TFormula("", formula.Data())
-      .func = UHH2TFormula("", formula.Data())
+      .func = make_shared<expression_t>()
     };
+    entry.func->register_symbol_table(fSymbolTable);
+    fParser.compile(expression_string, *entry.func);
 
     JetFlavor jf = JetFlavor::UNDEFINED;
     const string jf_str = TOKEN_ELEMENT(3).Data();
@@ -121,7 +129,7 @@ float BTagCalib::Reader::Evaluate(
   float eta,
   float pt,
   float discr
-) const
+)
 {
   if (!fCalibEntries.count(sysType)) throw runtime_error("BTagCalib::Reader::Evaluate(): No entries for sysType '"+sysType+"' found. Not loaded?");
   else if (!fCalibEntries.at(sysType).count(jf)) {
@@ -184,7 +192,8 @@ float BTagCalib::Reader::Evaluate(
       && entry.ptMin <= pt && pt <= entry.ptMax
       && (bShape ? (entry.discrMin <= discr && discr <= entry.discrMax) : true)
     ) {
-      sf = entry.func.Eval(bShape ? discr : pt);
+      fVariable = bShape ? discr : pt;
+      sf = entry.func->value();
       entry_found = true;
       break;
     }
