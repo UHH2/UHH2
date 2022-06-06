@@ -105,7 +105,11 @@ void BTagCalib::Reader::ReadCSV()
       .func = make_shared<expression_t>()
     };
     entry.func->register_symbol_table(fSymbolTable);
-    fParser.compile(expression_string, *entry.func);
+    if (!fParser.compile(expression_string, *entry.func)) {
+      stringstream ss;
+      ss << "BTagCalib::Reader::ReadCSV(): Compilation error for formula:\n" << expression_string;
+      throw runtime_error(ss.str());
+    }
 
     JetFlavor jf = JetFlavor::UNDEFINED;
     const string jf_str = TOKEN_ELEMENT(3).Data();
