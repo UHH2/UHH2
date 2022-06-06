@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <UHH2/common/include/exprtk.hpp> // toolkit for compiling strings to cpp-valid formulas during runtime (based on LLVM/Clang similar to TFormula, but more powerful and efficient)
+#include <UHH2/common/include/exprtk.hpp> // toolkit for compiling strings to cpp-valid formulas during runtime (similar to TFormula, but more powerful and efficient)
 
 #define F_MAX std::numeric_limits<float>::max()
 #define F_MIN std::numeric_limits<float>::min()
