@@ -205,8 +205,7 @@ float BTagCalib::Reader::Evaluate(
 
   if (!entry_found) {
     stringstream ss;
-    ss << "BTagEntry::Evaluate(): Calibration entry is null pointer!\n"
-    << "This (probably) means that no valid entry can be found for this sysType/jetFlavor/eta/pt/discr combination:\n"
+    ss << "BTagEntry::Evaluate(): No valid calibration entry can be found for this sysType/jetFlavor/eta/pt/discr combination:\n"
     << sysType << " / " << kJetFlavors.at(jf).csv_string << " / " << to_string(eta) << " / " << to_string(pt) << " / " << to_string(discr);
     if (bFailIfNoEntry) throw runtime_error(ss.str());
     else if (bVerbose) cout << ss.str() << "\nScale factor evaluated to default value "+to_string(sf) << endl;
