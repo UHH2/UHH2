@@ -983,7 +983,7 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
   // If JEC variation is applied, we do not apply the central b-tagging SF but the corresponding "up/down_jes..." SF.
   // If you specify a JEC uncertainty sub-source via "jecsmear_source" in your config XML, the correct corresponding b-tagging SF will be used.
   // In order to get an overview of which splitted JEC uncertainty sources are available, you should look into the UncertaintySources JEC files and the b-tagging SF files.
-  // If you specify a JEC uncertainty source that is not supported, i.e. not given in the b-tagging SF files, BTagCalibrationReader will hopefully fail loudly.
+  // If you specify a JEC uncertainty source that is not supported, i.e. not given in the b-tagging SF files or just not loaded, BTagCalib::Reader::Evaluate will fail loudly.
   // By default, the "Total" JEC uncertainty is used.
   else if(jecsmear_direction == "up") {
     fCentralOrJES = "up_jes";
