@@ -1109,17 +1109,40 @@ bool MCBTagDiscriminantReweighting::process(Event & event) {
 
       if(jet_flavor == BTagCalib::JetFlavor::FLAV_C) {
         // For c jets, no dedicated JES SFs are available and the "central" SF is always used for the "central" weight.
-        weight_central *= fReader->Evaluate("central", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        const float w_central = fReader->Evaluate("central", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+
+        weight_central *= w_central;
 
         weight_cferr1_up *= fReader->Evaluate("up_cferr1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
         weight_cferr1_down *= fReader->Evaluate("down_cferr1", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
         weight_cferr2_up *= fReader->Evaluate("up_cferr2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
         weight_cferr2_down *= fReader->Evaluate("down_cferr2", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+
+        weight_lf_up *= w_central;
+        weight_lf_down *= w_central;
+        weight_lfstats1_up *= w_central;
+        weight_lfstats1_down *= w_central;
+        weight_lfstats2_up *= w_central;
+        weight_lfstats2_down *= w_central;
+
+        weight_hf_up *= w_central;
+        weight_hf_down *= w_central;
+        weight_hfstats1_up *= w_central;
+        weight_hfstats1_down *= w_central;
+        weight_hfstats2_up *= w_central;
+        weight_hfstats2_down *= w_central;
       }
 
       else if(jet_flavor == BTagCalib::JetFlavor::FLAV_B || jet_flavor == BTagCalib::JetFlavor::FLAV_UDSG) {
         // For b and light jets, the "central" weight is either the "central" SF or a dedicated JES variation SF (if jecsmear_direction != nominal).
-        weight_central *= fReader->Evaluate(fCentralOrJES, jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+        const float w_central = fReader->Evaluate(fCentralOrJES, jet_flavor, jet_eta, jet_pt, jet_btagdisc);
+
+        weight_central *= w_central;
+
+        weight_cferr1_up *= w_central;
+        weight_cferr1_down *= w_central;
+        weight_cferr2_up *= w_central;
+        weight_cferr2_down *= w_central;
 
         // lf(stats1/2) and hf(stats1/2) variatons must be applied to both FLAV_B and FLAV_UDSG jets!
         weight_lf_up *= fReader->Evaluate("up_lf", jet_flavor, jet_eta, jet_pt, jet_btagdisc);
