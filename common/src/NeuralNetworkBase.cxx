@@ -9,6 +9,7 @@ using namespace std;
 
 
 NeuralNetworkBase::NeuralNetworkBase(Context& ctx, const std::string & ModelName, const std::string& ConfigName){
+    (void) ctx;
     tensorflow::SessionOptions sessionOptions;
     tensorflow::setThreading(sessionOptions, 1, "no_threads");
     tensorflow::setLogging("3");
@@ -40,6 +41,7 @@ NeuralNetworkBase::NeuralNetworkBase(Context& ctx, const std::string & ModelName
 }
 
 void NeuralNetworkBase::CreateInputs(Event & event){
+    (void) event;
     NNInputs.clear();
     NNoutputs.clear();
 
