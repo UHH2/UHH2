@@ -1,11 +1,12 @@
 #include <boost/optional.hpp>
 #include <limits>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
 
-#include <TF1.h>
+#include <UHH2/common/include/exprtk.hpp> // toolkit for compiling strings to cpp-valid formulas during runtime (similar to TFormula, but more powerful and efficient)
 
 #define F_MAX std::numeric_limits<float>::max()
 #define F_MIN std::numeric_limits<float>::min()
@@ -50,6 +51,10 @@ const std::map<JetFlavor, JetFlavorInfo> kJetFlavors = {
   { JetFlavor::FLAV_UDSG, { .csv_string = "0" } },
 };
 
+typedef exprtk::symbol_table<float> symbol_table_t;
+typedef exprtk::expression<float> expression_t;
+typedef exprtk::parser<float> parser_t;
+
 class Reader {
 
 public:
@@ -71,9 +76,13 @@ public:
     float eta,
     float pt,
     float discr = 0.f
-  ) const;
+  );
 
 private:
+
+  symbol_table_t fSymbolTable;
+  parser_t fParser;
+  float fVariable;
 
   typedef struct {
     float etaMin = F_MIN;
@@ -82,7 +91,7 @@ private:
     float ptMax = F_MAX;
     float discrMin = F_MIN;
     float discrMax = F_MAX;
-    TF1 *func = nullptr;
+    std::shared_ptr<expression_t> func;
   } CalibEntry;
 
   void ReadCSV();
