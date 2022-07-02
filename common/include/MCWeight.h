@@ -77,6 +77,7 @@ class MCScaleVariation: public uhh2::AnalysisModule {
 
   private:
   double syst_weight;
+  bool is_dy;
   int i_mu_r = 0, i_mu_f = 0;
   uhh2::Event::Handle<float> h_murmuf_weight_upup_;
   uhh2::Event::Handle<float> h_murmuf_weight_upnone_;

@@ -215,6 +215,7 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
   }
   auto s_mu_r = ctx.get("ScaleVariationMuR");
   auto s_mu_f = ctx.get("ScaleVariationMuF");
+  is_dy = ctx.get("dataset_version").find("DYJetsToLL") == 0;
 
   if(s_mu_r == "up") {i_mu_r = 1;}
   else if(s_mu_r == "down"){i_mu_r = 2;}
@@ -250,12 +251,22 @@ bool MCScaleVariation::process(Event & event){
     }
 
     // Set handles, written for all relevant cases irrespective of the values of mu_r and mu_f specified in the config file
-    event.set(h_murmuf_weight_upup_, event.genInfo->systweights().at(4)/event.genInfo->originalXWGTUP());
-    event.set(h_murmuf_weight_upnone_, event.genInfo->systweights().at(3)/event.genInfo->originalXWGTUP());
-    event.set(h_murmuf_weight_noneup_, event.genInfo->systweights().at(1)/event.genInfo->originalXWGTUP());
-    event.set(h_murmuf_weight_downdown_, event.genInfo->systweights().at(8)/event.genInfo->originalXWGTUP());
-    event.set(h_murmuf_weight_downnone_, event.genInfo->systweights().at(6)/event.genInfo->originalXWGTUP());
-    event.set(h_murmuf_weight_nonedown_, event.genInfo->systweights().at(2)/event.genInfo->originalXWGTUP());
+    if ( is_dy ) {
+      event.set(h_murmuf_weight_upup_, event.genInfo->systweights().at(20)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_weight_upnone_, event.genInfo->systweights().at(5)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_weight_noneup_, event.genInfo->systweights().at(15)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_weight_downdown_, event.genInfo->systweights().at(40)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_weight_downnone_, event.genInfo->systweights().at(10)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_weight_nonedown_, event.genInfo->systweights().at(30)/event.genInfo->originalXWGTUP());
+    }
+    else {
+      event.set(h_murmuf_weight_upup_, event.genInfo->systweights().at(4)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_weight_upnone_, event.genInfo->systweights().at(1)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_weight_noneup_, event.genInfo->systweights().at(3)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_weight_downdown_, event.genInfo->systweights().at(8)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_weight_downnone_, event.genInfo->systweights().at(2)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_weight_nonedown_, event.genInfo->systweights().at(6)/event.genInfo->originalXWGTUP());
+    }
 
     // Modify event weight according to scale variation specified in config file
     if (i_mu_r == 0 && i_mu_f == 0) return true;
