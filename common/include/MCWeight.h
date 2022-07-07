@@ -77,13 +77,41 @@ class MCScaleVariation: public uhh2::AnalysisModule {
 
   private:
   double syst_weight;
+  bool is_dy;
+  bool is_wjets;
+  bool is_alps;
   int i_mu_r = 0, i_mu_f = 0;
+  void initialise_handles(uhh2::Event & event);
   uhh2::Event::Handle<float> h_murmuf_weight_upup_;
   uhh2::Event::Handle<float> h_murmuf_weight_upnone_;
   uhh2::Event::Handle<float> h_murmuf_weight_noneup_;
   uhh2::Event::Handle<float> h_murmuf_weight_downdown_;
   uhh2::Event::Handle<float> h_murmuf_weight_downnone_;
   uhh2::Event::Handle<float> h_murmuf_weight_nonedown_;
+  uhh2::Event::Handle<float> h_murmuf_dyn1_weight_upup_;
+  uhh2::Event::Handle<float> h_murmuf_dyn1_weight_upnone_;
+  uhh2::Event::Handle<float> h_murmuf_dyn1_weight_noneup_;
+  uhh2::Event::Handle<float> h_murmuf_dyn1_weight_downdown_;
+  uhh2::Event::Handle<float> h_murmuf_dyn1_weight_downnone_;
+  uhh2::Event::Handle<float> h_murmuf_dyn1_weight_nonedown_;
+  uhh2::Event::Handle<float> h_murmuf_dyn2_weight_upup_;
+  uhh2::Event::Handle<float> h_murmuf_dyn2_weight_upnone_;
+  uhh2::Event::Handle<float> h_murmuf_dyn2_weight_noneup_;
+  uhh2::Event::Handle<float> h_murmuf_dyn2_weight_downdown_;
+  uhh2::Event::Handle<float> h_murmuf_dyn2_weight_downnone_;
+  uhh2::Event::Handle<float> h_murmuf_dyn2_weight_nonedown_;
+  uhh2::Event::Handle<float> h_murmuf_dyn3_weight_upup_;
+  uhh2::Event::Handle<float> h_murmuf_dyn3_weight_upnone_;
+  uhh2::Event::Handle<float> h_murmuf_dyn3_weight_noneup_;
+  uhh2::Event::Handle<float> h_murmuf_dyn3_weight_downdown_;
+  uhh2::Event::Handle<float> h_murmuf_dyn3_weight_downnone_;
+  uhh2::Event::Handle<float> h_murmuf_dyn3_weight_nonedown_;
+  uhh2::Event::Handle<float> h_murmuf_dyn4_weight_upup_;
+  uhh2::Event::Handle<float> h_murmuf_dyn4_weight_upnone_;
+  uhh2::Event::Handle<float> h_murmuf_dyn4_weight_noneup_;
+  uhh2::Event::Handle<float> h_murmuf_dyn4_weight_downdown_;
+  uhh2::Event::Handle<float> h_murmuf_dyn4_weight_downnone_;
+  uhh2::Event::Handle<float> h_murmuf_dyn4_weight_nonedown_;
 };
 
 
