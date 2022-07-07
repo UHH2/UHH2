@@ -209,13 +209,43 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
   h_murmuf_weight_downnone_ = ctx.declare_event_output<float>("weight_murmuf_downnone");
   h_murmuf_weight_nonedown_ = ctx.declare_event_output<float>("weight_murmuf_nonedown");
 
+  h_murmuf_dyn1_weight_upup_     = ctx.declare_event_output<float>("weight_murmuf_dyn1_upup");
+  h_murmuf_dyn1_weight_upnone_   = ctx.declare_event_output<float>("weight_murmuf_dyn1_upnone");
+  h_murmuf_dyn1_weight_noneup_   = ctx.declare_event_output<float>("weight_murmuf_dyn1_noneup");
+  h_murmuf_dyn1_weight_downdown_ = ctx.declare_event_output<float>("weight_murmuf_dyn1_downdown");
+  h_murmuf_dyn1_weight_downnone_ = ctx.declare_event_output<float>("weight_murmuf_dyn1_downnone");
+  h_murmuf_dyn1_weight_nonedown_ = ctx.declare_event_output<float>("weight_murmuf_dyn1_nonedown");
+
+  h_murmuf_dyn2_weight_upup_     = ctx.declare_event_output<float>("weight_murmuf_dyn2_upup");
+  h_murmuf_dyn2_weight_upnone_   = ctx.declare_event_output<float>("weight_murmuf_dyn2_upnone");
+  h_murmuf_dyn2_weight_noneup_   = ctx.declare_event_output<float>("weight_murmuf_dyn2_noneup");
+  h_murmuf_dyn2_weight_downdown_ = ctx.declare_event_output<float>("weight_murmuf_dyn2_downdown");
+  h_murmuf_dyn2_weight_downnone_ = ctx.declare_event_output<float>("weight_murmuf_dyn2_downnone");
+  h_murmuf_dyn2_weight_nonedown_ = ctx.declare_event_output<float>("weight_murmuf_dyn2_nonedown");
+
+  h_murmuf_dyn3_weight_upup_     = ctx.declare_event_output<float>("weight_murmuf_dyn3_upup");
+  h_murmuf_dyn3_weight_upnone_   = ctx.declare_event_output<float>("weight_murmuf_dyn3_upnone");
+  h_murmuf_dyn3_weight_noneup_   = ctx.declare_event_output<float>("weight_murmuf_dyn3_noneup");
+  h_murmuf_dyn3_weight_downdown_ = ctx.declare_event_output<float>("weight_murmuf_dyn3_downdown");
+  h_murmuf_dyn3_weight_downnone_ = ctx.declare_event_output<float>("weight_murmuf_dyn3_downnone");
+  h_murmuf_dyn3_weight_nonedown_ = ctx.declare_event_output<float>("weight_murmuf_dyn3_nonedown");
+
+  h_murmuf_dyn4_weight_upup_     = ctx.declare_event_output<float>("weight_murmuf_dyn4_upup");
+  h_murmuf_dyn4_weight_upnone_   = ctx.declare_event_output<float>("weight_murmuf_dyn4_upnone");
+  h_murmuf_dyn4_weight_noneup_   = ctx.declare_event_output<float>("weight_murmuf_dyn4_noneup");
+  h_murmuf_dyn4_weight_downdown_ = ctx.declare_event_output<float>("weight_murmuf_dyn4_downdown");
+  h_murmuf_dyn4_weight_downnone_ = ctx.declare_event_output<float>("weight_murmuf_dyn4_downnone");
+  h_murmuf_dyn4_weight_nonedown_ = ctx.declare_event_output<float>("weight_murmuf_dyn4_nonedown");
+
   if(!is_mc){
     cout << "Warning: MCScaleVariation will not have an effect on this non-MC sample (dataset_type = '" + dataset_type + "')" << endl;
     return;
   }
   auto s_mu_r = ctx.get("ScaleVariationMuR");
   auto s_mu_f = ctx.get("ScaleVariationMuF");
-  is_dy = ctx.get("dataset_version").find("DYJetsToLL") == 0;
+  is_dy = ctx.get("dataset_version").find("DYJets") == 0;
+  is_wjets = ctx.get("dataset_version").find("WJets") == 0;
+  is_alps = ctx.get("dataset_version").find("ALP") == 0;
 
   if(s_mu_r == "up") {i_mu_r = 1;}
   else if(s_mu_r == "down"){i_mu_r = 2;}
@@ -225,38 +255,85 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
 
 }
 
+void MCScaleVariation::initialise_handles(Event & event){
+  event.set(h_murmuf_weight_upup_, 1.);
+  event.set(h_murmuf_weight_upnone_, 1.);
+  event.set(h_murmuf_weight_noneup_, 1.);
+  event.set(h_murmuf_weight_downdown_, 1.);
+  event.set(h_murmuf_weight_downnone_, 1.);
+  event.set(h_murmuf_weight_nonedown_, 1.);
+  // DYN 1: Sum PT
+  event.set(h_murmuf_dyn1_weight_upup_, 1.);
+  event.set(h_murmuf_dyn1_weight_upnone_, 1.);
+  event.set(h_murmuf_dyn1_weight_noneup_, 1.);
+  event.set(h_murmuf_dyn1_weight_downdown_, 1.);
+  event.set(h_murmuf_dyn1_weight_downnone_, 1.);
+  event.set(h_murmuf_dyn1_weight_nonedown_, 1.);
+  // DYN 2: HT
+  event.set(h_murmuf_dyn2_weight_upup_, 1.);
+  event.set(h_murmuf_dyn2_weight_upnone_, 1.);
+  event.set(h_murmuf_dyn2_weight_noneup_, 1.);
+  event.set(h_murmuf_dyn2_weight_downdown_, 1.);
+  event.set(h_murmuf_dyn2_weight_downnone_, 1.);
+  event.set(h_murmuf_dyn2_weight_nonedown_, 1.);
+  // DYN 3: HT / 2
+  event.set(h_murmuf_dyn3_weight_upup_, 1.);
+  event.set(h_murmuf_dyn3_weight_upnone_, 1.);
+  event.set(h_murmuf_dyn3_weight_noneup_, 1.);
+  event.set(h_murmuf_dyn3_weight_downdown_, 1.);
+  event.set(h_murmuf_dyn3_weight_downnone_, 1.);
+  event.set(h_murmuf_dyn3_weight_nonedown_, 1.);
+  // DYN 4: SQRTS
+  event.set(h_murmuf_dyn4_weight_upup_, 1.);
+  event.set(h_murmuf_dyn4_weight_upnone_, 1.);
+  event.set(h_murmuf_dyn4_weight_noneup_, 1.);
+  event.set(h_murmuf_dyn4_weight_downdown_, 1.);
+  event.set(h_murmuf_dyn4_weight_downnone_, 1.);
+  event.set(h_murmuf_dyn4_weight_nonedown_, 1.);
+}
+
 bool MCScaleVariation::process(Event & event){
 
-  // Set weights to 1 for data
-  if (event.isRealData) {
-    event.set(h_murmuf_weight_upup_, 1.);
-    event.set(h_murmuf_weight_upnone_, 1.);
-    event.set(h_murmuf_weight_noneup_, 1.);
-    event.set(h_murmuf_weight_downdown_, 1.);
-    event.set(h_murmuf_weight_downnone_, 1.);
-    event.set(h_murmuf_weight_nonedown_, 1.);
-    return true;
-  }
+  
+  initialise_handles(event);  // Set weights to 1 for data
+  if (event.isRealData) return true;
 
   try{
     // Set weights to 1 if no genInfo scale variation weights exist
-    if(event.genInfo->systweights().size() < 9){
-      event.set(h_murmuf_weight_upup_, 1.);
-      event.set(h_murmuf_weight_upnone_, 1.);
-      event.set(h_murmuf_weight_noneup_, 1.);
-      event.set(h_murmuf_weight_downdown_, 1.);
-      event.set(h_murmuf_weight_downnone_, 1.);
-      event.set(h_murmuf_weight_nonedown_, 1.);
-      return true;
-    }
+    if(event.genInfo->systweights().size() < 9) return true;
 
-    // Set handles, written for all relevant cases irrespective of the values of mu_r and mu_f specified in the config file
-    if ( is_dy ) {
+    // Set handles, written for all relevant cases irrespective of
+    // the values of mu_r and mu_f specified in the config file
+    if ( is_dy || is_wjets || is_alps ) {
+      event.set(h_murmuf_dyn1_weight_upup_, event.genInfo->systweights().at(16)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn2_weight_upup_, event.genInfo->systweights().at(17)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn3_weight_upup_, event.genInfo->systweights().at(18)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_upup_, event.genInfo->systweights().at(19)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_upup_, event.genInfo->systweights().at(20)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn1_weight_upnone_, event.genInfo->systweights().at(1)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn2_weight_upnone_, event.genInfo->systweights().at(2)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn3_weight_upnone_, event.genInfo->systweights().at(3)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_upnone_, event.genInfo->systweights().at(4)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_upnone_, event.genInfo->systweights().at(5)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn1_weight_noneup_, event.genInfo->systweights().at(11)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn2_weight_noneup_, event.genInfo->systweights().at(12)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn3_weight_noneup_, event.genInfo->systweights().at(13)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_noneup_, event.genInfo->systweights().at(14)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_noneup_, event.genInfo->systweights().at(15)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(36)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(37)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(38)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(39)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_downdown_, event.genInfo->systweights().at(40)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn1_weight_downnone_, event.genInfo->systweights().at(6)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn2_weight_downnone_, event.genInfo->systweights().at(7)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn3_weight_downnone_, event.genInfo->systweights().at(8)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_downnone_, event.genInfo->systweights().at(9)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_downnone_, event.genInfo->systweights().at(10)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn1_weight_nonedown_, event.genInfo->systweights().at(26)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn2_weight_nonedown_, event.genInfo->systweights().at(27)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn3_weight_nonedown_, event.genInfo->systweights().at(28)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_nonedown_, event.genInfo->systweights().at(29)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_nonedown_, event.genInfo->systweights().at(30)/event.genInfo->originalXWGTUP());
     }
     else {
