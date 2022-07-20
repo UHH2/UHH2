@@ -80,6 +80,7 @@ class MCScaleVariation: public uhh2::AnalysisModule {
   bool is_dy;
   bool is_wjets;
   bool is_alps;
+  bool is_azh;
   int i_mu_r = 0, i_mu_f = 0;
   void initialise_handles(uhh2::Event & event);
   uhh2::Event::Handle<float> h_murmuf_weight_upup_;

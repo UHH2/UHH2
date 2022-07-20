@@ -246,6 +246,7 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
   is_dy = ctx.get("dataset_version").find("DYJets") == 0;
   is_wjets = ctx.get("dataset_version").find("WJets") == 0;
   is_alps = ctx.get("dataset_version").find("ALP") == 0;
+  is_azh = ctx.get("dataset_version").find("AZH") == 0;
 
   if(s_mu_r == "up") {i_mu_r = 1;}
   else if(s_mu_r == "down"){i_mu_r = 2;}
@@ -304,37 +305,37 @@ bool MCScaleVariation::process(Event & event){
 
     // Set handles, written for all relevant cases irrespective of
     // the values of mu_r and mu_f specified in the config file
-    if ( is_dy || is_wjets || is_alps ) {
-      event.set(h_murmuf_dyn1_weight_upup_, event.genInfo->systweights().at(16)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn2_weight_upup_, event.genInfo->systweights().at(17)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn3_weight_upup_, event.genInfo->systweights().at(18)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn4_weight_upup_, event.genInfo->systweights().at(19)/event.genInfo->originalXWGTUP());
+    if ( is_dy || is_wjets || is_alps || is_azh ) {
       event.set(h_murmuf_weight_upup_, event.genInfo->systweights().at(20)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn1_weight_upnone_, event.genInfo->systweights().at(1)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn2_weight_upnone_, event.genInfo->systweights().at(2)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn3_weight_upnone_, event.genInfo->systweights().at(3)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn4_weight_upnone_, event.genInfo->systweights().at(4)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn1_weight_upup_, event.genInfo->systweights().at(21)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn2_weight_upup_, event.genInfo->systweights().at(22)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn3_weight_upup_, event.genInfo->systweights().at(23)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_upup_, event.genInfo->systweights().at(24)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_upnone_, event.genInfo->systweights().at(5)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn1_weight_noneup_, event.genInfo->systweights().at(11)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn2_weight_noneup_, event.genInfo->systweights().at(12)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn3_weight_noneup_, event.genInfo->systweights().at(13)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn4_weight_noneup_, event.genInfo->systweights().at(14)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn1_weight_upnone_, event.genInfo->systweights().at(6)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn2_weight_upnone_, event.genInfo->systweights().at(7)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn3_weight_upnone_, event.genInfo->systweights().at(8)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_upnone_, event.genInfo->systweights().at(9)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_noneup_, event.genInfo->systweights().at(15)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(36)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(37)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(38)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(39)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn1_weight_noneup_, event.genInfo->systweights().at(16)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn2_weight_noneup_, event.genInfo->systweights().at(17)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn3_weight_noneup_, event.genInfo->systweights().at(18)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_noneup_, event.genInfo->systweights().at(19)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_downdown_, event.genInfo->systweights().at(40)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn1_weight_downnone_, event.genInfo->systweights().at(6)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn2_weight_downnone_, event.genInfo->systweights().at(7)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn3_weight_downnone_, event.genInfo->systweights().at(8)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn4_weight_downnone_, event.genInfo->systweights().at(9)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(41)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(42)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(43)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_downdown_, event.genInfo->systweights().at(44)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_downnone_, event.genInfo->systweights().at(10)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn1_weight_nonedown_, event.genInfo->systweights().at(26)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn2_weight_nonedown_, event.genInfo->systweights().at(27)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn3_weight_nonedown_, event.genInfo->systweights().at(28)/event.genInfo->originalXWGTUP());
-      event.set(h_murmuf_dyn4_weight_nonedown_, event.genInfo->systweights().at(29)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn1_weight_downnone_, event.genInfo->systweights().at(11)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn2_weight_downnone_, event.genInfo->systweights().at(12)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn3_weight_downnone_, event.genInfo->systweights().at(13)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_downnone_, event.genInfo->systweights().at(14)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_weight_nonedown_, event.genInfo->systweights().at(30)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn1_weight_nonedown_, event.genInfo->systweights().at(31)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn2_weight_nonedown_, event.genInfo->systweights().at(32)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn3_weight_nonedown_, event.genInfo->systweights().at(33)/event.genInfo->originalXWGTUP());
+      event.set(h_murmuf_dyn4_weight_nonedown_, event.genInfo->systweights().at(34)/event.genInfo->originalXWGTUP());
     }
     else {
       event.set(h_murmuf_weight_upup_, event.genInfo->systweights().at(4)/event.genInfo->originalXWGTUP());
