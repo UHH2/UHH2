@@ -1948,12 +1948,16 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     elif(year == "UL17"): doRunVID=True
     elif(year == "UL18"): doRunVID=True
 
+    # The following means that the energy corrections are calculated for each electron/photon and are thus accessible but they are not actually applied to the electron/photon written to the ntuple.
+    # In order to apply the energy corrections on analysis-level, one can use members of electron/photon class which store the calculated corrections (if they have been written to the electron/photon
+    # class, see NtupleWriterLeptons).
     doRunEnergyCorrections=True
-    if(year == "2016v3"): runEnergyCorrections=False
+    if(year == "2016v3"): doRunEnergyCorrections=False
+    doApplyEnergyCorrections=False
 
     # this is the magic thing by the Egamma POG that does *everything*
     from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
-    setupEgammaPostRecoSeq(process, era=egamma_era, runVID=doRunVID, runEnergyCorrections=doRunEnergyCorrections)
+    setupEgammaPostRecoSeq(process, era=egamma_era, runVID=doRunVID, runEnergyCorrections=doRunEnergyCorrections, applyEnergyCorrections=doApplyEnergyCorrections)
 
     el_isovals = []
 

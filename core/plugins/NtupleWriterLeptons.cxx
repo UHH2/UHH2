@@ -123,7 +123,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     ele.set_jetNDauChargedMVASel(pat_ele.hasUserCand("jetForLepJetVar")?pat_ele.userFloat("jetNDauChargedMVASel"):-999.);
     ele.set_pTRel(pat_ele.hasUserCand("jetForLepJetVar")?pat_ele.userFloat("ptRel"):-999.);
     ele.set_ptRatio(pat_ele.hasUserCand("jetForLepJetVar")?min(pat_ele.userFloat("ptRatio"),float(1.5)):-999.);
-    
+
     const pat::Jet* closestJet = nullptr;
     if (pat_ele.hasUserCand("jetForLepJetVar")){closestJet = dynamic_cast<const pat::Jet*>(pat_ele.userCand("jetForLepJetVar").get());}
     ele.set_bTagDeepJetClosestJet(closestJet?max(closestJet->bDiscriminator("pfDeepFlavourJetTags:probbb")+closestJet->bDiscriminator("pfDeepFlavourJetTags:probb")+closestJet->bDiscriminator("pfDeepFlavourJetTags:problepb"),float(0.0)):-1.);
@@ -131,11 +131,40 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     ele.set_electronMVATOP(pat_ele.hasUserFloat("mvaTOP")?pat_ele.userFloat("mvaTOP"):-999.);
 
     ele.set_puppiChargedHadronIso(pat_ele.puppiChargedHadronIso());
-    ele.set_puppiNeutralHadronIso(pat_ele.puppiNeutralHadronIso());          
-    ele.set_puppiPhotonIso(pat_ele.puppiPhotonIso());            
+    ele.set_puppiNeutralHadronIso(pat_ele.puppiNeutralHadronIso());
+    ele.set_puppiPhotonIso(pat_ele.puppiPhotonIso());
     ele.set_puppiNoLeptonsChargedHadronIso(pat_ele.puppiNoLeptonsChargedHadronIso());
-    ele.set_puppiNoLeptonsNeutralHadronIso(pat_ele.puppiNoLeptonsNeutralHadronIso()); 
-    ele.set_puppiNoLeptonsPhotonIso(pat_ele.puppiNoLeptonsPhotonIso());   
+    ele.set_puppiNoLeptonsNeutralHadronIso(pat_ele.puppiNoLeptonsNeutralHadronIso());
+    ele.set_puppiNoLeptonsPhotonIso(pat_ele.puppiNoLeptonsPhotonIso());
+
+    // EGamma Residuals
+    ele.set_ecalEnergyPreCorr(pat_ele.hasUserFloat("ecalEnergyPreCorr")?pat_ele.userFloat("ecalEnergyPreCorr"):-999.);
+    ele.set_ecalEnergyErrPreCorr(pat_ele.hasUserFloat("ecalEnergyErrPreCorr")?pat_ele.userFloat("ecalEnergyErrPreCorr"):-999.);
+    ele.set_ecalEnergyPostCorr(pat_ele.hasUserFloat("ecalEnergyPostCorr")?pat_ele.userFloat("ecalEnergyPostCorr"):-999.);
+    ele.set_ecalEnergyErrPostCorr(pat_ele.hasUserFloat("ecalEnergyErrPostCorr")?pat_ele.userFloat("ecalEnergyErrPostCorr"):-999.);
+    ele.set_ecalTrkEnergyPreCorr(pat_ele.hasUserFloat("ecalTrkEnergyPreCorr")?pat_ele.userFloat("ecalTrkEnergyPreCorr"):-999.);
+    ele.set_ecalTrkEnergyErrPreCorr(pat_ele.hasUserFloat("ecalTrkEnergyErrPreCorr")?pat_ele.userFloat("ecalTrkEnergyErrPreCorr"):-999.);
+    ele.set_ecalTrkEnergyPostCorr(pat_ele.hasUserFloat("ecalTrkEnergyPostCorr")?pat_ele.userFloat("ecalTrkEnergyPostCorr"):-999.);
+    ele.set_ecalTrkEnergyErrPostCorr(pat_ele.hasUserFloat("ecalTrkEnergyErrPostCorr")?pat_ele.userFloat("ecalTrkEnergyErrPostCorr"):-999.);
+    ele.set_energyScaleValue(pat_ele.hasUserFloat("energyScaleValue")?pat_ele.userFloat("energyScaleValue"):-999.);
+    ele.set_energySigmaValue(pat_ele.hasUserFloat("energySigmaValue")?pat_ele.userFloat("energySigmaValue"):-999.);
+    ele.set_energySmearNrSigma(pat_ele.hasUserFloat("energySmearNrSigma")?pat_ele.userFloat("energySmearNrSigma"):-999.);
+    ele.set_energyScaleUp(pat_ele.hasUserFloat("energyScaleUp")?pat_ele.userFloat("energyScaleUp"):-999.);
+    ele.set_energyScaleDown(pat_ele.hasUserFloat("energyScaleDown")?pat_ele.userFloat("energyScaleDown"):-999.);
+    ele.set_energyScaleStatUp(pat_ele.hasUserFloat("energyScaleStatUp")?pat_ele.userFloat("energyScaleStatUp"):-999.);
+    ele.set_energyScaleStatDown(pat_ele.hasUserFloat("energyScaleStatDown")?pat_ele.userFloat("energyScaleStatDown"):-999.);
+    ele.set_energyScaleSystUp(pat_ele.hasUserFloat("energyScaleSystUp")?pat_ele.userFloat("energyScaleSystUp"):-999.);
+    ele.set_energyScaleSystDown(pat_ele.hasUserFloat("energyScaleSystDown")?pat_ele.userFloat("energyScaleSystDown"):-999.);
+    ele.set_energyScaleGainUp(pat_ele.hasUserFloat("energyScaleGainUp")?pat_ele.userFloat("energyScaleGainUp"):-999.);
+    ele.set_energyScaleGainDown(pat_ele.hasUserFloat("energyScaleGainDown")?pat_ele.userFloat("energyScaleGainDown"):-999.);
+    ele.set_energyScaleEtUp(pat_ele.hasUserFloat("energyScaleEtUp")?pat_ele.userFloat("energyScaleEtUp"):-999.);
+    ele.set_energyScaleEtDown(pat_ele.hasUserFloat("energyScaleEtDown")?pat_ele.userFloat("energyScaleEtDown"):-999.);
+    ele.set_energySigmaUp(pat_ele.hasUserFloat("energySigmaUp")?pat_ele.userFloat("energySigmaUp"):-999.);
+    ele.set_energySigmaDown(pat_ele.hasUserFloat("energySigmaDown")?pat_ele.userFloat("energySigmaDown"):-999.);
+    ele.set_energySigmaPhiUp(pat_ele.hasUserFloat("energySigmaPhiUp")?pat_ele.userFloat("energySigmaPhiUp"):-999.);
+    ele.set_energySigmaPhiDown(pat_ele.hasUserFloat("energySigmaPhiDown")?pat_ele.userFloat("energySigmaPhiDown"):-999.);
+    ele.set_energySigmaRhoUp(pat_ele.hasUserFloat("energySigmaRhoUp")?pat_ele.userFloat("energySigmaRhoUp"):-999.);
+    ele.set_energySigmaRhoDown(pat_ele.hasUserFloat("energySigmaRhoDown")?pat_ele.userFloat("energySigmaRhoDown"):-999.);
 
 
     for(const auto& tag_str : IDtag_keys){
@@ -247,6 +276,35 @@ void NtupleWriterPhotons::process(const edm::Event & event, uhh2::Event & uevent
       double dR_recoPho_l1EGamma = reco::deltaR(pat_pho.eta(), pat_pho.phi(), itL1.p4().Eta(), itL1.p4().Phi());
       if(dR_recoPho_l1EGamma < pho.minDeltaRToL1EGamma()) pho.set_minDeltaRToL1EGamma(dR_recoPho_l1EGamma);
     }
+
+    // EGamma Residuals
+    pho.set_ecalEnergyPreCorr(pat_pho.hasUserFloat("ecalEnergyPreCorr")?pat_pho.userFloat("ecalEnergyPreCorr"):-999.);
+    pho.set_ecalEnergyErrPreCorr(pat_pho.hasUserFloat("ecalEnergyErrPreCorr")?pat_pho.userFloat("ecalEnergyErrPreCorr"):-999.);
+    pho.set_ecalEnergyPostCorr(pat_pho.hasUserFloat("ecalEnergyPostCorr")?pat_pho.userFloat("ecalEnergyPostCorr"):-999.);
+    pho.set_ecalEnergyErrPostCorr(pat_pho.hasUserFloat("ecalEnergyErrPostCorr")?pat_pho.userFloat("ecalEnergyErrPostCorr"):-999.);
+    pho.set_ecalTrkEnergyPreCorr(pat_pho.hasUserFloat("ecalTrkEnergyPreCorr")?pat_pho.userFloat("ecalTrkEnergyPreCorr"):-999.);
+    pho.set_ecalTrkEnergyErrPreCorr(pat_pho.hasUserFloat("ecalTrkEnergyErrPreCorr")?pat_pho.userFloat("ecalTrkEnergyErrPreCorr"):-999.);
+    pho.set_ecalTrkEnergyPostCorr(pat_pho.hasUserFloat("ecalTrkEnergyPostCorr")?pat_pho.userFloat("ecalTrkEnergyPostCorr"):-999.);
+    pho.set_ecalTrkEnergyErrPostCorr(pat_pho.hasUserFloat("ecalTrkEnergyErrPostCorr")?pat_pho.userFloat("ecalTrkEnergyErrPostCorr"):-999.);
+    pho.set_energyScaleValue(pat_pho.hasUserFloat("energyScaleValue")?pat_pho.userFloat("energyScaleValue"):-999.);
+    pho.set_energySigmaValue(pat_pho.hasUserFloat("energySigmaValue")?pat_pho.userFloat("energySigmaValue"):-999.);
+    pho.set_energySmearNrSigma(pat_pho.hasUserFloat("energySmearNrSigma")?pat_pho.userFloat("energySmearNrSigma"):-999.);
+    pho.set_energyScaleUp(pat_pho.hasUserFloat("energyScaleUp")?pat_pho.userFloat("energyScaleUp"):-999.);
+    pho.set_energyScaleDown(pat_pho.hasUserFloat("energyScaleDown")?pat_pho.userFloat("energyScaleDown"):-999.);
+    pho.set_energyScaleStatUp(pat_pho.hasUserFloat("energyScaleStatUp")?pat_pho.userFloat("energyScaleStatUp"):-999.);
+    pho.set_energyScaleStatDown(pat_pho.hasUserFloat("energyScaleStatDown")?pat_pho.userFloat("energyScaleStatDown"):-999.);
+    pho.set_energyScaleSystUp(pat_pho.hasUserFloat("energyScaleSystUp")?pat_pho.userFloat("energyScaleSystUp"):-999.);
+    pho.set_energyScaleSystDown(pat_pho.hasUserFloat("energyScaleSystDown")?pat_pho.userFloat("energyScaleSystDown"):-999.);
+    pho.set_energyScaleGainUp(pat_pho.hasUserFloat("energyScaleGainUp")?pat_pho.userFloat("energyScaleGainUp"):-999.);
+    pho.set_energyScaleGainDown(pat_pho.hasUserFloat("energyScaleGainDown")?pat_pho.userFloat("energyScaleGainDown"):-999.);
+    pho.set_energyScaleEtUp(pat_pho.hasUserFloat("energyScaleEtUp")?pat_pho.userFloat("energyScaleEtUp"):-999.);
+    pho.set_energyScaleEtDown(pat_pho.hasUserFloat("energyScaleEtDown")?pat_pho.userFloat("energyScaleEtDown"):-999.);
+    pho.set_energySigmaUp(pat_pho.hasUserFloat("energySigmaUp")?pat_pho.userFloat("energySigmaUp"):-999.);
+    pho.set_energySigmaDown(pat_pho.hasUserFloat("energySigmaDown")?pat_pho.userFloat("energySigmaDown"):-999.);
+    pho.set_energySigmaPhiUp(pat_pho.hasUserFloat("energySigmaPhiUp")?pat_pho.userFloat("energySigmaPhiUp"):-999.);
+    pho.set_energySigmaPhiDown(pat_pho.hasUserFloat("energySigmaPhiDown")?pat_pho.userFloat("energySigmaPhiDown"):-999.);
+    pho.set_energySigmaRhoUp(pat_pho.hasUserFloat("energySigmaRhoUp")?pat_pho.userFloat("energySigmaRhoUp"):-999.);
+    pho.set_energySigmaRhoDown(pat_pho.hasUserFloat("energySigmaRhoDown")?pat_pho.userFloat("energySigmaRhoDown"):-999.);
 
     /* source candidates */
     if(save_source_candidates_){
@@ -411,11 +469,11 @@ void NtupleWriterMuons::process(const edm::Event & event, uhh2::Event & uevent, 
     mu.set_dzlog(log(abs(pat_mu.dB(pat::Muon::PVDZ))));
 
     mu.set_puppiChargedHadronIso(pat_mu.puppiChargedHadronIso());
-    mu.set_puppiNeutralHadronIso(pat_mu.puppiNeutralHadronIso());          
-    mu.set_puppiPhotonIso(pat_mu.puppiPhotonIso());            
+    mu.set_puppiNeutralHadronIso(pat_mu.puppiNeutralHadronIso());
+    mu.set_puppiPhotonIso(pat_mu.puppiPhotonIso());
     mu.set_puppiNoLeptonsChargedHadronIso(pat_mu.puppiNoLeptonsChargedHadronIso());
-    mu.set_puppiNoLeptonsNeutralHadronIso(pat_mu.puppiNoLeptonsNeutralHadronIso()); 
-    mu.set_puppiNoLeptonsPhotonIso(pat_mu.puppiNoLeptonsPhotonIso());   
+    mu.set_puppiNoLeptonsNeutralHadronIso(pat_mu.puppiNoLeptonsNeutralHadronIso());
+    mu.set_puppiNoLeptonsPhotonIso(pat_mu.puppiNoLeptonsPhotonIso());
 
     mu.set_jetNDauChargedMVASel(pat_mu.hasUserCand("jetForLepJetVar")?pat_mu.userFloat("jetNDauChargedMVASel"):-999.);
     mu.set_pTRel(pat_mu.hasUserCand("jetForLepJetVar")?pat_mu.userFloat("ptRel"):-999.);
