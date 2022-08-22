@@ -138,6 +138,7 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     ele.set_puppiNoLeptonsPhotonIso(pat_ele.puppiNoLeptonsPhotonIso());
 
     // EGamma Residuals
+    /*
     ele.set_ecalEnergyPreCorr(pat_ele.hasUserFloat("ecalEnergyPreCorr")?pat_ele.userFloat("ecalEnergyPreCorr"):-999.);
     ele.set_ecalEnergyErrPreCorr(pat_ele.hasUserFloat("ecalEnergyErrPreCorr")?pat_ele.userFloat("ecalEnergyErrPreCorr"):-999.);
     ele.set_ecalEnergyPostCorr(pat_ele.hasUserFloat("ecalEnergyPostCorr")?pat_ele.userFloat("ecalEnergyPostCorr"):-999.);
@@ -165,7 +166,35 @@ void NtupleWriterElectrons::process(const edm::Event & event, uhh2::Event & ueve
     ele.set_energySigmaPhiDown(pat_ele.hasUserFloat("energySigmaPhiDown")?pat_ele.userFloat("energySigmaPhiDown"):-999.);
     ele.set_energySigmaRhoUp(pat_ele.hasUserFloat("energySigmaRhoUp")?pat_ele.userFloat("energySigmaRhoUp"):-999.);
     ele.set_energySigmaRhoDown(pat_ele.hasUserFloat("energySigmaRhoDown")?pat_ele.userFloat("energySigmaRhoDown"):-999.);
+    */
 
+    ele.set_tag(Electron::tag::residual_ecalEnergyPreCorr, float(pat_ele.hasUserFloat("ecalEnergyPreCorr")?pat_ele.userFloat("ecalEnergyPreCorr"):-999.));
+    ele.set_tag(Electron::tag::residual_ecalEnergyErrPreCorr, float(pat_ele.hasUserFloat("ecalEnergyErrPreCorr")?pat_ele.userFloat("ecalEnergyErrPreCorr"):-999.));
+    ele.set_tag(Electron::tag::residual_ecalEnergyPostCorr, float(pat_ele.hasUserFloat("ecalEnergyPostCorr")?pat_ele.userFloat("ecalEnergyPostCorr"):-999.));
+    ele.set_tag(Electron::tag::residual_ecalEnergyErrPostCorr, float(pat_ele.hasUserFloat("ecalEnergyErrPostCorr")?pat_ele.userFloat("ecalEnergyErrPostCorr"):-999.));
+    ele.set_tag(Electron::tag::residual_ecalTrkEnergyPreCorr, float(pat_ele.hasUserFloat("ecalTrkEnergyPreCorr")?pat_ele.userFloat("ecalTrkEnergyPreCorr"):-999.));
+    ele.set_tag(Electron::tag::residual_ecalTrkEnergyErrPreCorr, float(pat_ele.hasUserFloat("ecalTrkEnergyErrPreCorr")?pat_ele.userFloat("ecalTrkEnergyErrPreCorr"):-999.));
+    ele.set_tag(Electron::tag::residual_ecalTrkEnergyPostCorr, float(pat_ele.hasUserFloat("ecalTrkEnergyPostCorr")?pat_ele.userFloat("ecalTrkEnergyPostCorr"):-999.));
+    ele.set_tag(Electron::tag::residual_ecalTrkEnergyErrPostCorr, float(pat_ele.hasUserFloat("ecalTrkEnergyErrPostCorr")?pat_ele.userFloat("ecalTrkEnergyErrPostCorr"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleValue, float(pat_ele.hasUserFloat("energyScaleValue")?pat_ele.userFloat("energyScaleValue"):-999.));
+    ele.set_tag(Electron::tag::residual_energySigmaValue, float(pat_ele.hasUserFloat("energySigmaValue")?pat_ele.userFloat("energySigmaValue"):-999.));
+    ele.set_tag(Electron::tag::residual_energySmearNrSigma, float(pat_ele.hasUserFloat("energySmearNrSigma")?pat_ele.userFloat("energySmearNrSigma"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleUp, float(pat_ele.hasUserFloat("energyScaleUp")?pat_ele.userFloat("energyScaleUp"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleDown, float(pat_ele.hasUserFloat("energyScaleDown")?pat_ele.userFloat("energyScaleDown"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleStatUp, float(pat_ele.hasUserFloat("energyScaleStatUp")?pat_ele.userFloat("energyScaleStatUp"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleStatDown, float(pat_ele.hasUserFloat("energyScaleStatDown")?pat_ele.userFloat("energyScaleStatDown"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleSystUp, float(pat_ele.hasUserFloat("energyScaleSystUp")?pat_ele.userFloat("energyScaleSystUp"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleSystDown, float(pat_ele.hasUserFloat("energyScaleSystDown")?pat_ele.userFloat("energyScaleSystDown"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleGainUp, float(pat_ele.hasUserFloat("energyScaleGainUp")?pat_ele.userFloat("energyScaleGainUp"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleGainDown, float(pat_ele.hasUserFloat("energyScaleGainDown")?pat_ele.userFloat("energyScaleGainDown"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleEtUp, float(pat_ele.hasUserFloat("energyScaleEtUp")?pat_ele.userFloat("energyScaleEtUp"):-999.));
+    ele.set_tag(Electron::tag::residual_energyScaleEtDown, float(pat_ele.hasUserFloat("energyScaleEtDown")?pat_ele.userFloat("energyScaleEtDown"):-999.));
+    ele.set_tag(Electron::tag::residual_energySigmaUp, float(pat_ele.hasUserFloat("energySigmaUp")?pat_ele.userFloat("energySigmaUp"):-999.));
+    ele.set_tag(Electron::tag::residual_energySigmaDown, float(pat_ele.hasUserFloat("energySigmaDown")?pat_ele.userFloat("energySigmaDown"):-999.));
+    ele.set_tag(Electron::tag::residual_energySigmaPhiUp, float(pat_ele.hasUserFloat("energySigmaPhiUp")?pat_ele.userFloat("energySigmaPhiUp"):-999.));
+    ele.set_tag(Electron::tag::residual_energySigmaPhiDown, float(pat_ele.hasUserFloat("energySigmaPhiDown")?pat_ele.userFloat("energySigmaPhiDown"):-999.));
+    ele.set_tag(Electron::tag::residual_energySigmaRhoUp, float(pat_ele.hasUserFloat("energySigmaRhoUp")?pat_ele.userFloat("energySigmaRhoUp"):-999.));
+    ele.set_tag(Electron::tag::residual_energySigmaRhoDown, float(pat_ele.hasUserFloat("energySigmaRhoDown")?pat_ele.userFloat("energySigmaRhoDown"):-999.));
 
     for(const auto& tag_str : IDtag_keys){
       if(!pat_ele.isElectronIDAvailable(tag_str)) throw cms::Exception("Missing Electron ID", "ElectronID not found: "+tag_str);
@@ -278,6 +307,7 @@ void NtupleWriterPhotons::process(const edm::Event & event, uhh2::Event & uevent
     }
 
     // EGamma Residuals
+    /*
     pho.set_ecalEnergyPreCorr(pat_pho.hasUserFloat("ecalEnergyPreCorr")?pat_pho.userFloat("ecalEnergyPreCorr"):-999.);
     pho.set_ecalEnergyErrPreCorr(pat_pho.hasUserFloat("ecalEnergyErrPreCorr")?pat_pho.userFloat("ecalEnergyErrPreCorr"):-999.);
     pho.set_ecalEnergyPostCorr(pat_pho.hasUserFloat("ecalEnergyPostCorr")?pat_pho.userFloat("ecalEnergyPostCorr"):-999.);
@@ -305,6 +335,35 @@ void NtupleWriterPhotons::process(const edm::Event & event, uhh2::Event & uevent
     pho.set_energySigmaPhiDown(pat_pho.hasUserFloat("energySigmaPhiDown")?pat_pho.userFloat("energySigmaPhiDown"):-999.);
     pho.set_energySigmaRhoUp(pat_pho.hasUserFloat("energySigmaRhoUp")?pat_pho.userFloat("energySigmaRhoUp"):-999.);
     pho.set_energySigmaRhoDown(pat_pho.hasUserFloat("energySigmaRhoDown")?pat_pho.userFloat("energySigmaRhoDown"):-999.);
+    */
+
+    pho.set_tag(Photon::tag::residual_ecalEnergyPreCorr, float(pat_pho.hasUserFloat("ecalEnergyPreCorr")?pat_pho.userFloat("ecalEnergyPreCorr"):-999.));
+    pho.set_tag(Photon::tag::residual_ecalEnergyErrPreCorr, float(pat_pho.hasUserFloat("ecalEnergyErrPreCorr")?pat_pho.userFloat("ecalEnergyErrPreCorr"):-999.));
+    pho.set_tag(Photon::tag::residual_ecalEnergyPostCorr, float(pat_pho.hasUserFloat("ecalEnergyPostCorr")?pat_pho.userFloat("ecalEnergyPostCorr"):-999.));
+    pho.set_tag(Photon::tag::residual_ecalEnergyErrPostCorr, float(pat_pho.hasUserFloat("ecalEnergyErrPostCorr")?pat_pho.userFloat("ecalEnergyErrPostCorr"):-999.));
+    pho.set_tag(Photon::tag::residual_ecalTrkEnergyPreCorr, float(pat_pho.hasUserFloat("ecalTrkEnergyPreCorr")?pat_pho.userFloat("ecalTrkEnergyPreCorr"):-999.));
+    pho.set_tag(Photon::tag::residual_ecalTrkEnergyErrPreCorr, float(pat_pho.hasUserFloat("ecalTrkEnergyErrPreCorr")?pat_pho.userFloat("ecalTrkEnergyErrPreCorr"):-999.));
+    pho.set_tag(Photon::tag::residual_ecalTrkEnergyPostCorr, float(pat_pho.hasUserFloat("ecalTrkEnergyPostCorr")?pat_pho.userFloat("ecalTrkEnergyPostCorr"):-999.));
+    pho.set_tag(Photon::tag::residual_ecalTrkEnergyErrPostCorr, float(pat_pho.hasUserFloat("ecalTrkEnergyErrPostCorr")?pat_pho.userFloat("ecalTrkEnergyErrPostCorr"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleValue, float(pat_pho.hasUserFloat("energyScaleValue")?pat_pho.userFloat("energyScaleValue"):-999.));
+    pho.set_tag(Photon::tag::residual_energySigmaValue, float(pat_pho.hasUserFloat("energySigmaValue")?pat_pho.userFloat("energySigmaValue"):-999.));
+    pho.set_tag(Photon::tag::residual_energySmearNrSigma, float(pat_pho.hasUserFloat("energySmearNrSigma")?pat_pho.userFloat("energySmearNrSigma"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleUp, float(pat_pho.hasUserFloat("energyScaleUp")?pat_pho.userFloat("energyScaleUp"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleDown, float(pat_pho.hasUserFloat("energyScaleDown")?pat_pho.userFloat("energyScaleDown"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleStatUp, float(pat_pho.hasUserFloat("energyScaleStatUp")?pat_pho.userFloat("energyScaleStatUp"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleStatDown, float(pat_pho.hasUserFloat("energyScaleStatDown")?pat_pho.userFloat("energyScaleStatDown"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleSystUp, float(pat_pho.hasUserFloat("energyScaleSystUp")?pat_pho.userFloat("energyScaleSystUp"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleSystDown, float(pat_pho.hasUserFloat("energyScaleSystDown")?pat_pho.userFloat("energyScaleSystDown"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleGainUp, float(pat_pho.hasUserFloat("energyScaleGainUp")?pat_pho.userFloat("energyScaleGainUp"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleGainDown, float(pat_pho.hasUserFloat("energyScaleGainDown")?pat_pho.userFloat("energyScaleGainDown"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleEtUp, float(pat_pho.hasUserFloat("energyScaleEtUp")?pat_pho.userFloat("energyScaleEtUp"):-999.));
+    pho.set_tag(Photon::tag::residual_energyScaleEtDown, float(pat_pho.hasUserFloat("energyScaleEtDown")?pat_pho.userFloat("energyScaleEtDown"):-999.));
+    pho.set_tag(Photon::tag::residual_energySigmaUp, float(pat_pho.hasUserFloat("energySigmaUp")?pat_pho.userFloat("energySigmaUp"):-999.));
+    pho.set_tag(Photon::tag::residual_energySigmaDown, float(pat_pho.hasUserFloat("energySigmaDown")?pat_pho.userFloat("energySigmaDown"):-999.));
+    pho.set_tag(Photon::tag::residual_energySigmaPhiUp, float(pat_pho.hasUserFloat("energySigmaPhiUp")?pat_pho.userFloat("energySigmaPhiUp"):-999.));
+    pho.set_tag(Photon::tag::residual_energySigmaPhiDown, float(pat_pho.hasUserFloat("energySigmaPhiDown")?pat_pho.userFloat("energySigmaPhiDown"):-999.));
+    pho.set_tag(Photon::tag::residual_energySigmaRhoUp, float(pat_pho.hasUserFloat("energySigmaRhoUp")?pat_pho.userFloat("energySigmaRhoUp"):-999.));
+    pho.set_tag(Photon::tag::residual_energySigmaRhoDown, float(pat_pho.hasUserFloat("energySigmaRhoDown")?pat_pho.userFloat("energySigmaRhoDown"):-999.));
 
     /* source candidates */
     if(save_source_candidates_){
