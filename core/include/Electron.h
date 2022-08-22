@@ -32,7 +32,37 @@ class Electron : public RecParticle {
     mvaEleID_Fall17_noIso_V2_wpLoose,
     mvaEleID_Fall17_iso_V2_wp90,
     mvaEleID_Fall17_iso_V2_wp80,
-    mvaEleID_Fall17_iso_V2_wpLoose
+    mvaEleID_Fall17_iso_V2_wpLoose,
+
+    // EGamma Residuals
+    // In general it would be better to implement these corrections as usual class members: see commented out code below. But we use the "Tags" solution here for backwards compatibility with older ntuples of the RunII_106X_v2 branch.
+    residual_ecalEnergyPreCorr,
+    residual_ecalEnergyErrPreCorr,
+    residual_ecalEnergyPostCorr,
+    residual_ecalEnergyErrPostCorr,
+    residual_ecalTrkEnergyPreCorr,
+    residual_ecalTrkEnergyErrPreCorr,
+    residual_ecalTrkEnergyPostCorr,
+    residual_ecalTrkEnergyErrPostCorr,
+    residual_energyScaleValue,
+    residual_energySigmaValue,
+    residual_energySmearNrSigma,
+    residual_energyScaleUp,
+    residual_energyScaleDown,
+    residual_energyScaleStatUp,
+    residual_energyScaleStatDown,
+    residual_energyScaleSystUp,
+    residual_energyScaleSystDown,
+    residual_energyScaleGainUp,
+    residual_energyScaleGainDown,
+    residual_energyScaleEtUp,
+    residual_energyScaleEtDown,
+    residual_energySigmaUp,
+    residual_energySigmaDown,
+    residual_energySigmaPhiUp,
+    residual_energySigmaPhiDown,
+    residual_energySigmaRhoUp,
+    residual_energySigmaRhoDown,
   };
 
   static tag tagname2tag(const std::string & tagname){
@@ -54,6 +84,36 @@ class Electron : public RecParticle {
     if(tagname == "mvaEleID-Fall17-iso-V2-wp90") return mvaEleID_Fall17_iso_V2_wp90;
     if(tagname == "mvaEleID-Fall17-iso-V2-wp80") return mvaEleID_Fall17_iso_V2_wp80;
     if(tagname == "mvaEleID-Fall17-iso-V2-wpLoose") return mvaEleID_Fall17_iso_V2_wpLoose;
+
+    // EGamma Residuals
+    if(tagname == "residual_ecalEnergyPreCorr") return residual_ecalEnergyPreCorr;
+    if(tagname == "residual_ecalEnergyErrPreCorr") return residual_ecalEnergyErrPreCorr;
+    if(tagname == "residual_ecalEnergyPostCorr") return residual_ecalEnergyPostCorr;
+    if(tagname == "residual_ecalEnergyErrPostCorr") return residual_ecalEnergyErrPostCorr;
+    if(tagname == "residual_ecalTrkEnergyPreCorr") return residual_ecalTrkEnergyPreCorr;
+    if(tagname == "residual_ecalTrkEnergyErrPreCorr") return residual_ecalTrkEnergyErrPreCorr;
+    if(tagname == "residual_ecalTrkEnergyPostCorr") return residual_ecalTrkEnergyPostCorr;
+    if(tagname == "residual_ecalTrkEnergyErrPostCorr") return residual_ecalTrkEnergyErrPostCorr;
+    if(tagname == "residual_energyScaleValue") return residual_energyScaleValue;
+    if(tagname == "residual_energySigmaValue") return residual_energySigmaValue;
+    if(tagname == "residual_energySmearNrSigma") return residual_energySmearNrSigma;
+    if(tagname == "residual_energyScaleUp") return residual_energyScaleUp;
+    if(tagname == "residual_energyScaleDown") return residual_energyScaleDown;
+    if(tagname == "residual_energyScaleStatUp") return residual_energyScaleStatUp;
+    if(tagname == "residual_energyScaleStatDown") return residual_energyScaleStatDown;
+    if(tagname == "residual_energyScaleSystUp") return residual_energyScaleSystUp;
+    if(tagname == "residual_energyScaleSystDown") return residual_energyScaleSystDown;
+    if(tagname == "residual_energyScaleGainUp") return residual_energyScaleGainUp;
+    if(tagname == "residual_energyScaleGainDown") return residual_energyScaleGainDown;
+    if(tagname == "residual_energyScaleEtUp") return residual_energyScaleEtUp;
+    if(tagname == "residual_energyScaleEtDown") return residual_energyScaleEtDown;
+    if(tagname == "residual_energySigmaUp") return residual_energySigmaUp;
+    if(tagname == "residual_energySigmaDown") return residual_energySigmaDown;
+    if(tagname == "residual_energySigmaPhiUp") return residual_energySigmaPhiUp;
+    if(tagname == "residual_energySigmaPhiDown") return residual_energySigmaPhiDown;
+    if(tagname == "residual_energySigmaRhoUp") return residual_energySigmaRhoUp;
+    if(tagname == "residual_energySigmaRhoDown") return residual_energySigmaRhoDown;
+
     throw std::runtime_error("unknown Electron::tag '" + tagname + "'");
   }
 
@@ -131,6 +191,37 @@ class Electron : public RecParticle {
     m_puppiNoLeptonsPhotonIso = -99;
 
     m_electronMVATOP = -99;
+
+    // EGamma Residuals
+    /*
+    m_ecalEnergyPreCorr = -99;
+    m_ecalEnergyErrPreCorr = -99;
+    m_ecalEnergyPostCorr = -99;
+    m_ecalEnergyErrPostCorr = -99;
+    m_ecalTrkEnergyPreCorr = -99;
+    m_ecalTrkEnergyErrPreCorr = -99;
+    m_ecalTrkEnergyPostCorr = -99;
+    m_ecalTrkEnergyErrPostCorr = -99;
+    m_energyScaleValue = -99;
+    m_energySigmaValue = -99;
+    m_energySmearNrSigma = -99;
+    m_energyScaleUp = -99;
+    m_energyScaleDown = -99;
+    m_energyScaleStatUp = -99;
+    m_energyScaleStatDown = -99;
+    m_energyScaleSystUp = -99;
+    m_energyScaleSystDown = -99;
+    m_energyScaleGainUp = -99;
+    m_energyScaleGainDown = -99;
+    m_energyScaleEtUp = -99;
+    m_energyScaleEtDown = -99;
+    m_energySigmaUp = -99;
+    m_energySigmaDown = -99;
+    m_energySigmaPhiUp = -99;
+    m_energySigmaPhiDown = -99;
+    m_energySigmaRhoUp = -99;
+    m_energySigmaRhoDown = -99;
+    */
   }
 
   float supercluster_eta() const{return m_supercluster_eta;}
@@ -193,6 +284,37 @@ class Electron : public RecParticle {
   float puppiNoLeptonsPhotonIso()         const { return m_puppiNoLeptonsPhotonIso;}
 
   float electronMVATOP()                      const { return m_electronMVATOP;}
+
+  // EGamma Residuals
+  /*
+  float ecalEnergyPreCorr() const { return m_ecalEnergyPreCorr; }
+  float ecalEnergyErrPreCorr() const { return m_ecalEnergyErrPreCorr; }
+  float ecalEnergyPostCorr() const { return m_ecalEnergyPostCorr; }
+  float ecalEnergyErrPostCorr() const { return m_ecalEnergyErrPostCorr; }
+  float ecalTrkEnergyPreCorr() const { return m_ecalTrkEnergyPreCorr; }
+  float ecalTrkEnergyErrPreCorr() const { return m_ecalTrkEnergyErrPreCorr; }
+  float ecalTrkEnergyPostCorr() const { return m_ecalTrkEnergyPostCorr; }
+  float ecalTrkEnergyErrPostCorr() const { return m_ecalTrkEnergyErrPostCorr; }
+  float energyScaleValue() const { return m_energyScaleValue; }
+  float energySigmaValue() const { return m_energySigmaValue; }
+  float energySmearNrSigma() const { return m_energySmearNrSigma; }
+  float energyScaleUp() const { return m_energyScaleUp; }
+  float energyScaleDown() const { return m_energyScaleDown; }
+  float energyScaleStatUp() const { return m_energyScaleStatUp; }
+  float energyScaleStatDown() const { return m_energyScaleStatDown; }
+  float energyScaleSystUp() const { return m_energyScaleSystUp; }
+  float energyScaleSystDown() const { return m_energyScaleSystDown; }
+  float energyScaleGainUp() const { return m_energyScaleGainUp; }
+  float energyScaleGainDown() const { return m_energyScaleGainDown; }
+  float energyScaleEtUp() const { return m_energyScaleEtUp; }
+  float energyScaleEtDown() const { return m_energyScaleEtDown; }
+  float energySigmaUp() const { return m_energySigmaUp; }
+  float energySigmaDown() const { return m_energySigmaDown; }
+  float energySigmaPhiUp() const { return m_energySigmaPhiUp; }
+  float energySigmaPhiDown() const { return m_energySigmaPhiDown; }
+  float energySigmaRhoUp() const { return m_energySigmaRhoUp; }
+  float energySigmaRhoDown() const { return m_energySigmaRhoDown; }
+  */
 
   const std::vector<source_candidate>& source_candidates() const { return m_source_candidates; }
 
@@ -272,6 +394,36 @@ class Electron : public RecParticle {
   void set_puppiNoLeptonsNeutralHadronIso(float x)   { m_puppiNoLeptonsNeutralHadronIso=x;}
   void set_puppiNoLeptonsPhotonIso(float x)          { m_puppiNoLeptonsPhotonIso=x;}
 
+  // EGamma Residuals
+  /*
+  void set_ecalEnergyPreCorr(float x) { m_ecalEnergyPreCorr=x; }
+  void set_ecalEnergyErrPreCorr(float x) { m_ecalEnergyErrPreCorr=x; }
+  void set_ecalEnergyPostCorr(float x) { m_ecalEnergyPostCorr=x; }
+  void set_ecalEnergyErrPostCorr(float x) { m_ecalEnergyErrPostCorr=x; }
+  void set_ecalTrkEnergyPreCorr(float x) { m_ecalTrkEnergyPreCorr=x; }
+  void set_ecalTrkEnergyErrPreCorr(float x) { m_ecalTrkEnergyErrPreCorr=x; }
+  void set_ecalTrkEnergyPostCorr(float x) { m_ecalTrkEnergyPostCorr=x; }
+  void set_ecalTrkEnergyErrPostCorr(float x) { m_ecalTrkEnergyErrPostCorr=x; }
+  void set_energyScaleValue(float x) { m_energyScaleValue=x; }
+  void set_energySigmaValue(float x) { m_energySigmaValue=x; }
+  void set_energySmearNrSigma(float x) { m_energySmearNrSigma=x; }
+  void set_energyScaleUp(float x) { m_energyScaleUp=x; }
+  void set_energyScaleDown(float x) { m_energyScaleDown=x; }
+  void set_energyScaleStatUp(float x) { m_energyScaleStatUp=x; }
+  void set_energyScaleStatDown(float x) { m_energyScaleStatDown=x; }
+  void set_energyScaleSystUp(float x) { m_energyScaleSystUp=x; }
+  void set_energyScaleSystDown(float x) { m_energyScaleSystDown=x; }
+  void set_energyScaleGainUp(float x) { m_energyScaleGainUp=x; }
+  void set_energyScaleGainDown(float x) { m_energyScaleGainDown=x; }
+  void set_energyScaleEtUp(float x) { m_energyScaleEtUp=x; }
+  void set_energyScaleEtDown(float x) { m_energyScaleEtDown=x; }
+  void set_energySigmaUp(float x) { m_energySigmaUp=x; }
+  void set_energySigmaDown(float x) { m_energySigmaDown=x; }
+  void set_energySigmaPhiUp(float x) { m_energySigmaPhiUp=x; }
+  void set_energySigmaPhiDown(float x) { m_energySigmaPhiDown=x; }
+  void set_energySigmaRhoUp(float x) { m_energySigmaRhoUp=x; }
+  void set_energySigmaRhoDown(float x) { m_energySigmaRhoDown=x; }
+  */
 
   float gsfTrack_dxy_vertex(const float point_x, const float point_y) const{
     return ( - (m_gsfTrack_vx-point_x) * m_gsfTrack_py + (m_gsfTrack_vy-point_y) * m_gsfTrack_px ) / sqrt(m_gsfTrack_px*m_gsfTrack_px+m_gsfTrack_py*m_gsfTrack_py);
@@ -391,4 +543,35 @@ class Electron : public RecParticle {
   float m_puppiNoLeptonsPhotonIso;
 
   float m_electronMVATOP;
+
+  // EGamma Residuals
+  /*
+  float m_ecalEnergyPreCorr;
+  float m_ecalEnergyErrPreCorr;
+  float m_ecalEnergyPostCorr;
+  float m_ecalEnergyErrPostCorr;
+  float m_ecalTrkEnergyPreCorr;
+  float m_ecalTrkEnergyErrPreCorr;
+  float m_ecalTrkEnergyPostCorr;
+  float m_ecalTrkEnergyErrPostCorr;
+  float m_energyScaleValue;
+  float m_energySigmaValue;
+  float m_energySmearNrSigma;
+  float m_energyScaleUp;
+  float m_energyScaleDown;
+  float m_energyScaleStatUp;
+  float m_energyScaleStatDown;
+  float m_energyScaleSystUp;
+  float m_energyScaleSystDown;
+  float m_energyScaleGainUp;
+  float m_energyScaleGainDown;
+  float m_energyScaleEtUp;
+  float m_energyScaleEtDown;
+  float m_energySigmaUp;
+  float m_energySigmaDown;
+  float m_energySigmaPhiUp;
+  float m_energySigmaPhiDown;
+  float m_energySigmaRhoUp;
+  float m_energySigmaRhoDown;
+  */
 };
