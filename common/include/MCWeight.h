@@ -79,6 +79,7 @@ class MCScaleVariation: public uhh2::AnalysisModule {
   double syst_weight;
   bool is_dy;
   bool is_wjets;
+  bool is_qcd;
   bool is_alps;
   bool is_azh;
   int i_mu_r = 0, i_mu_f = 0;

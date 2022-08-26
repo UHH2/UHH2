@@ -245,6 +245,7 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
   auto s_mu_f = ctx.get("ScaleVariationMuF");
   is_dy = ctx.get("dataset_version").find("DYJets") == 0;
   is_wjets = ctx.get("dataset_version").find("WJets") == 0;
+  is_qcd = ctx.get("dataset_version").find("QCD") == 0;
   is_alps = ctx.get("dataset_version").find("ALP") == 0;
   is_azh = ctx.get("dataset_version").find("AZH") == 0;
 
@@ -295,7 +296,7 @@ void MCScaleVariation::initialise_handles(Event & event){
 
 bool MCScaleVariation::process(Event & event){
 
-  
+
   initialise_handles(event);  // Set weights to 1 for data
   if (event.isRealData) return true;
 
@@ -305,7 +306,7 @@ bool MCScaleVariation::process(Event & event){
 
     // Set handles, written for all relevant cases irrespective of
     // the values of mu_r and mu_f specified in the config file
-    if ( is_dy || is_wjets || is_alps || is_azh ) {
+    if ( is_dy || is_wjets || is_qcd || is_alps || is_azh ) {
       event.set(h_murmuf_weight_upup_, event.genInfo->systweights().at(20)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_dyn1_weight_upup_, event.genInfo->systweights().at(21)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_dyn2_weight_upup_, event.genInfo->systweights().at(22)/event.genInfo->originalXWGTUP());
