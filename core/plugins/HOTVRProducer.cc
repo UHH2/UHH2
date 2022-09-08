@@ -358,7 +358,7 @@ pat::Jet HOTVRProducer::createPatJet(const PseudoJet & fjJet, const edm::EventSe
     // specific allocator.
     reco::Particle::LorentzVector jet4v = reco::Particle::LorentzVector(fjJet.px(), fjJet.py(), fjJet.pz(),fjJet.E());
     reco::PFJet pfjet;
-    reco::writeSpecific(pfjet,jet4v,vertex_,constituents, iSetup);// https://github.com/ahlinist/cmssw/blob/master/RecoJets/JetProducers/src/JetSpecific.cc#L91
+    reco::writeSpecific(pfjet,jet4v,vertex_,constituents);// https://github.com/ahlinist/cmssw/blob/master/RecoJets/JetProducers/src/JetSpecific.cc#L91
     patjet = pat::Jet(pfjet);
     // reco::GenJet genjet;
     // reco::writeSpecific(genjet,jet4v,vertex_,constituents, iSetup);

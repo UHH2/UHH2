@@ -1,6 +1,7 @@
 #include "FWCore/Utilities/interface/CPUTimer.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/Common/interface/TriggerNames.h"
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
 
 #include "UHH2/core/include/root-utils.h"
 #include "UHH2/core/plugins/NtupleWriter.h"
@@ -19,8 +20,8 @@
 #include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 #include "SimDataFormats/GeneratorProducts/interface/PdfInfo.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
-#include "SimDataFormats/JetMatching/interface/JetFlavourInfo.h"
-#include "SimDataFormats/JetMatching/interface/JetFlavourInfoMatching.h"
+#include "DataFormats/JetMatching/interface/JetFlavourInfo.h"
+#include "DataFormats/JetMatching/interface/JetFlavourInfoMatching.h"
 #include "DataFormats/Common/interface/EDCollection.h"
 
 

@@ -10,7 +10,8 @@
 
 #include <DataFormats/PatCandidates/interface/Photon.h>
 
-#include <RecoEgamma/EgammaTools/interface/EffectiveAreas.h>
+// Possibly not needed? In any case, moved to this location:
+//#include <CommonTools/Egamma/interface/EffectiveAreas.h>
 
 class PATPhotonUserData : public edm::EDProducer {
  public:

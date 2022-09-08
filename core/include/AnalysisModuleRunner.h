@@ -4,7 +4,7 @@
 // NOTE: this file must be parsable by CINT, so it cannot use C++11 features. Therefore,
 // keep it small and use pimpl-idiom for actual implementation.
 
-#include "core/include/SCycleBase.h"
+#include "../../../SFrame/core/include/SCycleBase.h"
 #include "UHH2/core/include/fwd.h"
 
 #include <memory>

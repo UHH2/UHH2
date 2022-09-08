@@ -3,6 +3,8 @@
 #include "UHH2/core/plugins/NtupleWriterLeptons.h"
 #include "UHH2/core/include/AnalysisModule.h"
 
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Photon.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"

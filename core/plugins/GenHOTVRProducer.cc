@@ -244,7 +244,7 @@ pat::Jet GenHOTVRProducer::createPatJet(const PseudoJet & fjJet, const edm::Even
 	  patjet = pat::Jet(pfjet);
     */
     reco::GenJet genjet;
-    reco::writeSpecific(genjet,jet4v,vertex_,constituents, iSetup);
+    reco::writeSpecific(genjet,jet4v,vertex_,constituents);
     patjet = pat::Jet((reco::Jet)genjet);
   }
   return patjet;

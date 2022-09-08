@@ -9,8 +9,7 @@
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
 
 #include <DataFormats/PatCandidates/interface/Electron.h>
-
-#include <RecoEgamma/EgammaTools/interface/EffectiveAreas.h>
+#include <CommonTools/Egamma/interface/EffectiveAreas.h>
 
 class PATElectronUserData : public edm::EDProducer {
  public:
