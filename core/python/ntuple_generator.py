@@ -270,7 +270,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # But check with:
     # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PdmVAnalysisSummaryTable
     # https://twiki.cern.ch/twiki/bin/view/CMS/PdmVRun2LegacyAnalysis
-    process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+    process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
     # There should be 1 key:value entry per entry in acceptable_years, and each
     # should have a dictionary of "data" and "mc" with their respective global tags
@@ -463,6 +463,8 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         producer.addJetFlavourInfo  = cms.bool(False)
 
 
+    from PhysicsTools.PatAlgos.tools.jetTools import addJetCollection, updateJetCollection
+
     # Adapt primary vertex collection
     from PhysicsTools.PatAlgos.tools.pfTools import adaptPVs
     adaptPVs(process, pvCollection=cms.InputTag('offlineSlimmedPrimaryVertices'))
@@ -475,7 +477,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # (compared to higher threshold in miniAOD)
     ak8_label = "AK8PFPUPPI"
     ak8puppi_patname = 'patJets' + ak8_label
-    print 'Adding', ak8puppi_patname
+    print(f"Adding {ak8puppi_patname}")
     ak8puppi_jet_source = 'ak8PuppiJets'
     addJetCollection(process,
                      labelName=ak8_label,
@@ -512,7 +514,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
     ak8_label = "AK8PFCHS"
     ak8chs_patname = 'patJets' + ak8_label
-    print 'Adding', ak8chs_patname
+    print(f"Adding {ak8chs_patname}")
     ak8chs_jet_source = "ak8CHSJets"
     addJetCollection(process,
                      labelName=ak8_label,
@@ -535,127 +537,6 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         producer = getattr(process, ak8chs_patname)
         modify_patjetproducer_for_data(process, producer)
 
-    # ###############################################
-    # # Packing substructure: fat jets + subjets
-    # #
-    # # Add subjets from groomed fat jet to its corresponding ungroomed fatjet
-    # process.packedPatJetsAk8CHSJets = cms.EDProducer("JetSubstructurePacker",
-    #     jetSrc = cms.InputTag("patJetsAk8CHSJetsFat"),
-    #     distMax = cms.double(0.8),
-    #     algoTags = cms.VInputTag(
-    #         cms.InputTag("patJetsAk8CHSJetsSoftDropPacked")
-    #     ),
-    #     algoLabels = cms.vstring(
-    #         'SoftDropCHS'
-    #     ),
-    #     fixDaughters = cms.bool(False)
-    # )
-    # task.add(process.packedPatJetsAk8CHSJets)
-
-    # Rekey jets so ungroomed constituents point to packedPFCandidates not PUPPI.
-    # Easiet here after all btagging etc calculations done that involve constituents
-    # to avoid incorrect calculations
-    process.rekeyPatJetsAk8PuppiJetsFat = cms.EDProducer("RekeyJets",
-        jetSrc=cms.InputTag("patJetsAk8PuppiJetsFat"),
-        candidateSrc=cms.InputTag("packedPFCandidates"),
-        )
-    task.add(process.rekeyPatJetsAk8PuppiJetsFat)
-
-
-    ###############################################
-    # Do deep flavours & deep tagging
-    # This MUST be run *After* JetSubstructurePacker, so that the subjets are already there,
-    # otherwise the DeepBoostedJetTagInfoProducer will fail
-    # Also add in PUPPI multiplicities while we're at it.
-    for name in ['slimmedJets', 'slimmedJetsPuppi', 'rekeyPatJetsAK8PFPUPPI', 'rekeyPackedPatJetsAk8PuppiJets','packedPatJetsAk8CHSJets']:
-        labelName = cap(name)
-        name_lower = name.lower()
-        is_ak8 = "ak8" in name_lower
-        is_puppi = "puppi" in name_lower
-        is_reclustered = "slimmed" not in name_lower and 'rekey' not in name_lower
-        is_topjet = "packed" in name_lower
-        # This postfix is VERY IMPORTANT for reclustered puppi, as the puppi weights
-        # are already applied. If it doesn't have this postfix then it will apply
-        # puppi weights - necessary for slimmedCollections & rekeyed ones
-        # (i.e. they have the packedPFCandidates as daughters - require puppi weights to be applied)
-        # See https://github.com/cms-sw/cmssw/blob/CMSSW_10_2_10/PhysicsTools/PatAlgos/python/tools/jetTools.py#L653
-        # Please check in future releases if this is still the case!
-        # It's needed only for pfDeepBoostedJetTagInfos
-        postfix = "WithPuppiDaughters" if is_puppi and is_reclustered else "NewDFTraining"  # NewDFTraining is not special, could just be ''
-
-        # This call to updateJetCollection adds one PATJetUpdater to only remove the JECs,
-        # then uses that as the input to another PATJetUpdater, which re-applies the JECs,
-        # adds in all b tag stuff, etc.
-        # The 2nd PATJetsUpdater has the extra "TransientCorrected" bit in its name.
-        # It also produces a final similar "selectedUpdatedPatJets"+labelName+postfix collection
-        # which is a PATJetSelector
-        updater_src = "updatedPatJets" + labelName + postfix  # 1st PATJetUpdater, that removes JECs, is src to updater_name
-        updater_name = "updatedPatJetsTransientCorrected" + labelName + postfix  # 2nd PATJetUpdater
-        selector_name = "selectedUpdatedPatJets" + labelName + postfix
-
-        if is_ak8 and is_puppi:
-            correction_tag = "AK8PFPuppi"
-        elif is_ak8 and not is_puppi:
-            correction_tag = "AK8PFchs"
-        elif not is_ak8 and is_puppi:
-            correction_tag = "AK4PFPuppi"
-        elif not is_ak8 and not is_puppi:
-            correction_tag = "AK4PFchs"
-
-        else:
-            raise RuntimeError("No idea which jet correction tag you need here")
-
-        jetcorr_list = ['L1FastJet', 'L2Relative', 'L3Absolute']
-        if is_puppi:
-            jetcorr_list = jetcorr_list[1:]
-        if useData:
-            jetcorr_list.append("L2L3Residual")
-
-        discriminators = ak4btagDiscriminators[:]
-
-        if is_ak8 and is_topjet:
-            discriminators.extend(ak8btagDiscriminators)
-
-        updateJetCollection(
-            process,
-            labelName=labelName,
-            jetSource=cms.InputTag(name),
-            pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
-            svSource=cms.InputTag('slimmedSecondaryVertices'),
-            jetCorrections=(correction_tag, cms.vstring(jetcorr_list), 'None'),  # Can't use None here as we are doing btagging for some reason.
-            btagDiscriminators=discriminators,
-            postfix=postfix,
-            printWarning=False
-        )
-
-        if is_puppi:
-            # Add puppi multiplicity producers
-            # For each, we have to add a PATPuppiJetSpecificProducer,
-            # then update the relevant pat::Jet collection using updateJetCollection
-            # using userFloats mechanism
-            # Crucially, the PATPuppiJetSpecificProducer module name MUST be the same
-            # as the final jet collection, with only "patPuppiJetSpecificProducer" prepended
-            # so that NtupleWriterJets can find the stored userFloat
-            puppi_mult_name = "patPuppiJetSpecificProducer" + updater_name
-            setattr(process,
-                    puppi_mult_name,
-                    cms.EDProducer("PATPuppiJetSpecificProducer",
-                                   src = cms.InputTag(updater_src)
-                                   )
-                    )
-            task.add(getattr(process, puppi_mult_name))
-
-
-            # We add in the userFloats to the last PATJetUpdater
-            # This is because we use the jet collection name to access the userFloats in NtupleWriterJets
-            getattr(process, updater_name).userData.userFloats.src = [
-                '%s:puppiMultiplicity' % puppi_mult_name,
-                '%s:neutralPuppiMultiplicity' % puppi_mult_name,
-                '%s:neutralHadronPuppiMultiplicity' % puppi_mult_name,
-                '%s:photonPuppiMultiplicity' % puppi_mult_name,
-                '%s:HFHadronPuppiMultiplicity' % puppi_mult_name,
-                '%s:HFEMPuppiMultiplicity' % puppi_mult_name
-                ]
 
 
     def rename_module(process, task, current_name, new_name, update_userData=True):
@@ -706,7 +587,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                 setattr(getattr(user_data, field_name), "src", cms.VInputTag(new_srcs))  # TODO: check the original type
 
         # Add the new module to process & task
-        print "Renaming '%s' to '%s'" % (current_name, new_name)
+        print(f"Renaming {current_name} to {new_name}")
         setattr(process, new_name, new_updater)
         task.add(getattr(process, new_name))
         # Delete old one
@@ -724,38 +605,16 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # with 0 cuts, and rename that
     #
     # Jet collections
-    rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining", "jetsAk4Puppi")
-    rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsNewDFTraining", "jetsAk4CHS")
-    rename_module(process, task, "updatedPatJetsTransientCorrectedRekeyPatJetsAK8PFPUPPINewDFTraining", "jetsAk8Puppi")
-    rename_module(process, task, ak8chs_patname, "jetsAk8CHS")
+#    rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsPuppiNewDFTraining", "jetsAk4Puppi")
+#    rename_module(process, task, "updatedPatJetsTransientCorrectedSlimmedJetsNewDFTraining", "jetsAk4CHS")
+#    rename_module(process, task, "updatedPatJetsTransientCorrectedRekeyPatJetsAK8PFPUPPINewDFTraining", "jetsAk8Puppi")
+#    rename_module(process, task, ak8chs_patname, "jetsAk8CHS")
     # TopJet collections
-    rename_module(process, task, "updatedPatJetsTransientCorrectedRekeyPackedPatJetsAk8PuppiJetsNewDFTraining", "jetsAk8PuppiSubstructure", update_userData=False)
-    rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8CHSJetsNewDFTraining", "jetsAk8CHSSubstructure", update_userData=False)
+#    rename_module(process, task, "updatedPatJetsTransientCorrectedRekeyPackedPatJetsAk8PuppiJetsNewDFTraining", "jetsAk8PuppiSubstructure", update_userData=False)
+#    rename_module(process, task, "updatedPatJetsTransientCorrectedPackedPatJetsAk8CHSJetsNewDFTraining", "jetsAk8CHSSubstructure", update_userData=False)
 #    rename_module(process, task, "packedPatJetsAk8CHSJets", "jetsAk8CHSSubstructure", update_userData=False)  # don't update userData as JetSubstructurePacker
 
 
-    # Rename GenTopJet collections
-    process.genjetsAk8Substructure = cms.EDAlias(
-        ak8GenJetsFat = cms.VPSet( cms.PSet(type=cms.string("recoGenJets")) )
-    )
-
-
-    ###############################################
-    # LEPTON jets (clustering muons or electrons with radiated photons)
-    #
-    process.muonGenJets = process.ak8GenJetsFat.clone(
-        jetPtMin = cms.double(10.0),
-        rParam = cms.double(0.1),
-        src = cms.InputTag("MuonPhotonGenParticles")
-    )
-    task.add(process.muonGenJets)
-
-    process.electronGenJets = process.ak8GenJetsFat.clone(
-        jetPtMin = cms.double(10.0),
-        rParam = cms.double(0.1),
-        src = cms.InputTag("ElectronPhotonGenParticles")
-    )
-    task.add(process.electronGenJets)
 
     ###############################################
     # LEPTON configuration
@@ -815,40 +674,38 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
 
     #### Muons miniIso
-    process.isoForMu = cms.EDProducer("MuonIsoValueMapProducer",
-                              src = cms.InputTag("slimmedMuonsData"),
-                              relative = cms.bool(False),
-                              rho_MiniIso = cms.InputTag("fixedGridRhoFastjetAll"),
-                              EAFile_MiniIso = cms.FileInPath("PhysicsTools/NanoAOD/data/effAreaMuons_cone03_pfNeuHadronsAndPhotons_94X.txt"),
-                          )
-    task.add(process.isoForMu)
+#    process.isoForMu = cms.EDProducer("MuonIsoValueMapProducer",
+#                              src = cms.InputTag("slimmedMuonsData"),
+#                              relative = cms.bool(False),
+#                              rho_MiniIso = cms.InputTag("fixedGridRhoFastjetAll"),
+#                              EAFile_MiniIso = cms.FileInPath("PhysicsTools/NanoAOD/data/effAreaMuons_cone03_pfNeuHadronsAndPhotons_94X.txt"),
+#                          )
+#    task.add(process.isoForMu)
 
-    process.ptRatioRelForMu = cms.EDProducer("MuonJetVarProducer",
-                                             srcJet = cms.InputTag("jetsAk4CHS"),
-                                             srcLep = cms.InputTag("slimmedMuonsData"),
-                                             srcVtx = cms.InputTag("offlineSlimmedPrimaryVertices"),
-                                         )
-    task.add(process.ptRatioRelForMu)
+#    process.ptRatioRelForMu = cms.EDProducer("MuonJetVarProducer",
+#                                             srcJet = cms.InputTag("jetsAk4CHS"),
+#                                             srcLep = cms.InputTag("slimmedMuonsData"),
+#                                             srcVtx = cms.InputTag("offlineSlimmedPrimaryVertices"),
+#                                         )
+#    task.add(process.ptRatioRelForMu)
 
 
-    process.slimmedMuonsWithUserData = cms.EDProducer("PATMuonUserDataEmbedder",
-                                              src = cms.InputTag("slimmedMuonsData"),
-                                              userFloats = cms.PSet(
-                                                  miniIsoChg = cms.InputTag("isoForMu:miniIsoChg"),
-                                                  miniIsoAll = cms.InputTag("isoForMu:miniIsoAll"),
-                                                  ptRatio = cms.InputTag("ptRatioRelForMu:ptRatio"),
-                                                  ptRel = cms.InputTag("ptRatioRelForMu:ptRel"),
-                                                  jetNDauChargedMVASel = cms.InputTag("ptRatioRelForMu:jetNDauChargedMVASel")
-                                              ),
-                                              userCands = cms.PSet(
-                                                  jetForLepJetVar = cms.InputTag("ptRatioRelForMu:jetForLepJetVar") # warning: Ptr is null if no match is found
-                                              ),
-                                          )
-    task.add(process.slimmedMuonsWithUserData)
+#    process.slimmedMuonsWithUserData = cms.EDProducer("PATMuonUserDataEmbedder",
+#                                              src = cms.InputTag("slimmedMuonsData"),
+#                                              userFloats = cms.PSet(
+#                                                  miniIsoChg = cms.InputTag("isoForMu:miniIsoChg"),
+#                                                  miniIsoAll = cms.InputTag("isoForMu:miniIsoAll"),
+#                                                  ptRatio = cms.InputTag("ptRatioRelForMu:ptRatio"),
+#                                                  ptRel = cms.InputTag("ptRatioRelForMu:ptRel"),
+#                                                  jetNDauChargedMVASel = cms.InputTag("ptRatioRelForMu:jetNDauChargedMVASel")
+#                                              ),
+#                                              userCands = cms.PSet(
+#                                                  jetForLepJetVar = cms.InputTag("ptRatioRelForMu:jetForLepJetVar") # warning: Ptr is null if no match is found
+#                                              ),
+#                                          )
+#    task.add(process.slimmedMuonsWithUserData)
 
-    muonMVAweightFile="UHH2/common/data/UL16preVFP/TMVA_BDTG_TOP_muon_2016.weights.xml"
-    if (year=="UL17"):  muonMVAweightFile="UHH2/common/data/UL17/TMVA_BDTG_TOP_muon_2017.weights.xml"
-    elif(year=="UL18"): muonMVAweightFile="UHH2/common/data/UL18/TMVA_BDTG_TOP_muon_2018.weights.xml"
+    muonMVAweightFile=""#"UHH2/common/data/UL16preVFP/TMVA_BDTG_TOP_muon_2016.weights.xml"
 
 
     process.muonMVATOP= cms.EDProducer("MuonBaseMVAValueMapProducer",
@@ -873,15 +730,15 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                            relIso = cms.string("(pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt"),
                                        )
                                    )
-    task.add(process.muonMVATOP)
+    #task.add(process.muonMVATOP)
 
-    process.slimmedMuonsUSER = cms.EDProducer("PATMuonUserDataEmbedder",
-                                              src = cms.InputTag("slimmedMuonsWithUserData"),
-                                              userFloats = cms.PSet(
-                                                  mvaTOP = cms.InputTag("muonMVATOP"),
-                                              ),
-                                          )
-    task.add(process.slimmedMuonsUSER)
+#    process.slimmedMuonsUSER = cms.EDProducer("PATMuonUserDataEmbedder",
+#                                              src = cms.InputTag("slimmedMuonsWithUserData"),
+#                                              userFloats = cms.PSet(
+#                                                  mvaTOP = cms.InputTag("muonMVATOP"),
+#                                              ),
+#                                          )
+#    task.add(process.slimmedMuonsUSER)
 
     ###############################################
     # ELECTRONS and PHOTONS
@@ -1059,7 +916,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
 
 
-    rename_module(process, task, "slimmedPhotons", "slimmedPhotonsUSER", False)
+    #rename_module(process, task, "slimmedPhotons", "slimmedPhotonsUSER", False)
 
     process.MyNtuple = cms.EDFilter('NtupleWriter',
                                     # AnalysisModule = cms.PSet(
@@ -1080,11 +937,11 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     save_lepton_keys=cms.bool(False),
 
                                     doElectrons=cms.bool(True),
-                                    electron_source=cms.InputTag("slimmedElectronsUSER"),
+                                    electron_source=cms.InputTag("slimmedElectrons"),
                                     electron_IDtags=cms.vstring(),
 
                                     doMuons=cms.bool(True),
-                                    muon_sources=cms.vstring("slimmedMuonsUSER"),
+                                    muon_sources=cms.vstring("slimmedMuons"),
 
                                     doTaus=cms.bool(False),
                                     tau_sources=cms.vstring("slimmedTaus"),
@@ -1093,15 +950,16 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
                                     doPhotons=cms.bool(True),
                                     save_photon_keys=cms.bool(True),
-                                    photon_sources = cms.InputTag("slimmedPhotonsUSER"),
+                                    photon_sources = cms.InputTag("slimmedPhotons"),
                                     photon_IDtags=cms.vstring(),
 
                                     doJets=cms.bool(True),
                                     jet_sources=cms.vstring(
-                                        "jetsAk4CHS",
-                                        "jetsAk4Puppi",
-                                        "jetsAk8CHS",
-                                        "jetsAk8Puppi"
+                                        "slimmedJets"
+                                        #"jetsAk4CHS",
+                                        #"jetsAk4Puppi",
+                                        #"jetsAk8CHS",
+                                        #"jetsAk8Puppi"
                                         ),
                                     jet_ptmin=cms.double(10.0),
                                     jet_etamax=cms.double(999.0),
@@ -1253,7 +1111,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     trigger_bits=cms.InputTag("TriggerResults", "", "HLT"),
                                     # MET filters (HBHE noise, CSC, etc.) are stored as trigger Bits in
                                     # MINIAOD produced in path "PAT"/"RECO" with prefix "Flag_"
-                                    metfilter_bits=cms.InputTag("TriggerResults", "", metfilterpath),
+                                    metfilter_bits=cms.InputTag("TriggerResults", "", "PAT"),
                                     # for now, save all the triggers:
                                     trigger_prefixes=cms.vstring("HLT_", "Flag_"),
 
@@ -1335,7 +1193,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     # In theory one could also store the EcalBadCalib bit here as well,
                                     # but that might screw up existing workflows,
                                     # and removing the branch might screw up existing trees
-                                    extra_trigger_bits=extra_trigger_bits,
+                                    extra_trigger_bits=cms.VInputTag(),
 
                                     #For 2017 data with prefiring issue it might be usefull to store L1 seeds
                                     doL1TriggerObjects=cms.bool(False),
@@ -1350,7 +1208,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     ecalBadCalib_source=cms.InputTag("ecalBadCalibReducedMINIAODFilter"),
 
                                     doPrefire=cms.bool(False),
-                                    prefire_source=cms.string(prefire_source),
+                                    #prefire_source=cms.string(prefire_source),
 
                                     # *** gen stuff:
                                     doGenInfo=cms.bool(not useData),  # Master switch for geninfo, genparticles, etc
@@ -1503,14 +1361,14 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         process.MyNtuple
 #        * process.content
     )
-    if do_prefire:
-        process.p.insert(0, process.prefiringweight)
+    #if do_prefire:
+    #    process.p.insert(0, process.prefiringweight)
 
-    if bad_ecal:
-        process.p.insert(0, process.ecalBadCalibReducedMINIAODFilter)
+    #if bad_ecal:
+    #    process.p.insert(0, process.ecalBadCalibReducedMINIAODFilter)
 
-    if do_bad_muon_charged_filters:
-        process.p.insert(0, process.BadPFMuonFilter)
+    #if do_bad_muon_charged_filters:
+    #    process.p.insert(0, process.BadPFMuonFilter)
         # process.p.insert(0, process.BadChargedCandidateFilter)
 
     process.p.associate(task)
