@@ -71,20 +71,7 @@ def get_year(dataset):
     and will raise exceptions if it can't find a UL-typical year
     """
     _,primary_ds_name,processed_ds_name,data_tier_name = tuple(dataset.split('/'))
-    year_string = ''
-
-    year = re.search(r'UL(?:20)?1[678]',processed_ds_name)
-
-    if(year):
-        year_string += year.group(0).replace('20','')
-        if('16' in year.group(0)):
-            if('APV' in processed_ds_name or 'HIPM' in processed_ds_name):
-                year_string += 'preVFP'
-            else:
-                year_string += 'postVFP'
-    else:
-        raise BaseException('Could not extract year from DAS string: %s'%dataset)
-
+    year_string='run3'
     return year_string
 
 def get_ntuplewriter(dataset, jetConstituents=False):
@@ -109,6 +96,6 @@ def get_ntuplewriter(dataset, jetConstituents=False):
     ntuplewriter_name += '.py'
     return ntuplewriter_name
 
-def get_outLFNDirBase(dataset, prefix = '/store/group/uhh/uhh2ntuples/RunII_106X_v2/'):
+def get_outLFNDirBase(dataset, prefix = '/store/group/uhh/uhh2ntuples/Run3_124X_v1/'):
     """Build outLFNDirBase from dataset DAS string by adding year dependent subdir to prefix."""
     return os.path.join(prefix, get_year(dataset))

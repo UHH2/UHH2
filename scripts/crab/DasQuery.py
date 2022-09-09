@@ -17,13 +17,13 @@ def autocomplete_Datasets(data):
                 for i in range(len(jsondict['data'])):
                     result_array.append(jsondict['data'][i]['dataset'][0]['name'])
             except:
-                print '='*10
-                print 'Not found',element
-                print '='*10
+                print('='*10)
+                print('Not found',element)
+                print('='*10)
         else:
             result_array.append(element)
     if len(result_array) == 0: 
-        print "No samples found"
+        print("No samples found")
         return []
     # Do this to remove duplicates but maintain order of insertion
     # We get duplicates because it queries ALL databases not just the main one
