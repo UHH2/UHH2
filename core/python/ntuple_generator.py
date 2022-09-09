@@ -54,127 +54,16 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
         raise RuntimeError("Cannot setup process for this year, may need to add a new entry.")
 
     bTagDiscriminators = [
-        'pfDeepCSVJetTags:probb',
-        'pfDeepCSVJetTags:probbb',
-        'pfBoostedDoubleSecondaryVertexAK8BJetTags',
-        'pfBoostedDoubleSecondaryVertexCA15BJetTags'
     ]
 
     ak4btagDiscriminators = [
-        'pfDeepFlavourJetTags:probb',
-        'pfDeepFlavourJetTags:probbb',
-        'pfDeepFlavourJetTags:problepb',
-        'pfDeepFlavourJetTags:probc',
-        'pfDeepFlavourJetTags:probuds',
-        'pfDeepFlavourJetTags:probg'
     ]
 
     ak8btagDiscriminators = [
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:bbvsLight',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ccvsLight',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:TvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHccvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:WvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZHbbvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:H4qvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:HbbvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZbbvsQCD',
-        'pfMassDecorrelatedDeepBoostedDiscriminatorsJetTags:ZvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:TvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:WvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:H4qvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:HbbvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:ZbbvsQCD',
-        'pfDeepBoostedDiscriminatorsJetTags:ZvsQCD',
-        'pfMassDecorrelatedDeepBoostedJetTags:probHbb',
-        'pfMassDecorrelatedDeepBoostedJetTags:probQCDc',
-        'pfMassDecorrelatedDeepBoostedJetTags:probQCDbb',
-        'pfMassDecorrelatedDeepBoostedJetTags:probTbqq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probTbcq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probTbq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probQCDothers',
-        'pfMassDecorrelatedDeepBoostedJetTags:probQCDb',
-        'pfMassDecorrelatedDeepBoostedJetTags:probTbc',
-        'pfMassDecorrelatedDeepBoostedJetTags:probWqq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probQCDcc',
-        'pfMassDecorrelatedDeepBoostedJetTags:probHcc',
-        'pfMassDecorrelatedDeepBoostedJetTags:probWcq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probZcc',
-        'pfMassDecorrelatedDeepBoostedJetTags:probZqq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probHqqqq',
-        'pfMassDecorrelatedDeepBoostedJetTags:probZbb',
-        'pfDeepDoubleBvLJetTags:probHbb',
-        'pfDeepDoubleBvLJetTags:probQCD',
-        'pfDeepDoubleCvBJetTags:probHbb',
-        'pfDeepDoubleCvBJetTags:probHcc',
-        'pfDeepDoubleCvLJetTags:probHcc',
-        'pfDeepDoubleCvLJetTags:probQCD',
-        'pfMassIndependentDeepDoubleBvLJetTags:probHbb',
-        'pfMassIndependentDeepDoubleBvLJetTags:probQCD',
-        'pfMassIndependentDeepDoubleCvBJetTags:probHbb',
-        'pfMassIndependentDeepDoubleCvBJetTags:probHcc',
-        'pfMassIndependentDeepDoubleCvLJetTags:probHcc',
-        'pfMassIndependentDeepDoubleCvLJetTags:probQCD',
-        'pfDeepBoostedJetTags:probHbb',
-        'pfDeepBoostedJetTags:probQCDc',
-        'pfDeepBoostedJetTags:probQCDbb',
-        'pfDeepBoostedJetTags:probTbqq',
-        'pfDeepBoostedJetTags:probTbcq',
-        'pfDeepBoostedJetTags:probTbq',
-        'pfDeepBoostedJetTags:probQCDothers',
-        'pfDeepBoostedJetTags:probQCDb',
-        'pfDeepBoostedJetTags:probTbc',
-        'pfDeepBoostedJetTags:probWqq',
-        'pfDeepBoostedJetTags:probQCDcc',
-        'pfDeepBoostedJetTags:probHcc',
-        'pfDeepBoostedJetTags:probWcq',
-        'pfDeepBoostedJetTags:probZcc',
-        'pfDeepBoostedJetTags:probZqq',
-        'pfDeepBoostedJetTags:probHqqqq',
-        'pfDeepBoostedJetTags:probZbb'
     ]
 
     # from RecoBTag.ONNXRuntime.pfParticleNet_cff import _pfParticleNetJetTagsAll as pfParticleNetJetTagsAll
     pfParticleNetJetTagsAll = [
-        'pfParticleNetJetTags:probTbcq',
-        'pfParticleNetJetTags:probTbqq',
-        'pfParticleNetJetTags:probTbc',
-        'pfParticleNetJetTags:probTbq',
-        'pfParticleNetJetTags:probTbel',
-        'pfParticleNetJetTags:probTbmu',
-        'pfParticleNetJetTags:probTbta',
-        'pfParticleNetJetTags:probWcq',
-        'pfParticleNetJetTags:probWqq',
-        'pfParticleNetJetTags:probZbb',
-        'pfParticleNetJetTags:probZcc',
-        'pfParticleNetJetTags:probZqq',
-        'pfParticleNetJetTags:probHbb',
-        'pfParticleNetJetTags:probHcc',
-        'pfParticleNetJetTags:probHqqqq',
-        'pfParticleNetJetTags:probQCDbb',
-        'pfParticleNetJetTags:probQCDcc',
-        'pfParticleNetJetTags:probQCDb',
-        'pfParticleNetJetTags:probQCDc',
-        'pfParticleNetJetTags:probQCDothers',
-        'pfParticleNetDiscriminatorsJetTags:TvsQCD',
-        'pfParticleNetDiscriminatorsJetTags:WvsQCD',
-        'pfParticleNetDiscriminatorsJetTags:ZvsQCD',
-        'pfParticleNetDiscriminatorsJetTags:ZbbvsQCD',
-        'pfParticleNetDiscriminatorsJetTags:HbbvsQCD',
-        'pfParticleNetDiscriminatorsJetTags:HccvsQCD',
-        'pfParticleNetDiscriminatorsJetTags:H4qvsQCD',
-        'pfMassDecorrelatedParticleNetJetTags:probXbb',
-        'pfMassDecorrelatedParticleNetJetTags:probXcc',
-        'pfMassDecorrelatedParticleNetJetTags:probXqq',
-        'pfMassDecorrelatedParticleNetJetTags:probQCDbb',
-        'pfMassDecorrelatedParticleNetJetTags:probQCDcc',
-        'pfMassDecorrelatedParticleNetJetTags:probQCDb',
-        'pfMassDecorrelatedParticleNetJetTags:probQCDc',
-        'pfMassDecorrelatedParticleNetJetTags:probQCDothers',
-        'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XbbvsQCD',
-        'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XccvsQCD',
-        'pfMassDecorrelatedParticleNetDiscriminatorsJetTags:XqqvsQCD',
-        'pfParticleNetMassRegressionJetTags:mass'
     ]
     ak8btagDiscriminators += pfParticleNetJetTagsAll
 
@@ -387,16 +276,16 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     # process.load('PhysicsTools.PatAlgos.slimming.unpackedTracksAndVertices_cfi')
 
     # common parameters for the addJetCollection function, see below.
-    common_btag_parameters = dict(
-        #trackSource = cms.InputTag('unpackedTracksAndVertices'),
-        pfCandidates=cms.InputTag('packedPFCandidates'),
-        pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
-        svSource=cms.InputTag('slimmedSecondaryVertices'),
-        muSource=cms.InputTag('slimmedMuons'),
-        elSource=cms.InputTag('slimmedElectrons'),
-        btagInfos=bTagInfos,
-        btagDiscriminators=bTagDiscriminators
-    )
+    # common_btag_parameters = dict(
+    #     #trackSource = cms.InputTag('unpackedTracksAndVertices'),
+    #     pfCandidates=cms.InputTag('packedPFCandidates'),
+    #     pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
+    #     svSource=cms.InputTag('slimmedSecondaryVertices'),
+    #     muSource=cms.InputTag('slimmedMuons'),
+    #     elSource=cms.InputTag('slimmedElectrons'),
+    #     btagInfos=bTagInfos,
+    #     btagDiscriminators=bTagDiscriminators
+    # )
 
     process.packedGenParticlesForJetsNoNu = cms.EDFilter("CandPtrSelector",
         src=cms.InputTag("packedGenParticles"),
@@ -708,28 +597,28 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
     muonMVAweightFile=""#"UHH2/common/data/UL16preVFP/TMVA_BDTG_TOP_muon_2016.weights.xml"
 
 
-    process.muonMVATOP= cms.EDProducer("MuonBaseMVAValueMapProducer",
-                                       src = cms.InputTag("slimmedMuonsWithUserData"),
-                                       weightFile =  cms.FileInPath(muonMVAweightFile),
-                                       name = cms.string("muonMVATOP"),
-                                       isClassifier = cms.bool(True),
-                                    variablesOrder = cms.vstring(["dxylog", "miniIsoCharged", "miniIsoNeutral", "pTRel", "sip3d", "segmentCompatibility", "ptRatio", "bTagDeepJetClosestJet", "pt", "trackMultClosestJet", "etaAbs", "dzlog", "relIso"]),
-                                       variables = cms.PSet(
-                                           dxylog = cms.string("log(abs(dB('PV2D')))"),
-                                           miniIsoCharged = cms.string("userFloat('miniIsoChg')/pt"),
-                                           miniIsoNeutral = cms.string("(userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt"),
-                                           pTRel = cms.string("?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0"),
-                                           sip3d = cms.string("abs(dB('PV3D')/edB('PV3D'))"),
-                                           segmentCompatibility = cms.string("segmentCompatibility"),
-                                           ptRatio = cms.string("?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
-                                           bTagDeepJetClosestJet = cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probbb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:problepb'),0.0):0.0"),
-                                           pt = cms.string("pt"),
-                                           trackMultClosestJet = cms.string("?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
-                                           etaAbs = cms.string("abs(eta)"),
-                                           dzlog = cms.string("log(abs(dB('PVDZ')))"),
-                                           relIso = cms.string("(pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt"),
-                                       )
-                                   )
+    # process.muonMVATOP= cms.EDProducer("MuonBaseMVAValueMapProducer",
+    #                                    src = cms.InputTag("slimmedMuonsWithUserData"),
+    #                                    weightFile =  cms.FileInPath(muonMVAweightFile),
+    #                                    name = cms.string("muonMVATOP"),
+    #                                    isClassifier = cms.bool(True),
+    #                                 variablesOrder = cms.vstring(["dxylog", "miniIsoCharged", "miniIsoNeutral", "pTRel", "sip3d", "segmentCompatibility", "ptRatio", "bTagDeepJetClosestJet", "pt", "trackMultClosestJet", "etaAbs", "dzlog", "relIso"]),
+    #                                    variables = cms.PSet(
+    #                                        dxylog = cms.string("log(abs(dB('PV2D')))"),
+    #                                        miniIsoCharged = cms.string("userFloat('miniIsoChg')/pt"),
+    #                                        miniIsoNeutral = cms.string("(userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt"),
+    #                                        pTRel = cms.string("?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0"),
+    #                                        sip3d = cms.string("abs(dB('PV3D')/edB('PV3D'))"),
+    #                                        segmentCompatibility = cms.string("segmentCompatibility"),
+    #                                        ptRatio = cms.string("?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
+    #                                        bTagDeepJetClosestJet = cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probbb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:problepb'),0.0):0.0"),
+    #                                        pt = cms.string("pt"),
+    #                                        trackMultClosestJet = cms.string("?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
+    #                                        etaAbs = cms.string("abs(eta)"),
+    #                                        dzlog = cms.string("log(abs(dB('PVDZ')))"),
+    #                                        relIso = cms.string("(pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt"),
+    #                                    )
+    #                                )
     #task.add(process.muonMVATOP)
 
 #    process.slimmedMuonsUSER = cms.EDProducer("PATMuonUserDataEmbedder",
@@ -955,11 +844,13 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
 
                                     doJets=cms.bool(True),
                                     jet_sources=cms.vstring(
-                                        "slimmedJets"
+                                        "slimmedJets",
                                         #"jetsAk4CHS",
                                         #"jetsAk4Puppi",
                                         #"jetsAk8CHS",
-                                        #"jetsAk8Puppi"
+                                        #"jetsAk8Puppi",
+					"slimmedJetsPuppi",
+					"slimmedJetsAK8",
                                         ),
                                     jet_ptmin=cms.double(10.0),
                                     jet_etamax=cms.double(999.0),
@@ -1111,7 +1002,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     trigger_bits=cms.InputTag("TriggerResults", "", "HLT"),
                                     # MET filters (HBHE noise, CSC, etc.) are stored as trigger Bits in
                                     # MINIAOD produced in path "PAT"/"RECO" with prefix "Flag_"
-                                    metfilter_bits=cms.InputTag("TriggerResults", "", "PAT"),
+                                    metfilter_bits=cms.InputTag("TriggerResults", "", "RECO"),
                                     # for now, save all the triggers:
                                     trigger_prefixes=cms.vstring("HLT_", "Flag_"),
 

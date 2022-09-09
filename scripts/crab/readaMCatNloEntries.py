@@ -35,12 +35,12 @@ def read_tree(rootDir, progress_bar=None):
         if any(["error" in x.lower() for x in output.splitlines()]):
             raise RuntimeError("Error running ROOT: " + output)
     except Exception as e:
-        print 'unable to count events in root file',rootDir
-        print e
+        print('unable to count events in root file',rootDir)
+        print(e)
         return numberOfweightedEntries
     w = output.splitlines()[-1]
     if not w.replace(".","").replace("-","").isdigit():
-        print "Problem while trying to convert countNumberEvents output to float. Affected ntuple:", rootDir
+        print("Problem while trying to convert countNumberEvents output to float. Affected ntuple:", rootDir)
         return numberOfweightedEntries
     numberOfweightedEntries = float(w)
     if progress_bar: progress_bar.update(1)
@@ -53,25 +53,25 @@ def read_treeFast(rootDir, progress_bar=None):
         AnalysisTree = ntuple.Get("AnalysisTree")
         fastentries =  AnalysisTree.GetEntriesFast()
     except Exception as e:
-        print 'unable to count events in root file',rootDir
-        print e
+        print('unable to count events in root file',rootDir)
+        print(e)
     if progress_bar: progress_bar.update(1)
     return fastentries
 
 def readEntries(worker, xmlfiles, fast=False):
-    if fast: print 'Going to use the Fast Method, no weights used'
+    if fast: print('Going to use the Fast Method, no weights used')
     else:
-        print 'Going to use the Weight Method: countNumberEvents.C'
+        print('Going to use the Weight Method: countNumberEvents.C')
         # let `make` decide if recompilation is necessary
         command = "make -f countNumberEventsMakefile >& countNumberEvents_C_compilation_log.txt"
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
 
-    print "Number of workers:",worker
+    print("Number of workers:",worker)
     result_list = []
     for xml in xmlfiles:
         pool = ThreadPool(processes=int(worker))
-        print "Open XML file:",xml
+        print("Open XML file:",xml)
         rootFileStore = read_xml(xml)
         entries_per_rootfile = []
         progress_bar = tqdm(total=len(rootFileStore), desc='Ntuples counted', dynamic_ncols=True, leave=False)
@@ -81,7 +81,7 @@ def readEntries(worker, xmlfiles, fast=False):
         pool.join()
         progress_bar.close()
         entries_per_rootfile = [result.get() for result in entries_per_rootfile]
-        print 'Done.', ('Number of events:' if fast else 'Sum of event weights:'), sum(entries_per_rootfile)
+        print('Done.', ('Number of events:' if fast else 'Sum of event weights:'), sum(entries_per_rootfile))
         result_list.append(sum(entries_per_rootfile))
         commentOutEmptyRootFiles(xml, entries_per_rootfile,fast)
     return result_list
@@ -105,7 +105,7 @@ def commentOutEmptyRootFiles(xmlfile, entries_per_rootfile,fast=False):
                 i_ += 1
             elif line.startswith('<!-- < NumberEntries'):
                 newText.append(line)
-        if len(entries_per_rootfile)!= i_: print "ERROR", len(entries_per_rootfile), i_
+        if len(entries_per_rootfile)!= i_: print("ERROR", len(entries_per_rootfile), i_)
     with open(xmlfile, "w") as outputfile:
         for line in newText:
             outputfile.write(line)
