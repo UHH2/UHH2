@@ -3,9 +3,9 @@
 #include "UHH2/core/include/Event.h"
 
 
-class PSWeights: uhh2::AnalysisModule {
+class PSWeights: public uhh2::AnalysisModule {
 public:
-  explicit PSWeights(uhh2::Context & ctx);
+  explicit PSWeights(uhh2::Context & ctx, const bool sample_without_ps_weights_ = false);
   virtual bool process(uhh2::Event & event) override;
 
   // Inclusive Variations - up sqrt(2; down 1/sqrt(2)
@@ -49,6 +49,7 @@ public:
   uhh2::Event::Handle<float> handle_isr_g2xg_dn;
 
 private:
+  const bool sample_without_ps_weights;
   void initialise_handles(uhh2::Event & event);
   void write_inclusive_weights_from_geninfo(uhh2::Event & event);
   void write_split_weights_from_geninfo(uhh2::Event & event);
