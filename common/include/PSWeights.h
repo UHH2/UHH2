@@ -3,7 +3,7 @@
 #include "UHH2/core/include/Event.h"
 
 
-class PSWeights: uhh2::AnalysisModule {
+class PSWeights: public uhh2::AnalysisModule {
 public:
   explicit PSWeights(uhh2::Context & ctx);
   virtual bool process(uhh2::Event & event) override;
