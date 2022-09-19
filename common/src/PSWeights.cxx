@@ -3,7 +3,9 @@
 using namespace std;
 using namespace uhh2;
 
-PSWeights::PSWeights(Context & ctx) {
+PSWeights::PSWeights(Context & ctx, const bool sample_without_ps_weights_):
+sample_without_ps_weights(sample_without_ps_weights_)
+{
 
   auto dataset_type = ctx.get("dataset_type");
   is_mc = dataset_type == "MC";
@@ -182,7 +184,7 @@ void PSWeights::write_split_weights_from_geninfo(Event & event) {
 
 
 bool PSWeights::process(Event & event) {
-  if(!is_mc){
+  if(!is_mc || sample_without_ps_weights){
     initialise_handles(event);
   }
   else{
