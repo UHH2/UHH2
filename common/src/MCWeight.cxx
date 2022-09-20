@@ -842,16 +842,16 @@ MCBTagScaleFactor::MCBTagScaleFactor(
     case BTag::DEEPCSV :
     switch(fYear) {
       case Year::isUL16preVFP :
-      sf_file_path += "wp_deepCSV_106XUL16preVFP_v2.csv";
+      sf_file_path += "UL16preVFP/wp_deepCSV_v1.csv";
       break;
       case Year::isUL16postVFP :
-      sf_file_path += "wp_deepCSV_106XUL16postVFP_v3.csv";
+      sf_file_path += "UL16postVFP/wp_deepCSV_v1.csv";
       break;
       case Year::isUL17 :
-      sf_file_path += "wp_deepCSV_106XUL17_v3.csv";
+      sf_file_path += "UL17/wp_deepCSV_v1.csv";
       break;
       case Year::isUL18 :
-      sf_file_path += "wp_deepCSV_106XUL18_v2.csv";
+      sf_file_path += "UL18/wp_deepCSV_v1.csv";
       break;
       default :
       throw invalid_argument("MCBTagScaleFactor: Invalid year");
@@ -860,16 +860,16 @@ MCBTagScaleFactor::MCBTagScaleFactor(
     case BTag::DEEPJET :
     switch(fYear) {
       case Year::isUL16preVFP :
-      sf_file_path += "wp_deepJet_106XUL16preVFP_v2.csv";
+      sf_file_path += "UL16preVFP/wp_deepJet_v1.csv";
       break;
       case Year::isUL16postVFP :
-      sf_file_path += "wp_deepJet_106XUL16postVFP_v3.csv";
+      sf_file_path += "UL16postVFP/wp_deepJet_v1.csv";
       break;
       case Year::isUL17 :
-      sf_file_path += "wp_deepJet_106XUL17_v3.csv";
+      sf_file_path += "UL17/wp_deepJet_v1.csv";
       break;
       case Year::isUL18 :
-      sf_file_path += "wp_deepJet_106XUL18_v2.csv";
+      sf_file_path += "UL18/wp_deepJet_v1.csv";
       break;
       default :
       throw invalid_argument("MCBTagScaleFactor: Invalid year");
@@ -1095,16 +1095,16 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
     case BTag::DEEPCSV :
     switch(fYear) {
       case Year::isUL16preVFP :
-      sf_file_path += "reshaping_deepCSV_106XUL16preVFP_v2.csv";
+      sf_file_path += "UL16preVFP/reshaping_deepCSV_v2.csv";
       break;
       case Year::isUL16postVFP :
-      sf_file_path += "reshaping_deepCSV_106XUL16postVFP_v3.csv";
+      sf_file_path += "UL16postVFP/reshaping_deepCSV_v2.csv";
       break;
       case Year::isUL17 :
-      sf_file_path += "reshaping_deepCSV_106XUL17_v3.csv";
+      sf_file_path += "UL17/reshaping_deepCSV_v2.csv";
       break;
       case Year::isUL18 :
-      sf_file_path += "reshaping_deepCSV_106XUL18_v2.csv";
+      sf_file_path += "UL18/reshaping_deepCSV_v2.csv";
       break;
       default :
       throw invalid_argument("MCBTagDiscriminantReweighting: Invalid year");
@@ -1113,16 +1113,16 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
     case BTag::DEEPJET :
     switch(fYear) {
       case Year::isUL16preVFP :
-      sf_file_path += "reshaping_deepJet_106XUL16preVFP_v2.csv";
+      sf_file_path += "UL16preVFP/reshaping_deepJet_v2.csv";
       break;
       case Year::isUL16postVFP :
-      sf_file_path += "reshaping_deepJet_106XUL16postVFP_v3.csv";
+      sf_file_path += "UL16postVFP/reshaping_deepJet_v2.csv";
       break;
       case Year::isUL17 :
-      sf_file_path += "reshaping_deepJet_106XUL17_v3.csv";
+      sf_file_path += "UL17/reshaping_deepJet_v2.csv";
       break;
       case Year::isUL18 :
-      sf_file_path += "reshaping_deepJet_106XUL18_v2.csv";
+      sf_file_path += "UL18/reshaping_deepJet_v2.csv";
       break;
       default :
       throw invalid_argument("MCBTagDiscriminantReweighting: Invalid year");
