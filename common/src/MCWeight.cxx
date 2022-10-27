@@ -520,6 +520,7 @@ bool MCMuonScaleFactor::process_onemuon(uhh2::Event & event, int i) {
 
   const auto & muons = event.get(h_muons_);
   float weight = 1., weight_up = 1., weight_down = 1.;
+  float err_propagation = 0.;
   Muon mu = muons.at(i);
   float eta = fAbsoluteEta ? fabs(mu.eta()) : mu.eta();
   float pt = mu.pt();
@@ -556,11 +557,12 @@ bool MCMuonScaleFactor::process_onemuon(uhh2::Event & event, int i) {
     if(out_of_range) err_tot*=2;
 
     weight      *= w;
-    weight_up   *= w + err_tot;
-    weight_down *= w - err_tot;
+    err_propagation += pow(err_tot/w, 2);
 
   }
 
+  weight_up = weight + sqrt(err_propagation);
+  weight_down = weight - sqrt(err_propagation);
 
   event.set(h_muon_weight_,       weight);
   event.set(h_muon_weight_up_,    weight_up);
@@ -738,6 +740,7 @@ bool MCElecScaleFactor::process(uhh2::Event & event) {
 
   const auto & elecs = event.get(h_elecs_);
   float weight = 1., weight_up = 1., weight_down = 1.;
+  float err_propagation = 0.;
   for (const auto & el : elecs) {
     float eta = fAbsoluteEta ? fabs(el.supercluster_eta()) : el.supercluster_eta();
     float pt = el.pt();
@@ -768,11 +771,13 @@ bool MCElecScaleFactor::process(uhh2::Event & event) {
       if(out_of_range) err_tot*=2;
 
       weight      *= w;
-      weight_up   *= w + err_tot;
-      weight_down *= w - err_tot;
+      err_propagation += pow(err_tot/w, 2);
     }
 
   }
+  
+  weight_up = weight + sqrt(err_propagation);
+  weight_down = weight - sqrt(err_propagation);
 
   event.set(h_elec_weight_,       weight);
   event.set(h_elec_weight_up_,    weight_up);
