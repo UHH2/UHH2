@@ -85,6 +85,7 @@ class MCScaleVariation: public uhh2::AnalysisModule {
   bool is_htott_scalar;
   bool is_htott_pseudo;
   bool is_zprimetott;
+  bool is_tstartstar;
   int i_mu_r = 0, i_mu_f = 0;
   void initialise_handles(uhh2::Event & event);
   uhh2::Event::Handle<float> h_murmuf_weight_upup_;
