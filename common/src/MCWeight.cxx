@@ -251,6 +251,7 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
   is_htott_scalar = ctx.get("dataset_version").find("HscalarToTTTo") == 0;
   is_htott_pseudo = ctx.get("dataset_version").find("HpseudoToTTTo") == 0;
   is_zprimetott = ctx.get("dataset_version").find("ZPrimeToTT_") == 0;
+  is_tstartstar = ctx.get("dataset_version").find("TstarTstar") != std::string::npos;
 
   if(s_mu_r == "up") {i_mu_r = 1;}
   else if(s_mu_r == "down"){i_mu_r = 2;}
@@ -309,7 +310,7 @@ bool MCScaleVariation::process(Event & event){
 
     // Set handles, written for all relevant cases irrespective of
     // the values of mu_r and mu_f specified in the config file
-    if ( is_dy || is_wjets || is_qcd_HTbinned || is_alps || is_azh || is_htott_scalar || is_htott_pseudo || is_zprimetott ) {
+    if ( is_dy || is_wjets || is_qcd_HTbinned || is_alps || is_azh || is_htott_scalar || is_htott_pseudo || is_zprimetott || is_tstartstar ) {
       event.set(h_murmuf_weight_upup_, event.genInfo->systweights().at(20)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_dyn1_weight_upup_, event.genInfo->systweights().at(21)/event.genInfo->originalXWGTUP());
       event.set(h_murmuf_dyn2_weight_upup_, event.genInfo->systweights().at(22)/event.genInfo->originalXWGTUP());
