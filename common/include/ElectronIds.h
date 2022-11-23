@@ -48,6 +48,22 @@ class ElectronTagID{
 
 };
 
+// Electron ID to clean out "crack" electrons ------------------------
+class ElectronEtaWindowId {
+  // Electron selector for non-crack electrons
+  public:
+    ElectronEtaWindowId() {}
+
+    bool operator()(const Electron & ele, const uhh2::Event &) const {
+      float eta = abs(ele.eta());
+      return (eta < eta_window_lower) || (eta > eta_window_upper);
+    }
+
+  private:
+    float eta_window_upper = 1.5560;
+    float eta_window_lower = 1.4442;
+};
+
 // Electron selector for PF MINI-Isolation ---------------------------
 class Electron_MINIIso {
 
