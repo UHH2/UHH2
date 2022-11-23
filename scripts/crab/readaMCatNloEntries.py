@@ -8,18 +8,34 @@
 
 import sys, time, os
 from multiprocessing.pool import ThreadPool
-import subprocess
+import subprocess, multiprocessing
 import ROOT
 from tqdm import tqdm
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(1)
 
+def OpenTFile(fname):
+    ntuple = ROOT.TFile(str(fname))
+    ntuple.Close()
+    return True
+
+def VerifyFile(fname,timeout=10):
+    p = multiprocessing.Process(target=OpenTFile, args=(fname,))
+    p.start()
+    startTime = time.time()
+    while (time.time() - startTime)<timeout:
+        if not p.is_alive():
+            return True
+    if p.is_alive():
+        p.terminate()
+        p.join()
+        return False
+    return True
 
 def read_xml(xmlFileDir):
     xmlFile = open(str(xmlFileDir))
     rootFileStore = []
-    comment = False
     for line in xmlFile:
         if ".root" in line:
             rootFileStore.append(line.split('"')[1])
@@ -28,6 +44,8 @@ def read_xml(xmlFileDir):
 def read_tree(rootDir, progress_bar=None):
     numberOfweightedEntries = 0
     try:
+        if not VerifyFile(fname=str(rootDir)):
+            raise RuntimeError("Impossible to open "+str(rootDir))
         # Use compiled root-macro to count as significantly faster (~15x)
         cmd = "./countNumberEvents "+rootDir+" false"
         output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
@@ -49,6 +67,8 @@ def read_tree(rootDir, progress_bar=None):
 def read_treeFast(rootDir, progress_bar=None):
     fastentries =0
     try:
+        if not VerifyFile(fname=str(rootDir)):
+            raise RuntimeError("Impossible to open "+str(rootDir))
         ntuple = ROOT.TFile(str(rootDir))
         AnalysisTree = ntuple.Get("AnalysisTree")
         fastentries =  AnalysisTree.GetEntriesFast()
