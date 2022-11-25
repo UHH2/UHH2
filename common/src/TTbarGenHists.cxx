@@ -205,8 +205,8 @@ void TTbarGenHists::fill(const uhh2::Event & e){
   top_ttframe.Boost(-ttbar.BoostVector());
   antitop_ttframe.Boost(-ttbar.BoostVector());
 
-  cosThetastar_top_ttframe->Fill(ttbar.Vect().Dot(top_ttframe)/ttbar.P()/top_ttframe.P(), e.weight);
-  cosThetastar_antitop_ttframe->Fill(ttbar.Vect().Dot(antitop_ttframe)/ttbar.P()/antitop_ttframe.P(), e.weight);
+  cosThetastar_top_ttframe->Fill(ttbar.Vect().Dot(top_ttframe.Vect())/ttbar.P()/top_ttframe.P(), e.weight);
+  cosThetastar_antitop_ttframe->Fill(ttbar.Vect().Dot(antitop_ttframe.Vect())/ttbar.P()/antitop_ttframe.P(), e.weight);
   Pt_top_ttframe->Fill(top_ttframe.Pt(),e.weight);
   Pt_antitop_ttframe->Fill(antitop_ttframe.Pt(),e.weight);
 
