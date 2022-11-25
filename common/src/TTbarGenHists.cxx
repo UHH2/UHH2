@@ -40,7 +40,7 @@ TTbarGenHists::TTbarGenHists(uhh2::Context & ctx, const std::string & dirname): 
 
   shat_vs_deltaR_top = book<TH2F>( "shat_vs_deltaR_top", "#hat{s} [GeV] vs #DeltaR(t decay prod.)",500,0,5000,500,0,5);
   shat_vs_deltaR_antitop = book<TH2F>( "shat_vs_deltaR_antitop", "#hat{s} [GeV] vs #DeltaR(#bar{t} decay prod.)",500,0,5000,500,0,5);
-  
+
   Pt_top_vs_deltaR_top = book<TH2F>( "Pt_top_vs_deltaR_top", "P_{T,t} [GeV/c] vs #DeltaR(t decay prod.)",500,0,2000,500,0,5);
   Pt_antitop_vs_deltaR_antitop = book<TH2F>( "Pt_antitop_vs_deltaR_antitop", "P_{T,#bar{t}} [GeV/c] vs #DeltaR(#bar{t} decay prod.)",500,0,2000,500,0,5);
 
@@ -205,8 +205,8 @@ void TTbarGenHists::fill(const uhh2::Event & e){
   top_ttframe.Boost(-ttbar.BoostVector());
   antitop_ttframe.Boost(-ttbar.BoostVector());
 
-  cosThetastar_top_ttframe->Fill(cos(top_ttframe.Theta()) ,e.weight);
-  cosThetastar_antitop_ttframe->Fill(cos(antitop_ttframe.Theta()) ,e.weight);
+  cosThetastar_top_ttframe->Fill(ttbar.Vect().Dot(top_ttframe)/ttbar.P()/top_ttframe.P(), e.weight);
+  cosThetastar_antitop_ttframe->Fill(ttbar.Vect().Dot(antitop_ttframe)/ttbar.P()/antitop_ttframe.P(), e.weight);
   Pt_top_ttframe->Fill(top_ttframe.Pt(),e.weight);
   Pt_antitop_ttframe->Fill(antitop_ttframe.Pt(),e.weight);
 
