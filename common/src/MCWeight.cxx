@@ -247,7 +247,8 @@ MCScaleVariation::MCScaleVariation(Context & ctx){
   is_wjets = ctx.get("dataset_version").find("WJets") == 0;
   is_qcd_HTbinned = ctx.get("dataset_version").find("QCD_HT") == 0;
   is_alps = ctx.get("dataset_version").find("ALP") == 0;
-  is_azh = ctx.get("dataset_version").find("AZH") == 0;
+  is_azh = (ctx.get("dataset_version").find("AZH") == 0) ||
+           (ctx.get("dataset_version").find("AToZHToLLTTbar") == 0);
   is_htott_scalar = ctx.get("dataset_version").find("HscalarToTTTo") == 0;
   is_htott_pseudo = ctx.get("dataset_version").find("HpseudoToTTTo") == 0;
   is_zprimetott = ctx.get("dataset_version").find("ZPrimeToTT_") == 0;
