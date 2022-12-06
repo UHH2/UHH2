@@ -121,7 +121,10 @@ def commentOutEmptyRootFiles(xmlfile, entries_per_rootfile,fast=False):
         i_ = 0
         for line in file.readlines():
             if '.root' in line:
-                newText.append(line if entries_per_rootfile[i_]!=0 else '<!--EMPTY <In FileName="'+line.split('"')[1]+'" Lumi="0.0"/> -->\n')
+                line = '<In FileName="'+line.split('"')[1]+'" Lumi="0.0"/>'
+                if entries_per_rootfile[i_] == 0:
+                    line = '<!--EMPTY {} -->'.format(line)
+                newText.append(line + "\n")
                 i_ += 1
             elif line.startswith('<!-- < NumberEntries'):
                 newText.append(line)
