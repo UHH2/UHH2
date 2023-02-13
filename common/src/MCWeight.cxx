@@ -777,7 +777,7 @@ bool MCElecScaleFactor::process(uhh2::Event & event) {
     }
 
   }
-  
+
   weight_up = weight + sqrt(err_propagation);
   weight_down = weight - sqrt(err_propagation);
 
@@ -805,7 +805,8 @@ MCBTagScaleFactor::MCBTagScaleFactor(
   const std::string & measType_bc,
   const std::string & measType_udsg,
   const std::string & xml_config_eff_file,
-  const std::string & weights_name_postfix
+  const std::string & weights_name_postfix,
+  const std::string & sf_version
 ):
   fYear(extract_year(ctx)),
   fBTagID(BTag(algo, wp)),
@@ -852,16 +853,16 @@ MCBTagScaleFactor::MCBTagScaleFactor(
     case BTag::DEEPCSV :
     switch(fYear) {
       case Year::isUL16preVFP :
-      sf_file_path += "UL16preVFP/wp_deepCSV_v1.csv";
+      sf_file_path += "UL16preVFP/wp_deepCSV_"+sf_version+".csv";
       break;
       case Year::isUL16postVFP :
-      sf_file_path += "UL16postVFP/wp_deepCSV_v1.csv";
+      sf_file_path += "UL16postVFP/wp_deepCSV_"+sf_version+".csv";
       break;
       case Year::isUL17 :
-      sf_file_path += "UL17/wp_deepCSV_v1.csv";
+      sf_file_path += "UL17/wp_deepCSV_"+sf_version+".csv";
       break;
       case Year::isUL18 :
-      sf_file_path += "UL18/wp_deepCSV_v1.csv";
+      sf_file_path += "UL18/wp_deepCSV_"+sf_version+".csv";
       break;
       default :
       throw invalid_argument("MCBTagScaleFactor: Invalid year");
@@ -870,16 +871,16 @@ MCBTagScaleFactor::MCBTagScaleFactor(
     case BTag::DEEPJET :
     switch(fYear) {
       case Year::isUL16preVFP :
-      sf_file_path += "UL16preVFP/wp_deepJet_v1.csv";
+      sf_file_path += "UL16preVFP/wp_deepJet_"+sf_version+".csv";
       break;
       case Year::isUL16postVFP :
-      sf_file_path += "UL16postVFP/wp_deepJet_v1.csv";
+      sf_file_path += "UL16postVFP/wp_deepJet_"+sf_version+".csv";
       break;
       case Year::isUL17 :
-      sf_file_path += "UL17/wp_deepJet_v1.csv";
+      sf_file_path += "UL17/wp_deepJet_"+sf_version+".csv";
       break;
       case Year::isUL18 :
-      sf_file_path += "UL18/wp_deepJet_v1.csv";
+      sf_file_path += "UL18/wp_deepJet_"+sf_version+".csv";
       break;
       default :
       throw invalid_argument("MCBTagScaleFactor: Invalid year");
@@ -1013,7 +1014,8 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
   BTag::algo algorithm,
   const std::string & jets_handle_name,
   const std::string & weights_name_postfix,
-  const std::string & measType
+  const std::string & measType,
+  const std::string & sf_version
 ):
   fAlgorithm(algorithm),
   fYear(extract_year(ctx)),
@@ -1105,16 +1107,16 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
     case BTag::DEEPCSV :
     switch(fYear) {
       case Year::isUL16preVFP :
-      sf_file_path += "UL16preVFP/reshaping_deepCSV_v2.csv";
+      sf_file_path += "UL16preVFP/reshaping_deepCSV_"+sf_version+".csv";
       break;
       case Year::isUL16postVFP :
-      sf_file_path += "UL16postVFP/reshaping_deepCSV_v2.csv";
+      sf_file_path += "UL16postVFP/reshaping_deepCSV_"+sf_version+".csv";
       break;
       case Year::isUL17 :
-      sf_file_path += "UL17/reshaping_deepCSV_v2.csv";
+      sf_file_path += "UL17/reshaping_deepCSV_"+sf_version+".csv";
       break;
       case Year::isUL18 :
-      sf_file_path += "UL18/reshaping_deepCSV_v2.csv";
+      sf_file_path += "UL18/reshaping_deepCSV_"+sf_version+".csv";
       break;
       default :
       throw invalid_argument("MCBTagDiscriminantReweighting: Invalid year");
@@ -1123,16 +1125,16 @@ MCBTagDiscriminantReweighting::MCBTagDiscriminantReweighting(
     case BTag::DEEPJET :
     switch(fYear) {
       case Year::isUL16preVFP :
-      sf_file_path += "UL16preVFP/reshaping_deepJet_v2.csv";
+      sf_file_path += "UL16preVFP/reshaping_deepJet_"+sf_version+".csv";
       break;
       case Year::isUL16postVFP :
-      sf_file_path += "UL16postVFP/reshaping_deepJet_v2.csv";
+      sf_file_path += "UL16postVFP/reshaping_deepJet_"+sf_version+".csv";
       break;
       case Year::isUL17 :
-      sf_file_path += "UL17/reshaping_deepJet_v2.csv";
+      sf_file_path += "UL17/reshaping_deepJet_"+sf_version+".csv";
       break;
       case Year::isUL18 :
-      sf_file_path += "UL18/reshaping_deepJet_v2.csv";
+      sf_file_path += "UL18/reshaping_deepJet_"+sf_version+".csv";
       break;
       default :
       throw invalid_argument("MCBTagDiscriminantReweighting: Invalid year");

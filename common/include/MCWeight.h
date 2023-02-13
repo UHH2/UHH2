@@ -300,7 +300,8 @@ public:
     const std::string & measType_bc="mujets",
     const std::string & measType_udsg="incl",
     const std::string & xml_config_eff_file="MCBtagEfficiencies",
-    const std::string & weights_name_postfix=""
+    const std::string & weights_name_postfix="",
+    const std::string & sf_version="v1"
   );
   virtual bool process(uhh2::Event & event) override;
 
@@ -407,7 +408,8 @@ public:
     BTag::algo algorithm,
     const std::string & jets_handle_name="jets",
     const std::string & weights_name_postfix="",
-    const std::string & measType="iterativefit"
+    const std::string & measType="iterativefit",
+    const std::string & sf_version="v3"
   );
 
   virtual bool process(uhh2::Event & event) override;
