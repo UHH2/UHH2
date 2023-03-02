@@ -127,6 +127,8 @@ const std::map<Year, std::string> year_str_map_simple = {
     {Year::is2017v1,        "2017"},
     {Year::is2017v2,        "2017"},
     {Year::is2018,          "2018"},
+    {Year::isUL16preVFP,    "2016"},
+    {Year::isUL16postVFP,   "2016"},
     {Year::isUL17,          "2017"},
     {Year::isUL18,          "2018"},
 };
