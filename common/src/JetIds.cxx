@@ -304,21 +304,38 @@ JetPFID::JetPFID(wp working_point):m_working_point(working_point){}
 
 bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
   if(ev.year.find("UL") != string::npos){
-    // Note: These jet IDs are only confirmed to be valid for UL17 and UL18 yet
     // https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
-    switch(m_working_point){
-      case WP_TIGHT_CHS:
-      return tightIDUL_CHS(jet);
-      case WP_TIGHT_PUPPI:
-      return tightIDUL_PUPPI(jet);
-      case WP_TIGHT_LEPVETO_CHS:
-      return tightLepVetoIDUL_CHS(jet);
-      case WP_TIGHT_LEPVETO_PUPPI:
-      return tightLepVetoIDUL_PUPPI(jet);
-      case WP_TIGHT_LEPVETO:
-      throw invalid_argument("In UL, the LepVeto JetPFID is not the same for CHS and PUPPI. Please specify either CHS or PUPPI working point.");
-      default:
-      throw invalid_argument("invalid working point passed to JetPFID");
+    if(ev.year.find("16") != string::npos){
+      switch(m_working_point){
+        case WP_TIGHT_CHS:
+        return tightIDUL16_CHS(jet);
+        case WP_TIGHT_PUPPI:
+        return tightIDUL16_PUPPI(jet);
+        case WP_TIGHT_LEPVETO_CHS:
+        return tightLepVetoIDUL16_CHS(jet);
+        case WP_TIGHT_LEPVETO_PUPPI:
+        return tightLepVetoIDUL16_PUPPI(jet);
+        case WP_TIGHT_LEPVETO:
+        throw invalid_argument("In UL, the LepVeto JetPFID is not the same for CHS and PUPPI. Please specify either CHS or PUPPI working point.");
+        default:
+        throw invalid_argument("invalid working point passed to JetPFID");
+      }
+    }
+    else{
+      switch(m_working_point){
+        case WP_TIGHT_CHS:
+        return tightIDUL1718_CHS(jet);
+        case WP_TIGHT_PUPPI:
+        return tightIDUL1718_PUPPI(jet);
+        case WP_TIGHT_LEPVETO_CHS:
+        return tightLepVetoIDUL1718_CHS(jet);
+        case WP_TIGHT_LEPVETO_PUPPI:
+        return tightLepVetoIDUL1718_PUPPI(jet);
+        case WP_TIGHT_LEPVETO:
+        throw invalid_argument("In UL, the LepVeto JetPFID is not the same for CHS and PUPPI. Please specify either CHS or PUPPI working point.");
+        default:
+        throw invalid_argument("invalid working point passed to JetPFID");
+      }
     }
   }
   else if (ev.year.find("2016") != string::npos){
@@ -380,7 +397,32 @@ bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
 
 
 //according to https://twiki.cern.ch/twiki/bin/view/CMS/JetID13TeVUL
-bool JetPFID::tightIDUL_CHS(const Jet & jet) const{
+bool JetPFID::tightIDUL16_CHS(const Jet & jet) const{
+  if(fabs(jet.eta())<=2.4
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.90
+  && jet.numberOfDaughters()>1
+  && jet.chargedHadronEnergyFraction()>0
+  && jet.chargedMultiplicity()>0) return true;
+
+  if(fabs(jet.eta())>2.4 && fabs(jet.eta())<=2.7
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.99) return true;
+
+  if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3.0
+  && jet.neutralEmEnergyFraction()>0. && jet.neutralEmEnergyFraction()<0.99
+  && jet.neutralMultiplicity()>1) return true;
+
+  if(fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0
+  && jet.neutralHadronEnergyFraction()>0.2
+  && jet.neutralEmEnergyFraction()<0.9
+  && jet.neutralMultiplicity()>10) return true;
+
+  if(fabs(jet.eta())>5.0) return true; // not sure if anyone will ever use these jets but, according to the reference link above, they are not explicitly vetoed
+  return false;
+}
+
+bool JetPFID::tightIDUL1718_CHS(const Jet & jet) const{
   if(fabs(jet.eta())<=2.6
   && jet.neutralHadronEnergyFraction()<0.90
   && jet.neutralEmEnergyFraction()<0.90
@@ -406,7 +448,31 @@ bool JetPFID::tightIDUL_CHS(const Jet & jet) const{
   return false;
 }
 
-bool JetPFID::tightIDUL_PUPPI(const Jet & jet) const{
+bool JetPFID::tightIDUL16_PUPPI(const Jet & jet) const{
+  if(fabs(jet.eta())<=2.4
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.90
+  && jet.numberOfDaughters()>1
+  && jet.chargedHadronEnergyFraction()>0
+  && jet.chargedMultiplicity()>0) return true;
+
+  if(fabs(jet.eta())>2.4 && fabs(jet.eta())<=2.7
+  && jet.neutralHadronEnergyFraction()<0.98
+  && jet.neutralEmEnergyFraction()<0.99) return true;
+
+  if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3.0
+  && jet.neutralMultiplicity()>=1) return true;
+
+  if(fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0
+  && jet.neutralEmEnergyFraction()<0.9
+  && jet.neutralPuppiMultiplicity()>2) return true;
+
+  if(fabs(jet.eta())>5.0) return true; // not sure if anyone will ever use these jets but, according to the reference link above, they are not explicitly vetoed
+
+  return false;
+}
+
+bool JetPFID::tightIDUL1718_PUPPI(const Jet & jet) const{
   if(fabs(jet.eta())<=2.6
   && jet.neutralHadronEnergyFraction()<0.90
   && jet.neutralEmEnergyFraction()<0.90
@@ -430,23 +496,35 @@ bool JetPFID::tightIDUL_PUPPI(const Jet & jet) const{
   return false;
 }
 
-bool JetPFID::tightLepVetoIDUL_CHS(const Jet & jet) const{
-  if(fabs(jet.eta())>2.7) return true;
-  if(!tightIDUL_CHS(jet)) return false;
+bool JetPFID::tightLepVetoIDUL16_CHS(const Jet & jet) const{
+  if(!tightIDUL16_CHS(jet)) return false;
+  if(fabs(jet.eta())>2.4) return true;
   if(jet.muonEnergyFraction()<0.80
-  && jet.chargedEmEnergyFraction()<0.80){
-    return true;
-  }
+  && jet.chargedEmEnergyFraction()<0.80) return true;
   return false;
 }
 
-bool JetPFID::tightLepVetoIDUL_PUPPI(const Jet & jet) const{
+bool JetPFID::tightLepVetoIDUL1718_CHS(const Jet & jet) const{
+  if(!tightIDUL1718_CHS(jet)) return false;
   if(fabs(jet.eta())>2.7) return true;
-  if(!tightIDUL_PUPPI(jet)) return false;
   if(jet.muonEnergyFraction()<0.80
-  && jet.chargedEmEnergyFraction()<0.80){
-    return true;
-  }
+  && jet.chargedEmEnergyFraction()<0.80) return true;
+  return false;
+}
+
+bool JetPFID::tightLepVetoIDUL16_PUPPI(const Jet & jet) const{
+  if(!tightIDUL16_PUPPI(jet)) return false;
+  if(fabs(jet.eta())>2.4) return true;
+  if(jet.muonEnergyFraction()<0.80
+  && jet.chargedEmEnergyFraction()<0.80) return true;
+  return false;
+}
+
+bool JetPFID::tightLepVetoIDUL1718_PUPPI(const Jet & jet) const{
+  if(!tightIDUL1718_PUPPI(jet)) return false;
+  if(fabs(jet.eta())>2.7) return true;
+  if(jet.muonEnergyFraction()<0.80
+  && jet.chargedEmEnergyFraction()<0.80) return true;
   return false;
 }
 
