@@ -1,7 +1,7 @@
 #include "UHH2/core/plugins/NtupleWriterJets.h"
 #include "UHH2/core/include/AnalysisModule.h"
 #include "UHH2/core/include/Utils.h"
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/one/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "DataFormats/Common/interface/Handle.h"
