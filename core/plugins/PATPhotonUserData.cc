@@ -3,7 +3,7 @@
 #include <string>
 
 #include <FWCore/Framework/interface/Frameworkfwd.h>
-#include <FWCore/Framework/interface/EDProducer.h>
+#include <FWCore/Framework/interface/one/EDProducer.h>
 #include <FWCore/Framework/interface/Event.h>
 #include <FWCore/Framework/interface/MakerMacros.h>
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
@@ -13,7 +13,7 @@
 // Possibly not needed? In any case, moved to this location:
 //#include <CommonTools/Egamma/interface/EffectiveAreas.h>
 
-class PATPhotonUserData : public edm::EDProducer {
+class PATPhotonUserData : public edm::one::EDProducer<> {
  public:
   explicit PATPhotonUserData(const edm::ParameterSet&);
   virtual ~PATPhotonUserData() {}

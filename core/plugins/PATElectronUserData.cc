@@ -3,7 +3,7 @@
 #include <string>
 
 #include <FWCore/Framework/interface/Frameworkfwd.h>
-#include <FWCore/Framework/interface/EDProducer.h>
+#include <FWCore/Framework/interface/one/EDProducer.h>
 #include <FWCore/Framework/interface/Event.h>
 #include <FWCore/Framework/interface/MakerMacros.h>
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
@@ -11,7 +11,7 @@
 #include <DataFormats/PatCandidates/interface/Electron.h>
 #include <CommonTools/Egamma/interface/EffectiveAreas.h>
 
-class PATElectronUserData : public edm::EDProducer {
+class PATElectronUserData : public edm::one::EDProducer<> {
  public:
   explicit PATElectronUserData(const edm::ParameterSet&);
   virtual ~PATElectronUserData() {}

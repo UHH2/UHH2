@@ -3,14 +3,14 @@
 #include <string>
 
 #include <FWCore/Framework/interface/Frameworkfwd.h>
-#include <FWCore/Framework/interface/EDProducer.h>
+#include <FWCore/Framework/interface/one/EDProducer.h>
 #include <FWCore/Framework/interface/Event.h>
 #include <FWCore/Framework/interface/MakerMacros.h>
 #include <FWCore/ParameterSet/interface/ParameterSet.h>
 
 #include <DataFormats/PatCandidates/interface/Muon.h>
 
-class PATMuonUserData : public edm::EDProducer {
+class PATMuonUserData : public edm::one::EDProducer<> {
  public:
   explicit PATMuonUserData(const edm::ParameterSet&);
   virtual ~PATMuonUserData() {}
