@@ -4,7 +4,7 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/EDFilter.h"
+#include "FWCore/Framework/interface/one/EDFilter.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/Run.h"
@@ -35,7 +35,7 @@ namespace uhh2 {
     class NtupleWriterTopJets;
 }
 
-class NtupleWriter : public edm::EDFilter {
+class NtupleWriter : public edm::one::EDFilter<edm::one::SharedResources> {
    public:
       explicit NtupleWriter(const edm::ParameterSet&);
       ~NtupleWriter();
@@ -47,7 +47,7 @@ class NtupleWriter : public edm::EDFilter {
       virtual bool filter(edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
 
-      virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
+      virtual void beginRun(edm::Run const&, edm::EventSetup const&);
 
       // fill gen particles and other info from a reco::jet
       void fill_geninfo_recojet(const reco::Jet& reco_genjet, GenJet& genjet, bool &add);
