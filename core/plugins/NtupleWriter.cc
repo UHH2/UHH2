@@ -588,14 +588,14 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   if(doTrigger){
     trigger_prefixes = iConfig.getParameter<std::vector<std::string> >("trigger_prefixes");
     event->get_triggerResults() = new vector<bool>();
-    event->get_triggerPrescales() = new vector<int>();
-    event->get_triggerPrescalesL1min() = new vector<int>();
-    event->get_triggerPrescalesL1max() = new vector<int>();
+    event->get_triggerPrescales() = new vector<double>();
+    event->get_triggerPrescalesL1min() = new vector<double>();
+    event->get_triggerPrescalesL1max() = new vector<double>();
     branch(tr, "triggerNames", "std::vector<std::string>", &triggerNames_outbranch);
     branch(tr, "triggerResults", "std::vector<bool>", event->get_triggerResults());
-    branch(tr, "triggerPrescales", "std::vector<int>", event->get_triggerPrescales());
-    branch(tr, "triggerPrescalesL1min", "std::vector<int>", event->get_triggerPrescalesL1min());
-    branch(tr, "triggerPrescalesL1max", "std::vector<int>", event->get_triggerPrescalesL1max());
+    branch(tr, "triggerPrescales", "std::vector<double>", event->get_triggerPrescales());
+    branch(tr, "triggerPrescalesL1min", "std::vector<double>", event->get_triggerPrescalesL1min());
+    branch(tr, "triggerPrescalesL1max", "std::vector<double>", event->get_triggerPrescalesL1max());
     triggerBits_ = consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("trigger_bits"));
     edm::InputTag triggerPrescalesTag("patTrigger");
     triggerPrescales_ = consumes<pat::PackedTriggerPrescales>(triggerPrescalesTag);
@@ -1164,9 +1164,9 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         triggerResults.push_back(triggerBits->accept(i));
 
         if(iEvent.isRealData()){
-          triggerPrescales.push_back(packedTriggerPrescales->getPrescaleForIndex(i));
-          triggerPrescalesL1min.push_back(packedTriggerPrescalesL1min->getPrescaleForIndex(i));
-          triggerPrescalesL1max.push_back(packedTriggerPrescalesL1max->getPrescaleForIndex(i));
+          triggerPrescales.push_back(packedTriggerPrescales->getPrescaleForIndex<double>(i));
+          triggerPrescalesL1min.push_back(packedTriggerPrescalesL1min->getPrescaleForIndex<double>(i));
+          triggerPrescalesL1max.push_back(packedTriggerPrescalesL1max->getPrescaleForIndex<double>(i));
         }
         if(newrun){
           triggerNames_outbranch.push_back(names.triggerName(i));
