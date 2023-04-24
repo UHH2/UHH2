@@ -122,7 +122,7 @@ sed -i "s/#include <TSystem.h>/#include <TSystem.h>\n#include <TObjString.h>/g" 
 # Get CMSSW
 export SCRAM_ARCH=slc7_amd64_gcc10
 checkArch
-CMSREL=CMSSW_12_4_8
+CMSREL=CMSSW_13_0_3
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
