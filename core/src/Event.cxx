@@ -119,7 +119,7 @@ bool Event::passes_trigger(TriggerIndex & ti) const{
 }
 
 
-int Event::trigger_prescale(TriggerIndex & ti) const{
+double Event::trigger_prescale(TriggerIndex & ti) const{
     if(!lookup_trigger_index(ti)){
         throw runtime_error("Event does not have trigger '" + ti.triggername + "'. Available triggers:\n" + format_list(triggerNames_currentrun));
     }

@@ -116,12 +116,12 @@ public:
    * Throws the same exceptions as \c lookup_trigger_index. In addition, throws a runtime_error
    * if \c lookup_trigger_index returns false.
    */
-  int trigger_prescale(TriggerIndex & ti) const;
+  double trigger_prescale(TriggerIndex & ti) const;
 
   //L1 prescales, see for more details:
   //https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD2017#Trigger
-  int trigger_prescaleL1min(TriggerIndex & ti) const;
-  int trigger_prescaleL1max(TriggerIndex & ti) const;
+  double trigger_prescaleL1min(TriggerIndex & ti) const;
+  double trigger_prescaleL1max(TriggerIndex & ti) const;
 
   /** \brief Test whether a given trigger is available for the current event
    *
@@ -149,14 +149,14 @@ public:
       return triggerResults;
   }
 
-  std::vector<int>* & get_triggerPrescales(){
+  std::vector<double>* & get_triggerPrescales(){
       return triggerPrescales;
   }
 
-  std::vector<int>* & get_triggerPrescalesL1min(){
+  std::vector<double>* & get_triggerPrescalesL1min(){
     return triggerPrescalesL1min;
   }
-  std::vector<int>* & get_triggerPrescalesL1max(){
+  std::vector<double>* & get_triggerPrescalesL1max(){
     return triggerPrescalesL1max;
   }
 
@@ -177,9 +177,9 @@ public:
 
 private:
     std::vector<bool>* triggerResults;
-    std::vector<int>* triggerPrescales;
-    std::vector<int>* triggerPrescalesL1min;
-    std::vector<int>* triggerPrescalesL1max;
+    std::vector<double>* triggerPrescales;
+    std::vector<double>* triggerPrescalesL1min;
+    std::vector<double>* triggerPrescalesL1max;
 
     std::vector<std::string> triggerNames_currentrun;
     int triggerNames_currentrun_runid;
