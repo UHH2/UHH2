@@ -34,7 +34,7 @@ ExampleModuleGenOnly::ExampleModuleGenOnly(Context & ctx){
 bool ExampleModuleGenOnly::process(Event & event) {
     cout << "ExampleModuleGenOnly: Starting to process event (runid, eventid) = (" << event.run << ", " << event.event << "); weight = " << event.weight << endl;
 
-    for (const auto gj : *event.genjets) {
+    for (const auto &gj : *event.genjets) {
         cout << gj.pt() << " : " << gj.eta() << " : " << gj.phi() << endl;
     }
     genjetHists->fill(event);
