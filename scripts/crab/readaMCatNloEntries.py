@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # usage of script: number of cores, first file, second file, ..., method to use True==Fast, False==counting weights
@@ -97,9 +97,9 @@ def commentOutEmptyRootFiles(xmlfile, entries_per_rootfile,fast=False):
     (we assume the user knows how to handle that scenario)
     """
     newText = []
-    with open(xmlfile, "U") as file:
+    with open(xmlfile, "r") as file_:
         i_ = 0
-        for line in file.readlines():
+        for line in file_.readlines():
             if '.root' in line:
                 newText.append(line if entries_per_rootfile[i_]!=0 else '<!--EMPTY <In FileName="'+line.split('"')[1]+'" Lumi="0.0"/> -->\n')
                 i_ += 1

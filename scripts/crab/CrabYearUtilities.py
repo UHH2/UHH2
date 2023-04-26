@@ -71,7 +71,7 @@ def get_year(dataset):
     and will raise exceptions if it can't find a UL-typical year
     """
     _,primary_ds_name,processed_ds_name,data_tier_name = tuple(dataset.split('/'))
-    year_string='run3'
+    year_string='Run3'
     return year_string
 
 def get_ntuplewriter(dataset, jetConstituents=False):
