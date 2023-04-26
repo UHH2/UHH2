@@ -120,12 +120,14 @@ sed -i "s/lPyROOT/lROOTTPython/g" SFrame/core/Makefile
 sed -i "s/#include <TSystem.h>/#include <TSystem.h>\n#include <TObjString.h>/g" SFrame/core/src/SCycleBaseNTuple.cxx
 
 # Get CMSSW
-export SCRAM_ARCH=slc7_amd64_gcc10
+export SCRAM_ARCH=slc7_amd64_gcc11
 checkArch
 CMSREL=CMSSW_13_0_3
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
+sed -i 's/CHECK_PRIVATE_HEADERS="1"/CHECK_PRIVATE_HEADERS="0"/g' $CMSSW_BASE/config/Self.xml
 eval `scramv1 runtime -sh`
+run scram setup self
 
 # Install FastJet & contribs for HOTVR & XCONE
 cd ../..
