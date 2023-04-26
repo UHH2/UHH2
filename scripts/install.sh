@@ -125,6 +125,7 @@ checkArch
 CMSREL=CMSSW_12_4_8
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
+sed -i 's/CHECK_PRIVATE_HEADERS="1"/CHECK_PRIVATE_HEADERS="0"/g' $CMSSW_BASE/config/Self.xml
 eval `scramv1 runtime -sh`
 
 # Install FastJet & contribs for HOTVR & XCONE
