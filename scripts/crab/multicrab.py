@@ -46,10 +46,10 @@ if __name__ == '__main__':
     parser.add_argument('--options','-o',dest='crab_options', action='append',
                         default=[],
                         help='Hand any option to your crab command')
-    parser.add_argument('--readEntries', dest='readEntries', action='store',
+    parser.add_argument('--readEntries', dest='readEntries', action='store', type=int,
                         default=0,
                         help='read the all entries contained in all xml files. Specify how many cores you want to use.')
-    parser.add_argument('--readEntriesFast', dest='readEntriesFast', action='store',
+    parser.add_argument('--readEntriesFast', dest='readEntriesFast', action='store', type=int,
                         default=0,
                         help='read the all entries contained in all xml files. Specify how many cores you want to use. This version can be used it no negativ weights are needed')
     parser.add_argument('--postfix','-p', dest='postfix', action='store',
