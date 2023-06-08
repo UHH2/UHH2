@@ -11,7 +11,7 @@ set MAKEFLAGS="-j${cores}"
 
 # Get CMSSW
 source /cvmfs/cms.cern.ch/cmsset_default.csh
-setenv SCRAM_ARCH slc7_amd64_gcc700
+setenv SCRAM_ARCH slc7_amd64_gcc11
 set kernel=`uname -r`
 if ( "$kernel" =~ *el7* ) then
     :
@@ -20,10 +20,12 @@ else
     echo "Please log into one and run this again"
     exit 1
 endif
-set CMSREL=CMSSW_10_6_28
+set CMSREL=CMSSW_13_0_3
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
+sed -i 's/CHECK_PRIVATE_HEADERS="1"/CHECK_PRIVATE_HEADERS="0"/g' $CMSSW_BASE/config/Self.xml
 eval `scramv1 runtime -csh`
+run scram setup self
 
 # Install FastJet & contribs for HOTVR & XCONE
 set FJVER="3.3.0"

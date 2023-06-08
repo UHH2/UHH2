@@ -2,7 +2,6 @@
 
 from CRABAPI.RawCommand import crabCommand
 from CRABClient.ClientExceptions import ClientException
-from httplib import HTTPException
 from CRABClient.UserUtilities import config
 from CrabYearUtilities import get_ntuplewriter,get_outLFNDirBase
 import os
@@ -42,17 +41,15 @@ class CrabConfig:
                     crabCommand(self.command, *self.options, config = myconfig)
                 else:
                     crabCommand(self.command,config = myconfig)
-        except HTTPException as hte:
-            print "Failed submitting task: %s" % (hte.headers)
         except ClientException as cle:
-            print "Failed submitting task: %s" % (cle)
+            print("Failed submitting task: %s" % (cle))
 
     def ByDatasets(self,listOfDatasets, listOfNames, namePostfix):
         #print "DataSets", listOfDatasets,"Request Name", listOfNames, "Postfix",namePostfix
-        
+
         if(len(listOfNames)==len(listOfDatasets)):
             for i in range(0,len(listOfDatasets)):
-                print "Working on", listOfNames[i]+namePostfix
+                print("Working on", listOfNames[i]+namePostfix)
                 self.config.Data.inputDataset = listOfDatasets[i]
                 self.config.General.requestName = listOfNames[i]+namePostfix
 
@@ -65,15 +62,11 @@ class CrabConfig:
                         self.config.Data.outLFNDirBase = get_outLFNDirBase(listOfDatasets[i],prefix=self.outLFNDirBasePrefix)
                     else:
                         self.config.Data.outLFNDirBase = get_outLFNDirBase(listOfDatasets[i])
-
-                #print "Working on DataSet", listOfDatasets[i],"Request Name", listOfNames[i]+namePostfix
-		#self._submit_(self.config)
-		p = Process(target=self._submit_,args=(self.config,))
+                p = Process(target=self._submit_,args=(self.config,))
                 try:
                     p.start()
                     p.join()
                 except Exeption as e:
-                    print e
+                    print(e)
         else:
-            print "Number of Datasets & Names are unequal"
-                
+            print("Number of Datasets & Names are unequal")

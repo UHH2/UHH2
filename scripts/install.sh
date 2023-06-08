@@ -115,14 +115,19 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh
 
 # Get SFrame, do not compile it until we have the right ROOT etc
 time git clone https://github.com/UHH2/SFrame.git
+# Apply fixes on-the-fly
+sed -i "s/lPyROOT/lROOTTPython/g" SFrame/core/Makefile
+sed -i "s/#include <TSystem.h>/#include <TSystem.h>\n#include <TObjString.h>/g" SFrame/core/src/SCycleBaseNTuple.cxx
 
 # Get CMSSW
-export SCRAM_ARCH=slc7_amd64_gcc700
+export SCRAM_ARCH=slc7_amd64_gcc11
 checkArch
-CMSREL=CMSSW_10_6_28
+CMSREL=CMSSW_13_0_3
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
+sed -i 's/CHECK_PRIVATE_HEADERS="1"/CHECK_PRIVATE_HEADERS="0"/g' $CMSSW_BASE/config/Self.xml
 eval `scramv1 runtime -sh`
+run scram setup self
 
 # Install FastJet & contribs for HOTVR & XCONE
 cd ../..
@@ -160,20 +165,12 @@ scram setup fastjet
 scram setup fastjet-contrib
 scram setup fastjet-contrib-archive
 
-# fetching Egamma POG postrecotools
-# twiki: https://twiki.cern.ch/twiki/bin/view/CMS/EgammaUL2016To2018
-time git cms-addpkg RecoEgamma/EgammaTools
-time git clone https://github.com/cms-egamma/EgammaPostRecoTools.git
-mv EgammaPostRecoTools/python/EgammaPostRecoTools.py RecoEgamma/EgammaTools/python/.
-time git clone -b ULSSfiles_correctScaleSysMC https://github.com/jainshilpi/EgammaAnalysis-ElectronTools.git EgammaAnalysis/ElectronTools/data/
-time git cms-addpkg EgammaAnalysis/ElectronTools
-
 scram b clean
 time scram b $MAKEFLAGS
 
 # Get the UHH2 repo & JEC,JER files
 cd $CMSSW_BASE/src
-time git clone -b RunII_106X_v2 https://github.com/UHH2/UHH2.git
+time git clone -b Run3_130X_v1 https://github.com/UHH2/UHH2.git
 cd UHH2
 time git clone https://github.com/cms-jet/JECDatabase.git
 time git clone https://github.com/cms-jet/JRDatabase.git

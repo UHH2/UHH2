@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "UHH2/core/include/obj.h"
 #include "UHH2/core/include/Utils.h"
 

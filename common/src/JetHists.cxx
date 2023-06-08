@@ -70,7 +70,7 @@ void JetHists::fill(const Event & event){
     vector<Jet> jets = collection.empty() ?  *event.jets : event.get(h_jets);
     if(jetid){
       vector<Jet> help_jets;
-      for(const auto jet : jets)
+      for(const auto &jet : jets)
 	if(passes_id(jet,event,jetid)) help_jets.push_back(jet);
       jets.swap(help_jets);
     }
@@ -134,7 +134,7 @@ JetHistsBase::jetHist TopJetHists::book_topJetHist(const std::string & axisSuffi
 void TopJetHists::fill_topJetHist(const TopJet & jet, JetHistsBase::jetHist & jet_hist, double  weight) {
   fill_jetHist(jet, jet_hist, weight);
   LorentzVector subjet_sum;
-  for (const auto s : jet.subjets()) {
+  for (const auto &s : jet.subjets()) {
     subjet_sum += s.v4();
   }
   jet_hist.mvahiggsdiscr->Fill(jet.mvahiggsdiscr(), weight);
@@ -194,7 +194,7 @@ void TopJetHists::fill(const Event & event){
     //assert(jets);
     if(topjetid){
       vector<TopJet> help_jets;
-      for(const auto jet : jets)
+      for(const auto &jet : jets)
 	if(passes_id(jet,event,topjetid)) help_jets.push_back(jet);
       jets.swap(help_jets);
     }

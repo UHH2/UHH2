@@ -18,6 +18,7 @@
 #include <stdexcept>
 #include <memory>
 #include <iostream>
+#include <optional>
 
 using namespace std;
 using namespace uhh2;

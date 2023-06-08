@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -11,7 +11,6 @@
 from fnmatch import fnmatchcase
 import argparse
 import os, glob, sys
-import click
 
 from CrabScript import *
 from create_dataset_xmlfile import create_dataset_xml
@@ -47,10 +46,10 @@ if __name__ == '__main__':
     parser.add_argument('--options','-o',dest='crab_options', action='append',
                         default=[],
                         help='Hand any option to your crab command')
-    parser.add_argument('--readEntries', dest='readEntries', action='store',
+    parser.add_argument('--readEntries', dest='readEntries', action='store', type=int,
                         default=0,
                         help='read the all entries contained in all xml files. Specify how many cores you want to use.')
-    parser.add_argument('--readEntriesFast', dest='readEntriesFast', action='store',
+    parser.add_argument('--readEntriesFast', dest='readEntriesFast', action='store', type=int,
                         default=0,
                         help='read the all entries contained in all xml files. Specify how many cores you want to use. This version can be used it no negativ weights are needed')
     parser.add_argument('--postfix','-p', dest='postfix', action='store',
@@ -80,15 +79,15 @@ if __name__ == '__main__':
         os.makedirs(ConfigFile.config.General.workArea)
 
     if len(ConfigFile.requestNames) != len(ConfigFile.inputDatasets):
-        print 'Number of Request-Names',len(ConfigFile.requestNames),' unequal to number of Input-Datasets',len(ConfigFile.inputDatasets)
-        print 'prefere to exit'
+        print('Number of Request-Names',len(ConfigFile.requestNames),' unequal to number of Input-Datasets',len(ConfigFile.inputDatasets))
+        print('prefere to exit')
         exit(100)
 
     if len(args.filter_dataset) > 0 or len(args.filter_request) > 0:
         setList = []
         filterlist =[]
         if len(args.filter_dataset) > 0 and len(args.filter_request) > 0:
-            print 'Only one filter list at a time supported. Exit'
+            print('Only one filter list at a time supported. Exit')
             exit(110)
         if len(args.filter_dataset) > 0: setList = ConfigFile.inputDatasets; filterlist = args.filter_dataset
         if len(args.filter_request) > 0: setList = ConfigFile.requestNames; filterlist = args.filter_request
@@ -103,15 +102,12 @@ if __name__ == '__main__':
                     del ConfigFile.requestNames[i]
                     del ConfigFile.inputDatasets[i]
 
-    print 'Going to print the Request-Name / Input-Dataset pairs'
-    print 'Number of Samples',len(ConfigFile.requestNames)
+    print('Going to print the Request-Name / Input-Dataset pairs')
+    print('Number of Samples',len(ConfigFile.requestNames))
     for i in range(len(ConfigFile.requestNames)):
-        print ConfigFile.requestNames[i],ConfigFile.inputDatasets[i]
+        print(ConfigFile.requestNames[i],ConfigFile.inputDatasets[i])
 
     if args.submit_flag:
-        if not '--dryrun' in set(args.crab_options):
-            if not click.confirm('You have not specified to perform a dryrun (dryruns are highly suggested!). Do you really want to continue?'):
-                sys.exit('Abort')
         work = CrabConfig(ConfigFile.config,'submit',args.crab_options)
         work.ByDatasets(ConfigFile.inputDatasets,ConfigFile.requestNames,args.postfix)
     if args.proceed_flag:
@@ -139,14 +135,14 @@ if __name__ == '__main__':
             dirname = os.path.join('/pnfs/desy.de/cms/tier2', ConfigFile.config.Data.outLFNDirBase.strip('/'), help_name, 'crab_'+name+args.postfix, '**/**/*.root')
             xmlname = name+'.xml'
             #print dirname
-            print 'For',xmlname
+            print('For',xmlname)
             l = glob.glob(dirname)
             #print xmlname, l
             create_dataset_xml(dirname,xmlname)
 
     if args.readEntries > 0 or args.readEntriesFast > 0:
         if args.readEntries > 0 and args.readEntriesFast > 0:
-            print 'something went wrong use readEntries OR readEntriesFast!'
+            print('something went wrong use readEntries OR readEntriesFast!')
             exit(120)
         fast = False
         cores = args.readEntries

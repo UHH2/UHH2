@@ -1,11 +1,11 @@
-#include "FWCore/Framework/interface/EDFilter.h"
+#include "FWCore/Framework/interface/one/EDFilter.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 using namespace std;
 
-class FilterStrangeGenParticles: public edm::EDFilter {
+class FilterStrangeGenParticles: public edm::one::EDFilter<edm::one::SharedResources> {
    public:
       explicit FilterStrangeGenParticles(const edm::ParameterSet& cfg) {
           src = cfg.getParameter<edm::InputTag>("src");

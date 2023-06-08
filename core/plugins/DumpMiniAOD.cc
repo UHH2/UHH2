@@ -1,4 +1,4 @@
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class DumpMiniAOD: public edm::EDAnalyzer {
+class DumpMiniAOD: public edm::one::EDAnalyzer<> {
    public:
       explicit DumpMiniAOD(const edm::ParameterSet& cfg){
       }

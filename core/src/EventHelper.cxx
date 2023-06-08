@@ -73,9 +73,9 @@ IMPL_SETUP(L1T_seeds, vector<L1Tau>)
 void EventHelper::setup_trigger(){
     trigger = true;
     h_triggerResults = declare_in_out<std::vector<bool>>("triggerResults", "triggerResults", ctx);
-    h_triggerPrescales = declare_in_out<std::vector<int>>("triggerPrescales", "triggerPrescales", ctx);
-    h_triggerPrescalesL1min = declare_in_out<std::vector<int>>("triggerPrescalesL1min", "triggerPrescalesL1min", ctx);
-    h_triggerPrescalesL1max = declare_in_out<std::vector<int>>("triggerPrescalesL1max", "triggerPrescalesL1max", ctx);
+    h_triggerPrescales = declare_in_out<std::vector<double>>("triggerPrescales", "triggerPrescales", ctx);
+    h_triggerPrescalesL1min = declare_in_out<std::vector<double>>("triggerPrescalesL1min", "triggerPrescalesL1min", ctx);
+    h_triggerPrescalesL1max = declare_in_out<std::vector<double>>("triggerPrescalesL1max", "triggerPrescalesL1max", ctx);
     h_triggerNames = declare_in_out<std::vector<std::string>>("triggerNames", "triggerNames", ctx);
 }
 

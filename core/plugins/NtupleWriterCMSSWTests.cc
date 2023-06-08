@@ -1,4 +1,4 @@
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "DataFormats/JetReco/interface/GenJetCollection.h"
@@ -9,7 +9,7 @@
 
 using namespace std;
 
-class NtupleWriterTestGenJets : public edm::EDAnalyzer {
+class NtupleWriterTestGenJets : public edm::one::EDAnalyzer<> {
    public:
       explicit NtupleWriterTestGenJets(const edm::ParameterSet& cfg): n_gj_total(0), n_gj_withnull(0){
           genjetsrc = cfg.getParameter<edm::InputTag>("genjetsrc");
