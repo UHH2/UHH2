@@ -157,18 +157,18 @@ ElectronIdScaleFactors::ElectronIdScaleFactors(
         file_name_UL17 = "egammaEffi.txt_EGM2D_Tight_UL17.root";
         file_name_UL18 = "egammaEffi.txt_Ele_Tight_EGM2D.root";
         break;
-      case Electron::tag::mvaEleID_Fall17_noIso_V2_wp90 :
-        file_name_UL16preVFP = "egammaEffi.txt_Ele_wp90noiso_preVFP_EGM2D.root";
-        file_name_UL16postVFP = "egammaEffi.txt_Ele_wp90noiso_postVFP_EGM2D.root";
-        file_name_UL17 = "egammaEffi.txt_EGM2D_MVA90noIso_UL17.root";
-        file_name_UL18 = "egammaEffi.txt_Ele_wp90noiso_EGM2D.root";
-        break;
-      case Electron::tag::mvaEleID_Fall17_noIso_V2_wp80 :
-        file_name_UL16preVFP = "egammaEffi.txt_Ele_wp80noiso_preVFP_EGM2D.root";
-        file_name_UL16postVFP = "egammaEffi.txt_Ele_wp80noiso_postVFP_EGM2D.root";
-        file_name_UL17 = "egammaEffi.txt_EGM2D_MVA80noIso_UL17.root";
-        file_name_UL18 = "egammaEffi.txt_Ele_wp80noiso_EGM2D.root";
-        break;
+      // case Electron::tag::mvaEleID_Fall17_noIso_V2_wp90 :
+      //   file_name_UL16preVFP = "egammaEffi.txt_Ele_wp90noiso_preVFP_EGM2D.root";
+      //   file_name_UL16postVFP = "egammaEffi.txt_Ele_wp90noiso_postVFP_EGM2D.root";
+      //   file_name_UL17 = "egammaEffi.txt_EGM2D_MVA90noIso_UL17.root";
+      //   file_name_UL18 = "egammaEffi.txt_Ele_wp90noiso_EGM2D.root";
+      //   break;
+      // case Electron::tag::mvaEleID_Fall17_noIso_V2_wp80 :
+      //   file_name_UL16preVFP = "egammaEffi.txt_Ele_wp80noiso_preVFP_EGM2D.root";
+      //   file_name_UL16postVFP = "egammaEffi.txt_Ele_wp80noiso_postVFP_EGM2D.root";
+      //   file_name_UL17 = "egammaEffi.txt_EGM2D_MVA80noIso_UL17.root";
+      //   file_name_UL18 = "egammaEffi.txt_Ele_wp80noiso_EGM2D.root";
+      //   break;
       case Electron::tag::mvaEleID_Fall17_iso_V2_wp90 :
         file_name_UL16preVFP = "egammaEffi.txt_Ele_wp90iso_preVFP_EGM2D.root";
         file_name_UL16postVFP = "egammaEffi.txt_Ele_wp90iso_postVFP_EGM2D.root";

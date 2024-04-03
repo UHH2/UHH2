@@ -15,6 +15,8 @@ YearSwitcher::YearSwitcher(const uhh2::Context & ctx):
   moduleUL17_(nullptr),
   module2018_(nullptr),
   moduleUL18_(nullptr),
+  module2022_(nullptr),
+  module2023_(nullptr),
   theModule_(nullptr)
 {}
 
@@ -62,6 +64,12 @@ bool YearSwitcher::process(uhh2::Event & event) {
     }
     else if ((year_ == Year::is2018) && module2018_) {
       theModule_ = module2018_;
+    }
+    else if ((year_ == Year::is2022) && module2022_) {
+      theModule_ = module2022_;
+    }
+    else if ((year_ == Year::is2023) && module2023_) {
+      theModule_ = module2023_;
     }
     doneInit_ = true;
   }
@@ -118,6 +126,14 @@ void YearSwitcher::setup2018(std::shared_ptr<uhh2::AnalysisModule> module) {
 
 void YearSwitcher::setupUL18(std::shared_ptr<uhh2::AnalysisModule> module) {
   moduleUL18_ = module;
+}
+
+void YearSwitcher::setup2022(std::shared_ptr<uhh2::AnalysisModule> module) {
+  module2022_ = module;
+}
+
+void YearSwitcher::setup2023(std::shared_ptr<uhh2::AnalysisModule> module) {
+  module2023_ = module;
 }
 
 
@@ -181,5 +197,7 @@ std::string RunSwitcher::shortYear(const std::string & year) {
   if (year.find("16") != std::string::npos) return "2016";
   if (year.find("17") != std::string::npos) return "2017";
   if (year.find("18") != std::string::npos) return "2018";
+  if (year.find("22") != std::string::npos) return "2022";
+  if (year.find("23") != std::string::npos) return "2023";
   throw std::runtime_error("Cannot identify shortYear from " + year);
 }

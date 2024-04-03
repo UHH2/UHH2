@@ -52,6 +52,9 @@ public:
   void setup2018(std::shared_ptr<uhh2::AnalysisModule> module);
   void setupUL18(std::shared_ptr<uhh2::AnalysisModule> module);
 
+  void setup2022(std::shared_ptr<uhh2::AnalysisModule> module);
+  void setup2023(std::shared_ptr<uhh2::AnalysisModule> module);
+
 private:
   Year year_;
   bool doneInit_;
@@ -62,6 +65,7 @@ private:
   std::shared_ptr<uhh2::AnalysisModule> module2016_, module2016v2_, module2016v3_, moduleUL16preVFP_, moduleUL16postVFP_;
   std::shared_ptr<uhh2::AnalysisModule> module2017_, module2017v1_, module2017v2_, moduleUL17_;
   std::shared_ptr<uhh2::AnalysisModule> module2018_, moduleUL18_;
+  std::shared_ptr<uhh2::AnalysisModule> module2022_, module2023_;
   std::shared_ptr<uhh2::AnalysisModule> theModule_;
 
 };

@@ -120,6 +120,12 @@ private:
   bool tightID2018_PUPPI(const Jet & jet) const;
   bool tightLepVetoID2018_CHS(const Jet & jet) const;
   bool tightLepVetoID2018_PUPPI(const Jet & jet) const;
+
+  //2022 taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID13p6TeV
+  // bool tightID2022_CHS(const Jet & jet) const;
+  bool tightID2022_PUPPI(const Jet & jet) const;
+  // bool tightLepVetoID2022_CHS(const Jet & jet) const;
+  // bool tightLepVetoID2022_PUPPI(const Jet & jet) const;
 };
 
 /**
@@ -162,6 +168,30 @@ private:
     { "UL18", {
       { "fname",  {"JECDatabase/jet_veto_maps/Summer19UL18_V1/hotjets-UL18.root"}},
       { "hname",  {"h2hot_ul18_plus_hem1516_and_hbp2m1"}},
+    }},
+    { "UL18", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer19UL18_V1/hotjets-UL18.root"}},
+      { "hname",  {"h2hot_ul18_plus_hem1516_and_hbp2m1"}},
+    }},
+    { "2022preEE", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer22_23Sep2023/Summer22_23Sep2023_RunCD_v1.root"}},
+      { "hname",  {"jetvetomap"}},
+    }},
+    { "2022postEE", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer22EE_23Sep2023/Summer22EE_23Sep2023_RunEFG_v1.root"}},
+      { "hname",  {"jetvetomap"}},
+    }},
+    { "2023preBPix", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer23Prompt23/Summer23Prompt23_RunC_v1.root"}},
+      { "hname",  {"jetvetomap"}},
+    }},
+    { "2023postBPix", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Summer23BPixPrompt23/Summer23BPixPrompt23_RunD_v1.root"}},
+      { "hname",  {"jetvetomap"}},
+    }},
+    { "Run3_CD", {
+      { "fname",  {"JECDatabase/jet_veto_maps/Winter22Run3/Winter22Run3_RunCD_v1.root"}},
+      { "hname",  {"jetvetomap"}},
     }},
   };
 

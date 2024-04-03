@@ -1,5 +1,6 @@
 #include "UHH2/common/include/JetCorrectionSets.h"
 #include <string>
+#include <iostream>
 
 // Getting path of a JER file from JRDatabase (e.g. SF, PtResolution, etc) for a given tag and jetCollection
 const std::string JERFiles::JERPathStringMC(const std::string & tag,
@@ -96,8 +97,62 @@ const std::map<std::string, std::map<std::string, std::string> > JERFiles::jecRu
     {"C", "C"},
     {"D", "D"}
   }},
+  {"Summer20UL18", {
+    {"A", "A"},
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"}
+  }},
+  {"Summer20UL17", {
+    {"B", "B"},
+    {"C", "C"},
+    {"D", "D"},
+    {"E", "E"},
+    {"F", "F"}
+  }},
+  {"Summer20UL16APV", {
+    {"B", "BCDEF"},
+    {"C", "BCDEF"},
+    {"D", "BCDEF"},
+    {"E", "BCDEF"},
+    {"F", "BCDEF"}
+  }},
+  {"Summer20UL16", {
+    {"F", "FGH"},
+    {"G", "FGH"},
+    {"H", "FGH"}
+  }},
+  {"Summer22EEPrompt22", {
+    {"E", "E"},
+    {"F", "F"},
+    {"G", "G"}
+  }},
+  {"Summer22", {
+    {"B", "CD"},
+    {"C", "CD"},
+    {"D", "CD"},
+  }},
+  {"Summer22EE", {
+    {"E", "E"},
+    {"F", "F"},
+    {"G", "G"},
+  }},
+  {"Winter22Run3", {
+    {"C", "C"},
+    {"D", "D"}
+  }},
+  {"Winter23Prompt23", {
+    {"B", "A"},
+    {"C", "A"}
+  }},
+  {"Summer23Prompt23", {
+    {"Cv123", "Cv123"},
+    {"Cv4", "Cv4"}
+  }},
+  {"Summer23BPixPrompt23", {
+    {"D", "D"}
+  }},
 };
-
 const std::string JERFiles::JECPathStringDATA(const std::string & tag,
                                               const std::string & ver,
                                               const std::string & jetCollection,
@@ -108,8 +163,14 @@ const std::string JERFiles::JECPathStringDATA(const std::string & tag,
 
   std::string campaign = tag.substr(0, tag.find("_"));
   std::string newRunName = JERFiles::jecRunMap.at(campaign).at(runName);
-  // in 2018, and for UL,  they use "_RunX" instead of just "X"
-  if (tag.find("18") != std::string::npos || tag.find("UL") != std::string::npos) {
+  // in 2018, for UL, and for Run3  they use "_RunX" instead of just "X"
+  if (tag.find("18") != std::string::npos || 
+    tag.find("UL") != std::string::npos || 
+    tag.find("Run3") != std::string::npos ||
+    tag.find("Prompt22") != std::string::npos ||
+    tag.find("Summer22") != std::string::npos ||
+    tag.find("Summer23") != std::string::npos ||
+    tag.find("Prompt23") != std::string::npos ) {
     newRunName = "_Run" + newRunName;
   }
 

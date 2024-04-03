@@ -338,6 +338,19 @@ bool JetPFID::operator()(const Jet & jet, const Event & ev) const{
       }
     }
   }
+  else if (ev.year.find("2022") != string::npos || ev.year.find("2023") != string::npos){
+    // https://twiki.cern.ch/twiki/bin/view/CMS/JetID13p6TeV
+    switch(m_working_point){
+        case WP_TIGHT_PUPPI:
+        return tightID2022_PUPPI(jet);
+        case WP_TIGHT_LEPVETO_PUPPI:
+        return tightLepVetoIDUL1718_PUPPI(jet);
+        case WP_TIGHT_LEPVETO:
+        throw invalid_argument("In 2022, the LepVeto JetPFID is not implemented yet.");
+        default:
+        throw invalid_argument("invalid working point passed to JetPFID");
+      }
+  }
   else if (ev.year.find("2016") != string::npos){
     switch(m_working_point){
       case WP_LOOSE_CHS:
@@ -490,6 +503,30 @@ bool JetPFID::tightIDUL1718_PUPPI(const Jet & jet) const{
   if(fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0
   && jet.neutralEmEnergyFraction()<0.9
   && jet.neutralPuppiMultiplicity()>2) return true;
+
+  if(fabs(jet.eta())>5.0) return true; // not sure if anyone will ever use these jets but, according to the reference link above, they are not explicitly vetoed
+
+  return false;
+}
+
+bool JetPFID::tightID2022_PUPPI(const Jet & jet) const{
+  if(fabs(jet.eta())<=2.6
+  && jet.neutralHadronEnergyFraction()<0.99
+  && jet.neutralEmEnergyFraction()<0.90
+  && jet.numberOfDaughters()>1
+  && jet.chargedHadronEnergyFraction()>0.01
+  && jet.chargedMultiplicity()>0) return true;
+
+  if(fabs(jet.eta())>2.6 && fabs(jet.eta())<=2.7
+  && jet.neutralHadronEnergyFraction()<0.90
+  && jet.neutralEmEnergyFraction()<0.99) return true;
+
+  if(fabs(jet.eta())>2.7 && fabs(jet.eta())<=3.0
+  && jet.neutralHadronEnergyFraction()<0.9999) return true;
+
+  if(fabs(jet.eta())>3.0 && fabs(jet.eta())<=5.0
+  && jet.neutralEmEnergyFraction()<0.4
+  && jet.neutralMultiplicity()>=2) return true; // neutralPuppiMultiplicity
 
   if(fabs(jet.eta())>5.0) return true; // not sure if anyone will ever use these jets but, according to the reference link above, they are not explicitly vetoed
 
@@ -787,8 +824,9 @@ HotZoneVetoId::HotZoneVetoId() {
 
 
 bool HotZoneVetoId::operator()(const Jet &jet, const Event &ev) const{
-  if (h2HotExcl.find(ev.year) == h2HotExcl.end()) throw std::runtime_error("In HotZoneVetoId: "+ev.year+" not found.");
-  for (const auto& h : h2HotExcl.at(ev.year)) {
+  string key_map = ev.year;
+  if (h2HotExcl.find(key_map) == h2HotExcl.end()) throw std::runtime_error("In HotZoneVetoId: "+key_map+" not found.");
+  for (const auto& h : h2HotExcl.at(key_map)) {
     if (h.second->GetBinContent(h.second->FindBin(jet.eta(),jet.phi())) > 0) return false;
   }
   return true;

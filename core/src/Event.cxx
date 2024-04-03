@@ -103,23 +103,26 @@ string format_list(const vector<string> & l){
 
 bool Event::passes_trigger(TriggerIndex & ti) const{
     if(!lookup_trigger_index(ti)){
-        throw runtime_error("Event does not have trigger '" + ti.triggername + "'. Available triggers:\n" + format_list(triggerNames_currentrun));
+        return false; // For Run3 only
+        // throw runtime_error("Event does not have trigger '" + ti.triggername + "'. Available triggers:\n" + format_list(triggerNames_currentrun));
     }
     if(!triggerResults){
         throw runtime_error("Event::passes_trigger: trigger Results have not beed read in");
     }
-     if(triggerNames_currentrun.size() != triggerResults->size()){
-         stringstream ss;
-         ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger results for current event have size " << triggerResults->size()
-            << endl;
-         throw runtime_error(ss.str());
-     }
-     assert(triggerNames_currentrun.size() == triggerResults->size());
+    // for(auto &c: triggerNames_currentrun) cout << c << endl;
+    if(triggerNames_currentrun.size() != triggerResults->size()){
+        stringstream ss;
+        ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger results for current event have size " << triggerResults->size()
+        << endl;
+        // throw runtime_error(ss.str());
+        return false; // For Run3 only
+    }
+    assert(triggerNames_currentrun.size() == triggerResults->size());
     return triggerResults->at(ti.index);
 }
 
 
-int Event::trigger_prescale(TriggerIndex & ti) const{
+double Event::trigger_prescale(TriggerIndex & ti) const{
     if(!lookup_trigger_index(ti)){
         throw runtime_error("Event does not have trigger '" + ti.triggername + "'. Available triggers:\n" + format_list(triggerNames_currentrun));
     }
@@ -134,4 +137,38 @@ int Event::trigger_prescale(TriggerIndex & ti) const{
     }
     assert(triggerNames_currentrun.size() == triggerPrescales->size());
     return triggerPrescales->at(ti.index);
+}
+
+double Event::trigger_prescaleL1min(TriggerIndex & ti) const{
+    if(!lookup_trigger_index(ti)){
+        throw runtime_error("Event does not have trigger '" + ti.triggername + "'. Available triggers:\n" + format_list(triggerNames_currentrun));
+    }
+    if(!triggerPrescalesL1min){
+        throw runtime_error("Event::trigger_prescale: trigger prescales have not beed read in; perhaps you are running on MC, prescales are only filled for data.");
+    }
+    if(triggerNames_currentrun.size() != triggerPrescalesL1min->size()){
+        stringstream ss;
+	ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger prescales for current event have size " << triggerPrescales->size()
+	   << "; perhaps you are running on MC, prescales are only filled for data." << endl;
+	throw runtime_error(ss.str());
+    }
+    assert(triggerNames_currentrun.size() == triggerPrescalesL1min->size());
+    return triggerPrescalesL1min->at(ti.index);
+}
+
+double Event::trigger_prescaleL1max(TriggerIndex & ti) const{
+    if(!lookup_trigger_index(ti)){
+        throw runtime_error("Event does not have trigger '" + ti.triggername + "'. Available triggers:\n" + format_list(triggerNames_currentrun));
+    }
+    if(!triggerPrescalesL1max){
+        throw runtime_error("Event::trigger_prescale: trigger prescales have not beed read in; perhaps you are running on MC, prescales are only filled for data.");
+    }
+    if(triggerNames_currentrun.size() != triggerPrescalesL1max->size()){
+        stringstream ss;
+	ss << "Inconsistent trigger information: trigger names for current run have size " << triggerNames_currentrun.size() << ", but trigger prescales for current event have size " << triggerPrescales->size()
+	   << "; perhaps you are running on MC, prescales are only filled for data." << endl;
+	throw runtime_error(ss.str());
+    }
+    assert(triggerNames_currentrun.size() == triggerPrescalesL1max->size());
+    return triggerPrescalesL1max->at(ti.index);
 }
