@@ -127,6 +127,9 @@ CMSREL=CMSSW_13_0_13
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
+sed -i 's/CHECK_PRIVATE_HEADERS="1"/CHECK_PRIVATE_HEADERS="0"/g' $CMSSW_BASE/config/Self.xml
+eval `scramv1 runtime -sh`
+run scram setup self
 # Install FastJet & contribs for HOTVR & XCONE
 cd ../..
 # FJVER="3.3.0"
