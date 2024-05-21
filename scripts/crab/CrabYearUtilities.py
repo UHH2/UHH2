@@ -96,6 +96,6 @@ def get_ntuplewriter(dataset, jetConstituents=False):
     ntuplewriter_name += '.py'
     return ntuplewriter_name
 
-def get_outLFNDirBase(dataset, prefix = '/store/group/uhh/uhh2ntuples/Run3_124X_v1/'):
+def get_outLFNDirBase(dataset, prefix = '/store/group/uhh/uhh2ntuples/Run3_130X_v1/'):
     """Build outLFNDirBase from dataset DAS string by adding year dependent subdir to prefix."""
     return os.path.join(prefix, get_year(dataset))

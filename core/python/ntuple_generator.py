@@ -1002,7 +1002,7 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     trigger_bits=cms.InputTag("TriggerResults", "", "HLT"),
                                     # MET filters (HBHE noise, CSC, etc.) are stored as trigger Bits in
                                     # MINIAOD produced in path "PAT"/"RECO" with prefix "Flag_"
-                                    metfilter_bits=cms.InputTag("TriggerResults", "", "RECO"),
+                                    metfilter_bits=cms.InputTag("TriggerResults", "", "PAT"),
                                     # for now, save all the triggers:
                                     trigger_prefixes=cms.vstring("HLT_", "Flag_"),
 
@@ -1175,71 +1175,71 @@ def generate_process(year, useData=True, isDebug=False, fatjet_ptmin=120.):
                                     doAllPFParticles=cms.bool(False),
                                     pf_collection_source=cms.InputTag("packedPFCandidates"),
 
-                                    # *** HOTVR & XCone stuff
-                                    doXCone=cms.bool(False),
-                                    #store PF constituents for XCone_sources: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFxconeJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
-                                    doPFxconeJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
-                                    XCone_sources=cms.VInputTag(
-                                        cms.InputTag("xconePuppi"),
-                                        cms.InputTag("xconeCHS"),
-                                    ),
-                                    doHOTVR=cms.bool(False),
-                                    #store PF constituents for HOTVR_sources: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFhotvrJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
-                                    doPFhotvrJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
-                                    HOTVR_sources=cms.VInputTag(
-                                        cms.InputTag("hotvrPuppi")
-                                    ),
+#                                     # *** HOTVR & XCone stuff
+#                                     doXCone=cms.bool(False),
+#                                     #store PF constituents for XCone_sources: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
+#                                     doPFxconeJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
+#                                     doPFxconeJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
+#                                     XCone_sources=cms.VInputTag(
+#                                         cms.InputTag("xconePuppi"),
+#                                         cms.InputTag("xconeCHS"),
+#                                     ),
+#                                     doHOTVR=cms.bool(False),
+#                                     #store PF constituents for HOTVR_sources: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
+#                                     doPFhotvrJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
+#                                     doPFhotvrJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
+#                                     HOTVR_sources=cms.VInputTag(
+#                                         cms.InputTag("hotvrPuppi")
+#                                     ),
 
-                                    doGenHOTVR=cms.bool(False),
-                                    doGenhotvrJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
-                                    doGenhotvrJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
+#                                     doGenHOTVR=cms.bool(False),
+#                                     doGenhotvrJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
+#                                     doGenhotvrJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
 
-                                    doGenXCone=cms.bool(False),
-                                    doGenxconeJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
-                                    doGenxconeJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
+#                                     doGenXCone=cms.bool(False),
+#                                     doGenxconeJetConstituentsNjets=cms.uint32(0),#store constituents for N leading genjets, where N is parameter
+#                                     doGenxconeJetConstituentsMinJetPt=cms.double(-1),#store constituence for all genjets with pt above threshold, set to negative value if not used
 
-                                    GenHOTVR_sources=cms.VInputTag(
-                                        cms.InputTag("hotvrGen")
-                                    ),
-                                    GenXCone_sources=cms.VInputTag(
-#                                        cms.InputTag("genXCone23TopJets"),
-                                        cms.InputTag("genXCone33TopJets"),
-                                    ),
-                                    doXCone_dijet=cms.bool(False), #XCone for dijet (JERC) studies, should be stored for QCD MC and JetHT DATA
-                                    #store PF constituents for XCone_dijet_sources: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
-                                    doPFxconeDijetJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
-                                    doPFxconeDijetJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
+#                                     GenHOTVR_sources=cms.VInputTag(
+#                                         cms.InputTag("hotvrGen")
+#                                     ),
+#                                     GenXCone_sources=cms.VInputTag(
+# #                                        cms.InputTag("genXCone23TopJets"),
+#                                         cms.InputTag("genXCone33TopJets"),
+#                                     ),
+#                                     doXCone_dijet=cms.bool(False), #XCone for dijet (JERC) studies, should be stored for QCD MC and JetHT DATA
+#                                     #store PF constituents for XCone_dijet_sources: doPFJetConstituentsNjets and doPFJetConstituentsMinJetPt are combined with OR
+#                                     doPFxconeDijetJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
+#                                     doPFxconeDijetJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not used
 
-                                    XCone_dijet_sources=cms.VInputTag(
-                                        cms.InputTag("xconeCHS2jets04"),
-                                        cms.InputTag("xconeCHS3jets04"),
-                                        cms.InputTag("xconeCHS4jets04"),
-                                        cms.InputTag("xconeCHS2jets08"),
-                                        cms.InputTag("xconeCHS3jets08"),
-                                        cms.InputTag("xconeCHS4jets08"),
-                                        cms.InputTag("xconePUPPI2jets04"),
-                                        cms.InputTag("xconePUPPI3jets04"),
-                                        cms.InputTag("xconePUPPI4jets04"),
-                                        cms.InputTag("xconePUPPI2jets08"),
-                                        cms.InputTag("xconePUPPI3jets08"),
-                                        cms.InputTag("xconePUPPI4jets08"),
+#                                     XCone_dijet_sources=cms.VInputTag(
+#                                         cms.InputTag("xconeCHS2jets04"),
+#                                         cms.InputTag("xconeCHS3jets04"),
+#                                         cms.InputTag("xconeCHS4jets04"),
+#                                         cms.InputTag("xconeCHS2jets08"),
+#                                         cms.InputTag("xconeCHS3jets08"),
+#                                         cms.InputTag("xconeCHS4jets08"),
+#                                         cms.InputTag("xconePUPPI2jets04"),
+#                                         cms.InputTag("xconePUPPI3jets04"),
+#                                         cms.InputTag("xconePUPPI4jets04"),
+#                                         cms.InputTag("xconePUPPI2jets08"),
+#                                         cms.InputTag("xconePUPPI3jets08"),
+#                                         cms.InputTag("xconePUPPI4jets08"),
 
-                                    ),
-#                                    doGenXCone_dijet=cms.bool(not useData),
-                                    doGenXCone_dijet=cms.bool(False),
-                                    #store GEN constituents for GenXCone_dijet_sources: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
-                                    doGenxconeDijetJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
-                                    doGenxconeDijetJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not
-                                    GenXCone_dijet_sources=cms.VInputTag(
-                                        cms.InputTag("genXCone2jets04"),
-                                        cms.InputTag("genXCone3jets04"),
-                                        cms.InputTag("genXCone4jets04"),
-                                        cms.InputTag("genXCone2jets08"),
-                                        cms.InputTag("genXCone3jets08"),
-                                        cms.InputTag("genXCone4jets08"),
-                                    )
+#                                     ),
+# #                                    doGenXCone_dijet=cms.bool(not useData),
+#                                     doGenXCone_dijet=cms.bool(False),
+#                                     #store GEN constituents for GenXCone_dijet_sources: doGenJetConstituentsNjets and doGenJetConstituentsMinJetPt are combined with OR
+#                                     doGenxconeDijetJetConstituentsNjets=cms.uint32(0),#store constituents for N leading topjets, where N is parameter
+#                                     doGenxconeDijetJetConstituentsMinJetPt=cms.double(-1),#store constituence for all topjets with pt above threshold, set to negative value if not
+#                                     GenXCone_dijet_sources=cms.VInputTag(
+#                                         cms.InputTag("genXCone2jets04"),
+#                                         cms.InputTag("genXCone3jets04"),
+#                                         cms.InputTag("genXCone4jets04"),
+#                                         cms.InputTag("genXCone2jets08"),
+#                                         cms.InputTag("genXCone3jets08"),
+#                                         cms.InputTag("genXCone4jets08"),
+#                                     )
 
     )
 

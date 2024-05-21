@@ -19,10 +19,18 @@ from DasQuery import autocomplete_Datasets
 storeJetConstituents = False
 
 inputDatasets = [
-'/JetHT/Run2022C-PromptReco-v1/MINIAOD', 
-'/JetMET/Run2022C-PromptReco-v1/MINIAOD', 
-'/JetMET/Run2022D-PromptReco-v1/MINIAOD', 
-'/JetMET/Run2022D-PromptReco-v2/MINIAOD', 
+# '/JetMET0/Run2023C-22Sep2023_v1-v1/MINIAOD',
+# '/JetMET0/Run2023C-22Sep2023_v2-v1/MINIAOD',
+# '/JetMET0/Run2023C-22Sep2023_v3-v1/MINIAOD',
+# '/JetMET0/Run2023C-22Sep2023_v4-v1/MINIAOD',
+# '/JetMET1/Run2023C-22Sep2023_v1-v1/MINIAOD',
+# '/JetMET1/Run2023C-22Sep2023_v2-v1/MINIAOD',
+# '/JetMET1/Run2023C-22Sep2023_v3-v1/MINIAOD',
+# '/JetMET1/Run2023C-22Sep2023_v4-v1/MINIAOD',
+'/JetMET0/Run2023D-22Sep2023_v1-v1/MINIAOD',
+'/JetMET0/Run2023D-22Sep2023_v2-v1/MINIAOD',
+'/JetMET1/Run2023D-22Sep2023_v1-v1/MINIAOD',
+'/JetMET1/Run2023D-22Sep2023_v2-v1/MINIAOD',
 ]
 inputDatasets = autocomplete_Datasets(inputDatasets)
 requestNames = [CrabYearUtilities.get_request_name(x) for x in inputDatasets] # Here you can define custom request names if the get_request_names function doesn't return nice ones

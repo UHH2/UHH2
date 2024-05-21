@@ -34,7 +34,7 @@ try:
     imp.find_module('Losses')
     from Losses import *
 except ImportError:
-    print('No Losses module found, ignoring at your own risk')
+    print( 'No Losses module found, ignoring at your own risk')
     global_loss_list = {}
 
 try:

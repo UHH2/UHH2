@@ -4,7 +4,7 @@ DICT := include/AnalysisModuleRunner.h include/NtupleObjects.h include/SUHH2core
 FJINC=$(shell scram tool tag FASTJET INCLUDE)
 FJLIB=$(shell scram tool tag FASTJET LIBDIR)
 
-USERLDFLAGS := -Wl,-rpath,${FJLIB} -lm -L${FJLIB} -lfastjettools -lfastjet -lHOTVR -lNsubjettiness -lRecursiveTools
+USERLDFLAGS := -Wl,-rpath,${FJLIB} -lm -L${FJLIB} -lfastjettools -lfastjet
 USERCXXFLAGS := -I${FJINC}
 
 TEST := 1

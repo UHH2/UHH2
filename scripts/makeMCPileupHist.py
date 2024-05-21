@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Use this script to convert MC pileup distribution from python file to a TH1 in a ROOT file
@@ -9,10 +9,10 @@ e.g.
 """
 
 import argparse
-import importlib
-import FWCore.ParameterSet.Config as cms
+# import FWCore.ParameterSet.Config as cms
 import os
 import ROOT
+import importlib
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(1)
@@ -20,6 +20,7 @@ ROOT.TH1.SetDefaultSumw2()
 
 
 if __name__ == "__main__":
+	print("in main")
 	parser = argparse.ArgumentParser(description=__doc__)
 	parser.add_argument("pileup", help="Name of MC mixing pileup file")
 	parser.add_argument("--Nbins", type=int, default=100)
@@ -29,6 +30,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	filename = ""
+	print("in main continuing")
 	if os.path.isfile(args.pileup):
 		parts = args.pileup.split("/")
 		try:
@@ -61,7 +63,7 @@ if __name__ == "__main__":
 			ind = bins.index(hTI.GetBinLowEdge(i))
 			hTI.SetBinContent(i, values[ind])
 		except ValueError as e:
-			print "Nothing for bin", i
+			print("Nothing for bin", i)
 			hTI.SetBinContent(i, 0)
 
 	f = ROOT.TFile(args.outputFilename, "RECREATE")

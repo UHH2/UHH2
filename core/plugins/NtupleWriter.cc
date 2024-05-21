@@ -215,45 +215,45 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
   doPrefire = iConfig.getParameter<bool>("doPrefire");
 
 
-  doXCone = iConfig.getParameter<bool>("doXCone");
-  doPFxconeJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFxconeJetConstituentsNjets");
-  doPFxconeJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFxconeJetConstituentsMinJetPt");
-  doPFxconeJetConstituents = false;
-  if((doPFxconeJetConstituentsNjets>0 || doPFxconeJetConstituentsMinJetPt>0) && doXCone)
-  doPFxconeJetConstituents=true;
-  if(doPFxconeJetConstituentsMinJetPt<1e-6) doPFxconeJetConstituentsMinJetPt=2e6;
+  // doXCone = iConfig.getParameter<bool>("doXCone");
+  // doPFxconeJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFxconeJetConstituentsNjets");
+  // doPFxconeJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFxconeJetConstituentsMinJetPt");
+  // doPFxconeJetConstituents = false;
+  // if((doPFxconeJetConstituentsNjets>0 || doPFxconeJetConstituentsMinJetPt>0) && doXCone)
+  // doPFxconeJetConstituents=true;
+  // if(doPFxconeJetConstituentsMinJetPt<1e-6) doPFxconeJetConstituentsMinJetPt=2e6;
 
-  doHOTVR = iConfig.getParameter<bool>("doHOTVR");
-  doPFhotvrJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFhotvrJetConstituentsNjets");
-  doPFhotvrJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFhotvrJetConstituentsMinJetPt");
-  doPFhotvrJetConstituents = false;
-  if((doPFhotvrJetConstituentsNjets>0 || doPFhotvrJetConstituentsMinJetPt>0) && doHOTVR)
-  doPFhotvrJetConstituents=true;
-  if(doPFhotvrJetConstituentsMinJetPt<1e-6) doPFhotvrJetConstituentsMinJetPt=2e6;
+  // doHOTVR = iConfig.getParameter<bool>("doHOTVR");
+  // doPFhotvrJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFhotvrJetConstituentsNjets");
+  // doPFhotvrJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFhotvrJetConstituentsMinJetPt");
+  // doPFhotvrJetConstituents = false;
+  // if((doPFhotvrJetConstituentsNjets>0 || doPFhotvrJetConstituentsMinJetPt>0) && doHOTVR)
+  // doPFhotvrJetConstituents=true;
+  // if(doPFhotvrJetConstituentsMinJetPt<1e-6) doPFhotvrJetConstituentsMinJetPt=2e6;
 
 
-  doGenXCone = iConfig.getParameter<bool>("doGenXCone");
-  doGenxconeJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenxconeJetConstituentsNjets");
-  doGenxconeJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeJetConstituentsMinJetPt");
-  if(doGenxconeJetConstituentsMinJetPt<1e-6) doGenxconeJetConstituentsMinJetPt=2e6;
+  // doGenXCone = iConfig.getParameter<bool>("doGenXCone");
+  // doGenxconeJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenxconeJetConstituentsNjets");
+  // doGenxconeJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeJetConstituentsMinJetPt");
+  // if(doGenxconeJetConstituentsMinJetPt<1e-6) doGenxconeJetConstituentsMinJetPt=2e6;
 
-  doGenHOTVR = iConfig.getParameter<bool>("doGenHOTVR");
-  doGenhotvrJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenhotvrJetConstituentsNjets");
-  doGenhotvrJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenhotvrJetConstituentsMinJetPt");
-  if(doGenhotvrJetConstituentsMinJetPt<1e-6) doGenhotvrJetConstituentsMinJetPt=2e6;
+  // doGenHOTVR = iConfig.getParameter<bool>("doGenHOTVR");
+  // doGenhotvrJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenhotvrJetConstituentsNjets");
+  // doGenhotvrJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenhotvrJetConstituentsMinJetPt");
+  // if(doGenhotvrJetConstituentsMinJetPt<1e-6) doGenhotvrJetConstituentsMinJetPt=2e6;
 
-  doXCone_dijet = iConfig.getParameter<bool>("doXCone_dijet");
-  doPFxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFxconeDijetJetConstituentsNjets");
-  doPFxconeDijetJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFxconeDijetJetConstituentsMinJetPt");
-  doPFxconeDijetJetConstituents = false;
-  if((doPFxconeDijetJetConstituentsNjets>0 || doPFxconeDijetJetConstituentsMinJetPt>0) && doXCone_dijet)
-  doPFxconeDijetJetConstituents=true;
-  if(doPFxconeDijetJetConstituentsMinJetPt<1e-6) doPFxconeDijetJetConstituentsMinJetPt=2e6;
+  // doXCone_dijet = iConfig.getParameter<bool>("doXCone_dijet");
+  // doPFxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doPFxconeDijetJetConstituentsNjets");
+  // doPFxconeDijetJetConstituentsMinJetPt = iConfig.getParameter<double>("doPFxconeDijetJetConstituentsMinJetPt");
+  // doPFxconeDijetJetConstituents = false;
+  // if((doPFxconeDijetJetConstituentsNjets>0 || doPFxconeDijetJetConstituentsMinJetPt>0) && doXCone_dijet)
+  // doPFxconeDijetJetConstituents=true;
+  // if(doPFxconeDijetJetConstituentsMinJetPt<1e-6) doPFxconeDijetJetConstituentsMinJetPt=2e6;
 
-  doGenXCone_dijet = iConfig.getParameter<bool>("doGenXCone_dijet");
-  doGenxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenxconeDijetJetConstituentsNjets");
-  doGenxconeDijetJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeDijetJetConstituentsMinJetPt");
-  if(doGenxconeDijetJetConstituentsMinJetPt<1e-6) doGenxconeDijetJetConstituentsMinJetPt=2e6;
+  // doGenXCone_dijet = iConfig.getParameter<bool>("doGenXCone_dijet");
+  // doGenxconeDijetJetConstituentsNjets = iConfig.getParameter<unsigned>("doGenxconeDijetJetConstituentsNjets");
+  // doGenxconeDijetJetConstituentsMinJetPt = iConfig.getParameter<double>("doGenxconeDijetJetConstituentsMinJetPt");
+  // if(doGenxconeDijetJetConstituentsMinJetPt<1e-6) doGenxconeDijetJetConstituentsMinJetPt=2e6;
 
   auto pv_sources       = iConfig.getParameter<std::vector<std::string> >("pv_sources");
   auto l1muon_sources   = iConfig.getParameter<edm::InputTag>("l1MuonSrc");
@@ -656,61 +656,61 @@ NtupleWriter::NtupleWriter(const edm::ParameterSet& iConfig): outfile(0), tr(0),
     }
   }
 
-  // HOTVR and XCone Jet Cluster - added by Alex and Dennis
+  // // HOTVR and XCone Jet Cluster - added by Alex and Dennis
 
-  if (doHOTVR) {
-    auto hotvr_sources = iConfig.getParameter<std::vector<edm::InputTag> >("HOTVR_sources");
-    hotvrJets.resize(hotvr_sources.size());
-    for (size_t j=0; j<hotvr_sources.size(); ++j) {
-      hotvr_tokens.push_back(consumes<pat::JetCollection>(hotvr_sources[j]));
-      branch(tr, hotvr_sources[j].encode().c_str(), "std::vector<TopJet>", &hotvrJets[j]);
-    }
-  }
+  // if (doHOTVR) {
+  //   auto hotvr_sources = iConfig.getParameter<std::vector<edm::InputTag> >("HOTVR_sources");
+  //   hotvrJets.resize(hotvr_sources.size());
+  //   for (size_t j=0; j<hotvr_sources.size(); ++j) {
+  //     hotvr_tokens.push_back(consumes<pat::JetCollection>(hotvr_sources[j]));
+  //     branch(tr, hotvr_sources[j].encode().c_str(), "std::vector<TopJet>", &hotvrJets[j]);
+  //   }
+  // }
 
-  if (doXCone) {
-    auto xcone_sources = iConfig.getParameter<std::vector<edm::InputTag> >("XCone_sources");
-    xconeJets.resize(xcone_sources.size());
-    for (size_t j=0; j<xcone_sources.size(); ++j) {
-      xcone_tokens.push_back(consumes<pat::JetCollection>(xcone_sources[j]));
-      branch(tr, xcone_sources[j].encode().c_str(), "std::vector<TopJet>", &xconeJets[j]);
-    }
-  }
+  // if (doXCone) {
+  //   auto xcone_sources = iConfig.getParameter<std::vector<edm::InputTag> >("XCone_sources");
+  //   xconeJets.resize(xcone_sources.size());
+  //   for (size_t j=0; j<xcone_sources.size(); ++j) {
+  //     xcone_tokens.push_back(consumes<pat::JetCollection>(xcone_sources[j]));
+  //     branch(tr, xcone_sources[j].encode().c_str(), "std::vector<TopJet>", &xconeJets[j]);
+  //   }
+  // }
 
-  if (doXCone_dijet) {
-    auto xcone_sources_dijet = iConfig.getParameter<std::vector<edm::InputTag> >("XCone_dijet_sources");
-    xconeJets_dijet.resize(xcone_sources_dijet.size());
-    for (size_t j=0; j<xcone_sources_dijet.size(); ++j) {
-      xcone_tokens_dijet.push_back(consumes<pat::JetCollection>(xcone_sources_dijet[j]));
-      branch(tr, xcone_sources_dijet[j].encode().c_str(), "std::vector<TopJet>", &xconeJets_dijet[j]);
-    }
-  }
+  // if (doXCone_dijet) {
+  //   auto xcone_sources_dijet = iConfig.getParameter<std::vector<edm::InputTag> >("XCone_dijet_sources");
+  //   xconeJets_dijet.resize(xcone_sources_dijet.size());
+  //   for (size_t j=0; j<xcone_sources_dijet.size(); ++j) {
+  //     xcone_tokens_dijet.push_back(consumes<pat::JetCollection>(xcone_sources_dijet[j]));
+  //     branch(tr, xcone_sources_dijet[j].encode().c_str(), "std::vector<TopJet>", &xconeJets_dijet[j]);
+  //   }
+  // }
 
 
-  if (doGenHOTVR) {
-    auto genhotvr_sources = iConfig.getParameter<std::vector<edm::InputTag> >("GenHOTVR_sources");
-    genhotvrJets.resize(genhotvr_sources.size());
-    for (size_t j=0; j<genhotvr_sources.size(); ++j) {
-      genhotvr_tokens.push_back(consumes<pat::JetCollection>(genhotvr_sources[j]));
-      branch(tr, genhotvr_sources[j].encode().c_str(), "std::vector<GenTopJet>", &genhotvrJets[j]);
-    }
-  }
+  // if (doGenHOTVR) {
+  //   auto genhotvr_sources = iConfig.getParameter<std::vector<edm::InputTag> >("GenHOTVR_sources");
+  //   genhotvrJets.resize(genhotvr_sources.size());
+  //   for (size_t j=0; j<genhotvr_sources.size(); ++j) {
+  //     genhotvr_tokens.push_back(consumes<pat::JetCollection>(genhotvr_sources[j]));
+  //     branch(tr, genhotvr_sources[j].encode().c_str(), "std::vector<GenTopJet>", &genhotvrJets[j]);
+  //   }
+  // }
 
-  if (doGenXCone) {
-    auto genxcone_sources = iConfig.getParameter<std::vector<edm::InputTag> >("GenXCone_sources");
-    genxconeJets.resize(genxcone_sources.size());
-    for (size_t j=0; j<genxcone_sources.size(); ++j) {
-      genxcone_tokens.push_back(consumes<pat::JetCollection>(genxcone_sources[j]));
-      branch(tr, genxcone_sources[j].encode().c_str(), "std::vector<GenTopJet>", &genxconeJets[j]);
-    }
-  }
-  if (doGenXCone_dijet) {
-    auto genxcone_sources_dijet = iConfig.getParameter<std::vector<edm::InputTag> >("GenXCone_dijet_sources");
-    genxconeJets_dijet.resize(genxcone_sources_dijet.size());
-    for (size_t j=0; j<genxcone_sources_dijet.size(); ++j) {
-      genxcone_tokens_dijet.push_back(consumes<pat::JetCollection>(genxcone_sources_dijet[j]));
-      branch(tr, genxcone_sources_dijet[j].encode().c_str(), "std::vector<GenTopJet>", &genxconeJets_dijet[j]);
-    }
-  }
+  // if (doGenXCone) {
+  //   auto genxcone_sources = iConfig.getParameter<std::vector<edm::InputTag> >("GenXCone_sources");
+  //   genxconeJets.resize(genxcone_sources.size());
+  //   for (size_t j=0; j<genxcone_sources.size(); ++j) {
+  //     genxcone_tokens.push_back(consumes<pat::JetCollection>(genxcone_sources[j]));
+  //     branch(tr, genxcone_sources[j].encode().c_str(), "std::vector<GenTopJet>", &genxconeJets[j]);
+  //   }
+  // }
+  // if (doGenXCone_dijet) {
+  //   auto genxcone_sources_dijet = iConfig.getParameter<std::vector<edm::InputTag> >("GenXCone_dijet_sources");
+  //   genxconeJets_dijet.resize(genxcone_sources_dijet.size());
+  //   for (size_t j=0; j<genxcone_sources_dijet.size(); ++j) {
+  //     genxcone_tokens_dijet.push_back(consumes<pat::JetCollection>(genxcone_sources_dijet[j]));
+  //     branch(tr, genxcone_sources_dijet[j].encode().c_str(), "std::vector<GenTopJet>", &genxconeJets_dijet[j]);
+  //   }
+  // }
   newrun = true;
   firstEvent = true;
 }
@@ -1491,363 +1491,363 @@ bool NtupleWriter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   }
 
 
-  // ------------- HOTVR and XCone Jets  -------------
-  if (doHOTVR) {
-    for (size_t j=0; j < hotvr_tokens.size(); ++j){
-      hotvrJets[j].clear();
-      edm::Handle<pat::JetCollection> hotvr_patjets;
-      iEvent.getByToken(hotvr_tokens[j], hotvr_patjets);
+  // // ------------- HOTVR and XCone Jets  -------------
+  // if (doHOTVR) {
+  //   for (size_t j=0; j < hotvr_tokens.size(); ++j){
+  //     hotvrJets[j].clear();
+  //     edm::Handle<pat::JetCollection> hotvr_patjets;
+  //     iEvent.getByToken(hotvr_tokens[j], hotvr_patjets);
 
-      // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
-      for (const auto & patJet : *hotvr_patjets) {
-        TopJet thisJet;
-        thisJet.set_pt(patJet.p4().pt());
-        thisJet.set_eta(patJet.p4().eta());
-        thisJet.set_phi(patJet.p4().phi());
-        thisJet.set_energy(patJet.p4().E());
-        thisJet.set_jetArea(patJet.jetArea());
-        thisJet.set_tau1_groomed(patJet.userFloat("tau1"));
-        thisJet.set_tau2_groomed(patJet.userFloat("tau2"));
-        thisJet.set_tau3_groomed(patJet.userFloat("tau3"));
-        thisJet.set_numberOfDaughters(patJet.numberOfDaughters());
-        thisJet.set_partonFlavour(patJet.partonFlavour());
-        thisJet.set_hadronFlavour(patJet.hadronFlavour());
-        thisJet.set_charge(patJet.charge());
-        if(patJet.isPFJet()){
-          thisJet.set_neutralEmEnergyFraction (patJet.neutralEmEnergyFraction());
-          thisJet.set_neutralHadronEnergyFraction (patJet.neutralHadronEnergyFraction());
-          thisJet.set_chargedEmEnergyFraction (patJet.chargedEmEnergyFraction());
-          thisJet.set_chargedHadronEnergyFraction (patJet.chargedHadronEnergyFraction());
-          thisJet.set_muonEnergyFraction (patJet.muonEnergyFraction());
-          thisJet.set_photonEnergyFraction (patJet.photonEnergyFraction());
-          thisJet.set_chargedMultiplicity (patJet.chargedMultiplicity());
-          thisJet.set_neutralMultiplicity (patJet.neutralMultiplicity());
-          thisJet.set_muonMultiplicity (patJet.muonMultiplicity());
-          thisJet.set_electronMultiplicity (patJet.electronMultiplicity());
-          thisJet.set_photonMultiplicity (patJet.photonMultiplicity());
-        }
-        thisJet.set_JEC_factor_raw(1.);
-        thisJet.set_JEC_L1factor_raw(1.);
-        bool storePFparts = (hotvrJets[j].size()<doPFhotvrJetConstituentsNjets || thisJet.pt()>doPFhotvrJetConstituentsMinJetPt);
-        if(storePFparts){
-          const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
-          for(const auto & daughter_p : jet_daughter_ptrs){
-            size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
-            thisJet.add_pfcand_index(pfparticles_index);
-          }
-        }
+  //     // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
+  //     for (const auto & patJet : *hotvr_patjets) {
+  //       TopJet thisJet;
+  //       thisJet.set_pt(patJet.p4().pt());
+  //       thisJet.set_eta(patJet.p4().eta());
+  //       thisJet.set_phi(patJet.p4().phi());
+  //       thisJet.set_energy(patJet.p4().E());
+  //       thisJet.set_jetArea(patJet.jetArea());
+  //       thisJet.set_tau1_groomed(patJet.userFloat("tau1"));
+  //       thisJet.set_tau2_groomed(patJet.userFloat("tau2"));
+  //       thisJet.set_tau3_groomed(patJet.userFloat("tau3"));
+  //       thisJet.set_numberOfDaughters(patJet.numberOfDaughters());
+  //       thisJet.set_partonFlavour(patJet.partonFlavour());
+  //       thisJet.set_hadronFlavour(patJet.hadronFlavour());
+  //       thisJet.set_charge(patJet.charge());
+  //       if(patJet.isPFJet()){
+  //         thisJet.set_neutralEmEnergyFraction (patJet.neutralEmEnergyFraction());
+  //         thisJet.set_neutralHadronEnergyFraction (patJet.neutralHadronEnergyFraction());
+  //         thisJet.set_chargedEmEnergyFraction (patJet.chargedEmEnergyFraction());
+  //         thisJet.set_chargedHadronEnergyFraction (patJet.chargedHadronEnergyFraction());
+  //         thisJet.set_muonEnergyFraction (patJet.muonEnergyFraction());
+  //         thisJet.set_photonEnergyFraction (patJet.photonEnergyFraction());
+  //         thisJet.set_chargedMultiplicity (patJet.chargedMultiplicity());
+  //         thisJet.set_neutralMultiplicity (patJet.neutralMultiplicity());
+  //         thisJet.set_muonMultiplicity (patJet.muonMultiplicity());
+  //         thisJet.set_electronMultiplicity (patJet.electronMultiplicity());
+  //         thisJet.set_photonMultiplicity (patJet.photonMultiplicity());
+  //       }
+  //       thisJet.set_JEC_factor_raw(1.);
+  //       thisJet.set_JEC_L1factor_raw(1.);
+  //       bool storePFparts = (hotvrJets[j].size()<doPFhotvrJetConstituentsNjets || thisJet.pt()>doPFhotvrJetConstituentsMinJetPt);
+  //       if(storePFparts){
+  //         const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
+  //         for(const auto & daughter_p : jet_daughter_ptrs){
+  //           size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
+  //           thisJet.add_pfcand_index(pfparticles_index);
+  //         }
+  //       }
 
-        for (const auto & subItr : patJet.subjets()) {
-          Jet subjet;
-          subjet.set_pt(subItr->p4().pt());
-          subjet.set_eta(subItr->p4().eta());
-          subjet.set_phi(subItr->p4().phi());
-          subjet.set_energy(subItr->p4().E());
-          subjet.set_jetArea(subItr->jetArea());
-          subjet.set_numberOfDaughters(subItr->numberOfDaughters());
-          subjet.set_partonFlavour(subItr->partonFlavour());
-          subjet.set_hadronFlavour(subItr->hadronFlavour());
-          subjet.set_charge(subItr->charge());
-          if(subItr->isPFJet()){
-            subjet.set_neutralEmEnergyFraction (subItr->neutralEmEnergyFraction());
-            subjet.set_neutralHadronEnergyFraction (subItr->neutralHadronEnergyFraction());
-            subjet.set_chargedEmEnergyFraction (subItr->chargedEmEnergyFraction());
-            subjet.set_chargedHadronEnergyFraction (subItr->chargedHadronEnergyFraction());
-            subjet.set_muonEnergyFraction (subItr->muonEnergyFraction());
-            subjet.set_photonEnergyFraction (subItr->photonEnergyFraction());
-            subjet.set_chargedMultiplicity (subItr->chargedMultiplicity());
-            subjet.set_neutralMultiplicity (subItr->neutralMultiplicity());
-            subjet.set_muonMultiplicity (subItr->muonMultiplicity());
-            subjet.set_electronMultiplicity (subItr->electronMultiplicity());
-            subjet.set_photonMultiplicity (subItr->photonMultiplicity());
-          }
-          subjet.set_JEC_factor_raw(1.);
-          subjet.set_JEC_L1factor_raw(1.);
-          if(storePFparts){
-            const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
-            for(const auto & daughter_p : jet_daughter_ptrs){
-              size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
-              subjet.add_pfcand_index(pfparticles_index);
-            }
-          }
-          thisJet.add_subjet(subjet);
-        }
+  //       for (const auto & subItr : patJet.subjets()) {
+  //         Jet subjet;
+  //         subjet.set_pt(subItr->p4().pt());
+  //         subjet.set_eta(subItr->p4().eta());
+  //         subjet.set_phi(subItr->p4().phi());
+  //         subjet.set_energy(subItr->p4().E());
+  //         subjet.set_jetArea(subItr->jetArea());
+  //         subjet.set_numberOfDaughters(subItr->numberOfDaughters());
+  //         subjet.set_partonFlavour(subItr->partonFlavour());
+  //         subjet.set_hadronFlavour(subItr->hadronFlavour());
+  //         subjet.set_charge(subItr->charge());
+  //         if(subItr->isPFJet()){
+  //           subjet.set_neutralEmEnergyFraction (subItr->neutralEmEnergyFraction());
+  //           subjet.set_neutralHadronEnergyFraction (subItr->neutralHadronEnergyFraction());
+  //           subjet.set_chargedEmEnergyFraction (subItr->chargedEmEnergyFraction());
+  //           subjet.set_chargedHadronEnergyFraction (subItr->chargedHadronEnergyFraction());
+  //           subjet.set_muonEnergyFraction (subItr->muonEnergyFraction());
+  //           subjet.set_photonEnergyFraction (subItr->photonEnergyFraction());
+  //           subjet.set_chargedMultiplicity (subItr->chargedMultiplicity());
+  //           subjet.set_neutralMultiplicity (subItr->neutralMultiplicity());
+  //           subjet.set_muonMultiplicity (subItr->muonMultiplicity());
+  //           subjet.set_electronMultiplicity (subItr->electronMultiplicity());
+  //           subjet.set_photonMultiplicity (subItr->photonMultiplicity());
+  //         }
+  //         subjet.set_JEC_factor_raw(1.);
+  //         subjet.set_JEC_L1factor_raw(1.);
+  //         if(storePFparts){
+  //           const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
+  //           for(const auto & daughter_p : jet_daughter_ptrs){
+  //             size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
+  //             subjet.add_pfcand_index(pfparticles_index);
+  //           }
+  //         }
+  //         thisJet.add_subjet(subjet);
+  //       }
 
-        hotvrJets[j].push_back(thisJet);
-      }
-    }
-  }
+  //       hotvrJets[j].push_back(thisJet);
+  //     }
+  //   }
+  // }
 
-  if (doXCone) {
-    for (size_t j=0; j < xcone_tokens.size(); ++j){
-      xconeJets[j].clear();
-      edm::Handle<pat::JetCollection> xcone_patjets;
-      iEvent.getByToken(xcone_tokens[j], xcone_patjets);
+  // if (doXCone) {
+  //   for (size_t j=0; j < xcone_tokens.size(); ++j){
+  //     xconeJets[j].clear();
+  //     edm::Handle<pat::JetCollection> xcone_patjets;
+  //     iEvent.getByToken(xcone_tokens[j], xcone_patjets);
 
-      // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
-      for (const auto & patJet : *xcone_patjets) {
-        TopJet thisJet;
-        thisJet.set_pt(patJet.p4().pt());
-        thisJet.set_eta(patJet.p4().eta());
-        thisJet.set_phi(patJet.p4().phi());
-        thisJet.set_energy(patJet.p4().E());
-        thisJet.set_jetArea(patJet.jetArea());
-        thisJet.set_softdropmass(patJet.userFloat("softdropmass"));
-        thisJet.set_numberOfDaughters(patJet.numberOfDaughters());
-        thisJet.set_partonFlavour(patJet.partonFlavour());
-        thisJet.set_hadronFlavour(patJet.hadronFlavour());
-        thisJet.set_charge(patJet.charge());
-        if(patJet.isPFJet()){
-          thisJet.set_neutralEmEnergyFraction (patJet.neutralEmEnergyFraction());
-          thisJet.set_neutralHadronEnergyFraction (patJet.neutralHadronEnergyFraction());
-          thisJet.set_chargedEmEnergyFraction (patJet.chargedEmEnergyFraction());
-          thisJet.set_chargedHadronEnergyFraction (patJet.chargedHadronEnergyFraction());
-          thisJet.set_muonEnergyFraction (patJet.muonEnergyFraction());
-          thisJet.set_photonEnergyFraction (patJet.photonEnergyFraction());
-          thisJet.set_chargedMultiplicity (patJet.chargedMultiplicity());
-          thisJet.set_neutralMultiplicity (patJet.neutralMultiplicity());
-          thisJet.set_muonMultiplicity (patJet.muonMultiplicity());
-          thisJet.set_electronMultiplicity (patJet.electronMultiplicity());
-          thisJet.set_photonMultiplicity (patJet.photonMultiplicity());
-        }
-        thisJet.set_JEC_factor_raw(1.);
-        thisJet.set_JEC_L1factor_raw(1.);
-        bool storePFparts = (xconeJets[j].size()<doPFxconeJetConstituentsNjets || thisJet.pt()>doPFxconeJetConstituentsMinJetPt);
-        if(storePFparts){
-          const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
-          for(const auto & daughter_p : jet_daughter_ptrs){
-            size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
-            thisJet.add_pfcand_index(pfparticles_index);
-          }
-        }
+  //     // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
+  //     for (const auto & patJet : *xcone_patjets) {
+  //       TopJet thisJet;
+  //       thisJet.set_pt(patJet.p4().pt());
+  //       thisJet.set_eta(patJet.p4().eta());
+  //       thisJet.set_phi(patJet.p4().phi());
+  //       thisJet.set_energy(patJet.p4().E());
+  //       thisJet.set_jetArea(patJet.jetArea());
+  //       thisJet.set_softdropmass(patJet.userFloat("softdropmass"));
+  //       thisJet.set_numberOfDaughters(patJet.numberOfDaughters());
+  //       thisJet.set_partonFlavour(patJet.partonFlavour());
+  //       thisJet.set_hadronFlavour(patJet.hadronFlavour());
+  //       thisJet.set_charge(patJet.charge());
+  //       if(patJet.isPFJet()){
+  //         thisJet.set_neutralEmEnergyFraction (patJet.neutralEmEnergyFraction());
+  //         thisJet.set_neutralHadronEnergyFraction (patJet.neutralHadronEnergyFraction());
+  //         thisJet.set_chargedEmEnergyFraction (patJet.chargedEmEnergyFraction());
+  //         thisJet.set_chargedHadronEnergyFraction (patJet.chargedHadronEnergyFraction());
+  //         thisJet.set_muonEnergyFraction (patJet.muonEnergyFraction());
+  //         thisJet.set_photonEnergyFraction (patJet.photonEnergyFraction());
+  //         thisJet.set_chargedMultiplicity (patJet.chargedMultiplicity());
+  //         thisJet.set_neutralMultiplicity (patJet.neutralMultiplicity());
+  //         thisJet.set_muonMultiplicity (patJet.muonMultiplicity());
+  //         thisJet.set_electronMultiplicity (patJet.electronMultiplicity());
+  //         thisJet.set_photonMultiplicity (patJet.photonMultiplicity());
+  //       }
+  //       thisJet.set_JEC_factor_raw(1.);
+  //       thisJet.set_JEC_L1factor_raw(1.);
+  //       bool storePFparts = (xconeJets[j].size()<doPFxconeJetConstituentsNjets || thisJet.pt()>doPFxconeJetConstituentsMinJetPt);
+  //       if(storePFparts){
+  //         const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
+  //         for(const auto & daughter_p : jet_daughter_ptrs){
+  //           size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
+  //           thisJet.add_pfcand_index(pfparticles_index);
+  //         }
+  //       }
 
-        for (const auto & subItr : patJet.subjets()) {
-          Jet subjet;
-          subjet.set_pt(subItr->p4().pt());
-          subjet.set_eta(subItr->p4().eta());
-          subjet.set_phi(subItr->p4().phi());
-          subjet.set_energy(subItr->p4().E());
-          subjet.set_jetArea(subItr->jetArea());
-          subjet.set_numberOfDaughters(subItr->numberOfDaughters());
-          subjet.set_partonFlavour(subItr->partonFlavour());
-          subjet.set_hadronFlavour(subItr->hadronFlavour());
-          subjet.set_charge(subItr->charge());
-          if(subItr->isPFJet()){
-            subjet.set_neutralEmEnergyFraction (subItr->neutralEmEnergyFraction());
-            subjet.set_neutralHadronEnergyFraction (subItr->neutralHadronEnergyFraction());
-            subjet.set_chargedEmEnergyFraction (subItr->chargedEmEnergyFraction());
-            subjet.set_chargedHadronEnergyFraction (subItr->chargedHadronEnergyFraction());
-            subjet.set_muonEnergyFraction (subItr->muonEnergyFraction());
-            subjet.set_photonEnergyFraction (subItr->photonEnergyFraction());
-            subjet.set_chargedMultiplicity (subItr->chargedMultiplicity());
-            subjet.set_neutralMultiplicity (subItr->neutralMultiplicity());
-            subjet.set_muonMultiplicity (subItr->muonMultiplicity());
-            subjet.set_electronMultiplicity (subItr->electronMultiplicity());
-            subjet.set_photonMultiplicity (subItr->photonMultiplicity());
-          }
-          subjet.set_JEC_factor_raw(1.);
-          subjet.set_JEC_L1factor_raw(1.);
-          if(storePFparts){
-            const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
-            for(const auto & daughter_p : jet_daughter_ptrs){
-              size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
-              subjet.add_pfcand_index(pfparticles_index);
-            }
-          }
-          thisJet.add_subjet(subjet);
-        }
-        xconeJets[j].push_back(thisJet);
-      }
-    }
-  }
+  //       for (const auto & subItr : patJet.subjets()) {
+  //         Jet subjet;
+  //         subjet.set_pt(subItr->p4().pt());
+  //         subjet.set_eta(subItr->p4().eta());
+  //         subjet.set_phi(subItr->p4().phi());
+  //         subjet.set_energy(subItr->p4().E());
+  //         subjet.set_jetArea(subItr->jetArea());
+  //         subjet.set_numberOfDaughters(subItr->numberOfDaughters());
+  //         subjet.set_partonFlavour(subItr->partonFlavour());
+  //         subjet.set_hadronFlavour(subItr->hadronFlavour());
+  //         subjet.set_charge(subItr->charge());
+  //         if(subItr->isPFJet()){
+  //           subjet.set_neutralEmEnergyFraction (subItr->neutralEmEnergyFraction());
+  //           subjet.set_neutralHadronEnergyFraction (subItr->neutralHadronEnergyFraction());
+  //           subjet.set_chargedEmEnergyFraction (subItr->chargedEmEnergyFraction());
+  //           subjet.set_chargedHadronEnergyFraction (subItr->chargedHadronEnergyFraction());
+  //           subjet.set_muonEnergyFraction (subItr->muonEnergyFraction());
+  //           subjet.set_photonEnergyFraction (subItr->photonEnergyFraction());
+  //           subjet.set_chargedMultiplicity (subItr->chargedMultiplicity());
+  //           subjet.set_neutralMultiplicity (subItr->neutralMultiplicity());
+  //           subjet.set_muonMultiplicity (subItr->muonMultiplicity());
+  //           subjet.set_electronMultiplicity (subItr->electronMultiplicity());
+  //           subjet.set_photonMultiplicity (subItr->photonMultiplicity());
+  //         }
+  //         subjet.set_JEC_factor_raw(1.);
+  //         subjet.set_JEC_L1factor_raw(1.);
+  //         if(storePFparts){
+  //           const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
+  //           for(const auto & daughter_p : jet_daughter_ptrs){
+  //             size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
+  //             subjet.add_pfcand_index(pfparticles_index);
+  //           }
+  //         }
+  //         thisJet.add_subjet(subjet);
+  //       }
+  //       xconeJets[j].push_back(thisJet);
+  //     }
+  //   }
+  // }
 
-  //dijet XCONE
-  if (doXCone_dijet) {
-    for (size_t j=0; j < xcone_tokens_dijet.size(); ++j){
-      xconeJets_dijet[j].clear();
-      edm::Handle<pat::JetCollection> xcone_patjets_dijet;
-      iEvent.getByToken(xcone_tokens_dijet[j], xcone_patjets_dijet);
+  // //dijet XCONE
+  // if (doXCone_dijet) {
+  //   for (size_t j=0; j < xcone_tokens_dijet.size(); ++j){
+  //     xconeJets_dijet[j].clear();
+  //     edm::Handle<pat::JetCollection> xcone_patjets_dijet;
+  //     iEvent.getByToken(xcone_tokens_dijet[j], xcone_patjets_dijet);
 
-      // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
-      for (const auto & patJet : *xcone_patjets_dijet) {
-        TopJet thisJet;
-        thisJet.set_pt(patJet.p4().pt());
-        thisJet.set_eta(patJet.p4().eta());
-        thisJet.set_phi(patJet.p4().phi());
-        thisJet.set_energy(patJet.p4().E());
-        thisJet.set_jetArea(patJet.jetArea());
-        thisJet.set_softdropmass(patJet.userFloat("softdropmass"));
-        thisJet.set_numberOfDaughters(patJet.numberOfDaughters());
-        thisJet.set_partonFlavour(patJet.partonFlavour());
-        thisJet.set_hadronFlavour(patJet.hadronFlavour());
-        thisJet.set_charge(patJet.charge());
-        if(patJet.isPFJet()){
-          thisJet.set_neutralEmEnergyFraction (patJet.neutralEmEnergyFraction());
-          thisJet.set_neutralHadronEnergyFraction (patJet.neutralHadronEnergyFraction());
-          thisJet.set_chargedEmEnergyFraction (patJet.chargedEmEnergyFraction());
-          thisJet.set_chargedHadronEnergyFraction (patJet.chargedHadronEnergyFraction());
-          thisJet.set_muonEnergyFraction (patJet.muonEnergyFraction());
-          thisJet.set_photonEnergyFraction (patJet.photonEnergyFraction());
-          thisJet.set_chargedMultiplicity (patJet.chargedMultiplicity());
-          thisJet.set_neutralMultiplicity (patJet.neutralMultiplicity());
-          thisJet.set_muonMultiplicity (patJet.muonMultiplicity());
-          thisJet.set_electronMultiplicity (patJet.electronMultiplicity());
-          thisJet.set_photonMultiplicity (patJet.photonMultiplicity());
-        }
-        thisJet.set_JEC_factor_raw(1.);
-        thisJet.set_JEC_L1factor_raw(1.);
-        bool storePFparts = (xconeJets_dijet[j].size()<doPFxconeDijetJetConstituentsNjets || thisJet.pt()>doPFxconeDijetJetConstituentsMinJetPt);
-        if(storePFparts){
-          const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
-          for(const auto & daughter_p : jet_daughter_ptrs){
-            size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
-            thisJet.add_pfcand_index(pfparticles_index);
-          }
-        }
+  //     // Convert from pat::Jet to TopJet, with special userFloats, and with subjets
+  //     for (const auto & patJet : *xcone_patjets_dijet) {
+  //       TopJet thisJet;
+  //       thisJet.set_pt(patJet.p4().pt());
+  //       thisJet.set_eta(patJet.p4().eta());
+  //       thisJet.set_phi(patJet.p4().phi());
+  //       thisJet.set_energy(patJet.p4().E());
+  //       thisJet.set_jetArea(patJet.jetArea());
+  //       thisJet.set_softdropmass(patJet.userFloat("softdropmass"));
+  //       thisJet.set_numberOfDaughters(patJet.numberOfDaughters());
+  //       thisJet.set_partonFlavour(patJet.partonFlavour());
+  //       thisJet.set_hadronFlavour(patJet.hadronFlavour());
+  //       thisJet.set_charge(patJet.charge());
+  //       if(patJet.isPFJet()){
+  //         thisJet.set_neutralEmEnergyFraction (patJet.neutralEmEnergyFraction());
+  //         thisJet.set_neutralHadronEnergyFraction (patJet.neutralHadronEnergyFraction());
+  //         thisJet.set_chargedEmEnergyFraction (patJet.chargedEmEnergyFraction());
+  //         thisJet.set_chargedHadronEnergyFraction (patJet.chargedHadronEnergyFraction());
+  //         thisJet.set_muonEnergyFraction (patJet.muonEnergyFraction());
+  //         thisJet.set_photonEnergyFraction (patJet.photonEnergyFraction());
+  //         thisJet.set_chargedMultiplicity (patJet.chargedMultiplicity());
+  //         thisJet.set_neutralMultiplicity (patJet.neutralMultiplicity());
+  //         thisJet.set_muonMultiplicity (patJet.muonMultiplicity());
+  //         thisJet.set_electronMultiplicity (patJet.electronMultiplicity());
+  //         thisJet.set_photonMultiplicity (patJet.photonMultiplicity());
+  //       }
+  //       thisJet.set_JEC_factor_raw(1.);
+  //       thisJet.set_JEC_L1factor_raw(1.);
+  //       bool storePFparts = (xconeJets_dijet[j].size()<doPFxconeDijetJetConstituentsNjets || thisJet.pt()>doPFxconeDijetJetConstituentsMinJetPt);
+  //       if(storePFparts){
+  //         const auto& jet_daughter_ptrs = patJet.daughterPtrVector();
+  //         for(const auto & daughter_p : jet_daughter_ptrs){
+  //           size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
+  //           thisJet.add_pfcand_index(pfparticles_index);
+  //         }
+  //       }
 
-        for (const auto & subItr : patJet.subjets()) {
-          Jet subjet;
-          subjet.set_pt(subItr->p4().pt());
-          subjet.set_eta(subItr->p4().eta());
-          subjet.set_phi(subItr->p4().phi());
-          subjet.set_energy(subItr->p4().E());
-          subjet.set_jetArea(subItr->jetArea());
-          subjet.set_numberOfDaughters(subItr->numberOfDaughters());
-          subjet.set_partonFlavour(subItr->partonFlavour());
-          subjet.set_hadronFlavour(subItr->hadronFlavour());
-          subjet.set_charge(subItr->charge());
-          if(subItr->isPFJet()){
-            subjet.set_neutralEmEnergyFraction (subItr->neutralEmEnergyFraction());
-            subjet.set_neutralHadronEnergyFraction (subItr->neutralHadronEnergyFraction());
-            subjet.set_chargedEmEnergyFraction (subItr->chargedEmEnergyFraction());
-            subjet.set_chargedHadronEnergyFraction (subItr->chargedHadronEnergyFraction());
-            subjet.set_muonEnergyFraction (subItr->muonEnergyFraction());
-            subjet.set_photonEnergyFraction (subItr->photonEnergyFraction());
-            subjet.set_chargedMultiplicity (subItr->chargedMultiplicity());
-            subjet.set_neutralMultiplicity (subItr->neutralMultiplicity());
-            subjet.set_muonMultiplicity (subItr->muonMultiplicity());
-            subjet.set_electronMultiplicity (subItr->electronMultiplicity());
-            subjet.set_photonMultiplicity (subItr->photonMultiplicity());
-          }
-          subjet.set_JEC_factor_raw(1.);
-          subjet.set_JEC_L1factor_raw(1.);
-          if(storePFparts){
-            const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
-            for(const auto & daughter_p : jet_daughter_ptrs){
-              size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
-              subjet.add_pfcand_index(pfparticles_index);
-            }
-          }
-          thisJet.add_subjet(subjet);
-        }
+  //       for (const auto & subItr : patJet.subjets()) {
+  //         Jet subjet;
+  //         subjet.set_pt(subItr->p4().pt());
+  //         subjet.set_eta(subItr->p4().eta());
+  //         subjet.set_phi(subItr->p4().phi());
+  //         subjet.set_energy(subItr->p4().E());
+  //         subjet.set_jetArea(subItr->jetArea());
+  //         subjet.set_numberOfDaughters(subItr->numberOfDaughters());
+  //         subjet.set_partonFlavour(subItr->partonFlavour());
+  //         subjet.set_hadronFlavour(subItr->hadronFlavour());
+  //         subjet.set_charge(subItr->charge());
+  //         if(subItr->isPFJet()){
+  //           subjet.set_neutralEmEnergyFraction (subItr->neutralEmEnergyFraction());
+  //           subjet.set_neutralHadronEnergyFraction (subItr->neutralHadronEnergyFraction());
+  //           subjet.set_chargedEmEnergyFraction (subItr->chargedEmEnergyFraction());
+  //           subjet.set_chargedHadronEnergyFraction (subItr->chargedHadronEnergyFraction());
+  //           subjet.set_muonEnergyFraction (subItr->muonEnergyFraction());
+  //           subjet.set_photonEnergyFraction (subItr->photonEnergyFraction());
+  //           subjet.set_chargedMultiplicity (subItr->chargedMultiplicity());
+  //           subjet.set_neutralMultiplicity (subItr->neutralMultiplicity());
+  //           subjet.set_muonMultiplicity (subItr->muonMultiplicity());
+  //           subjet.set_electronMultiplicity (subItr->electronMultiplicity());
+  //           subjet.set_photonMultiplicity (subItr->photonMultiplicity());
+  //         }
+  //         subjet.set_JEC_factor_raw(1.);
+  //         subjet.set_JEC_L1factor_raw(1.);
+  //         if(storePFparts){
+  //           const auto& jet_daughter_ptrs = subItr->daughterPtrVector();
+  //           for(const auto & daughter_p : jet_daughter_ptrs){
+  //             size_t pfparticles_index = uhh2::add_pfpart(*daughter_p,*event->pfparticles);
+  //             subjet.add_pfcand_index(pfparticles_index);
+  //           }
+  //         }
+  //         thisJet.add_subjet(subjet);
+  //       }
 
-        xconeJets_dijet[j].push_back(thisJet);
-      }
-    }
-  }
+  //       xconeJets_dijet[j].push_back(thisJet);
+  //     }
+  //   }
+  // }
 
-  if (doGenHOTVR) {
-    for (size_t j=0; j < genhotvr_tokens.size(); ++j){
-      genhotvrJets[j].clear();
-      edm::Handle<pat::JetCollection> genhotvr_patjets;
-      iEvent.getByToken(genhotvr_tokens[j], genhotvr_patjets);
+  // if (doGenHOTVR) {
+  //   for (size_t j=0; j < genhotvr_tokens.size(); ++j){
+  //     genhotvrJets[j].clear();
+  //     edm::Handle<pat::JetCollection> genhotvr_patjets;
+  //     iEvent.getByToken(genhotvr_tokens[j], genhotvr_patjets);
 
-      // Convert from pat::Jet to GenTopJet with subjets
-      for (const auto & patJet : *genhotvr_patjets) {
-        GenTopJet thisJet;
-        thisJet.set_pt(patJet.p4().pt());
-        thisJet.set_eta(patJet.p4().eta());
-        thisJet.set_phi(patJet.p4().phi());
-        thisJet.set_energy(patJet.p4().E());
-        thisJet.set_partonFlavour(patJet.partonFlavour());
-        thisJet.set_hadronFlavour(patJet.hadronFlavour());
-        bool add_genparts=false;
-        if(genhotvrJets[j].size()<doGenhotvrJetConstituentsNjets || thisJet.pt()>doGenhotvrJetConstituentsMinJetPt) add_genparts=true;
-        for (const auto & subItr : patJet.subjets()) {
-          GenJet subjet;
-          subjet.set_pt(subItr->p4().pt());
-          subjet.set_eta(subItr->p4().eta());
-          subjet.set_phi(subItr->p4().phi());
-          subjet.set_energy(subItr->p4().E());
-          subjet.set_partonFlavour(subItr->partonFlavour());
-          subjet.set_hadronFlavour(subItr->hadronFlavour());
-          fill_geninfo_patjet(subItr,subjet,add_genparts);
-          thisJet.add_subjet(subjet);
-        }
-        fill_geninfo_patjet(patJet,thisJet,add_genparts);
-        genhotvrJets[j].push_back(thisJet);
-      }
-    }
-  }
+  //     // Convert from pat::Jet to GenTopJet with subjets
+  //     for (const auto & patJet : *genhotvr_patjets) {
+  //       GenTopJet thisJet;
+  //       thisJet.set_pt(patJet.p4().pt());
+  //       thisJet.set_eta(patJet.p4().eta());
+  //       thisJet.set_phi(patJet.p4().phi());
+  //       thisJet.set_energy(patJet.p4().E());
+  //       thisJet.set_partonFlavour(patJet.partonFlavour());
+  //       thisJet.set_hadronFlavour(patJet.hadronFlavour());
+  //       bool add_genparts=false;
+  //       if(genhotvrJets[j].size()<doGenhotvrJetConstituentsNjets || thisJet.pt()>doGenhotvrJetConstituentsMinJetPt) add_genparts=true;
+  //       for (const auto & subItr : patJet.subjets()) {
+  //         GenJet subjet;
+  //         subjet.set_pt(subItr->p4().pt());
+  //         subjet.set_eta(subItr->p4().eta());
+  //         subjet.set_phi(subItr->p4().phi());
+  //         subjet.set_energy(subItr->p4().E());
+  //         subjet.set_partonFlavour(subItr->partonFlavour());
+  //         subjet.set_hadronFlavour(subItr->hadronFlavour());
+  //         fill_geninfo_patjet(subItr,subjet,add_genparts);
+  //         thisJet.add_subjet(subjet);
+  //       }
+  //       fill_geninfo_patjet(patJet,thisJet,add_genparts);
+  //       genhotvrJets[j].push_back(thisJet);
+  //     }
+  //   }
+  // }
 
-  if (doGenXCone) {
-    for (size_t j=0; j < genxcone_tokens.size(); ++j){
-      genxconeJets[j].clear();
-      edm::Handle<pat::JetCollection> genxcone_patjets;
-      iEvent.getByToken(genxcone_tokens[j], genxcone_patjets);
+  // if (doGenXCone) {
+  //   for (size_t j=0; j < genxcone_tokens.size(); ++j){
+  //     genxconeJets[j].clear();
+  //     edm::Handle<pat::JetCollection> genxcone_patjets;
+  //     iEvent.getByToken(genxcone_tokens[j], genxcone_patjets);
 
-      // Convert from pat::Jet to GenTopJet with subjets
-      for (const auto & patJet : *genxcone_patjets) {
-        GenTopJet thisJet;
-        thisJet.set_pt(patJet.p4().pt());
-        thisJet.set_eta(patJet.p4().eta());
-        thisJet.set_phi(patJet.p4().phi());
-        thisJet.set_energy(patJet.p4().E());
-        thisJet.set_partonFlavour(patJet.partonFlavour());
-        thisJet.set_hadronFlavour(patJet.hadronFlavour());
-        bool add_genparts=false;
-        if(genxconeJets[j].size()<doGenxconeJetConstituentsNjets || thisJet.pt()>doGenxconeJetConstituentsMinJetPt) add_genparts=true;
-        for (const auto & subItr : patJet.subjets()) {
-          GenJet subjet;
-          subjet.set_pt(subItr->p4().pt());
-          subjet.set_eta(subItr->p4().eta());
-          subjet.set_phi(subItr->p4().phi());
-          subjet.set_energy(subItr->p4().E());
-          subjet.set_partonFlavour(subItr->partonFlavour());
-          subjet.set_hadronFlavour(subItr->hadronFlavour());
-          fill_geninfo_patjet(subItr,subjet,add_genparts);
-          thisJet.add_subjet(subjet);
-        }
-        fill_geninfo_patjet(patJet,thisJet,add_genparts);
-        genxconeJets[j].push_back(thisJet);
-      }
-    }
-  }
+  //     // Convert from pat::Jet to GenTopJet with subjets
+  //     for (const auto & patJet : *genxcone_patjets) {
+  //       GenTopJet thisJet;
+  //       thisJet.set_pt(patJet.p4().pt());
+  //       thisJet.set_eta(patJet.p4().eta());
+  //       thisJet.set_phi(patJet.p4().phi());
+  //       thisJet.set_energy(patJet.p4().E());
+  //       thisJet.set_partonFlavour(patJet.partonFlavour());
+  //       thisJet.set_hadronFlavour(patJet.hadronFlavour());
+  //       bool add_genparts=false;
+  //       if(genxconeJets[j].size()<doGenxconeJetConstituentsNjets || thisJet.pt()>doGenxconeJetConstituentsMinJetPt) add_genparts=true;
+  //       for (const auto & subItr : patJet.subjets()) {
+  //         GenJet subjet;
+  //         subjet.set_pt(subItr->p4().pt());
+  //         subjet.set_eta(subItr->p4().eta());
+  //         subjet.set_phi(subItr->p4().phi());
+  //         subjet.set_energy(subItr->p4().E());
+  //         subjet.set_partonFlavour(subItr->partonFlavour());
+  //         subjet.set_hadronFlavour(subItr->hadronFlavour());
+  //         fill_geninfo_patjet(subItr,subjet,add_genparts);
+  //         thisJet.add_subjet(subjet);
+  //       }
+  //       fill_geninfo_patjet(patJet,thisJet,add_genparts);
+  //       genxconeJets[j].push_back(thisJet);
+  //     }
+  //   }
+  // }
 
-  //XCONE GEN dijet
-  if (doGenXCone_dijet) {
-    for (size_t j=0; j < genxcone_tokens_dijet.size(); ++j){
-      genxconeJets_dijet[j].clear();
-      edm::Handle<pat::JetCollection> genxcone_patjets_dijet;
-      iEvent.getByToken(genxcone_tokens_dijet[j], genxcone_patjets_dijet);
+  // //XCONE GEN dijet
+  // if (doGenXCone_dijet) {
+  //   for (size_t j=0; j < genxcone_tokens_dijet.size(); ++j){
+  //     genxconeJets_dijet[j].clear();
+  //     edm::Handle<pat::JetCollection> genxcone_patjets_dijet;
+  //     iEvent.getByToken(genxcone_tokens_dijet[j], genxcone_patjets_dijet);
 
-      // Convert from pat::Jet to GenTopJet with subjets
-      for (const auto & patJet : *genxcone_patjets_dijet) {
-        GenTopJet thisJet;
-        thisJet.set_pt(patJet.p4().pt());
-        thisJet.set_eta(patJet.p4().eta());
-        thisJet.set_phi(patJet.p4().phi());
-        thisJet.set_energy(patJet.p4().E());
-        thisJet.set_partonFlavour(patJet.partonFlavour());
-        thisJet.set_hadronFlavour(patJet.hadronFlavour());
-        bool add_genparts=false;
-        if(genxconeJets_dijet[j].size()<doGenxconeDijetJetConstituentsNjets || thisJet.pt()>doGenxconeDijetJetConstituentsMinJetPt) add_genparts=true;
-        for (const auto & subItr : patJet.subjets()) {
-          GenJet subjet;
-          subjet.set_pt(subItr->p4().pt());
-          subjet.set_eta(subItr->p4().eta());
-          subjet.set_phi(subItr->p4().phi());
-          subjet.set_energy(subItr->p4().E());
-          subjet.set_partonFlavour(subItr->partonFlavour());
-          subjet.set_hadronFlavour(subItr->hadronFlavour());
-          fill_geninfo_patjet(subItr,subjet,add_genparts);
-          thisJet.add_subjet(subjet);
-        }
-        fill_geninfo_patjet(patJet,thisJet,add_genparts);
-        genxconeJets_dijet[j].push_back(thisJet);
-      }
-    }
-  }
+  //     // Convert from pat::Jet to GenTopJet with subjets
+  //     for (const auto & patJet : *genxcone_patjets_dijet) {
+  //       GenTopJet thisJet;
+  //       thisJet.set_pt(patJet.p4().pt());
+  //       thisJet.set_eta(patJet.p4().eta());
+  //       thisJet.set_phi(patJet.p4().phi());
+  //       thisJet.set_energy(patJet.p4().E());
+  //       thisJet.set_partonFlavour(patJet.partonFlavour());
+  //       thisJet.set_hadronFlavour(patJet.hadronFlavour());
+  //       bool add_genparts=false;
+  //       if(genxconeJets_dijet[j].size()<doGenxconeDijetJetConstituentsNjets || thisJet.pt()>doGenxconeDijetJetConstituentsMinJetPt) add_genparts=true;
+  //       for (const auto & subItr : patJet.subjets()) {
+  //         GenJet subjet;
+  //         subjet.set_pt(subItr->p4().pt());
+  //         subjet.set_eta(subItr->p4().eta());
+  //         subjet.set_phi(subItr->p4().phi());
+  //         subjet.set_energy(subItr->p4().E());
+  //         subjet.set_partonFlavour(subItr->partonFlavour());
+  //         subjet.set_hadronFlavour(subItr->hadronFlavour());
+  //         fill_geninfo_patjet(subItr,subjet,add_genparts);
+  //         thisJet.add_subjet(subjet);
+  //       }
+  //       fill_geninfo_patjet(patJet,thisJet,add_genparts);
+  //       genxconeJets_dijet[j].push_back(thisJet);
+  //     }
+  //   }
+  // }
 
   // * done filling the event; call the AnalysisModule if configured:
   bool keep = true;

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # usage:
 # 1. install brilcalc (see http://cms-service-lumi.web.cern.ch/cms-service-lumi/brilwsdoc.html)
@@ -9,7 +9,7 @@
 
 
 import os,sys,time
-import coral
+# import coral
 
 from ROOT import gROOT, TFile, TTree, AddressOf, TString, std
 from ctypes import *
@@ -67,7 +67,7 @@ infile = open(options.infilename, "r")
 
 infile.readline()
 for line in infile:
-    #print line
+    print(line)
     if line.startswith('#'):
         continue
     run = line[0:line.find(":")]

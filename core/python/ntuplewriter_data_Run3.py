@@ -13,7 +13,9 @@ process = generate_process(year="2022", useData=True)
 
 # Please do not commit changes to source filenames - used for consistency testing
 process.source.fileNames = cms.untracked.vstring([
-    'root://cms-xrd-global.cern.ch//store/data/Run2022F/JetMET/MINIAOD/PromptReco-v1/000/360/381/00000/f2444ee4-ccae-42cc-a961-3cd3266bfd0f.root' 
+# '/store/data/Run2022D/JetMET/MINIAOD/PromptReco-v2/000/357/734/00000/014505b6-85f9-4661-a211-85ce48c390d4.root',
+# '/store/data/Run2022D/JetMET/MINIAOD/22Sep2023-v1/2550000/000a7361-c7e5-4a7e-93e1-bab6329edb0a.root',
+'/store/data/Run2024D/JetMET0/MINIAOD/PromptReco-v1/000/380/627/00000/f9efe1bb-c4f1-4d65-9604-bbccbb32ac83.root',
 ])
 
 # Do this after setting process.source.fileNames, since we want the ability to override it on the commandline
