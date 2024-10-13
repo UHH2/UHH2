@@ -563,8 +563,8 @@ bool MCMuonScaleFactor::process_onemuon(uhh2::Event & event, int i) {
 
   }
 
-  weight_up = weight + sqrt(err_propagation);
-  weight_down = weight - sqrt(err_propagation);
+  weight_up = weight * ( 1 + sqrt(err_propagation) );
+  weight_down = weight * ( 1 - sqrt(err_propagation) );
 
   event.set(h_muon_weight_,       weight);
   event.set(h_muon_weight_up_,    weight_up);
@@ -778,8 +778,8 @@ bool MCElecScaleFactor::process(uhh2::Event & event) {
 
   }
 
-  weight_up = weight + sqrt(err_propagation);
-  weight_down = weight - sqrt(err_propagation);
+  weight_up = weight * ( 1 + sqrt(err_propagation) );
+  weight_down = weight * ( 1 - sqrt(err_propagation) );
 
   event.set(h_elec_weight_,       weight);
   event.set(h_elec_weight_up_,    weight_up);
